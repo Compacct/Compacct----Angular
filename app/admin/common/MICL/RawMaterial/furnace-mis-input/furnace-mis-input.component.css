@@ -136,3 +136,9 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav li a {
  p-tabview > div > ul{
     padding : 1px !important
   }
+
+  div.label-t {
+    margin-top: 7px;
+    padding: 6px 12px;
+    background: rgb(206 216 216 / 51%);
+}

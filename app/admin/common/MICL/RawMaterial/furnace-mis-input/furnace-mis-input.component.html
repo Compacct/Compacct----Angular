@@ -18,6 +18,24 @@
         </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" key="s" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -33,17 +51,11 @@
                     <div class="form-group">
                         <div class="col-sm-4">
                             <label class="control-label">Furnace No<sup class="text-danger">*</sup></label>
-                            <select class="form-control" name="furnaceno" #furnaceno="ngModel" [(ngModel)]="ObjFurnaceMISinput.Furnace_No" [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && furnaceno?.errors?.required}"
-                                required>
-                                  <option  [ngValue]="undefined">Select</option>
-                              <option *ngFor="let option of FurnaceNoList" value="{{option.Furnace_No}}">
-                                  {{option.Furnace_No}}
-                                  </option>
-                            </select>
+                            <input class="form-control" name="furnaceno" #furnaceno="ngModel" [disabled]="true" [(ngModel)]="ObjFurnaceMISinput.Furnace_No" [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && furnaceno?.errors?.required}">
                         </div>
                         <div class="col-sm-4">
                             <label class="control-label">Date</label>
-                            <ejs-datepicker  [(value)]="Doc_Date" [format]="'dd/MMM/yyyy'"></ejs-datepicker>
+                            <ejs-datepicker  [(value)]="Doc_Date" [format]="'dd/MMM/yyyy'" (change)="ChangeConsumption()"></ejs-datepicker>
                         </div> 
                     </div>
                 </form>
@@ -59,18 +71,19 @@
                 <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                     <!-- Daily Performance Parameter -->
                     <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
-                        <!-- <form name="RawMaterialForm" #RawMaterialForm="ngForm" novalidate> -->
+                        <form name="DailyPerForm" #DailyPerForm="ngForm" novalidate>
                         <div class="form-group">
                             <!-- <div class="col-sm-3">
                                 <label class="control-label">Product Type <span class="text-danger"></span></label>
                                 <p-multiSelect [options]="DistRMProductType" [(ngModel)]="SelectedDistRMProductType" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Product_Type" [resetFilterOnHide]="true"></p-multiSelect>
                             </div> -->
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                             <label class="control-label">Furnace Power <sup class="text-danger">*</sup></label>
                                 <input class="form-control"
                                         name="furnacepower"
                                         #furnacepower="ngModel"
-                                        [(ngModel)]="ObjFurnaceMISinput.Furnace_Power"
+                                        [(ngModel)]="ObjDailyPerformancet.Furnace_Power"
+                                        CompacctDigitonly="true"
                                         [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && furnacepower?.errors?.required}"
                                         required>
                                       <!-- <option  [ngValue]="undefined">Select</option> -->
@@ -80,12 +93,18 @@
                                 <!-- </select> -->
 
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-1">
+                                <label class="control-label"></label>
+                                 <div class="label-t">KWH</div>
+    
+                            </div>
+                            <div class="col-sm-3">
                                 <label class="control-label">Auxiliary Power <sup class="text-danger">*</sup></label>
                                     <input class="form-control"
                                             name="auxpower"
                                             #auxpower="ngModel"
-                                            [(ngModel)]="ObjFurnaceMISinput.Auxiliary_Power"
+                                            [(ngModel)]="ObjDailyPerformancet.Auxiliary_Power"
+                                            CompacctDigitonly="true"
                                             [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && auxpower?.errors?.required}"
                                             required>
                                           <!-- <option  [ngValue]="undefined">Select</option> -->
@@ -95,12 +114,18 @@
                                     <!-- </select> -->
     
                                 </div>
-                                <div class="col-sm-4">
-                                    <label class="control-label">Average Load <sup class="text-danger">*</sup></label>
+                                <div class="col-sm-1">
+                                    <label class="control-label"></label>
+                                     <div class="label-t">KWH</div>
+        
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Average Load (Minus Shutdown)<sup class="text-danger">*</sup></label>
                                         <input class="form-control"
                                                 name="avgload"
                                                 #avgload="ngModel"
-                                                [(ngModel)]="ObjFurnaceMISinput.Average_Load"
+                                                [(ngModel)]="ObjDailyPerformancet.Average_Load"
+                                                CompacctDigitonly="true"
                                                 [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && avgload?.errors?.required}"
                                                 required>
                                               <!-- <option  [ngValue]="undefined">Select</option> -->
@@ -109,6 +134,11 @@
                                               </option> -->
                                         <!-- </select> -->
         
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <label class="control-label"></label>
+                                         <div class="label-t">KW</div>
+            
                                     </div>
                         </div>
                         <div class="form-group">
@@ -121,8 +151,9 @@
                                 <input class="form-control"
                                         name="avgpower"
                                         #avgpower="ngModel"
-                                        [(ngModel)]="ObjFurnaceMISinput.Average_Power"
-                                        [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && avgpower?.errors?.required}"
+                                        [(ngModel)]="ObjDailyPerformancet.Average_Power_Factor"
+                                        CompacctDigitonly="true"
+                                        [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && avgpower?.errors?.required  || CheckDecimal(ObjDailyPerformancet.Average_Power_Factor)}"
                                         required>
                                       <!-- <option  [ngValue]="undefined">Select</option> -->
                                       <!-- <option *ngFor="let option of rawmaterialprotypellist" value="{{option.Product_Type_ID}}">
@@ -136,9 +167,9 @@
                                     <input class="form-control"
                                             name="loadfactor"
                                             #loadfactor="ngModel"
-                                            [(ngModel)]="ObjFurnaceMISinput.Load_Factor"
+                                            [(ngModel)]="ObjDailyPerformancet.Load_Factor"
                                             CompacctDigitonly="true"
-                                            [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && loadfactor?.errors?.required}"
+                                            [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && loadfactor?.errors?.required || CheckDecimal(ObjDailyPerformancet.Load_Factor)}"
                                             required>
                                           <!-- <option  [ngValue]="undefined">Select</option> -->
                                           <!-- <option *ngFor="let option of rawmaterialprotypellist" value="{{option.Product_Type_ID}}">
@@ -147,12 +178,13 @@
                                     <!-- </select> -->
     
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <label class="control-label">Slipping (3 Electrodes) <sup class="text-danger">*</sup></label>
                                         <input class="form-control"
                                                 name="slipping"
                                                 #slipping="ngModel"
-                                                [(ngModel)]="ObjFurnaceMISinput.slipping"
+                                                [(ngModel)]="ObjDailyPerformancet.Slipping_3_Electrodes"
+                                                CompacctDigitonly="true"
                                                 [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && slipping?.errors?.required}"
                                                 required>
                                               <!-- <option  [ngValue]="undefined">Select</option> -->
@@ -161,7 +193,12 @@
                                               </option> -->
                                         <!-- </select> -->
         
-                                    </div>
+                                </div>
+                                <div class="col-sm-1">
+                                    <label class="control-label"></label>
+                                    <div class="label-t">MM</div>
+            
+                                </div>
                         </div>
                         <div class="form-group">
                             <!-- <div class="col-sm-3">
@@ -173,7 +210,8 @@
                                 <input class="form-control"
                                         name="nooftapping"
                                         #nooftapping="ngModel"
-                                        [(ngModel)]="ObjFurnaceMISinput.No_of_Tapping"
+                                        [(ngModel)]="ObjDailyPerformancet.No_Of_Tapping"
+                                        CompacctDigitonly="true"
                                         [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && nooftapping?.errors?.required}"
                                         required>
                                       <!-- <option  [ngValue]="undefined">Select</option> -->
@@ -185,7 +223,7 @@
                             </div>
                         </div>
 
-                        <!-- </form> -->
+                        </form>
                         <!-- <br>
                         <div class="table-responsive table-id">
                             <p-table [value]="getrawmaterialtabledata" #dt [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Product_Description","UOM"]'>
@@ -228,7 +266,7 @@
 
                     </p-tabPanel>
                     <!-- Raw Materils Consumption -->
-                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt">
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="fa fa-shopping-cart">
                         <!-- <form name="SemiFinishedForm" #SemiFinishedForm="ngForm" novalidate> -->
                         <!-- <div class="form-group">
                             <div class="col-sm-4">
@@ -347,59 +385,7 @@
                         </div>
                     </p-tabPanel>
                     <!-- Consumable Consumption -->
-                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-list-alt">
-                        <!-- <div class="form-group">
-                            <div class="col-sm-4">
-                                <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
-                                <p-dropdown [options]="ConsumableConsList" 
-                                name="consumablecons" 
-                                [(ngModel)]="ObjFurnaceMISinput.Consumable_Consumption"
-                                [showClear]="true" 
-                                [emptyFilterMessage]="' No Data Found'" 
-                                [filter]="true" 
-                                filterBy="label,value" 
-                                [resetFilterOnHide]="true"
-                                [placeholder]="'Select Product'" 
-                                [virtualScroll]="true" 
-                                #consumablecons="ngModel"
-                                [styleClass]="ConConsumptionvalid && consumablecons.errors?.required ? 'clearance': ''" 
-                                required>
-                            </p-dropdown>
-                            </div>
-                            <div class="col-sm-3">
-                                <label class="control-label">Batch No <sup class="text-danger">*</sup></label>
-                                    <select class="form-control"
-                                            name="cconbatchno"
-                                            #cconbatchno="ngModel"
-                                            [(ngModel)]="ObjFurnaceMISinput.CC_Batch_No"
-                                            [ngClass]="{'clearance': ConConsumptionvalid && cconbatchno?.errors?.required}"
-                                            required>
-                                          <option  [ngValue]="undefined">Select</option>
-                                           <option *ngFor="let option of rawmaterialprotypellist" value="{{option.Product_Type_ID}}">
-                                             {{option.Product_Type}}
-                                          </option> 
-                                    </select>
-    
-                                </div>
-                                <div class="col-sm-3">
-                                    <label class="control-label">Qty <sup class="text-danger">*</sup></label>
-                                        <input class="form-control"
-                                                name="cconqty"
-                                                #cconqty="ngModel"
-                                                [(ngModel)]="ObjFurnaceMISinput.CC_Qty"
-                                                CompacctDigitonly="true"
-                                                [ngClass]="{'clearance': ConConsumptionvalid && cconqty?.errors?.required}"
-                                                required>
-        
-                                    </div>
-                            <div class="col-sm-2">
-                                <button type="button" class="btn btn-primary custombutton" 
-                                        (click)="addConsumableCons()">
-                                    <span class="glyphicon glyphicon-plus"></span> ADD
-                                </button>
-                            </div>
-                        </div> -->
-
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="fa fa-shopping-bag">
                         <div class="box-footer">
                             <div class="no-padding">
                                 <p-table [value]="ConsumableConsList"
@@ -465,25 +451,25 @@
                         <div *ngIf='!ConsumableConsList.length'><b>No Data Found.</b></div>
                     </p-tabPanel>
                     <!-- Production -->
-                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-list-alt">
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="fa fa-product-hunt">
                         <form name="ProductionForm" #ProductionForm="ngForm" novalidate>
                         <div class="form-group">
                             <div class="col-sm-3">
                                 <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
                                 <select class="form-control" 
-                                name="F_Godown_ID" 
-                                #F_Godown_ID="ngModel" 
+                                name="Pro_Godown_ID" 
+                                #Pro_Godown_ID="ngModel" 
                                 [(ngModel)]="ObjFurMISinputPro.Godown_ID" 
-                                [ngClass]="{'clearance': Productionvalid && F_Godown_ID?.errors?.required}"
+                                [ngClass]="{'clearance': Productionvalid && Pro_Godown_ID?.errors?.required}"
                                 required 
                                 >
                                     <option  [ngValue]="undefined">Select</option>
-                                    <!-- <option *ngFor="let option of FGodownList" [value]="option.Godown_ID">{{option.godown_name}}</option> -->
+                                    <option *ngFor="let option of GodownList" [value]="option.Godown_ID">{{option.godown_name}}</option>
                             </select>
                             </div>
                             <div class="col-sm-3">
                                 <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
-                                <p-dropdown [options]="ProductionList" 
+                                <p-dropdown [options]="ProdList" 
                                 name="production" 
                                 [(ngModel)]="ObjFurMISinputPro.Product_ID"
                                 [showClear]="true" 
@@ -494,11 +480,12 @@
                                 [placeholder]="'Select Product'" 
                                 [virtualScroll]="true" 
                                 #production="ngModel"
+                                (onChange)="getProData(ObjFurMISinputPro.Product_ID)"
                                 [styleClass]="Productionvalid && production.errors?.required ? 'clearance': ''" 
                                 required>
                             </p-dropdown>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-2">
                                 <label class="control-label">Lot No. <sup class="text-danger">*</sup></label>
                                     <input class="form-control"
                                             name="rmconbatchno"
@@ -513,7 +500,7 @@
                                     </select> -->
     
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-1">
                                     <label class="control-label">Qty <sup class="text-danger">*</sup></label>
                                         <input class="form-control"
                                                 name="rmconqty"
@@ -523,10 +510,21 @@
                                                 [ngClass]="{'clearance': Productionvalid && rmconqty?.errors?.required}"
                                                 required>
         
-                                    </div>
+                                </div>
+                                <div class="col-sm-1">
+                                    <label class="control-label">UOM <sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                                name="rmconuom"
+                                                #rmconuom="ngModel"
+                                                [(ngModel)]="ObjFurMISinputPro.UOM"
+                                                disabled="true"
+                                                [ngClass]="{'clearance': Productionvalid && rmconuom?.errors?.required}"
+                                                required>
+        
+                                </div>
                             <div class="col-sm-1">
                                 <button type="button" class="btn btn-primary custombutton" 
-                                        (click)="addProduction()">
+                                        (click)="addProduction(ProductionForm.form.valid)">
                                     <span class="glyphicon glyphicon-plus"></span> ADD
                                 </button>
                             </div>
@@ -537,18 +535,22 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr style="background-color:#4fa1d1;color:white;">
+                                            <th>Stock Point</th>
                                             <th>Product Description</th>
-                                            <th>Lot No</th>
+                                            <th>Lot No.</th>
                                             <th>Qty</th>
+                                            <th>UOM</th>
                                             <!-- <th>Remarks</th> -->
                                             <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let obj of AddProductionList; let ind = index;">
-                                            <td>{{obj.Production}}</td>
-                                            <td>{{obj.Production_Batch_No}}</td>
-                                            <td>{{obj.Production_Qty}}</td>
+                                            <td>{{obj.Godown_Name}}</td>
+                                            <td>{{obj.Product_Description}}</td>
+                                            <td>{{obj.Batch_No}}</td>
+                                            <td>{{obj.Qty}}</td>
+                                            <td>{{obj.UOM}}</td>
                                             <!-- <td>{{obj.Purpose ? obj.Purpose : '-'}}</td> -->
                                             <td><button (click)="Productiondelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                         </tr>
@@ -558,7 +560,7 @@
                         </div>
                     </p-tabPanel>
                     <!-- Waste Slag, MT -->
-                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[4]" leftIcon="glyphicon glyphicon-list-alt">
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[4]" leftIcon="fa fa-trash-o">
                         <form name="WasteForm" #WasteForm="ngForm" novalidate>
                         <div class="form-group">
                             <div class="col-sm-3">
@@ -570,12 +572,12 @@
                                 [ngClass]="{'clearance': wasteslagvalid && waste_Godown_ID?.errors?.required}"
                                 required>
                                     <option  [ngValue]="undefined">Select</option>
-                                    <!-- <option *ngFor="let option of FGodownList" [value]="option.Godown_ID">{{option.godown_name}}</option> -->
+                                    <option *ngFor="let option of GodownList" [value]="option.Godown_ID">{{option.godown_name}}</option>
                             </select>
                             </div>
                             <div class="col-sm-3">
                                 <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
-                                <p-dropdown [options]="WasteSlagList" 
+                                <p-dropdown [options]="WasteProList" 
                                 name="wasteslag" 
                                 [(ngModel)]="ObjFurMISinputWaste.Product_ID"
                                 [showClear]="true" 
@@ -586,12 +588,13 @@
                                 [placeholder]="'Select Product'" 
                                 [virtualScroll]="true" 
                                 #wasteslag="ngModel"
+                                (onChange)="getwasteProData(ObjFurMISinputWaste.Product_ID)"
                                 [styleClass]="wasteslagvalid && wasteslag.errors?.required ? 'clearance': ''" 
                                 required>
                             </p-dropdown>
                             </div>
-                            <div class="col-sm-3">
-                                <label class="control-label">Lot No <sup class="text-danger">*</sup></label>
+                            <div class="col-sm-2">
+                                <label class="control-label">Lot No. <sup class="text-danger">*</sup></label>
                                     <input class="form-control"
                                             name="wasteslagbatchno"
                                             #wasteslagbatchno="ngModel"
@@ -600,7 +603,7 @@
                                             required>
     
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-1">
                                     <label class="control-label">Qty <sup class="text-danger">*</sup></label>
                                         <input class="form-control"
                                                 name="wasteslagqty"
@@ -610,10 +613,21 @@
                                                 [ngClass]="{'clearance': wasteslagvalid && wasteslagqty?.errors?.required}"
                                                 required>
         
-                                    </div>
+                                </div>
+                                <div class="col-sm-1">
+                                    <label class="control-label">UOM <sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                                name="wasteslaguom"
+                                                #wasteslaguom="ngModel"
+                                                [(ngModel)]="ObjFurMISinputWaste.UOM"
+                                                disabled="true"
+                                                [ngClass]="{'clearance': wasteslagvalid && wasteslaguom?.errors?.required}"
+                                                required>
+            
+                                </div>
                             <div class="col-sm-1">
                                 <button type="button" class="btn btn-primary custombutton" 
-                                        (click)="addWasteSlag()">
+                                        (click)="addWasteSlag(WasteForm.form.valid)">
                                     <span class="glyphicon glyphicon-plus"></span> ADD
                                 </button>
                             </div>
@@ -624,18 +638,22 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr style="background-color:#4fa1d1;color:white;">
+                                            <th>Stock Point</th>
                                             <th>Product Description</th>
-                                            <th>Batch No</th>
+                                            <th>Lot No.</th>
                                             <th>Qty</th>
+                                            <th>UOM</th>
                                             <!-- <th>Remarks</th> -->
                                             <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let obj of AddWasteSlagList; let ind = index;">
-                                            <td>{{obj.Waste_Slag}}</td>
-                                            <td>{{obj.WasteSlag_Batch_No}}</td>
-                                            <td>{{obj.WasteSlag_Qty}}</td>
+                                            <td>{{obj.Godown_Name}}</td>
+                                            <td>{{obj.Product_Description}}</td>
+                                            <td>{{obj.Batch_No}}</td>
+                                            <td>{{obj.Qty}}</td>
+                                            <td>{{obj.UOM}}</td>
                                             <!-- <td>{{obj.Purpose ? obj.Purpose : '-'}}</td> -->
                                             <td><button (click)="WasteSlagdelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                         </tr>
@@ -645,34 +663,37 @@
                         </div>
                     </p-tabPanel>
                     <!-- Shutdown Details -->
-                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[5]" leftIcon="glyphicon glyphicon-list-alt">
-                        <form name="WasteForm" #WasteForm="ngForm" novalidate>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[5]" leftIcon="fa fa-clone">
+                        <form name="ShutDetForm" #ShutDetForm="ngForm" novalidate>
                         <div class="form-group">
-                            <!-- <div class="col-sm-3">
-                                <label class="control-label">From</label> -->
-                                <!-- <ejs-timepicker placeholder='Select a time' [(value)]="objemployee.Off_In_Time" name="Off_In_Time" #Off_In_Time="ngModel" [ngModel]="objemployee.Off_In_Time" [enabled]="userdatedisabled" [format]="'hh:mm a'" [value]='TimeValue ' (change)="CalculateTime()"></ejs-timepicker> -->
-                                <!-- <ejs-timepicker placeholder='Select a time' [(value)]="objShutdown.From_Time" name="F_Time" #F_Time="ngModel" [format]="'hh:mm a'" [value]='FromTimeValue'></ejs-timepicker>
-                            </div> -->
-                            <!-- <div class="col-sm-3">
+                            <div class="col-sm-3">
+                                <label class="control-label">From</label>
+                                <ejs-timepicker placeholder='Select a time' [(value)]="ObjFurMISinputShutdoun.From_Time" name="F_Time" #F_Time="ngModel" [ngModel]="ObjFurMISinputShutdoun.From_Time" [format]="'hh:mm a'" [value]='FromTimeValue'
+                                [ngClass]="{'clearance': Shutdownvalid && F_Time?.errors?.required}"required ></ejs-timepicker>
+                                <!-- <ejs-timepicker placeholder='Select a time' [(value)]="objShutdown.From_Time" name="F_Time" #F_Time="ngModel" [format]="'hh:mm a'" [value]='FromTimeValue'></ejs-timepicker> -->
+                            </div>
+                            <div class="col-sm-3">
                                 <label class="control-label">To</label>
-                                <ejs-timepicker placeholder='Select a time' [(value)]="objShutdown.To_Time" name="T_Time" #T_Time="ngModel" [format]="'hh:mm a'" [value]='ToTimeValue'></ejs-timepicker>
-                            </div> -->
+                                <ejs-timepicker placeholder='Select a time' [(value)]="ObjFurMISinputShutdoun.To_Time" name="T_Time" #T_Time="ngModel" [ngModel]="ObjFurMISinputShutdoun.To_Time"  [format]="'hh:mm a'" [value]='ToTimeValue'
+                                [ngClass]="{'clearance': Shutdownvalid && T_Time?.errors?.required}"required ></ejs-timepicker>
+                                <!-- <ejs-timepicker placeholder='Select a time' [(value)]="objShutdown.To_Time" name="T_Time" #T_Time="ngModel" [format]="'hh:mm a'" [value]='ToTimeValue'></ejs-timepicker> [enabled]="userdatedisabled"-->
+                            </div>
                             <div class="col-sm-3">
                                 <label class="control-label">Reason<sup class="text-danger">*</sup></label>
                                 <select class="form-control" 
                                 name="reason" 
                                 #reason="ngModel" 
-                                [(ngModel)]="ObjFurMISinputShutdoun.Reason"
+                                [(ngModel)]="ObjFurMISinputShutdoun.Reason_ID"
                                 [ngClass]="{'clearance': Shutdownvalid && reason?.errors?.required}"
                                 required 
                                 >
                                     <option  [ngValue]="undefined">Select</option>
-                                    <!-- <option *ngFor="let option of ReasonList" [value]="option.Reason">{{option.Reason}}</option> -->
+                                    <option *ngFor="let option of ReasonList" [value]="option.Reason_ID">{{option.Reason_Des}}</option>
                             </select>
                             </div>
                             <div class="col-sm-2">
                                 <button type="button" class="btn btn-primary custombutton" 
-                                        (click)="addShutdown(WasteForm.form.valid)">
+                                        (click)="addShutdown(ShutDetForm.form.valid)">
                                     <span class="glyphicon glyphicon-plus"></span> ADD
                                 </button>
                             </div>
@@ -693,7 +714,7 @@
                                         <tr *ngFor="let obj of AddShutdownList; let ind = index;">
                                             <td>{{obj.From_Time}}</td>
                                             <td>{{obj.To_Time}}</td>
-                                            <td>{{obj.Reason}}</td>
+                                            <td>{{obj.Reason_Des}}</td>
                                             <td><button (click)="Shutdowndelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                         </tr>
                                     </tbody>
@@ -701,228 +722,161 @@
                             </div>
                         </div>
                     </p-tabPanel>
-                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[6]" leftIcon="glyphicon glyphicon-list-alt">
-                        <!-- <div class="form-group">
-                            <div class="col-sm-4">
-                                <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
-                                <p-dropdown [options]="ConsumableConsList" 
-                                name="consumablecons" 
-                                [(ngModel)]="ObjFurnaceMISinput.Consumable_Consumption"
-                                [showClear]="true" 
-                                [emptyFilterMessage]="' No Data Found'" 
-                                [filter]="true" 
-                                filterBy="label,value" 
-                                [resetFilterOnHide]="true"
-                                [placeholder]="'Select Product'" 
-                                [virtualScroll]="true" 
-                                #consumablecons="ngModel"
-                                [styleClass]="ConConsumptionvalid && consumablecons.errors?.required ? 'clearance': ''" 
-                                required>
-                            </p-dropdown>
-                            </div>
-                            <div class="col-sm-3">
-                                <label class="control-label">Batch No <sup class="text-danger">*</sup></label>
-                                    <select class="form-control"
-                                            name="cconbatchno"
-                                            #cconbatchno="ngModel"
-                                            [(ngModel)]="ObjFurnaceMISinput.CC_Batch_No"
-                                            [ngClass]="{'clearance': ConConsumptionvalid && cconbatchno?.errors?.required}"
-                                            required>
-                                          <option  [ngValue]="undefined">Select</option>
-                                    </select>
-    
-                                </div>
-                                <div class="col-sm-3">
-                                    <label class="control-label">Qty <sup class="text-danger">*</sup></label>
-                                        <input class="form-control"
-                                                name="cconqty"
-                                                #cconqty="ngModel"
-                                                [(ngModel)]="ObjFurnaceMISinput.CC_Qty"
-                                                CompacctDigitonly="true"
-                                                [ngClass]="{'clearance': ConConsumptionvalid && cconqty?.errors?.required}"
-                                                required>
-        
-                                    </div>
-                            <div class="col-sm-2">
-                                <button type="button" class="btn btn-primary custombutton" 
-                                        (click)="addConsumableCons()">
-                                    <span class="glyphicon glyphicon-plus"></span> ADD
-                                </button>
-                            </div>
-                        </div>
-
+                    <!-- Product Characteristics -->
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[6]" leftIcon="fa fa-file-text-o">
                         <div class="box-footer">
-                            <div class="table-responsive no-padding" style="margin-top: 7px;">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr style="background-color:#4fa1d1;color:white;">
-                                            <th>Product Description</th>
-                                            <th>Batch No</th>
-                                            <th>Qty</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let obj of AddConsumableConsList; let ind = index;">
-                                            <td>{{obj.Consumable_Consumption}}</td>
-                                            <td>{{obj.CC_Batch_No}}</td>
-                                            <td>{{obj.CC_Qty}}</td>
-                                            <td><button (click)="ConsumableConsdelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div> -->
-                    </p-tabPanel>
-                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[7]" leftIcon="glyphicon glyphicon-list-alt">
-                        <!-- <div class="form-group">
-                            <div class="col-sm-4">
-                                <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
-                                <p-dropdown [options]="ProductionList" 
-                                name="production" 
-                                [(ngModel)]="ObjFurnaceMISinput.Production"
-                                [showClear]="true" 
-                                [emptyFilterMessage]="' No Data Found'" 
-                                [filter]="true" 
-                                filterBy="label,value" 
-                                [resetFilterOnHide]="true"
-                                [placeholder]="'Select Product'" 
-                                [virtualScroll]="true" 
-                                #production="ngModel"
-                                [styleClass]="Productionvalid && production.errors?.required ? 'clearance': ''" 
-                                required>
-                            </p-dropdown>
-                            </div>
-                            <div class="col-sm-3">
-                                <label class="control-label">Batch No <sup class="text-danger">*</sup></label>
-                                    <select class="form-control"
-                                            name="rmconbatchno"
-                                            #rmconbatchno="ngModel"
-                                            [(ngModel)]="ObjFurnaceMISinput.Production_Batch_No"
-                                            [ngClass]="{'clearance': Productionvalid && rmconbatchno?.errors?.required}"
-                                            required>
-                                          <option  [ngValue]="undefined">Select</option>
-                                    </select>
+                            <div class="no-padding">
+                                <p-table [value]="ProCharList"
+                                [paginator]="ProCharList.length ? true : false"
+                                *ngIf='ProCharList.length'
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeaderforProCharList'
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
     
-                                </div>
-                                <div class="col-sm-3">
-                                    <label class="control-label">Qty <sup class="text-danger">*</sup></label>
-                                        <input class="form-control"
-                                                name="rmconqty"
-                                                #rmconqty="ngModel"
-                                                [(ngModel)]="ObjFurnaceMISinput.Production_Qty"
-                                                CompacctDigitonly="true"
-                                                [ngClass]="{'clearance': Productionvalid && rmconqty?.errors?.required}"
-                                                required>
-        
-                                    </div>
-                            <div class="col-sm-2">
-                                <button type="button" class="btn btn-primary custombutton" 
-                                        (click)="addProduction()">
-                                    <span class="glyphicon glyphicon-plus"></span> ADD
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="box-footer">
-                            <div class="table-responsive no-padding" style="margin-top: 7px;">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr style="background-color:#4fa1d1;color:white;">
-                                            <th>Product Description</th>
-                                            <th>Batch No</th>
-                                            <th>Qty</th>
-                                            <th></th>
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <!-- <th style="width:5em">Action</th> -->
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforProCharList">{{option.replaceAll('_',' ')}}</th> 
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let obj of AddProductionList; let ind = index;">
-                                            <td>{{obj.Production}}</td>
-                                            <td>{{obj.Production_Batch_No}}</td>
-                                            <td>{{obj.Production_Qty}}</td>
-                                            <td><button (click)="Productiondelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div> -->
-                    </p-tabPanel>
-                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[8]" leftIcon="glyphicon glyphicon-list-alt">
-                        <!-- <div class="form-group">
-                            <div class="col-sm-4">
-                                <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
-                                <p-dropdown [options]="WasteSlagList" 
-                                name="wasteslag" 
-                                [(ngModel)]="ObjFurnaceMISinput.Waste_Slag"
-                                [showClear]="true" 
-                                [emptyFilterMessage]="' No Data Found'" 
-                                [filter]="true" 
-                                filterBy="label,value" 
-                                [resetFilterOnHide]="true"
-                                [placeholder]="'Select Product'" 
-                                [virtualScroll]="true" 
-                                #wasteslag="ngModel"
-                                [styleClass]="wasteslagvalid && wasteslag.errors?.required ? 'clearance': ''" 
-                                required>
-                            </p-dropdown>
-                            </div>
-                            <div class="col-sm-3">
-                                <label class="control-label">Batch No <sup class="text-danger">*</sup></label>
-                                    <select class="form-control"
-                                            name="wasteslagbatchno"
-                                            #wasteslagbatchno="ngModel"
-                                            [(ngModel)]="ObjFurnaceMISinput.WasteSlag_Batch_No"
-                                            [ngClass]="{'clearance': wasteslagvalid && wasteslagbatchno?.errors?.required}"
-                                            required>
-                                          <option  [ngValue]="undefined">Select</option>
-                                    </select>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
     
-                                </div>
-                                <div class="col-sm-3">
-                                    <label class="control-label">Qty <sup class="text-danger">*</sup></label>
-                                        <input class="form-control"
-                                                name="wasteslagqty"
-                                                #wasteslagqty="ngModel"
-                                                [(ngModel)]="ObjFurnaceMISinput.WasteSlag_Qty"
-                                                CompacctDigitonly="true"
-                                                [ngClass]="{'clearance': wasteslagvalid && wasteslagqty?.errors?.required}"
-                                                required>
-        
-                                    </div>
-                            <div class="col-sm-2">
-                                <button type="button" class="btn btn-primary custombutton" 
-                                        (click)="addWasteSlag()">
-                                    <span class="glyphicon glyphicon-plus"></span> ADD
-                                </button>
+                                            <!-- <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="CreateGRN(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Create GRN 
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="PrintPRDB(col.RDB_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td> -->
+                                            <ng-container *ngFor="let option of DynamicHeaderforProCharList">
+                                                <td nowrap="nowrap">{{col[option]}}</td>
+                                            </ng-container>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
                             </div>
+                            <div *ngIf='!ProCharList.length'><b>No Data Found.</b></div>
                         </div>
-
-                        <div class="box-footer">
-                            <div class="table-responsive no-padding" style="margin-top: 7px;">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr style="background-color:#4fa1d1;color:white;">
-                                            <th>Product Description</th>
-                                            <th>Batch No</th>
-                                            <th>Qty</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let obj of AddWasteSlagList; let ind = index;">
-                                            <td>{{obj.Waste_Slag}}</td>
-                                            <td>{{obj.WasteSlag_Batch_No}}</td>
-                                            <td>{{obj.WasteSlag_Qty}}</td>
-                                            <td><button (click)="WasteSlagdelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div> -->
                     </p-tabPanel>
-                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[9]" leftIcon="glyphicon glyphicon-list-alt">
+                    <!-- Despatches -->
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[7]" leftIcon="fa fa-truck">
+                        <div class="box-footer">
+                            <div class="no-padding">
+                                <p-table [value]="DispatchList"
+                                [paginator]="DispatchList.length ? true : false"
+                                *ngIf='DispatchList.length'
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeaderforDispatchList'
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <!-- <th style="width:5em">Action</th> -->
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforDispatchList">{{option.replaceAll('_',' ')}}</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+    
+                                            <!-- <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="CreateGRN(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Create GRN 
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="PrintPRDB(col.RDB_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td> -->
+                                            <ng-container *ngFor="let option of DynamicHeaderforDispatchList">
+                                                <td nowrap="nowrap">{{col[option]}}</td>
+                                            </ng-container>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                            <div *ngIf='!DispatchList.length'><b>No Data Found.</b></div>
+                        </div>
+                    </p-tabPanel>
+                    <!-- Critical Issue -->
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[8]" leftIcon="fa fa-pencil-square-o">
                          <div class="form-group">
-                                <div class="col-sm-4">
+                            <!-- <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>Critical Issue :</strong>
+                                  </h5> -->
+                                    <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                        <p-editor name= "criticalissue"
+                                        #criticalissue="ngModel"
+                                        [(ngModel)]="ObjFurnaceMISinput.Critical_Issue"
+                                        [style]="{'height':'200px'}"
+                                       >
+                                          
+                                        </p-editor>
+                                    </div>
+                                <!-- <div class="col-sm-4">
                                     <label class="control-label">Critical Issue <sup class="text-danger">*</sup></label>
                                         <input class="form-control"
                                                 name="criticalissue"
@@ -931,12 +885,12 @@
                                                 [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && criticalissue?.errors?.required}"
                                                 required>
         
-                                    </div>
+                                    </div> -->
                         </div>
                     </p-tabPanel>
                     <div class="box-footer">
                         <button class="btn btn-primary pull-right"
-                                (click)="SaveFurnace(FurnaceMISinputForm.form.valid)"
+                                (click)="SaveFurnace()"
                                 id="load"
                                 [disabled]="Spinner">
                                 <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
