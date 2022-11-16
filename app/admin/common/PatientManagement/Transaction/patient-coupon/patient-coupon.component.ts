@@ -90,7 +90,7 @@ export class PatientCouponComponent implements OnInit {
   }
 
   getName(Mobile){
-    console.log(Mobile);
+    //console.log(Mobile);
     if(Mobile.length === 10)
     {
     const obj = {
@@ -104,7 +104,7 @@ export class PatientCouponComponent implements OnInit {
             {
               this.AllNameList = data;
               //this.objSubLedger.State=this.AllStateList.StateName;
-              console.log('AllNameList = ', this.AllNameList);
+             // console.log('AllNameList = ', this.AllNameList);
             
             });
           }
@@ -131,20 +131,17 @@ export class PatientCouponComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       // console.log(data);
       this.costCenterdataList = data ;
-      console.log("costCenterdataList=",this.costCenterdataList);
+     // console.log("costCenterdataList=",this.costCenterdataList);
         this.costCenterdataList.forEach(el => {
           this.costCenterList.push({
             label: el.Cost_Cen_Name,
             value: el.Cost_Cen_ID
-          });
-        
+          });   
         });
-        this.objPatient.Issue_Coupon_Cost_Center_ID = this.commonApi.CompacctCookies.Cost_Cen_ID;
-       
+        if(this.userType == "U"){
+          this.objPatient.Issue_Coupon_Cost_Center_ID = data[0].Cost_Cen_ID;
+        }    
     })
-    
-    //this.objSearch.Cost_Center_ID = this.commonApi.CompacctCookies.Cost_Cen_ID
-
   }
 
   getPatient(){
@@ -157,7 +154,7 @@ export class PatientCouponComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       // console.log(data);
       this.AllPatientList = data ;
-      console.log("AllPatientList=",this.AllPatientList);
+      //console.log("AllPatientList=",this.AllPatientList);
         this.AllPatientList.forEach(el => {
           this.PatientList.push({
             label: el.Patient,
@@ -181,7 +178,7 @@ export class PatientCouponComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       // console.log(data);
       this.costCenterdataList2 = data ;
-      console.log("costCenterdataList2=",this.costCenterdataList2);
+      //console.log("costCenterdataList2=",this.costCenterdataList2);
         this.costCenterdataList2.forEach(el => {
           this.costCenterList2.push({
             label: el.Cost_Cen_Name,
@@ -189,7 +186,9 @@ export class PatientCouponComponent implements OnInit {
           });
         
         });
-        this.objSearch.Cost_Center_ID = this.commonApi.CompacctCookies.Cost_Cen_ID
+        if(this.userType == "U"){
+          this.objSearch.Cost_Center_ID = this.commonApi.CompacctCookies.Cost_Cen_ID;
+        }     
        
     })
 
@@ -246,7 +245,7 @@ export class PatientCouponComponent implements OnInit {
        this.Searchedlist = data;
       
        
-       console.log('Searchedlist=====',this.Searchedlist);
+       //console.log('Searchedlist=====',this.Searchedlist);
        this.searchFormSubmit = false;
        
        
@@ -295,7 +294,7 @@ export class PatientCouponComponent implements OnInit {
          }
          this.GlobalAPI.getData(obj).subscribe((data : any)=>
          {
-           console.log('data=',data);
+         //  console.log('data=',data);
            
            if(data[0].Column1)
            {
@@ -337,17 +336,12 @@ export class PatientCouponComponent implements OnInit {
          });
     
   }
-
-  onConfirm2(){
-
-  }
   
   clearData(){
-    this.objPatient = new Patient();
+    this.AllNameList =[]
+    this.objPatient.Mobile =[]
     this.PatientCouponFormSubmit = false;
     this.searchFormSubmit = false;
-    this.objPatient.Issue_Coupon_Cost_Center_ID = this.commonApi.CompacctCookies.Cost_Cen_ID;
-    this.objSearch.Cost_Center_ID = this.commonApi.CompacctCookies.Cost_Cen_ID
    // this.getAllowDate()
    this.Coupon_Issue_Date = new Date()
    this.Coupon_Issue_Datemax = this.Coupon_Issue_Date
