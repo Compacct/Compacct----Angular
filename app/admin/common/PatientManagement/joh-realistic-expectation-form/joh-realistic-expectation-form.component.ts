@@ -60,6 +60,8 @@ export class JOHRealisticExpectationFormComponent implements OnInit {
   ProductPDFLink = undefined;
   JREIdUpload:any = undefined
   DelVoucherNo :any =undefined
+  userType :any = ""
+  disableCost :boolean = false
   @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
  
   constructor(
@@ -81,7 +83,7 @@ export class JOHRealisticExpectationFormComponent implements OnInit {
     this.ListingNeedList = ["Conversation with 1 or 2 in quiet", "Conversation with 1 or 2 in noise", "Conversation with small group in quiet", "Conversation with small group in noise", 
                             "Conversation with large group in quiet", "Conversation with large group in noise", "Television / Radio at normal volume", "Hearing in mobile phone", "Hearing in landline phone", 
                             "Hearing phone ring from another room", "Hear front door bell or knock", "Meeting", "Classroom", "Listening to music", "Sound Quality/Naturalness"];
-      
+    this.userType = this.commonApi.CompacctCookies.User_Type  
     this.getCostCenter();
     this.getReProduct();
     this.getAiProduct();
@@ -93,6 +95,12 @@ export class JOHRealisticExpectationFormComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Create";
     this.RequirementsFormSubmit = false;
+    if (this.userType == 'U'){
+      this.disableCost = true
+    }
+    else{
+      this.disableCost = false
+    } 
     this.clearData();
   }
 
@@ -119,8 +127,13 @@ export class JOHRealisticExpectationFormComponent implements OnInit {
         
          
         });
-        this.objRealistic.Cost_Cen_ID = this.commonApi.CompacctCookies.Cost_Cen_ID;
-        this.objSearch.Cost_Cen_ID = this.commonApi.CompacctCookies.Cost_Cen_ID;
+        if(this.userType == 'U'){
+          this.disableCost =true
+          this.objRealistic.Cost_Cen_ID = this.commonApi.CompacctCookies.Cost_Cen_ID;
+          this.objSearch.Cost_Cen_ID = this.commonApi.CompacctCookies.Cost_Cen_ID;
+        }
+        
+        
        
         
     })
@@ -318,6 +331,7 @@ export class JOHRealisticExpectationFormComponent implements OnInit {
   EditRealistic(Col){
     this.RequirementsFormSubmit = false;
     if(Col.JRE_Id){
+      this.disableCost =true
       this.JREId = Col.JRE_Id;
       this.tabIndexToView = 1;
       this.items = ["BROWSE", "UPDATE"];

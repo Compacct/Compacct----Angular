@@ -38,7 +38,7 @@
                                         <p-dropdown [options]="costCenterList" name="Cost_Center1" #Cost_Center1="ngModel" 
                                         [(ngModel)]="objSearch.Cost_Cen_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
                                         [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
-                                        [virtualScroll]="true" itemSize="30"  >
+                                        [virtualScroll]="true" itemSize="30" [disabled]="userType =='U'"  >
                                         </p-dropdown>
 
                                     </div>
@@ -149,7 +149,7 @@
                                         [(ngModel)]="objRealistic.Cost_Cen_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
                                         [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
                                         [virtualScroll]="true" itemSize="30" (onChange)="getCustomId()"
-                                        [styleClass]="RealisticFormSubmit && Cost_Center.errors?.required ? 'clearance': ''" [disabled]="JREId" [required]="true">
+                                        [styleClass]="RealisticFormSubmit && Cost_Center.errors?.required ? 'clearance': ''" [disabled]="disableCost" [required]="true">
                                         </p-dropdown>
                                     </div>
                                     <div class="col-sm-3">

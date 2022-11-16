@@ -39,8 +39,7 @@
                                         <p-dropdown [options]="costCenterList2" name="Cost_Center1" #Cost_Center1="ngModel" 
                                         [(ngModel)]="objSearch.Cost_Center_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
                                         [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
-                                        [virtualScroll]="true" itemSize="30"
-                                        [styleClass]="searchFormSubmit && Cost_Center1.errors?.required ? 'clearance': ''" [required]="true"   >
+                                        [virtualScroll]="true" itemSize="30" [disabled]="userType =='U'" >
                                         </p-dropdown>
                                     </div>
                                     <div class="col-sm-3" style=" height: 77px;">
@@ -155,7 +154,12 @@
                             <div class="form-group">
                                 <div class="col-sm-4">
                                     <label class="control-label">Mobile No.</label>
-                                    <input class="form-control" name="Mobile" #Mobile="ngModel" [(ngModel)]="objPatient.Mobile" CompacctDigitonly="true" placeholder="Mobile No." maxlength="10" minlength="10" (ngModelChange)="getName(objPatient.Mobile)">
+                                    <input class="form-control" 
+                                    name="Mobile" #Mobile="ngModel" 
+                                    [(ngModel)]="objPatient.Mobile" CompacctDigitonly="true"
+                                     placeholder="Mobile No." maxlength="10" minlength="10" 
+                                     (ngModelChange)="getName(objPatient.Mobile)"
+                                     [ngClass]="{'clearance ': PatientCouponFormSubmit && Mobile.errors?.required}" required>
 
                                 </div>
                                 <div class="col-sm-4">
@@ -169,14 +173,6 @@
                                    </select>
                                 </div>
 
-                                <!-- <div class="col-sm-3" style="margin-top: 25px;">
-                                    <h4> Coupon Id:- {{Footfallid}} </h4>
-                                </div>
-                                <div class="col-sm-3" *ngIf="Footfallid != null">
-                                    <button class="btn btn-success custombutton "(click)="GetPrint()" data-toggle="modal" id="load2">
-                                    <span  class="glyphicon glyphicon-print"></span>&nbsp;Print Coupon
-                                    </button>
-                                </div> -->
                                 <div class="col-sm-4">
                                     <label class="control-label">Date<sup class="text-danger">*</sup></label>
                                     <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Coupon_Issue_Date' name="Issue_Date" [min]='Coupon_Issue_Datemin' [max]="Coupon_Issue_Datemax"></ejs-datepicker>
@@ -190,8 +186,8 @@
                                     <p-dropdown [options]="costCenterList" name="Cost_Center" #Cost_Center="ngModel" 
                                     [(ngModel)]="objPatient.Issue_Coupon_Cost_Center_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
                                     [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Cost Center'"
-                                    [virtualScroll]="true" itemSize="30" 
-                                    [styleClass]="PatientCouponFormSubmit && Cost_Center.errors?.required ? 'clearance': ''" [required]="true" >
+                                    [virtualScroll]="true" itemSize="30" [disabled]="userType =='U'"
+                                    [styleClass]="PatientCouponFormSubmit && Cost_Center.errors?.required ? 'clearance': ''" [required]="true"   >
                                     </p-dropdown>
                                 </div>
                             </div>
