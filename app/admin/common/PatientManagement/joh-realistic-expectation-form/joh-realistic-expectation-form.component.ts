@@ -1,11 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
-
+import { FileUpload } from "primeng/primeng";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 @Component({
   selector: 'app-joh-realistic-expectation-form',
   templateUrl: './joh-realistic-expectation-form.component.html',
@@ -51,15 +52,24 @@ export class JOHRealisticExpectationFormComponent implements OnInit {
   JREId : any;
   customDataList :any = [];
   PatientName : any;
-  
-
+  DocUploadModal:boolean = false
+  PDFFlag = false;
+  ProductPDFFile = {};
+  SpinnerUpload = false;
+  PDFViewFlag = false;
+  ProductPDFLink = undefined;
+  JREIdUpload:any = undefined
+  DelVoucherNo :any =undefined
+  @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
+ 
   constructor(
     private $http : HttpClient,
     private commonApi : CompacctCommonApi,
     private Header : CompacctHeader,
     private GlobalAPI : CompacctGlobalApiService,
     private compacctToast : MessageService,
-    private DateService : DateTimeConvertService
+    private DateService : DateTimeConvertService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -82,7 +92,7 @@ export class JOHRealisticExpectationFormComponent implements OnInit {
     this.tabIndexToView = e.index;
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Create";
-    
+    this.RequirementsFormSubmit = false;
     this.clearData();
   }
 
@@ -306,6 +316,7 @@ export class JOHRealisticExpectationFormComponent implements OnInit {
   }
 
   EditRealistic(Col){
+    this.RequirementsFormSubmit = false;
     if(Col.JRE_Id){
       this.JREId = Col.JRE_Id;
       this.tabIndexToView = 1;
@@ -496,9 +507,45 @@ export class JOHRealisticExpectationFormComponent implements OnInit {
 
 
   }
-
+  DeleteEarMold(valid){
+    this.DelVoucherNo = undefined
+    if(valid.JRE_Id){
+      this.Del =true;
+      this.Save = false;
+     this.DelVoucherNo = valid.JRE_Id ;
+     this.compacctToast.clear();
+     this.compacctToast.add({
+       key: "c",
+       sticky: true,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+     });
+   
+    } 
+  }
   onConfirm2(){
-
+    if(this.DelVoucherNo){
+      const obj = {
+        "SP_String": "sp_Joh_Realistic_Expectation",
+        "Report_Name_String": "Delete_Data",
+        "Json_Param_String": JSON.stringify([{JRE_Id : this.DelVoucherNo}])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        // console.log("del Data===", data[0].Column1)
+        if (data[0].message){
+          this.onReject();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "JRE_Id: " + this.DelVoucherNo.toString(),
+            detail: "Succesfully Deleted"
+          });
+          this.getAlldata();
+         }
+      })
+    }
   }
   clearData(){
     this.objRealistic = new Realistic();
@@ -514,10 +561,103 @@ export class JOHRealisticExpectationFormComponent implements OnInit {
     this.RealisticFormSubmit = false;
     this.customDataList = [];
     this.customList = [];
-    this.PatientName = undefined
+    this.PatientName = undefined;
+    this.Requirementadd = [];
 
   }
-
+  uploadModel(col:any){
+   if(col.JRE_Id){
+    this.PDFFlag = false;
+    this.ProductPDFFile = {};
+    this.SpinnerUpload = false;
+    this.PDFViewFlag = false;
+    this.ProductPDFLink = undefined;
+    this.JREIdUpload = undefined;
+    this.fileInput.clear();
+    this.JREIdUpload = col.JRE_Id;
+    this.DocUploadModal = true;
+   }
+  }
+  handleFileSelect(event:any) {
+    this.PDFFlag = false;
+    this.ProductPDFFile = {};
+    if (event) {
+      ////console.log(event)
+      this.ProductPDFFile = event.files[0];
+      this.PDFFlag = true;
+   }
+  }
+  SaveUploadDoc(){
+  if(this.ProductPDFFile['size']){
+      this.ngxService.start();
+      this.SpinnerUpload = true
+        this.SpinnerUpload =true
+        this.GlobalAPI.CommonFileUpload(this.ProductPDFFile)
+        .subscribe((data : any)=>
+        {
+          if(data.file_url){
+            this.saveDocFinal(data.file_url)
+          }
+          else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error",
+            detail: "Fail to upload"
+          });
+          }
+        })  
+      }
+    
+  }
+  saveDocFinal(fileUrl){
+    const tempSaveDataObj = {
+      JRE_Id: this.JREIdUpload,      
+      File_Name_User_ID:	this.commonApi.CompacctCookies.User_ID,
+      File_Name: fileUrl
+    }
+    const obj = {
+      "SP_String": "sp_Joh_Realistic_Expectation",
+      "Report_Name_String": "Update_Document",
+      "Json_Param_String": JSON.stringify(tempSaveDataObj)
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+        //console.log(data)
+        if(data[0].message == "Update done"){
+          this.PDFFlag = false;
+          this.ProductPDFFile = {};
+          this.getAlldata()
+          this.SpinnerUpload = false;
+          this.PDFViewFlag = false;
+          this.ProductPDFLink = undefined;
+          this.fileInput.clear();
+          this.JREIdUpload = undefined;
+          this.DocUploadModal = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            detail: "File Succesfully Upload"
+          });
+          this.ngxService.stop();
+         }
+         else {
+          this.ngxService.stop();
+         this.SpinnerUpload =false 
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+        }
+    })
+  }
+  docOpen(file:any){
+    window.open(file,'_blank')
+  }
 }
 
 class Realistic{

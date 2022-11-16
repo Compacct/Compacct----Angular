@@ -73,6 +73,7 @@
                                             <!-- <th nowrap>Mobile</th> -->
                                             <th nowrap>Audologist Name </th>
                                             <th nowrap>Cost Cen Name</th>
+                                            <th nowrap>File</th>
                                             <!-- <th nowrap>Patient ID</th>
                                             <th nowrap>Sub Ledger Name</th> -->
                                             
@@ -94,16 +95,22 @@
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li>
-                                                        <!-- <li *ngIf = "DelRight == 'Y'">
+                                                        
+                                                        <li >
                                                             <a (click)="DeleteEarMold(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
-                                                        </li> -->
+                                                        </li>
                                                         <!-- <li>
                                                             <a (click)="PODUpdate(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> POD Update
                                                             </a>
                                                         </li> -->
+                                                        <li>
+                                                            <a (click)="uploadModel(col)">
+                                                                <i class="fa fa-fw fa-file"></i> Doc Upload
+                                                            </a>
+                                                        </li>
                                                         <li>
                                                             <a (click)="GetPrint(col)">
                                                                 <i class="fa fa-fw fa-print"></i> Print
@@ -122,6 +129,7 @@
                                             <!-- <td nowrap>{{col.Mobile ? col.Mobile : '-'}}</td> -->
                                             <td nowrap>{{col.Audiologist ? col.Audiologist : '-'}}</td>
                                             <td nowrap>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
+                                            <td nowrap><button class="btn btn-info" (click)="docOpen(col.File_Name)" ><i class="fa fa-file"></i></button></td>
                                             <!-- <td nowrap>{{col.Patient_ID ? col.Patient_ID : '-'}}</td>
                                             <td nowrap>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td> -->
                                         </tr>
@@ -257,6 +265,8 @@
                 border-bottom: 1px solid #c6c6c6;
                 margin-top: -4px;
                 "><strong>Listening Needs / Requirements</strong> </h5>
+                </div>
+                <div class="form-group">
                 <div class="col-sm-4">
                 <label class="control-label">Listening Needs / Requirements<sup class="text-danger">*</sup></label>
                     <select class="form-control" name="Requirements" #Requirements="ngModel" [(ngModel)]="objRequirements.Listening_Needs"  [ngClass]="{'clearance ': RequirementsFormSubmit && Requirements.errors?.required}" required>
@@ -267,21 +277,21 @@
                     </select>
                 </div>
                 <div class="col-sm-4">
-                    <label class="control-label">Present Ability(in % or words)</label>
-                  <input class="form-control" name="Present_Ability" #Present_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Present_Ability" >
+                    <label class="control-label">Present Ability(in % or words)<sup class="text-danger">*</sup></label>
+                  <input class="form-control" name="Present_Ability" #Present_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Present_Ability" [ngClass]="{'clearance ': RequirementsFormSubmit && Present_Ability.errors?.required}" required>
 
                 </div>
                 <div class="col-sm-4">
-                    <label class="control-label">Expected Ability(in % or words)</label>
-                  <input class="form-control" name="Expected_Ability" #Expected_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Expected_Ability" >
+                    <label class="control-label">Expected Ability(in % or words)<sup class="text-danger">*</sup></label>
+                  <input class="form-control" name="Expected_Ability" #Expected_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Expected_Ability" [ngClass]="{'clearance ': RequirementsFormSubmit && Expected_Ability.errors?.required}" required>
 
                 </div>
 
             </div>
                <div class="form-group">
                 <div class="col-sm-4">
-                    <label class="control-label">Agreed Ability(in % or words)</label>
-                  <input class="form-control" name="Agreed_Ability" #Agreed_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Agreed_Ability" >
+                    <label class="control-label">Agreed Ability(in % or words)<sup class="text-danger">*</sup></label>
+                  <input class="form-control" name="Agreed_Ability" #Agreed_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Agreed_Ability" [ngClass]="{'clearance ': RequirementsFormSubmit && Agreed_Ability.errors?.required}" required>
 
                 </div>
                 <div class="col-sm-5">
@@ -610,3 +620,54 @@
         </div>
     </div>
 </div>
+<p-dialog [header]="'View'" 
+[appendTo]="'body'" 
+[visible]="DocUploadModal" 
+[closeOnEscape]="true" 
+[closable]="false" 
+[modal]="true" 
+[responsive]="true"
+ [style]="{ width: '30%', minWidth: '200px' }" 
+ style="text-align: center;" 
+ [minY]="40" 
+ [maximizable]="true"
+ [baseZIndex]="10000">
+ <div class="col-sm-12">
+    <label class="control-label">Upload Document</label>
+    <p-fileUpload #fileInput 
+                *ngIf="!PDFViewFlag" 
+                name="aFile566" 
+                accept=".pdf, .png, .jpg, .jpeg, .xls, .xlsx" 
+                [customUpload]="true" 
+                [chooseLabel]="'Browse'" 
+                [showUploadButton]="false" 
+                (onSelect)="handleFileSelect($event)">
+            </p-fileUpload>
+    <a [href]="ProductPDFLink" 
+        *ngIf="PDFViewFlag" 
+        style="display: block;">
+        <img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
+  </div>
+    <p-footer>
+        <!-- <button type="button" (click)="SaveUploadDoc()" class="btn btn-primary">
+       <span class="glyphicon glyphicon-save"></span>Save
+    </button> -->
+    <button class="btn btn-primary" 
+    (click)="SaveUploadDoc()" 
+    id="Saveload"
+   [disabled]="SpinnerUpload">
+    <p-progressSpinner 
+    *ngIf="SpinnerUpload" 
+    [style]="{width: '15px', height: '15px'}" 
+    strokeWidth="8"  
+    animationDuration=".5s">
+    </p-progressSpinner>
+    <span *ngIf="!SpinnerUpload" 
+    class="glyphicon glyphicon-save">
+    </span>Save
+    </button>
+        <button type="button" (click)="DocUploadModal = false" class="btn btn-info">
+            <i class="fa fa-close"></i>Close
+   </button>
+    </p-footer>
+</p-dialog>

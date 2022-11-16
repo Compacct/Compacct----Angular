@@ -9,6 +9,7 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
 import { NgxUiLoaderService } from "ngx-ui-loader";
 import { DateNepalConvertService } from "../../../shared/compacct.global/dateNepal.service"
 import { map } from 'rxjs/operators';
+import { isUndefined } from 'util';
 
 @Component({
   selector: 'app-nepal-purchase-request-negotiate-price',
@@ -40,6 +41,22 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
   PaymentMethodSelect:any = undefined
   CurrencyList:any = []
   CurrencySelect:any = []
+  ViewPurchaseTypeModal :boolean = false
+  PurchaseId =undefined
+  PaymentId= undefined
+  ViewPaymentTypeModal :boolean =false
+  ViewCurrencyTypeModal:boolean =false
+  PurchaseTypeModal:boolean =false
+  PaymentTypeModal :boolean = false
+  CurrencyTypeModal :boolean =false
+  PurchaseTypeFormSubmitted :boolean =false
+  PaymentFormSubmitted :boolean = false
+  CurrencyFormSubmitted :boolean = false
+  PurchaseTypeName = undefined;
+  PaymentTypeName = undefined
+  CurrencyId =undefined
+  CurrencyName = undefined
+  Spinner:boolean = false;
   constructor( private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -82,9 +99,9 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
   }
   onReject(){
     this.compacctToast.clear("c");
-   }
-   onConfirm(){
-
+    this.compacctToast.clear("A");
+    this.compacctToast.clear("B");
+    this.compacctToast.clear("D");
    }
    getPRno(){
     const obj = {
@@ -297,7 +314,263 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
       this.purchaseRequestChange()
       this.PurchaseTypeSelect = col.Purchase_Type
       this.PaymentMethodSelect = col.Payment_Method
+      this.CurrencySelect = col.Currency
     }
+  }
+
+  ViewPurchasePOP(){
+      this.PurchaseTypeList = [];
+       this.getPurchaseType();
+      setTimeout(() => {
+        this.ViewPurchaseTypeModal = true;
+      }, 200);
+  }
+  deletePurchaseType(mettype){
+    this.PurchaseId = undefined;
+    if(mettype.Purchase_Type){
+      this.PurchaseId = mettype.Purchase_Type;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "A",
+        sticky: true,
+        severity:'warn',
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
+  onConfirm1(){
+    if(this.PurchaseId){
+      const obj = {
+        "SP_String": "sp_Bl_Txn_Purchase_Request",
+        "Report_Name_String": "Delete_Purchase_Type",
+        "Json_Param_String": JSON.stringify([{Purchase_Type : this.PurchaseId}])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        let msg = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : this.PurchaseId
+        let Tempo = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : "Successfully Delete"
+        let Data = data[0].Column1 == 'Can Not Delete' ? 'error' : 'success'
+        if (data[0].Column1){
+          this.onReject();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: Data,
+            summary: "Purchase Type: " + msg,
+            detail: Tempo
+          });
+          this.getPurchaseType();
+        }
+      })
+  }
+  }
+  PurchasePopup(){
+  this.PurchaseTypeFormSubmitted = false;
+  this.PurchaseTypeName = undefined;
+  this.PurchaseTypeModal = true;
+  }
+  CreatPurchasePOP(valid){
+    this.PurchaseTypeFormSubmitted = true;
+      const Obj = {
+        Purchase_Type : this.PurchaseTypeName,
+      }
+      if(valid){
+         const obj = {
+           "SP_String": "sp_Bl_Txn_Purchase_Request",
+           "Report_Name_String" : "Create_Purchase_Type ",
+           "Json_Param_String": JSON.stringify([Obj])     
+         }
+         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+          let msg = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : this.PurchaseTypeName
+          let Tempo = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : "Successfully Create"
+          let Data = data[0].Column1 == 'Already Exisis' ? 'error' : 'success'
+           if(data[0].Column1){
+            this.compacctToast.clear();
+            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+            this.compacctToast.add({
+             key: "compacct-toast",
+             severity: Data,
+             summary: "Purchase Type " + msg,
+             detail: Tempo
+           });
+           this.PurchaseTypeFormSubmitted = false;
+           this.PurchaseTypeName = undefined;
+           this.PurchaseTypeModal = false;
+           this.getPurchaseType();
+       
+           }
+          })
+  }
+  }
+
+  ViewPaymentPOP(){
+    this.PaymentMethodList = [];
+    this.getPaymentMethod();
+   setTimeout(() => {
+     this.ViewPaymentTypeModal = true;
+   }, 200);
+  }
+  deletePaymentType(Valid){
+    this.PaymentId = undefined;
+    if(Valid.Payment_Method){
+      this.PaymentId = Valid.Payment_Method;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "B",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }  
+  }
+  onConfirm2(){
+    if(this.PaymentId){
+      const obj = {
+        "SP_String": "sp_Bl_Txn_Purchase_Request",
+        "Report_Name_String": "Delete_Payment_Method",
+        "Json_Param_String": JSON.stringify([{Payment_Method : this.PaymentId}])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        let msg = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : this.PaymentId
+        let Tempo = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : "Successfully Delete"
+        let Data = data[0].Column1 == 'Can Not Delete' ? 'error' : 'success'
+        if (data[0].Column1){
+          this.onReject();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: Data,
+            summary: "Payment Method: " +msg,
+            detail: Tempo
+          });
+          this.getPaymentMethod();
+        }
+      })
+  }
+  }
+  PaymentPOP(){
+    this.PaymentFormSubmitted = false;
+    this.PaymentTypeName = undefined;
+    this.PaymentTypeModal = true; 
+  }
+  creatPaymentPOP(valid){
+    this.PaymentFormSubmitted = true;
+      const Obj = {
+        Payment_Method : this.PaymentTypeName,
+      }
+      if(valid){
+         const obj = {
+           "SP_String": "sp_Bl_Txn_Purchase_Request",
+           "Report_Name_String" : "Create_Payment_Method ",
+           "Json_Param_String": JSON.stringify([Obj])     
+         }
+         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+          let msg = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : this.PaymentTypeName
+          let Tempo = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : "Successfully Create"
+          let Data = data[0].Column1 == 'Already Exisis' ? 'error' : 'success'
+           if(data[0].Column1){
+            this.compacctToast.clear();
+            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+            this.compacctToast.add({
+             key: "compacct-toast",
+             severity: Data,
+             summary: "Payment Type " + msg,
+             detail: Tempo
+           });
+           this.PaymentFormSubmitted = false;
+           this.PaymentTypeName = undefined;
+           this.PaymentTypeModal = false;
+           this.getPaymentMethod();
+       
+           }
+          })
+  }  
+  }
+
+
+  ViewCurrencyPOP(){
+    this.CurrencyList = [];
+       this.GetCurrency();
+      setTimeout(() => {
+        this.ViewCurrencyTypeModal = true;
+      }, 200);
+  }
+  deleteCurrencyType(Valid){
+    this.CurrencyId = undefined;
+    if(Valid.Currency){
+      this.CurrencyId = Valid.Currency;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "D",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }  
+  }
+  onConfirm3(){
+    if(this.CurrencyId){
+      const obj = {
+        "SP_String": "sp_Bl_Txn_Purchase_Request",
+        "Report_Name_String": "Delete_Currency",
+        "Json_Param_String": JSON.stringify([{Currency : this.CurrencyId}])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        let msg = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : this.CurrencyId
+        let Tempo = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : "Successfully Delete"
+        let Data = data[0].Column1 == 'Can Not Delete' ? 'error' : 'success'
+        if (data[0].Column1){
+          this.onReject();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: Data,
+            summary: "Currency: " + msg,
+            detail: Tempo
+          });
+          this.GetCurrency();
+        }
+      })
+  }
+  }
+  CurrencyPOP(){
+    this.CurrencyFormSubmitted = false;
+    this.CurrencyName = undefined;
+    this.CurrencyTypeModal = true;   
+  }
+  CreatCurrencyPOP(valid){
+    this.CurrencyFormSubmitted = true;
+    const Obj = {
+      Currency : this.CurrencyName,
+    }
+    if(valid){
+       const obj = {
+         "SP_String": "sp_Bl_Txn_Purchase_Request",
+         "Report_Name_String" : "Create_Currency",
+         "Json_Param_String": JSON.stringify([Obj])     
+       }
+       this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+        let msg = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : this.CurrencyName
+        let Tempo = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : "Successfully Create"
+        let Data = data[0].Column1 == 'Already Exisis' ? 'error' : 'success'
+        console.log(msg)
+         if(data[0].Column1){
+          this.compacctToast.clear();
+          this.compacctToast.add({
+           key: "compacct-toast",
+           severity: Data,
+           summary: "Currency" + msg  ,
+           detail: Tempo
+         });
+         this.CurrencyFormSubmitted = false;
+         this.CurrencyName = undefined;
+         this.CurrencyTypeModal = false;
+         this.GetCurrency();
+         }
+        })
+     }    
   }
 }
 class negotiatePrice{

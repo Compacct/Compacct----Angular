@@ -1490,7 +1490,7 @@ PrintREQ(DocNo) {
 GetGSTAmt(){
   if(this.ObjaddWorkOrder.taxable_AMT){
     this.ObjaddWorkOrder.GST_AMT = (Number(this.ObjaddWorkOrder.taxable_AMT) * (Number(this.ObjaddWorkOrder.Gst)/100)).toFixed(2);
-    this.ObjaddWorkOrder.Total_Amount = Number(this.ObjaddWorkOrder.GST_AMT) + Number(this.ObjaddWorkOrder.taxable_AMT)
+    this.ObjaddWorkOrder.Total_Amount = (Number(this.ObjaddWorkOrder.GST_AMT) + Number(this.ObjaddWorkOrder.taxable_AMT)).toFixed(2);
   }
   else {
     this.ObjaddWorkOrder.Total_Amount = undefined;

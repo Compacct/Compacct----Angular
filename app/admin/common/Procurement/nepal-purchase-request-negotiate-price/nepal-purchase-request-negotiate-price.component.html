@@ -1,4 +1,4 @@
-<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast key="compacct-toast" baseZIndex="999999"></p-toast>
 <p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
@@ -10,6 +10,60 @@
         <div class="ui-g ui-fluid">
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="A" (onClose)="onReject()" [modal]="true" [autoZIndex]="true" baseZIndex="999999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{ message.summary }}</h3>
+            <p>{{ message.detail }}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm1()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="B" (onClose)="onReject()" [modal]="true" [autoZIndex]="true" baseZIndex="999999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{ message.summary }}</h3>
+            <p>{{ message.detail }}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="D" (onClose)="onReject()" [modal]="true" [autoZIndex]="true" baseZIndex="999999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{ message.summary }}</h3>
+            <p>{{ message.detail }}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm3()" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
@@ -184,8 +238,14 @@
                                     <div class="row">
                                         <div class="col-sm-3 pull-right" style="text-align: right">
                                             <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
-                                        </div>
-                                        <div class="col-sm-2 pull-right" style="text-align: right" >
+                                        </div>                                    
+                                    </div><br>
+                                    <div class="row" style=" display: flex; justify-content: center;">                                  
+                                        <div class="col-sm-4"  >
+                                            <div class="pull-right">
+                                                <button (click)="ViewPurchasePOP()"class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
+                                                <button (click)="PurchasePopup()"class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                            </div>
                                         <p-dropdown [options]="PurchaseTypeList" 
                                         name="PurchaseType" 
                                         [(ngModel)]="PurchaseTypeSelect" 
@@ -200,7 +260,11 @@
                                         >
                                     </p-dropdown>
                                         </div>
-                                        <div class="col-sm-2 pull-right" style="text-align: right" >
+                                        <div class="col-sm-4"  >
+                                            <div class="pull-right">
+                                                <button (click)="ViewPaymentPOP()" class="btn btn-primary  createPatient" ><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
+                                                <button (click)="PaymentPOP()" class="btn btn-primary  createPatient" ><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                            </div>
                                             <p-dropdown [options]="PaymentMethodList" 
                                             name="PaymentMethod" 
                                             [(ngModel)]="PaymentMethodSelect" 
@@ -215,7 +279,11 @@
                                             >
                                         </p-dropdown>
                                         </div>
-                                        <div class="col-sm-2 pull-right" style="text-align: right" >
+                                        <div class="col-sm-4"  >
+                                            <div class="pull-right">
+                                                <button (click)="ViewCurrencyPOP()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
+                                                <button (click)="CurrencyPOP()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                            </div>
                                             <p-dropdown [options]="CurrencyList" 
                                             name="Currency" 
                                             [(ngModel)]="CurrencySelect" 
@@ -232,7 +300,6 @@
                                         </p-dropdown>
                                         </div>
                                     </div>
-
                                 </ng-template>
                                         <ng-template pTemplate="header">
                                             <tr>
@@ -294,3 +361,169 @@
         </div>
     </div>
 </div>
+
+
+<!-- VIEWS -->
+<!--Purchase Type -->
+<p-dialog [header]="'Purchase Type View'" [appendTo]="'body'" [visible]="ViewPurchaseTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+       <p-table [value]="PurchaseTypeList"  [rowHover]="true">
+             <ng-template pTemplate="header">
+                <tr>
+                    <th>Purchase Type </th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                     <td>{{col.Purchase_Type}}</td>
+                    <td><button class="btn btn-sm btn-danger" 
+                        (click)="deletePurchaseType(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewPurchaseTypeModal= false" class="btn btn-default">
+  CANCEL
+       </button>
+    </p-footer>
+</p-dialog>
+
+<!-- payment Type -->
+<p-dialog [header]="'View Payment Type'" [appendTo]="'body'" [(visible)]="ViewPaymentTypeModal" [closeOnEscape]="true" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="PaymentMethodList">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Payment Method</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Payment_Method}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deletePaymentType(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewPaymentTypeModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+
+<!-- Currency Type -->
+<p-dialog [header]="'View Currency Type'" [appendTo]="'body'" [(visible)]="ViewCurrencyTypeModal" [closeOnEscape]="true" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="CurrencyList">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Currency</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Currency}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteCurrencyType(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewCurrencyTypeModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+
+
+<!--Create-->
+<!--Purchase Type -->
+<p-dialog [header]="'Create Product Type'" [appendTo]="'body'" [visible]="PurchaseTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
+    [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="PurchaseTypeForm" #PurchaseTypeForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Purchase Type<sup class="text-danger">*</sup></label>
+                    <input type="text" class="form-control" 
+                    name="PT" #PT="ngModel" 
+                    [(ngModel)]="PurchaseTypeName" 
+                    placeholder="Purchase Type"  
+                    [ngClass]="{clearance: PurchaseTypeFormSubmitted && PT?.errors?.required}" required />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="PurchaseTypeModal = false" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreatPurchasePOP(PurchaseTypeForm.form.valid)" id="load2" [disabled]="Spinner">
+<span class="glyphicon glyphicon-save"></span>&nbsp;CREATE
+</button>
+    </p-footer>
+</p-dialog>
+
+<!-- payment Type -->
+<p-dialog [header]="'Create Payment Type'" [appendTo]="'body'" [visible]="PaymentTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
+    [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="PaymentTypeForm" #PaymentTypeForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Payment Type<sup class="text-danger">*</sup></label>
+                    <input type="text" class="form-control" 
+                    name="PST" #PST="ngModel" 
+                    [(ngModel)]="PaymentTypeName" placeholder="Payment Type" 
+                     [ngClass]="{ clearance: PaymentFormSubmitted && PST?.errors?.required}" required />
+                </div>
+            </div>
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="PaymentTypeModal = false" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="creatPaymentPOP(PaymentTypeForm.form.valid)" id="load2" [disabled]="Spinner">
+<span class="glyphicon glyphicon-save"></span
+>&nbsp;CREATE
+</button>
+    </p-footer>
+</p-dialog>
+
+<!-- Currency Type -->
+<p-dialog [header]="'Currency'" [appendTo]="'body'" [visible]="CurrencyTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="CurrencyForm" #CurrencyForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Currency <sup class="text-danger">*</sup></label>
+                    <input type="text" class="form-control"
+                     name="Currency" #Currency="ngModel" 
+                     [(ngModel)]="CurrencyName" placeholder="Type Currency"
+                      [ngClass]="{  clearance: CurrencyFormSubmitted && Currency?.errors?.required}" required />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="CurrencyTypeModal = false" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreatCurrencyPOP(CurrencyForm.form.valid)" id="load2" >
+<span class="glyphicon glyphicon-save"></span
+>&nbsp;CREATE
+</button>
+    </p-footer>
+</p-dialog>

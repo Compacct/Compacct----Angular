@@ -286,6 +286,7 @@ import { NepalBLTxnPurchaseOrderComponent } from "./common/Procurement/nepal-bl-
 import { JOHRealisticExpectationFormComponent } from "./common/PatientManagement/joh-realistic-expectation-form/joh-realistic-expectation-form.component";
 import { FurnaceMisInputComponent } from './common/MICL/RawMaterial/furnace-mis-input/furnace-mis-input.component';
 import { MiclRawMaterialIssueNewComponent } from './common/MICL/RawMaterial/micl-raw-material-issue-new/micl-raw-material-issue-new.component';
+import { RequisitionForIssueChargeableComponent } from './common/MICL/requisition-for-issue-chargeable/requisition-for-issue-chargeable.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2141,6 +2142,13 @@ path: 'MICL_Cost_Center_Master',
     component: MiclRawMaterialIssueNewComponent,
     data: {
       title: 'Raw Material Issue'
+}
+},
+{
+  path: 'Requisition_For_Issue_Chargeable',
+    component: RequisitionForIssueChargeableComponent,
+    data: {
+      title: 'Issue Chargeable Requisition'
 }
 },
     

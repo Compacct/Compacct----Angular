@@ -233,7 +233,7 @@ export class PatientCouponComponent implements OnInit {
       FromDate : start,
       ToDate : end,
       Issue_Coupon_Cost_Center_ID : this.objSearch.Cost_Center_ID ? this.objSearch.Cost_Center_ID : 0,
-      Mobile : this.objSearch.Patient_Name,
+      Mobile : this.objSearch.Patient_Name ? this.objSearch.Patient_Name : 0,
       Issue_Coupon_Use_ID : this.commonApi.CompacctCookies.User_ID
     
     }

@@ -439,6 +439,31 @@ export class AttendanceSheetComponent implements OnInit {
       }
   })
   }
+  exportoexcelattnsht(fileName): void {
+    var firstDate = this.Month_Name+'-'+'01'
+    const obj = {
+      "SP_String": "HR_Txn_Attn_Sheet",
+      "Report_Name_String": "Get_Attn_Data_NEW_For_Export",
+      "Json_Param_String": JSON.stringify([{Date : this.DateService.dateConvert(new Date(firstDate))}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if (data[0].Success === "False") {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+      else {
+        const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+        const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+        XLSX.writeFile(workbook, fileName+'.xlsx');
+      }
+    })
+  }
   getAttendanceDatafornewmonth(){
     if (this.Month_Name) {
       this.generate = true;
