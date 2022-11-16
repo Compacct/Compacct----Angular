@@ -20,8 +20,8 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   buttonname = "Save";
   ObjPurchase: Purchase = new Purchase();
   DocDate: any = {};
-  BrowseStartDate:any = {}
-  BrowseEndDate:any = {}
+  BrowseStartDate: any = {};
+  BrowseEndDate: any = {};
   PurchaseOrderForm: boolean = false;
   SearchFormSubmit: boolean = false;
   TotalRate = 0;
@@ -33,10 +33,11 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   QtyTotal: number = 0;
   Searchedlist: any = [];
   masterDoc = undefined;
-
+  PoCode = undefined;
   Spinner:boolean = false;
   editorDis:boolean = false;
-
+  EditList: any = [];
+  UpdatePono: any = {};
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -50,7 +51,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   ngOnInit() {
   this.items = ["BROWSE", "CREATE"];
     this.Header.pushHeader({
-      Header: "Nepal BL Txn Purchase Order",
+      Header: "Purchase Order",
       Link: " Procurement ->  Nepal BL Txn Purchase Order"
     });
     this.DocDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
@@ -65,11 +66,16 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.buttonname = "Save";
     this.clearData();
   }
-  onReject(){}
+  onReject() {
+  this.compacctToast.clear("c");
+  }
   clearData() {
     this.PurchaseOrderForm = false;
     this.ObjPurchase = new Purchase(); 
     this.ProductList = [];
+    this.Searchedlist = [];
+    this.UpdatePono = {};
+    this.DocDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
   }
   getGodown() {
     this.$http.get("/CRM_Billing_Order/Get_Godown_Name").subscribe((data: any) => {
@@ -166,8 +172,8 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     let ArrData:any =[];
     this.ProductList.forEach(element => {
     const TempObj = {
-    Doc_No : "A",                                        
-    Purchase_Request_No : this.ObjPurchase.Purchase_Request_No  ,                   
+    Doc_No : this.PoCode ? this.PoCode : "A",                                        
+    Purchase_Request_No : this.ObjPurchase.Purchase_Request_No ?  this.ObjPurchase.Purchase_Request_No : this.UpdatePono.Purchase_Request_No ,                   
     Doc_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate)) ,                                
     Cost_Center_ID : 2,                     
     Sub_Ledger_ID: this.ObjPurchase.Sub_Ledger_ID,
@@ -184,7 +190,6 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       }
        ArrData.push(TempObj)
     })
-    console.log("ArrData====",ArrData)
     if (vaild) {
       const obj = {
         "SP_String": "sp_Bl_Txn_Purchase_Order_Nepal",
@@ -197,13 +202,21 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "success",
-            summary: "Purchase Order",
-            detail: "Succesfully Save"
-          });
+            summary: this.PoCode ? this.PoCode : "Purchase Order",
+            detail: "Succesfully" + this.buttonname ,
+          });  
           this.tabIndexToView = 0;
           this.ObjPurchase = new Purchase();
+          this.PurchaseOrderForm = false;
+          this.Searchedlist = [];
+         if (data[0].Column1) {
+          window.open("/Report/Crystal_Files/Nepal/Purchase_Order_Nepal.aspx?Doc_No=" + data[0].Column1, 
+          'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+          );
+        }    
         }
       })
+
     }
   }
   BrowseSearch(valid) {
@@ -264,6 +277,56 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
        }
     })
   } 
+  }
+  EditBrowse(Update) {
+     this.EditList = [];
+  if (Update.Doc_No) {
+    this.PoCode = undefined;
+    this.tabIndexToView = 1;
+    this.items = ["BROWSE", "UPDATE"];
+    this.buttonname = "Update";
+    this.clearData();
+    this.PoCode = Update.Doc_No
+    this.GetEdit(Update.Doc_No)
+   }  
+  }
+  GetEdit(Uid) {
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Order_Nepal",
+      "Report_Name_String": "Get_Data_From_Purchase_Order",
+      "Json_Param_String": JSON.stringify([{ Doc_No: Uid }])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+     // console.log("data", data);
+      if (data.length) {
+        this.EditList = [];
+        this.UpdatePono = data[0];
+        this.DocDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(data[0].Doc_Date),
+        this.ObjPurchase.Godown = data[0].Godown,
+          this.ObjPurchase.Remarks = data[0].Remarks,
+          this.ObjPurchase.Heading = data[0].Remarks1,
+          this.ObjPurchase.Sub_Ledger_ID = data[0].Sub_Ledger_ID,
+          data.forEach(element => {
+            const TempObj = {
+              Product_Description: element.Product_Description,
+              Product_ID : element.Product_ID, 
+              Purchase_Request_Qty: Number(element.Qty),
+              Rate: element.Rate,
+              UOM: element.UOM,
+              Line_Total: element.Line_Total,
+              Grant_Total: this.getTotal(),
+            }
+            this.ProductList.push(TempObj);
+          })
+      }
+    }) 
+  }
+  Print(Doc) {
+   if (Doc.Doc_No) {
+          window.open("/Report/Crystal_Files/Nepal/Purchase_Order_Nepal.aspx?Doc_No=" + Doc.Doc_No, 
+          'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+          );
+        }  
   }
 }
 class Purchase{

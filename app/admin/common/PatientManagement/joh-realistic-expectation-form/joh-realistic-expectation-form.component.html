@@ -265,6 +265,8 @@
                 border-bottom: 1px solid #c6c6c6;
                 margin-top: -4px;
                 "><strong>Listening Needs / Requirements</strong> </h5>
+                </div>
+                <div class="form-group">
                 <div class="col-sm-4">
                 <label class="control-label">Listening Needs / Requirements<sup class="text-danger">*</sup></label>
                     <select class="form-control" name="Requirements" #Requirements="ngModel" [(ngModel)]="objRequirements.Listening_Needs"  [ngClass]="{'clearance ': RequirementsFormSubmit && Requirements.errors?.required}" required>
@@ -275,21 +277,21 @@
                     </select>
                 </div>
                 <div class="col-sm-4">
-                    <label class="control-label">Present Ability(in % or words)</label>
-                  <input class="form-control" name="Present_Ability" #Present_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Present_Ability" >
+                    <label class="control-label">Present Ability(in % or words)<sup class="text-danger">*</sup></label>
+                  <input class="form-control" name="Present_Ability" #Present_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Present_Ability" [ngClass]="{'clearance ': RequirementsFormSubmit && Present_Ability.errors?.required}" required>
 
                 </div>
                 <div class="col-sm-4">
-                    <label class="control-label">Expected Ability(in % or words)</label>
-                  <input class="form-control" name="Expected_Ability" #Expected_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Expected_Ability" >
+                    <label class="control-label">Expected Ability(in % or words)<sup class="text-danger">*</sup></label>
+                  <input class="form-control" name="Expected_Ability" #Expected_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Expected_Ability" [ngClass]="{'clearance ': RequirementsFormSubmit && Expected_Ability.errors?.required}" required>
 
                 </div>
 
             </div>
                <div class="form-group">
                 <div class="col-sm-4">
-                    <label class="control-label">Agreed Ability(in % or words)</label>
-                  <input class="form-control" name="Agreed_Ability" #Agreed_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Agreed_Ability" >
+                    <label class="control-label">Agreed Ability(in % or words)<sup class="text-danger">*</sup></label>
+                  <input class="form-control" name="Agreed_Ability" #Agreed_Ability="ngModel" CompacctDigitonly="true" [(ngModel)]="objRequirements.Agreed_Ability" [ngClass]="{'clearance ': RequirementsFormSubmit && Agreed_Ability.errors?.required}" required>
 
                 </div>
                 <div class="col-sm-5">

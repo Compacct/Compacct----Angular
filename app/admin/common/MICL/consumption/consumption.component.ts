@@ -10,6 +10,7 @@ import { CompacctCommonApi } from "../../../shared/compacct.services/common.api.
 import { CompacctHeader } from "../../../shared/compacct.services/common.header.service";
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service";
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-consumption',
@@ -50,6 +51,21 @@ export class ConsumptionComponent implements OnInit {
   f : any;
   objAllData : AllData = new AllData();
   Del_Right : string = "";
+
+  seachSpinnerPendUtil = false;
+  PendUtil_start_date: Date;
+  PendUtil_end_date: Date;
+  PendUtilList:any = [];
+  DynamicHeaderforPendUtilList:any = [];
+  allTotalObj:any = {}
+  BackupPendUtilList:any = [];
+  BackupPendUtilListFilter:any = []
+  SelectedDistDepartmentPendUtil:any = [];
+  SelectedDistCostCen:any = [];
+  DistDepartmentPendUtil:any = [];
+  DistCostCen:any = [];
+  DistStockPoint:any =[];
+  SelectedDistStockPoint:any = [];
   
 
   constructor(
@@ -64,13 +80,14 @@ export class ConsumptionComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "PENDING UTILIZATION"];
     this.Header.pushHeader({
       Header:  " Consumption/Utilization " ,
-      Link: " " 
+      Link: "Consumption/Utilization " 
     });
-    this.initDate = [new Date(),new Date()];
+    // this.initDate = [new Date(),new Date()];
     this.getCostcenter();
+    this.Finyear();
     //this.Getsearchlist2();
     
   }
@@ -80,13 +97,23 @@ export class ConsumptionComponent implements OnInit {
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "PENDING UTILIZATION"];
     this.buttonname = "Save";
     this.clearData();
     //this.Editdisable = false;
   }
+  Finyear() {
+    this.$http
+      .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
+      .subscribe((res: any) => {
+      let data = JSON.parse(res)
+      // this.vouchermaxDate = new Date(data[0].Fin_Year_End);
+      // this.voucherminDate = new Date(data[0].Fin_Year_Start);
+      // this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
+     this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
+      });
+  }
 
-  
   // View(col){
   //   if(col.Doc_No){
   //   this.tabIndexToView = 1;
@@ -173,8 +200,6 @@ export class ConsumptionComponent implements OnInit {
 
   }
 
-  
-
   getCostcenter(){
     const obj = {
       "SP_String": "Sp_Consumption_Module",
@@ -224,7 +249,8 @@ export class ConsumptionComponent implements OnInit {
  const tempobj = {
   Entry_Date : Entry_Date,
   Cost_Cen_ID : this.ObjBrowse.Cost_Cen_ID ? this.ObjBrowse.Cost_Cen_ID : 0,
-  Godown_ID : this.ObjBrowse.godown_id ? this.ObjBrowse.godown_id : 0
+  Godown_ID : this.ObjBrowse.godown_id ? this.ObjBrowse.godown_id : 0,
+  User_ID : this.$CompacctAPI.CompacctCookies.User_ID
 
 }
 const obj = {
@@ -503,9 +529,200 @@ onConfirm2(){
     this.Searchedlist = [];
     this.Browselist=[];
     this.Entry_Date = new Date();
-    this.initDate = [new Date(),new Date()]
+    // this.initDate = [new Date(),new Date()]
+    this.Finyear();
     
     this.getCostcenter();
+}
+
+// Pending Utilization
+getDateRangePenUtil(dateRangeObj) {
+  if (dateRangeObj.length) {
+    this.PendUtil_start_date = dateRangeObj[0];
+    this.PendUtil_end_date = dateRangeObj[1];
+  }
+}
+GetPenUtil(){
+    // this.PendingIndentFormSubmitted = true;
+    this.seachSpinnerPendUtil = true;
+    const start = this.PendUtil_start_date
+    ? this.DateService.dateConvert(new Date(this.PendUtil_start_date))
+    : this.DateService.dateConvert(new Date());
+    const end = this.PendUtil_end_date
+    ? this.DateService.dateConvert(new Date(this.PendUtil_end_date))
+    : this.DateService.dateConvert(new Date());
+    if (start && end) {
+    const tempobj = {
+      From_Date : start,
+      To_Date  : end,
+    //  To_Cost_Cen_ID : this.ObjPendingIndent.Cost_Cen_ID,
+    //  proj : "N"
+    }
+    // if (valid) {
+    const obj = {
+      "SP_String": "SP_MICL_Dispatch_Challan",
+      "Report_Name_String": "Pending_Utilization",
+      "Json_Param_String": JSON.stringify([tempobj])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.PendUtilList = data;
+      this.BackupPendUtilList = data;
+      this.BackupPendUtilListFilter = data;
+      // this.GetDistinctPenUtil();
+      this.GetDeptDist()
+      this.GetCostCenterDist()
+      this.getStockPoint()
+      if(this.PendUtilList.length){
+        this.DynamicHeaderforPendUtilList = Object.keys(data[0]);
+      }
+      else {
+        this.DynamicHeaderforPendUtilList = [];
+      }
+      this.seachSpinnerPendUtil = false;
+      this.TotalValue(this.PendUtilList);
+      // console.log("DynamicHeaderforPendUtilList",this.DynamicHeaderforPendUtilList);
+    })
+    }
+    else {
+      this.seachSpinnerPendUtil = false;
+      // this.ngxService.stop();
+      this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Something Wrong"
+        });
+    }
+}
+exportexcelPenUtil(Arr,fileName): void {
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, fileName+'.xlsx');
+}
+FilterDistPenUtil(v:any) {
+  let department:any = [];
+  let costcen:any = [];
+  let stockpoint:any = [];
+  let SearchFieldsPenUtil:any =[];
+if (this.SelectedDistDepartmentPendUtil.length) {
+  SearchFieldsPenUtil.push('Dept_Name');
+  department = this.SelectedDistDepartmentPendUtil;
+  console.log("department",department)
+}
+if (this.SelectedDistCostCen.length) {
+  SearchFieldsPenUtil.push('Cost_Cen_Name');
+  costcen = this.SelectedDistCostCen;
+}
+if (this.SelectedDistStockPoint.length) {
+  SearchFieldsPenUtil.push('Stock_Point');
+  stockpoint = this.SelectedDistStockPoint;
+}
+this.PendUtilList = [];
+console.log("SearchFieldsPenUtil",SearchFieldsPenUtil)
+console.log("BackupPendUtilList",this.BackupPendUtilList)
+if (SearchFieldsPenUtil.length) {
+  let LeadArr = this.BackupPendUtilList.filter(function (e) {
+    return (department.length ? department.includes(e['Dept_Name']) : true)
+    && (costcen.length ? costcen.includes(e['Cost_Cen_Name']) : true)
+    && (stockpoint.length ? stockpoint.includes(e['Stock_Point']) : true)
+  });
+  console.log("LeadArr",LeadArr)
+this.PendUtilList = LeadArr.length ? LeadArr : [];
+
+} else {
+this.PendUtilList = [...this.BackupPendUtilList] ;
+}
+this.TotalValue(this.PendUtilList);
+if(v === "Dept_Name"){
+  this.getStockPoint()
+  this.GetCostCenterDist()
+  
+}
+if(v === "Cost_Cen_Name"){
+  this.getStockPoint()
+}
+if(v != "Stock_Point"){
+ // this.getStockPoint()
+}
+if(!this.SelectedDistDepartmentPendUtil.length && !this.SelectedDistCostCen.length && !this.SelectedDistStockPoint.length){
+  this.GetDeptDist()
+  this.getStockPoint()
+  this.GetCostCenterDist()
+}
+}
+GetDistinctPenUtil() {
+  //let department:any = [];
+  let costcen:any = [];
+  let stockpoint:any = [];
+  // this.DistDepartmentPendUtil =[];
+  // this.SelectedDistDepartmentPendUtil =[];
+  // this.DistCostCen =[];
+  // this.SelectedDistCostCen =[];
+  this.DistStockPoint =[];
+  this.SelectedDistStockPoint = [];
+  this.PendUtilList.forEach((item) => {
+// if (department.indexOf(item.Dept_Name) === -1) {
+//   department.push(item.Dept_Name);
+//   this.DistDepartmentPendUtil.push({ label: item.Dept_Name, value: item.Dept_Name });
+//   }
+//  if (costcen.indexOf(item.Cost_Cen_Name) === -1) {
+//   costcen.push(item.Cost_Cen_Name);
+//  this.DistCostCen.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
+//  }
+ if (stockpoint.indexOf(item.Stock_Point) === -1) {
+  stockpoint.push(item.Stock_Point);
+ this.DistStockPoint.push({ label: item.Stock_Point, value: item.Stock_Point });
+ }
+});
+   this.BackupPendUtilList = [...this.PendUtilList];
+}
+
+GetDeptDist(){
+  let department:any = [];
+  this.DistDepartmentPendUtil =[];
+  this.SelectedDistDepartmentPendUtil =[];
+  this.PendUtilList.forEach((item) => {
+    if (department.indexOf(item.Dept_Name) === -1) {
+      department.push(item.Dept_Name);
+      this.DistDepartmentPendUtil.push({ label: item.Dept_Name, value: item.Dept_Name });
+      }
+      this.BackupPendUtilList = [...this.BackupPendUtilListFilter];
+  })
+}
+GetCostCenterDist(){
+  let costcen:any = [];
+  this.DistCostCen =[];
+  this.SelectedDistCostCen =[];
+  console.log("Pend Util List",this.PendUtilList)
+  this.PendUtilList.forEach((item) => {
+    if (costcen.indexOf(item.Cost_Cen_Name) === -1) {
+      costcen.push(item.Cost_Cen_Name);
+     this.DistCostCen.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
+     }
+      this.BackupPendUtilList = [...this.BackupPendUtilListFilter];
+  })
+}
+getStockPoint(){
+  let stockpoint:any = [];
+  this.DistStockPoint =[];
+  this.SelectedDistStockPoint = [];
+  this.PendUtilList.forEach((item) => {
+    if (stockpoint.indexOf(item.Stock_Point) === -1) {
+      stockpoint.push(item.Stock_Point);
+     this.DistStockPoint.push({ label: item.Stock_Point, value: item.Stock_Point });
+     }
+      this.BackupPendUtilList = [...this.BackupPendUtilListFilter];
+  })
+}
+TotalValue(arrList:any){
+  if(arrList.length){
+    this.allTotalObj.Value =0
+    arrList.forEach(ele => {
+      this.allTotalObj.Value = Number(Number(ele.Value) + Number(this.allTotalObj.Value)).toFixed(2)
+    });
+  }
+  console.log(this.allTotalObj)
 }
 
 }
