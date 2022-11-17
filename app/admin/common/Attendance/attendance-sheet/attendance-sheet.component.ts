@@ -92,6 +92,7 @@ export class AttendanceSheetComponent implements OnInit {
   generate = false;
   download = false;
   AllattendancestatusFormSubmitted = false;
+  attndata:any = [];
   constructor(
     private route : ActivatedRoute,
     private Header: CompacctHeader,
@@ -448,6 +449,8 @@ export class AttendanceSheetComponent implements OnInit {
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.attndata = data;
+      console.log("excel attndata ===",this.attndata)
       if (data[0].Success === "False") {
         this.compacctToast.clear();
         this.compacctToast.add({
@@ -460,6 +463,7 @@ export class AttendanceSheetComponent implements OnInit {
       else {
         const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
         const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+        // console.log("excel ===",workbook)
         XLSX.writeFile(workbook, fileName+'.xlsx');
       }
     })
