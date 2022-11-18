@@ -383,6 +383,7 @@ import { FurnaceMisInputComponent } from './common/MICL/RawMaterial/furnace-mis-
 import { MiclRawMaterialIssueNewComponent } from './common/MICL/RawMaterial/micl-raw-material-issue-new/micl-raw-material-issue-new.component';
 import { RequisitionForIssueChargeableComponent } from './common/MICL/requisition-for-issue-chargeable/requisition-for-issue-chargeable.component';
 import { JohValidationProcessComponent } from "./common/PatientManagement/joh-validation-process/joh-validation-process.component";
+import { ReturnMaterialComponent } from './common/MICL/return-material/return-material.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -682,7 +683,8 @@ import { JohValidationProcessComponent } from "./common/PatientManagement/joh-va
     FurnaceMisInputComponent,
     MiclRawMaterialIssueNewComponent,
     RequisitionForIssueChargeableComponent,
-    JohValidationProcessComponent
+    JohValidationProcessComponent,
+    ReturnMaterialComponent
   ],
   imports: [
     CommonModule,
