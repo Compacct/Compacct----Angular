@@ -80,6 +80,7 @@
                                             <th>Sub Ledger Name</th>
                                             <th>Purchase Request No</th>
                                             <th>Grant Total</th>
+                                            <th>Current Status</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -97,11 +98,17 @@
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li>
+                                                        <li>
+                                                            <a (click)="PoUpdate(col)">
+                                                                <i class='fa fa-edit green-color'></i> PO Update
+                                                            </a>
+                                                        </li>
                                                          <li >
                                                             <a (click)="DeleteBrowse(col)">
                                                                 <i class="fa fa-trash" aria-hidden="true"></i> Delete
                                                             </a>
                                                         </li>
+                                                        
                                                         <li>
                                                             <a (click)="Print(col)">
                                                             <i class="fa fa-print" aria-hidden="true"></i> Print
@@ -115,7 +122,8 @@
                                             <td>{{col.Godown ? col.Godown : '-'}}</td>
                                             <td>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
                                             <td>{{col.Purchase_Request_No ? col.Purchase_Request_No : '-'}}</td>
-                                            <td>{{col.Grant_Total ? col.Grant_Total : '-'}}</td>                                        
+                                            <td>{{col.Grant_Total ? col.Grant_Total : '-'}}</td> 
+                                            <td>{{col.Current_Status ? col.Current_Status : '-'}}</td>                                       
                                         </tr>
                                     </ng-template>                                 
                                 </p-table>
@@ -287,3 +295,44 @@
         </div>
     </div>
 </div>
+
+
+<p-dialog [header]="'PO Update Status( '+titleHeder+' )'" [appendTo]="'body'" [visible]="ViewPoTypeModal" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="POupdateList" [rowHover]="true">
+            <ng-template pTemplate="header">
+                <tr >
+                    <th style="width: 5em;">SL No.</th>
+                    <th>Status </th>
+                    <th>Date</th>
+                    <th>Updated By</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                    <td>{{i+1}}</td>
+                    <td>{{col.Status ? col.Status : '-'}}</td>
+                    <td>{{col.Status_Date ? col.Status_Date :'-'}}</td>
+                    <td>{{col.User_Name ? col.User_Name :'-'}}</td>
+                </tr>         
+            </ng-template>         
+        </p-table>
+    </div>
+    <form name="POPForms" #POPForms="ngForm" novalidate>
+        <div class="col-sm-8">
+            <label class="control-label">New Status<sup class="text-danger">*</sup></label>
+            <input Class="form-control" name="Status" #Status="ngModel" [(ngModel)]="StatusForPop" placeholder="Type New Status"
+                [ngClass]="{'clearance': POPform && Status?.errors?.required}" required>
+        </div>
+    </form>
+    <p-footer>
+        <button type="button" (click)="UpdatePOP(POPForms.form.valid)" class="btn btn-primary">
+            Update
+        </button>
+        <button type="button" (click)="ViewPoTypeModal= false" class="btn btn-info">
+            Cancel
+        </button>
+    </p-footer>
+</p-dialog>

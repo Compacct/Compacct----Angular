@@ -394,6 +394,13 @@ GetBrowseSearch(valid){
   }) 
   }
 }
+PrintRGP(obj) {
+  if (obj.Doc_No) {
+    window.open("/Report/Crystal_Files/MICL/Returnable_Gate_Pass.aspx?DocNo=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+
+    );
+  }
+}
 GetDistinct(){
   let vendor:any = [];
   let CostCenter:any = [];
@@ -538,6 +545,9 @@ AddData(valid:any){
       // this.ObjGatePass.Doc_No = this.createListObj .Doc_No;
       this.Expected_Return_Date = new Date();
       this.ObjGatePass.Req_No = backUPobj.Req_No;
+      this.ObjGatePass.Mode_Of_Transport = backUPobj.Mode_Of_Transport;
+      this.ObjGatePass.Vehicle_No = backUPobj.Vehicle_No;
+      this.ObjGatePass.By_Order = backUPobj.By_Order;
      }
     
     // this.gatePassFromSubmited = false;
@@ -646,6 +656,9 @@ onConfirmSave(){
         Doc_Date :this.DateService.dateConvert(new Date(this.Doc_Date)),
         Cost_Cen_ID : Number(this.ObjGatePass.Cost_Cen_ID),
         Godown_ID :Number(this.ObjGatePass.Godown_ID),
+        Mode_Of_Transport : this.ObjGatePass.Mode_Of_Transport,
+        Vehicle_No : this.ObjGatePass.Vehicle_No,
+        By_Order : this.ObjGatePass.By_Order,
 
         Req_No: element.Req_No,
         Product_ID: Number(element.Product_ID),
@@ -802,6 +815,9 @@ Edit(col){
     this.Getgodown();
     this.ObjGatePass.Godown_ID = data[0].Godown_ID;
     // this.ObjGatePass.Req_No = data[0].Req_No;
+    this.ObjGatePass.Mode_Of_Transport = data[0].Mode_Of_Transport;
+    this.ObjGatePass.Vehicle_No = data[0].Vehicle_No;
+    this.ObjGatePass.By_Order = data[0].By_Order;
     this.Expected_Return_Date = new Date(data[0].Expected_Return_Date);
     this.ObjGatePass.Remarks = data[0].Remarks;
     // console.log("addPurchaseList",this.addPurchaseList)
@@ -856,6 +872,9 @@ class GatePass{
   Created_By:any;
   Doc_No:any;
   bottom:any;
+  Mode_Of_Transport:any;
+  Vehicle_No:any;
+  By_Order:any;
 }
 class Browse{
   Cost_Cen_ID:any;

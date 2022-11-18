@@ -38,6 +38,12 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   editorDis:boolean = false;
   EditList: any = [];
   UpdatePono: any = {};
+  ViewPoTypeModal: boolean = false;
+  StatusForPop: any = undefined;
+  POPform: boolean = false;
+  POupdateList: any = [];
+  DocID: any = undefined;
+  titleHeder: string = "";
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -327,6 +333,65 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
           'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
           );
         }  
+  }
+  PoUpdate(po: any) {
+    this.POPform = false;
+    this.POupdateList = [];
+    this.DocID = po.Doc_No;
+    this.titleHeder =""
+    if (this.DocID) {
+      this.titleHeder = this.DocID;
+     const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Order_Nepal",
+      "Report_Name_String": "Get_Status_With_Doc_No",
+      "Json_Param_String": JSON.stringify([{ Doc_No: this.DocID}])
+    }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        // console.log("data", data);
+        if (data.length) {
+          this.POupdateList = data;
+          data.forEach((el: any) => {
+            el.Status_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(el.Status_Date);
+          });
+        }
+      }) 
+    }
+    setTimeout(() => {
+       this.ViewPoTypeModal = true   
+    },600);
+
+  }
+  UpdatePOP() {
+    this.POPform = true
+    if (this.StatusForPop) {
+      const PopData = {
+        Doc_No: this.DocID,
+        Status: this.StatusForPop,
+        Posted_By: this.$CompacctAPI.CompacctCookies.User_ID
+      }
+      const obj = {
+        "SP_String": "sp_Bl_Txn_Purchase_Order_Nepal",
+        "Report_Name_String": "Update_Status_With_Doc_No",
+        "Json_Param_String": JSON.stringify(PopData)
+      }
+      this.GlobalAPI.postData(obj).subscribe((data: any) => {
+        if (data[0].Column1) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary:"Purchase Order Status",
+            detail: "Succesfully Update" 
+          });
+          this.BrowseSearch(true);
+        }
+      })
+    this.StatusForPop = undefined;
+    this.POPform = false;
+    this.ViewPoTypeModal = false;
+    
+    }
+    
   }
 }
 class Purchase{

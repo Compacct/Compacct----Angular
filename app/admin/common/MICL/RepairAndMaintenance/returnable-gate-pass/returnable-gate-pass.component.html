@@ -160,11 +160,11 @@
                                                             <i class="fa fa-fw fa-trash"></i> Delete
                                                         </a>
                                                     </li>
-                                                    <!-- <li>
-                                                        <a (click)="PrintBill(col)">
+                                                    <li>
+                                                        <a (click)="PrintRGP(col)">
                                                             <i class="fa fa-fw fa-print" aria-hidden="true"></i>Print
                                                         </a>
-                                                    </li> -->
+                                                    </li>
                                                   
                                                 </ul> 
                                             </div> 
@@ -183,7 +183,7 @@
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                         <form name="RetanableForm" #RetanableForm="ngForm" novalidate>
-                             <div class="form-group">
+                            <div class="form-group">
                                 <!-- <div class="col-sm-4">
                                 <label class="control-label">Work Order<sup class="text-danger">*</sup></label> -->
                                 <!-- <p-dropdown [options]="" 
@@ -286,8 +286,8 @@
                                </p-dropdown>
                                </div>
                                 <!-- <div class="clearfix"></div> -->
-                             </div>   
-                             <div class="form-group"> 
+                            </div>   
+                            <div class="form-group"> 
                                 <div class="col-sm-4">
                                     <label class="control-label">Pending Maintenance Indent<sup class="text-danger">*</sup></label>
                                             <p-dropdown  *ngIf="!addPurchaseListInput"
@@ -343,8 +343,20 @@
                                     [ngClass]="{'clearance':gatePassFromSubmited && UOM?.errors?.required}" 
                                     required>
                                 </div>
-                             </div>
-                             <div class="form-group">
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Mode Of Transport<sup class="text-danger">*</sup></label>
+                                    <input class="form-control" name="Transport" #Transport="ngModel" [(ngModel)]="ObjGatePass.Mode_Of_Transport" placeholder="Mode Of Transport" [ngClass]="{'clearance': gatePassFromSubmited && Transport.errors?.required}" required>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Vehicle No.<sup class="text-danger">*</sup></label>
+                                    <input class="form-control" name="Vehicle_No" #Vehicle_No="ngModel" [(ngModel)]="ObjGatePass.Vehicle_No" placeholder="Vehicle No" [ngClass]="{'clearance': gatePassFromSubmited && Vehicle_No.errors?.required}" required>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">By Order<sup class="text-danger">*</sup></label>
+                                    <input class="form-control" name="byorder" #byorder="ngModel" [(ngModel)]="ObjGatePass.By_Order" placeholder="By Order" [ngClass]="{'clearance': gatePassFromSubmited && byorder.errors?.required}" required>
+                                </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Expected Return Date<sup class="text-danger">*</sup></label>
                                     <div class="input-group date">
@@ -357,6 +369,8 @@
                                          </ejs-datepicker> <!-- (change)="GetNumberOfdays()" [min]='voucherminDate' [max] ='vouchermaxDate' -->
                                     </div>
                                 </div>
+                            </div>
+                            <div class="form-group">
                                 <div class="col-sm-3" >
                                     <label class="control-label">Purpose<sup class="text-danger">*</sup></label>
                                     <textarea name="purpose" placeholder="Purpose"  
@@ -368,7 +382,7 @@
                                 </div> 
                                 
                                 <div class="col-sm-2">
-                                    <button type="submit"class="btn btn-primary" style="margin-top: 25px; margin-left: 25px;"(click)="AddData(RetanableForm.form.valid)">
+                                    <button type="submit"class="btn btn-primary" style="margin-top: 28px; margin-left: 25px;"(click)="AddData(RetanableForm.form.valid)">
                                         <span class="glyphicon glyphicon-plus"></span>Add
                                 </button>
                                  </div>
