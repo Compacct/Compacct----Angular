@@ -77,6 +77,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
   ToFurnacebrowseList:any = [];
   DocNo = undefined;
   prodisabledflag:boolean = true;
+  YardName:any;
 
   constructor(
     private $http: HttpClient,
@@ -260,7 +261,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
           //   element['Yard'] = yard[0].godown_name
           // });
           this.AddProDetails = data;
-          this.objRMissue.Remarks = data[0].Remarks ? data[0].Remarks : undefined;
+          this.objRMissue.Remarks = data.length ? data[0].Remarks : undefined;
           this.DocNo = this.AddProDetails.length ? data[0].Doc_No : undefined;
           this.RMissueFormSubmit = false;
           this.SpinnerShow = false;
@@ -306,6 +307,12 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
     this.reqDocNo = undefined;
     this.docdateDisabled = true;
     this.Topfielddisabled = false;
+    this.YardName = undefined;
+  }
+  getyardName(){
+    var yardn = this.FGodownList.filter(el => Number(el.Godown_ID) === Number(this.objRMissue.F_Godown_ID));
+      var yardname = yardn ? yardn[0].godown_name : undefined;
+      this.YardName = this.objRMissue.F_Godown_ID ? "at " + yardname : undefined;
   }
   changedisabled(){
     this.prodisabledflag = false;

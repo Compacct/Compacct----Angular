@@ -134,7 +134,7 @@ export class K4cPremixInventoryComponent implements OnInit {
       Material_Type : this.MaterialType_Flag ? this.MaterialType_Flag : 'NA'
     }
     const obj = {
-      "SP_String": "SP_Production_Closing_Stock",
+      "SP_String": "SP_K4C_Premix_Inventory",
       "Report_Name_String": "Get Cost Centre Non outlet",
       "Json_Param_String": JSON.stringify([tempObj])
     }
@@ -154,7 +154,7 @@ export class K4cPremixInventoryComponent implements OnInit {
         Material_Type : this.MaterialType_Flag ? this.MaterialType_Flag : 'NA'
       }
       const obj = {
-        "SP_String": "SP_Production_Closing_Stock",
+        "SP_String": "SP_K4C_Premix_Inventory",
         "Report_Name_String": "Get - Godown",
         "Json_Param_String": JSON.stringify([tempObj])
       }
@@ -175,7 +175,7 @@ export class K4cPremixInventoryComponent implements OnInit {
   }
   GetBCostCen(){
     const obj = {
-      "SP_String": "SP_Raw_Material_Stock_Transfer",
+      "SP_String": "SP_K4C_Premix_Inventory",
       "Report_Name_String": "Get Cost Centre Non outlet",
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -193,7 +193,7 @@ export class K4cPremixInventoryComponent implements OnInit {
         Material_Type : this.MaterialType_Flag
       }
       const obj = {
-        "SP_String": "SP_Raw_Material_Stock_Transfer",
+        "SP_String": "SP_K4C_Premix_Inventory",
         "Report_Name_String": "Get - Godown",
         "Json_Param_String": JSON.stringify([tempObj])
       }
@@ -230,7 +230,7 @@ export class K4cPremixInventoryComponent implements OnInit {
       Brand_ID : this.ObjProClosingStock.Brand_ID ? this.ObjProClosingStock.Brand_ID : 0
      }
    const obj = {
-    "SP_String": "SP_Production_Closing_Stock",
+    "SP_String": "SP_K4C_Premix_Inventory",
     "Report_Name_String" : "Get Product",
    "Json_Param_String": JSON.stringify([TempObj])
 
@@ -522,8 +522,8 @@ ConsumptionCal(indx){
     // if(this.saveqty()){
       if(this.saveRemarks()){
       const obj = {
-        "SP_String": "SP_Production_Closing_Stock",
-        "Report_Name_String" : "Save_Production_Closing_Stock",
+        "SP_String": "SP_K4C_Premix_Inventory",
+        "Report_Name_String" : "Save_K4C_Premix_Inventory",
        "Json_Param_String": this.dataforSaveRawMaterialIssue()
 
       }
@@ -599,8 +599,8 @@ const tempobj = {
 
 }
 const obj = {
-  "SP_String": "SP_Production_Closing_Stock",
-  "Report_Name_String": "Browse_Production_Closing_Stock",
+  "SP_String": "SP_K4C_Premix_Inventory",
+  "Report_Name_String": "Browse_K4C_Premix_Inventory",
   "Json_Param_String": JSON.stringify([tempobj])
 }
  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -721,7 +721,7 @@ EditIntStock(col){
 GetdataforEdit(){
   //this.OTclosingstockwithbatchFormSubmitted = false;
     const obj = {
-      "SP_String": "SP_Production_Closing_Stock",
+      "SP_String": "SP_K4C_Premix_Inventory",
       "Report_Name_String": "Get_Edit_Data",
       "Json_Param_String": JSON.stringify([{Doc_No  : this.ObjProClosingStock.Doc_No, Doc_Date : this.DateService.dateConvert(new Date(this.Doc_Date))}])
 
@@ -817,8 +817,8 @@ View(DocNo){
 }
 geteditmaster(Doc_No){
   const obj = {
-    "SP_String": "SP_Production_Closing_Stock",
-    "Report_Name_String": "View_Production_Closing_Stock",
+    "SP_String": "SP_K4C_Premix_Inventory",
+    "Report_Name_String": "View_K4C_Premix_Inventory",
     "Json_Param_String": JSON.stringify([{Doc_No:Doc_No}])
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -868,8 +868,8 @@ onConfirm(){
       Doc_No : this.ObjProClosingStock.Doc_No
     }
     const objj = {
-      "SP_String": "SP_Production_Closing_Stock",
-      "Report_Name_String": "Delete_Production_Closing_Stock",
+      "SP_String": "SP_K4C_Premix_Inventory",
+      "Report_Name_String": "Delete_K4C_Premix_Inventory",
       "Json_Param_String": JSON.stringify([Tempdata])
     }
     this.GlobalAPI.getData(objj).subscribe((data:any)=>{

@@ -33,6 +33,7 @@ export class RawMaterialReceiveComponent implements OnInit {
   BrowseList:any = []
   BrowseListHeader:any = []
   recdatedisabled:boolean = true;
+  maxDate:Date;
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -49,8 +50,10 @@ export class RawMaterialReceiveComponent implements OnInit {
     Header: "Raw Material Receive",
     Link: " Production Management -> Master -> Raw Material Receive"
   });
-  this.getReference()
-  this.GetStockPoint()
+  this.maxDate = new Date(this.DocDate);
+  this.Finyear();
+  this.getReference();
+  this.GetStockPoint();
   }
 TabClick(e) {
     this.tabIndexToView = e.index;
@@ -60,14 +63,27 @@ TabClick(e) {
      this.recdatedisabled = true;
 }
 clearData(){
- this.AllMaterialName = []
- this.ObjRawMatRev = new RawMatRev()
- this.RawMatRevFormSubmitted = false
- this.DocDate = new Date()
- this.Spinner = false
- this.AddRawMatRevList = []
- this.seachSpinner = false
+ this.AllMaterialName = [];
+ this.ObjRawMatRev = new RawMatRev();
+ this.RawMatRevFormSubmitted = false;
+ this.DocDate = new Date();
+ this.maxDate = new Date(this.DocDate);
+ this.Spinner = false;
+ this.AddRawMatRevList = [];
+ this.seachSpinner = false;
 }
+Finyear() {
+  this.http
+    .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
+    .subscribe((res: any) => {
+    let data = JSON.parse(res)
+    // this.vouchermaxDate = new Date(data[0].Fin_Year_End);
+    // this.voucherminDate = new Date(data[0].Fin_Year_Start);
+    // this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
+   this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
+    });
+}
+
 getReference(){
   const obj = {
     "SP_String": this.spString,
@@ -163,7 +179,8 @@ AddRawMatRev(valid:any){
     UOM:  this.ObjRawMatRev.UOM,
     Receive_Qty: this.ObjRawMatRev.Receive_Qty,
     Batch_Lot_No: this.ObjRawMatRev.Batch_Lot_No,
-    Vehicle_No: this.ObjRawMatRev.Vehicle_No,
+    // Vehicle_No: this.ObjRawMatRev.Vehicle_No,
+    Note_Description: this.ObjRawMatRev.Note_Description,
     Godown_ID: this.ObjRawMatRev.Godown_ID,
     Godown_Name : FilterStockPointList ? FilterStockPointList.godown_name : " ",
     Purpose: this.ObjRawMatRev.Purpose,
@@ -175,6 +192,7 @@ AddRawMatRev(valid:any){
   // this.ObjRawMatRev = new RawMatRev()
   this.ObjRawMatRev.Batch_Lot_No = undefined;
   this.ObjRawMatRev.Vehicle_No = undefined;
+  this.ObjRawMatRev.Note_Description = undefined;
   // this.AllMaterialName = []
   // this.DocDate = new Date()
   this.recdatedisabled = false;
@@ -291,6 +309,7 @@ class RawMatRev{
   Receive_Qty:any
   Batch_Lot_No:any
   Vehicle_No:any
+  Note_Description:any;
   Godown_ID:any
   Purpose:any
   Remarks:any

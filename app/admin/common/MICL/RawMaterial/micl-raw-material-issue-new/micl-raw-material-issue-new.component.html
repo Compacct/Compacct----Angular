@@ -175,9 +175,8 @@
                                         <select class="form-control" 
                                         name="F_Godown_ID" 
                                         #F_Godown_ID="ngModel" 
-                                        [(ngModel)]="objRMissue.F_Godown_ID" 
-                                        [disabled]="Topfielddisabled"
-                                        (change)="changedisabled()"
+                                        [(ngModel)]="objRMissue.F_Godown_ID"
+                                        (change)="getyardName()"
                                         [ngClass]="{'clearance': RMissueFormSubmit && F_Godown_ID?.errors?.required}"
                                         required 
                                         >
@@ -246,7 +245,7 @@
                                     <div class="form-group">
                                       <div class="col-sm-4">
                                           <label class="control-label"
-                                            >Product Name <sup class="text-danger">*</sup> &nbsp;
+                                            >Product In Stock {{YardName}} <sup class="text-danger">*</sup> &nbsp;
                                           </label>
                                           <p-dropdown
                                             [options]= "ProductionlList"
