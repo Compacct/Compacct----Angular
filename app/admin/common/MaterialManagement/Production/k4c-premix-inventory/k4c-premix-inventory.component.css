@@ -39,9 +39,11 @@ textarea.form-control {
     width: auto !important;
 }
 
-.custombutton {
+
+/* .custombutton {
     margin-top: 28px;
-}
+    margin-left: 130px;
+  } */
 
 .custombutton1 {
     margin-top: 28px;
@@ -67,24 +69,10 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav {
     border-bottom: 1px solid #c1c1c1 !important;
     margin-bottom: 0px;
 }
-
-fieldset {
-	border: 1px solid #ddd !important;
-	margin: 0;
-	min-width: 0;
-	padding: 10px;
-	position: relative;
-	border-radius:4px;
-	background-color:#f5f5f5;
-	padding-left:10px!important;
-	}
-  legend {
-	font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 0px;
-    width: fit-content;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 0px 10px 0px 10px;
-    background-color: #ffffff;
-	}
+.custombutton1 {
+    margin-top: 28px;
+    margin-left: 15px;
+}
+.custombutton3 {
+    margin-top: 30px;
+}
