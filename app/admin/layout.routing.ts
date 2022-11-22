@@ -289,6 +289,7 @@ import { MiclRawMaterialIssueNewComponent } from './common/MICL/RawMaterial/micl
 import { RequisitionForIssueChargeableComponent } from './common/MICL/requisition-for-issue-chargeable/requisition-for-issue-chargeable.component';
 import { JohValidationProcessComponent } from "./common/PatientManagement/joh-validation-process/joh-validation-process.component";
 import { ReturnMaterialComponent } from './common/MICL/return-material/return-material.component';
+import { K4cPremixInventoryComponent } from './common/MaterialManagement/Production/k4c-premix-inventory/k4c-premix-inventory.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2165,6 +2166,13 @@ path: 'MICL_Cost_Center_Master',
     component: ReturnMaterialComponent,
     data: {
       title: 'Return Material'
+}
+},
+{
+  path: 'Premix_Inventory',
+    component: K4cPremixInventoryComponent,
+    data: {
+      title: 'Premix Inventory'
 }
 },
     

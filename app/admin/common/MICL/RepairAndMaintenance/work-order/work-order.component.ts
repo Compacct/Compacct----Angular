@@ -1455,7 +1455,7 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
   if(DocNo) {
   const objtemp = {
     "SP_String": "Sp_Purchase_Order",
-    "Report_Name_String": "Purchase_Order_Print"
+    "Report_Name_String": "Work_Order_Print"
     }
   this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
     var printlink = data[0].Column1;

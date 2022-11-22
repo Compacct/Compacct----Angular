@@ -384,6 +384,7 @@ import { MiclRawMaterialIssueNewComponent } from './common/MICL/RawMaterial/micl
 import { RequisitionForIssueChargeableComponent } from './common/MICL/requisition-for-issue-chargeable/requisition-for-issue-chargeable.component';
 import { JohValidationProcessComponent } from "./common/PatientManagement/joh-validation-process/joh-validation-process.component";
 import { ReturnMaterialComponent } from './common/MICL/return-material/return-material.component';
+import { K4cPremixInventoryComponent } from './common/MaterialManagement/Production/k4c-premix-inventory/k4c-premix-inventory.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -684,7 +685,8 @@ import { ReturnMaterialComponent } from './common/MICL/return-material/return-ma
     MiclRawMaterialIssueNewComponent,
     RequisitionForIssueChargeableComponent,
     JohValidationProcessComponent,
-    ReturnMaterialComponent
+    ReturnMaterialComponent,
+    K4cPremixInventoryComponent
   ],
   imports: [
     CommonModule,
