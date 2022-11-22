@@ -61,7 +61,8 @@ export class JOHRealisticExpectationFormComponent implements OnInit {
   JREIdUpload:any = undefined
   DelVoucherNo :any =undefined
   userType :any = ""
-  disableCost :boolean = false
+  disableCost: boolean = false
+  DelRight :any = undefined
   @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
  
   constructor(
@@ -83,7 +84,8 @@ export class JOHRealisticExpectationFormComponent implements OnInit {
     this.ListingNeedList = ["Conversation with 1 or 2 in quiet", "Conversation with 1 or 2 in noise", "Conversation with small group in quiet", "Conversation with small group in noise", 
                             "Conversation with large group in quiet", "Conversation with large group in noise", "Television / Radio at normal volume", "Hearing in mobile phone", "Hearing in landline phone", 
                             "Hearing phone ring from another room", "Hear front door bell or knock", "Meeting", "Classroom", "Listening to music", "Sound Quality/Naturalness"];
-    this.userType = this.commonApi.CompacctCookies.User_Type  
+    this.userType = this.commonApi.CompacctCookies.User_Type 
+    this.DelRight = this.commonApi.CompacctCookies.Del_Right
     this.getCostCenter();
     this.getReProduct();
     this.getAiProduct();

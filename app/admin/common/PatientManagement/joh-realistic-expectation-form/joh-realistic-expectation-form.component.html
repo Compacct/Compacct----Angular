@@ -90,13 +90,13 @@
                                                                 <span class="caret"></span>
                                                             </button>
                                                     <ul class="dropdown-menu">
-                                                        <li>
+                                                        <li *ngIf="DelRight === 'Y'">
                                                             <a (click)="EditRealistic(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li>
                                                         
-                                                        <li >
+                                                        <li *ngIf="DelRight === 'Y'" >
                                                             <a (click)="DeleteEarMold(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
