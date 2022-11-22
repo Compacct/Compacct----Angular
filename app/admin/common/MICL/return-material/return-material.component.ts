@@ -36,8 +36,17 @@ export class ReturnMaterialComponent implements OnInit {
   seachSpinner : any= false;
   Searchedlist:any = [];
   flag:boolean = false;
+  Productid: any;
+  DocNo: any;
+  Batchno: any;
+  ViewList:any = [];
+  ViewListobj2 : any = {};
+  ViewModal:boolean = false;
+  EditList:any = [];
+  EditListobj : any = {};
+  EditModal:boolean = false;
 
-  // Del_Right : string = "";
+  Del_Right : string = "";
 
   // seachSpinnerPendUtil = false;
   // PendUtil_start_date: Date;
@@ -75,6 +84,7 @@ export class ReturnMaterialComponent implements OnInit {
     this.getCostcenter();
     this.Finyear();
     //this.Getsearchlist2();
+    this.Del_Right = this.$CompacctAPI.CompacctCookies.Del_Right;
     
   }
   TabClick(e) {
@@ -110,7 +120,7 @@ export class ReturnMaterialComponent implements OnInit {
   }
   getCostcenter(){
     const obj = {
-      "SP_String": "Sp_Consumption_Module",
+      "SP_String": "Sp_Return_Material_Module",
       "Report_Name_String": "Get_Cost_Center"
       
     }
@@ -128,7 +138,7 @@ export class ReturnMaterialComponent implements OnInit {
       Cost_Cen_ID : this.ObjBrowse.Cost_Cen_ID
     }
     const obj = {
-      "SP_String": "Sp_Consumption_Module",
+      "SP_String": "Sp_Return_Material_Module",
       "Report_Name_String": "Get_Godown_Name",
       "Json_Param_String": JSON.stringify([tempobj])
       
@@ -168,8 +178,8 @@ export class ReturnMaterialComponent implements OnInit {
         }
 
       const obj = {
-        "SP_String": "Sp_Consumption_Module",
-        "Report_Name_String": "Txn_Consumption_Browse",
+        "SP_String": "Sp_Return_Material_Module",
+        "Report_Name_String": "Txn_Return_Material_Browse",
         "Json_Param_String": JSON.stringify([tempobj])
       }
        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -199,8 +209,8 @@ export class ReturnMaterialComponent implements OnInit {
       User_ID : this.$CompacctAPI.CompacctCookies.User_ID
     }
     const obj = {
-      "SP_String": "Sp_Consumption_Module",
-      "Report_Name_String": "Txn_Consumption_Balance",
+      "SP_String": "Sp_Return_Material_Module",
+      "Report_Name_String": "Txn_Return_Material_Balance",
       "Json_Param_String": JSON.stringify([tempobj])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -306,8 +316,8 @@ saveqtyChk(){
       
     }) 
     const obj = {
-      "SP_String": "Sp_Consumption_Module",
-      "Report_Name_String":"Txn_Consumption_Issue_Create",
+      "SP_String": "Sp_Return_Material_Module",
+      "Report_Name_String":"Txn_Return_Material_Create",
       "Json_Param_String": JSON.stringify(temparr) 
      }
      this.GlobalAPI.getData(obj).subscribe((data : any)=>
@@ -327,7 +337,7 @@ saveqtyChk(){
       //this.getAllList();
       
       this.clearData();
-      
+      this.Getsearchlist(true);
       this.Spinner = false;
       this.tabIndexToView = 0;
       }
@@ -345,9 +355,146 @@ saveqtyChk(){
      });
     
 }
+Edit(Doc_No) {
+  console.log('Doc_No', Doc_No);
+  const obj = {
+    "SP_String": "Sp_Return_Material_Module",
+    "Report_Name_String": "Txn_Return_Material_Get",
+    "Json_Param_String": JSON.stringify([{Doc_No:Doc_No}])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log("Edit",data);
+    this.EditList = data;
+    this.EditListobj = data[0];
+    console.log('ViewListobj=',this.EditListobj);
+    //this.todayDate = new Date(data[0].Doc_Date);
+    //this.ObjRawMateriali = data[0];
+    // TempData.forEach(element => {
+    //   this.Searchedlist.push({
+    //     Cost_Cen_ID:element.Cost_Cen_ID,
+    //     godown_id:element.godown_id,
+    //     Issue_Qty:element.Issue_Qty,
+    //     Remarks:element.Remarks,
+    //     Serial_No:element.Serial_No,
+    //     Product_ID:element.Product_ID,
+    //     Batch_No:element.Batch_No,
+    //     uom : element.UOM	
+        
+    //   })
+    //  });
+     //this.BackupIndentList = this.ProductList;
+     //this.GetProductType();
+  })
+  setTimeout(() => {
+    this.EditModal = true;
+  }, 200);
+
+}
+Delete(col){
+  this.Productid = undefined;
+  this.DocNo = undefined;
+  this.Batchno = undefined;
+  if (col.Doc_No) {
+  this.Productid = col.Product_ID;
+  this.DocNo = col.Doc_No;
+  this.Batchno = col.Batch_No;
+  console.log(this.Productid);
+      // this.Spinner = true;
+     this.compacctToast.clear();
+     this.compacctToast.add({
+       key: "c",
+       sticky: true,
+       closable: false,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+     })
+    //  this.Spinner = false;
+  }
+  
+}
+onConfirm(){
+  const tempobj={
+    Doc_No : this.DocNo,
+    Product_ID : this.Productid,
+    Batch_No	 : this.Batchno
+  }
+  const obj = {
+    "SP_String": "Sp_Return_Material_Module",
+    "Report_Name_String": "Txn_Return_Material_Delete",
+    "Json_Param_String": JSON.stringify([tempobj])
+    
+  }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log('data=',data[0].Column1);
+    //if (data[0].Sub_Ledger_ID)
+    if(data[0].Column1)
+    {
+      //this.SubLedgerID = data[0].Column1
+     this.compacctToast.clear();
+     this.compacctToast.add({
+     key: "compacct-toast",
+     severity: "success",
+     summary: "Return Material",
+     detail: "Succesfully Deleted"
+   });
+  //  this.Delete(this.DocNo);
+  this.Edit(this.DocNo);
+   this.Getsearchlist(true);
+  }
+  else{
+    this.compacctToast.clear();
+    this.compacctToast.add({
+    key: "compacct-toast",
+    severity: "error",
+    summary: "Error",
+    detail: "Something Wrong"
+  });
+}
+     
+   })
+
+}
   onReject(){
     this.compacctToast.clear("c");
     this.compacctToast.clear("s");
+    this.Spinner = false;
+  }
+  View(Doc_No){
+    console.log('Doc_No', Doc_No);
+    const obj = {
+      "SP_String": "Sp_Return_Material_Module",
+      "Report_Name_String": "Txn_Return_Material_Get",
+      "Json_Param_String": JSON.stringify([{Doc_No:Doc_No}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("Edit",data);
+      this.ViewList = data;
+      this.ViewListobj2 = data[0];
+      console.log('ViewListobj2=',this.ViewListobj2);
+      //this.todayDate = new Date(data[0].Doc_Date);
+      //this.ObjRawMateriali = data[0];
+      // TempData.forEach(element => {
+      //   this.Searchedlist.push({
+      //     Cost_Cen_ID:element.Cost_Cen_ID,
+      //     godown_id:element.godown_id,
+      //     Issue_Qty:element.Issue_Qty,
+      //     Remarks:element.Remarks,
+      //     Serial_No:element.Serial_No,
+      //     Product_ID:element.Product_ID,
+      //     Batch_No:element.Batch_No,
+      //     uom : element.UOM	
+          
+      //   })
+      //  });
+       //this.BackupIndentList = this.ProductList;
+       //this.GetProductType();
+    })
+    setTimeout(() => {
+      this.ViewModal = true;
+    }, 200);
+
+
   }
 
 }

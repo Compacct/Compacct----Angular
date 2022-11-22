@@ -20,27 +20,27 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
   encapsulation: ViewEncapsulation.None
 })
 export class K4CDispatchOutletAdvOrderComponent implements OnInit {
-  items = [];
-  menuList = [];
+  items:any = [];
+  menuList:any = [];
   tabIndexToView = 0;
   brandInput = false ;
   buttonname = "Create";
   myDate : Date;
   ChallanDate : any = Date ;
-  brandList = [];
-  toGodownList = [];
-  costcenterList = [];
-  VehicleList = [];
-  itemList =[];
-  NativeitemList = [];
-  FromGodownList = [];
-  productDetails = [];
-  saveList = [];
-  saveData = [];
-  outletListBro = [];
-  GetAllDataList = [];
-  OutletFilter = [];
-  BackUPGetAllDataList = [];
+  brandList:any = [];
+  toGodownList:any = [];
+  costcenterList:any = [];
+  VehicleList:any = [];
+  itemList:any =[];
+  NativeitemList:any = [];
+  FromGodownList:any = [];
+  productDetails:any = [];
+  saveList:any = [];
+  saveData:any = [];
+  outletListBro:any = [];
+  GetAllDataList:any = [];
+  OutletFilter:any = [];
+  BackUPGetAllDataList:any = [];
   SelectedOutLet :any;
   OutletFormSubmit = false;
   outLetDis = false;
@@ -60,8 +60,8 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   Auto_Accepted: any;
 
   dispatchchallanno : any;
-  FranchiseProductList = [];
-  FranchiseList = [];
+  FranchiseProductList:any = [];
+  FranchiseList:any = [];
   taxable: any;
   cgst: any;
   sgst: any;
@@ -77,11 +77,11 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
 
   totalaccpqty: any;
   totaldelqty: any;
-  Franchise = [];
+  Franchise:any = [];
   FranchiseBill:any;
   ToCostCentId = undefined;
 
-  Regeneratelist = [];
+  Regeneratelist:any = [];
   contactname = undefined;
   taxableRegenerate: any;
   cgstRegenerate: any;
@@ -98,7 +98,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   salebillno: any;
 
   ViewPoppup = false;
-  viewList = [];
+  viewList:any = [];
   view_Doc_No = undefined;
   view_Doc_date = undefined;
   view_Order_No = undefined;

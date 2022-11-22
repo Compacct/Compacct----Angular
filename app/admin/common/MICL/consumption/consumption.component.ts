@@ -126,8 +126,7 @@ export class ConsumptionComponent implements OnInit {
 
   // }
 
-  Delete(Doc_No)
-  {
+  Delete(Doc_No) {
     console.log('Doc_No', Doc_No);
     const obj = {
       "SP_String": "Sp_Consumption_Module",
@@ -351,7 +350,7 @@ const tempobj = {
 }
   return Flag;
 }
-saveqtyChk(){
+ saveqtyChk(){
   let Flag = false;
   for(let i = 0; i < this.Searchedlist.length ; i++){
     if(this.Searchedlist[i].Issue_Qty ){
