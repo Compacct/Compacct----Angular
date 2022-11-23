@@ -76,7 +76,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
   saveData:any = [];
   ToFurnacebrowseList:any = [];
   DocNo = undefined;
-  prodisabledflag:boolean = true;
+  prodisabledflag:boolean = false;
   YardName:any;
 
   constructor(
@@ -230,19 +230,19 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
 //    })
 //    }
 //  }
-  GetProductsDetalis(valid){
+  GetProductsDetalis(){
       this.AddProDetails = [];
-      this.RMissueFormSubmit = true;
+      // this.RMissueFormSubmit = true;
       this.SpinnerShow = true;
       this.docdateDisabled = true;
       this.Topfielddisabled = false;
       this.prodisabledflag = false;
-      if (valid) {
-        if(Number(this.objRMissue.F_Godown_ID) !== Number(this.objRMissue.To_Godown_ID)){
+      if (this.objRMissue.To_Godown_ID) {
+        // if(Number(this.objRMissue.F_Godown_ID) !== Number(this.objRMissue.To_Godown_ID)){
         const Dobj = {
           Doc_Date : this.DateService.dateConvert(new Date(this.RM_Issue_Date)),
           F_Cost_Cen_ID: Number(this.objRMissue.F_Cost_Cen_ID),
-          F_Godown_ID : Number(this.objRMissue.F_Godown_ID),
+          // F_Godown_ID : Number(this.objRMissue.F_Godown_ID),
           To_Cost_Cen_ID: Number(this.objRMissue.To_Cost_Cen_ID),
           To_Godown_ID : Number(this.objRMissue.To_Godown_ID),
           Type_Of_Product : this.issueType
@@ -263,29 +263,29 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
           this.AddProDetails = data;
           this.objRMissue.Remarks = data.length ? data[0].Remarks : undefined;
           this.DocNo = this.AddProDetails.length ? data[0].Doc_No : undefined;
-          this.RMissueFormSubmit = false;
+          // this.RMissueFormSubmit = false;
           this.SpinnerShow = false;
        //console.log("productList",this.productList);
         //   }
         // else {
         //   this.productList = [];
-          this.RMissueFormSubmit = false;
+          // this.RMissueFormSubmit = false;
           this.SpinnerShow = false;
           this.docdateDisabled = false;
           this.Topfielddisabled = true;
     // }
     })
-    }
-    else{
-      this.SpinnerShow = false;
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "compacct-toast",
-        severity: "error",
-        summary: "Warn Message",
-        detail: "can't use same stock point"
-      });
-    }
+    // }
+    // else{
+    //   this.SpinnerShow = false;
+    //   this.compacctToast.clear();
+    //   this.compacctToast.add({
+    //     key: "compacct-toast",
+    //     severity: "error",
+    //     summary: "Warn Message",
+    //     detail: "can't use same stock point"
+    //   });
+    // }
   }
     else {
       this.SpinnerShow = false;
@@ -295,7 +295,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
     this.objRMissue = new RMissue();
     this.objRMissueadd = new RMissueadd();
     this.ObjproductAdd = new productAdd();
-    this.prodisabledflag = true;
+    // this.prodisabledflag = true;
     this.RM_Issue_Date = new Date();
     this.objRMissue.F_Cost_Cen_ID = 36;
     this.ObjBrowseData.Cost_Cen_ID = 4;
@@ -310,9 +310,16 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
     this.YardName = undefined;
   }
   getyardName(){
+    this.YardName = undefined;
+    this.ObjproductAdd.Product_ID = undefined;
+    this.ProductionlList = [];
+    this.BatchNoList = [];
+    if (this.objRMissue.F_Godown_ID) {
     var yardn = this.FGodownList.filter(el => Number(el.Godown_ID) === Number(this.objRMissue.F_Godown_ID));
-      var yardname = yardn ? yardn[0].godown_name : undefined;
-      this.YardName = this.objRMissue.F_Godown_ID ? "at " + yardname : undefined;
+      // var yardname = yardn ? yardn[0].godown_name : undefined;
+      this.YardName = yardn ? "at " + yardn[0].godown_name : undefined;
+      this.GetProductionpro();
+    }
   }
   changedisabled(){
     this.prodisabledflag = false;
@@ -361,8 +368,11 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
   // }
   // FOR PRODUCT NAME DROPDOWN
   GetProductionpro(){
+    this.ProductionlList = [];
     const tempObj = {
-      Type_Of_Product : this.issueType
+      Type_Of_Product : this.issueType,
+      Cost_Cen_ID : this.objRMissue.F_Cost_Cen_ID,
+      Godown_ID : this.objRMissue.F_Godown_ID
     }
     const obj = {
       "SP_String": "SP_MICL_Raw_Material_Issue_New",
@@ -398,6 +408,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
   }
   }
   GetBatchNo(){
+    this.BatchNoList = [];
     // this.RMissueFormSubmit = true;
     // if(this.objRMissue.F_Godown_ID && this.objRMissue.To_Godown_ID) {
     const TempObj = {
@@ -564,41 +575,43 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
               }
     }
    }
-  SaveIssue(){ 
+  SaveIssue(valid){ 
     //console.log("valid",valid);
-    // this.RMissueFormSubmit = true;
+    this.RMissueFormSubmit = true;
     this.ngxService.start();
-    if(this.AddProDetails.length){
-      // if(this.AddRMissueList.length){
-      if(this.saveqty()) {
-       this.Spinner = true;
-       this.ngxService.start();
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "s",
-        sticky: true,
-        closable: false,
-        severity: "warn",
-        summary: "Are you sure?",
-        detail: "Confirm to proceed"
-      });
-      }
-    }
-      else{
-        this.Spinner = false;
-        this.ngxService.stop();
+    if(valid) {
+      this.RMissueFormSubmit = false;
+      if(this.AddProDetails.length){
+        // if(this.AddRMissueList.length){
+        if(this.saveqty()) {
+         this.Spinner = true;
+         this.ngxService.start();
+        this.compacctToast.clear();
         this.compacctToast.add({
-         key: "compacct-toast",
-         severity: "error",
-         summary: "Warn Message",
-         detail: "Error Occured "
-       });
+          key: "s",
+          sticky: true,
+          closable: false,
+          severity: "warn",
+          summary: "Are you sure?",
+          detail: "Confirm to proceed"
+        });
+        }
       }
-    // }
-    // else {
-    //   this.Spinner = false;
-    //   this.ngxService.stop();
-    // }
+        else{
+          this.Spinner = false;
+          this.ngxService.stop();
+          this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "error",
+           summary: "Warn Message",
+           detail: "Error Occured "
+         });
+        }
+    }
+    else {
+      this.Spinner = false;
+      this.ngxService.stop();
+    }
    }
    saveqty(){
     let flag = true;

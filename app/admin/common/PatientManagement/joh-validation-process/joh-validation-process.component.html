@@ -82,21 +82,26 @@
                                                                 <span class="caret"></span>
                                                             </button>
                                                     <ul class="dropdown-menu">
-                                                        <li>
+                                                        <li *ngIf = "DelRight == 'Y'">
                                                             <a (click)="EditValidation(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li>
-                                                        <li>
+                                                        <li *ngIf = "DelRight == 'Y'">
                                                             <a (click)="delectMaster(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
                                                         </li>
-                                                        <!-- <li>
-                                                            <a (click)="PODUpdate(col)">
-                                                                <i class="fa fa-fw fa-pencil"></i> POD Update
+                                                        <li>
+                                                            <a (click)="uploadModel(col)">
+                                                                <i class="fa fa-fw fa-file"></i> Doc Upload
                                                             </a>
-                                                        </li> -->
+                                                        </li>
+
+                                                  
+
+
+
                                                         <li>
                                                             <a (click)="GetPrint(col)">
                                                                 <i class="fa fa-fw fa-print"></i> Print
@@ -529,4 +534,54 @@
         </div>
     </div>
 </div>
-
+<p-dialog [header]="'Document Upload Here'" 
+[appendTo]="'body'" 
+[visible]="DocUploadModal" 
+[closeOnEscape]="true" 
+[closable]="false" 
+[modal]="true" 
+[responsive]="true"
+[style]="{ width: '30%', minWidth: '200px' }" 
+style="text-align: center;" 
+[minY]="40" 
+[maximizable]="true"
+[baseZIndex]="10000">
+<div class="col-sm-12">
+    <label class="control-label">Upload Document</label>
+    <p-fileUpload #fileInput 
+                *ngIf="!PDFViewFlag" 
+                name="aFile566" 
+                accept=".pdf, .png, .jpg, .jpeg, .xls, .xlsx" 
+                [customUpload]="true" 
+                [chooseLabel]="'Browse'" 
+                [showUploadButton]="false" 
+                (onSelect)="handleFileSelect($event)">
+            </p-fileUpload>
+    <a [href]="ProductPDFLink" 
+        *ngIf="PDFViewFlag" 
+        style="display: block;">
+        <img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
+</div>
+    <p-footer>
+        <!-- <button type="button" (click)="SaveUploadDoc()" class="btn btn-primary">
+    <span class="glyphicon glyphicon-save"></span>Save
+    </button> -->
+    <button class="btn btn-primary" 
+    (click)="SaveUploadDoc()" 
+    id="Saveload"
+    [disabled]="SpinnerUpload">
+    <p-progressSpinner 
+    *ngIf="SpinnerUpload" 
+    [style]="{width: '15px', height: '15px'}" 
+    strokeWidth="8"  
+    animationDuration=".5s">
+    </p-progressSpinner>
+    <span *ngIf="!SpinnerUpload" 
+    class="glyphicon glyphicon-save">
+    </span>Save
+    </button>
+        <button type="button" (click)="DocUploadModal = false" class="btn btn-info">
+            <i class="fa fa-close"></i>Close
+        </button>
+    </p-footer>
+</p-dialog>

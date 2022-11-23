@@ -50,7 +50,7 @@ export class RawMaterialReceiveComponent implements OnInit {
     Header: "Raw Material Receive",
     Link: " Production Management -> Master -> Raw Material Receive"
   });
-  this.maxDate = new Date(this.DocDate);
+  this.maxDate = new Date();
   this.Finyear();
   this.getReference();
   this.GetStockPoint();
@@ -67,7 +67,7 @@ clearData(){
  this.ObjRawMatRev = new RawMatRev();
  this.RawMatRevFormSubmitted = false;
  this.DocDate = new Date();
- this.maxDate = new Date(this.DocDate);
+ this.maxDate = new Date();
  this.Spinner = false;
  this.AddRawMatRevList = [];
  this.seachSpinner = false;

@@ -1039,7 +1039,7 @@ GetGRNNoProlistdetails2(){
     this.CESS = (count6).toFixed(2);
     this.Total_Tax = Number(Number(this.Total_GST) + Number(this.CESS)).toFixed(2);
     this.Gross_Amount = Number(Number(this.Taxable_Amount) + Number(this.Total_Tax)).toFixed(2);
-    this.Round_off = (Number(this.Gross_Amount) - Number(Math.round(this.Gross_Amount))).toFixed(2);
+    this.Round_off = (Number(Math.round(this.Gross_Amount)) - Number(this.Gross_Amount)).toFixed(2);
     this.Net_Amt = Number(Math.round(this.Gross_Amount)).toFixed(2);
     this.ObjTDS.Taxable_Amount = Number(this.Taxable_Amount);
   }
