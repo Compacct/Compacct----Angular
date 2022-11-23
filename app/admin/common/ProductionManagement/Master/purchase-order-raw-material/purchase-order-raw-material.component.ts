@@ -8,6 +8,8 @@ import { CompacctCommonApi } from '../../../../shared/compacct.services/common.a
 import { CompacctHeader } from '../../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
 import { CompacctProjectComponent } from '../../../../shared/compacct.components/compacct.forms/compacct-project/compacct-project.component';
+import { MapType } from '@angular/compiler/src/output/output_ast';
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-purchase-order-raw-material',
   templateUrl: './purchase-order-raw-material.component.html',
@@ -135,6 +137,23 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
   seachPendSpinner = false;
   disBackUp:any = undefined;
 
+  AllMaterialData:any = [];
+  Material_Type:any
+
+  ObjMIS : MIS = new MIS()
+  MISreportFormSubmit = false;
+  ReportNameList:any = [];
+  MISSpinner = false;
+  misReportList:any = [];
+  DynamicHeaderMISreport:any = [];
+  BackupMisReport:any = [];
+  DistVendorName:any = [];
+  SelectedDistVendorName:any = [];
+  DistMaterialType:any = [];
+  SelectedDistMaterialType:any = [];
+  DistProductType:any = [];
+  SelectedDistProductType:any = [];
+  SearchFieldsMis:any = [];
   
   constructor(
     private $http: HttpClient ,
@@ -147,7 +166,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.items = [ 'BROWSE', 'CREATE'];
+    this.items = [ 'BROWSE', 'CREATE', 'MIS'];
     this.Header.pushHeader({
       Header: "Purchase Order Raw Material",
       Link: "Production Management -> Master -> Purchase Order Raw Material"
@@ -158,18 +177,19 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
       this.GetCostCenter();
       this.GetCurrency();
       this.GetOrderType();
-      this.GetProductsDetalis();
+      this.GetMaterialTyp();
+      // this.GetProductsDetalis();
      this.getProduct();
       this.GetRequlist();
       this.GettermAmt();
       this.getAllData(true);
       this.getcompany();
       this.getCostcenter();
-     this.userType = this.$CompacctAPI.CompacctCookies.User_Type
+     this.userType = this.$CompacctAPI.CompacctCookies.User_Type;
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = [ 'BROWSE', 'CREATE'];
+    this.items = [ 'BROWSE', 'CREATE', 'MIS'];
     this.buttonname = "Create"; 
     this.clearData();
  
@@ -205,6 +225,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
     this.disAmtBackUpAMT = 0
     this.ObjWorkOrder.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+    this.ObjMIS.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     this.objpendingreq.Cost_Cen_ID = this.costcenterListPeding.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
     this.objpendingPurIndPro.Cost_Cen_ID = this.costcenterListPeding.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
     this.ObjWorkOrder.Billing_To  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
@@ -361,6 +382,24 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
       console.log("OrderTypeList",this.OrderTypeList);
     })
   }
+  GetMaterialTyp(){ 
+    this.AllMaterialData = [];
+       const obj = {
+        "SP_String": "SP_Production_Management_Master_Raw_Material",
+        "Report_Name_String":"Get_Material_Type",
+       }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         if(data.length) {
+           data.forEach(element => {
+             element['label'] = element.Material_Type,
+             element['value'] = element.Material_Type
+           });
+           this.AllMaterialData = data;
+         } else {
+           this.AllMaterialData = [];
+         }
+      })
+}
   getreq(){
     // if(this.openProject == 'N'){
       if(this.objProjectRequi.Billing_To && this.objProjectRequi.Cost_Cen_ID){
@@ -438,9 +477,12 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
     // }
 
     this.ProductList = [];
+    this.ObjaddWorkOrder.Product_Spec = undefined;
+    if (this.Material_Type) {
     const obj = {
       "SP_String": "Sp_BL_Txn_Purchase_Order_Raw_Material",
       "Report_Name_String": "Get_Product",
+      "Json_Param_String": JSON.stringify([{Material_Type : this.Material_Type}])
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.productDataList = data;
@@ -452,6 +494,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
           });
          });
       })
+    }
   
   }
   getProduct(id?,uom?,psc?){
@@ -540,7 +583,9 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
   this.ObjaddWorkOrder.Product_ID = tempAddObj.Product_ID
    if(this.ObjaddWorkOrder.Product_ID){
     let tempVal:any = this.productDataList.filter((el:any)=> Number(el.Product_ID) === Number(this.ObjaddWorkOrder.Product_ID));
-    this.ObjaddWorkOrder.Product_Spec = tempVal[0].Product_Description;
+    // let mattype:any = this.AllMaterialData.filter((ele:any)=> Number(ele.Material_ID) === Number(this.ObjaddWorkOrder.Material_ID))
+    var matname:any =  this.Material_Type ? " ( "+ this.Material_Type +" ) " : "";
+    this.ObjaddWorkOrder.Product_Spec = tempVal[0].Product_Description + matname;
     this.ObjaddWorkOrder.Qty = tempVal[0].Qty
     this.ObjaddWorkOrder.Rate = tempVal[0].Rate;
     // if(this.openProject === 'Y'){
@@ -1203,7 +1248,7 @@ this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
   if(this.DocNo){
     this.ngxService.stop();
     this.tabIndexToView = 0;
-    this.items = [ 'BROWSE', 'CREATE', 'PENDING MAINTENANCE INDENT'];
+    this.items = [ 'BROWSE', 'CREATE', 'MIS'];
     this.buttonname = "Create";
   }
   this.ngxService.stop();
@@ -1219,7 +1264,7 @@ this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
   if(this.DocNo){
     this.ngxService.stop();
     this.tabIndexToView = 0;
-    this.items = [ 'BROWSE', 'CREATE', 'PENDING MAINTENANCE INDENT'];
+    this.items = [ 'BROWSE', 'CREATE', 'MIS'];
     this.buttonname = "Create";
   }
   this.ngxService.stop();
@@ -1389,7 +1434,7 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     this.DocNo = undefined;
     this.DocNo = col.Doc_No;
     this.tabIndexToView = 1;
-    this.items = [ 'BROWSE', 'UPDATE'];
+    this.items = [ 'BROWSE', 'UPDATE', 'MIS'];
     this.buttonname = "Update";
     this.geteditmaster(col.Doc_No);
    }
@@ -1535,10 +1580,14 @@ getTofix(key){
  RoundOff(key:any){
    return Math.round(Number(Number(key).toFixed(2)))
  }
- getRoundedOff(){
-  return this.getTofix(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2)) -
-          Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2)))) 
-} 
+//  getRoundedOff(){
+//   return this.getTofix(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2)) -
+//           Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2)))) 
+// } 
+getRoundedOff(){
+  return this.getTofix( Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2))) -
+          Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2))) 
+}
 getcompany(){
   const obj = {
     "SP_String": "sp_Comm_Controller",
@@ -1549,6 +1598,7 @@ getcompany(){
    console.log("companyList",this.companyList)
    this.ObjWorkOrder.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
    this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
+   this.ObjMIS.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
   })
 }
 showTost(msg,won){
@@ -1737,6 +1787,116 @@ gettermsdetails(){
     })
     }
   }
+
+  //MIS
+    getDateRangeMIS(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjMIS.From_Date = dateRangeObj[0];
+      this.ObjMIS.To_Date = dateRangeObj[1];
+    }
+    }
+    GetMISreport(valid){
+      this.misReportList = [];
+      this.BackupMisReport = [];
+      this.DynamicHeaderMISreport = [];
+      this.MISreportFormSubmit = true;
+      this.MISSpinner = true;
+    const start = this.ObjMIS.From_Date
+    ? this.DateService.dateConvert(new Date(this.ObjMIS.From_Date))
+    : this.DateService.dateConvert(new Date());
+    const end = this.ObjMIS.To_Date
+    ? this.DateService.dateConvert(new Date(this.ObjMIS.To_Date))
+    : this.DateService.dateConvert(new Date());
+    const tempobj = {
+      From_Date : start,
+      To_Date : end,
+      Company_ID : this.ObjMIS.Company_ID,
+    }
+    // console.log("valid",valid)
+    if (valid) {
+      const obj = {
+        "SP_String": "Sp_BL_Txn_Purchase_Order_Raw_Material",
+        "Report_Name_String": "Purchase_Order_Raw_Material_MIS",
+        "Json_Param_String": JSON.stringify([tempobj])
+        }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.misReportList = data;
+        this.BackupMisReport = data;
+        this.GetDistinctReport();
+        if(this.misReportList.length){
+          this.DynamicHeaderMISreport = Object.keys(data[0]);
+        }
+        this.MISSpinner = false
+        this.MISreportFormSubmit = false;
+      })
+      }
+      else {
+        this.MISSpinner = false;
+      }
+    }
+    exportoexcel(Arr,fileName): void {
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      XLSX.writeFile(workbook, fileName+'.xlsx');
+    }
+      // DISTINCT & FILTER
+    GetDistinctReport() {
+      let DVendorName:any = [];
+      let DMaterialType:any = [];
+      let DProductType:any = [];
+      this.DistVendorName =[];
+      this.SelectedDistVendorName =[];
+      this.DistMaterialType =[];
+      this.SelectedDistMaterialType =[];
+      this.DistProductType =[];
+      this.SelectedDistProductType =[];
+      this.SearchFieldsMis =[];
+      this.misReportList.forEach((item) => {
+      if (DVendorName.indexOf(item.Vendor_Name) === -1) {
+         DVendorName.push(item.Vendor_Name);
+         this.DistVendorName.push({ label: item.Vendor_Name, value: item.Vendor_Name });
+      }
+      if (DMaterialType.indexOf(item.Material_Type) === -1) {
+         DMaterialType.push(item.Material_Type);
+         this.DistMaterialType.push({ label: item.Material_Type, value: item.Material_Type });
+      }
+      if (DProductType.indexOf(item.Product_Type) === -1) {
+         DProductType.push(item.Product_Type);
+         this.DistProductType.push({ label: item.Product_Type, value: item.Product_Type });
+      }
+    });
+       this.BackupMisReport = [...this.misReportList];
+    }
+      
+    FilterDistReport() {
+      let DVendorName:any = [];
+      let DMaterialType:any = [];
+      let DProductType:any = [];
+      this.SearchFieldsMis =[];
+    if (this.SelectedDistVendorName.length) {
+      this.SearchFieldsMis.push('Vendor_Name');
+      DVendorName = this.SelectedDistVendorName;
+    }
+    if (this.SelectedDistMaterialType.length) {
+      this.SearchFieldsMis.push('Material_Type');
+      DMaterialType = this.SelectedDistMaterialType;
+    }
+    if (this.SelectedDistProductType.length) {
+      this.SearchFieldsMis.push('Product_Type');
+      DProductType = this.SelectedDistProductType;
+    }
+    this.misReportList = [];
+    if (this.SearchFieldsMis.length) {
+      let LeadArr = this.BackupMisReport.filter(function (e) {
+        return (DVendorName.length ? DVendorName.includes(e['Vendor_Name']) : true)
+        && (DMaterialType.length ? DMaterialType.includes(e['Material_Type']) : true)
+        && (DProductType.length ? DProductType.includes(e['Product_Type']) : true)
+      });
+    this.misReportList = LeadArr.length ? LeadArr : [];
+    } else {
+    this.misReportList = [...this.BackupMisReport] ;
+    }
+    }
   
 }
 
@@ -1895,5 +2055,11 @@ Term_Amount:any
 GST_Per:any
 GST_Amount:any
 HSN_No:any
+}
+class MIS {
+  Company_ID : any;
+  Report_Name : any;
+  From_Date : Date;
+  To_Date : Date;
 }
 
