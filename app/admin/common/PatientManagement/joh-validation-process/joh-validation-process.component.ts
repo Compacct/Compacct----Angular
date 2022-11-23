@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Console } from 'console';
 import { data } from 'jquery';
 import { updateLocale } from 'moment';
@@ -8,6 +8,8 @@ import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
+import { FileUpload } from "primeng/primeng";
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
   selector: 'app-joh-validation-process',
@@ -39,6 +41,18 @@ export class JohValidationProcessComponent implements OnInit {
   ObjPatient: PatientValidation = new PatientValidation();
   objSearch: Search =new Search();
   seachSpinner:boolean = false
+  DelRight:any='';
+  PDFFlag:boolean=false;
+  ProductPDFFile:any=[];
+  SpinnerUpload:boolean=false;
+  PDFViewFlag:boolean=false;
+  ProductPDFLink:any='';
+  ValidationNoUpload:any='';
+  DocUploadModal:boolean=false;
+
+
+
+  @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
   constructor(
     private header:CompacctHeader,
     private $http: HttpClient,
@@ -46,6 +60,7 @@ export class JohValidationProcessComponent implements OnInit {
     private compacctToast:MessageService,
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
+    private ngxService: NgxUiLoaderService,
     ) { }
 
   ngOnInit() {
@@ -60,8 +75,104 @@ export class JohValidationProcessComponent implements OnInit {
     this.UserType = this.$CompacctAPI.CompacctCookies.User_Type;
     this.Select();
     this.Date_Of_Birth = new Date()
-    
+    this.DelRight= this.$CompacctAPI.CompacctCookies.Del_Right;
   }
+  handleFileSelect(event:any) {
+    this.PDFFlag = false;
+    this.ProductPDFFile = {};
+    if (event) {
+      console.log(event)
+      this.ProductPDFFile = event.files[0];
+      this.PDFFlag = true;
+  }
+  }
+
+  uploadModel(col:any){
+    if(col.Validation_No){
+     this.PDFFlag = false;
+     this.ProductPDFFile = {};
+     this.SpinnerUpload = false;
+     this.PDFViewFlag = false;
+     this.ProductPDFLink = undefined;
+     this.ValidationNoUpload = undefined;   //this.JREIdUpload = undefined;
+     this.fileInput.clear();
+     this.ValidationNoUpload = col.Validation_No;   //this.JREIdUpload = col.Validation_No;
+     this.DocUploadModal = true;
+    }
+   }
+
+
+   SaveUploadDoc(){
+    if(this.ProductPDFFile['size']){
+        this.ngxService.start();
+        this.SpinnerUpload = true
+          this.SpinnerUpload =true
+          this.GlobalAPI.CommonFileUpload(this.ProductPDFFile)
+          .subscribe((data : any)=>
+          {
+            if(data.file_url){
+              this.saveDocFinal(data.file_url)
+            }
+            else {
+              this.compacctToast.clear();
+              this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Error",
+              detail: "Fail to upload"
+            });
+            }
+          })  
+        }
+      
+    }
+
+    saveDocFinal(fileUrl){
+      const tempSaveDataObj = {
+        Validation_No: this.ValidationNoUpload,      
+        File_Name_User_ID:	this.$CompacctAPI.CompacctCookies.User_ID,
+        File_Name: fileUrl
+      }
+      const obj = {
+        "SP_String": "sp_JOH_Validation_Processt",
+        "Report_Name_String": "Update_Document",
+        "Json_Param_String": JSON.stringify(tempSaveDataObj)
+      }
+      this.GlobalAPI.postData(obj).subscribe((data: any) => {
+        console.log("file save data",data);
+          if(data[0].message == "Update done"){
+           
+            this.PDFFlag = false;
+            this.ProductPDFFile = {};
+            this.getAlldata()
+            this.SpinnerUpload = false;
+            this.PDFViewFlag = false;
+            this.ProductPDFLink = undefined;
+            this.fileInput.clear();
+            this.ValidationNoUpload = undefined;
+            this.DocUploadModal = false;
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              detail: "File Succesfully Upload"
+            });
+            this.ngxService.stop();
+           }
+           else {
+            this.ngxService.stop();
+           this.SpinnerUpload =false 
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Error Occured "
+            });
+          }
+      })
+    }
+
 
   getDateRange(dateRangeObj:any){
     if(dateRangeObj.length){
