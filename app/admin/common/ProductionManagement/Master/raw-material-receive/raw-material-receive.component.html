@@ -313,7 +313,121 @@
                                 </div>
                             </form>
                         </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="MISreportForm" #MISreportForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <!-- <div class="col-sm-4">
+                                        <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" 
+                                        name="miscompany" 
+                                        #miscompany="ngModel" 
+                                        [(ngModel)]="ObjMIS.Company_ID"
+                                        [ngClass]="{'clearance': MISreportFormSubmit && miscompany?.errors?.required}"
+                                        required>
+                                        <option  [ngValue]="undefined">Select</option>
+                                           <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                              {{option.Company_Name}}
+                                            </option>
+                                      </select>
+                                    </div> -->
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRangeMIS($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetMISreport(MISreportForm.form.valid)" id="load4" [disabled]="MISSpinner">
+                                          <p-progressSpinner *ngIf="MISSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                          <span *ngIf="!MISSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                       </button>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <button class="btn btn-success pull-right" style="margin-top: 26px;" (click)="exportoexcel(BackupMisReport,'MIS_Report')" [disabled]="!misReportList.length">
+                                                 <span  class="glyphicon glyphicon-save"></span> Download Report
+                                              </button>
+                                    </div>
+                                </div>
+                                </form>
+                                <!-- <div class="form-group" *ngIf="BackupMisReport.length" style="padding:15px">
 
+                                    <fieldset class="col-md-12">
+
+                                        <div class="form-group" >
+                                            <div class="col-sm-3" *ngIf="ObjMIS.Report_Name != 'Pending Purchase Indent - Details'">
+                                                <label class="control-label">Vendor Name <span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistVendorName" [(ngModel)]="SelectedDistVendorName" itemSize="30" (onChange)='FilterDistReport()' #vender [styleClass]="'compacct-multiselect'" name="Vendor_Name"></p-multiSelect>
+                                            </div>
+                                            <div class="col-sm-3" *ngIf="ObjMIS.Report_Name != 'Pending PO - Not Delivered - Summary'">
+                                                <label class="control-label">Material Type <span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistMaterialType" [(ngModel)]="SelectedDistMaterialType" itemSize="30" (onChange)='FilterDistReport()' [styleClass]="'compacct-multiselect'" name="Material_Type"></p-multiSelect>
+                                            </div>
+                                            <div class="col-sm-3" *ngIf="ObjMIS.Report_Name != 'Pending PO - Not Delivered - Summary'">
+                                                <label class="control-label">Product Type <span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistProductType"  [(ngModel)]="SelectedDistProductType" itemSize="30" (onChange)='FilterDistReport()'[styleClass]="'compacct-multiselect'" name="Product_Type"></p-multiSelect>
+                                        </div>
+                                        </div>
+
+                                    </fieldset>
+                                </div> -->
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="misReportList" 
+                                    *ngIf='misReportList.length' #dt8
+                                     [paginator]="misReportList.length ? true : false"
+                                     [rows]="100"
+                                     [rowHover]="true" 
+                                     [autoLayout]="true" 
+                                     sortMode="multiple" 
+                                     [rowsPerPageOptions]="[100,200,300]" 
+                                     [rowHover]="true"
+                                     [columns]="cols"
+                                     [globalFilterFields]='DynamicHeaderMISreport'>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt8.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+        
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <!-- <th style="width:5em">Action</th> -->
+                                                <th nowrap="nowrap" *ngFor="let option of DynamicHeaderMISreport">{{option.replaceAll('_',' ')}}</th>
+                                               </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <!-- <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button"
+                                                            data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                           <li>
+                                                                <a (click)="PrintREQ(col.Indent_No)">
+                                                                    <i class="fa fa-print" aria-hidden="true"></i>
+                                                                    Print
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td> -->
+                                                <ng-container *ngFor="let option of DynamicHeaderMISreport">
+                                                    <td [class]="ObjMIS.Report_Name != 'Pending PO - Not Delivered - Summary' ? 'Othercolor' : option === 'PO_No' ? 'QtyColor' : 'Othercolor'" (click)="getPONoforview(option,col)">{{col[option]}}</td>
+                                                </ng-container>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" *ngIf="misReportList.length" let-state>
+                                            Showing {{ state.first + 1 }} of
+                                            {{ state.first + 1 + state.rows }} of
+                                            {{ state.totalRecords }}
+                                        </ng-template>
+                                    </p-table>
+                                </div> 
+                        </p-tabPanel>
                     </p-tabView>
                 </div>
             </div>
