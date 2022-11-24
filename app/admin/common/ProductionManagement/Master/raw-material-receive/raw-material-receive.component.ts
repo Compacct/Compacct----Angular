@@ -6,6 +6,7 @@ import { CompacctCommonApi } from './../../../../shared/compacct.services/common
 import { CompacctHeader } from './../../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from './../../../../shared/compacct.services/compacct.global.api.service';
 import { NgxUiLoaderService } from "ngx-ui-loader";
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-raw-material-receive',
   templateUrl: './raw-material-receive.component.html',
@@ -34,6 +35,21 @@ export class RawMaterialReceiveComponent implements OnInit {
   BrowseListHeader:any = []
   recdatedisabled:boolean = true;
   maxDate:Date;
+
+  ObjMIS : MIS = new MIS()
+  MISreportFormSubmit = false;
+  ReportNameList:any = [];
+  MISSpinner = false;
+  misReportList:any = [];
+  DynamicHeaderMISreport:any = [];
+  BackupMisReport:any = [];
+  DistVendorName:any = [];
+  SelectedDistVendorName:any = [];
+  DistMaterialType:any = [];
+  SelectedDistMaterialType:any = [];
+  DistProductType:any = [];
+  SelectedDistProductType:any = [];
+  SearchFieldsMis:any = [];
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -45,7 +61,7 @@ export class RawMaterialReceiveComponent implements OnInit {
     private ngxService: NgxUiLoaderService,
   ) { }
   ngOnInit() {
-   this.items = ["BROWSE", "CREATE"];
+   this.items = ["BROWSE", "CREATE", "MIS"];
       this.header.pushHeader({
     Header: "Raw Material Receive",
     Link: " Production Management -> Master -> Raw Material Receive"
@@ -57,7 +73,7 @@ export class RawMaterialReceiveComponent implements OnInit {
   }
 TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "MIS"];
     this.buttonname = "Create";
      this.clearData()
      this.recdatedisabled = true;
@@ -244,7 +260,7 @@ ConfirmSave(){
         detail: "Succesfully Create"
       });
       this.Spinner = false;
-      this.items = ["BROWSE", "CREATE"];
+      this.items = ["BROWSE", "CREATE", "MIS"];
       this.clearData();
       this.onReject()
       this.getAllData(true)
@@ -297,6 +313,116 @@ getAllData(valid:any){
     })
   }
 }
+
+//MIS
+getDateRangeMIS(dateRangeObj) {
+  if (dateRangeObj.length) {
+    this.ObjMIS.From_Date = dateRangeObj[0];
+    this.ObjMIS.To_Date = dateRangeObj[1];
+  }
+  }
+  GetMISreport(valid){
+    this.misReportList = [];
+    this.BackupMisReport = [];
+    this.DynamicHeaderMISreport = [];
+    this.MISreportFormSubmit = true;
+    this.MISSpinner = true;
+  const start = this.ObjMIS.From_Date
+  ? this.DateService.dateConvert(new Date(this.ObjMIS.From_Date))
+  : this.DateService.dateConvert(new Date());
+  const end = this.ObjMIS.To_Date
+  ? this.DateService.dateConvert(new Date(this.ObjMIS.To_Date))
+  : this.DateService.dateConvert(new Date());
+  const tempobj = {
+    From_Date : start,
+    To_Date : end,
+    // Company_ID : this.ObjMIS.Company_ID,
+  }
+  // console.log("valid",valid)
+  if (valid) {
+    const obj = {
+      "SP_String": "SP_BL_Txn_Production_Raw_Material_Receive",
+      "Report_Name_String": "BL_Txn_Production_Raw_Material_Receive_MIS",
+      "Json_Param_String": JSON.stringify([tempobj])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.misReportList = data;
+      this.BackupMisReport = data;
+      this.GetDistinctReport();
+      if(this.misReportList.length){
+        this.DynamicHeaderMISreport = Object.keys(data[0]);
+      }
+      this.MISSpinner = false
+      this.MISreportFormSubmit = false;
+    })
+    }
+    else {
+      this.MISSpinner = false;
+    }
+  }
+  exportoexcel(Arr,fileName): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+  }
+    // DISTINCT & FILTER
+  GetDistinctReport() {
+    let DVendorName:any = [];
+    let DMaterialType:any = [];
+    let DProductType:any = [];
+    this.DistVendorName =[];
+    this.SelectedDistVendorName =[];
+    this.DistMaterialType =[];
+    this.SelectedDistMaterialType =[];
+    this.DistProductType =[];
+    this.SelectedDistProductType =[];
+    this.SearchFieldsMis =[];
+    this.misReportList.forEach((item) => {
+    if (DVendorName.indexOf(item.Vendor_Name) === -1) {
+       DVendorName.push(item.Vendor_Name);
+       this.DistVendorName.push({ label: item.Vendor_Name, value: item.Vendor_Name });
+    }
+    if (DMaterialType.indexOf(item.Material_Type) === -1) {
+       DMaterialType.push(item.Material_Type);
+       this.DistMaterialType.push({ label: item.Material_Type, value: item.Material_Type });
+    }
+    if (DProductType.indexOf(item.Product_Type) === -1) {
+       DProductType.push(item.Product_Type);
+       this.DistProductType.push({ label: item.Product_Type, value: item.Product_Type });
+    }
+  });
+     this.BackupMisReport = [...this.misReportList];
+  }
+    
+  FilterDistReport() {
+    let DVendorName:any = [];
+    let DMaterialType:any = [];
+    let DProductType:any = [];
+    this.SearchFieldsMis =[];
+  if (this.SelectedDistVendorName.length) {
+    this.SearchFieldsMis.push('Vendor_Name');
+    DVendorName = this.SelectedDistVendorName;
+  }
+  if (this.SelectedDistMaterialType.length) {
+    this.SearchFieldsMis.push('Material_Type');
+    DMaterialType = this.SelectedDistMaterialType;
+  }
+  if (this.SelectedDistProductType.length) {
+    this.SearchFieldsMis.push('Product_Type');
+    DProductType = this.SelectedDistProductType;
+  }
+  this.misReportList = [];
+  if (this.SearchFieldsMis.length) {
+    let LeadArr = this.BackupMisReport.filter(function (e) {
+      return (DVendorName.length ? DVendorName.includes(e['Vendor_Name']) : true)
+      && (DMaterialType.length ? DMaterialType.includes(e['Material_Type']) : true)
+      && (DProductType.length ? DProductType.includes(e['Product_Type']) : true)
+    });
+  this.misReportList = LeadArr.length ? LeadArr : [];
+  } else {
+  this.misReportList = [...this.BackupMisReport] ;
+  }
+  }
 }
 class RawMatRev{
   Doc_No:any
@@ -317,5 +443,11 @@ class RawMatRev{
 }
 class Browse {
   From_Date : Date ;
+  To_Date : Date;
+}
+class MIS {
+  // Company_ID : any;
+  // Report_Name : any;
+  From_Date : Date;
   To_Date : Date;
 }
