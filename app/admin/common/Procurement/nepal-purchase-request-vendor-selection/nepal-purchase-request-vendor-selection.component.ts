@@ -9,7 +9,8 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
 import { NgxUiLoaderService } from "ngx-ui-loader";
 import { DateNepalConvertService } from "../../../shared/compacct.global/dateNepal.service"
 import { map } from 'rxjs/operators';
-import { ThrowStmt } from '@angular/compiler/src/output/output_ast';
+import { THIS_EXPR, ThrowStmt } from '@angular/compiler/src/output/output_ast';
+import { data } from 'jquery';
 @Component({
   selector: 'app-nepal-purchase-request-vendor-selection',
   templateUrl: './nepal-purchase-request-vendor-selection.component.html',
@@ -28,12 +29,24 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
   Searchedlist:any = []
   prList:any = []
   Venderlist:any = []
-  VenderSelect:any = undefined
+  VenderSelect: any = undefined
+  ToEmailSelect: any = undefined
+  CCEmailSelect :any = undefined
   SaveSpinner:boolean = false
   seachSpinner:boolean = false
   BrowseStartDate:any = {}
   BrowseEndDate:any = {}
-  SearchFormSubmit:boolean = false
+  SearchFormSubmit: boolean = false
+  toEmailList: any = []
+  CCEmailList: any = []
+  EmailCheck: boolean = false
+  NewEmailFormSubmitted: boolean = false
+  CreateEmailModal: boolean = false
+  ViewCompanyModal :boolean =false
+  CompantEmailName: any = undefined
+  CompanyEmailList: any = []
+  EmailId :any = undefined
+  
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -58,6 +71,7 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
    this.tabIndexToView = 0
    this.getPRno()
    this.GetVender()
+   this.getCompanyMail()
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -70,13 +84,14 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
   this.vendorSelectionFormSubmit = false
   this.PoDate = undefined
   this.prList = []
-  this.SaveSpinner = false
+    this.SaveSpinner = false
+    this.ToEmailSelect = undefined;
+    this.CCEmailSelect = undefined;
+    this.EmailCheck = false;
+    this.VenderSelect =undefined
   }
   onReject(){
     this.compacctToast.clear("c");
-   }
-   onConfirm(){
-
    }
    getPRno(){
     const obj = {
@@ -85,7 +100,7 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj)
     .subscribe((data: any) => {
-      console.log("data",data)
+      //console.log("data",data)
       if(data.length) {
         data.forEach(element => {
           element['label'] = element.Purchase_Request_No,
@@ -97,7 +112,7 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
         this.poRequestList = [];
   
       }
-      console.log("poRequestList",this.poRequestList)
+     // console.log("poRequestList",this.poRequestList)
     })
    }
    purchaseRequestChange(){
@@ -121,7 +136,7 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
         "Json_Param_String": JSON.stringify([{ Purchase_Request_No :this.objvendorSelection.Purchase_Request_No}])
        }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log("prList",data)
+      //console.log("prList",data)
       this.prList = data
       })
      }
@@ -161,7 +176,7 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
           ])
        }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        console.log("data Save",data)
+        //console.log("data Save",data)
         if(data[0].Column1 == "Done"){
           this.compacctToast.clear();
           this.compacctToast.add({
@@ -208,13 +223,13 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
         "Json_Param_String": JSON.stringify([tempobj])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        console.log("search Data",data)
+        //console.log("search Data",data)
         if(data.length){
          data.forEach((y:any) => {
           y.Date = this.DateNepalConvertService.convertEngToNepaliFormatDateObj(y.Date);
           });
          this.Searchedlist = data
-         console.log("Searchedlist",this.Searchedlist)
+        // console.log("Searchedlist",this.Searchedlist)
         }
         this.seachSpinner = false
       })
@@ -231,6 +246,143 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
     
   }
   }
+  getEmailId(col) {
+    this.toEmailList = []
+    this.CCEmailList = []
+    this.EmailCheck = false
+    this.ToEmailSelect = undefined
+    this.CCEmailSelect = undefined
+    this.CompantEmailName = undefined
+    if (col) {
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Request",
+        "Report_Name_String": "Get_Subledger_Email_ID",
+       "Json_Param_String": JSON.stringify([{Sub_Ledger_ID: col }])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+     // console.log("data",data)
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.email,
+          element['value'] = element.email
+        });
+        this.toEmailList = data;
+         this.CCEmailList = data
+      }
+       else {
+        this.toEmailList = [];
+         this.CCEmailList = []
+  
+      }
+     // console.log("toEmailList",this.toEmailList)
+    })    
+    }
+      
+  }
+  ClickCheck() {
+    if (this.EmailCheck === false) {
+      this.ToEmailSelect  = undefined;
+      this.CCEmailSelect = undefined;
+      this.CompantEmailName = undefined;
+    }
+  }
+  getCompanyMail() {
+  this.CompanyEmailList =[]
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Request",
+        "Report_Name_String": "Get_Company_Email",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      //console.log("dataEmail",data)
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Email_ID,
+          element['value'] = element.Email_ID
+        });
+        this.CompanyEmailList = data;
+      }
+       else {
+        this.CompanyEmailList = []; 
+      }
+    })    
+
+        
+  }
+  deleteEmailId(valid: any) {
+     this.EmailId = undefined
+    if (valid.Email_ID) {
+    this.EmailId = valid.Email_ID
+   this.compacctToast.clear();
+   this.compacctToast.add({
+     key: "c",
+     sticky: true,
+     severity: "warn",
+     summary: "Are you sure?",
+     detail: "Confirm to proceed"
+   });
+ }
+  }
+  onConfirm(){
+  if(this.EmailId){
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Request  ",
+      "Report_Name_String": "Delete_Company_Email",
+      "Json_Param_String": JSON.stringify([{Email_ID : this.EmailId}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if (data[0].Column1){
+        this.onReject();
+        this.getCompanyMail();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity:'success',
+          summary: "Email ID:- " + this.EmailId,
+          detail: "Succesfully Delete"
+        });
+      }
+    })
+  }
+}
+  ViewCompEmail() {
+      setTimeout(() => {
+        this.ViewCompanyModal = true;
+        }, 200);
+  }
+  CompCreatPopup() {
+  this.NewEmailFormSubmitted = false;
+  this.CompantEmailName = undefined;
+   this.CreateEmailModal =true 
+  }
+  CreateEmailType(valid){
+  this.NewEmailFormSubmitted = true;
+  if(valid){
+           const tempSave = {
+            Email_ID : this.CompantEmailName,
+          }
+           const obj = {
+             "SP_String": "sp_Bl_Txn_Purchase_Request",
+             "Report_Name_String" : "Create_Company_Email",
+             "Json_Param_String": JSON.stringify([tempSave])
+           }
+           this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+             if(data[0].Column1){
+              this.compacctToast.clear();
+              this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "success",
+               summary: "Email ID:- "+ this.CompantEmailName,
+               detail: "Succesfully Created" 
+              });
+             this.getCompanyMail();
+             this.NewEmailFormSubmitted = false;
+             this.CompantEmailName = undefined;
+             this.CreateEmailModal = false;        
+             }       
+           })        
+        }
+
+    }
 }
 class vendorSelection{
   Purchase_Request_No:any

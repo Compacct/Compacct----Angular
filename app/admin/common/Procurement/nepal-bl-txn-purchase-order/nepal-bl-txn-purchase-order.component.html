@@ -16,6 +16,23 @@
         </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" baseZIndex="99999" key="A" (onClose)="onReject()" [modal]="true" [autoZIndex]="true" baseZIndex="999999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm1()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 
 <div class="row">
     <div class="col-xs-12">
@@ -51,7 +68,7 @@
                                     </div>                              
                                         <div class="col-sm-2">
                                             <button class="btn btn-primary custombutton" type="button" (click)="BrowseSearch(POFormsBrowse.form.valid)" id="load">
-                                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Search
+                                                <span *ngIf="!Spinner" class="glyphicon glyphicon-search"></span> Search
                                             </button>
                                         </div>
                                 </div>
@@ -76,7 +93,7 @@
                                             <th style="width:5em">Action</th>
                                             <th>Doc No</th>
                                             <th>Doc Date</th>
-                                            <th>Godown</th>
+                                            <th>Billing To</th>
                                             <th>Sub Ledger Name</th>
                                             <th>Purchase Request No</th>
                                             <th>Grant Total</th>
@@ -119,7 +136,7 @@
                                             </td>
                                             <td>{{col.Doc_No ? col.Doc_No : '-'}}</td>
                                             <td>{{col.Doc_Date ? col.Doc_Date : '-'}}</td>
-                                            <td>{{col.Godown ? col.Godown : '-'}}</td>
+                                            <td>{{col.Billing_To ? col.Billing_To : '-'}}</td>
                                             <td>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
                                             <td>{{col.Purchase_Request_No ? col.Purchase_Request_No : '-'}}</td>
                                             <td>{{col.Grant_Total ? col.Grant_Total : '-'}}</td> 
@@ -133,7 +150,7 @@
                             leftIcon="glyphicon glyphicon-floppy-save">
                             <form name="POForms" #POForms="ngForm" novalidate>
                                 <div class="form-group">
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-2">
                                         <label class="control-label">Doc Date<sup class="text-danger">*</sup></label>
                                         <div class="input-group date">
                                             <div class="input-group-addon">
@@ -145,62 +162,92 @@
                                             required>                                      
                                         </div>          
                                     </div>
-                                    <div class="col-sm-6">
-                                        <label class="control-label">Godown<sup class="text-danger">*</sup></label>
-                                        <p-dropdown [options]="GodownList"
-                                            name="Godown"
-                                            #Godown="ngModel" 
-                                            [(ngModel)]="ObjPurchase.Godown"  
-                                            [showClear]="true" 
-                                            [emptyFilterMessage]="' No Godown Found'"
-                                            [filter]="true"
-                                            filterBy="label,value.name"
-                                            [resetFilterOnHide]="true"
-                                            [placeholder]="'Select Godown'" 
-                                            [virtualScroll]="true"
-                                            itemSize="30"
-                                            [ngClass]="{'clearance': PurchaseOrderForm && Godown?.errors?.required}" required>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Vendor<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="VendorList" name="Vendor" #Vendor="ngModel" [(ngModel)]="ObjPurchase.Sub_Ledger_ID"
+                                            [showClear]="true" [emptyFilterMessage]="' No Vendor Found'" [filter]="true" filterBy="label,value.name"
+                                            [resetFilterOnHide]="true" [placeholder]="'Select Vendor'" [virtualScroll]="true" itemSize="30"
+                                            (onChange)="getPRno()" [disabled]="buttonname == 'Update'"
+                                            [ngClass]="{'clearance': PurchaseOrderForm && Vendor?.errors?.required}" required>
                                         </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Caption<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="CaptionList" name="Caption" #Caption="ngModel" [(ngModel)]="ObjPurchase.Address_Caption" [showClear]="true"
+                                            [emptyFilterMessage]="' No Caption Found'" [filter]="true" filterBy="label,value.name"
+                                            [resetFilterOnHide]="true" [placeholder]="'Select Caption'" [virtualScroll]="true" itemSize="30"
+                                            (onChange)="getVaddress()"
+                                            [ngClass]="{'clearance': PurchaseOrderForm && Caption?.errors?.required}" required>
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Vendor Address</label>
+                                        <textarea class="form-control" 
+                                        name="V_Address" #V_Address="ngModel" 
+                                        [(ngModel)]="ObjPurchase.Subledger_Address" disabled >
+                                        </textarea>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                        <div class="col-sm-6">
-                                            <label class="control-label">Vendor<sup class="text-danger">*</sup></label>
-                                            <p-dropdown [options]="VendorList" 
-                                                name="Vendor"
-                                                #Vendor="ngModel" 
-                                                [(ngModel)]="ObjPurchase.Sub_Ledger_ID"
-                                                [showClear]="true" 
-                                                [emptyFilterMessage]="' No Vendor Found'" 
-                                                [filter]="true"
-                                                filterBy="label,value.name" 
-                                                [resetFilterOnHide]="true" 
-                                                [placeholder]="'Select Vendor'"
-                                                [virtualScroll]="true" itemSize="30"
-                                                (onChange)="getPRno()"
-                                                [disabled]="buttonname == 'Update'"
-                                                [ngClass]="{'clearance': PurchaseOrderForm && Vendor?.errors?.required}" required>
-                                            </p-dropdown>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <label class="control-label">Purchase Request No<sup class="text-danger">*</sup></label>
-                                            <p-dropdown [options]="POnoList" 
-                                                name="Purchase_Request_No"
-                                                #Purchase_Request_No="ngModel" 
-                                                [(ngModel)]="ObjPurchase.Purchase_Request_No"
-                                                [showClear]="true"
-                                                 *ngIf="buttonname == 'Save'" 
-                                                [emptyFilterMessage]="'No Purchase Request No Found'"
-                                                [filter]="true"
-                                                filterBy="label,value.name" 
-                                                [resetFilterOnHide]="true" 
-                                                [placeholder]="'Select Purchase Request No'"
-                                                [virtualScroll]="true" itemSize="30"
-                                                (onChange)="getPRoduct()"
-                                                [ngClass]="{'clearance': PurchaseOrderForm && Purchase_Request_No?.errors?.required}" required>
-                                            </p-dropdown>
-                                            <div class="label-t" *ngIf="buttonname == 'Update'">{{UpdatePono.Purchase_Request_No ? UpdatePono.Purchase_Request_No : "-"  }}</div>
-                                        </div>
+                                <div class="col-sm-6">
+                                    <label class="control-label">Billing To<sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="BillingTolist" name="Billing" #Billing="ngModel" [(ngModel)]="ObjPurchase.Godown1" [showClear]="true"
+                                        [emptyFilterMessage]="' No Billing To Found'" [filter]="true" filterBy="label,value.name"
+                                        [resetFilterOnHide]="true" [placeholder]="'Select Billing To'" [virtualScroll]="true" itemSize="30" (onChange)="Alladdress()"
+                                        [ngClass]="{'clearance': PurchaseOrderForm && Billing?.errors?.required}" required>
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="control-label">Shipping To<sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="ShippingTolist" name="Shipping" #Shipping="ngModel" [(ngModel)]="ObjPurchase.Godown2" [showClear]="true"
+                                        [emptyFilterMessage]="' No Shipping To Found'" [filter]="true" filterBy="label,value.name"
+                                        [resetFilterOnHide]="true" [placeholder]="'Select Shipping To'" [virtualScroll]="true" itemSize="30"(onChange)="Alladdress()"
+                                        [ngClass]="{'clearance': PurchaseOrderForm && Shipping?.errors?.required}" required>
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="control-label">Billing To Address</label>
+                                    <textarea class="form-control" 
+                                    name="B_Address" #B_Address="ngModel"
+                                     [(ngModel)]="ObjPurchase.Billing_Address"disabled>
+                                    </textarea>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="control-label">Shipping To Address</label>
+                                    <textarea class="form-control"
+                                     name="S_Address" #S_Address="ngModel"
+                                      [(ngModel)]="ObjPurchase.Shipping_Address"disabled >
+                                    </textarea>
+                                </div>                              
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="CompanyList" name="Company" #Company="ngModel" [(ngModel)]="ObjPurchase.Company_Name"
+                                            [showClear]="true" [emptyFilterMessage]="' No Company Found'" [filter]="true" filterBy="label,value.name"
+                                            [resetFilterOnHide]="true" [placeholder]="'Select Company'" [virtualScroll]="true" itemSize="30"
+                                            [ngClass]="{'clearance': PurchaseOrderForm && Company?.errors?.required}" required>
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Purchase Request No<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="POnoList" 
+                                            name="Purchase_Request_No"
+                                            #Purchase_Request_No="ngModel" 
+                                            [(ngModel)]="ObjPurchase.Purchase_Request_No"
+                                            [showClear]="true"
+                                                *ngIf="buttonname == 'Save'" 
+                                            [emptyFilterMessage]="'No Purchase Request No Found'"
+                                            [filter]="true"
+                                            filterBy="label,value.name" 
+                                            [resetFilterOnHide]="true" 
+                                            [placeholder]="'Select Purchase Request No'"
+                                            [virtualScroll]="true" itemSize="30"
+                                            (onChange)="getPRoduct()"
+                                            [ngClass]="{'clearance': PurchaseOrderForm && Purchase_Request_No?.errors?.required}" required>
+                                        </p-dropdown>
+                                        <div class="label-t" *ngIf="buttonname == 'Update'">{{UpdatePono.Purchase_Request_No ? UpdatePono.Purchase_Request_No : "-"  }}</div>
+                                    </div>
                                 </div>
                                 <br>
                                 <div class="table-responsive">
@@ -279,14 +326,53 @@
                                     [style]="{'height':'200px'}"
                                     [readonly]="editorDis">
                                     </p-editor>
+                                </div>                              
+                            </form><br>
+                            <div class="container">
+                                <div class="col-sm-2" *ngIf="ObjPurchase.Sub_Ledger_ID">
+                                    <label class="control-label">Send To Email ?</label>
+                                    <div class="checkBox">
+                                        <p-checkbox name="Email" [(ngModel)]="EmailCheck" (onChange)="ClickCheck()" binary="true"></p-checkbox>
+                                    </div>
                                 </div>
-                                <div class="box-footer">
-                                    <button class="btn btn-primary pull-right" type="button"
-                                        (click)="SavePo(POForms.form.valid)" id="load">
-                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
-                                    </button>
+                                <div class="col-sm-3" *ngIf="ObjPurchase.Sub_Ledger_ID && EmailCheck === true">
+                                    <label class="control-label">To Email<sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="toEmailList" [showClear]="true" name="ToEmail" #ToEmail="ngModel"
+                                        [(ngModel)]="ToEmailSelect" [emptyFilterMessage]="' No Email Found'" [filter]="true"
+                                        filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Email'" 
+                                        [virtualScroll]="true"
+                                        (onChange)="toEmailChange()"
+                                        itemSize="30" [styleClass]="'textAlign'">
+                                    </p-dropdown>
                                 </div>
-                            </form>
+                                <div class="col-sm-3" *ngIf="ObjPurchase.Sub_Ledger_ID  && EmailCheck === true && ToEmailSelect">
+                                    <label class="control-label">CC Email</label>
+                                    <p-multiSelect [options]="CCEmailList" name="CCEmail" #CCEmail="ngModel" [(ngModel)]="CCEmailSelect"
+                                        [virtualScroll]="true" itemSize="30" [defaultLabel]="'Choose CC Email'"
+                                        [emptyFilterMessage]="' No CC Email Found'" [styleClass]="'compacct-multiselect'">
+                                    </p-multiSelect>
+                                </div>
+                                <div class="col-sm-4" *ngIf="ObjPurchase.Sub_Ledger_ID  && EmailCheck === true && ToEmailSelect">
+                                    <label class="control-label">Company CC Email</label>
+                                    <div class="pull-right">
+                                        <button (click)="ViewCompEmail()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i>
+                                            View</button>
+                                        &nbsp;
+                                        <button (click)="CompCreatPopup()" class="btn btn-primary  createPatient"><i
+                                                class="fa fa-fw  fa-plus"></i>Create</button>
+                                    </div>
+                                    <p-multiSelect [options]="CompanyEmailList" name="SCCEmail" #SCCEmail="ngModel" [(ngModel)]="CompantEmailName"
+                                        [virtualScroll]="true" itemSize="30" [defaultLabel]="'Choose Company CC Email'"
+                                        [emptyFilterMessage]="' No Company CC Email Found'" [styleClass]="'compacct-multiselect'">
+                                    </p-multiSelect>
+                                </div>
+                            </div>
+                            
+                            <div class="box-footer">
+                                <button class="btn btn-primary pull-right" type="button" (click)="SavePo(POForms.form.valid)" id="load">
+                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                </button>
+                            </div>
                         </p-tabPanel>
 
                     </p-tabView>
@@ -333,6 +419,61 @@
         </button>
         <button type="button" (click)="ViewPoTypeModal= false" class="btn btn-info">
             Cancel
+        </button>
+    </p-footer>
+</p-dialog>
+
+
+<!-- VIEWS -->
+<p-dialog [header]="'View Company CC Email'" [appendTo]="'body'" [visible]="ViewCompanyModal" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="CompanyEmailList" [rowHover]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 65px;">SL No.</th>
+                    <th>Email ID </th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                    <td>{{i+1}}</td>
+                    <td>{{col.Email_ID}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteEmailId(col)"><i
+                                class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewCompanyModal = false" class="btn btn-info">
+            Cancel
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!-- CREATE -->
+<p-dialog [header]="'Create Company CC Email'" [appendTo]="'body'" [visible]="CreateEmailModal" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="EmailTypeForm" #EmailTypeForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Company Email<sup class="text-danger">*</sup></label>
+                    <input type="text" class="form-control" name="MT" #MT="ngModel" [(ngModel)]="CompantEmailName"
+                        placeholder="Type Company Email"
+                        [ngClass]="{clearance: NewEmailFormSubmitted && MT?.errors?.required}" required />
+                </div>
+            </div>
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="CreateEmailModal = false" class="btn btn-info">Cancel</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton"
+            (click)="CreateEmailType(EmailTypeForm.form.valid)">
+            <span class="glyphicon glyphicon-save"></span>&nbsp;Create
         </button>
     </p-footer>
 </p-dialog>
