@@ -386,6 +386,7 @@ import { JohValidationProcessComponent } from "./common/PatientManagement/joh-va
 import { ReturnMaterialComponent } from './common/MICL/return-material/return-material.component';
 import { K4cPremixInventoryComponent } from './common/MaterialManagement/Production/k4c-premix-inventory/k4c-premix-inventory.component';
 import { K4cPremixStockTransferComponent } from './common/MaterialManagement/Production/k4c-premix-stock-transfer/k4c-premix-stock-transfer.component';
+import { NepalBLTxnPurchaseOrderApproveComponent } from './common/Procurement/nepal-bl-txn-purchase-order-approve/nepal-bl-txn-purchase-order-approve.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -688,7 +689,8 @@ import { K4cPremixStockTransferComponent } from './common/MaterialManagement/Pro
     JohValidationProcessComponent,
     ReturnMaterialComponent,
     K4cPremixInventoryComponent,
-    K4cPremixStockTransferComponent
+    K4cPremixStockTransferComponent,
+    NepalBLTxnPurchaseOrderApproveComponent
   ],
   imports: [
     CommonModule,

@@ -291,6 +291,7 @@ import { JohValidationProcessComponent } from "./common/PatientManagement/joh-va
 import { ReturnMaterialComponent } from './common/MICL/return-material/return-material.component';
 import { K4cPremixInventoryComponent } from './common/MaterialManagement/Production/k4c-premix-inventory/k4c-premix-inventory.component';
 import { K4cPremixStockTransferComponent } from './common/MaterialManagement/Production/k4c-premix-stock-transfer/k4c-premix-stock-transfer.component';
+import { NepalBLTxnPurchaseOrderApproveComponent } from "./common/Procurement/nepal-bl-txn-purchase-order-approve/nepal-bl-txn-purchase-order-approve.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2181,6 +2182,13 @@ path: 'MICL_Cost_Center_Master',
     component: K4cPremixStockTransferComponent,
     data: {
       title: 'Premix Stock Transfer'
+}
+    },
+{
+  path: 'Nepal_BL_Txn_Purchase_Order_Approve',
+    component: NepalBLTxnPurchaseOrderApproveComponent,
+    data: {
+      title: 'Nepal BL Txn Purchase Order Approve'
 }
 },
     
