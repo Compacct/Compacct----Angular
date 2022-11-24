@@ -1,5 +1,5 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
-<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true" baseZIndex="999999">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
             <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
@@ -17,6 +17,7 @@
         </div>
     </ng-template>
 </p-toast>
+
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -138,7 +139,7 @@
                             <form name="vendorSelectionForm" #vendorSelectionForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-md-6">
-                                        <label class="control-label">Purchase Request No<sup class="text-danger"></sup></label>
+                                        <label class="control-label">Purchase Request No<sup class="text-danger">*</sup></label>
                                         <p-dropdown [options]="poRequestList" 
                                         name="Purchase_Request_No" 
                                         [(ngModel)]="objvendorSelection.Purchase_Request_No" 
@@ -195,7 +196,7 @@
                                         [virtualScroll]="true"
                                         itemSize="30" #Vender="ngModel" 
                                         [styleClass]="'textAlign'"
-                                        >
+                                        (ngModelChange)="getEmailId(VenderSelect)">
                                     </p-dropdown>
                                         </div>
                                     </div>
@@ -216,9 +217,58 @@
                                                 </tr>
                                         </ng-template>
                                                         
-                                </p-table>
-                      
-                            </div>
+                                </p-table>                    
+                            </div><br>
+                            <div class="container">
+                                <div class="col-sm-2" *ngIf="VenderSelect && objvendorSelection.Purchase_Request_No" >
+                                    <label class="control-label">Send To Email ?</label>
+                                    <div class="checkBox">
+                                        <p-checkbox name="Email" [(ngModel)]="EmailCheck" (onChange)="ClickCheck()" binary="true"></p-checkbox>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3"  *ngIf="EmailCheck === true && VenderSelect  ">
+                                    <label class="control-label">To Email<sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="toEmailList" 
+                                            [showClear]="true"
+                                            name="ToEmail" 
+                                            #ToEmail="ngModel" 
+                                            [(ngModel)]="ToEmailSelect"  
+                                            [emptyFilterMessage]="' No Email Found'" 
+                                            [filter]="true"
+                                            filterBy="label,value.name" 
+                                            [resetFilterOnHide]="true" 
+                                            [placeholder]="'Select Email'" 
+                                            [virtualScroll]="true"
+                                            itemSize="30" 
+                                            [styleClass]="'textAlign'">
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-sm-3"  *ngIf="VenderSelect && EmailCheck === true && ToEmailSelect" >
+                                    <label class="control-label">CC Email</label>
+                                    <p-multiSelect [options]="CCEmailList"
+                                            name="CCEmail" 
+                                            #CCEmail="ngModel" 
+                                            [(ngModel)]="CCEmailSelect"  
+                                            [virtualScroll]="true" 
+                                            itemSize="30"                                           
+                                            [defaultLabel]="'Choose CC Email'"
+                                            [emptyFilterMessage]="' No CC Email Found'" 
+                                            [styleClass]="'compacct-multiselect'" >  
+                                    </p-multiSelect>
+                                </div>
+                                <div class="col-sm-4" *ngIf="VenderSelect && EmailCheck === true && ToEmailSelect">
+                                    <label class="control-label">Company CC Email</label>
+                                    <div class="pull-right">
+                                        <button (click)="ViewCompEmail()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button>
+                                        &nbsp;
+                                        <button (click)="CompCreatPopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i>Create</button>
+                                    </div>
+                                    <p-multiSelect [options]="CompanyEmailList" name="CCEmail" #CCEmail="ngModel" [(ngModel)]="CompantEmailName"
+                                        [virtualScroll]="true" itemSize="30" [defaultLabel]="'Choose Company CC Email'"
+                                        [emptyFilterMessage]="' No Company CC Email Found'" [styleClass]="'compacct-multiselect'">
+                                    </p-multiSelect>
+                                </div>                           
+                            </div><br>
                             <div class="box-footer">
                                 <button class="btn btn-primary pull-right" 
                                                 (click)="SavevendorSeletction()" 
@@ -243,3 +293,57 @@
         </div>
     </div>
 </div>
+
+
+<!-- VIEWS -->
+<p-dialog [header]="'View Company CC Email'" [appendTo]="'body'" [visible]="ViewCompanyModal" [closeOnEscape]="true" [closable]="false"
+    [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="CompanyEmailList" [rowHover]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 65px;">SL No.</th>
+                    <th>Email ID </th>
+                    <th style="width: 26%; text-align: center;">Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                    <td>{{i+1}}</td>
+                    <td>{{col.Email_ID}}</td>
+                    <td style="text-align: center;"><button class="btn btn-sm btn-danger" (click)="deleteEmailId(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewCompanyModal = false" class="btn btn-info">
+            Cancel
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!-- CREATE -->
+<p-dialog [header]="'Create Company CC Email'" [appendTo]="'body'" [visible]="CreateEmailModal" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="EmailTypeForm" #EmailTypeForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Company Email<sup class="text-danger">*</sup></label>
+                    <input type="text" class="form-control" name="MT" #MT="ngModel" [(ngModel)]="CompantEmailName"
+                        placeholder="Type Company Email" 
+                        [ngClass]="{clearance: NewEmailFormSubmitted && MT?.errors?.required}" required />
+                </div>
+            </div>
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="CreateEmailModal = false" class="btn btn-info">Cancel</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton"
+            (click)="CreateEmailType(EmailTypeForm.form.valid)" >
+            <span class="glyphicon glyphicon-save"></span>&nbsp;Create
+        </button>
+    </p-footer>
+</p-dialog>
