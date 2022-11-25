@@ -389,6 +389,7 @@ import { K4cPremixStockTransferComponent } from './common/MaterialManagement/Pro
 import { NepalBLTxnPurchaseOrderApproveComponent } from './common/Procurement/nepal-bl-txn-purchase-order-approve/nepal-bl-txn-purchase-order-approve.component';
 import { DoctorAppointmentComponent } from './common/PatientManagement/doctor-appointment/doctor-appointment.component';
 import { MiclPurchaseBillComponent } from './common/MICL/micl-purchase-bill/micl-purchase-bill.component';
+import { DoctorsAppointmentNewABRComponent } from './common/PatientManagement/doctors-appointment-new-abr/doctors-appointment-new-abr.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -694,7 +695,8 @@ import { MiclPurchaseBillComponent } from './common/MICL/micl-purchase-bill/micl
     K4cPremixStockTransferComponent,
     NepalBLTxnPurchaseOrderApproveComponent,
     DoctorAppointmentComponent,
-    MiclPurchaseBillComponent
+    MiclPurchaseBillComponent,
+    DoctorsAppointmentNewABRComponent
   ],
   imports: [
     CommonModule,

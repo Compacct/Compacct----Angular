@@ -192,7 +192,6 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
     this.items = [ 'BROWSE', 'CREATE', 'MIS'];
     this.buttonname = "Create"; 
     this.clearData();
- 
   }
  
   clearData(){
@@ -241,12 +240,13 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
     this.grNetTerm = 0
     this.getAllTotal()
     // this.initDate = [new Date(),new Date()];
+    this.Material_Type = undefined;
     this.productList = [];
     this.RequistionPendingFormSubmit =false;
     this.productDetalisView = false;
     this.productDetalisViewList = [];
     this.addPurchaseListInputField = {}
-    this.editorDis = true
+    this.editorDis = true;
     setTimeout(() => {
       this.editorDis = false
     }, 500);
@@ -475,7 +475,6 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
     //   this.ObjaddWorkOrder = new addWorkOrder()
     //   this.ObjaddWorkOrder.Product_Type_ID = tempObj.Product_Type_ID
     // }
-
     this.ProductList = [];
     this.ObjaddWorkOrder.Product_Spec = undefined;
     if (this.Material_Type) {
@@ -947,7 +946,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
   this.projectDisable = true
       this.ObjaddWorkOrder = new addWorkOrder();
       // this.Requisiton_Type = undefined;
-      // this.Material_Type = undefined;
+      this.Material_Type = undefined;
       this.totalAmtBackUp = undefined;
       this.totalbackUp = undefined; 
       this.totalRate = undefined;
