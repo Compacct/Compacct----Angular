@@ -208,7 +208,7 @@ DisapprovedPo(data: any) {
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
-          severity: "Error",
+          severity: "success",
           summary: " PO No " + this.DocNo ,
           detail: "Succesfully Disapprove "
         });

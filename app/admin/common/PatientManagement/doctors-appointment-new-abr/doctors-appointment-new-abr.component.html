@@ -1,0 +1,495 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" header="Appointment"
+                            leftIcon="glyphicon glyphicon-user">
+                            <form name="DoctorsAppointmentNewABR" #DoctorsAppointmentNewABRForm="ngForm" novalidate>
+                               
+                                  <div class="row">   
+                                    <div class="col-sm-3">
+                                        <label class="control-label"> Name</label>
+                                        <input class="form-control"
+                                        name="Name"
+                                        #Name="ngModel" 
+                                        [(ngModel)]="ObjABR.Name"
+                                        placeholder="Write Your Name"
+                                        disabled
+                                        > 
+                                    </div>
+                                    <div class="col-sm-3">
+                                            <label class="control-label"> Patient ID</label>
+                                            <input class="form-control"
+                                            name="PatientID"
+                                            #PatientID="ngModel"
+                                            [(ngModel)]="ObjABR.PatientID" 
+                                            placeholder="Type Patient ID"
+                                            disabled
+                                            > 
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label"> Sex</label>
+                                        <select class="form-control"
+                                        name="Sex"
+                                        #Sex="ngModel"
+                                        [(ngModel)]="ObjABR.Sex"
+                                        disabled
+                                         >
+                                         <option  [ngValue]="undefined">Select</option>
+                                         <option  *ngFor="let option of GenderList" value="{{option}}">
+                                             {{option}}
+                                         </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label"> Reffered By</label>
+                                        <input class="form-control"
+                                        name="RefferedBy"
+                                        #RefferedBy="ngModel"
+                                        [(ngModel)]="ObjABR.RefferedBy" 
+                                        placeholder="Type Reffered By"
+                                        disabled
+                                        > 
+                                    </div>
+                                  </div>
+                                  <div class="row"> 
+                                    <div class="col-sm-3">
+                                        <label class="control-label"> Age</label>
+                                        <input class="form-control"
+                                        name="Age"
+                                        #Age="ngModel"
+                                        [(ngModel)]="ObjABR.Age" 
+                                        CompacctDigitonly="true"
+                                        placeholder="Put Your Age"
+                                        disabled
+                                        > 
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date<sup class="text-danger"></sup></label>
+                                            <div class="label-t">{{Appo_Date ? (Appo_Date | date: "dd/MMM/yyyy") : '-'}}</div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label"> Filter</label>
+                                        <input class="form-control"
+                                        name="Filter"
+                                        #Filter="ngModel"
+                                        [(ngModel)]="ObjABR.Filter" 
+                                        placeholder="Type Filter"
+                                        > 
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label"> Repetition Rate</label>
+                                        <input class="form-control"
+                                        name="RepetitionRate"
+                                        #RepetitionRate="ngModel"
+                                        [(ngModel)]="ObjABR.RepetitionRate" 
+                                        placeholder="Type Repetition Rate"
+                                        > 
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-sm-3">
+                                        <label class="control-label"> Centre<sup class="text-danger"></sup></label>                                 
+                                        <p-dropdown [options]="CentreList"
+                                                name="Centre" 
+                                                #Centre="ngModel" 
+                                                [(ngModel)]="ObjABR.Centre"
+                                                [showClear]="true" 
+                                                [emptyFilterMessage]="' No Centre Found'" 
+                                                [filter]="true" filterBy="label,value.name" 
+                                                [resetFilterOnHide]="true" 
+                                                [placeholder]="'Select Centre'" 
+                                                [virtualScroll]="true"
+                                                itemSize="30"
+                                                [required]="true"
+                                                disabled> 
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label"> Stimulus</label>
+                                        <select class="form-control"
+                                        name="Stimulus"
+                                        #Stimulus="ngModel"
+                                        [(ngModel)]="ObjABR.Stimulus"
+                                         >
+                                         <option  [ngValue]="undefined">Select Stimulus</option>
+                                         <option  *ngFor="let option of StimulusList" value="{{option}}">
+                                             {{option}}
+                                         </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                    </div>
+                                    <div class="col-sm-3">
+                                    </div>
+                                  </div>
+                                  <hr class="box boxboxDivide-primary">
+
+
+                                    <div class="form-group">
+                                        <div class="col-sm-6">
+                                            <label class="control-label pull-left">Upload Graph For Left Ear<sup class="text-danger">*</sup></label>
+                                            <label class="control-label small  pull-right">( Left Ear )</label>
+                                            <br>
+                                            <div class="imgset">
+                                                <br>
+                                                <img id="img-B1" style="width:80px;height:45px;">
+                                                <br>
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <span class="btn btn-default btn-file">
+                                                        Browse… <input type="file">
+                                                    </span>
+                                                </span>
+                                                <input type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label class="control-label  pull-left">Upload Graph For Right Ear<sup class="text-danger">*</sup></label>
+                                            <label class="control-label small pull-right">( Right Ear )</label>
+                                            <br>
+                                            <div class="imgset">
+                                                <br>
+                                                <img id="img-B2" style="width:80px;height:45px;">
+                                                <br>
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <span class="btn btn-default btn-file">
+                                                        Browse… <input type="file">
+                                                    </span>
+                                                </span>
+                                                <input type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="box boxboxDivide-primary">
+
+                                    
+                                    <div class="row">
+                                        <table style="width:100%">
+                                           <thead class="table-header"> 
+                                            <tr>
+                                              <th rowspan="2">Stimulus Intensity<br>(dBnHL)</th>
+                                              <th colspan="3">LEFT EAR (PEAK V)</th>
+                                              <th colspan="3">RIGHT EAR (PEAK V)</th>
+                                            </tr>
+                                            <tr>
+                                              <th>Latencies (msec)</th>
+                                              <th>Amplitude (μV)</th>
+                                              <th>Remarks</th>
+                                              <th>Latencies (msec)</th>
+                                              <th>Amplitude (μV)</th>
+                                              <th>Remarks</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>  
+                                            <tr>
+                                                <td><input type="text" 
+                                                    name="StiInt1"
+                                                    #StiInt1="ngModel" 
+                                                    [(ngModel)]="ObjABR.StiInt1"
+                                                    placeholder="Write Here...">
+                                                </td>
+                                                <td><input type="text" 
+                                                    name="LLaten1"
+                                                    #LLaten1="ngModel" 
+                                                    [(ngModel)]="ObjABR.LLaten1"
+                                                    placeholder="Write Here...">
+                                                </td>
+                                                <td><input type="text" 
+                                                    name="LAmp1"
+                                                    #LAmp1="ngModel" 
+                                                    [(ngModel)]="ObjABR.LAmp1"
+                                                    placeholder="Write Here...">
+                                                </td>
+                                                <td>
+                                                    <select class="form-control"
+                                                    name="LRemarks1"
+                                                    #LRemarks1="ngModel"
+                                                    [(ngModel)]="ObjABR.LRemarks1"
+                                                     >
+                                                     <option  [ngValue]="undefined">Select</option>
+                                                     <option  *ngFor="let option of RemarksList" value="{{option}}">
+                                                         {{option}}
+                                                     </option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="text" 
+                                                    name="RLaten1"
+                                                    #RLaten1="ngModel" 
+                                                    [(ngModel)]="ObjABR.RLaten1"
+                                                    placeholder="Write Here...">
+                                                </td>
+                                                <td><input type="text" 
+                                                    name="RAmp1"
+                                                    #RAmp1="ngModel" 
+                                                    [(ngModel)]="ObjABR.RAmp1"
+                                                    placeholder="Write Here...">
+                                                </td>
+                                                <td>
+                                                    <select class="form-control"
+                                                    name="RRemarks1"
+                                                    #RRemarks1="ngModel"
+                                                    [(ngModel)]="ObjABR.RRemarks1"
+                                                     >
+                                                     <option  [ngValue]="undefined">Select</option>
+                                                     <option  *ngFor="let option of RemarksList" value="{{option}}">
+                                                         {{option}}
+                                                     </option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><input type="text" 
+                                                    name="StiInt2"
+                                                    #StiInt2="ngModel" 
+                                                    [(ngModel)]="ObjABR.StiInt2"
+                                                    placeholder="Write Here...">
+                                                </td>
+                                                <td><input type="text" 
+                                                    name="LLaten2"
+                                                    #LLaten2="ngModel" 
+                                                    [(ngModel)]="ObjABR.LLaten2"
+                                                    placeholder="Write Here...">
+                                                </td>
+                                                <td><input type="text" 
+                                                    name="LAmp2"
+                                                    #LAmp2="ngModel" 
+                                                    [(ngModel)]="ObjABR.LAmp2"
+                                                    placeholder="Write Here...">
+                                                </td>
+                                                <td>
+                                                    <select class="form-control"
+                                                    name="LRemarks2"
+                                                    #LRemarks2="ngModel"
+                                                    [(ngModel)]="ObjABR.LRemarks2"
+                                                     >
+                                                     <option  [ngValue]="undefined">Select</option>
+                                                     <option  *ngFor="let option of RemarksList" value="{{option}}">
+                                                         {{option}}
+                                                     </option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="text" 
+                                                    name="RLaten2"
+                                                    #RLaten2="ngModel" 
+                                                    [(ngModel)]="ObjABR.RLaten2"
+                                                    placeholder="Write Here...">
+                                                </td>
+                                                <td><input type="text" 
+                                                    name="RAmp2"
+                                                    #RAmp2="ngModel" 
+                                                    [(ngModel)]="ObjABR.RAmp2"
+                                                    placeholder="Write Here...">
+                                                </td>
+                                                <td>
+                                                    <select class="form-control"
+                                                    name="RRemarks2"
+                                                    #RRemarks2="ngModel"
+                                                    [(ngModel)]="ObjABR.RRemarks2"
+                                                     >
+                                                     <option  [ngValue]="undefined">Select</option>
+                                                     <option  *ngFor="let option of RemarksList" value="{{option}}">
+                                                         {{option}}
+                                                     </option>
+                                                    </select>
+                                                </td>
+                                              </tr>
+                                              <tr>
+                                                <td><input type="text" 
+                                                    name="StiInt3"
+                                                    #StiInt3="ngModel" 
+                                                    [(ngModel)]="ObjABR.StiInt3"
+                                                    placeholder="Write Here...">
+                                                </td>
+                                                <td><input type="text" 
+                                                    name="LLaten3"
+                                                    #LLaten3="ngModel" 
+                                                    [(ngModel)]="ObjABR.LLaten3"
+                                                    placeholder="Write Here...">
+                                                </td>
+                                                <td><input type="text" 
+                                                    name="LAmp3"
+                                                    #LAmp3="ngModel" 
+                                                    [(ngModel)]="ObjABR.LAmp3"
+                                                    placeholder="Write Here...">
+                                                </td>
+                                                <td>
+                                                    <select class="form-control"
+                                                    name="LRemarks3"
+                                                    #LRemarks3="ngModel"
+                                                    [(ngModel)]="ObjABR.LRemarks3"
+                                                     >
+                                                     <option  [ngValue]="undefined">Select</option>
+                                                     <option  *ngFor="let option of RemarksList" value="{{option}}">
+                                                         {{option}}
+                                                     </option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="text" 
+                                                    name="RLaten3"
+                                                    #RLaten3="ngModel" 
+                                                    [(ngModel)]="ObjABR.RLaten3"
+                                                    placeholder="Write Here...">
+                                                </td>
+                                                <td><input type="text" 
+                                                    name="RAmp3"
+                                                    #RAmp3="ngModel" 
+                                                    [(ngModel)]="ObjABR.RAmp3"
+                                                    placeholder="Write Here...">
+                                                </td>
+                                                <td>
+                                                    <select class="form-control"
+                                                    name="RRemarks3"
+                                                    #RRemarks3="ngModel"
+                                                    [(ngModel)]="ObjABR.RRemarks3"
+                                                     >
+                                                     <option  [ngValue]="undefined">Select</option>
+                                                     <option  *ngFor="let option of RemarksList" value="{{option}}">
+                                                         {{option}}
+                                                     </option>
+                                                    </select>
+                                                </td>
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                    </div>
+                                    <hr class="box boxboxDivide-primary">
+
+
+                                    <div class="row">
+                                        <table style="width:100%">
+                                            <tr>
+                                                <th colspan="2" class="table-header">INTERPRETATION</th>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 100px;">Right Ear</th>
+                                                <td><input type="text" 
+                                                    style="width: 100%;" 
+                                                    name="REar"
+                                                    #REar="ngModel" 
+                                                    [(ngModel)]="ObjABR.REar"
+                                                    placeholder="Write Here..."></td>
+                                            </tr>
+                                            <tr>
+                                                <th  style="width: 100px;">Left Ear</th>
+                                                <td><input type="text" 
+                                                    style="width: 100%;" 
+                                                    name="LEar"
+                                                    #LEar="ngModel" 
+                                                    [(ngModel)]="ObjABR.LEar"
+                                                    placeholder="Write Here..."></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                    <div class="row">
+                                        <br>
+                                        <table style="width:100%">
+                                            <tr>
+                                                <th style="width: 100px;">COMMENT</th>
+                                                <td><input type="text" 
+                                                    style="width: 100%; height: 35px;"
+                                                    name="Comment"
+                                                    #Comment="ngModel" 
+                                                    [(ngModel)]="ObjABR.Comment"
+                                                    placeholder="Write Here..."></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <hr class="box boxboxDivide-primary">
+
+
+                                    <div class="row"> 
+                                            <label class="control-label">RECOMMENDATION:</label>
+                                            <br>
+                                            <p-checkbox label="Consult Back to Doctor"
+                                            binary="true">
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox label="Aural Hygiene" 
+                                            binary="true">
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox label="OAE" 
+                                            binary="true">
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox label="ASSR" 
+                                            binary="true">
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox label="Counselling" 
+                                            binary="true">
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox label="Hearing Aid Trial " 
+                                            binary="true">
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox label="Cochlear Implant" 
+                                            binary="true">
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox label="Speech & Language Assessment"
+                                            binary="true">
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox label="Speech Therapy" 
+                                            binary="true">
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox label="Psychological Evaluation" 
+                                            binary="true">
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox label="Follow Up" 
+                                            binary="true">
+                                            </p-checkbox>
+                                    </div>
+
+                                    <div class="row">
+                                        <label class="control-label pull-right">Audiologist</label>
+                                    </div>
+
+                                    <div class="row">
+                                      <div class="col-sm-4">
+                                        <label class="control-label">Status<sup class="text-danger">*</sup></label>
+                                        <select class="form-control"
+                                        name="Status"
+                                        #Status="ngModel"
+                                        [(ngModel)]="ObjABR.Status"
+                                         >
+                                         <option  [ngValue]="undefined">Select</option>
+                                         <option  *ngFor="let option of StatusList" value="{{option}}">
+                                             {{option}}
+                                         </option>
+                                        </select>
+                                      </div>
+                                    </div>
+
+                                    <div class="form-group" style="padding: 1em;">
+                                        <div class="col-sm-4"></div>
+                                        <div class="col-sm-4"></div>
+                                        <div class="col-sm-2"></div>
+                                        <div class="col-sm-2">
+                                        <button class="btn btn-primary pull-right"  id="load"   [disabled]="">
+                                             <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                         <span *ngIf="!Spinner" class="glyphicon glyphicon-save">Save</span>
+                                        </button>
+                                        </div> 
+                                     
+                                    </div> 
+                                
+                            </form>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
