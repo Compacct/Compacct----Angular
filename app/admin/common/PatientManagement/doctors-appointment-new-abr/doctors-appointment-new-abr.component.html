@@ -1,3 +1,22 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+           <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -128,45 +147,37 @@
                                   <hr class="box boxboxDivide-primary">
 
 
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                         <div class="col-sm-6">
                                             <label class="control-label pull-left">Upload Graph For Left Ear<sup class="text-danger">*</sup></label>
                                             <label class="control-label small  pull-right">( Left Ear )</label>
                                             <br>
-                                            <div class="imgset">
-                                                <br>
-                                                <img id="img-B1" style="width:80px;height:45px;">
-                                                <br>
-                                            </div>
-                                            <div class="input-group">
-                                                <span class="input-group-btn">
-                                                    <span class="btn btn-default btn-file">
-                                                        Browse… <input type="file">
-                                                    </span>
-                                                </span>
-                                                <input type="text" class="form-control">
-                                            </div>
+                                            <br>
+                                             <p-fileUpload #fileInput 
+                                                            name="fileInput" 
+                                                            accept=".pdf, .png, .jpg, .jpeg" 
+                                                            [chooseLabel]="'Browse'" 
+                                                            [showUploadButton]="false" 
+                                                            [customUpload]="true" 
+                                                            (onSelect)="handleFileSelect1($event)">
+                                            </p-fileUpload>
                                         </div>
                                         <div class="col-sm-6">
                                             <label class="control-label  pull-left">Upload Graph For Right Ear<sup class="text-danger">*</sup></label>
                                             <label class="control-label small pull-right">( Right Ear )</label>
                                             <br>
-                                            <div class="imgset">
-                                                <br>
-                                                <img id="img-B2" style="width:80px;height:45px;">
-                                                <br>
-                                            </div>
-                                            <div class="input-group">
-                                                <span class="input-group-btn">
-                                                    <span class="btn btn-default btn-file">
-                                                        Browse… <input type="file">
-                                                    </span>
-                                                </span>
-                                                <input type="text" class="form-control">
-                                            </div>
+                                            <br>
+                                             <p-fileUpload #fileInput 
+                                                            name="fileInput" 
+                                                            accept=".pdf, .png, .jpg, .jpeg" 
+                                                            [chooseLabel]="'Browse'" 
+                                                            [showUploadButton]="false" 
+                                                            [customUpload]="true" 
+                                                            (onSelect)="handleFileSelect2($event)">
+                                            </p-fileUpload>
                                         </div>
                                     </div>
-                                    <hr class="box boxboxDivide-primary">
+                                    <hr class="box boxboxDivide-primary"> -->
 
                                     
                                     <div class="row">
@@ -189,18 +200,21 @@
                                           <tbody>  
                                             <tr>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     name="StiInt1"
                                                     #StiInt1="ngModel" 
                                                     [(ngModel)]="ObjABR.StiInt1"
                                                     placeholder="Write Here...">
                                                 </td>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     name="LLaten1"
                                                     #LLaten1="ngModel" 
                                                     [(ngModel)]="ObjABR.LLaten1"
                                                     placeholder="Write Here...">
                                                 </td>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     name="LAmp1"
                                                     #LAmp1="ngModel" 
                                                     [(ngModel)]="ObjABR.LAmp1"
@@ -219,12 +233,14 @@
                                                     </select>
                                                 </td>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     name="RLaten1"
                                                     #RLaten1="ngModel" 
                                                     [(ngModel)]="ObjABR.RLaten1"
                                                     placeholder="Write Here...">
                                                 </td>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     name="RAmp1"
                                                     #RAmp1="ngModel" 
                                                     [(ngModel)]="ObjABR.RAmp1"
@@ -245,18 +261,21 @@
                                             </tr>
                                             <tr>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     name="StiInt2"
                                                     #StiInt2="ngModel" 
                                                     [(ngModel)]="ObjABR.StiInt2"
                                                     placeholder="Write Here...">
                                                 </td>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     name="LLaten2"
                                                     #LLaten2="ngModel" 
                                                     [(ngModel)]="ObjABR.LLaten2"
                                                     placeholder="Write Here...">
                                                 </td>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     name="LAmp2"
                                                     #LAmp2="ngModel" 
                                                     [(ngModel)]="ObjABR.LAmp2"
@@ -275,12 +294,14 @@
                                                     </select>
                                                 </td>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     name="RLaten2"
                                                     #RLaten2="ngModel" 
                                                     [(ngModel)]="ObjABR.RLaten2"
                                                     placeholder="Write Here...">
                                                 </td>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     name="RAmp2"
                                                     #RAmp2="ngModel" 
                                                     [(ngModel)]="ObjABR.RAmp2"
@@ -301,18 +322,21 @@
                                               </tr>
                                               <tr>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     name="StiInt3"
                                                     #StiInt3="ngModel" 
                                                     [(ngModel)]="ObjABR.StiInt3"
                                                     placeholder="Write Here...">
                                                 </td>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     name="LLaten3"
                                                     #LLaten3="ngModel" 
                                                     [(ngModel)]="ObjABR.LLaten3"
                                                     placeholder="Write Here...">
                                                 </td>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     name="LAmp3"
                                                     #LAmp3="ngModel" 
                                                     [(ngModel)]="ObjABR.LAmp3"
@@ -331,12 +355,14 @@
                                                     </select>
                                                 </td>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     name="RLaten3"
                                                     #RLaten3="ngModel" 
                                                     [(ngModel)]="ObjABR.RLaten3"
                                                     placeholder="Write Here...">
                                                 </td>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     name="RAmp3"
                                                     #RAmp3="ngModel" 
                                                     [(ngModel)]="ObjABR.RAmp3"
@@ -369,6 +395,7 @@
                                             <tr>
                                                 <th style="width: 100px;">Right Ear</th>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     style="width: 100%;" 
                                                     name="REar"
                                                     #REar="ngModel" 
@@ -378,6 +405,7 @@
                                             <tr>
                                                 <th  style="width: 100px;">Left Ear</th>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     style="width: 100%;" 
                                                     name="LEar"
                                                     #LEar="ngModel" 
@@ -393,6 +421,7 @@
                                             <tr>
                                                 <th style="width: 100px;">COMMENT</th>
                                                 <td><input type="text" 
+                                                    class="form-control"
                                                     style="width: 100%; height: 35px;"
                                                     name="Comment"
                                                     #Comment="ngModel" 
@@ -407,48 +436,82 @@
                                     <div class="row"> 
                                             <label class="control-label">RECOMMENDATION:</label>
                                             <br>
-                                            <p-checkbox label="Consult Back to Doctor"
-                                            binary="true">
+                                            <p-checkbox 
+                                            label="Consult Back to Doctor"
+                                            value="Consult Back to Doctor"
+                                            name="RECOMMENDATION"
+                                            [(ngModel)]="checkBoxArray"
+                                            inputId="RECO">
                                             </p-checkbox>
                                             <br>
                                             <p-checkbox label="Aural Hygiene" 
-                                            binary="true">
+                                            value="Aural Hygiene"
+                                            name="RECOMMENDATION"
+                                             [(ngModel)]="checkBoxArray"
+                                            inputId="Aural">
                                             </p-checkbox>
                                             <br>
                                             <p-checkbox label="OAE" 
-                                            binary="true">
+                                            value="OAE"
+                                            name="RECOMMENDATION"
+                                             [(ngModel)]="checkBoxArray"
+                                            inputId="OAE">
                                             </p-checkbox>
                                             <br>
                                             <p-checkbox label="ASSR" 
-                                            binary="true">
+                                            value="ASSR"
+                                            name="RECOMMENDATION"
+                                             [(ngModel)]="checkBoxArray"
+                                            inputId="ASSR">
                                             </p-checkbox>
                                             <br>
                                             <p-checkbox label="Counselling" 
-                                            binary="true">
+                                            value="Counselling"
+                                            name="RECOMMENDATION"
+                                             [(ngModel)]="checkBoxArray"
+                                             inputId="Coun">
                                             </p-checkbox>
                                             <br>
-                                            <p-checkbox label="Hearing Aid Trial " 
-                                            binary="true">
+                                            <p-checkbox label="Hearing Aid Trial" 
+                                            value="Hearing Aid Trial"
+                                            name="RECOMMENDATION"
+                                             [(ngModel)]="checkBoxArray"
+                                             inputId="Hearing">
                                             </p-checkbox>
                                             <br>
                                             <p-checkbox label="Cochlear Implant" 
-                                            binary="true">
+                                            value="Cochlear Implant"
+                                            name="RECOMMENDATION"
+                                             [(ngModel)]="checkBoxArray"
+                                             inputId="Cochlear">
                                             </p-checkbox>
                                             <br>
                                             <p-checkbox label="Speech & Language Assessment"
-                                            binary="true">
+                                            value="Speech & Language Assessment"
+                                            name="RECOMMENDATION"
+                                             [(ngModel)]="checkBoxArray"
+                                             inputId="Speech">
                                             </p-checkbox>
                                             <br>
                                             <p-checkbox label="Speech Therapy" 
-                                            binary="true">
+                                            value="Speech Therapy"
+                                            name="RECOMMENDATION"
+                                             [(ngModel)]="checkBoxArray"
+                                             inputId="Speech">
                                             </p-checkbox>
                                             <br>
                                             <p-checkbox label="Psychological Evaluation" 
-                                            binary="true">
+                                            value="Psychological Evaluation"
+                                            name="RECOMMENDATION"
+                                             [(ngModel)]="checkBoxArray"
+                                             inputId="Psychological">
                                             </p-checkbox>
                                             <br>
                                             <p-checkbox label="Follow Up" 
-                                            binary="true">
+                                            value="Follow Up"
+                                            name="RECOMMENDATION"
+                                             [(ngModel)]="checkBoxArray"
+                                             inputId="Follow">
                                             </p-checkbox>
                                     </div>
 
@@ -458,7 +521,7 @@
 
                                     <div class="row">
                                       <div class="col-sm-4">
-                                        <label class="control-label">Status<sup class="text-danger">*</sup></label>
+                                        <label class="control-label">Status</label>
                                         <select class="form-control"
                                         name="Status"
                                         #Status="ngModel"
@@ -477,9 +540,9 @@
                                         <div class="col-sm-4"></div>
                                         <div class="col-sm-2"></div>
                                         <div class="col-sm-2">
-                                        <button class="btn btn-primary pull-right"  id="load"   [disabled]="">
+                                        <button class="btn btn-primary pull-right" (click)="saveDocAppo(DoctorsAppointmentNewABRForm.form.valid)"  id="load"   [disabled]="">
                                              <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                         <span *ngIf="!Spinner" class="glyphicon glyphicon-save">Save</span>
+                                         <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
                                         </button>
                                         </div> 
                                      
