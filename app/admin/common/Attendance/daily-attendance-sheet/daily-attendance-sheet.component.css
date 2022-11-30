@@ -78,3 +78,10 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav {
     color: #ffff;
     text-align: center;
   }
+  
+  .PWO,
+  .PPH {
+    background-color:#42ca6d !important;
+    color: #ffff;
+    text-align: center;
+  }

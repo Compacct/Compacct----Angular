@@ -34,6 +34,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
   Atten_Type: any;
   employeename: any;
   checkbuttonname: any;
+  AttendanceTypeList:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -53,9 +54,6 @@ export class DailyAttendanceSheetComponent implements OnInit {
     });
     this.getAttendanceType();
     // this.GetEmpData();
-  }
-  onReject() {
-    this.compacctToast.clear("c");
   }
   getAttendanceType(){
     const obj = {
@@ -110,6 +108,65 @@ export class DailyAttendanceSheetComponent implements OnInit {
       })
      })
   }
+  getAttenTypedropdown(atnid){
+    const obj = {
+      "SP_String": "SP_HR_Attn_Sheet_Day_Wise",
+      "Report_Name_String": "Get_Attn_Data_Type"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      var attntypelist = data;
+      //  console.log("AttendanceTypeList ===",this.AttendanceTypeList);
+      if (atnid == "WO") {
+        var atdata = attntypelist.filter(function(value){
+          return value.Atten_Type_ID != 2 && 
+                 value.Atten_Type_ID != 3 && 
+                 value.Atten_Type_ID != 4 && 
+                 value.Atten_Type_ID != 5 && 
+                 value.Atten_Type_ID != 6 && 
+                 value.Atten_Type_ID != 8 && 
+                 value.Atten_Type_ID != 9 && 
+                 value.Atten_Type_ID != 10 &&
+                 value.Atten_Type_ID != 11 &&
+                 value.Atten_Type_ID != 12 && 
+                 value.Atten_Type_ID != 13 && 
+                 value.Atten_Type_ID != 15 
+                //  Number(value.Atten_Type_ID) == 1 && 
+                //  Number(value.Atten_Type_ID) == 7 && 
+                //  Number(value.Atten_Type_ID) == 11 && 
+                //  Number(value.Atten_Type_ID) == 14 && 
+                //  Number(value.Atten_Type_ID) == 15 ;
+        });
+        this.AttendanceTypeList = atdata;
+      }
+      else if (atnid == "PH") {
+        var atdata = attntypelist.filter(function(value){
+          return value.Atten_Type_ID != 2 && 
+                 value.Atten_Type_ID != 3 && 
+                 value.Atten_Type_ID != 4 && 
+                 value.Atten_Type_ID != 5 && 
+                 value.Atten_Type_ID != 6 && 
+                 value.Atten_Type_ID != 7 &&
+                 value.Atten_Type_ID != 8 && 
+                 value.Atten_Type_ID != 9 && 
+                 value.Atten_Type_ID != 10 &&
+                 value.Atten_Type_ID != 12 && 
+                 value.Atten_Type_ID != 13 && 
+                 value.Atten_Type_ID != 14
+        });
+        this.AttendanceTypeList = atdata;
+      }
+      else if (atnid == "PWO" || atnid == "PPH") {
+        this.AttendanceTypeList = attntypelist;
+      }
+      else {
+        var atdata = attntypelist.filter(function(value){
+          return value.Atten_Type_ID != 14 &&
+                 value.Atten_Type_ID != 15;
+        });
+        this.AttendanceTypeList = atdata;
+      }
+    })
+  }
   ShowAttendancePopup(obj){
     this.empid = undefined;
     this.employeename = undefined;
@@ -119,12 +176,70 @@ export class DailyAttendanceSheetComponent implements OnInit {
       this.employeename = obj.Emp_Name;
       var attnid = this.AttenTypelist.filter(ele=> ele.Sht_Desc === obj.Atten_Type_ID)
       this.Atten_Type = attnid[0].Atten_Type_ID;
+      this.getAttenTypedropdown(obj.Atten_Type_ID);
       this.AttendancePopup = true;
     }
   }
-  SaveAttendanceType(valid){
+  // CheckIsLeave () {
+  //   const attndata = this.AttenTypelist.filter(item=> Number(item.Atten_Type_ID) === Number(this.Atten_Type));
+  //     if(attndata.length) {
+  //       if(attndata[0].Is_Leave === true) {
+  //         return true;
+  //       } else {
+  //         this.compacctToast.clear();
+  //         this.compacctToast.add({
+  //           key: "compacct-toast",
+  //           severity: "error",
+  //           summary: "Warn Message",
+  //           detail: "Quantity can't be more than in batch available quantity "
+  //         });
+  //         return false;
+  //       }
+  //     } else {
+  //       return true;
+  //     }
+  //   }
+  CheckApproveStatus(valid){
     this.attendancetypeFormSubmitted = true;
-    if (valid){
+    var attndata = this.AttenTypelist.filter(item=> Number(item.Atten_Type_ID) === Number(this.Atten_Type))
+    var isleave = attndata[0].Is_Leave;
+    const objattn = {
+      Emp_ID : this.empid,
+      Atten_Type_ID : this.Atten_Type,
+      Date : this.DateService.dateConvert(new Date(this.Daily_Atten_Date))
+    }
+    if(valid){
+    if(isleave === true) {
+      const obj = {
+        "SP_String": "SP_Leave_Application",
+        "Report_Name_String" : "Check_Approve_Status",
+       "Json_Param_String": JSON.stringify([objattn])
+
+      }
+      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+        //console.log(data);
+        if(data[0].Column1 === "OK"){
+         this.SaveAttendanceType();
+        } else{
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "c",
+            sticky: true,
+            severity: "warn",
+            summary: data[0].Column1,
+            detail: ""
+          });
+        }
+      })
+    }
+    else {
+      this.SaveAttendanceType();
+    }
+    }
+  }
+  SaveAttendanceType(){
+    // this.attendancetypeFormSubmitted = true;
+    // if (valid){
        this.EmpDailyAttenList.forEach((el:any)=>{
          if(Number(el.Emp_ID )== Number(this.empid)){
           var attenshtdes = this.AttenTypelist.filter( ele => Number(ele.Atten_Type_ID) === Number(this.Atten_Type));
@@ -133,7 +248,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
        })
       //  this.attendancestatusFormSubmitted = false;
        this.AttendancePopup = false;
-    }
+    // }
   }
   CalculateTime(obj){
     // console.log("obj.Off_Out_Time",new Date(obj.Off_Out_Time))
@@ -283,5 +398,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
   }
 
 onConfirm(){}
-
+onReject(){
+  this.compacctToast.clear("c");
+}
 }

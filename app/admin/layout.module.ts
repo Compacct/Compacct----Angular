@@ -390,6 +390,7 @@ import { NepalBLTxnPurchaseOrderApproveComponent } from './common/Procurement/ne
 import { DoctorAppointmentComponent } from './common/PatientManagement/doctor-appointment/doctor-appointment.component';
 import { MiclPurchaseBillComponent } from './common/MICL/micl-purchase-bill/micl-purchase-bill.component';
 import { DoctorsAppointmentNewABRComponent } from './common/PatientManagement/doctors-appointment-new-abr/doctors-appointment-new-abr.component';
+import { K4CBillDateUpdateComponent } from "./common/OutletManagement/k4-c-bill-date-update/k4-c-bill-date-update.component";
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -696,7 +697,8 @@ import { DoctorsAppointmentNewABRComponent } from './common/PatientManagement/do
     NepalBLTxnPurchaseOrderApproveComponent,
     DoctorAppointmentComponent,
     MiclPurchaseBillComponent,
-    DoctorsAppointmentNewABRComponent
+    DoctorsAppointmentNewABRComponent,
+    K4CBillDateUpdateComponent
   ],
   imports: [
     CommonModule,

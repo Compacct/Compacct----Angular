@@ -1,0 +1,72 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+           <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" header="Bill Date Update"
+                        leftIcon="glyphicon glyphicon-list-alt">
+
+                            <form name="K4CBillDateUpdate" #K4CBillDateUpdateForm="ngForm" novalidate>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Bill Date:<sup class="text-danger">*</sup></label>
+                                                    <ejs-datepicker 
+                                                    [format]="'dd/MMM/yyyy'"
+                                                    name="Bill_Date"
+                                                    #Bill_Date="ngModel"
+                                                    [(ngModel)]="ObjBill.Bill_Date"
+                                                    [ngClass]="{'clearance': BillDateSubmitted && Bill_Date?.errors?.required}"  
+                                                    required
+                                                    ></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Bill No:<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                    name="Bill_NO"
+                                                    #Bill_NO="ngModel"
+                                                    [(ngModel)]="ObjBill.Bill_NO"
+                                                    placeholder="Type Bill Number"
+                                                    [ngClass]="{clearance: BillDateSubmitted && Bill_NO?.errors?.required }"
+                                                    required
+                                                    > 
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row" *ngIf="UserType == 'A' && DelRight == 'Y'">
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-primary pull-left"   id="load" (click)="UpdateBill(K4CBillDateUpdateForm.form.valid)"  [disabled]="Spinner">
+                                            <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save">Update</span>
+                                    </button>
+                                    </div>
+                                </div>                    
+                            </form>
+
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

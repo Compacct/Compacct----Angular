@@ -56,7 +56,8 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
   seachSpinner = false;
   userType = "";
   docno : any;
-  minFromDate = new Date();
+  minFromDate:Date = new Date();
+  maxDate:Date = new Date();
   hrYeatList:any = [];
   HR_Year_ID: any;
   RMrewBrowseList:any = [];
@@ -134,6 +135,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
     this.objRMissue = new RMissue();
     this.objRMissueadd = new RMissueadd();
     this.RM_Issue_Date = new Date();
+    this.maxDate = new Date();
     this.objRMissue.F_Cost_Cen_ID = 36;
     this.ObjBrowseData.Cost_Cen_ID = 4;
     this.objRMissue.To_Cost_Cen_ID = 4;
@@ -424,10 +426,21 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.BatchNoList = data;
      this.ObjproductAdd.Batch_No = this.BatchNoList.length ? this.BatchNoList[0].Batch_No : undefined;
+     this.GetLotNoteDesc();
      //console.log('Batch No ==', data)
     //  this.RMissueFormSubmit = false;
     });
   // }
+  }
+  GetLotNoteDesc(){
+    this.ObjproductAdd.Note_Description = undefined;
+  if(this.ObjproductAdd.Batch_No) {
+    const ctrl = this;
+    const lotObj = $.grep(ctrl.BatchNoList,function(item) {return item.Batch_No == ctrl.ObjproductAdd.Batch_No})[0];
+    console.log(lotObj);
+    //this.ObjproductAdd.ID = productObj.ID;
+    this.ObjproductAdd.Note_Description = lotObj.Note_Description;
+  }
   }
   AddProductDetails(valid){
   //console.log('add ===', valid)
@@ -447,7 +460,8 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
     Batch_No : this.ObjproductAdd.Batch_No,
     Batch_Qty : batch[0].Batch_Qty,
     Qty :  this.ObjproductAdd.Qty,
-    UOM : this.ObjproductAdd.UOM
+    UOM : this.ObjproductAdd.UOM,
+    Note_Description : this.ObjproductAdd.Note_Description
     //Return_Reason : RR.Return_Reason
   };
   // this.AddProDetails.push(productObj);
@@ -678,6 +692,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
               Qty: el.Qty,
               Accepted_Qty: el.Delivery_Qty,
               UOM: el.UOM,
+              Note_Description: el.Note_Description,
               // Req_No: this.SelectedIndent,
               Created_By: this.$CompacctAPI.CompacctCookies.User_ID
             }
@@ -892,6 +907,7 @@ class productAdd {
   UOM :  any;
   Product_ID : any;
   Product_Description : string;
+  Note_Description : any;
  }
 class BrowseData {
   From_Date: string;

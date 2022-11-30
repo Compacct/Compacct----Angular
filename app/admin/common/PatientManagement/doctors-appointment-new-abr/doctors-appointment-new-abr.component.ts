@@ -26,6 +26,9 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
   Spinner:boolean=false;
   AppoIDvalue:any;
   patientSearchList:any=[];
+  checkBoxArray:any=[];
+  ProductPDFFile:any=[];
+  buttonname:string = "Create"
 
   ObjABR: ABR = new ABR();
   constructor(
@@ -58,10 +61,12 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
     this.StatusList=['Test Done but H.A. not required','Test Done H.A. required but Trial Not Taken','Test Done H.A. required and Wiling to Buy'];
     this.GetCostCentre();
     this.GetAllDataAppoID();
+    
   }
 
   TabClick(e) {
     this.tabIndexToView = e.index;
+    this.buttonname = "Create"
   }
 
   GetCostCentre(){
@@ -112,6 +117,148 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
       }
     });
   }
+
+  // handleFileSelect1(event:any) {
+  //   this.ProductPDFFile = {};
+  //   if (event) {
+  //     console.log(event)
+  //     this.ProductPDFFile = event.files[0];
+  // }
+  // }
+
+  // handleFileSelect2(event:any) {
+  //   this.ProductPDFFile = {};
+  //   if (event) {
+  //     console.log(event)
+  //     this.ProductPDFFile = event.files[0];
+  // }
+  // }
+
+  saveDocAppo(valid:any){
+    console.log('checkBox1 value',this.checkBoxArray);
+    let tempSaveJ1:any = []
+    if(this.checkBoxArray.length){
+      this.checkBoxArray.forEach((ele:any) => {
+        tempSaveJ1.push({
+          Recommend : ele
+        })
+      });
+    }
+    console.log("tempSaveJ1",tempSaveJ1);
+    const TempObj ={
+      Foot_Fall_ID: this.ObjABR.PatientID,
+      Appo_ID: this.AppoIDvalue,
+      Txn_Date: this.Appo_Date,
+      Cost_Center_ID: this.ObjABR.Centre,
+      Filter: this.ObjABR.Filter,
+      Stimulus: this.ObjABR.Stimulus,
+      Repetition_Rate: this.ObjABR.RepetitionRate,
+      Pic_Left_Ear_Graph: '',
+      Pic_Right_Ear_Graph: '',
+      Stimulus_Intensity_1: this.ObjABR.StiInt1,
+      Stimulus_Intensity_2: this.ObjABR.StiInt2,
+      Stimulus_Intensity_3: this.ObjABR.StiInt3,
+      Left_EAR_Laten_1: this.ObjABR.LLaten1,
+      Left_EAR_Laten_2: this.ObjABR.LLaten2,
+      Left_EAR_Laten_3: this.ObjABR.LLaten3,
+      Left_Ampl_1: this.ObjABR.LAmp1,
+      Left_Ampl_2: this.ObjABR.LAmp2,
+      Left_Ampl_3: this.ObjABR.LAmp3,
+      Left_Remarks_1: this.ObjABR.LRemarks1,
+      Left_Remarks_2: this.ObjABR.LRemarks2,
+      Left_Remarks_3: this.ObjABR.LRemarks3,
+      Right_EAR_Laten_1: this.ObjABR.RLaten1,
+      Right_EAR_Laten_2: this.ObjABR.RLaten2,
+      Right_EAR_Laten_3: this.ObjABR.RLaten3,
+      Right_Ampl_1: this.ObjABR.RAmp1,
+      Right_Ampl_2: this.ObjABR.RAmp2,
+      Right_Ampl_3: this.ObjABR.RAmp3,
+      Right_Remarks_1: this.ObjABR.RRemarks1,
+      Right_Remarks_2: this.ObjABR.RRemarks2,
+      Right_Remarks_3: this.ObjABR.RRemarks3,
+      Right_Ear_Interpretation: this.ObjABR.REar,
+      Left_Ear_Interpretation: this.ObjABR.LEar,
+      Comment: this.ObjABR.Comment,
+      Status: this.ObjABR.Status,
+      Posted_By: this.$CompacctAPI.CompacctCookies.User_ID,
+      Posted_On: this.DateService.dateConvert(new Date()),
+      Recommendation: ''
+    }
+    console.log("TempObj",TempObj);
+    this.Spinner=true;
+    if(valid){
+
+    const obj = {
+      "SP_String": "SP_BL_Txn_Doctor_Appo_ABR",
+      "Report_Name_String": "Create_BL_Txn_Doctor_Appo_ABR",
+      "Json_Param_String": JSON.stringify(TempObj),
+      "Json_1_String": JSON.stringify(tempSaveJ1)
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+      console.log("save data",data);
+      if (data[0].Column1){
+        this.Spinner=false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Appointment Create",
+          detail: "Succesfully "
+        });
+        this.ClearData();
+      }
+      else {
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message ",
+          detail:"Error occured "
+        });
+      }
+    });
+    
+   }
+  }
+
+  onConfirm(){
+  }
+  onReject(){
+    this.compacctToast.clear("c");
+  }
+
+  ClearData(){
+     this.ObjABR.Filter=undefined;
+     this.ObjABR.RepetitionRate=undefined;
+     this.ObjABR.Stimulus=undefined;
+     this.ObjABR.LRemarks1=undefined;
+     this.ObjABR.LRemarks2=undefined;
+     this.ObjABR.LRemarks3=undefined;
+     this.ObjABR.RRemarks1=undefined;
+     this.ObjABR.RRemarks2=undefined;
+     this.ObjABR.RRemarks3=undefined;
+     this.ObjABR.Status=undefined;
+     this.ObjABR.StiInt1=undefined;
+     this.ObjABR.StiInt2=undefined;
+     this.ObjABR.StiInt3=undefined;
+     this.ObjABR.LLaten1=undefined;
+     this.ObjABR.LLaten2=undefined;
+     this.ObjABR.LLaten3=undefined;
+     this.ObjABR.LAmp1=undefined;
+     this.ObjABR.LAmp2=undefined;
+     this.ObjABR.LAmp3=undefined;
+     this.ObjABR.RLaten1=undefined;
+     this.ObjABR.RLaten2=undefined;
+     this.ObjABR.RLaten3=undefined;
+     this.ObjABR.RAmp1=undefined;
+     this.ObjABR.RAmp2=undefined;
+     this.ObjABR.RAmp3=undefined;
+     this.ObjABR.REar=undefined;
+     this.ObjABR.LEar=undefined;
+     this.ObjABR.Comment=undefined;
+     this.checkBoxArray=[]
+  }
 }
 
 class ABR{
@@ -129,7 +276,7 @@ class ABR{
   LRemarks3:any;
   RRemarks1:any;
   RRemarks2:any;
-  RRemarks13:any;
+  RRemarks3:any;
   RECOMMENDATION:any;
   Status:any;
   StiInt1:any;
@@ -151,3 +298,4 @@ class ABR{
   LEar:any;
   Comment:any;
 }
+

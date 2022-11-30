@@ -316,7 +316,8 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let col of JournalListAdd let i = index">
-                                            <td nowrap="nowrap">{{i + 1}}</td>
+                                            <!-- <td nowrap="nowrap">{{i + 1}}</td> -->
+                                            <td nowrap="nowrap">{{col.SL_NO}}</td>
                                             <td nowrap="nowrap">{{col.Ledger_Name}}</td>
                                             <td nowrap="nowrap">{{col.Sub_Ledger_Name}}</td>
                                             <td nowrap="nowrap">{{col.Cost_Head_Name}}</td>
