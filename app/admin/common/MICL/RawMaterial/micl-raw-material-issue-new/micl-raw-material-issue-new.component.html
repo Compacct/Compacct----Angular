@@ -155,7 +155,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Date</label>
-                                        <ejs-datepicker  [(value)]="RM_Issue_Date" [min]='minFromDate' [format]="'dd/MMM/yyyy'" [enabled]="!AddProDetails.length"
+                                        <ejs-datepicker  [(value)]="RM_Issue_Date" [max]="maxDate" [format]="'dd/MMM/yyyy'" [enabled]="!AddProDetails.length"
                                         ></ejs-datepicker>
                                     </div> 
                                     <div class="col-sm-4">
@@ -271,6 +271,7 @@
                                                 #Batch_No = "ngModel"
                                                 [(ngModel)] ="ObjproductAdd.Batch_No"
                                                 [disabled]="prodisabledflag"
+                                                (change)="GetLotNoteDesc()"
                                                 [ngClass]="{'clearance':AddProDetailsFormSubmitted && Batch_No?.errors?.required}"
                                                 required>
                                         <option  [ngValue]="undefined">Select</option>
@@ -302,12 +303,23 @@
                                                 required
                                                 >
                                     </div>
-                                    <div>
+                                    <!-- <div>
                                     <button id="row-Add" class ="btn btn-primary custombuttonadd" [disabled]="prodisabledflag" (click)="AddProductDetails(AddProDetailsForm.form.valid)">
-                                      <!-- <i class="fa fa-fw fa-add"></i>&nbsp; Add --> Add
+                                      <i class="fa fa-fw fa-add"></i>&nbsp; Add 
                                     </button>
-                                    </div>
+                                    </div> -->
                                       </div>
+                                      <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Note Description </label>
+                                            <textarea class="form-control" name="notedes" #notedes="ngModel" [(ngModel)]="ObjproductAdd.Note_Description" placeholder="Note Description" [ngClass]="{'clearance':AddProDetailsFormSubmitted && notedes?.errors?.required}" ></textarea>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <button id="row-Add" class ="btn btn-primary custombuttonadd" [disabled]="prodisabledflag" (click)="AddProductDetails(AddProDetailsForm.form.valid)">
+                                              <!-- <i class="fa fa-fw fa-add"></i>&nbsp;   --> Add
+                                            </button>
+                                            </div>
+                                    </div>
                                 </form>
                                 </div>
                                 </div>
@@ -341,6 +353,7 @@
                                                  <!-- <th>Batch Qty</th> -->
                                                  <th>Qty</th>
                                                  <th>UOM</th>
+                                                 <th>Note Description</th>
                                                  <th>Delete</th>
                                                  <!-- <th *ngIf="EditList.length">Accept Reason</th> -->
                                              </tr>
@@ -354,6 +367,7 @@
                                                  <!-- <td>{{col.Batch_Qty}}</td> -->
                                                  <td>{{col.Qty}}</td>
                                                  <td>{{col.UOM}}</td>
+                                                 <td>{{col.Note_Description ? col.Note_Description : "-"}}</td>
                                                  <!-- <td><input type="text" [name]="col.product_id" [(ngModel)]='col.Delivery_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td> -->
                                                  <td><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                                  <!-- <td *ngIf="EditList.length">{{col.Accept_Reason}}</td> -->

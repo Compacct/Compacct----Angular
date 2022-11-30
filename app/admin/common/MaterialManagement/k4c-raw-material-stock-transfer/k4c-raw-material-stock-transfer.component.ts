@@ -77,21 +77,23 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
     private ngxService: NgxUiLoaderService
-  ) {}
-
-  ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      // console.log(params);
-      this.clearData();
-      this.Searchedlist = [];
-      this.BackupIndentList = [];
-     this.TIndentList = [];
-     this.SelectedIndent = [];
+  ) {
+      this.route.queryParams.subscribe(params => {
+       //console.log("params",params);
       this.Param_Flag = params['Name'];
       this.CostCentId_Flag = params['Cost_Cen_ID'];
       this.MaterialType_Flag = params['Material_Type']
        console.log (this.CostCentId_Flag);
+  })
+  }
+
+  ngOnInit() {
     this.items = ["BROWSE", "CREATE"];
+    this.clearData();
+    this.Searchedlist = [];
+    this.BackupIndentList = [];
+    this.TIndentList = [];
+    this.SelectedIndent = [];
     this.Header.pushHeader({
       Header: this.MaterialType_Flag + " Stock Transfer - " + this.Param_Flag,
       Link: " Material Management -> " + this.MaterialType_Flag + " Stock Transfer - " + this.Param_Flag
@@ -100,7 +102,6 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     this.GetToCostCen();
     this.GetBToCostCen();
     this.GetProductType();
-  })
   }
   TabClick(e){
     // console.log(e)

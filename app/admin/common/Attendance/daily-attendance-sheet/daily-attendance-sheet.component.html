@@ -9,11 +9,12 @@
         </div>
 
         <div class="ui-g ui-fluid">
-            <div class="ui-g-6">
+            <!-- <div class="ui-g-6">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
-            </div>
+            </div> -->
             <div class="ui-g-6">
-                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+                <!-- <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button> -->
+                <button type="button" pButton (click)="onReject()" label="Ok" class="ui-button-danger" style="margin-left: 70px;"></button>
             </div>
         </div>
     </ng-template>
@@ -116,7 +117,7 @@
             <label>Attendance Type <sup class="text-danger">*</sup></label>&nbsp;
             <select name="attentype" #attentype="ngModel" [(ngModel)]="Atten_Type" [ngClass]="{'clearance': attendancetypeFormSubmitted && attentype?.errors?.required}" required>
            <option  [ngValue]="undefined">Select</option>
-           <option *ngFor = "let option of AttenTypelist" value="{{option.Atten_Type_ID}}">
+           <option *ngFor = "let option of AttendanceTypeList" value="{{option.Atten_Type_ID}}">
              {{option.Atten_Type}}
             </option>
            </select>
@@ -126,7 +127,7 @@
         <p-footer>
             <div class="text-right">
                 <button type="button" (click)="AttendancePopup = false" class="btn btn-default"><i class="fa fa-time"></i>&nbsp; Close</button>&nbsp;
-                <button type="button" (click)="SaveAttendanceType(attendancetypeForm.form.valid)" class="btn btn-success">
+                <button type="button" (click)="CheckApproveStatus(attendancetypeForm.form.valid)" class="btn btn-success">
            <i class="fa fa-check"></i>&nbsp;  Done
          </button>
             </div>
