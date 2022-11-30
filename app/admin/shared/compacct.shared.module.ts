@@ -17,7 +17,8 @@ import { CompacctHearingThresholdChartComponent } from "./compacct.components/co
 import { CompacctFinyearwisedateDirective } from './compacct.directives/compacct.finyearwisedate.directive';
 import { CompacctNepaliDatepickerDirective } from './compacct.directives/compacct-nepali-datepicker.directive';
 import { CompacctOnlyAlphabetsDirective } from './compacct.directives/compacct-only-alphabets.directive';
-import { CompacctCharactersWthUnderscoreDirective } from './compacct.directives/compacct-characters-wth-underscore.directive'
+import { CompacctCharactersWthUnderscoreDirective } from './compacct.directives/compacct-characters-wth-underscore.directive';
+import { UpdateConsultancyComponent } from './compacct.components/compacct.forms/update-consultancy/update-consultancy.component'
 
 
 
