@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MessageService } from 'primeng/api';
+import { iif } from 'rxjs';
+import { UpdateConsultancyComponent } from '../../../shared/compacct.components/compacct.forms/update-consultancy/update-consultancy.component';
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
@@ -20,24 +22,31 @@ export class DoctorAppointmentComponent implements OnInit {
   Tabitems = {};
   TabView = "";
   showTabs = false;
-  allDetalis = [];
+  allDetalis:any = [];
+  allDetalisHeader:any = []
   appo_Date: Date = new Date();
   ConsultancyName = undefined;
-  ConsultancyList = [];
+  ConsultancyList:any = [];
   backupAlldetalis = [];
   url = window["config"];
   SelectedcosCenter: any = undefined;
-  cosCenterList = [];
-  SelectedDistOrderBy1=[];
-  ConsultancyFilter=[];
-  ststusFilter=[];
-  SelectedConsultancy=[];
-  Selectedstatus=[];
+  cosCenterList:any = [];
+  SelectedDistOrderBy1:any=[];
+  ConsultancyFilter:any=[];
+  ststusFilter:any=[];
+  SelectedConsultancy:any=[];
+  Selectedstatus:any=[];
   UserID:any='';
   CosCenID='';
   row:any=0;
   HomeVisit:boolean=false;
-
+  ActionList:any = []
+  UpdateAppointmentModel:boolean = false
+  updateConsultancyInputObj:any = {}
+  ObjupdateConsultancy:any = {}
+  Spinner:boolean = false
+  @ViewChild("consultancy", { static: false })
+  UpdateConsultancy: UpdateConsultancyComponent;
   constructor(    
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -55,6 +64,7 @@ export class DoctorAppointmentComponent implements OnInit {
     });
     this.UserID= Number(this.$CompacctAPI.CompacctCookies.User_ID);
     this.GetConsultancy();
+    
   }
 
   TabClick(e) {
@@ -73,6 +83,8 @@ export class DoctorAppointmentComponent implements OnInit {
   GetAllDetails() {
     console.log("this.SelectedcosCenter", this.SelectedcosCenter);
     if (this.ConsultancyName) {
+      this.allDetalisHeader = []
+      this.ActionList = []
       const Temp = {
         Cons_Type: this.ConsultancyName,
         User_ID: this.UserID,
@@ -89,6 +101,7 @@ export class DoctorAppointmentComponent implements OnInit {
         this.allDetalis = data;
         this.backupAlldetalis = data;
         if (this.allDetalis.length) {
+          this.allDetalisHeader = Object.keys(data[0])
           this.GetDist3();
           this.ClickCheck();
         }
@@ -96,7 +109,83 @@ export class DoctorAppointmentComponent implements OnInit {
       })
     }
   }
- 
+  getAction(col:any){
+    let returnArr:any = []
+   if(col.Consultancy_Done == 'N' && col.Controller_Name == 'NA'){
+    returnArr.push({
+      Name: 'Update Appointment',
+      Icon: 'fa fa-repeat',
+      FuctionName: 'UpdateAppo'
+    })
+   }
+   return returnArr
+  }
+  dateCheck(col:any){
+  return this.DateService.dateConvert(col.Appo_Dt) == this.DateService.dateConvert(new Date()) ? true : false
+  }
+  actionClick(col:any,actype){
+    this.updateConsultancyInputObj = {
+      Appo_ID : 0,
+      required : true
+    }
+   switch (actype) {
+    case 'UpdateAppointment':
+        this.UpdateAppointmentModel = true
+        this.updateConsultancyInputObj = {
+          Appo_ID : col.Appo_ID,
+          required : true
+        }
+
+      break;
+    case 'CreateReport':
+      window.open(col.Controller_Name + col.Appo_ID, '_blank');
+    break;
+    case'EditReport':
+      window.open(col.Controller_Name + col.Appo_ID, '_blank');
+    break;
+    case 'PrintReport' :
+      window.open(col.Print_Aspx+ col.Appo_ID, 'Print Appointment', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    default:
+      break;
+   }
+  }
+  getStatusWiseColor(obj:any) {
+    var currentDate = Date.parse(this.DateService.dateConvert(new Date()) + ' ' + this.DateService.getTime24Hours(new Date()) + ':00');
+    var appoDate = Date.parse(this.DateService.dateConvert(new Date(obj.Appo_Dt)) + ' ' + this.DateService.getTime24Hours(new Date(obj.Appo_Dt)) + ':00');
+    if (obj.Status == "Appointment" && currentDate > appoDate) {
+        return 'red'
+    }
+    else {
+        switch (obj.Status) {
+            case 'Cancel':
+                return 'red';
+                break;
+            case 'Reschedule':
+                return 'purple';
+                break;
+            case 'Consultancy Done':
+                return 'blue';
+                break;
+            case 'Consultancy Bill Done':
+                return 'orange';
+                break;
+            case 'Package Booked':
+                return 'orange';
+                break;
+            case 'Payment Done':
+                return 'green';
+                break;
+            case 'Therapy Done':
+                return 'green';
+                break;
+            case 'Billed':
+                return 'orange';
+                break;
+            default:
+        }
+    }
+    return
+}
   GetCentre() {
     this.cosCenterList= [];
     const tempobj = {
@@ -122,8 +211,6 @@ export class DoctorAppointmentComponent implements OnInit {
     this.GetAllDetails();
   }
 
-
-
   ClickCheck(){
     console.log('check box value',this.HomeVisit);
     this.allDetalis=[];
@@ -140,7 +227,6 @@ export class DoctorAppointmentComponent implements OnInit {
 
     }
   }
-
 
   filterStatus() {
     console.log("SelectedcosCenter", this.Selectedstatus);
@@ -160,14 +246,11 @@ export class DoctorAppointmentComponent implements OnInit {
       console.log("else GetAllDataList", this.allDetalis)
     }
   }
-
-    
-  
-    GetDist3() {
-      let DOrderBy = [];
+ GetDist3() {
+      let DOrderBy:any = [];
       this.ststusFilter = [];
       this.SelectedDistOrderBy1 = [];
-      this.backupAlldetalis.forEach((item) => {
+      this.backupAlldetalis.forEach((item:any) => {
         if (DOrderBy.indexOf(item.Status) === -1) {
           DOrderBy.push(item.Status);
           this.ststusFilter.push({ label: item.Status, value: item.Status });
@@ -175,18 +258,55 @@ export class DoctorAppointmentComponent implements OnInit {
         }
       });
     }
-    GetChargeable() {
-      this.allDetalis.forEach(el => {
-        return el.Chargeable ? "Yes" : "No"
-      })
-    }      
-    GetHomeVisit() {
-      this.allDetalis.forEach(el => {
-        return el.Home_Visit ? "Yes" : "No"
-      })
+  GetChargeable() {
+    this.allDetalis.forEach(el => {
+      return el.Chargeable ? "Yes" : "No"
+    })
+  }      
+  GetHomeVisit() {
+    this.allDetalis.forEach(el => {
+      return el.Home_Visit ? "Yes" : "No"
+    })
     } 
+  updateConsultancysave(e:any){
+    console.log("e",e)
+    this.ObjupdateConsultancy = e
+  
+  }
   onConfirm() { }
   onReject() { }
-  
+  SaveUpdateConsultancy(valid:any){
+    console.log("valid",valid)
+    this.Spinner = true
+    const tempObj = {
+      Appo_ID  : this.updateConsultancyInputObj.Appo_ID , 
+			Level_1_Status : this.ObjupdateConsultancy.Level_1_Status,
+			Level_2_Status :this.ObjupdateConsultancy.Level_2_Status,
+			Level_3_Status :this.ObjupdateConsultancy.Level_3_Status
+    }
+     const obj = {
+       "SP_String": "sp_DoctorsAppointmentNew",
+       "Report_Name_String": "Update_Consultancy_Done",
+       "Json_Param_String": JSON.stringify(tempObj)
+      }
+     this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+       console.log(" Update Data ",data)
+       if(data[0].Column1 == "Done"){
+        this.UpdateAppointmentModel = false
+        this.GetAllDetails()
+        this.Spinner = false
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Consultancy",
+          detail: "Succesfully Update"
+    });
+      
+        
+       }
+     })
+    }
+   }
 
-}
+
