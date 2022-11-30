@@ -94,14 +94,14 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav li a {
   
   .ui-tabview .ui-tabview-nav::-webkit-scrollbar {
     width: 5px;
-    height: 5px;
+    height: 10px;
   }
   .ui-tabview .ui-tabview-nav::-webkit-scrollbar-button {
     width: 0px;
     height: 0px;
   }
   .ui-tabview .ui-tabview-nav::-webkit-scrollbar-thumb {
-    background: #b9c7d2;
+    background: #707b84;
     border: 0px none #ffffff;
     border-radius: 50px;
   }

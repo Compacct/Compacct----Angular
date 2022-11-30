@@ -55,6 +55,7 @@ export class K4cPremixStockTransferComponent implements OnInit {
   Doc_date:any = undefined;
   Formstockpoint:any = undefined;
   Tostockpoint:any = undefined;
+  FCostdisableflag = false;
   constructor(
     private Header: CompacctHeader,
     private router: Router,
@@ -99,7 +100,7 @@ getDateRange(dateRangeObj) {
       this.ObjBrowse.end_date = dateRangeObj[1];
     }
 }
-PremixSearch(){
+PremixSearch(valid?){
   this.Searchedlist = [];
   this.ngxService.start();
    this.seachSpinner = true;
