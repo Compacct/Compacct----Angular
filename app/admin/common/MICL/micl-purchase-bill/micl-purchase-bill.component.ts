@@ -181,8 +181,8 @@ export class MiclPurchaseBillComponent implements OnInit {
       {label: 'Delete', icon: 'fa fa-fw fa-trash'}
     ];
     this.Header.pushHeader({
-      Header: this.headerData,
-      Link: " Financial Management -> Purchase -> " + this.headerData
+      Header: "Purchase Bill",
+      Link: " Financial Management -> Purchase ->  Purchase Bill"
     });
     this.Finyear();
     this.GetVendor();
