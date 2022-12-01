@@ -1,0 +1,52 @@
+<form name="UpdateConsultancyForm" #UpdateConsultancyForm="ngForm" novalidate>
+    <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+        <div class="col-sm-4" >
+            <label class="control-label"> Audiology Status <sup  class="text-danger">*</sup></label>
+            <select class="form-control" 
+            name="Level_1_Status" 
+            #Level_1_Status="ngModel" 
+            [(ngModel)]="Objconsultancy.Level_1_Status"
+            (change)="getSecondL()"
+            [ngClass]="{'clearance': UpdateConsultancyFormSubmit && Level_1_Status?.errors?.required }"
+            [required]="true"
+            >
+            <option *ngFor = "let option of FirstLevelList" [value]="option.Level_1_ID">
+                  {{option.Level_1_Status}}
+                </option>
+          </select>
+        </div>
+        <div class="col-sm-4" *ngIf="SecondLevelList.length">
+            <label class="control-label"> {{SecondL}}<sup  class="text-danger">*</sup></label>
+            <select class="form-control" 
+            name="Level_2_Status" 
+            #Level_2_Status="ngModel" 
+            [(ngModel)]="Objconsultancy.Level_2_Status"
+            [ngClass]="{'clearance': UpdateConsultancyFormSubmit && Level_2_Status?.errors?.required }"
+            (change)="getThirdL()"
+            [required]="true"
+            >
+            <option *ngFor = "let option of SecondLevelList" [value]="option.Level_2_ID">
+                  {{option.Level_2_Status}}
+                </option>
+          </select>
+        </div>
+        <div class="col-sm-4" *ngIf="ThirdLevelList.length" >
+            <label class="control-label"> {{ThirdL}}<sup class="text-danger">*</sup></label>
+            <select class="form-control" 
+            name="Level_3_Status" 
+            #Level_3_Status="ngModel" 
+            [(ngModel)]="Objconsultancy.Level_3_Status"
+            (change)="ChangeThirdL()"
+            [ngClass]="{'clearance': UpdateConsultancyFormSubmit && Level_3_Status?.errors?.required }"
+            [required]="true"
+            >
+           
+               <option *ngFor = "let option of ThirdLevelList" [value]="option.Level_3_ID">
+                  {{option.Level_3_Status}}
+                </option>
+          </select>
+        </div>
+     </div>
+     
+   
+</form>

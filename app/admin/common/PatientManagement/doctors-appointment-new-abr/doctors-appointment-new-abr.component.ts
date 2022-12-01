@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MessageService } from 'primeng/api';
@@ -7,6 +7,8 @@ import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
+import { UpdateConsultancyComponent } from '../../../shared/compacct.components/compacct.forms/update-consultancy/update-consultancy.component';
+
 
 @Component({
   selector: 'app-doctors-appointment-new-abr',
@@ -28,9 +30,14 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
   patientSearchList:any=[];
   checkBoxArray:any=[];
   ProductPDFFile:any=[];
-  buttonname:string = "Create"
+  buttonname:string = "Create";
+  Level_1_Status:any=undefined;
+  Level_2_Status:any=undefined;
+  Level_3_Status:any=undefined;
 
   ObjABR: ABR = new ABR();
+
+  @ViewChild("consultancy", { static: false }) UpdateConsultancy: UpdateConsultancyComponent;
   constructor(
     private header:CompacctHeader,
     private $http: HttpClient,
@@ -45,7 +52,7 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
      // console.log("param",params);
       this.AppoIDvalue=params.Appo_ID;
-      console.log("value",this.AppoIDvalue);
+     // console.log("value",this.AppoIDvalue);
      })
   }
 
@@ -103,7 +110,7 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
       "Json_Param_String": JSON.stringify([tempobj])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log("GetAllDataAppoID",data);
+     // console.log("GetAllDataAppoID",data);
       if(data.length){
         this.patientSearchList=data;
 
@@ -134,8 +141,17 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
   // }
   // }
 
+  updateConsultancysave(event){
+    console.log('event',event);
+    //console.log('event1',event.Level_1_Status);
+    this.Level_1_Status=event.Level_1_Status;
+    this.Level_2_Status=event.Level_2_Status;
+    this.Level_3_Status=event.Level_3_Status;
+    //console.log('event1',this.Level_1_Status);
+  }
+
   saveDocAppo(valid:any){
-    console.log('checkBox1 value',this.checkBoxArray);
+   // console.log('checkBox1 value',this.checkBoxArray);
     let tempSaveJ1:any = []
     if(this.checkBoxArray.length){
       this.checkBoxArray.forEach((ele:any) => {
@@ -145,6 +161,7 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
       });
     }
     console.log("tempSaveJ1",tempSaveJ1);
+
     const TempObj ={
       Foot_Fall_ID: this.ObjABR.PatientID,
       Appo_ID: this.AppoIDvalue,
@@ -179,12 +196,21 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
       Right_Ear_Interpretation: this.ObjABR.REar,
       Left_Ear_Interpretation: this.ObjABR.LEar,
       Comment: this.ObjABR.Comment,
-      Status: this.ObjABR.Status,
+      Status: '',
       Posted_By: this.$CompacctAPI.CompacctCookies.User_ID,
       Posted_On: this.DateService.dateConvert(new Date()),
       Recommendation: ''
     }
     console.log("TempObj",TempObj);
+
+    const TempObj2={
+      Appo_ID: this.AppoIDvalue,
+      Level_1_Status: this.Level_1_Status,
+      Level_2_Status: this.Level_2_Status,
+      Level_3_Status: this.Level_3_Status
+    }
+    console.log("TempObj2",TempObj2);
+
     this.Spinner=true;
     if(valid){
 
@@ -218,7 +244,37 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
         });
       }
     });
-    
+
+    const obj2 = {
+      "SP_String": "sp_DoctorsAppointmentNew",
+      "Report_Name_String": "Update_Consultancy_Done",
+      "Json_Param_String": JSON.stringify(TempObj2),
+    }
+    this.GlobalAPI.postData(obj2).subscribe((data: any) => {
+      console.log("save data2",data);
+      if (data[0].Column1){
+        this.Spinner=false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Appointment Create",
+          detail: "Succesfully "
+        });
+        this.UpdateConsultancy.clearComData();
+      }
+      else {
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message ",
+          detail:"Error occured "
+        });
+      }
+    });
+
    }
   }
 

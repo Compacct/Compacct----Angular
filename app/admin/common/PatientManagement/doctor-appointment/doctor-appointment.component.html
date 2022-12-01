@@ -84,8 +84,8 @@
                                     <p-table [value]="allDetalis" [paginator]="allDetalis.length ? true : false"
                                         [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
                                         [rowsPerPageOptions]="[100,200,300]"
-                                        [globalFilterFields]="['UOM','Primary/Alternative']" [rowHover]="true" #dt>
-                                        <ng-template pTemplate="caption">
+                                        [globalFilterFields]="allDetalisHeader" [rowHover]="true" #dt>
+                                        <ng-template pTemplate="caption"  >
                                             <div class="row">
                                                 <div class="col-sm-3 pull-right" style="text-align: right">
                                                     <input type="text" pInputText size="50" placeholder="Search"
@@ -129,18 +129,44 @@
                                                             <i class="fa fa-fw fa-bars"></i>
                                                             <span class="caret"></span>
                                                         </button>
-                                                        <ul class="dropdown-menu">
-                                                            <li>
-                                                                <a >
-                                                                    <i class="fa fa-fw fa-pencil"></i>
-                                                                    Patient Details
+                                                        <!-- <ul class="dropdown-menu" *ngFor="let list of getAction(col) " >
+                                                            <li >
+                                                                <a (click)="actionClick($event)">
+                                                                    <i [ngClass]="list.Icon"></i>
+                                                                   {{list.Name}}
+                                                                </a>
+                                                            </li>
+                                                          </ul> -->
+                                                         <ul class="dropdown-menu">
+                                                             <li *ngIf="col.Consultancy_Done == 'N' && col.Controller_Name == 'NA' " >
+                                                                <a (click)="actionClick(col ,'UpdateAppointment')" >
+                                                                    <i class="fa fa-repeat"></i>
+                                                                   Update Appointment
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Consultancy_Done == 'N' && col.Controller_Name != 'NA' ">
+                                                                <a (click)="actionClick(col,'CreateReport')">
+                                                                    <i class="fa fa-user-plus"></i>
+                                                                    Create Report
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Consultancy_Done == 'Y' && col.Controller_Name != 'NA' && dateCheck(col)" >
+                                                                <a (click)="actionClick(col,'EditReport')">
+                                                                    <i class="fa fa-edit"></i>
+                                                                    Edit Report
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Consultancy_Done == 'Y' && col.Print_Aspx != 'NA'" >
+                                                                <a (click)="actionClick(col,'PrintReport')">
+                                                                    <i class="fa fa-print"></i>
+                                                                    Print Report
                                                                 </a>
                                                             </li>
                                                          </ul>
                                                     </div>
                                                 </td>
                                                 <td>{{col.Appo_Dt | date :" hh:mm a"}}</td>
-                                                <td>{{col.Status}}</td>
+                                                <td nowrap><span [ngClass]="'badge bg-'+ getStatusWiseColor(col)" >{{col.Status }}</span></td>
                                                 <td>{{col.Patient}}</td>
                                                 <td style="font-weight: 800; width: 10%;"><a
                                                         href="{{ 'tel:+91' + col.Mobile }}" ><i
@@ -172,3 +198,41 @@
         </div>
     </div>
 </div>
+<!-- PO No view -->
+<p-dialog
+[header]="'Update AppointmentModel'"
+[appendTo]="'body'"
+[visible]="UpdateAppointmentModel"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '58%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="form-horizontal">
+    <form name="UpdateConsultancyForm" #UpdateConsultancyForm="ngForm" novalidate>
+        <update-consultancy #consultancy  (saveData)="updateConsultancysave($event)" ></update-consultancy>
+      
+    </form>
+      
+</div>
+
+<p-footer>
+    <button class="btn btn-primary pull-right" (click)="SaveUpdateConsultancy(UpdateConsultancyForm.form.valid)" id="load3" [disabled]="Spinner">
+        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+      <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Save
+      </button>
+    <button
+    type="button"
+    (click)="UpdateAppointmentModel = false"
+    class="btn btn-default"
+    ><span class="glyphicon glyphicon-remove"></span>
+    CLOSE
+    </button>
+
+</p-footer>
+</p-dialog>

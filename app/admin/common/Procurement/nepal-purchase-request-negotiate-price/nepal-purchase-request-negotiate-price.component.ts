@@ -366,6 +366,10 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
       this.CurrencySelect = col.Currency
     }
   }
+  CreatPurchasePOP(valid?){}
+  creatPaymentPOP(valid?){}
+  CreatCurrencyPOP(valid?){}
+
 
   // ViewPurchasePOP(){
   //     this.PurchaseTypeList = [];
