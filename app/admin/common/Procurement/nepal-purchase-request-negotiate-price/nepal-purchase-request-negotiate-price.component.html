@@ -222,12 +222,80 @@
                                           </div>
                                     </div>
                                 </div>
+                                    <div class="form-group" *ngIf="prList.length">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Purchase Type<sup class="text-danger">*</sup></label>
+                                            <!-- <div class="pull-right">
+                                                <button (click)="ViewPurchasePOP()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i>
+                                                    View</button> &nbsp;
+                                                <button (click)="PurchasePopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i>
+                                                    Create</button>
+                                            </div> -->
+                                            <p-dropdown [options]="PurchaseTypeList" name="PurchaseType" [(ngModel)]="PurchaseTypeSelect" [showClear]="true"
+                                                [emptyFilterMessage]="' No Purchase Type Found'" [filter]="true" filterBy="label,value.name"
+                                                [resetFilterOnHide]="true" [placeholder]="'Select Purchase Type'" [virtualScroll]="true" itemSize="30"
+                                                #PurchaseType="ngModel" [styleClass]="'textAlign'"(onChange)="getPaymentMethod()"
+                                                [ngClass]="{'clearance': vendorSelectionFormSubmit && PurchaseType?.errors?.required}" required>
+                                            </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-4" >
+                                            <label class="control-label">Payment Terms<sup class="text-danger">*</sup></label>
+                                            <!-- <div class="pull-right">
+                                                    <button (click)="ViewPaymentPOP()" class="btn btn-primary  createPatient" ><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
+                                                    <button (click)="PaymentPOP()" class="btn btn-primary  createPatient" ><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                                </div> -->
+                                            <p-dropdown [options]="PaymentMethodList" name="PaymentMethod" [(ngModel)]="PaymentMethodSelect"
+                                                [showClear]="true" [emptyFilterMessage]="' No Payment Terms Found'" [filter]="true"
+                                                filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Payment Terms'"
+                                                [virtualScroll]="true" itemSize="30" #PaymentMethod="ngModel" [styleClass]="'textAlign'"
+                                                 [ngClass]="{'clearance': vendorSelectionFormSubmit && PaymentMethod?.errors?.required}" required>
+                                            </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Payment Details</label>
+                                            <!-- <div class="pull-right">
+                                                    <button (click)="ViewPaymentPOP()" class="btn btn-primary  createPatient" ><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
+                                                    <button (click)="PaymentPOP()" class="btn btn-primary  createPatient" ><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                                </div> -->                 
+                                            <input class="form-control" placeholder="Type Payment details" name="Payment" #Payment="ngModel"
+                                                [(ngModel)]="PaymentTramsSelect">
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <div class="col-sm-4" >
+                                            <label class="control-label">Delivery Terms<sup class="text-danger">*</sup></label>
+                                            <!-- <div class="pull-right">
+                                                    <button (click)="ViewPaymentPOP()" class="btn btn-primary  createPatient" ><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
+                                                    <button (click)="PaymentPOP()" class="btn btn-primary  createPatient" ><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                                </div> -->
+                                            <p-dropdown [options]="DeliveryTermsList" name="Delivery" [(ngModel)]="DeliveryMethodSelect"
+                                                [showClear]="true" [emptyFilterMessage]="' No Delivery Terms Found'" [filter]="true"
+                                                filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Delivery Terms'"
+                                                [virtualScroll]="true" itemSize="30" #Delivery="ngModel" [styleClass]="'textAlign'"
+                                                [ngClass]="{'clearance': vendorSelectionFormSubmit && Delivery?.errors?.required}" required>
+                                            </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Currency<sup class="text-danger">*</sup></label>
+                                            <!-- <div class="pull-right">
+                                                <button (click)="ViewCurrencyPOP()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i>
+                                                    View</button> &nbsp;
+                                                <button (click)="CurrencyPOP()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i>
+                                                    Create</button>
+                                            </div> -->
+                                            <p-dropdown [options]="CurrencyList" name="Currency" [(ngModel)]="CurrencySelect" [showClear]="true"
+                                                [emptyFilterMessage]="' No Currency Found'" [filter]="true" filterBy="label,value.name"
+                                                [resetFilterOnHide]="true" [placeholder]="'Select Currency'" [virtualScroll]="true" itemSize="30"
+                                                #Currency="ngModel" [styleClass]="'textAlign'" (ngModelChange)="CurrencyChange()"
+                                                [ngClass]="{'clearance': vendorSelectionFormSubmit && Currency?.errors?.required}" required>
+                                            </p-dropdown>
+                                        </div>
+                                    </div>
                             </form>
                             <div class="table-responsive table-id">
                                 <p-table [value]="prList" 
                                 #dt1 [paginator]="true"
                                 *ngIf="prList.length"
-                                [rows]="100" 
+                                [rows]="10" 
                                 [rowHover]="true" 
                                 [autoLayout]="true" 
                                 sortMode="multiple" 
@@ -240,66 +308,6 @@
                                             <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                         </div>                                    
                                     </div><br>
-                                    <div class="row" style=" display: flex; justify-content: center;">                                  
-                                        <div class="col-sm-4"  >
-                                            <div class="pull-right">
-                                                <button (click)="ViewPurchasePOP()"class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
-                                                <button (click)="PurchasePopup()"class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
-                                            </div>
-                                        <p-dropdown [options]="PurchaseTypeList" 
-                                        name="PurchaseType" 
-                                        [(ngModel)]="PurchaseTypeSelect" 
-                                        [showClear]="true" 
-                                        [emptyFilterMessage]="' No Purchase Type Found'" 
-                                        [filter]="true" filterBy="label,value.name" 
-                                        [resetFilterOnHide]="true" 
-                                        [placeholder]="'Select Purchase Type'" 
-                                        [virtualScroll]="true"
-                                        itemSize="30" #PurchaseType="ngModel" 
-                                        [styleClass]="'textAlign'"
-                                        >
-                                    </p-dropdown>
-                                        </div>
-                                        <div class="col-sm-4"  >
-                                            <div class="pull-right">
-                                                <button (click)="ViewPaymentPOP()" class="btn btn-primary  createPatient" ><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
-                                                <button (click)="PaymentPOP()" class="btn btn-primary  createPatient" ><i class="fa fa-fw  fa-plus"></i> Create</button>
-                                            </div>
-                                            <p-dropdown [options]="PaymentMethodList" 
-                                            name="PaymentMethod" 
-                                            [(ngModel)]="PaymentMethodSelect" 
-                                            [showClear]="true" 
-                                            [emptyFilterMessage]="' No Payment Method Found'" 
-                                            [filter]="true" filterBy="label,value.name" 
-                                            [resetFilterOnHide]="true" 
-                                            [placeholder]="'Select Payment Method'" 
-                                            [virtualScroll]="true"
-                                            itemSize="30" #PaymentMethod="ngModel" 
-                                            [styleClass]="'textAlign'"
-                                            >
-                                        </p-dropdown>
-                                        </div>
-                                        <div class="col-sm-4"  >
-                                            <div class="pull-right">
-                                                <button (click)="ViewCurrencyPOP()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
-                                                <button (click)="CurrencyPOP()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
-                                            </div>
-                                            <p-dropdown [options]="CurrencyList" 
-                                            name="Currency" 
-                                            [(ngModel)]="CurrencySelect" 
-                                            [showClear]="true" 
-                                            [emptyFilterMessage]="' No Currency Found'" 
-                                            [filter]="true" filterBy="label,value.name" 
-                                            [resetFilterOnHide]="true" 
-                                            [placeholder]="'Select Currency'" 
-                                            [virtualScroll]="true"
-                                            itemSize="30" #Currency="ngModel" 
-                                            [styleClass]="'textAlign'"
-                                            (ngModelChange)="CurrencyChange()"
-                                            >
-                                        </p-dropdown>
-                                        </div>
-                                    </div>
                                 </ng-template>
                                         <ng-template pTemplate="header">
                                             <tr>
@@ -339,9 +347,9 @@
                             </div>
                             <div class="box-footer">
                                 <button class="btn btn-primary pull-right" 
-                                                (click)="negotiateSave()" 
+                                                (click)="negotiateSave(vendorSelectionForm.form.valid)" 
                                                 id="Saveload"
-                                                *ngIf="PaymentMethodSelect && ObjnegotiatePrice.Purchase_Request_No && PurchaseTypeSelect && CurrencySelect"
+                                                *ngIf="ObjnegotiatePrice.Purchase_Request_No"
                                                 [disabled]="SaveSpinner">
                                             <p-progressSpinner 
                                             *ngIf="SaveSpinner" 
