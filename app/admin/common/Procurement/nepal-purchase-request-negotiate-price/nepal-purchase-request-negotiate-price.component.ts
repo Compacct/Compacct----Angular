@@ -370,6 +370,7 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
   creatPaymentPOP(valid?){}
   CreatCurrencyPOP(valid?){}
 
+
   // ViewPurchasePOP(){
   //     this.PurchaseTypeList = [];
   //      this.getPurchaseType();
