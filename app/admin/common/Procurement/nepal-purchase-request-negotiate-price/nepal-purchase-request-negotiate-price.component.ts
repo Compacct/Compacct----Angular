@@ -358,8 +358,11 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
       this.buttonname = "Update"
       this.ObjnegotiatePrice.Purchase_Request_No = col.Purchase_Request_No
       this.purchaseRequestChange()
-      this.PurchaseTypeSelect = col.Purchase_Type
-      this.PaymentMethodSelect = col.Payment_Method
+      this.PurchaseTypeSelect = col.Purchase_Type_ID
+      this.PaymentMethodSelect = col.Payment_Term_ID
+      this.getPaymentMethod()
+      this.DeliveryMethodSelect = col.Delivery_Term_ID;
+      this.PaymentTramsSelect = col.Payment_Term_Details;
       this.CurrencySelect = col.Currency
     }
   }
