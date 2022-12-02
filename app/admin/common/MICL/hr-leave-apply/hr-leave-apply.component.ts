@@ -118,10 +118,14 @@ export class HrLeaveApplyComponent implements OnInit {
     // this.To_Time = new Date(this.To_Time.setDate(this.From_Time.getDate() + 1 ))
     this.minToDate = this.FromDatevalue
     this.showBaln = undefined;
+    this.applydays = undefined;
     this.showErrorMsg = false
     this.GetNumberOfdays();
     this.ObjHrleave.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined;
     this.employeeData();
+    this.FromDatevalue = new Date();
+    this.minFromDate = new Date();
+    this.ToDatevalue = new Date();
     }
   getDateRange(dateRangeObj) {
       if (dateRangeObj.length) {

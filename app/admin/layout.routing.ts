@@ -297,6 +297,8 @@ import { MiclPurchaseBillComponent } from './common/MICL/micl-purchase-bill/micl
 import { DoctorsAppointmentNewABRComponent } from './common/PatientManagement/doctors-appointment-new-abr/doctors-appointment-new-abr.component';
 import { K4CBillDateUpdateComponent } from "./common/OutletManagement/k4-c-bill-date-update/k4-c-bill-date-update.component";
 import { DoctorApptNewImpedanceAudiometryComponent } from "./common/PatientManagement/doctor-appt-new-impedance-audiometry/doctor-appt-new-impedance-audiometry.component";
+import { NepalPurchaseOrderStatusMasterComponent } from "./common/Procurement/nepal-purchase-order-status-master/nepal-purchase-order-status-master.component";
+import { DailyAttendanceForContractorComponent } from './common/Attendance/daily-attendance-for-contractor/daily-attendance-for-contractor.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2231,6 +2233,21 @@ path: 'MICL_Cost_Center_Master',
       title: 'Doctors Appointment New Impedance Audiometry'
 }
 },
+{
+  path: 'Nepal_BL_Txn_Purchase_Order_Status_Master',
+    component: NepalPurchaseOrderStatusMasterComponent,
+    data: {
+      title: 'Nepal BL Txn Purchase Order Status Master'
+}
+},
+{
+  path: 'Daily_Attendance_For_Contractor',
+    component: DailyAttendanceForContractorComponent,
+    data: {
+      title: 'Daily Attendance For Contractor'
+}
+},
+
     
 
     /*{
