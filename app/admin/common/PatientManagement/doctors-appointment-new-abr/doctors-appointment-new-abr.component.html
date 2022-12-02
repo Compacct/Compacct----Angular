@@ -129,6 +129,8 @@
                                     <div class="col-sm-3">
                                         <label class="control-label"> Stimulus</label>
                                         <select class="form-control"
+                                        [ngClass]="{clearance: ABR_Submitted && Stimulus?.errors?.required }" 
+                                        required
                                         name="Stimulus"
                                         #Stimulus="ngModel"
                                         [(ngModel)]="ObjABR.Stimulus"
@@ -145,39 +147,6 @@
                                     </div>
                                   </div>
                                   <hr class="box boxboxDivide-primary">
-
-
-                                    <!-- <div class="form-group">
-                                        <div class="col-sm-6">
-                                            <label class="control-label pull-left">Upload Graph For Left Ear<sup class="text-danger">*</sup></label>
-                                            <label class="control-label small  pull-right">( Left Ear )</label>
-                                            <br>
-                                            <br>
-                                             <p-fileUpload #fileInput 
-                                                            name="fileInput" 
-                                                            accept=".pdf, .png, .jpg, .jpeg" 
-                                                            [chooseLabel]="'Browse'" 
-                                                            [showUploadButton]="false" 
-                                                            [customUpload]="true" 
-                                                            (onSelect)="handleFileSelect1($event)">
-                                            </p-fileUpload>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <label class="control-label  pull-left">Upload Graph For Right Ear<sup class="text-danger">*</sup></label>
-                                            <label class="control-label small pull-right">( Right Ear )</label>
-                                            <br>
-                                            <br>
-                                             <p-fileUpload #fileInput 
-                                                            name="fileInput" 
-                                                            accept=".pdf, .png, .jpg, .jpeg" 
-                                                            [chooseLabel]="'Browse'" 
-                                                            [showUploadButton]="false" 
-                                                            [customUpload]="true" 
-                                                            (onSelect)="handleFileSelect2($event)">
-                                            </p-fileUpload>
-                                        </div>
-                                    </div>
-                                    <hr class="box boxboxDivide-primary"> -->
 
                                     
                                     <div class="row">
@@ -222,6 +191,8 @@
                                                 </td>
                                                 <td>
                                                     <select class="form-control"
+                                                    [ngClass]="{clearance: ABR_Submitted && LRemarks1?.errors?.required }" 
+                                                    required
                                                     name="LRemarks1"
                                                     #LRemarks1="ngModel"
                                                     [(ngModel)]="ObjABR.LRemarks1"
@@ -248,6 +219,8 @@
                                                 </td>
                                                 <td>
                                                     <select class="form-control"
+                                                    [ngClass]="{clearance: ABR_Submitted && RRemarks1?.errors?.required }" 
+                                                    required
                                                     name="RRemarks1"
                                                     #RRemarks1="ngModel"
                                                     [(ngModel)]="ObjABR.RRemarks1"
@@ -283,6 +256,8 @@
                                                 </td>
                                                 <td>
                                                     <select class="form-control"
+                                                    [ngClass]="{clearance: ABR_Submitted && LRemarks2?.errors?.required }" 
+                                                    required
                                                     name="LRemarks2"
                                                     #LRemarks2="ngModel"
                                                     [(ngModel)]="ObjABR.LRemarks2"
@@ -309,6 +284,8 @@
                                                 </td>
                                                 <td>
                                                     <select class="form-control"
+                                                    [ngClass]="{clearance: ABR_Submitted && RRemarks2?.errors?.required }" 
+                                                    required
                                                     name="RRemarks2"
                                                     #RRemarks2="ngModel"
                                                     [(ngModel)]="ObjABR.RRemarks2"
@@ -344,6 +321,8 @@
                                                 </td>
                                                 <td>
                                                     <select class="form-control"
+                                                    [ngClass]="{clearance: ABR_Submitted && LRemarks3?.errors?.required }" 
+                                                    required
                                                     name="LRemarks3"
                                                     #LRemarks3="ngModel"
                                                     [(ngModel)]="ObjABR.LRemarks3"
@@ -370,6 +349,8 @@
                                                 </td>
                                                 <td>
                                                     <select class="form-control"
+                                                    [ngClass]="{clearance: ABR_Submitted && RRemarks3?.errors?.required }" 
+                                                    required
                                                     name="RRemarks3"
                                                     #RRemarks3="ngModel"
                                                     [(ngModel)]="ObjABR.RRemarks3"
@@ -433,10 +414,11 @@
                                     <hr class="box boxboxDivide-primary">
 
 
-                                    <div class="row"> 
+                                    <div class="row mrg"> 
                                             <label class="control-label">RECOMMENDATION:</label>
                                             <br>
                                             <p-checkbox 
+                                            class="mrgtop"
                                             label="Consult Back to Doctor"
                                             value="Consult Back to Doctor"
                                             name="RECOMMENDATION"
@@ -445,6 +427,7 @@
                                             </p-checkbox>
                                             <br>
                                             <p-checkbox label="Aural Hygiene" 
+                                            class="mrgtop"
                                             value="Aural Hygiene"
                                             name="RECOMMENDATION"
                                              [(ngModel)]="checkBoxArray"
@@ -452,65 +435,74 @@
                                             </p-checkbox>
                                             <br>
                                             <p-checkbox label="OAE" 
+                                            class="mrgtop"
                                             value="OAE"
                                             name="RECOMMENDATION"
-                                             [(ngModel)]="checkBoxArray"
+                                            [(ngModel)]="checkBoxArray"
                                             inputId="OAE">
                                             </p-checkbox>
                                             <br>
-                                            <p-checkbox label="ASSR" 
+                                            <p-checkbox label="ASSR"
+                                            class="mrgtop" 
                                             value="ASSR"
                                             name="RECOMMENDATION"
-                                             [(ngModel)]="checkBoxArray"
+                                            [(ngModel)]="checkBoxArray"
                                             inputId="ASSR">
                                             </p-checkbox>
                                             <br>
                                             <p-checkbox label="Counselling" 
+                                            class="mrgtop"
                                             value="Counselling"
                                             name="RECOMMENDATION"
-                                             [(ngModel)]="checkBoxArray"
+                                            [(ngModel)]="checkBoxArray"
                                              inputId="Coun">
                                             </p-checkbox>
                                             <br>
-                                            <p-checkbox label="Hearing Aid Trial" 
+                                            <p-checkbox label="Hearing Aid Trial"
+                                            class="mrgtop" 
                                             value="Hearing Aid Trial"
                                             name="RECOMMENDATION"
-                                             [(ngModel)]="checkBoxArray"
+                                            [(ngModel)]="checkBoxArray"
                                              inputId="Hearing">
                                             </p-checkbox>
                                             <br>
                                             <p-checkbox label="Cochlear Implant" 
+                                            class="mrgtop"
                                             value="Cochlear Implant"
                                             name="RECOMMENDATION"
-                                             [(ngModel)]="checkBoxArray"
+                                            [(ngModel)]="checkBoxArray"
                                              inputId="Cochlear">
                                             </p-checkbox>
                                             <br>
                                             <p-checkbox label="Speech & Language Assessment"
+                                            class="mrgtop"
                                             value="Speech & Language Assessment"
                                             name="RECOMMENDATION"
-                                             [(ngModel)]="checkBoxArray"
+                                            [(ngModel)]="checkBoxArray"
                                              inputId="Speech">
                                             </p-checkbox>
                                             <br>
                                             <p-checkbox label="Speech Therapy" 
+                                            class="mrgtop"
                                             value="Speech Therapy"
                                             name="RECOMMENDATION"
-                                             [(ngModel)]="checkBoxArray"
+                                            [(ngModel)]="checkBoxArray"
                                              inputId="Speech">
                                             </p-checkbox>
                                             <br>
-                                            <p-checkbox label="Psychological Evaluation" 
+                                            <p-checkbox label="Psychological Evaluation"
+                                            class="mrgtop" 
                                             value="Psychological Evaluation"
                                             name="RECOMMENDATION"
-                                             [(ngModel)]="checkBoxArray"
+                                            [(ngModel)]="checkBoxArray"
                                              inputId="Psychological">
                                             </p-checkbox>
                                             <br>
                                             <p-checkbox label="Follow Up" 
+                                            class="mrgtop"
                                             value="Follow Up"
                                             name="RECOMMENDATION"
-                                             [(ngModel)]="checkBoxArray"
+                                            [(ngModel)]="checkBoxArray"
                                              inputId="Follow">
                                             </p-checkbox>
                                     </div>
@@ -520,21 +512,6 @@
                                     </div>
 
                                     
-                                    <!-- <div class="row">
-                                      <div class="col-sm-4">
-                                        <label class="control-label">Status</label>
-                                        <select class="form-control"
-                                        name="Status"
-                                        #Status="ngModel"
-                                        [(ngModel)]="ObjABR.Status"
-                                         >
-                                         <option  [ngValue]="undefined">Select</option>
-                                         <option  *ngFor="let option of StatusList" value="{{option}}">
-                                             {{option}}
-                                         </option>
-                                        </select>
-                                      </div>
-                                    </div> -->
                                     <div class="form-group">
                                     <update-consultancy #consultancy  (saveData)="updateConsultancysave($event)"></update-consultancy>
                                     </div>
@@ -549,7 +526,6 @@
                                          <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
                                         </button>
                                         </div> 
-                                     
                                     </div> 
                                 
                             </form>

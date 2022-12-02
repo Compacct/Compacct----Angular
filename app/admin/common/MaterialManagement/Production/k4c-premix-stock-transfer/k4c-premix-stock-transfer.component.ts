@@ -77,8 +77,8 @@ ngOnInit() {
   this.clearData()
     this.items = ["BROWSE", "CREATE"];
     this.Header.pushHeader({
-       Header: this.MaterialType_Flag + " Stock Transfer - " + this.Param_Flag,
-      Link: " Material Management ->Production-> " + this.MaterialType_Flag + " Stock Transfer - "
+       Header:  "Premix Stock Transfer - " + this.MaterialType_Flag,
+      Link: " Material Management -> Production -> " + "Premix Stock Transfer - " + this.MaterialType_Flag
     });
   this.GetBToCostCen();
   this.GetFromCostCen();
@@ -220,12 +220,13 @@ GetFromGodown(){
             el['value'] = el.godown_id;
            });
           this.FromGodownList = data;
-          this.ObjpremixST.From_godown_id = this.FromGodownList.length === 1 ? this.FromGodownList[0].godown_id : undefined;
-          if (this.FromGodownList.length === 1) {
-            this.FGdisableflag = true;
-          } else {
-            this.FGdisableflag = false;
-          }
+          // this.ObjpremixST.From_godown_id = this.FromGodownList.length === 1 ? this.FromGodownList[0].godown_id : undefined;
+          this.ObjpremixST.From_godown_id = 126;
+          // if (this.FromGodownList.length === 1) {
+            // this.FGdisableflag = true;
+          // } else {
+          //   this.FGdisableflag = false;
+          // }
           //console.log("From Godown List ===", this.FromGodownList);
         }
       })
@@ -608,12 +609,13 @@ clearData(){
         this.GetBToGodown();
       }
      
-    this.ObjpremixST.From_godown_id = this.FromGodownList.length === 1 ? this.FromGodownList[0].godown_id : undefined;
-     if(this.FromGodownList.length === 1){
-       this.FGdisableflag = true;
-     }else{
-       this.FGdisableflag = false;
-     }
+      this.ObjpremixST.From_godown_id = 126;
+    // this.ObjpremixST.From_godown_id = this.FromGodownList.length === 1 ? this.FromGodownList[0].godown_id : undefined;
+    //  if(this.FromGodownList.length === 1){
+    //    this.FGdisableflag = true;
+    //  }else{
+    //    this.FGdisableflag = false;
+    //  }
      this.ObjpremixST.To_godown_id = this.ToGodownList.length === 1 ? this.ToGodownList[0].godown_id : undefined;
      if(this.ToGodownList.length === 1){
        this.TGdisableflag = true;

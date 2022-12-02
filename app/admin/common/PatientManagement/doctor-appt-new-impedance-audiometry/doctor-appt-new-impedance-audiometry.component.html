@@ -1,0 +1,682 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+           <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" header="Appointment"
+                            leftIcon="glyphicon glyphicon-user">
+
+                            <form name="DoctorsAppointmentNewImpedanceAudiometry" #DoctorsAppointmentNewImpedanceAudiometryForm="ngForm" novalidate>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="Name"
+                                        #Name="ngModel" 
+                                        [(ngModel)]="ObjImp.Name"
+                                        placeholder="Write Your Name"
+                                        disabled
+                                        > 
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Patient ID<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="PatientID"
+                                        #PatientID="ngModel"
+                                        [(ngModel)]="ObjImp.PatientID" 
+                                        CompacctDigitonly="true"
+                                        placeholder="Type Patient ID"
+                                        disabled
+                                        > 
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Sex<sup class="text-danger">*</sup></label>
+                                        <select class="form-control"
+                                        name="Sex"
+                                        #Sex="ngModel"
+                                        [(ngModel)]="ObjImp.Sex"
+                                        disabled
+                                         >
+                                         <option  [ngValue]="undefined">Select</option>
+                                         <option  *ngFor="let option of GenderList" value="{{option}}">
+                                             {{option}}
+                                         </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Age<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="Age"
+                                        #Age="ngModel"
+                                        [(ngModel)]="ObjImp.Age" 
+                                        CompacctDigitonly="true"
+                                        placeholder="Put Your Age"
+                                        disabled
+                                        > 
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                        <div class="label-t">{{Appo_Date ? (Appo_Date | date: "dd/MMM/yyyy") : '-'}}</div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Reffered By<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="RefferedBy"
+                                        #RefferedBy="ngModel"
+                                        [(ngModel)]="ObjImp.RefferedBy" 
+                                        placeholder="Type Reffered By"
+                                        disabled
+                                        > 
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Centre<sup class="text-danger">*</sup></label>                                 
+                                        <p-dropdown [options]="CentreList"
+                                                name="Centre" 
+                                                #Centre="ngModel" 
+                                                [(ngModel)]="ObjImp.Centre"
+                                                [showClear]="true" 
+                                                [emptyFilterMessage]="' No Centre Found'" 
+                                                [filter]="true" filterBy="label,value.name" 
+                                                [resetFilterOnHide]="true" 
+                                                [placeholder]="'Select Centre'" 
+                                                [virtualScroll]="true"
+                                                itemSize="30"
+                                                [required]="true"
+                                                disabled> 
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Probe Frequency<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="Probe_Frequency"
+                                        #Probe_Frequency="ngModel"
+                                        [(ngModel)]="ObjImp.Probe_Frequency" 
+                                        placeholder="Write Here..."
+                                        disabled
+                                        > 
+                                    </div>
+                                </div>
+                                <hr class="box boxboxDivide-primary">
+
+                                <div class="row">
+                                    <label class="labelTYMP">TYMPANOMETRY</label>
+                                    <table style="width:100%">
+                                        <tr>
+                                            <th class="table-header"></th>
+                                            <th class="table-header">Left</th>
+                                            <th class="table-header">Right</th>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 300px;">Type</th>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Left_Type?.errors?.required }" 
+                                                required
+                                                name="Left_Type"
+                                                #Left_Type="ngModel" 
+                                                [(ngModel)]="ObjImp.Left_Type"
+                                                 >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of TypeList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>   
+                                            </td>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Right_Type?.errors?.required }" 
+                                                required
+                                                name="Right_Type"
+                                                #Right_Type="ngModel" 
+                                                [(ngModel)]="ObjImp.Right_Type"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of TypeList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 300px;">Pk Pressure (daPa)</th>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Left_Pk_Pressure"
+                                                #Left_Pk_Pressure="ngModel" 
+                                                [(ngModel)]="ObjImp.Left_Pk_Pressure"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Right_Pk_Pressure"
+                                                #Right_Pk_Pressure="ngModel" 
+                                                [(ngModel)]="ObjImp.Right_Pk_Pressure"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 300px;">Compliance (ml/cc)</th>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Left_Compliance"
+                                                #Left_Compliance="ngModel" 
+                                                [(ngModel)]="ObjImp.Left_Compliance"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Right_Compliance"
+                                                #Right_Compliance="ngModel" 
+                                                [(ngModel)]="ObjImp.Right_Compliance"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 300px;">ECV (ml/cc)</th>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Left_ECV"
+                                                #Left_ECV="ngModel" 
+                                                [(ngModel)]="ObjImp.Left_ECV"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Right_ECV"
+                                                #Right_ECV="ngModel" 
+                                                [(ngModel)]="ObjImp.Right_ECV"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 300px;">Resonant Frequency (Hz)</th>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Left_Resonant_Frequency"
+                                                #Left_Resonant_Frequency="ngModel" 
+                                                [(ngModel)]="ObjImp.Left_Resonant_Frequency"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Right_Resonant_Frequency"
+                                                #Right_Resonant_Frequency="ngModel" 
+                                                [(ngModel)]="ObjImp.Right_Resonant_Frequency"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <hr class="box boxboxDivide-primary">
+
+                                <div class="row">
+                                    <label class="labelEUSTACHIAN">EUSTACHIAN TUBE FUNCTION TEST (ETF)</label>
+                                    <table style="width:100%">
+                                        <tr>
+                                            <th class="table-header">Ear</th>
+                                            <th class="table-header">Test</th>
+                                            <th class="table-header">Results</th>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 200px;">Right</th>
+                                            <td rowspan="2">
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Eustachian_Test?.errors?.required }" 
+                                                required
+                                                name="Eustachian_Test"
+                                                #Eustachian_Test="ngModel" 
+                                                [(ngModel)]="ObjImp.Eustachian_Test"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of TestList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>   
+                                            </td>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Eustachian_Result_Right?.errors?.required }" 
+                                                required
+                                                name="Eustachian_Result_Right"
+                                                #Eustachian_Result_Right="ngModel" 
+                                                [(ngModel)]="ObjImp.Eustachian_Result_Right"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ResultsList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 200px;">Left</th>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Eustachian_Result_Left?.errors?.required }" 
+                                                required
+                                                name="Eustachian_Result_Left"
+                                                #Eustachian_Result_Left="ngModel" 
+                                                [(ngModel)]="ObjImp.Eustachian_Result_Left"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ResultsList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <hr class="box boxboxDivide-primary">
+
+                                <div class="row">
+                                    <label class="labelREFLEX">REFLEXOMETRY</label>
+                                    <table style="width:100%">
+                                        <tr>
+                                            <th class="table-header" colspan="2">Probe Ear</th>
+                                            <th class="table-header">500Hz</th>
+                                            <th class="table-header">1000Hz</th>
+                                            <th class="table-header">2000Hz</th>
+                                            <th class="table-header">4000Hz</th>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 100px;" rowspan="2">Right</th>
+                                            <th style="width: 100px;">Ipsi</th>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Reflax_Right_Ipsi_500?.errors?.required }" 
+                                                required
+                                                name="Reflax_Right_Ipsi_500"
+                                                #Reflax_Right_Ipsi_500="ngModel" 
+                                                [(ngModel)]="ObjImp.Reflax_Right_Ipsi_500"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ReflexList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Reflax_Right_Ipsi_1000?.errors?.required }" 
+                                                required
+                                                name="Reflax_Right_Ipsi_1000"
+                                                #Reflax_Right_Ipsi_1000="ngModel" 
+                                                [(ngModel)]="ObjImp.Reflax_Right_Ipsi_1000"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ReflexList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Reflax_Right_Ipsi_2000?.errors?.required }" 
+                                                required
+                                                name="Reflax_Right_Ipsi_2000"
+                                                #Reflax_Right_Ipsi_2000="ngModel" 
+                                                [(ngModel)]="ObjImp.Reflax_Right_Ipsi_2000"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ReflexList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Reflax_Right_Ipsi_4000?.errors?.required }" 
+                                                required
+                                                name="Reflax_Right_Ipsi_4000"
+                                                #Reflax_Right_Ipsi_4000="ngModel" 
+                                                [(ngModel)]="ObjImp.Reflax_Right_Ipsi_4000"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ReflexList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 100px;">Contra</th>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Reflax_Right_Contra_500?.errors?.required }" 
+                                                required
+                                                name="Reflax_Right_Contra_500"
+                                                #Reflax_Right_Contra_500="ngModel" 
+                                                [(ngModel)]="ObjImp.Reflax_Right_Contra_500"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ReflexList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Reflax_Right_Contra_1000?.errors?.required }" 
+                                                required
+                                                name="Reflax_Right_Contra_1000"
+                                                #Reflax_Right_Contra_1000="ngModel" 
+                                                [(ngModel)]="ObjImp.Reflax_Right_Contra_1000"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ReflexList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Reflax_Right_Contra_2000?.errors?.required }" 
+                                                required
+                                                name="Reflax_Right_Contra_2000"
+                                                #Reflax_Right_Contra_2000="ngModel" 
+                                                [(ngModel)]="ObjImp.Reflax_Right_Contra_2000"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ReflexList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Reflax_Right_Contra_4000?.errors?.required }" 
+                                                required
+                                                name="Reflax_Right_Contra_4000"
+                                                #Reflax_Right_Contra_4000="ngModel" 
+                                                [(ngModel)]="ObjImp.Reflax_Right_Contra_4000"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ReflexList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+
+                                        <hr style="width: 100%;">
+
+                                        <tr>
+                                            <th style="width: 100px;" rowspan="2">Left</th>
+                                            <th style="width: 100px;">Ipsi</th>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Reflax_Left_Ipsi_500?.errors?.required }" 
+                                                required
+                                                name="Reflax_Left_Ipsi_500"
+                                                #Reflax_Left_Ipsi_500="ngModel" 
+                                                [(ngModel)]="ObjImp.Reflax_Left_Ipsi_500"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ReflexList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Reflax_Left_Ipsi_1000?.errors?.required }" 
+                                                required
+                                                name="Reflax_Left_Ipsi_1000"
+                                                #Reflax_Left_Ipsi_1000="ngModel" 
+                                                [(ngModel)]="ObjImp.Reflax_Left_Ipsi_1000"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ReflexList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Reflax_Left_Ipsi_2000?.errors?.required }" 
+                                                required
+                                                name="Reflax_Left_Ipsi_2000"
+                                                #Reflax_Left_Ipsi_2000="ngModel" 
+                                                [(ngModel)]="ObjImp.Reflax_Left_Ipsi_2000"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ReflexList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Reflax_Left_Ipsi_4000?.errors?.required }" 
+                                                required
+                                                name="Reflax_Left_Ipsi_4000"
+                                                #Reflax_Left_Ipsi_4000="ngModel" 
+                                                [(ngModel)]="ObjImp.Reflax_Left_Ipsi_4000"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ReflexList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 100px;">Contra</th>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Reflax_Left_Contra_500?.errors?.required }" 
+                                                required
+                                                name="Reflax_Left_Contra_500"
+                                                #Reflax_Left_Contra_500="ngModel" 
+                                                [(ngModel)]="ObjImp.Reflax_Left_Contra_500"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ReflexList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Reflax_Left_Contra_1000?.errors?.required }" 
+                                                required
+                                                name="Reflax_Left_Contra_1000"
+                                                #Reflax_Left_Contra_1000="ngModel" 
+                                                [(ngModel)]="ObjImp.Reflax_Left_Contra_1000"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ReflexList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Reflax_Left_Contra_2000?.errors?.required }" 
+                                                required
+                                                name="Reflax_Left_Contra_2000"
+                                                #Reflax_Left_Contra_2000="ngModel" 
+                                                [(ngModel)]="ObjImp.Reflax_Left_Contra_2000"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ReflexList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Reflax_Left_Contra_4000?.errors?.required }" 
+                                                required
+                                                name="Reflax_Left_Contra_4000"
+                                                #Reflax_Left_Contra_4000="ngModel" 
+                                                [(ngModel)]="ObjImp.Reflax_Left_Contra_4000"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ReflexList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <hr class="box boxboxDivide-primary">
+
+                                <div class="row">
+                                    <table style="width:100%">
+                                        <tr>
+                                            <th colspan="2" class="table-header">INTERPRETATION</th>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 100px;">Right Ear</th>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Right_Ear_Interpretation?.errors?.required }" 
+                                                required
+                                                name="Right_Ear_Interpretation"
+                                                #Right_Ear_Interpretation="ngModel" 
+                                                [(ngModel)]="ObjImp.Right_Ear_Interpretation"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of InterpretationList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th  style="width: 100px;">Left Ear</th>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: ImpedanceAudiometryFormSubmitted && Left_Ear_Interpretation?.errors?.required }" 
+                                                required
+                                                name="Left_Ear_Interpretation"
+                                                #Left_Ear_Interpretation="ngModel" 
+                                                [(ngModel)]="ObjImp.Left_Ear_Interpretation"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of InterpretationList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                <div class="row">
+                                    <br>
+                                    <table style="width:100%">
+                                        <tr>
+                                            <th style="width: 100px;">COMMENT</th>
+                                            <td>
+                                                <input 
+                                                class="form-control"
+                                                style="width: 100%; height: 35px;"
+                                                name="Comment"
+                                                #Comment="ngModel" 
+                                                [(ngModel)]="ObjImp.Comment"
+                                                placeholder="Write Here...">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <hr class="box boxboxDivide-primary">
+
+                                <div class="row mrg"> 
+                                    <label class="control-label">RECOMMENDATION:</label>
+                                    <br>
+                                    <p-checkbox 
+                                    label="Consult Back to Doctor"
+                                    value="Consult Back to Doctor"
+                                    name="RECOMMENDATION"
+                                    [(ngModel)]="CheckBoxRECOMMENDATION"
+                                    inputId="RC1">
+                                    </p-checkbox>
+                                    <br>
+                                    <p-checkbox 
+                                    label="To be Correlated with Clinical Findings" 
+                                    value="To be Correlated with Clinical Findings" 
+                                    name="RECOMMENDATION"
+                                    [(ngModel)]="CheckBoxRECOMMENDATION"
+                                    inputId="RC2">
+                                    </p-checkbox>
+                                    <br>
+                                    <p-checkbox 
+                                    label="Aural Hygiene" 
+                                    value="Aural Hygiene" 
+                                    name="RECOMMENDATION"
+                                    [(ngModel)]="CheckBoxRECOMMENDATION"
+                                    inputId="RC3">
+                                    </p-checkbox>
+                                    <br>
+                                    <p-checkbox 
+                                    label="Follow Up"
+                                    value="Follow Up"
+                                    name="RECOMMENDATION"
+                                    [(ngModel)]="CheckBoxRECOMMENDATION"
+                                    inputId="RC4">
+                                    </p-checkbox>
+                                </div>
+
+                                <div class="row">
+                                    <label class="control-label pull-right">Audiologist</label>
+                                </div>
+
+                                <div class="form-group">
+                                    <update-consultancy #consultancy (saveData)="updateConsultancysave($event)"></update-consultancy>
+                                </div>
+
+                                <div class="form-group" style="padding: 1em;">
+                                    <div class="col-sm-4"></div>
+                                    <div class="col-sm-4"></div>
+                                    <div class="col-sm-2"></div>
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-primary pull-right" (click)="saveDocAppo(DoctorsAppointmentNewImpedanceAudiometryForm.form.valid)"  id="load"   [disabled]="Spinner">
+                                            <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                          <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                        </button>
+                                    </div> 
+                                </div> 
+
+                            </form>
+
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

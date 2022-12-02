@@ -100,6 +100,12 @@ export class ConsumptionComponent implements OnInit {
     this.items = ["BROWSE", "CREATE", "PENDING UTILIZATION"];
     this.buttonname = "Save";
     this.clearData();
+    // this.ObjBrowse.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.Searchedlist = this.tabIndexToView ? this.Searchedlist : [];
+    this.ObjBrowse = this.tabIndexToView ? this.ObjBrowse : new Browse();
+    this.Entry_Date = this.tabIndexToView ? this.Entry_Date : new Date();
+    this.ObjBrowse.Cost_Cen_ID = this.tabIndexToView ? this.ObjBrowse.Cost_Cen_ID : this.getCostcenter();
+    // this.ObjBrowse.godown_id = this.tabIndexToView ? this.ObjBrowse.godown_id : this.ToBGodownList[0].godown_id;
     //this.Editdisable = false;
   }
   Finyear() {
@@ -423,9 +429,13 @@ const tempobj = {
       //this.getAllList();
       
       this.clearData();
-      
+      this.getCostcenter()
       this.Spinner = false;
       this.tabIndexToView = 0;
+      this.ObjBrowse = new Browse();
+      this.ConsumptionFormSubmitted = false;
+      this.Searchedlist = [];
+      this.Entry_Date = new Date();
       }
       else{
         this.compacctToast.clear();
@@ -437,6 +447,11 @@ const tempobj = {
       });
       this.clearData();
       this.Spinner = false;
+      this.getCostcenter()
+      this.ObjBrowse = new Browse();
+      this.ConsumptionFormSubmitted = false;
+      this.Searchedlist = [];
+      this.Entry_Date = new Date();
       }
      });
     
@@ -521,17 +536,17 @@ onConfirm2(){
 
 
   clearData(){
-    this.ObjBrowse = new Browse();
-    this.objAllData = new AllData();
+    // this.ObjBrowse = new Browse();
+    // this.objAllData = new AllData();
     this.ConsumptionFormSubmitted = false;
     this.BrowseFormSubmitted = false;
-    this.Searchedlist = [];
+    // this.Searchedlist = [];
     this.Browselist=[];
-    this.Entry_Date = new Date();
+    // this.Entry_Date = new Date();
     // this.initDate = [new Date(),new Date()]
     this.Finyear();
     
-    this.getCostcenter();
+    // this.getCostcenter();
 }
 
 // Pending Utilization

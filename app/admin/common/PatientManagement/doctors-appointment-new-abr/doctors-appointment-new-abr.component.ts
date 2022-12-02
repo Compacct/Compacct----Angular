@@ -34,6 +34,7 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
   Level_1_Status:any=undefined;
   Level_2_Status:any=undefined;
   Level_3_Status:any=undefined;
+  ABR_Submitted:boolean=false;
 
   ObjABR: ABR = new ABR();
 
@@ -125,21 +126,7 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
     });
   }
 
-  // handleFileSelect1(event:any) {
-  //   this.ProductPDFFile = {};
-  //   if (event) {
-  //     console.log(event)
-  //     this.ProductPDFFile = event.files[0];
-  // }
-  // }
-
-  // handleFileSelect2(event:any) {
-  //   this.ProductPDFFile = {};
-  //   if (event) {
-  //     console.log(event)
-  //     this.ProductPDFFile = event.files[0];
-  // }
-  // }
+ 
 
   updateConsultancysave(event){
     console.log('event',event);
@@ -211,9 +198,10 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
     }
     console.log("TempObj2",TempObj2);
 
-    this.Spinner=true;
-    if(valid){
+    this.ABR_Submitted=true;
 
+    if(valid){
+    this.Spinner=true;
     const obj = {
       "SP_String": "SP_BL_Txn_Doctor_Appo_ABR",
       "Report_Name_String": "Create_BL_Txn_Doctor_Appo_ABR",
@@ -224,6 +212,7 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
       console.log("save data",data);
       if (data[0].Column1){
         this.Spinner=false;
+        this.ABR_Submitted=false;
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",

@@ -52,8 +52,20 @@ table, th, td {
   padding: 5px;
 }
 .mrg{
-  margin-left: 15px;
+  margin-left: 5px;
 }
 .mrgtop{
   margin-top: 8px;
+}
+.labelTYMP{
+  margin-left: 500px;
+  font-size: 17px;
+}
+.labelEUSTACHIAN{
+  margin-left: 450px;
+  font-size: 17px;
+}
+.labelREFLEX{
+  margin-left: 500px;
+  font-size: 17px;
 }

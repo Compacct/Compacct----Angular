@@ -161,6 +161,9 @@ export class PurchaseOrderComponent implements OnInit {
   ObjCol:any = {}
   @ViewChild('vender',{static:false}) vender:ElementRef;
   companyname="";
+  databaseName:any;
+  cancelDocNo:any;
+  allTotalObj:any = {}
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
     private Header: CompacctHeader ,
@@ -193,6 +196,7 @@ ngOnInit() {
         'Header' : this.headerText,
         'Link' : this.headerText
       });
+      this.getDatabase();
       this.Finyear();
       this.objpurchase.Credit_Days = 0;
       this.GetFreightType();
@@ -217,6 +221,15 @@ ngOnInit() {
      }
      this.GetReportNameList();
 } 
+getDatabase(){
+  this.$http
+      .get("/Common/Get_Database_Name",
+      {responseType: 'text'})
+      .subscribe((data: any) => {
+        this.databaseName = data;
+        console.log(data)
+      });
+}
 GetFreightType(){
     this.FreightTypeList = [{FreightType : "%"},{FreightType: "AMT"}]
 }
@@ -227,6 +240,7 @@ TabClick(e) {
     this.clearData();
     this.clearProject()
     this.GetCostCenter();
+    // this.getTotal(this.misReportList)
     this.addPurchaseListInput = false
     
     // this.gettermsdetails();
@@ -302,6 +316,7 @@ clearData(){
 onReject() {
     this.compacctToast.clear("c");
     this.compacctToast.clear("c1");
+    this.compacctToast.clear("x");
     this.Spinner = false;
     this.ngxService.stop();
     this.deleteError = false;
@@ -1315,6 +1330,54 @@ PrintREQ(DocNo) {
   })
   }
 }
+CancelPO(col){
+  // console.log("Delete Col",col);
+  this.cancelDocNo = undefined;
+  if(col.Doc_No){
+   this.cancelDocNo = col.Doc_No;
+   this.compacctToast.clear();
+   this.compacctToast.add({
+     key: "x",
+     sticky: true,
+     severity: "warn",
+     summary: "Are you sure?",
+     detail: "Confirm to proceed"
+   });
+  }
+}
+onCancel(){
+  if(this.cancelDocNo){
+   const obj = {
+     "SP_String": "Sp_Purchase_Order",
+     "Report_Name_String":"Purchase_Order_Cancel",
+     "Json_Param_String": JSON.stringify([{Doc_No : this.cancelDocNo,User_ID : this.$CompacctAPI.CompacctCookies.User_ID}]) 
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     // console.log("data ==",data[0].Column1);
+     if (data[0].Column1 === "Done"){
+       this.compacctToast.clear();
+       this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "success",
+         summary: "Purchase Order Cancel Succesfully",
+         detail: "Succesfully Cancel"
+       });
+       this.cancelDocNo = undefined;
+       this.getAllData(true);
+       }
+       else {
+         this.onReject();
+         this.compacctToast.clear();
+         this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Error Occured",
+          detail: data[0].Column1
+         });
+       }
+      });
+  }
+}
 Delete(col){
   // console.log("Delete Col",col);
   this.DocNo = undefined;
@@ -1796,6 +1859,8 @@ UpdateTerms(){
     }
   })
 }
+
+// MIS
 GetReportNameList(){
 this.ReportNameList = [
   {Report_Name : "Pending Indent Details"},
@@ -1840,6 +1905,7 @@ if (valid) {
     this.misReportList = data;
     this.BackupMisReport = data;
     this.GetDistinctReport();
+    // this.getTotal(this.misReportList)
     if(this.misReportList.length){
       this.DynamicHeaderMISreport = Object.keys(data[0]);
     }
@@ -1848,6 +1914,37 @@ if (valid) {
   })
   }
 }
+getTotalValue(key){
+  let Amtval = 0;
+  this.misReportList.forEach((item)=>{
+    Amtval += Number(item[key]);
+  });
+
+  return Amtval ? Amtval.toFixed(2) : '-';
+}
+// getTotal(arrList:any){
+//   if(arrList.length){
+//       this.allTotalObj.Gross_Amount =0
+//       this.allTotalObj.Discount_Amount = 0
+//       this.allTotalObj.Product_Taxable = 0
+//       this.allTotalObj.Term_Amount = 0
+//       this.allTotalObj.Total_Opening =0
+//       this.allTotalObj.Total_GST = 0
+//       this.allTotalObj.Rounded_Off = 0
+//       this.allTotalObj.Net_Amount = 0
+//     arrList.forEach(ele => {
+//       this.allTotalObj.Gross_Amount = (Number(ele.Gross_Amount) + Number(this.allTotalObj.Gross_Amount)).toFixed(2)
+//       this.allTotalObj.Discount_Amount = (Number(ele.Discount_Amount) + Number(this.allTotalObj.Discount_Amount)).toFixed(2)
+//       this.allTotalObj.Product_Taxable = (Number(ele.Product_Taxable) + Number(this.allTotalObj.Product_Taxable)).toFixed(2)
+//       this.allTotalObj.Term_Amount = (Number(ele.Term_Amount) + Number(this.allTotalObj.Term_Amount)).toFixed(2)
+//       this.allTotalObj.Total_Taxable = (Number(ele.Total_Taxable) + Number(this.allTotalObj.Total_Taxable)).toFixed(2)
+//       this.allTotalObj.Total_GST = (Number(ele.Total_GST) + Number(this.allTotalObj.Total_GST)).toFixed(2)
+//       this.allTotalObj.Rounded_Off = (Number(ele.Rounded_Off) + Number(this.allTotalObj.Rounded_Off)).toFixed(2)
+//       this.allTotalObj.Net_Amount = (Number(ele.Net_Amount) + Number(this.allTotalObj.Net_Amount)).toFixed(2)
+//     });
+//   }
+//   console.log(this.allTotalObj)
+// }
 exportoexcel(Arr,fileName): void {
   const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
   const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
@@ -1910,6 +2007,7 @@ this.misReportList = LeadArr.length ? LeadArr : [];
 } else {
 this.misReportList = [...this.BackupMisReport] ;
 }
+// this.getTotal(this.misReportList)
 }
   
 getPONoforview(col,row){
