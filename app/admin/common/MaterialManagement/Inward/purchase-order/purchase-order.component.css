@@ -170,3 +170,6 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav {
 .txt:hover {
   text-decoration: underline;
 }
+.text-red-active > td {
+  color:red;
+}

@@ -62,6 +62,10 @@
                                     <input class="form-control" name="gstno" #gstno="ngModel" id="txtGSTCard" [(ngModel)]="GST_No" placeholder="Gst No" minlength="15" maxlength="15" (ngModelChange)='ValidateGST()' 
                                     [ngClass]="{clearance:(GSTvalidFlag) ||(gstno.errors?.minlength && gstno.touched)}" >
                                 </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">input </label>
+                                    <input class="form-control" name="input" #input="ngModel" [(ngModel)]="Decimal" (ngModelChange)='checkdecimal()' >
+                                </div>
                                 <!-- <div class="col-sm-2">
                                     <label class="control-label">Aadhar NO </label>
                                     <input class="form-control" name="aadharno" #aadharno="ngModel" id="aadhaar" [(ngModel)]="Aadhar_No" placeholder="Aadhar No" minlength="12" maxlength="12" (ngModelChange)='ValidateAadhar()' 

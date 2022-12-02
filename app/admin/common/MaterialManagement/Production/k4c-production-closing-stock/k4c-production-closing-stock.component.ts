@@ -254,6 +254,26 @@ export class K4cProductionClosingStockComponent implements OnInit {
    })
   }
   }
+  checkdecimal(obj){
+    if (obj.Receive_Qty) {
+      var val = obj.Receive_Qty;
+      if(val[0] === '.'){
+        obj.Receive_Qty = 0+val; 
+      }
+    }
+    if (obj.Closing_Qty) {
+      var val = obj.Closing_Qty;
+      if(val[0] === '.'){
+        obj.Closing_Qty = 0+val; 
+      }
+    }
+    if (obj.Wastage_Qty) {
+      var val = obj.Wastage_Qty;
+      if(val[0] === '.'){
+        obj.Wastage_Qty = 0+val; 
+      }
+    }
+  }
   exportexcel(Arr,fileName): void {
     let temp:any = [];
      Arr.forEach(element => {
@@ -352,7 +372,7 @@ saveRemarks(){
 
   return flag;
 }
-ConsumptionCal(indx){
+ConsumptionCal(indx,obj){
   this.ProductList[indx]['Consumption_Qty'] = 0;
   if(this.ProductList[indx]['Wastage_Qty']){
     var openrec = (this.ProductList[indx]['Opening_Qty'] + Number((this.ProductList[indx]['Receive_Qty']))).toFixed(2);
@@ -374,6 +394,7 @@ ConsumptionCal(indx){
     }
 
   })
+  this.checkdecimal(obj);
 }
 
   // GET PRODUCT LIST

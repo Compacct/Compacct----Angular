@@ -107,6 +107,7 @@ export class PurchaseBillFromGrnComponent implements OnInit {
   PANvalidFlag = false;
   GST_No :any;
   GSTvalidFlag = false;
+  Decimal:number;
 
   constructor(
     private Header: CompacctHeader,
@@ -131,6 +132,13 @@ export class PurchaseBillFromGrnComponent implements OnInit {
     // this.GetCostCenter();
     // this.GetSearchedlist();
     this.ObjPurBillChallan.Currency_ID = 1;
+  }
+ 
+  checkdecimal(){
+      var val = this.Decimal;
+      if(val[0] === '.'){
+        this.Decimal = 0+val; 
+      }
   }
 
   // ngOnInit() {

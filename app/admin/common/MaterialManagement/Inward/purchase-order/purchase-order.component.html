@@ -45,6 +45,24 @@
         </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" key="x" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid" >
+            <div class="ui-g-6" >
+                <button type="button" pButton (click)="onCancel()" label="Yes" class="ui-button-success"></button>
+            </div>           
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -112,11 +130,11 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeader  |  slice:1">{{option.replaceAll('_',' ')}}</th> 
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeader  |  slice:3">{{option.replaceAll('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
-                                        <tr>
+                                        <tr [class]='col.Cancel_PO != "N" &&  (databaseName === "MICL_Demo" || databaseName ==="MICL") ? "text-red-active" : ""'>
     
                                             <td>
                                                 <div class="dropdown">
@@ -125,37 +143,40 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                     <ul class="dropdown-menu">
-                                                        <li *ngIf="col.Approve_Status =='Pending' && companyname == 'HARBAUER India [P] Ltd'">
+                                                        <li *ngIf="col.Approve_Status =='Pending' && (databaseName == 'Harbauer_Demo' || databaseName == 'Harbauer')">
                                                             <a (click)="FinalSave(col)">
                                                             <i class="fa fa-save"></i> Final Save
                                                             </a>
                                                         </li>
-                                                        <li>
                                                         <li *ngIf="col.Approve_Status =='Pending'">
                                                                 <a (click)="Edit(col)">
                                                                     <i class="fa fa-fw fa-pencil"></i> Edit
                                                                 </a>
-                                                            </li>
+                                                        </li>
                                                         <li>
                                                             <a (click)="Print(col.Doc_No)">
                                                                 <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.Approve_Status =='Pending' && companyname == 'HARBAUER India [P] Ltd'">
+                                                         <li *ngIf="col.Approve_Status =='Pending' && (databaseName == 'Harbauer_Demo' || databaseName == 'Harbauer')"><!-- companyname == 'HARBAUER India [P] Ltd' -->
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="!col.RDB_No && (databaseName === 'MICL_Demo' || databaseName === 'MICL')">
+                                                            <a (click)="CancelPO(col)">
+                                                                <i class="fa fa-fw fa-times"></i> Cancel
                                                             </a>
                                                         </li>
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <ng-container *ngFor="let option of DynamicHeader |  slice:1">
+                                            <ng-container *ngFor="let option of DynamicHeader  |  slice:3">
                                                 <td *ngIf="option != 'Work_Details'" >{{col[option]}}</td>
                                                 <td *ngIf="option == 'Work_Details'">
                                                     <div (click)="selectWork($event,col,op)" [ngClass]="stringShort(col[option],'css')">{{stringShort(col[option],'ff')}}</div>
                                                 </td>
                                             </ng-container>
-                                            
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -1472,7 +1493,7 @@
                                                 <th nowrap="nowrap" *ngFor="let option of DynamicHeaderMISreport">{{option.replaceAll('_',' ')}}</th>
                                                </tr>
                                         </ng-template>
-                                        <ng-template pTemplate="body" let-col>
+                                        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
                                             <tr>
                                                 <!-- <td>
                                                     <div class="dropdown">
@@ -1495,6 +1516,19 @@
                                                     <td [class]="ObjMIS.Report_Name != 'Pending PO - Not Delivered - Summary' ? 'Othercolor' : option === 'PO_No' ? 'QtyColor' : 'Othercolor'" (click)="getPONoforview(option,col)">{{col[option]}}</td>
                                                 </ng-container>
                                             </tr>
+                                            <tr *ngIf='ObjMIS.Report_Name === "PO Wise Summary"'>
+                                            <ng-container *ngIf='rowIndex === (misReportList.length - 1)'>
+                                                <td colspan="5" class="text-right">Total</td>
+                                                <td>{{getTotalValue('Gross_Amount')}}</td>
+                                                <td>{{getTotalValue('Discount_Amount')}}</td>
+                                                <td>{{getTotalValue('Product_Taxable')}}</td>
+                                                <td>{{getTotalValue('Term_Amount')}}</td>
+                                                <td>{{getTotalValue('Total_Taxable')}}</td>
+                                                <td>{{getTotalValue('Total_GST')}}</td>
+                                                <td>{{getTotalValue('Rounded_Off')}}</td>
+                                                <td>{{getTotalValue('Net_Amount')}}</td>
+                                            </ng-container>
+                                            </tr>
                                         </ng-template>
                                         <ng-template pTemplate="paginatorright" *ngIf="misReportList.length" let-state>
                                             Showing {{ state.first + 1 }} of
@@ -1503,6 +1537,36 @@
                                         </ng-template>
                                     </p-table>
                                 </div> 
+                                <!-- <div class="table-responsive no-padding" *ngIf="ObjMIS.Report_Name === 'PO Wise Summary'">
+                                    <table class="table bidopen table-bordered" *ngIf="misReportList.length">
+                                        <thead>
+                                          <tr>
+                                                <th style=" width: 20% ;" ></th>
+                                                <th style=" width: 10% ;" >Total Gross Amount </th>
+                                                <th style=" width: 10% ;" >Discount Amount </th>
+                                                <th style=" width: 10% ;" >Product Taxable</th>
+                                                <th style=" width: 10% ;" >Term Amount</th>
+                                                <th style=" width: 10% ;" >Total Taxable </th>
+                                                <th style=" width: 10% ;" >Total GST </th>
+                                                <th style=" width: 10% ;" >Rounded Off</th>
+                                                <th style=" width: 10% ;" >Net Amount</th>
+                                          </tr>
+                                          <tr>
+                                            <th style=" width: 20% ;" ></th>
+                                            <th style=" width: 10% ;" >{{allTotalObj.Gross_Amount ? allTotalObj.Gross_Amount : 0}}</th>
+                                            <th style=" width: 10% ;" >{{allTotalObj.Discount_Amount ? allTotalObj.Discount_Amount : 0}}</th>
+                                            <th style=" width: 10% ;" >{{allTotalObj.Product_Taxable ? allTotalObj.Product_Taxable : 0}}</th>
+                                            <th style=" width: 10% ;" >{{allTotalObj.Term_Amount ? allTotalObj.Term_Amount : 0}}</th>
+                                            <th style=" width: 10% ;" >{{allTotalObj.Total_Taxable ? allTotalObj.Total_Taxable : 0}}</th>
+                                            <th style=" width: 10% ;" >{{allTotalObj.Total_GST ? allTotalObj.Total_GST : 0}}</th>
+                                            <th style=" width: 10% ;" >{{allTotalObj.Rounded_Off ? allTotalObj.Rounded_Off : 0}}</th>
+                                            <th style=" width: 10% ;" >{{allTotalObj.Net_Amount ? allTotalObj.Net_Amount : 0}}</th>
+                                      </tr>
+                                  
+                                        </thead>
+                                        
+                                      </table>
+                                </div> -->
                         </p-tabPanel>
                     </p-tabView>
                 </div>
