@@ -392,6 +392,7 @@ import { MiclPurchaseBillComponent } from './common/MICL/micl-purchase-bill/micl
 import { DoctorsAppointmentNewABRComponent } from './common/PatientManagement/doctors-appointment-new-abr/doctors-appointment-new-abr.component';
 import { K4CBillDateUpdateComponent } from "./common/OutletManagement/k4-c-bill-date-update/k4-c-bill-date-update.component";
 import { UpdateConsultancyComponent } from './shared/compacct.components/compacct.forms/update-consultancy/update-consultancy.component'
+import { DoctorApptNewImpedanceAudiometryComponent } from "./common/PatientManagement/doctor-appt-new-impedance-audiometry/doctor-appt-new-impedance-audiometry.component";
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -700,7 +701,8 @@ import { UpdateConsultancyComponent } from './shared/compacct.components/compacc
     MiclPurchaseBillComponent,
     DoctorsAppointmentNewABRComponent,
     K4CBillDateUpdateComponent,
-    UpdateConsultancyComponent
+    UpdateConsultancyComponent,
+    DoctorApptNewImpedanceAudiometryComponent
   ],
   imports: [
     CommonModule,

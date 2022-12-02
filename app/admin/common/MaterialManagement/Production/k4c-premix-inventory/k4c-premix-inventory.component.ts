@@ -160,7 +160,7 @@ export class K4cPremixInventoryComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.GodownList = data;
-        this.ObjProClosingStock.godown_id = 4;
+        this.ObjProClosingStock.godown_id = 126;
       //   this.ObjProClosingStock.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
       //  if(this.GodownList.length === 1){
       //    this.Gdisableflag = true;
@@ -200,7 +200,7 @@ export class K4cPremixInventoryComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.BGodownList = data;
       // this.ObjBrowse.godown_id = this.BGodownList.length === 1 ? this.BGodownList[0].godown_id : undefined;
-      this.ObjBrowse.godown_id = 4
+      this.ObjBrowse.godown_id = 126
       // if(this.GodownList.length === 1){
       //   //this.ObjRawMateriali.To_godown_id = this.ToGodownList[0].godown_id;
       //   this.ObjBrowse.godown_id = this.GodownList[0].godown_id;
@@ -614,10 +614,10 @@ const obj = {
 
   clearData(){
     this.ObjProClosingStock.Cost_Cen_ID = 2;
-    this.ObjProClosingStock.godown_id = 4;
+    this.ObjProClosingStock.godown_id = 126;
     // this.GetGodown();
     this.ObjBrowse.Cost_Cen_ID = 2;
-    this.ObjBrowse.godown_id = 4;
+    this.ObjBrowse.godown_id = 126;
     // this.GetBGodown();
     // this.ObjProClosingStock.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     // FOR CREATE TAB

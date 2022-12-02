@@ -37,7 +37,9 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
   ObjnegotiatePrice:negotiatePrice = new negotiatePrice()
   PurchaseTypeList:any = []
   PurchaseTypeSelect:any = undefined
-  PaymentMethodList:any = []
+  PaymentMethodList: any = []
+  PaymentTermsList: any = []
+  DeliveryTermsList :any =[]
   PaymentMethodSelect:any = undefined
   CurrencyList:any = []
   CurrencySelect:any = []
@@ -56,7 +58,9 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
   PaymentTypeName = undefined
   CurrencyId =undefined
   CurrencyName = undefined
-  Spinner:boolean = false;
+  Spinner: boolean = false;
+  PaymentTramsSelect: any = undefined
+  DeliveryMethodSelect :any =undefined
   constructor( private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -78,7 +82,6 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
    this.BrowseEndDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
    this.getPRno()
    this.getPurchaseType()
-   this.getPaymentMethod()
    this.GetCurrency()
   }
   TabClick(e) {
@@ -88,29 +91,34 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
     this.clearData();
   }
   clearData(){
-  this.ObjnegotiatePrice = new negotiatePrice()
-  this.vendorSelectionFormSubmit = false
-  this.PoDate = undefined
-  this.prList = []
-  this.SaveSpinner = false
-  this.PurchaseTypeSelect = undefined
-  this.PaymentMethodSelect = undefined
-  this.CurrencySelect = undefined
+  this.ObjnegotiatePrice = new negotiatePrice();
+  this.vendorSelectionFormSubmit = false;
+  this.PoDate = undefined;
+  this.Searchedlist = [];
+  this.prList = [];
+  this.SaveSpinner = false;
+  this.PurchaseTypeSelect = undefined;
+  this.PaymentMethodSelect = undefined;
+  this.DeliveryMethodSelect = undefined;
+  this.PaymentTramsSelect = undefined;
+  this.CurrencySelect = undefined;
+  this.DeliveryMethodSelect = undefined;
+  this.PaymentMethodSelect = undefined;
   }
   onReject(){
     this.compacctToast.clear("c");
     this.compacctToast.clear("A");
     this.compacctToast.clear("B");
     this.compacctToast.clear("D");
-   }
-   getPRno(){
+  }
+  getPRno(){
     const obj = {
       "SP_String": "sp_Bl_Txn_Purchase_Request",
       "Report_Name_String": "Get_Purchase_Request_Doc_No"
     }
     this.GlobalAPI.getData(obj)
     .subscribe((data: any) => {
-      console.log("data",data)
+      //console.log("data",data)
       if(data.length) {
         data.forEach(element => {
           element['label'] = element.Purchase_Request_No,
@@ -123,10 +131,10 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
         this.poRequestList = [];
   
       }
-      console.log("poRequestList",this.poRequestList)
+      //console.log("poRequestList",this.poRequestList)
     })
-   }
-   purchaseRequestChange(){
+  }
+  purchaseRequestChange(){
     if(this.ObjnegotiatePrice.Purchase_Request_No){
       this.getPr()
       const poRequestListFilter = this.poRequestList.filter((y:any)=> y.Purchase_Request_No_Actual == this.ObjnegotiatePrice.Purchase_Request_No)[0]
@@ -148,22 +156,24 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
          "Json_Param_String": JSON.stringify([{ Purchase_Request_No :this.ObjnegotiatePrice.Purchase_Request_No}])
         }
        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-       console.log("prList",data)
+      // console.log("prList",data)
        this.prList = data
        })
-      }
-  getPurchaseType(){
+  }
+  getPurchaseType() {
+  this.PaymentTramsSelect = undefined;
+  this.DeliveryMethodSelect = undefined;
+  this.PaymentMethodSelect = undefined;
     const obj = {
       "SP_String": "sp_Bl_Txn_Purchase_Request",
       "Report_Name_String": "Get_Purchase_Type"
     }
-    this.GlobalAPI.getData(obj)
-    .subscribe((data: any) => {
-      console.log("data",data)
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      //console.log("data",data)
       if(data.length) {
         data.forEach(element => {
           element['label'] = element.Purchase_Type,
-          element['value'] = element.Purchase_Type
+          element['value'] = element.Purchase_Type_ID
         });
        this.PurchaseTypeList = data;
      // console.log("Requlist======",this.Requlist);
@@ -172,30 +182,58 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
         this.PurchaseTypeList = [];
   
       }
-      console.log("PurchaseTypeList",this.PurchaseTypeList)
+      //console.log("PurchaseTypeList",this.PurchaseTypeList)
     })
   }
-  getPaymentMethod(){
+  getPaymentMethod() {
+    const tempobj = {
+      Purchase_Type_ID: this.PurchaseTypeSelect 
+      }
     const obj = {
       "SP_String": "sp_Bl_Txn_Purchase_Request",
-      "Report_Name_String": "Get_Payment_Method"
+      "Report_Name_String": "Get_Data_Payment_Terms",
+      "Json_Param_String": JSON.stringify([tempobj])
     }
     this.GlobalAPI.getData(obj)
     .subscribe((data: any) => {
-      console.log("data",data)
+      //console.log("data",data)
       if(data.length) {
         data.forEach(element => {
-          element['label'] = element.Payment_Method,
-          element['value'] = element.Payment_Method
+          element['label'] = element.Payment_term_name,
+          element['value'] = element.Payment_Term_ID
         });
        this.PaymentMethodList = data;
      // console.log("Requlist======",this.Requlist);
       }
        else {
-        this.PaymentMethodList = [];
+        this.PaymentMethodList = []; 
+      }
+      this.getDeliveryMethod();
+      //console.log("PaymentMethodList",this.PaymentMethodList)
+    })
+  }
+  getDeliveryMethod() {
+    const tempobj = {
+      Purchase_Type_ID: this.PurchaseTypeSelect 
+      }
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Request",
+      "Report_Name_String": "Get_Data_Delivery_Terms",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Delivery_Term_Name,
+          element['value'] = element.Delivery_Term_ID
+        });
+       this.DeliveryTermsList = data;
+      }
+       else {
+        this.DeliveryTermsList = [];
   
       }
-      console.log("PaymentMethodList",this.PaymentMethodList)
+      //console.log("DeliveryTermsList",this.DeliveryTermsList)
     })
   }
   GetCurrency(){
@@ -205,7 +243,7 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj)
     .subscribe((data: any) => {
-      console.log("data",data)
+      //console.log("data",data)
       if(data.length) {
         data.forEach(element => {
           element['label'] = element.Currency,
@@ -218,7 +256,7 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
         this.CurrencyList = [];
   
       }
-      console.log("CurrencyList",this.CurrencyList)
+     // console.log("CurrencyList",this.CurrencyList)
     })
   }
   CurrencyChange(){
@@ -227,15 +265,18 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
   }); 
 
   }
-  negotiateSave(){
-    if(this.PaymentMethodSelect && this.ObjnegotiatePrice.Purchase_Request_No && this.PurchaseTypeSelect && this.CurrencySelect){
+  negotiateSave(valid:any) {
+    this.vendorSelectionFormSubmit = true
+    if(valid && this.ObjnegotiatePrice.Purchase_Request_No){
       let saveData:any=[]
        this.prList.forEach((ele:any) => {
         saveData.push({
           Purchase_Request_No: this.ObjnegotiatePrice.Purchase_Request_No,
-          Purchase_Type: this.PurchaseTypeSelect,
-          Payment_Method: this.PaymentMethodSelect,
-          Currency : this.CurrencySelect,
+          Purchase_Type_ID: this.PurchaseTypeSelect,
+          Payment_Term_ID: this.PaymentMethodSelect,
+          Payment_Term_Details : this.PaymentTramsSelect, 
+          Delivery_Term_ID : this.DeliveryMethodSelect,                					
+          Currency: this.CurrencySelect,                                               
           Negotiate_Price: Number(ele.Negotiate_Price),
           Product_ID: Number( ele.Product_ID)
         })
@@ -261,8 +302,13 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
         this.PoDate = undefined
         this.items = ["BROWSE", "CREATE"];
         this.buttonname = "Save";
+        this.vendorSelectionFormSubmit = false
         this.PurchaseTypeSelect = undefined
         this.PaymentMethodSelect = undefined
+        this.PaymentTramsSelect = undefined;
+        this.CurrencySelect = undefined;
+        this.DeliveryMethodSelect = undefined;
+        
         this.GetSearchedList(true)
         }
         else {
@@ -299,7 +345,7 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
         data.forEach((y:any) => {
           y.Date = this.DateNepalConvertService.convertEngToNepaliFormatDateObj(y.Date);
           });
-         console.log("Searchedlist",this.Searchedlist)
+        // console.log("Searchedlist",this.Searchedlist)
         }
         this.seachSpinner = false
       })
@@ -312,266 +358,273 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
       this.buttonname = "Update"
       this.ObjnegotiatePrice.Purchase_Request_No = col.Purchase_Request_No
       this.purchaseRequestChange()
-      this.PurchaseTypeSelect = col.Purchase_Type
-      this.PaymentMethodSelect = col.Payment_Method
+      this.PurchaseTypeSelect = col.Purchase_Type_ID
+      this.PaymentMethodSelect = col.Payment_Term_ID
+      this.getPaymentMethod()
+      this.DeliveryMethodSelect = col.Delivery_Term_ID;
+      this.PaymentTramsSelect = col.Payment_Term_Details;
       this.CurrencySelect = col.Currency
     }
   }
+  CreatPurchasePOP(valid?){}
+  creatPaymentPOP(valid?){}
+  CreatCurrencyPOP(valid?){}
 
-  ViewPurchasePOP(){
-      this.PurchaseTypeList = [];
-       this.getPurchaseType();
-      setTimeout(() => {
-        this.ViewPurchaseTypeModal = true;
-      }, 200);
-  }
-  deletePurchaseType(mettype){
-    this.PurchaseId = undefined;
-    if(mettype.Purchase_Type){
-      this.PurchaseId = mettype.Purchase_Type;
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "A",
-        sticky: true,
-        severity:'warn',
-        summary: "Are you sure?",
-        detail: "Confirm to proceed"
-      });
-    }
-  }
-  onConfirm1(){
-    if(this.PurchaseId){
-      const obj = {
-        "SP_String": "sp_Bl_Txn_Purchase_Request",
-        "Report_Name_String": "Delete_Purchase_Type",
-        "Json_Param_String": JSON.stringify([{Purchase_Type : this.PurchaseId}])
-      }
-      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        let msg = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : this.PurchaseId
-        let Tempo = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : "Successfully Delete"
-        let Data = data[0].Column1 == 'Can Not Delete' ? 'error' : 'success'
-        if (data[0].Column1){
-          this.onReject();
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: Data,
-            summary: "Purchase Type: " + msg,
-            detail: Tempo
-          });
-          this.getPurchaseType();
-        }
-      })
-  }
-  }
-  PurchasePopup(){
-  this.PurchaseTypeFormSubmitted = false;
-  this.PurchaseTypeName = undefined;
-  this.PurchaseTypeModal = true;
-  }
-  CreatPurchasePOP(valid){
-    this.PurchaseTypeFormSubmitted = true;
-      const Obj = {
-        Purchase_Type : this.PurchaseTypeName,
-      }
-      if(valid){
-         const obj = {
-           "SP_String": "sp_Bl_Txn_Purchase_Request",
-           "Report_Name_String" : "Create_Purchase_Type ",
-           "Json_Param_String": JSON.stringify([Obj])     
-         }
-         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
-          let msg = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : this.PurchaseTypeName
-          let Tempo = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : "Successfully Create"
-          let Data = data[0].Column1 == 'Already Exisis' ? 'error' : 'success'
-           if(data[0].Column1){
-            this.compacctToast.clear();
-            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
-            this.compacctToast.add({
-             key: "compacct-toast",
-             severity: Data,
-             summary: "Purchase Type " + msg,
-             detail: Tempo
-           });
-           this.PurchaseTypeFormSubmitted = false;
-           this.PurchaseTypeName = undefined;
-           this.PurchaseTypeModal = false;
-           this.getPurchaseType();
+
+  // ViewPurchasePOP(){
+  //     this.PurchaseTypeList = [];
+  //      this.getPurchaseType();
+  //     setTimeout(() => {
+  //       this.ViewPurchaseTypeModal = true;
+  //     }, 200);
+  // }
+  // deletePurchaseType(mettype){
+  //   this.PurchaseId = undefined;
+  //   if(mettype.Purchase_Type){
+  //     this.PurchaseId = mettype.Purchase_Type;
+  //     this.compacctToast.clear();
+  //     this.compacctToast.add({
+  //       key: "A",
+  //       sticky: true,
+  //       severity:'warn',
+  //       summary: "Are you sure?",
+  //       detail: "Confirm to proceed"
+  //     });
+  //   }
+  // }
+  // onConfirm1(){
+  //   if(this.PurchaseId){
+  //     const obj = {
+  //       "SP_String": "sp_Bl_Txn_Purchase_Request",
+  //       "Report_Name_String": "Delete_Purchase_Type",
+  //       "Json_Param_String": JSON.stringify([{Purchase_Type : this.PurchaseId}])
+  //     }
+  //     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //       let msg = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : this.PurchaseId
+  //       let Tempo = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : "Successfully Delete"
+  //       let Data = data[0].Column1 == 'Can Not Delete' ? 'error' : 'success'
+  //       if (data[0].Column1){
+  //         this.onReject();
+  //         this.compacctToast.clear();
+  //         this.compacctToast.add({
+  //           key: "compacct-toast",
+  //           severity: Data,
+  //           summary: "Purchase Type: " + msg,
+  //           detail: Tempo
+  //         });
+  //         this.getPurchaseType();
+  //       }
+  //     })
+  // }
+  // }
+  // PurchasePopup(){
+  // this.PurchaseTypeFormSubmitted = false;
+  // this.PurchaseTypeName = undefined;
+  // this.PurchaseTypeModal = true;
+  // }
+  // CreatPurchasePOP(valid){
+  //   this.PurchaseTypeFormSubmitted = true;
+  //     const Obj = {
+  //       Purchase_Type : this.PurchaseTypeName,
+  //     }
+  //     if(valid){
+  //        const obj = {
+  //          "SP_String": "sp_Bl_Txn_Purchase_Request",
+  //          "Report_Name_String" : "Create_Purchase_Type ",
+  //          "Json_Param_String": JSON.stringify([Obj])     
+  //        }
+  //        this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+  //         let msg = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : this.PurchaseTypeName
+  //         let Tempo = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : "Successfully Create"
+  //         let Data = data[0].Column1 == 'Already Exisis' ? 'error' : 'success'
+  //          if(data[0].Column1){
+  //           this.compacctToast.clear();
+  //           //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+  //           this.compacctToast.add({
+  //            key: "compacct-toast",
+  //            severity: Data,
+  //            summary: "Purchase Type " + msg,
+  //            detail: Tempo
+  //          });
+  //          this.PurchaseTypeFormSubmitted = false;
+  //          this.PurchaseTypeName = undefined;
+  //          this.PurchaseTypeModal = false;
+  //          this.getPurchaseType();
        
-           }
-          })
-  }
-  }
+  //          }
+  //         })
+  // }
+  // }
 
-  ViewPaymentPOP(){
-    this.PaymentMethodList = [];
-    this.getPaymentMethod();
-   setTimeout(() => {
-     this.ViewPaymentTypeModal = true;
-   }, 200);
-  }
-  deletePaymentType(Valid){
-    this.PaymentId = undefined;
-    if(Valid.Payment_Method){
-      this.PaymentId = Valid.Payment_Method;
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "B",
-        sticky: true,
-        severity: "warn",
-        summary: "Are you sure?",
-        detail: "Confirm to proceed"
-      });
-    }  
-  }
-  onConfirm2(){
-    if(this.PaymentId){
-      const obj = {
-        "SP_String": "sp_Bl_Txn_Purchase_Request",
-        "Report_Name_String": "Delete_Payment_Method",
-        "Json_Param_String": JSON.stringify([{Payment_Method : this.PaymentId}])
-      }
-      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        let msg = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : this.PaymentId
-        let Tempo = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : "Successfully Delete"
-        let Data = data[0].Column1 == 'Can Not Delete' ? 'error' : 'success'
-        if (data[0].Column1){
-          this.onReject();
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: Data,
-            summary: "Payment Method: " +msg,
-            detail: Tempo
-          });
-          this.getPaymentMethod();
-        }
-      })
-  }
-  }
-  PaymentPOP(){
-    this.PaymentFormSubmitted = false;
-    this.PaymentTypeName = undefined;
-    this.PaymentTypeModal = true; 
-  }
-  creatPaymentPOP(valid){
-    this.PaymentFormSubmitted = true;
-      const Obj = {
-        Payment_Method : this.PaymentTypeName,
-      }
-      if(valid){
-         const obj = {
-           "SP_String": "sp_Bl_Txn_Purchase_Request",
-           "Report_Name_String" : "Create_Payment_Method ",
-           "Json_Param_String": JSON.stringify([Obj])     
-         }
-         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
-          let msg = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : this.PaymentTypeName
-          let Tempo = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : "Successfully Create"
-          let Data = data[0].Column1 == 'Already Exisis' ? 'error' : 'success'
-           if(data[0].Column1){
-            this.compacctToast.clear();
-            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
-            this.compacctToast.add({
-             key: "compacct-toast",
-             severity: Data,
-             summary: "Payment Type " + msg,
-             detail: Tempo
-           });
-           this.PaymentFormSubmitted = false;
-           this.PaymentTypeName = undefined;
-           this.PaymentTypeModal = false;
-           this.getPaymentMethod();
+  // ViewPaymentPOP(){
+  //   this.PaymentMethodList = [];
+  //   this.getPaymentMethod();
+  //  setTimeout(() => {
+  //    this.ViewPaymentTypeModal = true;
+  //  }, 200);
+  // }
+  // deletePaymentType(Valid){
+  //   this.PaymentId = undefined;
+  //   if(Valid.Payment_Method){
+  //     this.PaymentId = Valid.Payment_Method;
+  //     this.compacctToast.clear();
+  //     this.compacctToast.add({
+  //       key: "B",
+  //       sticky: true,
+  //       severity: "warn",
+  //       summary: "Are you sure?",
+  //       detail: "Confirm to proceed"
+  //     });
+  //   }  
+  // }
+  // onConfirm2(){
+  //   if(this.PaymentId){
+  //     const obj = {
+  //       "SP_String": "sp_Bl_Txn_Purchase_Request",
+  //       "Report_Name_String": "Delete_Payment_Method",
+  //       "Json_Param_String": JSON.stringify([{Payment_Method : this.PaymentId}])
+  //     }
+  //     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //       let msg = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : this.PaymentId
+  //       let Tempo = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : "Successfully Delete"
+  //       let Data = data[0].Column1 == 'Can Not Delete' ? 'error' : 'success'
+  //       if (data[0].Column1){
+  //         this.onReject();
+  //         this.compacctToast.clear();
+  //         this.compacctToast.add({
+  //           key: "compacct-toast",
+  //           severity: Data,
+  //           summary: "Payment Method: " +msg,
+  //           detail: Tempo
+  //         });
+  //         this.getPaymentMethod();
+  //       }
+  //     })
+  // }
+  // }
+  // PaymentPOP(){
+  //   this.PaymentFormSubmitted = false;
+  //   this.PaymentTypeName = undefined;
+  //   this.PaymentTypeModal = true; 
+  // }
+  // creatPaymentPOP(valid){
+  //   this.PaymentFormSubmitted = true;
+  //     const Obj = {
+  //       Payment_Method : this.PaymentTypeName,
+  //     }
+  //     if(valid){
+  //        const obj = {
+  //          "SP_String": "sp_Bl_Txn_Purchase_Request",
+  //          "Report_Name_String" : "Create_Payment_Method ",
+  //          "Json_Param_String": JSON.stringify([Obj])     
+  //        }
+  //        this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+  //         let msg = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : this.PaymentTypeName
+  //         let Tempo = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : "Successfully Create"
+  //         let Data = data[0].Column1 == 'Already Exisis' ? 'error' : 'success'
+  //          if(data[0].Column1){
+  //           this.compacctToast.clear();
+  //           //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+  //           this.compacctToast.add({
+  //            key: "compacct-toast",
+  //            severity: Data,
+  //            summary: "Payment Type " + msg,
+  //            detail: Tempo
+  //          });
+  //          this.PaymentFormSubmitted = false;
+  //          this.PaymentTypeName = undefined;
+  //          this.PaymentTypeModal = false;
+  //          this.getPaymentMethod();
        
-           }
-          })
-  }  
-  }
+  //          }
+  //         })
+  // }  
+  // }
 
 
-  ViewCurrencyPOP(){
-    this.CurrencyList = [];
-       this.GetCurrency();
-      setTimeout(() => {
-        this.ViewCurrencyTypeModal = true;
-      }, 200);
-  }
-  deleteCurrencyType(Valid){
-    this.CurrencyId = undefined;
-    if(Valid.Currency){
-      this.CurrencyId = Valid.Currency;
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "D",
-        sticky: true,
-        severity: "warn",
-        summary: "Are you sure?",
-        detail: "Confirm to proceed"
-      });
-    }  
-  }
-  onConfirm3(){
-    if(this.CurrencyId){
-      const obj = {
-        "SP_String": "sp_Bl_Txn_Purchase_Request",
-        "Report_Name_String": "Delete_Currency",
-        "Json_Param_String": JSON.stringify([{Currency : this.CurrencyId}])
-      }
-      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        let msg = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : this.CurrencyId
-        let Tempo = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : "Successfully Delete"
-        let Data = data[0].Column1 == 'Can Not Delete' ? 'error' : 'success'
-        if (data[0].Column1){
-          this.onReject();
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: Data,
-            summary: "Currency: " + msg,
-            detail: Tempo
-          });
-          this.GetCurrency();
-        }
-      })
-  }
-  }
-  CurrencyPOP(){
-    this.CurrencyFormSubmitted = false;
-    this.CurrencyName = undefined;
-    this.CurrencyTypeModal = true;   
-  }
-  CreatCurrencyPOP(valid){
-    this.CurrencyFormSubmitted = true;
-    const Obj = {
-      Currency : this.CurrencyName,
-    }
-    if(valid){
-       const obj = {
-         "SP_String": "sp_Bl_Txn_Purchase_Request",
-         "Report_Name_String" : "Create_Currency",
-         "Json_Param_String": JSON.stringify([Obj])     
-       }
-       this.GlobalAPI.postData(obj).subscribe((data:any)=>{
-        let msg = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : this.CurrencyName
-        let Tempo = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : "Successfully Create"
-        let Data = data[0].Column1 == 'Already Exisis' ? 'error' : 'success'
-        console.log(msg)
-         if(data[0].Column1){
-          this.compacctToast.clear();
-          this.compacctToast.add({
-           key: "compacct-toast",
-           severity: Data,
-           summary: "Currency" + msg  ,
-           detail: Tempo
-         });
-         this.CurrencyFormSubmitted = false;
-         this.CurrencyName = undefined;
-         this.CurrencyTypeModal = false;
-         this.GetCurrency();
-         }
-        })
-     }    
-  }
+  // ViewCurrencyPOP(){
+  //   this.CurrencyList = [];
+  //      this.GetCurrency();
+  //     setTimeout(() => {
+  //       this.ViewCurrencyTypeModal = true;
+  //     }, 200);
+  // }
+  // deleteCurrencyType(Valid){
+  //   this.CurrencyId = undefined;
+  //   if(Valid.Currency){
+  //     this.CurrencyId = Valid.Currency;
+  //     this.compacctToast.clear();
+  //     this.compacctToast.add({
+  //       key: "D",
+  //       sticky: true,
+  //       severity: "warn",
+  //       summary: "Are you sure?",
+  //       detail: "Confirm to proceed"
+  //     });
+  //   }  
+  // }
+  // onConfirm3(){
+  //   if(this.CurrencyId){
+  //     const obj = {
+  //       "SP_String": "sp_Bl_Txn_Purchase_Request",
+  //       "Report_Name_String": "Delete_Currency",
+  //       "Json_Param_String": JSON.stringify([{Currency : this.CurrencyId}])
+  //     }
+  //     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //       let msg = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : this.CurrencyId
+  //       let Tempo = data[0].Column1 == 'Can Not Delete' ? data[0].Column1 : "Successfully Delete"
+  //       let Data = data[0].Column1 == 'Can Not Delete' ? 'error' : 'success'
+  //       if (data[0].Column1){
+  //         this.onReject();
+  //         this.compacctToast.clear();
+  //         this.compacctToast.add({
+  //           key: "compacct-toast",
+  //           severity: Data,
+  //           summary: "Currency: " + msg,
+  //           detail: Tempo
+  //         });
+  //         this.GetCurrency();
+  //       }
+  //     })
+  // }
+  // }
+  // CurrencyPOP(){
+  //   this.CurrencyFormSubmitted = false;
+  //   this.CurrencyName = undefined;
+  //   this.CurrencyTypeModal = true;   
+  // }
+  // CreatCurrencyPOP(valid){
+  //   this.CurrencyFormSubmitted = true;
+  //   const Obj = {
+  //     Currency : this.CurrencyName,
+  //   }
+  //   if(valid){
+  //      const obj = {
+  //        "SP_String": "sp_Bl_Txn_Purchase_Request",
+  //        "Report_Name_String" : "Create_Currency",
+  //        "Json_Param_String": JSON.stringify([Obj])     
+  //      }
+  //      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+  //       let msg = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : this.CurrencyName
+  //       let Tempo = data[0].Column1 == 'Already Exisis' ? data[0].Column1 : "Successfully Create"
+  //       let Data = data[0].Column1 == 'Already Exisis' ? 'error' : 'success'
+  //       //console.log(msg)
+  //        if(data[0].Column1){
+  //         this.compacctToast.clear();
+  //         this.compacctToast.add({
+  //          key: "compacct-toast",
+  //          severity: Data,
+  //          summary: "Currency" + msg  ,
+  //          detail: Tempo
+  //        });
+  //        this.CurrencyFormSubmitted = false;
+  //        this.CurrencyName = undefined;
+  //        this.CurrencyTypeModal = false;
+  //        this.GetCurrency();
+  //        }
+  //       })
+  //    }    
+  // }
 }
 class negotiatePrice{
   Purchase_Request_No:any

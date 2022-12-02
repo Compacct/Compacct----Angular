@@ -296,6 +296,7 @@ import { DoctorAppointmentComponent } from './common/PatientManagement/doctor-ap
 import { MiclPurchaseBillComponent } from './common/MICL/micl-purchase-bill/micl-purchase-bill.component';
 import { DoctorsAppointmentNewABRComponent } from './common/PatientManagement/doctors-appointment-new-abr/doctors-appointment-new-abr.component';
 import { K4CBillDateUpdateComponent } from "./common/OutletManagement/k4-c-bill-date-update/k4-c-bill-date-update.component";
+import { DoctorApptNewImpedanceAudiometryComponent } from "./common/PatientManagement/doctor-appt-new-impedance-audiometry/doctor-appt-new-impedance-audiometry.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2221,6 +2222,13 @@ path: 'MICL_Cost_Center_Master',
     component: K4CBillDateUpdateComponent,
     data: {
       title: 'K4C Bill Date Update'
+}
+},
+{
+  path: 'DoctorsAppointmentNew_Impedance_Audiometry',
+    component: DoctorApptNewImpedanceAudiometryComponent,
+    data: {
+      title: 'Doctors Appointment New Impedance Audiometry'
 }
 },
     

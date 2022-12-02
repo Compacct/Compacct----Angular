@@ -171,7 +171,7 @@
                                                         [(ngModel)]="ObjpremixST.From_Cost_Cen_ID"
                                                         [ngClass]="{'clearance': PremixIssueFormSubmitted && From_Cost_Cen_ID?.errors?.required}" 
                                                         (onChange)="GetFromGodown()"
-                                                        [disabled]="FCostdisableflag"
+                                                        [disabled]="true"
                                                         [required]="true">
                                                     </p-dropdown>
                                                 </div>
@@ -185,7 +185,7 @@
                                                          name="From_godown_id" #From_godown_id="ngModel"
                                                         [(ngModel)]="ObjpremixST.From_godown_id"
                                                         [ngClass]="{'clearance': PremixIssueFormSubmitted && From_godown_id?.errors?.required}" 
-                                                        [disabled]="FGdisableflag" 
+                                                        [disabled]="true" 
                                                         [required]="true">
                                                     </p-dropdown>
                                                 </div>
