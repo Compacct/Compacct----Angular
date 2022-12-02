@@ -393,6 +393,7 @@ import { DoctorsAppointmentNewABRComponent } from './common/PatientManagement/do
 import { K4CBillDateUpdateComponent } from "./common/OutletManagement/k4-c-bill-date-update/k4-c-bill-date-update.component";
 import { UpdateConsultancyComponent } from './shared/compacct.components/compacct.forms/update-consultancy/update-consultancy.component'
 import { DoctorApptNewImpedanceAudiometryComponent } from "./common/PatientManagement/doctor-appt-new-impedance-audiometry/doctor-appt-new-impedance-audiometry.component";
+import { NepalPurchaseOrderStatusMasterComponent } from './common/Procurement/nepal-purchase-order-status-master/nepal-purchase-order-status-master.component'
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -702,7 +703,8 @@ import { DoctorApptNewImpedanceAudiometryComponent } from "./common/PatientManag
     DoctorsAppointmentNewABRComponent,
     K4CBillDateUpdateComponent,
     UpdateConsultancyComponent,
-    DoctorApptNewImpedanceAudiometryComponent
+    DoctorApptNewImpedanceAudiometryComponent,
+    NepalPurchaseOrderStatusMasterComponent
   ],
   imports: [
     CommonModule,
