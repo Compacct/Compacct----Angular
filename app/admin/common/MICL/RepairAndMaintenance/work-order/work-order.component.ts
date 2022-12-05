@@ -861,7 +861,7 @@ export class WorkOrderComponent implements OnInit {
   AddPurchase(valid){
     this.WorkAddFormSubmit = true
     console.log("valid",valid);
-   if(valid){
+   if(valid && this.GetSameProWithInd()){
      const productFilter:any = this.productDataList.filter((el:any)=> Number(el.Product_ID) === Number(this.ObjaddWorkOrder.Product_ID))
      console.log("productFilter",productFilter[0])
      let saveData = {
@@ -898,10 +898,12 @@ export class WorkOrderComponent implements OnInit {
         }
        });
        this.addClear()
+       this.ObjaddWorkOrder.Req_No = this.addPurchaseList[0].Req_No;
      }
      else{
       this.addPurchaseList.push(saveData);
       this.addClear()
+      this.ObjaddWorkOrder.Req_No = this.addPurchaseList[0].Req_No;
      }
       // this.addPurchaseList.push(saveData);
       // this.projectDisable = true
@@ -928,25 +930,25 @@ export class WorkOrderComponent implements OnInit {
       this.getAllTotal();
  }
  GetSameProWithInd () {
-  // if(!this.addPurchaseListInput){
-  // const sameproductwithindent = this.addPurchaseList.filter(item=> item.Req_No === this.ObjaddWorkOrder.Req_No && item.Product_ID === this.ObjaddWorkOrder.Product_ID );
-  // if(sameproductwithindent.length) {
-  //   this.compacctToast.clear();
-  //       this.compacctToast.add({
-  //         key: "compacct-toast",
-  //         severity: "error",
-  //         summary: "Warn Message",
-  //         detail: "Same Product with Same Indent no. Can't be Added."
-  //       });
-  //   return false;
-  //   } 
-  //   else {
-  //     return true;
-  //   }
-  // }
-  //    else{
-  //     return true
-  //    }
+  if(!this.addPurchaseListInput){
+  const sameproductwithindent = this.addPurchaseList.filter(item=> item.Req_No === this.ObjaddWorkOrder.Req_No && item.Product_ID === this.ObjaddWorkOrder.Product_ID );
+  if(sameproductwithindent.length) {
+    this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Same Product with Same Indent no. Can't be Added."
+        });
+    return false;
+    } 
+    else {
+      return true;
+    }
+  }
+     else{
+      return true
+     }
   }
   // Edit Add Purchase 
  EditAddPurchase(inx:any){
