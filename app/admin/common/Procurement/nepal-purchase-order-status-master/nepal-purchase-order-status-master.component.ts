@@ -15,6 +15,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
   encapsulation: ViewEncapsulation.None
 })
 export class NepalPurchaseOrderStatusMasterComponent implements OnInit {
+  tabIndexToView = 0;
   items: any = [];
   buttonname: string = "Save";
   PrTypeList: any = [];
@@ -46,6 +47,7 @@ ngOnInit() {
     this.getPrType();
     this.getBottomList();
 }
+TabClick(e){}
 getPrType() {
     this.PrTypeList = [];
     const obj = {
