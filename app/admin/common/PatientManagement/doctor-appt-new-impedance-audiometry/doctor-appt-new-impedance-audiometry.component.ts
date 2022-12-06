@@ -35,6 +35,9 @@ export class DoctorApptNewImpedanceAudiometryComponent implements OnInit {
   Level_1_Status:any=undefined;
   Level_2_Status:any=undefined;
   Level_3_Status:any=undefined;
+  EditPage:any;
+  buttonValid:boolean = true;
+  Get_TXN_ID:any;
   
   ObjImp: IMPEDANCE = new IMPEDANCE();
   @ViewChild("consultancy", { static: false }) UpdateConsultancy: UpdateConsultancyComponent;
@@ -52,6 +55,11 @@ export class DoctorApptNewImpedanceAudiometryComponent implements OnInit {
          //console.log("param",params);
          this.AppoIDvalue=params.Appo_ID;
          //console.log("value",this.AppoIDvalue);
+         this.EditPage=params.ed;
+         if(this.EditPage == 'y'){
+          this.editData();
+         } 
+
         })
     }
 
@@ -74,7 +82,6 @@ export class DoctorApptNewImpedanceAudiometryComponent implements OnInit {
 
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.buttonname = "Create"
   }
   GetCostCentre(){
     this.CentreList=[];
@@ -125,16 +132,17 @@ export class DoctorApptNewImpedanceAudiometryComponent implements OnInit {
   }
 
   updateConsultancysave(event){
-    console.log('event value',event);
+    //console.log('event value',event);
     //console.log('event1',event.Level_1_Status);
     this.Level_1_Status=event.Level_1_Status;
     this.Level_2_Status=event.Level_2_Status;
     this.Level_3_Status=event.Level_3_Status;
   }
 
+
   saveDocAppo(valid:any){
 
-    console.log('CheckBoxRECOMMENDATION value',this.CheckBoxRECOMMENDATION);
+    //console.log('CheckBoxRECOMMENDATION value',this.CheckBoxRECOMMENDATION);
     let tempSaveJ1:any = []
     if(this.CheckBoxRECOMMENDATION.length){
       this.CheckBoxRECOMMENDATION.forEach((ele:any) => {
@@ -143,8 +151,7 @@ export class DoctorApptNewImpedanceAudiometryComponent implements OnInit {
         })
       });
     }
-    console.log("tempSaveJ1",tempSaveJ1);
-
+    //console.log("tempSaveJ1",tempSaveJ1);
 
     const TempObj ={
       Foot_Fall_ID: this.ObjImp.PatientID,
@@ -187,15 +194,7 @@ export class DoctorApptNewImpedanceAudiometryComponent implements OnInit {
       Left_Ear_Interpretation: this.ObjImp.Left_Ear_Interpretation,
       Right_Ear_Interpretation: this.ObjImp.Right_Ear_Interpretation
     }
-    console.log("TempObj",TempObj);
-
-    const TempObj2={
-      Appo_ID: this.AppoIDvalue,
-      Level_1_Status: this.Level_1_Status,
-      Level_2_Status: this.Level_2_Status,
-      Level_3_Status: this.Level_3_Status
-    }
-    console.log("TempObj2",TempObj2);
+    //console.log("TempObj",TempObj);
 
     this.ImpedanceAudiometryFormSubmitted=true;
     if(valid){
@@ -207,69 +206,175 @@ export class DoctorApptNewImpedanceAudiometryComponent implements OnInit {
         "Json_1_String": JSON.stringify(tempSaveJ1)
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
-        console.log("save data",data);
-        if (data[0].Column1){
-          this.Spinner=false;
-          this.ImpedanceAudiometryFormSubmitted=false;
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "success",
-            summary: "Appointment Create",
-            detail: "Succesfully "
-          });
-          this.clearData();
-        }
-        else {
-          this.Spinner = false;
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "error",
-            summary: "Warn Message ",
-            detail:"Error occured "
-          });
-        }
-      });
+        // console.log("save data",data);
+         if (data[0].Column1){
+          this.saveStatus();
+         }
+         else {
+           this.Spinner = false;
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "error",
+             summary: "Warn Message ",
+             detail:"Error occured "
+           });
+         }
+       });
 
-
-      const obj2 = {
-        "SP_String": "sp_DoctorsAppointmentNew",
-        "Report_Name_String": "Update_Consultancy_Done",
-        "Json_Param_String": JSON.stringify(TempObj2),
-      }
-      this.GlobalAPI.postData(obj2).subscribe((data: any) => {
-        console.log("save data2",data);
-        if (data[0].Column1){
-          this.Spinner=false;
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "success",
-            summary: "Appointment Create",
-            detail: "Succesfully "
-          });
-          this.UpdateConsultancy.clearComData();
-        }
-        else {
-          this.Spinner = false;
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "error",
-            summary: "Warn Message ",
-            detail:"Error occured "
-          });
-        }
-      });
     }
+  }
+
+  saveStatus(){
+    const TempObj2={
+      Appo_ID: this.AppoIDvalue,
+      Level_1_Status: this.Level_1_Status,
+      Level_2_Status: this.Level_2_Status,
+      Level_3_Status: this.Level_3_Status
+    }
+   // console.log("TempObj2",TempObj2);
+   const obj2 = {
+    "SP_String": "sp_DoctorsAppointmentNew",
+    "Report_Name_String": "Update_Consultancy_Done",
+    "Json_Param_String": JSON.stringify(TempObj2),
+   }
+   this.GlobalAPI.postData(obj2).subscribe((data: any) => {
+    // console.log("save data2",data);
+    var msg= this.EditPage ?  "update" : "create";
+     if (data[0].Column1){
+       this.Spinner=false;
+       this.buttonValid = false
+       this.ImpedanceAudiometryFormSubmitted=false;
+       this.compacctToast.clear();
+       this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "success",
+         summary: "Appointment " +msg,
+         detail: "Succesfully "
+       });
+        if(this.EditPage != 'y'){
+         this.ClearData();
+         this.UpdateConsultancy.clearComData();
+       }
+     }
+     else {
+       this.Spinner = false;
+       this.compacctToast.clear();
+       this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message ",
+         detail:"Error occured "
+       });
+     }
+   });
+  }
+
+  editData(){
+    this.CheckBoxRECOMMENDATION = [];
+    const TempEditObj={
+          Appo_ID: this.AppoIDvalue
+        }
+      // console.log("TempEditObj",TempEditObj);
+
+      this.buttonname="Edit";
+      const Editobj = {
+          "SP_String": "SP_BL_Txn_Doctor_Appo_IMPEDANCE",
+          "Report_Name_String": "Retrieve_Data",
+          "Json_Param_String": JSON.stringify(TempEditObj)
+      }
+
+      this.GlobalAPI.getData(Editobj).subscribe((data: any) => {
+        console.log("Edit Data",data);
+    
+        this.ObjImp.Right_Type= data[0].Right_Type;
+        this.ObjImp.Left_Type= data[0].Left_Type;
+        this.ObjImp.Right_Pk_Pressure= data[0].Right_Pk_Pressure;
+        this.ObjImp.Left_Pk_Pressure= data[0].Left_Pk_Pressure;
+        this.ObjImp.Right_Compliance= data[0].Right_Compliance;
+        this.ObjImp.Left_Compliance= data[0].Left_Compliance;
+        this.ObjImp.Right_ECV= data[0].Right_ECV;
+        this.ObjImp.Left_ECV= data[0].Left_ECV;
+        this.ObjImp.Right_Resonant_Frequency= data[0].Right_Resonant_Frequency;
+        this.ObjImp.Left_Resonant_Frequency= data[0].Left_Resonant_Frequency;
+        this.ObjImp.Eustachian_Test= data[0].Eustachian_Test;
+        this.ObjImp.Eustachian_Result_Left= data[0].Eustachian_Result_Left;
+        this.ObjImp.Eustachian_Result_Right= data[0].Eustachian_Result_Right;
+        this.ObjImp.Reflax_Right_Ipsi_500= data[0].Reflax_Right_Ipsi_500;
+        this.ObjImp.Reflax_Right_Ipsi_1000= data[0].Reflax_Right_Ipsi_1000;
+        this.ObjImp.Reflax_Right_Ipsi_2000= data[0].Reflax_Right_Ipsi_2000;
+        this.ObjImp.Reflax_Right_Ipsi_4000= data[0].Reflax_Right_Ipsi_4000;
+        this.ObjImp.Reflax_Right_Contra_500= data[0].Reflax_Right_Contra_500;
+        this.ObjImp.Reflax_Right_Contra_1000= data[0].Reflax_Right_Contra_1000;
+        this.ObjImp.Reflax_Right_Contra_2000= data[0].Reflax_Right_Contra_2000;
+        this.ObjImp.Reflax_Right_Contra_4000= data[0].Reflax_Right_Contra_4000;
+        this.ObjImp.Reflax_Left_Ipsi_500= data[0].Reflax_Left_Ipsi_500;
+        this.ObjImp.Reflax_Left_Ipsi_1000= data[0].Reflax_Left_Ipsi_1000;
+        this.ObjImp.Reflax_Left_Ipsi_2000= data[0].Reflax_Left_Ipsi_2000;
+        this.ObjImp.Reflax_Left_Ipsi_4000= data[0].Reflax_Left_Ipsi_4000;
+        this.ObjImp.Reflax_Left_Contra_500= data[0].Reflax_Left_Contra_500;
+        this.ObjImp.Reflax_Left_Contra_1000= data[0].Reflax_Left_Contra_1000;
+        this.ObjImp.Reflax_Left_Contra_2000= data[0].Reflax_Left_Contra_2000;
+        this.ObjImp.Reflax_Left_Contra_4000= data[0].asReflax_Left_Contra_4000;
+        this.ObjImp.Comment= data[0].Comment;
+        this.ObjImp.Left_Ear_Interpretation= data[0].Left_Ear_Interpretation;
+        this.ObjImp.Right_Ear_Interpretation= data[0].Right_Ear_Interpretation;
+
+        this.Get_TXN_ID=data[0].Txn_ID;
+        console.log("check Get_TXN_ID",this.Get_TXN_ID);
+        this.editData1(this.Get_TXN_ID);
+      });
+  }
+
+  editData1(TXN_ID){
+    const TempTxnIDObj={
+      Txn_ID: TXN_ID
+    }
+    const Recmdobj = {
+      "SP_String": "SP_BL_Txn_Doctor_Appo_IMPEDANCE",
+      "Report_Name_String": "Retrieve_Data_Recommend",
+      "Json_Param_String": JSON.stringify(TempTxnIDObj)
+    }
+    this.GlobalAPI.getData(Recmdobj).subscribe((data: any) => {
+      console.log("Edit Data2",data);
+      let BoxArray:any = [];
+      data.forEach((ele:any) => {
+        BoxArray.push(ele.Recommend)
+      });
+    this.CheckBoxRECOMMENDATION= BoxArray;
+      console.log("this.CheckBoxRECOMMENDATION===",this.CheckBoxRECOMMENDATION);
+      this.editData2();
+    });
+  }
+
+  editData2(){
+    const TempDropdownObj={
+      Appo_ID : this.AppoIDvalue
+    }
+
+    const Dropdownobj = {
+      "SP_String": "SP_BL_Txn_Doctor_Appo_ABR",
+      "Report_Name_String": "Get_All_Data",
+      "Json_Param_String": JSON.stringify([TempDropdownObj])
+    }
+    this.GlobalAPI.getData(Dropdownobj).subscribe((data:any)=>{
+     console.log("GetAllDataAppoID For dropdown",data);
+      if(data.length){
+       const editObj = {
+          Level_1_Status: data[0].Level_1_Status.toString() ? data[0].Level_1_Status.toString() : '',
+          Level_2_Status: data[0].Level_2_Status.toString() ? data[0].Level_2_Status.toString() : '',
+          Level_3_Status: data[0].Level_3_Status.toString() ? data[0].Level_3_Status.toString() : ''
+        }
+        this.UpdateConsultancy.editConsulyancy(editObj)
+      }
+    });
   }
 
   onConfirm(){
   }
   onReject(){   
   }
-  clearData(){
+  ClearData(){
     this.ObjImp.Right_Type=undefined;
     this.ObjImp.Left_Type=undefined;
     this.ObjImp.Right_Pk_Pressure=undefined;

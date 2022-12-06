@@ -15,7 +15,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
   encapsulation: ViewEncapsulation.None
 })
 export class MICLDispatchChallanChargeableComponent implements OnInit {
-  items = [];
+  items:any = [];
   buttonname = "Create";
   tabIndexToView = 0;
   ObjChargeable :Chargeable = new Chargeable();
@@ -65,8 +65,8 @@ export class MICLDispatchChallanChargeableComponent implements OnInit {
 ngOnInit(){
     this.items = ["BROWSE", "CREATE"];
     this.Header.pushHeader({
-      Header: "Dispatch Challan Chargeable",
-      Link: "Material Management -> Outward -> Dispatch Challan Chargeable"
+      Header: "Issue Material Chargeable",
+      Link: "Material Management -> Outward -> Issue Material Chargeable"
     });
     this.GetFromCostcenter();
     this.Finyear();

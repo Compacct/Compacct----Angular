@@ -30,12 +30,14 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
   patientSearchList:any=[];
   checkBoxArray:any=[];
   ProductPDFFile:any=[];
-  buttonname:string = "Create";
+  buttonname = "Create";
   Level_1_Status:any=undefined;
   Level_2_Status:any=undefined;
   Level_3_Status:any=undefined;
   ABR_Submitted:boolean=false;
-
+  EditPage:any;
+  Get_TXN_ID:any;
+  buttonValid:boolean = true
   ObjABR: ABR = new ABR();
 
   @ViewChild("consultancy", { static: false }) UpdateConsultancy: UpdateConsultancyComponent;
@@ -51,9 +53,15 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
     private route: ActivatedRoute,
     ) { 
     this.route.queryParams.subscribe(params => {
-     // console.log("param",params);
+      console.log("param",params);
       this.AppoIDvalue=params.Appo_ID;
-     // console.log("value",this.AppoIDvalue);
+      this.EditPage=params.ed;
+      console.log("value",this.EditPage);
+      if(this.EditPage == 'y'){
+        this.editData();
+      
+      } 
+
      })
   }
 
@@ -69,12 +77,10 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
     this.StatusList=['Test Done but H.A. not required','Test Done H.A. required but Trial Not Taken','Test Done H.A. required and Wiling to Buy'];
     this.GetCostCentre();
     this.GetAllDataAppoID();
-    
   }
 
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.buttonname = "Create"
   }
 
   GetCostCentre(){
@@ -111,7 +117,7 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
       "Json_Param_String": JSON.stringify([tempobj])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     // console.log("GetAllDataAppoID",data);
+     console.log("GetAllDataAppoID",data);
       if(data.length){
         this.patientSearchList=data;
 
@@ -129,7 +135,7 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
  
 
   updateConsultancysave(event){
-    console.log('event',event);
+    //console.log('event',event);
     //console.log('event1',event.Level_1_Status);
     this.Level_1_Status=event.Level_1_Status;
     this.Level_2_Status=event.Level_2_Status;
@@ -138,8 +144,9 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
   }
 
   saveDocAppo(valid:any){
-   // console.log('checkBox1 value',this.checkBoxArray);
+  console.log('checkBox1 value',this.checkBoxArray);
     let tempSaveJ1:any = []
+    
     if(this.checkBoxArray.length){
       this.checkBoxArray.forEach((ele:any) => {
         tempSaveJ1.push({
@@ -147,7 +154,7 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
         })
       });
     }
-    console.log("tempSaveJ1",tempSaveJ1);
+   // console.log("tempSaveJ1",tempSaveJ1);
 
     const TempObj ={
       Foot_Fall_ID: this.ObjABR.PatientID,
@@ -161,25 +168,25 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
       Pic_Right_Ear_Graph: '',
       Stimulus_Intensity_1: this.ObjABR.StiInt1,
       Stimulus_Intensity_2: this.ObjABR.StiInt2,
-      Stimulus_Intensity_3: this.ObjABR.StiInt3,
+      Stimulus_Intensity_3: '',
       Left_EAR_Laten_1: this.ObjABR.LLaten1,
       Left_EAR_Laten_2: this.ObjABR.LLaten2,
-      Left_EAR_Laten_3: this.ObjABR.LLaten3,
+      Left_EAR_Laten_3: '',
       Left_Ampl_1: this.ObjABR.LAmp1,
       Left_Ampl_2: this.ObjABR.LAmp2,
-      Left_Ampl_3: this.ObjABR.LAmp3,
+      Left_Ampl_3: '',
       Left_Remarks_1: this.ObjABR.LRemarks1,
       Left_Remarks_2: this.ObjABR.LRemarks2,
-      Left_Remarks_3: this.ObjABR.LRemarks3,
+      Left_Remarks_3: '',
       Right_EAR_Laten_1: this.ObjABR.RLaten1,
       Right_EAR_Laten_2: this.ObjABR.RLaten2,
-      Right_EAR_Laten_3: this.ObjABR.RLaten3,
+      Right_EAR_Laten_3: '',
       Right_Ampl_1: this.ObjABR.RAmp1,
       Right_Ampl_2: this.ObjABR.RAmp2,
-      Right_Ampl_3: this.ObjABR.RAmp3,
+      Right_Ampl_3: '',
       Right_Remarks_1: this.ObjABR.RRemarks1,
       Right_Remarks_2: this.ObjABR.RRemarks2,
-      Right_Remarks_3: this.ObjABR.RRemarks3,
+      Right_Remarks_3: '',
       Right_Ear_Interpretation: this.ObjABR.REar,
       Left_Ear_Interpretation: this.ObjABR.LEar,
       Comment: this.ObjABR.Comment,
@@ -188,15 +195,10 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
       Posted_On: this.DateService.dateConvert(new Date()),
       Recommendation: ''
     }
-    console.log("TempObj",TempObj);
+  //  console.log("TempObj",TempObj);
 
-    const TempObj2={
-      Appo_ID: this.AppoIDvalue,
-      Level_1_Status: this.Level_1_Status,
-      Level_2_Status: this.Level_2_Status,
-      Level_3_Status: this.Level_3_Status
-    }
-    console.log("TempObj2",TempObj2);
+ 
+  //    console.log("TempObj2",TempObj2);
 
     this.ABR_Submitted=true;
 
@@ -209,18 +211,10 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
       "Json_1_String": JSON.stringify(tempSaveJ1)
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
-      console.log("save data",data);
+     // console.log("save data",data);
+     var msg= this.EditPage ?  "update" : "create";
       if (data[0].Column1){
-        this.Spinner=false;
-        this.ABR_Submitted=false;
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "success",
-          summary: "Appointment Create",
-          detail: "Succesfully "
-        });
-        this.ClearData();
+       this.saveStatus()
       }
       else {
         this.Spinner = false;
@@ -234,23 +228,42 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
       }
     });
 
+  
+
+    
+   }
+   
+  }
+  saveStatus(){
+    const TempObj2={
+      Appo_ID: this.AppoIDvalue,
+      Level_1_Status: this.Level_1_Status,
+      Level_2_Status: this.Level_2_Status,
+      Level_3_Status: this.Level_3_Status
+    }
     const obj2 = {
       "SP_String": "sp_DoctorsAppointmentNew",
       "Report_Name_String": "Update_Consultancy_Done",
       "Json_Param_String": JSON.stringify(TempObj2),
     }
     this.GlobalAPI.postData(obj2).subscribe((data: any) => {
-      console.log("save data2",data);
+     // console.log("save data2",data);
+     var msg1= this.EditPage ?  "update" : "create";
       if (data[0].Column1){
         this.Spinner=false;
+        this.buttonValid = false
+        this.ABR_Submitted=false;
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
           severity: "success",
-          summary: "Appointment Create",
+          summary: "Appointment " +msg1,
           detail: "Succesfully "
         });
-        this.UpdateConsultancy.clearComData();
+         if(this.EditPage != 'y'){
+          this.ClearData();
+          this.UpdateConsultancy.clearComData();
+        }
       }
       else {
         this.Spinner = false;
@@ -263,8 +276,101 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
         });
       }
     });
+  }
+  editData(){
+    this.checkBoxArray = []
+   const TempEditObj={
+        Appo_ID: this.AppoIDvalue
+      }
+     // console.log("TempEditObj",TempEditObj);
 
-   }
+      this.buttonname="Edit";
+      const Editobj = {
+          "SP_String": "SP_BL_Txn_Doctor_Appo_ABR",
+          "Report_Name_String": "Retrieve_Data",
+          "Json_Param_String": JSON.stringify(TempEditObj)
+      }
+
+      this.GlobalAPI.getData(Editobj).subscribe((data: any) => {
+        console.log("Edit Data",data);
+        this.ObjABR.Filter= data[0].Filter;
+        this.ObjABR.RepetitionRate=data[0].Repetition_Rate;
+        this.ObjABR.Stimulus=data[0].Stimulus;
+        this.ObjABR.LRemarks1=data[0].Left_Remarks_1;
+        this.ObjABR.LRemarks2=data[0].Left_Remarks_2;
+        // this.ObjABR.LRemarks3=data[0].Left_Remarks_3;
+        this.ObjABR.RRemarks1=data[0].Right_Remarks_1;
+        this.ObjABR.RRemarks2=data[0].Right_Remarks_2;
+        // this.ObjABR.RRemarks3=data[0].Right_Remarks_3;
+        this.ObjABR.StiInt1=data[0].Stimulus_Intensity_1;
+        this.ObjABR.StiInt2=data[0].Stimulus_Intensity_2;
+        // this.ObjABR.StiInt3=data[0].Stimulus_Intensity_3;
+        this.ObjABR.LLaten1=data[0].Left_EAR_Laten_1;
+        this.ObjABR.LLaten2=data[0].Left_EAR_Laten_2;
+        // this.ObjABR.LLaten3=data[0].Left_EAR_Laten_3;
+        this.ObjABR.LAmp1=data[0].Left_Ampl_1;
+        this.ObjABR.LAmp2=data[0].Left_Ampl_2;
+        // this.ObjABR.LAmp3=data[0].Left_Ampl_3;
+        this.ObjABR.RLaten1=data[0].Right_EAR_Laten_1;
+        this.ObjABR.RLaten2=data[0].Right_EAR_Laten_2;
+        // this.ObjABR.RLaten3=data[0].Right_EAR_Laten_3;
+        this.ObjABR.RAmp1=data[0].Right_Ampl_1;
+        this.ObjABR.RAmp2=data[0].Right_Ampl_2;
+        // this.ObjABR.RAmp3=data[0].Right_Ampl_3;
+        this.ObjABR.REar=data[0].Right_Ear_Interpretation;
+        this.ObjABR.LEar=data[0].Left_Ear_Interpretation;
+        this.ObjABR.Comment=data[0].Comment;
+
+        this.Get_TXN_ID=data[0].Txn_ID;
+        console.log("check Get_TXN_ID",this.Get_TXN_ID);
+        this.editData1(this.Get_TXN_ID);
+      });
+      
+    
+  }
+
+  editData1(TXN_ID){
+      const TempTxnIDObj={
+        Txn_ID: TXN_ID
+      }
+      const Recmdobj = {
+        "SP_String": "SP_BL_Txn_Doctor_Appo_ABR",
+        "Report_Name_String": "Retrieve_Data_Recommend",
+        "Json_Param_String": JSON.stringify(TempTxnIDObj)
+      }
+      this.GlobalAPI.getData(Recmdobj).subscribe((data: any) => {
+        console.log("Edit Data2",data);
+        let BoxArray:any = []
+        data.forEach((ele:any) => {
+          BoxArray.push(ele.Recommend)
+        });
+      this.checkBoxArray= BoxArray
+        console.log("this.checkBoxArray===",this.checkBoxArray)
+        this.editData2();
+      });
+  }
+
+  editData2(){
+    const TempDropdownObj={
+      Appo_ID : this.AppoIDvalue
+    }
+
+    const Dropdownobj = {
+      "SP_String": "SP_BL_Txn_Doctor_Appo_ABR",
+      "Report_Name_String": "Get_All_Data",
+      "Json_Param_String": JSON.stringify([TempDropdownObj])
+    }
+    this.GlobalAPI.getData(Dropdownobj).subscribe((data:any)=>{
+     console.log("GetAllDataAppoID For dropdown",data);
+      if(data.length){
+       const editObj = {
+          Level_1_Status: data[0].Level_1_Status.toString() ? data[0].Level_1_Status.toString() : '',
+          Level_2_Status: data[0].Level_2_Status.toString() ? data[0].Level_2_Status.toString() : '',
+          Level_3_Status: data[0].Level_3_Status.toString() ? data[0].Level_3_Status.toString() : ''
+        }
+        this.UpdateConsultancy.editConsulyancy(editObj)
+      }
+    });
   }
 
   onConfirm(){
@@ -279,26 +385,26 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
      this.ObjABR.Stimulus=undefined;
      this.ObjABR.LRemarks1=undefined;
      this.ObjABR.LRemarks2=undefined;
-     this.ObjABR.LRemarks3=undefined;
+    //  this.ObjABR.LRemarks3=undefined;
      this.ObjABR.RRemarks1=undefined;
      this.ObjABR.RRemarks2=undefined;
-     this.ObjABR.RRemarks3=undefined;
+    //  this.ObjABR.RRemarks3=undefined;
      this.ObjABR.Status=undefined;
      this.ObjABR.StiInt1=undefined;
      this.ObjABR.StiInt2=undefined;
-     this.ObjABR.StiInt3=undefined;
+    //  this.ObjABR.StiInt3=undefined;
      this.ObjABR.LLaten1=undefined;
      this.ObjABR.LLaten2=undefined;
-     this.ObjABR.LLaten3=undefined;
+    //  this.ObjABR.LLaten3=undefined;
      this.ObjABR.LAmp1=undefined;
      this.ObjABR.LAmp2=undefined;
-     this.ObjABR.LAmp3=undefined;
+    //  this.ObjABR.LAmp3=undefined;
      this.ObjABR.RLaten1=undefined;
      this.ObjABR.RLaten2=undefined;
-     this.ObjABR.RLaten3=undefined;
+    //  this.ObjABR.RLaten3=undefined;
      this.ObjABR.RAmp1=undefined;
      this.ObjABR.RAmp2=undefined;
-     this.ObjABR.RAmp3=undefined;
+    //  this.ObjABR.RAmp3=undefined;
      this.ObjABR.REar=undefined;
      this.ObjABR.LEar=undefined;
      this.ObjABR.Comment=undefined;

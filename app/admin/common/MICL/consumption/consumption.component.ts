@@ -569,6 +569,7 @@ GetPenUtil(){
     const tempobj = {
       From_Date : start,
       To_Date  : end,
+      User_ID : this.$CompacctAPI.CompacctCookies.User_ID 
     //  To_Cost_Cen_ID : this.ObjPendingIndent.Cost_Cen_ID,
     //  proj : "N"
     }

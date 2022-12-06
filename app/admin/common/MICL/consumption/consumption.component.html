@@ -156,7 +156,7 @@
                             <div class="table-responsive no-padding">
                                 <!-- <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Contact_Name','Mobile','Appo_Dt','Doctor_Name','PT_LEFT', 'PT_RIGHT']"
                                     [rowHover]="true" #dt> -->
-                                <p-table [value]="Searchedlist" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [globalFilterFields]="['Material_Type','Product_Type', 'Product_Sub_Type', 'Balance_Qty']" [rowHover]="true" #dt>
+                                <p-table [value]="Searchedlist" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [globalFilterFields]="['Type_Of_Product','Product_Description', 'Product_Type', 'Product_Sub_Type', 'Balance_Qty', 'Issue_Qty', 'Remarks']" [rowHover]="true" #dt>
                                     <ng-template pTemplate="caption">
                                         <div *ngIf="Searchedlist.length">
                                             <button class="btn btn-primary pull-right" (click)="SaveAllowance()" id="load2" [disabled]="Spinner">

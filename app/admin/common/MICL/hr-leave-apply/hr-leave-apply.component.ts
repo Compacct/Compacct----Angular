@@ -312,14 +312,19 @@ this.AllData = [...this.BackupAllData] ;
        this.ObjHrleave.No_Of_Days_Apply = diffDays + 1;
       //  this.ToDatevalue = new Date(this.ToDatevalue.setDate((this.FromDatevalue.getDate() + this.mndays) - 1 ))
        console.log("No_Of_Days_Apply",this.ObjHrleave.No_Of_Days_Apply);
+       this.getShowBaln();
     }
   }
   getShowBaln(){
-    if(this.ObjHrleave.Leave_Type && this.ObjHrleave.HR_Year_ID && this.ObjHrleave.Emp_ID){
+     this.ObjHrleave.Apply_From_Date = this.DateService.dateConvert(new Date(this.FromDatevalue));
+     this.ObjHrleave.Apply_To_Date = this.DateService.dateConvert(new Date(this.ToDatevalue));
+    if(this.ObjHrleave.Leave_Type && this.ObjHrleave.HR_Year_ID && this.ObjHrleave.Emp_ID && this.ObjHrleave.Apply_From_Date && this.ObjHrleave.Apply_To_Date){
       const TempSendData = {
         Emp_ID : Number(this.ObjHrleave.Emp_ID),
         HR_Year_ID : Number(this.ObjHrleave.HR_Year_ID),
-        LEAVE_TYPE : this.ObjHrleave.Leave_Type
+        LEAVE_TYPE : this.ObjHrleave.Leave_Type,
+        Issued_From_Date : this.ObjHrleave.Apply_From_Date,
+        Issued_To_Date : this.ObjHrleave.Apply_To_Date
       }
       const obj = {
         "SP_String": "SP_Leave_Application",
@@ -331,7 +336,7 @@ this.AllData = [...this.BackupAllData] ;
          console.log("Show Blan",data)
          this.showBaln = data[0].Balance;
        // this.checkLeave();
-       this.getminday();
+      //  this.getminday();
        })
     }
   
@@ -358,6 +363,7 @@ this.AllData = [...this.BackupAllData] ;
     // this.To_Time = new Date(this.To_Time.setDate(this.From_Time.getDate() + 1 ))
     // 
     //this.getapplydayschange();
+    this.getShowBaln();
   }
 }
  getMaxMindate(){
