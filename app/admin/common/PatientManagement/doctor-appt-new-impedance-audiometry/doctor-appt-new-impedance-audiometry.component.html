@@ -650,10 +650,7 @@
                                     inputId="RC4">
                                     </p-checkbox>
                                 </div>
-
-                                <div class="row">
-                                    <label class="control-label pull-right">Audiologist</label>
-                                </div>
+                                
 
                                 <div class="form-group">
                                     <update-consultancy #consultancy (saveData)="updateConsultancysave($event)"></update-consultancy>
@@ -664,7 +661,7 @@
                                     <div class="col-sm-4"></div>
                                     <div class="col-sm-2"></div>
                                     <div class="col-sm-2">
-                                        <button class="btn btn-primary pull-right" (click)="saveDocAppo(DoctorsAppointmentNewImpedanceAudiometryForm.form.valid)"  id="load"   [disabled]="Spinner">
+                                        <button *ngIf="buttonValid" class="btn btn-primary pull-right" (click)="saveDocAppo(DoctorsAppointmentNewImpedanceAudiometryForm.form.valid)"  id="load"   [disabled]="Spinner">
                                             <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                           <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
                                         </button>
