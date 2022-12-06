@@ -37,7 +37,7 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
   ABR_Submitted:boolean=false;
   EditPage:any;
   Get_TXN_ID:any;
-
+  buttonValid:boolean = true
   ObjABR: ABR = new ABR();
 
   @ViewChild("consultancy", { static: false }) UpdateConsultancy: UpdateConsultancyComponent;
@@ -197,12 +197,7 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
     }
   //  console.log("TempObj",TempObj);
 
-    const TempObj2={
-      Appo_ID: this.AppoIDvalue,
-      Level_1_Status: this.Level_1_Status,
-      Level_2_Status: this.Level_2_Status,
-      Level_3_Status: this.Level_3_Status
-    }
+ 
   //    console.log("TempObj2",TempObj2);
 
     this.ABR_Submitted=true;
@@ -219,16 +214,7 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
      // console.log("save data",data);
      var msg= this.EditPage ?  "update" : "create";
       if (data[0].Column1){
-        this.Spinner=false;
-        this.ABR_Submitted=false;
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "success",
-          summary: "Appointment " +msg,
-          detail: "Succesfully "
-        });
-        this.ClearData();
+       this.saveStatus()
       }
       else {
         this.Spinner = false;
@@ -242,6 +228,19 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
       }
     });
 
+  
+
+    
+   }
+   
+  }
+  saveStatus(){
+    const TempObj2={
+      Appo_ID: this.AppoIDvalue,
+      Level_1_Status: this.Level_1_Status,
+      Level_2_Status: this.Level_2_Status,
+      Level_3_Status: this.Level_3_Status
+    }
     const obj2 = {
       "SP_String": "sp_DoctorsAppointmentNew",
       "Report_Name_String": "Update_Consultancy_Done",
@@ -252,6 +251,8 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
      var msg1= this.EditPage ?  "update" : "create";
       if (data[0].Column1){
         this.Spinner=false;
+        this.buttonValid = false
+        this.ABR_Submitted=false;
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -259,7 +260,10 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
           summary: "Appointment " +msg1,
           detail: "Succesfully "
         });
-        this.UpdateConsultancy.clearComData();
+         if(this.EditPage != 'y'){
+          this.ClearData();
+          this.UpdateConsultancy.clearComData();
+        }
       }
       else {
         this.Spinner = false;
@@ -272,12 +276,7 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
         });
       }
     });
-
-    this.buttonname="Create";
-   }
-   
   }
-
   editData(){
     this.checkBoxArray = []
    const TempEditObj={
@@ -341,9 +340,11 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
       }
       this.GlobalAPI.getData(Recmdobj).subscribe((data: any) => {
         console.log("Edit Data2",data);
+        let BoxArray:any = []
         data.forEach((ele:any) => {
-          this.checkBoxArray.push(ele.Recommend)
+          BoxArray.push(ele.Recommend)
         });
+      this.checkBoxArray= BoxArray
         console.log("this.checkBoxArray===",this.checkBoxArray)
         this.editData2();
       });
@@ -362,14 +363,12 @@ export class DoctorsAppointmentNewABRComponent implements OnInit {
     this.GlobalAPI.getData(Dropdownobj).subscribe((data:any)=>{
      console.log("GetAllDataAppoID For dropdown",data);
       if(data.length){
-        this.UpdateConsultancy.Objconsultancy.Level_1_Status= data[0].Level_1_Status.toString() ? data[0].Level_1_Status.toString() : '';
-        console.log('Level_1_Status',this.UpdateConsultancy.Objconsultancy.Level_1_Status);
-
-        this.UpdateConsultancy.Objconsultancy.Level_2_Status= data[0].Level_2_Status.toString() ? data[0].Level_2_Status.toString() : '';
-        console.log('Level_2_Status',this.UpdateConsultancy.Objconsultancy.Level_2_Status);
-
-        this.UpdateConsultancy.Objconsultancy.Level_3_Status= data[0].Level_2_Status1.toString() ? data[0].Level_2_Status1.toString() : '';
-        console.log('Level_3_Status',this.UpdateConsultancy.Objconsultancy.Level_3_Status);
+       const editObj = {
+          Level_1_Status: data[0].Level_1_Status.toString() ? data[0].Level_1_Status.toString() : '',
+          Level_2_Status: data[0].Level_2_Status.toString() ? data[0].Level_2_Status.toString() : '',
+          Level_3_Status: data[0].Level_3_Status.toString() ? data[0].Level_3_Status.toString() : ''
+        }
+        this.UpdateConsultancy.editConsulyancy(editObj)
       }
     });
   }
