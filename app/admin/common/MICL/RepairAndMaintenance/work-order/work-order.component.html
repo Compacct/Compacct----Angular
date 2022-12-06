@@ -278,7 +278,7 @@
                                             <label class="control-label">Pending Maintenance Indent<sup class="text-danger"></sup></label>
                                             
                                             <p-dropdown *ngIf="!addPurchaseListInput" [options]="Requlist" name="Requisition" #Requisition="ngModel" [(ngModel)]="ObjaddWorkOrder.Req_No"  [showClear]="true" [emptyFilterMessage]="'Req No Not Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Requisition No'" [virtualScroll]="true"
-                                                        itemSize="30" #Supplier="ngModel" [styleClass]="purChaseAddFormSubmit && Requisition.errors?.required ? 'clearance' : ''"
+                                                        itemSize="30" #Supplier="ngModel" [disabled]="addPurchaseList.length" [styleClass]="purChaseAddFormSubmit && Requisition.errors?.required ? 'clearance' : ''"
                                                         [required]="true" (onChange)="RequisitionChange()">
                                                     </p-dropdown>
                                             <div *ngIf="addPurchaseListInput" class="label-t">{{ObjaddWorkOrder.Req_No}}</div>
