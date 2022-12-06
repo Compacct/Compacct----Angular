@@ -141,7 +141,7 @@ export class DoctorAppointmentComponent implements OnInit {
       window.open(col.Controller_Name + col.Appo_ID, '_blank');
     break;
     case'EditReport':
-      window.open(col.Controller_Name + col.Appo_ID, '_blank');
+      window.open(col.Controller_Name + col.Appo_ID+'&ed=y', '_blank');
     break;
     case 'PrintReport' :
       window.open(col.Print_Aspx+ col.Appo_ID, 'Print Appointment', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
