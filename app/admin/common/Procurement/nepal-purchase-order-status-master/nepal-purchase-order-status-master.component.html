@@ -16,24 +16,6 @@
         </div>
     </ng-template>
 </p-toast>
-<p-toast position="center" baseZIndex="99999" key="A" (onClose)="onReject()" [modal]="true" [autoZIndex]="true"
-    baseZIndex="999999">
-    <ng-template let-message pTemplate="message">
-        <div style="text-align: center">
-            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
-            <h3>{{message.summary}}</h3>
-            <p>{{message.detail}}</p>
-        </div>
-        <div class="ui-g ui-fluid">
-            <div class="ui-g-6">
-                <button type="button" pButton (click)="onConfirm1()" label="Yes" class="ui-button-success"></button>
-            </div>
-            <div class="ui-g-6">
-                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
-            </div>
-        </div>
-    </ng-template>
-</p-toast>
 
 <div class="row">
     <div class="col-xs-12">
@@ -47,29 +29,33 @@
                                 <div class="form-group">                                 
                                     <div class="col-sm-6">
                                         <label class="control-label">Status Name<sup class="text-danger">*</sup></label>
-                                        <textarea class="form-control" name="S_Address">
+                                        <textarea class="form-control" name="Status" #Status="ngModel"[(ngModel)]="ObjMaster.Status_Name"
+                                        [ngClass]="{'clearance': PoFormSuccess && Status?.errors?.required}" required>
                                         </textarea>
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="control-label">Purchase Type<sup class="text-danger">*</sup></label>
-                                    <p-multiSelect [options]="" name="CCEmail"
+                                    <p-multiSelect [options]="PrTypeList" name="Purchase" #Purchase="ngModel"[(ngModel)]="ObjMaster.Purchase_Type_ID" (onChange)="getPymtType()"
                                         [virtualScroll]="true" itemSize="30" [defaultLabel]="'Choose Purchase Type'" [emptyFilterMessage]="' No Purchase Type'"
-                                        [styleClass]="'compacct-multiselect'">
+                                        [styleClass]="'compacct-multiselect'"
+                                         [ngClass]="{'clearance': PoFormSuccess && Purchase?.errors?.required}" required>
                                     </p-multiSelect>
                                     </div>
                                     <div class="clearfix"></div>
                                     <div class="col-sm-6">
                                         <label class="control-label">Payment Terms<sup class="text-danger">*</sup></label>
-                                        <p-multiSelect [options]="" name="CCEmail" 
+                                        <p-multiSelect [options]="PymtTypeList" name="Payment" #Payment="ngModel"[(ngModel)]="ObjMaster.Payment_Term_ID" 
                                             [virtualScroll]="true" itemSize="30" [defaultLabel]="'Choose Payment Terms'" [emptyFilterMessage]="' No Payment Terms'"
-                                            [styleClass]="'compacct-multiselect'">
+                                            [styleClass]="'compacct-multiselect'"
+                                             [ngClass]="{'clearance': PoFormSuccess && Payment?.errors?.required}" required>
                                         </p-multiSelect>
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="control-label">Delivery Terms<sup class="text-danger">*</sup></label>
-                                    <p-multiSelect [options]="" name="CCEmail" 
+                                    <p-multiSelect [options]="DeliveryList" name="Delivery"  #Delivery="ngModel"[(ngModel)]="ObjMaster.Delivery_Term_ID" 
                                         [virtualScroll]="true" itemSize="30" [defaultLabel]="'Choose Delivery Terms'" [emptyFilterMessage]="' No Delivery Terms'"
-                                        [styleClass]="'compacct-multiselect'">
+                                        [styleClass]="'compacct-multiselect'"
+                                         [ngClass]="{'clearance': PoFormSuccess && Delivery?.errors?.required}" required>
                                     </p-multiSelect>
                                     </div>
                                 </div>                            
@@ -77,14 +63,14 @@
                             <div class="box-footer">
                                 <button class="btn btn-primary pull-right" type="button"
                                     (click)="SavePoStatus(POForms.form.valid)" id="load">
-                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                    <span class="glyphicon glyphicon-save"></span>{{buttonname}}
                                 </button>
                             </div>
                             <br>
                             <div class="table-responsive no-padding">
-                                <p-table #dt [value]="datalist" [globalFilterFields]="['Doc_No','Godown','Purchase_Request_No','Grant_Total']"
-                                    [paginator]="" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
-                                    [rowsPerPageOptions]="[100,300,500]" [rowHover]="true">
+                                <p-table #dt [value]="Bottomlist" [globalFilterFields]="['Status_Name','Purchase_Type_All','Payment_Term_All','Delivery_Term_All']"
+                                    [paginator]="Bottomlist.length ? true : false" [rows]="20" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                    [rowsPerPageOptions]="[20,50,100,200]" [rowHover]="true">
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right;">
@@ -96,8 +82,8 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th>Sl No</th>
-                                            <th>Status ID</th>
+                                            <th>Sl No.</th>
+                                            <th>Status Name</th>
                                             <th>Purchase Type </th>
                                             <th>payment Type</th>
                                             <th>Delivery Terms</th>
@@ -105,22 +91,22 @@
                                             <th style="text-align: center;">Delete</th>
                                         </tr>
                                     </ng-template>
-                                    <ng-template pTemplate="body" let-col>
+                                    <ng-template pTemplate="body" let-col  let-i = "rowIndex" >
                                         <tr>                                                  
-                                            <td>{{col}}</td>
-                                            <td>{{col}}</td>
-                                            <td>{{col}}</td>
-                                            <td>{{col}}</td>
-                                            <td>{{col}}</td>
+                                            <td align="center">{{i+1}}</td>
+                                            <td>{{col.Status_Name}}</td>
+                                            <td>{{col.Purchase_Type_All}}</td>
+                                            <td>{{col.Payment_Term_All}}</td>
+                                            <td>{{col.Delivery_Term_All}}</td>
                                             <td style="text-align: center;">
-                                                <button type="button" class="btn btn-warning" (click)="Edit()" >
-                                                    <i class="fa fa-edit" style="color:black ;"></i>
-                                                </button>       
+                                                <a (click)="Edit(col)" >
+                                                    <i class="fa fa-edit" style="color: rgb(129 26 207); ;font-size: 20px;cursor: pointer"></i>
+                                                </a>       
                                             </td>
                                             <td style="text-align: center;">
-                                                <button type="button" class="btn btn-danger" (click)="delete()">
-                                                    <i class="fa fa-trash" style="color:black ;"></i>
-                                                </button>
+                                                <a (click)="delete(col)">
+                                                    <i class="fa fa-trash" style="color:red ;font-size:20px;cursor: pointer"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                     </ng-template>
