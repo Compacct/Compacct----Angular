@@ -191,18 +191,25 @@ export class StockReportComponent implements OnInit {
       const CCTempobj={
         StDate: this.ObjBrowse.StDate,
         EndDate: this.ObjBrowse.EndDate,
-        Cost_Cen_ID: this.ObjBrowse.Cost_Cen_ID,
-        Godown_ID: this.ObjBrowse.Godown_ID
+        Cost_Cen_ID: this.ObjBrowse.Cost_Cen_ID ? this.ObjBrowse.Cost_Cen_ID : 0,
+        Godown_ID: this.ObjBrowse.Godown_ID ? this.ObjBrowse.Godown_ID : 0
       }
       const PtempObj = {
         StDate: this.ObjBrowse.StDate,
         EndDate: this.ObjBrowse.EndDate,
         Product_Type_ID : this.ObjBrowse.Product_Type_ID
       }
+      var reportname = '';
+      if(this.report_Type === "Product_Type_Wise_Stock") {
+        reportname = "Product Type Wise Stock";
+      }
+      else {
+        reportname = this.report_Type === 'Cost_Center_Wise'? "GET_STOCK" : this.report_Type === 'GET_STOCK_With_Value'? "GET_STOCK_With_Value" : "GET_Product_Wise_Stock";
+      }
       const obj = {
         "SP_String": "REP_Stock_Report",
       //  "Report_Name_String": this.report_Type === 'Cost_Center_Wise'? "GET_STOCK" : "GET_Product_Wise_Stock",
-      "Report_Name_String": this.report_Type === 'Cost_Center_Wise'? "GET_STOCK" : this.report_Type === 'GET_STOCK_With_Value'? "GET_STOCK_With_Value" : "GET_Product_Wise_Stock",
+        "Report_Name_String": reportname,
         "Json_Param_String": this.report_Type === 'Product_Wise'?JSON.stringify([PtempObj]) : JSON.stringify([CCTempobj])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
