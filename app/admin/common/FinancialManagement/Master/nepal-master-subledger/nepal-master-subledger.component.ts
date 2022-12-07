@@ -398,7 +398,7 @@ export class NepalMasterSubledgerComponent implements OnInit {
       this.ngxService.start();
       const obj = {
         "SP_String": "SP_Create_Subledger_New",
-        "Report_Name_String": "Get_Subledger_Location",
+        "Report_Name_String": "Get_Subledger_Location_For_Contacts",
         "Json_Param_String": JSON.stringify([{'Sub_Ledger_ID' : this.ObjSubledger.Sub_Ledger_ID}])
       }
       this.GlobalAPI.postData(obj).subscribe((data) => {
