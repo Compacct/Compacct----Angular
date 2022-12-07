@@ -395,6 +395,8 @@ import { UpdateConsultancyComponent } from './shared/compacct.components/compacc
 import { DoctorApptNewImpedanceAudiometryComponent } from "./common/PatientManagement/doctor-appt-new-impedance-audiometry/doctor-appt-new-impedance-audiometry.component";
 import { NepalPurchaseOrderStatusMasterComponent } from './common/Procurement/nepal-purchase-order-status-master/nepal-purchase-order-status-master.component';
 import { DailyAttendanceForContractorComponent } from './common/Attendance/daily-attendance-for-contractor/daily-attendance-for-contractor.component';
+import { NepalPurchaseOrderDocumenMasterComponent } from './common/Procurement/nepal-purchase-order-documen-master/nepal-purchase-order-documen-master.component';
+import { RawMaterialStockReportComponent } from './common/MaterialManagement/Report/raw-material-stock-report/raw-material-stock-report.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -706,7 +708,9 @@ import { DailyAttendanceForContractorComponent } from './common/Attendance/daily
     UpdateConsultancyComponent,
     DoctorApptNewImpedanceAudiometryComponent,
     NepalPurchaseOrderStatusMasterComponent,
-    DailyAttendanceForContractorComponent
+    DailyAttendanceForContractorComponent,
+    NepalPurchaseOrderDocumenMasterComponent,
+    RawMaterialStockReportComponent
   ],
   imports: [
     CommonModule,

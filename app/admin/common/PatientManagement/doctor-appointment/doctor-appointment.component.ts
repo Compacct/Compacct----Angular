@@ -75,6 +75,7 @@ export class DoctorAppointmentComponent implements OnInit {
       this.ConsultancyList = data ? JSON.parse(data) : [];
       this.ConsultancyName = this.ConsultancyList[0].Consultancy_Type;
       if (this.ConsultancyName) {
+        this.GetCentre();
         this.GetAllDetails();
       }
     })
