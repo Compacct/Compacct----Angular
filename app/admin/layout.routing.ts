@@ -300,6 +300,7 @@ import { DoctorApptNewImpedanceAudiometryComponent } from "./common/PatientManag
 import { NepalPurchaseOrderStatusMasterComponent } from "./common/Procurement/nepal-purchase-order-status-master/nepal-purchase-order-status-master.component";
 import { DailyAttendanceForContractorComponent } from './common/Attendance/daily-attendance-for-contractor/daily-attendance-for-contractor.component';
 import { NepalPurchaseOrderDocumenMasterComponent } from "./common/Procurement/nepal-purchase-order-documen-master/nepal-purchase-order-documen-master.component";
+import { RawMaterialStockReportComponent } from './common/MaterialManagement/Report/raw-material-stock-report/raw-material-stock-report.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2253,6 +2254,13 @@ path: 'MICL_Cost_Center_Master',
     component: NepalPurchaseOrderDocumenMasterComponent,
     data: {
       title: 'Nepal BL Txn Purchase Order Document Master'
+}
+},
+{
+  path: 'Raw_Material_Stock_Report',
+    component: RawMaterialStockReportComponent,
+    data: {
+      title: 'Raw Material Stock Report'
 }
 },
     

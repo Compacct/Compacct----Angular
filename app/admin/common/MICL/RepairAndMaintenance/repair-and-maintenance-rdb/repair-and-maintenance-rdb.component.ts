@@ -1060,7 +1060,7 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
   Printrdb(DocNo) {
     if(DocNo) {
     const objtemp = {
-      "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+      "SP_String": "SP_Repair_And_Maintenance_RDB",
       "Report_Name_String": "RDB_Print"
       }
     this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{

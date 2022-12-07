@@ -296,7 +296,8 @@ const obj = {
 const tempobj = {
   from_Date : start,
   to_date : end,
-  Cost_Cen_ID : this.objAllData.Cost_Cen_ID ? this.objAllData.Cost_Cen_ID : 0
+  Cost_Cen_ID : this.objAllData.Cost_Cen_ID ? this.objAllData.Cost_Cen_ID : 0,
+  User_ID : this.$CompacctAPI.CompacctCookies.User_ID
   }
 
   const obj = {

@@ -1089,7 +1089,7 @@ onConfirm(){
 PrintPGRN(DocNo:any) {
   if(DocNo) {
   const objtemp = {
-    "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+    "SP_String": "SP_Repair_And_Maintenance_GRN",
     "Report_Name_String": "GRN_Print"
     }
   this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
