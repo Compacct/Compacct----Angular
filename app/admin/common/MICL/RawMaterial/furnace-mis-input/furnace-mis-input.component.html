@@ -42,28 +42,45 @@
             <div class="form-horizontal">
                 <div class="box-body">
                     <p-tabView>
-<div class="col-lg-12">
-    <div class="panel-group">
-        <div class="panel panel-primary">
+                <div class="col-lg-12">
+                    <div class="panel-group">
+                        <div class="panel panel-primary">
 
-            <div class="panel-body">
-                <form name="FurnaceMISinputForm" #FurnaceMISinputForm="ngForm" novalidate>
-                    <div class="form-group">
-                        <div class="col-sm-4">
-                            <label class="control-label">Furnace No<sup class="text-danger">*</sup></label>
-                            <input class="form-control" name="furnaceno" #furnaceno="ngModel" [disabled]="true" [(ngModel)]="ObjFurnaceMISinput.Furnace_No" [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && furnaceno?.errors?.required}">
+                            <div class="panel-body">
+                                <form name="FurnaceMISinputForm" #FurnaceMISinputForm="ngForm" novalidate>
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Furnace No<sup class="text-danger">*</sup></label>
+                                            <!-- <input class="form-control" 
+                                            name="furnaceno" 
+                                            #furnaceno="ngModel"
+                                             [disabled]="true" 
+                                             [(ngModel)]="ObjFurnaceMISinput.Furnace_No" 
+                                             [ngClass]="{'clearance': FurnaceMISinputFormSubmitted && furnaceno?.errors?.required}"> -->
+                                             <select class="form-control" 
+                                             name="furnaceno" 
+                                             #furnaceno="ngModel" 
+                                             [(ngModel)]="ObjFurnaceMISinput.Furnace_No" 
+                                             [ngClass]="{'clearance ': FurnaceMISinputFormSubmitted && furnaceno.errors?.required}"
+                                              required 
+                                              >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of FurnaceNoList" value="{{option.Godown_ID}}">
+                                                {{option.godown_name}}
+                                                </option>
+                                   </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Date</label>
+                                            <ejs-datepicker  [(value)]="Doc_Date" [format]="'dd/MMM/yyyy'" (change)="ChangeConsumption()"></ejs-datepicker>
+                                        </div> 
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                        <div class="col-sm-4">
-                            <label class="control-label">Date</label>
-                            <ejs-datepicker  [(value)]="Doc_Date" [format]="'dd/MMM/yyyy'" (change)="ChangeConsumption()"></ejs-datepicker>
-                        </div> 
                     </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- <div class="col-lg-12">
+                </div>
+                <!-- <div class="col-lg-12">
     <div class="panel-group">
         <div class="panel panel-primary">
 
@@ -668,17 +685,45 @@
                         <div class="form-group">
                             <div class="col-sm-3">
                                 <label class="control-label">From</label>
-                                <!-- <input class="form-control" type="time" name="F_Time" #F_Time="ngModel" [(ngModel)]="ObjFurMISinputShutdoun.From_Time" [ngClass]="{'clearance': Shutdownvalid && F_Time?.errors?.required}"required> -->
-                                <ejs-timepicker placeholder='Select a time' [(value)]="ObjFurMISinputShutdoun.From_Time" name="F_Time" #F_Time="ngModel" [ngModel]="ObjFurMISinputShutdoun.From_Time" [format]="'hh:mm a'" [value]='FromTimeValue'
-                                [ngClass]="{'clearance': Shutdownvalid && F_Time?.errors?.required}"required ></ejs-timepicker>
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-clock-o"></i>
+                                    </div>
+                                    <input class="form-control" 
+                                    type="time" 
+                                    name="F_Time" 
+                                    #F_Time="ngModel" 
+                                    [(ngModel)]="ObjFurMISinputShutdoun.From_Time" 
+                                    [ngClass]="{'clearance': Shutdownvalid && F_Time?.errors?.required}"
+                                    required>
+                                </div>
+                              <!-- <ejs-timepicker placeholder='Select a time' [(value)]="ObjFurMISinputShutdoun.From_Time" name="F_Time" #F_Time="ngModel" [ngModel]="ObjFurMISinputShutdoun.From_Time" [format]="'hh:mm a'" [value]='FromTimeValue'
+                                [ngClass]="{'clearance': Shutdownvalid && F_Time?.errors?.required}"required ></ejs-timepicker> -->
                                 <!-- <ejs-timepicker placeholder='Select a time' [(value)]="objShutdown.From_Time" name="F_Time" #F_Time="ngModel" [format]="'hh:mm a'" [value]='FromTimeValue'></ejs-timepicker> -->
                             </div>
                             <div class="col-sm-3">
                                 <label class="control-label">To</label>
-                                <ejs-timepicker placeholder='Select a time' [(value)]="ObjFurMISinputShutdoun.To_Time" name="T_Time" #T_Time="ngModel" [ngModel]="ObjFurMISinputShutdoun.To_Time"  [format]="'hh:mm a'" [value]='ToTimeValue'
-                                [ngClass]="{'clearance': Shutdownvalid && T_Time?.errors?.required}"required ></ejs-timepicker>
-                                <!-- <ejs-timepicker placeholder='Select a time' [(value)]="objShutdown.To_Time" name="T_Time" #T_Time="ngModel" [format]="'hh:mm a'" [value]='ToTimeValue'></ejs-timepicker> [enabled]="userdatedisabled"-->
-                            </div>
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-clock-o"></i>
+                                    </div>
+                                    <input class="form-control" 
+                                    type="time" 
+                                    name="T_Time" 
+                                    #T_Time="ngModel" 
+                                    [(ngModel)]="ObjFurMISinputShutdoun.To_Time" 
+                                    [ngClass]="{'clearance': Shutdownvalid && T_Time?.errors?.required}"
+                                    required>
+                                </div>
+                               <!-- <ejs-timepicker 
+                                placeholder='Select a time' 
+                                [(value)]="ObjFurMISinputShutdoun.To_Time" 
+                                name="T_Time" #T_Time="ngModel" 
+                                [ngModel]="ObjFurMISinputShutdoun.To_Time"  
+                                [format]="'hh:mm a'" [value]='ToTimeValue'
+                                [ngClass]="{'clearance': Shutdownvalid && T_Time?.errors?.required}"required 
+                                ></ejs-timepicker> -->
+                             </div>
                             <div class="col-sm-3">
                                 <label class="control-label">Reason<sup class="text-danger">*</sup></label>
                                 <select class="form-control" 
@@ -713,8 +758,8 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let obj of AddShutdownList; let ind = index;">
-                                            <td>{{obj.From_Time}}</td>
-                                            <td>{{obj.To_Time}}</td>
+                                            <td>{{obj.From_Time | date: "hh:mm a"}}</td>
+                                            <td>{{obj.To_Time | date: "hh:mm a"}}</td>
                                             <td>{{obj.Reason_Des}}</td>
                                             <td><button (click)="Shutdowndelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                         </tr>
@@ -899,7 +944,7 @@
                         </button>
                     </div>
                 </p-tabView>
-            <!-- </div>
+                  <!-- </div>
         </div>
     </div>
 </div> -->
