@@ -397,6 +397,7 @@ import { NepalPurchaseOrderStatusMasterComponent } from './common/Procurement/ne
 import { DailyAttendanceForContractorComponent } from './common/Attendance/daily-attendance-for-contractor/daily-attendance-for-contractor.component';
 import { NepalPurchaseOrderDocumenMasterComponent } from './common/Procurement/nepal-purchase-order-documen-master/nepal-purchase-order-documen-master.component';
 import { RawMaterialStockReportComponent } from './common/MaterialManagement/Report/raw-material-stock-report/raw-material-stock-report.component';
+import { BSHPLHfFollowUpComponent } from './common/CRM/BSHPL-FOLLOWUP/bshpl-hf-follow-up/bshpl-hf-follow-up.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -710,7 +711,8 @@ import { RawMaterialStockReportComponent } from './common/MaterialManagement/Rep
     NepalPurchaseOrderStatusMasterComponent,
     DailyAttendanceForContractorComponent,
     NepalPurchaseOrderDocumenMasterComponent,
-    RawMaterialStockReportComponent
+    RawMaterialStockReportComponent,
+    BSHPLHfFollowUpComponent
   ],
   imports: [
     CommonModule,
