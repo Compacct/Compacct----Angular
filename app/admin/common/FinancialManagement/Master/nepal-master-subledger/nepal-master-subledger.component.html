@@ -822,10 +822,10 @@
                                                 <input
                                                     class="form-control"
                                                     type="text"
-                                                    name="Location_Name"
+                                                    name="LocationName"
                                                     placeholder="Location Name"
-                                                    #Location_Name="ngModel"
-                                                    [ngClass]="{'clearance': SubledgerLocationSubmitted &&  Location_Name?.errors?.required}"
+                                                    #LocationName="ngModel"
+                                                    [ngClass]="{'clearance': SubledgerLocationSubmitted &&  LocationName?.errors?.required}"
                                                     [(ngModel)]="ObjLocation.Location_Name"
                                                     required/>
                                             </div>
@@ -952,17 +952,13 @@
                                             </div>
                                             <div class="col-sm-4">
                                                 <label>Location<sup class="text-danger">*</sup></label>
-                                                <select class="form-control" 
-                                                name="Location" 
-                                                #Location="ngModel" 
-                                                [(ngModel)]="ObjContact.Location_ID" 
-                                                [ngClass]="{clearance: SubledgerContactPersonSubmitted && Location.errors?.required}"
-                                                required>
+                                                <select class="form-control" name="Location" #Location="ngModel" [(ngModel)]="ObjContact.Location_ID"
+                                                    [ngClass]="{clearance: SubledgerContactPersonSubmitted && Location.errors?.required}" required>
                                                     <option [ngValue]="undefined">Select</option>
-                                                    <option *ngFor="let option of LocationList" value="{{ option.Location_ID  }}">
-                                                    {{ option.Location_Name}}
+                                                    <option *ngFor="let item of LocationList" value="{{item.Location_ID}}">                              
+                                                       {{item.Location_Name}}
                                                     </option>
-                                                </select>
+                                                </select>                                                           
                                             </div>
                                             <div class="col-sm-4">
                                                 <label>Email<span class="text-danger">*</span></label>
