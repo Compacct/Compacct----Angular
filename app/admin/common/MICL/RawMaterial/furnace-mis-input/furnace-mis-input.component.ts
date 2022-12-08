@@ -66,7 +66,7 @@ export class FurnaceMisInputComponent implements OnInit {
 
   DispatchList:any = [];
   DynamicHeaderforDispatchList:any = [];
-
+  
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -94,6 +94,7 @@ export class FurnaceMisInputComponent implements OnInit {
     this.GetGodown();
     this.GetProduction();
     this.GetReason();
+    this.GetFurnaceNo();
   }
   onReject(){}
   onConfirm(){}
@@ -356,11 +357,15 @@ export class FurnaceMisInputComponent implements OnInit {
     var reson = this.ReasonList.filter(el => Number(el.Reason_ID) === Number(this.ObjFurMISinputShutdoun.Reason_ID))
     var furdate = this.DateService.dateConvert(new Date(this.Doc_Date))
     var ftime = this.dateTimeConvert(new Date(this.ObjFurMISinputShutdoun.From_Time))
-    var totime = this.dateTimeConvert(new Date(this.ObjFurMISinputShutdoun.To_Time))
+    var totime = this.dateTimeConvert(new Date())
+    console.log("totime",totime)
+    console.log("this.ObjFurMISinputShutdoun.From_Time",this.ObjFurMISinputShutdoun.From_Time)
+    console.log("this.ObjFurMISinputShutdoun.To_Time",this.ObjFurMISinputShutdoun.To_Time)
+ 
     if(valid){
         this.AddShutdownList.push({
-          From_Time: furdate + " " + ftime,
-          To_Time: furdate +" "+ totime,
+          From_Time: furdate + " " + this.transform(this.ObjFurMISinputShutdoun.From_Time),
+          To_Time: furdate +" "+ this.transform(this.ObjFurMISinputShutdoun.To_Time),
           Reason_ID: this.ObjFurMISinputShutdoun.Reason_ID,
           Reason_Des: reson[0].Reason_Des,
         })
@@ -371,8 +376,27 @@ export class FurnaceMisInputComponent implements OnInit {
   Shutdowndelete(i) {
     this.AddShutdownList.splice(i,1);
   }
-
-
+  transform(time: any): any {
+    let hour = (time.split(':'))[0]
+    let min = (time.split(':'))[1]
+    let part = hour > 12 ? 'pm' : 'am';
+    if(parseInt(hour) == 0)
+     hour = 12;
+    min = (min+'').length == 1 ? `0${min}` : min;
+    hour = hour > 12 ? hour - 12 : hour;
+    hour = (hour+'').length == 1 ? `0${hour}` : hour;
+    return `${hour}:${min} ${part}`
+  }
+ GetFurnaceNo(){
+  const obj = {
+    "SP_String": "SP_Furnace_MIS_Input",
+    "Report_Name_String": "Get_Furnace"
+  
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.FurnaceNoList = data
+  })
+ }
   SaveFurnace() {
     // console.log("save valid ===",valid)
     this.FurnaceMISinputFormSubmitted = true;
