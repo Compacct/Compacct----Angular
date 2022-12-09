@@ -50,7 +50,7 @@
                                 <form name="FurnaceMISinputForm" #FurnaceMISinputForm="ngForm" novalidate>
                                     <div class="form-group">
                                         <div class="col-sm-4">
-                                            <label class="control-label">Furnace No<sup class="text-danger">*</sup></label>
+                                            <label class="control-label">Furnace <sup class="text-danger">*</sup></label>
                                             <!-- <input class="form-control" 
                                             name="furnaceno" 
                                             #furnaceno="ngModel"
@@ -61,6 +61,7 @@
                                              name="furnaceno" 
                                              #furnaceno="ngModel" 
                                              [(ngModel)]="ObjFurnaceMISinput.Furnace_No" 
+                                             (change)="GetData()"
                                              [ngClass]="{'clearance ': FurnaceMISinputFormSubmitted && furnaceno.errors?.required}"
                                               required 
                                               >
@@ -758,8 +759,8 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let obj of AddShutdownList; let ind = index;">
-                                            <td>{{obj.From_Time | date: "hh:mm a"}}</td>
-                                            <td>{{obj.To_Time | date: "hh:mm a"}}</td>
+                                            <td>{{obj.From_Time}}</td>
+                                            <td>{{obj.To_Time}}</td>
                                             <td>{{obj.Reason_Des}}</td>
                                             <td><button (click)="Shutdowndelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                         </tr>

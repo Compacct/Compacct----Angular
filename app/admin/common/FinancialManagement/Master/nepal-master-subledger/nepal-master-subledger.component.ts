@@ -72,7 +72,6 @@ export class NepalMasterSubledgerComponent implements OnInit {
   Is_CR_Note_Enabled = false;
   Is_DR_Enabled = false;
   Is_Adj_Enabled = false;
-
   SubLedgerID = undefined;
   constructor(private $http: HttpClient,
     private Header: CompacctHeader,
@@ -591,12 +590,12 @@ export class NepalMasterSubledgerComponent implements OnInit {
       return true;
     }
   }
-  SaveContactForm(valid) {
+  SaveContactForm(valid: any) {
     this.SubledgerContactPersonSubmitted = true;
     if(valid && this.ObjSubledger.Sub_Ledger_ID) {
       this.ObjContact.Sub_Ledger_ID = this.ObjSubledger.Sub_Ledger_ID;
       this.SaveContact(this.ObjContact);
-    }
+     }
   }
   // EDIT
   EditSubledger(id) {
@@ -841,7 +840,7 @@ class Location{
 }
 class Contact{
   Contact_ID:String;        
-  Location_ID:String;         
+  Location_ID:any;         
   Sub_Ledger_ID:String; 	      
   Contact_Person_Type:String;    	
   Contact_Number:String;                 

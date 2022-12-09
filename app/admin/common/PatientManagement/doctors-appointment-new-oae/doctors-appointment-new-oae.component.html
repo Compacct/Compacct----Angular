@@ -1,0 +1,304 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+           <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" header="Appointment"
+                            leftIcon="glyphicon glyphicon-user">
+
+                            <form name="DoctorsAppointmentNewOAE" #DoctorsAppointmentNewOAEForm="ngForm" novalidate>
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="Name"
+                                        #Name="ngModel" 
+                                        [(ngModel)]="ObjOAE.Name"
+                                        placeholder="Write Your Name"
+                                        disabled
+                                        > 
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Patient ID<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="PatientID"
+                                        #PatientID="ngModel"
+                                        [(ngModel)]="ObjOAE.PatientID" 
+                                        CompacctDigitonly="true"
+                                        placeholder="Type Patient ID"
+                                        disabled
+                                        > 
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Sex<sup class="text-danger">*</sup></label>
+                                        <select class="form-control"
+                                        name="Sex"
+                                        #Sex="ngModel"
+                                        [(ngModel)]="ObjOAE.Sex"
+                                        disabled
+                                         >
+                                         <option  [ngValue]="undefined">Select</option>
+                                         <option  *ngFor="let option of GenderList" value="{{option}}">
+                                             {{option}}
+                                         </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Age<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="Age"
+                                        #Age="ngModel"
+                                        [(ngModel)]="ObjOAE.Age" 
+                                        CompacctDigitonly="true"
+                                        placeholder="Put Your Age"
+                                        disabled
+                                        > 
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                        <div class="label-t">{{Appo_Date ? (Appo_Date | date: "dd/MMM/yyyy") : '-'}}</div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Reffered By<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="RefferedBy"
+                                        #RefferedBy="ngModel"
+                                        [(ngModel)]="ObjOAE.RefferedBy" 
+                                        placeholder="Type Reffered By"
+                                        disabled
+                                        > 
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Centre<sup class="text-danger">*</sup></label>                                 
+                                        <p-dropdown [options]="CentreList"
+                                                name="Centre" 
+                                                #Centre="ngModel" 
+                                                [(ngModel)]="ObjOAE.Centre"
+                                                [showClear]="true" 
+                                                [emptyFilterMessage]="' No Centre Found'" 
+                                                [filter]="true" filterBy="label,value.name" 
+                                                [resetFilterOnHide]="true" 
+                                                [placeholder]="'Select Centre'" 
+                                                [virtualScroll]="true"
+                                                itemSize="30"
+                                                [required]="true"
+                                                disabled> 
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">OAE<sup class="text-danger">*</sup></label>
+                                        <select class="form-control"
+                                        name="OAE"
+                                        #OAE="ngModel"
+                                        [(ngModel)]="ObjOAE.OAE"
+                                        [ngClass]="{clearance: OAEFormSubmitted && OAE?.errors?.required }" 
+                                        required
+                                        >
+                                         <option  [ngValue]="undefined">Select</option>
+                                         <option  *ngFor="let option of OAEList" value="{{option}}">
+                                             {{option}}
+                                         </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <hr class="box boxboxDivide-primary">
+
+                                <div class="row">
+                                    <table style="width:100%">
+                                        <tr>
+                                            <th class="table-header">EAR</th>
+                                            <th class="table-header">RESULTS</th>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 100px;">Right</th>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: OAEFormSubmitted && Right_Results?.errors?.required }" 
+                                                required
+                                                name="Right_Results"
+                                                #Right_Results="ngModel" 
+                                                [(ngModel)]="ObjOAE.Right_Results"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ResultsList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th  style="width: 100px;">Left</th>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: OAEFormSubmitted && Left_Results?.errors?.required }" 
+                                                required
+                                                name="Left_Results"
+                                                #Left_Results="ngModel" 
+                                                [(ngModel)]="ObjOAE.Left_Results"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of ResultsList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <hr class="box boxboxDivide-primary">
+
+                                <div class="row">
+                                    <table style="width:100%">
+                                        <tr>
+                                            <th colspan="2" class="table-header">INTERPRETATION</th>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 100px;">Right Ear</th>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: OAEFormSubmitted && Right_Ear_Interpretation?.errors?.required }" 
+                                                required
+                                                name="Right_Ear_Interpretation"
+                                                #Right_Ear_Interpretation="ngModel" 
+                                                [(ngModel)]="ObjOAE.Right_Ear_Interpretation"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of InterpretationList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th  style="width: 100px;">Left Ear</th>
+                                            <td>
+                                                <select class="form-control"
+                                                [ngClass]="{clearance: OAEFormSubmitted && Left_Ear_Interpretation?.errors?.required }" 
+                                                required
+                                                name="Left_Ear_Interpretation"
+                                                #Left_Ear_Interpretation="ngModel" 
+                                                [(ngModel)]="ObjOAE.Left_Ear_Interpretation"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of InterpretationList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <hr class="box boxboxDivide-primary">
+
+                                <div class="row mrg"> 
+                                    <label class="control-label">RECOMMENDATION:</label>
+                                    <br>
+                                    <p-checkbox 
+                                    label="Consult Back to Doctor"
+                                    value="Consult Back to Doctor"
+                                    name="RECOMMENDATION"
+                                    [(ngModel)]="CheckBoxRECOMMENDATION"
+                                    inputId="RC1">
+                                    </p-checkbox>
+                                    <br>
+                                    <p-checkbox 
+                                    label="To be Correlated with Clinical Findings" 
+                                    value="To be Correlated with Clinical Findings" 
+                                    name="RECOMMENDATION"
+                                    [(ngModel)]="CheckBoxRECOMMENDATION"
+                                    inputId="RC2">
+                                    </p-checkbox>
+                                    <br>
+                                    <p-checkbox 
+                                    label="Counselling"
+                                    value="Counselling"
+                                    name="RECOMMENDATION"
+                                    [(ngModel)]="CheckBoxRECOMMENDATION"
+                                    inputId="RC3">
+                                    </p-checkbox>
+                                    <br>
+                                    <p-checkbox 
+                                    label="BERA"
+                                    value="BERA"
+                                    name="RECOMMENDATION"
+                                    [(ngModel)]="CheckBoxRECOMMENDATION"
+                                    inputId="RC4">
+                                    </p-checkbox>
+                                    <br>
+                                    <p-checkbox 
+                                    label="ASSR"
+                                    value="ASSR"
+                                    name="RECOMMENDATION"
+                                    [(ngModel)]="CheckBoxRECOMMENDATION"
+                                    inputId="RC5">
+                                    </p-checkbox>
+                                    <br>
+                                    <p-checkbox 
+                                    label="Aural Hygiene" 
+                                    value="Aural Hygiene" 
+                                    name="RECOMMENDATION"
+                                    [(ngModel)]="CheckBoxRECOMMENDATION"
+                                    inputId="RC6">
+                                    </p-checkbox>
+                                    <br>
+                                    <p-checkbox 
+                                    label="Follow Up"
+                                    value="Follow Up"
+                                    name="RECOMMENDATION"
+                                    [(ngModel)]="CheckBoxRECOMMENDATION"
+                                    inputId="RC7">
+                                    </p-checkbox>
+                                </div>
+                                <hr class="box boxboxDivide-primary">
+
+                                <div class="form-group">
+                                    <update-consultancy #consultancy (saveData)="updateConsultancysave($event)"></update-consultancy>
+                                </div>
+
+                                <div class="form-group" style="padding: 1em;">
+                                    <div class="col-sm-4"></div>
+                                    <div class="col-sm-4"></div>
+                                    <div class="col-sm-2"></div>
+                                    <div class="col-sm-2">
+                                        <button *ngIf="buttonValid" class="btn btn-primary pull-right" (click)="saveDocAppo(DoctorsAppointmentNewOAEForm.form.valid)"  id="load"   [disabled]="">
+                                            <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                          <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                        </button>
+                                    </div> 
+                                </div> 
+
+                            </form>
+
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
