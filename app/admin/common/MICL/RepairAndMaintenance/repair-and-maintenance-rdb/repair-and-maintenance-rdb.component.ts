@@ -141,7 +141,7 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
     this.ObjRepaAndMaintRdb.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     this.ObjRepaAndMaintRdb.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    this.getStockPoint();
+    this.getStockPoint(this.ObjRepaAndMaintRdb.Cost_Cen_ID);
     // this.ObjRepaAndMaintRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;
     this.deleteError = false;
     this.RegisterSpinner = false;
@@ -318,22 +318,63 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
          });
          this.ObjRepaAndMaintRdb.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
        });
-       this.getStockPoint();
+       this.getStockPoint(this.ObjRepaAndMaintRdb.Cost_Cen_ID);
      });
   }
-  getStockPoint(){
+  // getStockPoint(){
+  //   this.AllStockList=[];
+  //   this.StockList = [];
+  //   if(this.ObjRepaAndMaintRdb.Cost_Cen_ID){
+  //     const obj = {
+  //       "SP_String": "SP_Repair_And_Maintenance_RDB",
+  //       "Report_Name_String":"Get_Cost_Center_Godown",
+  //       "Json_Param_String": JSON.stringify([{Cost_Cen_ID: this.ObjRepaAndMaintRdb.Cost_Cen_ID}]) 
+  //      }
+  //      this.GlobalAPI.getData(obj)
+  //      .subscribe((data : any)=>
+  //      {
+  //        this.AllStockList = data;
+  //       //  console.log('AllStockList=',this.AllStockList);
+  //       //  this.AllStockList.forEach((el : any)=>
+  //       //  {
+  //       //     this.StockList.push({
+  //       //       label : el.godown_name,
+  //       //       value : el.godown_id
+  //       //     });
+  //       //  });
+  //       if(data.length) {
+  //         data.forEach((el:any)=>{
+  //           el['label'] = el.godown_name,
+  //           el['value'] = el.godown_id
+  //         })
+  //         this.StockList = data;
+  //       }
+  //       else {
+  //         this.StockList = [];
+  //       }
+  //       if (this.buttonname != "Update") {
+  //        this.ObjRepaAndMaintRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;
+  //       }
+  //      });
+  //   }
+  //   // else{
+  //   //   this.ObjRepaAndMaintRdb.godown_id = undefined;
+  //   // }
+  
+  // }
+  getStockPoint(Cost_Cen_ID,editcostgodown?){
     this.AllStockList=[];
     this.StockList = [];
-    if(this.ObjRepaAndMaintRdb.Cost_Cen_ID){
+    if(Cost_Cen_ID){
       const obj = {
-        "SP_String": "SP_Repair_And_Maintenance_RDB",
+        "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
         "Report_Name_String":"Get_Cost_Center_Godown",
-        "Json_Param_String": JSON.stringify([{Cost_Cen_ID: this.ObjRepaAndMaintRdb.Cost_Cen_ID}]) 
+        "Json_Param_String": JSON.stringify([{Cost_Cen_ID: Cost_Cen_ID}]) 
        }
        this.GlobalAPI.getData(obj)
        .subscribe((data : any)=>
        {
-         this.AllStockList = data;
+        //  this.AllStockList = data;
         //  console.log('AllStockList=',this.AllStockList);
         //  this.AllStockList.forEach((el : any)=>
         //  {
@@ -343,23 +384,26 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
         //     });
         //  });
         if(data.length) {
-          data.forEach((el:any)=>{
-            el['label'] = el.godown_name,
-            el['value'] = el.godown_id
-          })
-          this.StockList = data;
+        data.forEach((el:any)=>{
+          el['label'] = el.godown_name,
+          el['value'] = el.godown_id
+        })
+        this.StockList = data;
+      }
+      else {
+        this.StockList = [];
+      }
+         if(editcostgodown){
+          this.ObjRepaAndMaintRdb.godown_id = editcostgodown;
         }
-        else {
-          this.StockList = [];
-        }
-        if (this.buttonname != "Update") {
-         this.ObjRepaAndMaintRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;
+        else{
+          this.ObjRepaAndMaintRdb.godown_id = this.StockList.length === 1 ? this.StockList[0].godown_id : undefined;
         }
        });
     }
-    // else{
-    //   this.ObjRepaAndMaintRdb.godown_id = undefined;
-    // }
+    else{
+      this.ObjRepaAndMaintRdb.godown_id = undefined;
+    }
   
   }
 //  SaveTabCommon(valid, value){
@@ -893,7 +937,7 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
               this.ObjRepaAndMaintRdb.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
               this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
               this.ObjRepaAndMaintRdb.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-              this.getStockPoint();
+              // this.getStockPoint();
               this.ObjRepaAndMaintRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;  
               this.deleteError = false 
               this.DeptUserSpinner = false;   
@@ -946,7 +990,7 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
       this.objRepAndMaintRdb2 = data[0];
       this.objDeptUser = data[0];
       // this.getStockPoint(data[0].Cost_Cen_ID,data[0].godown_id);
-      this.getStockPoint();
+      this.getStockPoint(data[0].Cost_Cen_ID,data[0].godown_id);
       this.ObjRepaAndMaintRdb.godown_id = data[0].godown_id;
       this.RDB_Date = new Date(data[0].RDB_Date);
       this.SE_Date = new Date(data[0].SE_Date);
@@ -1183,7 +1227,8 @@ export class RepairAndMaintenanceRdbComponent implements OnInit {
       this.getProductDetails(data[0].Doc_No)
       this.Return_Gate_Pass_Date = new Date(data[0].Doc_Date);
       this.ObjRepaAndMaintRdb.Cost_Cen_ID = data[0].Cost_Cen_ID;
-      // this.getStockPoint();
+      this.getStockPoint(data[0].Cost_Cen_ID);
+      this.ObjRepaAndMaintRdb.godown_id = this.StockList.length === 1 ? this.StockList[0].godown_id : undefined;
       // setTimeout(() => {
       // this.ObjRepaAndMaintRdb.godown_id = data[0].Godown_ID;
       // }, 250);
