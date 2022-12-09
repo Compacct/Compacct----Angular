@@ -66,7 +66,7 @@ export class FurnaceMisInputComponent implements OnInit {
 
   DispatchList:any = [];
   DynamicHeaderforDispatchList:any = [];
-
+  
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -94,8 +94,14 @@ export class FurnaceMisInputComponent implements OnInit {
     this.GetGodown();
     this.GetProduction();
     this.GetReason();
+    this.GetFurnaceNo();
   }
-  onReject(){}
+  onReject(){
+    this.compacctToast.clear("c");
+    this.compacctToast.clear("s");
+    this.ngxService.stop();
+    this.Spinner = false;
+  }
   onConfirm(){}
   TabClick(e) {
     //console.log(e)
@@ -159,6 +165,9 @@ export class FurnaceMisInputComponent implements OnInit {
   ChangeConsumption() {
     this.GetRaWMatConsumption();
     this.GetConsConsumption();
+    if (this.ObjFurnaceMISinput.Furnace_No && this.Doc_Date) {
+    this.GetData();
+    }
   }
   // RAW MATERIAL CONSUMPTION
   GetRaWMatConsumption() {
@@ -286,12 +295,12 @@ export class FurnaceMisInputComponent implements OnInit {
   if(valid){
       this.AddProductionList.push({
         Cost_Cent_ID : this.ObjFurMISinputPro.Cost_Cent_ID,
-        Godown_ID : this.ObjFurMISinputPro.Godown_ID,
+        Godown_ID : Number(this.ObjFurMISinputPro.Godown_ID),
         Godown_Name : stockpoint[0].godown_name,
         Product_ID : this.ObjFurMISinputPro.Product_ID,
         Product_Description: this.ObjFurMISinputPro.Product_Description,
         Batch_No: this.ObjFurMISinputPro.Batch_No,
-        Qty: this.ObjFurMISinputPro.Qty,
+        Qty: Number(this.ObjFurMISinputPro.Qty),
         UOM : this.ObjFurMISinputPro.UOM
       })
       this.Productionvalid = false;
@@ -310,12 +319,12 @@ export class FurnaceMisInputComponent implements OnInit {
     if(valid){
         this.AddWasteSlagList.push({
           Cost_Cent_ID : this.ObjFurMISinputWaste.Cost_Cent_ID,
-          Godown_ID : this.ObjFurMISinputWaste.Godown_ID,
+          Godown_ID : Number(this.ObjFurMISinputWaste.Godown_ID),
           Godown_Name : stockpointw[0].godown_name,
           Product_ID : this.ObjFurMISinputWaste.Product_ID,
           Product_Description: this.ObjFurMISinputWaste.Product_Description,
           Batch_No: this.ObjFurMISinputWaste.Batch_No,
-          Qty: this.ObjFurMISinputWaste.Qty,
+          Qty: Number(this.ObjFurMISinputWaste.Qty),
           UOM : this.ObjFurMISinputWaste.UOM
         })
         this.wasteslagvalid = false;
@@ -356,12 +365,16 @@ export class FurnaceMisInputComponent implements OnInit {
     var reson = this.ReasonList.filter(el => Number(el.Reason_ID) === Number(this.ObjFurMISinputShutdoun.Reason_ID))
     var furdate = this.DateService.dateConvert(new Date(this.Doc_Date))
     var ftime = this.dateTimeConvert(new Date(this.ObjFurMISinputShutdoun.From_Time))
-    var totime = this.dateTimeConvert(new Date(this.ObjFurMISinputShutdoun.To_Time))
+    var totime = this.dateTimeConvert(new Date())
+    console.log("totime",totime)
+    console.log("this.ObjFurMISinputShutdoun.From_Time",this.ObjFurMISinputShutdoun.From_Time)
+    console.log("this.ObjFurMISinputShutdoun.To_Time",this.ObjFurMISinputShutdoun.To_Time)
+ 
     if(valid){
         this.AddShutdownList.push({
-          From_Time: furdate + " " + ftime,
-          To_Time: furdate +" "+ totime,
-          Reason_ID: this.ObjFurMISinputShutdoun.Reason_ID,
+          From_Time: furdate + " " + this.transform(this.ObjFurMISinputShutdoun.From_Time),
+          To_Time: furdate +" "+ this.transform(this.ObjFurMISinputShutdoun.To_Time),
+          Reason_ID: Number(this.ObjFurMISinputShutdoun.Reason_ID),
           Reason_Des: reson[0].Reason_Des,
         })
         this.Shutdownvalid = false;
@@ -371,8 +384,27 @@ export class FurnaceMisInputComponent implements OnInit {
   Shutdowndelete(i) {
     this.AddShutdownList.splice(i,1);
   }
-
-
+  transform(time: any): any {
+    let hour = (time.split(':'))[0]
+    let min = (time.split(':'))[1]
+    let part = hour > 12 ? 'PM' : 'AM';
+    if(parseInt(hour) == 0)
+     hour = 12;
+    min = (min+'').length == 1 ? `0${min}` : min;
+    hour = hour > 12 ? hour - 12 : hour;
+    hour = (hour+'').length == 1 ? `0${hour}` : hour;
+    return `${hour}:${min}${part}`
+  }
+ GetFurnaceNo(){
+  const obj = {
+    "SP_String": "SP_Furnace_MIS_Input",
+    "Report_Name_String": "Get_Furnace"
+  
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.FurnaceNoList = data
+  })
+ }
   SaveFurnace() {
     // console.log("save valid ===",valid)
     this.FurnaceMISinputFormSubmitted = true;
@@ -410,9 +442,19 @@ export class FurnaceMisInputComponent implements OnInit {
   //  const tempCost = this.costCenterList.filter(el=> Number(el.Cost_Cen_ID) === Number(this.objpurchase.Cost_Cen_ID))[0]
   //  const tempsub = this.SubLedgerDataList.filter(el=> Number(el.Sub_Ledger_ID) === Number(this.objpurchase.Sub_Ledger_ID))[0]
   //  const tempCurr = this.currencyList.filter(el=> Number(el.Currency_ID) === Number(this.objpurchase.Currency_ID))
-   this.ObjFurnaceMISinput.Furnace_No = this.ObjFurnaceMISinput.Furnace_No ? this.ObjFurnaceMISinput.Furnace_No : "A";
+   this.ObjFurnaceMISinput.Furnace_No = this.ObjFurnaceMISinput.Furnace_No ? Number(this.ObjFurnaceMISinput.Furnace_No) : "A";
+   this.ObjFurnaceMISinput.Furnace_ID = Number(this.ObjFurnaceMISinput.Furnace_No);
    this.ObjFurnaceMISinput.Furnace_Date = this.DateService.dateConvert(new Date(this.Doc_Date));
    this.ObjFurnaceMISinput.User_ID  = this.$CompacctAPI.CompacctCookies.User_ID;
+
+   this.ObjDailyPerformancet.Furnace_Power = Number(this.ObjDailyPerformancet.Furnace_Power);
+   this.ObjDailyPerformancet.Auxiliary_Power = Number(this.ObjDailyPerformancet.Auxiliary_Power);
+   this.ObjDailyPerformancet.Average_Load = Number(this.ObjDailyPerformancet.Average_Load);
+   this.ObjDailyPerformancet.Average_Power_Factor = Number(this.ObjDailyPerformancet.Average_Power_Factor);
+   this.ObjDailyPerformancet.Load_Factor = Number(this.ObjDailyPerformancet.Load_Factor);
+   this.ObjDailyPerformancet.Slipping_3_Electrodes = Number(this.ObjDailyPerformancet.Slipping_3_Electrodes);
+   this.ObjDailyPerformancet.No_Of_Tapping = Number(this.ObjDailyPerformancet.No_Of_Tapping);
+
    this.ObjFurnaceMISinput.Daily_Performance = this.ObjDailyPerformancet;
    this.ObjFurnaceMISinput.Production = this.AddProductionList;
    this.ObjFurnaceMISinput.Waste_Slag = this.AddWasteSlagList;
@@ -485,8 +527,49 @@ export class FurnaceMisInputComponent implements OnInit {
    });
    }
   }
+  GetData(){
+    this.ObjFurnaceMISinput.Critical_Issue = undefined;
+    // this.ObjFurnaceMISinput.Daily_Performance = new DailyPerformance();
+    this.AddProductionList = [];
+    this.AddWasteSlagList = [];
+    this.AddShutdownList = [];
+    this.ObjFurnaceMISinput.Furnace_Date = this.DateService.dateConvert(new Date(this.Doc_Date));
+    if (this.ObjFurnaceMISinput.Furnace_No && this.ObjFurnaceMISinput.Furnace_Date) {
+      const obj = {
+        "SP_String": "Sp_Furnace_MIS_Input",
+         "Report_Name_String":"Get_Edit_Data",
+         "Json_Param_String": JSON.stringify([{Furnace_ID : this.ObjFurnaceMISinput.Furnace_No , Furnace_Date : this.ObjFurnaceMISinput.Furnace_Date}]) 
+          }
+        this.GlobalAPI.getData(obj).subscribe((res)=>{
+              console.log("Get Data",res)
+              console.log("Get Data Main",JSON.parse(res[0].main))
+              // JSON.parse(res[0].main)
+              let data = JSON.parse(res[0].main)
+              // this.EmployeeDetailsList = data;
+            //  console.log("EmployeeDetailsList=",this.EmployeeDetailsList);
+            //  const editlist = data ? data[0] : undefined;
+            //   console.log("editlist=",editlist);
+            //  if (this.objselect.Emp_ID) {
+            //  this.objemployee = editlist;
+            // }
+            // else {
+            //   this.objemployee = new Employee();
+            // }
+            this.ObjFurnaceMISinput.Critical_Issue = data ? data[0].Critical_Issue : undefined;
+            this.ObjDailyPerformancet = data? data[0].Daily_Performance[0] : new DailyPerformance();
+            console.log("this.ObjDailyPerformancet ===", this.ObjDailyPerformancet)
+            this.AddProductionList = data ? data[0].Production : [];
+            this.AddWasteSlagList = data ? data[0].Waste_Slag : [];
+            this.AddShutdownList = data ? data[0].Shut_Down : [];
+            });
+          }
+          // else {
+          //   this.ObjFurnaceMISinput = new FurnaceMISinput();
+          // }
+  }
 }
 class FurnaceMISinput {
+  Furnace_ID : any;
   Furnace_No : any;
   Furnace_Date : any;
   User_ID : any;

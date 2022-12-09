@@ -398,6 +398,7 @@ import { DailyAttendanceForContractorComponent } from './common/Attendance/daily
 import { NepalPurchaseOrderDocumenMasterComponent } from './common/Procurement/nepal-purchase-order-documen-master/nepal-purchase-order-documen-master.component';
 import { RawMaterialStockReportComponent } from './common/MaterialManagement/Report/raw-material-stock-report/raw-material-stock-report.component';
 import { BSHPLHfFollowUpComponent } from './common/CRM/BSHPL-FOLLOWUP/bshpl-hf-follow-up/bshpl-hf-follow-up.component';
+import { DoctorsAppointmentNewOAEComponent } from "./common/PatientManagement/doctors-appointment-new-oae/doctors-appointment-new-oae.component";
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -712,7 +713,8 @@ import { BSHPLHfFollowUpComponent } from './common/CRM/BSHPL-FOLLOWUP/bshpl-hf-f
     DailyAttendanceForContractorComponent,
     NepalPurchaseOrderDocumenMasterComponent,
     RawMaterialStockReportComponent,
-    BSHPLHfFollowUpComponent
+    BSHPLHfFollowUpComponent,
+    DoctorsAppointmentNewOAEComponent
   ],
   imports: [
     CommonModule,

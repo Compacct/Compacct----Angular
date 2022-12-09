@@ -77,6 +77,7 @@ export class DoctorAppointmentComponent implements OnInit {
       if (this.ConsultancyName) {
         this.GetCentre();
         this.GetAllDetails();
+        this.GetCentre()
       }
     })
   }

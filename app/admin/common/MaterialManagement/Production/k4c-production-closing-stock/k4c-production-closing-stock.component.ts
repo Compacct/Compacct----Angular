@@ -491,6 +491,9 @@ ConsumptionCal(indx,obj){
         detail: "Confirm to proceed"
       });
     }
+    else {
+    this.Spinner = false;
+    }
   }
   dataforSaveRawMaterialIssue(){
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
@@ -570,6 +573,7 @@ ConsumptionCal(indx,obj){
          this.ProductList =[];
          this.IndentListFormSubmitted = false;
         } else{
+          this.Spinner = false;
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -579,7 +583,10 @@ ConsumptionCal(indx,obj){
           });
         }
       })
-    }
+      }
+      else {
+        this.Spinner = false;
+        }
     // else{
     //   this.compacctToast.clear();
     //   this.compacctToast.add({

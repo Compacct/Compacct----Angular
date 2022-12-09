@@ -16,6 +16,8 @@ import { CompacctGlobalApiService } from '../../../../shared/compacct.services/c
   encapsulation: ViewEncapsulation.None
 })
 export class BSHPLHfFollowUpComponent implements OnInit {
+  seachSpinner = false;
+  getAllFollowUpdata:any = [];
   items: any = [];
   tabIndexToView: number = 0;
   FollowupDate = new Date();
@@ -37,6 +39,9 @@ export class BSHPLHfFollowUpComponent implements OnInit {
       Link: "CRM -> BSHPL-follow Up -> BSHPL HA Follow Up"
     })
   }
+  onReject(){}
+  GetSearchedList(valid?){}
+  Appointment(){}
    TabClick(e) {
     this.tabIndexToView = e.index;
      this.items = ["REGULAR","WEBSITE","DOCTOR MKT","AFTER SALE"];
