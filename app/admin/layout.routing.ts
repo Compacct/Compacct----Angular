@@ -302,6 +302,7 @@ import { DailyAttendanceForContractorComponent } from './common/Attendance/daily
 import { NepalPurchaseOrderDocumenMasterComponent } from "./common/Procurement/nepal-purchase-order-documen-master/nepal-purchase-order-documen-master.component";
 import { RawMaterialStockReportComponent } from './common/MaterialManagement/Report/raw-material-stock-report/raw-material-stock-report.component';
 import { BSHPLHfFollowUpComponent } from "./common/CRM/BSHPL-FOLLOWUP/bshpl-hf-follow-up/bshpl-hf-follow-up.component";
+import { DoctorsAppointmentNewOAEComponent } from "./common/PatientManagement/doctors-appointment-new-oae/doctors-appointment-new-oae.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2269,6 +2270,13 @@ path: 'MICL_Cost_Center_Master',
     component: BSHPLHfFollowUpComponent,
     data: {
       title: 'BSHPL HF FollowUP'
+}
+},
+{
+  path: 'Doctors_Appointment_New_OAE',
+    component: DoctorsAppointmentNewOAEComponent,
+    data: {
+      title: 'Doctors Appointment New OAE'
 }
 },
     

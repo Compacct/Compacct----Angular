@@ -344,7 +344,7 @@ this.AllData = [...this.BackupAllData] ;
   getminday(){
     this.mndays = undefined;
     this.applydays = undefined;
-    this.minFromDate  = new Date();
+    // this.minFromDate  = new Date();
   if(this.ObjHrleave.Leave_Type) {
     const ctrl = this;
     const mindayobj = $.grep(ctrl.leaveList,function(item:any) {return Number(item.Atten_Type_ID) == Number(ctrl.ObjHrleave.Leave_Type)})[0];
@@ -355,11 +355,19 @@ this.AllData = [...this.BackupAllData] ;
     //this.FromDatevalue = new Date(new Date().getDate() + Number(mindayobj.Min_day))
     this.mndays = mindayobj.Min_day;
     this.applydays = mindayobj.Apply_day;
-
-    this.FromDatevalue =  new Date(this.minFromDate.setDate(new Date().getDate() + Number(mindayobj.Apply_day)));
+    if(this.mndays != 0) {
+    this.minFromDate  = new Date(new Date().setDate(new Date().getDate() + Number(mindayobj.Apply_day)));
+    this.FromDatevalue =  new Date(new Date().setDate(new Date().getDate() + Number(mindayobj.Apply_day)));
     this.minToDate  = new Date(this.FromDatevalue);
     this.ToDatevalue = new Date(this.minToDate.setDate(new Date(this.FromDatevalue).getDate() + (Number(mindayobj.Min_day) - 1)))
-    
+    }
+    else if (this.mndays == 0) {
+      this.minFromDate  = new Date(new Date().setDate(new Date().getDate() - Number(1000)));
+      this.FromDatevalue =  new Date();
+      this.minToDate  = new Date(new Date().setDate(new Date().getDate() - Number(1000)));
+      this.maxToDate = new Date(new Date().setDate(new Date().getDate() + Number(1000)));
+      this.ToDatevalue = new Date();
+    }
     // this.To_Time = new Date(this.To_Time.setDate(this.From_Time.getDate() + 1 ))
     // 
     //this.getapplydayschange();

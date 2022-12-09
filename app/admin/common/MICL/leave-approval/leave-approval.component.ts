@@ -34,6 +34,7 @@ export class LeaveApprovalComponent implements OnInit {
   DistEmpName:any = [];
   SelectedDistEmpName:any = [];
   SearchFields:any = [];
+  ShowObj:any = {};
 
   ApprovedApprovalList:any = [];
   BackupApprovedApprovalList:any = [];
@@ -48,6 +49,11 @@ export class LeaveApprovalComponent implements OnInit {
   DistEmpNameTab3:any = [];
   SelectedDistEmpNameTab3:any = [];
   SearchFieldsTab3:any = [];
+
+  DetailsModal = false;
+  AllEmpLeaveList:any = [];
+  Issued_From_Date:Date;
+  Issued_To_Date:Date;
 
   constructor(
     private route : ActivatedRoute,
@@ -266,6 +272,43 @@ this.ApprovalList = [...this.BackupApprovalList] ;
   onReject(){
     this.compacctToast.clear("c");
   }
+
+  //View Pop Panding 
+  ApprovedPopup(col){
+    this.ShowObj = col;
+    this.DetailsModal = true;
+  }
+  ApprovedPo(){}
+  DisapprovedPo(){}
+  // showApproved(col:any){
+  // this.ViewPopList = [];
+  // this.masterPopview = undefined 
+  // if(col.Doc_No){
+  //   this.masterPopview = col.Doc_No
+  //   const tempobj = {
+  //     Doc_No  : this.masterPopview
+  //   }
+  //   const obj = {
+  //     "SP_String": "SP_PO_Authorization",
+  //     "Report_Name_String": "PO_approval_view",
+  //     "Json_Param_String": JSON.stringify([tempobj])
+  //   }
+  //   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //   this.ViewPopList = JSON.parse(data[0].T_element)
+  //   this.TElementobj = this.ViewPopList[0];
+  //   this.masterPopview = undefined;
+  //   this.DetailsArrList = this.ViewPopList[0].pod_Element ? this.ViewPopList[0].pod_Element :undefined;
+  //   this.TermsArrList = this.ViewPopList[0].term_Element ? this.ViewPopList[0].term_Element :undefined;
+  //  // console.log("TElementobj",this.TElementobj)
+  //   //console.log("DetailsArrList",this.DetailsArrList)
+  //  // console.log("TermsArrList",this.TermsArrList)
+  //      //console.log(this.TElementobj.Doc_NO);
+  //     })
+  //   setTimeout(() => {
+  //     this.ViewProTypeModal = true;
+  //   }, 300);
+  // }
+  // }
 
   // Approved Approval
   getApprovedApprovaldetails(){
