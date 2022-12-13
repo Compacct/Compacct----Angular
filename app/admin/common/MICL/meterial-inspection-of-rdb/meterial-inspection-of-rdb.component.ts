@@ -169,13 +169,24 @@ export class MeterialInspectionOfRDBComponent implements OnInit {
   }
   Printrdb(DocNo) {
     if(DocNo) {
+      let spname = '';
+      let reportname = '';
+      if (DocNo.Is_Work_Order != 'Y') {
+          spname = "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+          reportname = "RDB_Print"
+      }
+      else {
+        spname = "SP_Repair_And_Maintenance_RDB",
+        reportname = "RDB_Print"
+      }
+      
     const objtemp = {
-      "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
-      "Report_Name_String": "RDB_Print"
+      "SP_String": spname,
+      "Report_Name_String": reportname
       }
     this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
       var printlink = data[0].Column1;
-      window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      window.open(printlink+"?Doc_No=" + DocNo.RDB_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
     })
     }
   }

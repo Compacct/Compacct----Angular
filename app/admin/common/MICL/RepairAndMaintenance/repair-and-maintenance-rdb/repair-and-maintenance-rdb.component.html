@@ -175,7 +175,7 @@
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Supplier<sup class="text-danger">*</sup></label>
-                                                    <p-dropdown [options]="SupplierList" name="Supplier" [(ngModel)]="ObjRepaAndMaintRdb.Sub_Ledger_ID"  [disabled]="createrdbdisabled" [showClear]="true" [emptyFilterMessage]="' No Supplier Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Supplier Name'" [virtualScroll]="true"
+                                                    <p-dropdown [options]="SupplierList" name="Supplier" [(ngModel)]="ObjRepaAndMaintRdb.Sub_Ledger_ID"  [disabled]="RDBListAdd.length" [showClear]="true" [emptyFilterMessage]="' No Supplier Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Supplier Name'" [virtualScroll]="true"
                                                         itemSize="30" #Supplier="ngModel" [styleClass]="RepairAndMaintRDBFormSubmit && Supplier.errors?.required? 'clearance': ''" [required]="true" (onChange)="getGeturnableGatePass(ObjRepaAndMaintRdb.Sub_Ledger_ID)">
                                                     </p-dropdown>
                                                 </div>
@@ -183,14 +183,14 @@
                                             <div class="form-group">
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
-                                                    <p-dropdown [options]="CostList" name="Cost_Center" [(ngModel)]="ObjRepaAndMaintRdb.Cost_Cen_ID"  [disabled]="createrdbdisabled" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true"
+                                                    <p-dropdown [options]="CostList" name="Cost_Center" [(ngModel)]="ObjRepaAndMaintRdb.Cost_Cen_ID"  [disabled]="RDBListAdd.length" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true"
                                                         itemSize="30" #Cost_Center="ngModel" [styleClass]="
-                                                              RepairAndMaintRDBFormSubmit && Cost_Center.errors?.required? 'clearance': ''" [required]="true" (onChange)="getStockPoint()">
+                                                              RepairAndMaintRDBFormSubmit && Cost_Center.errors?.required? 'clearance': ''" [required]="true" (onChange)="getStockPoint(ObjRepaAndMaintRdb.Cost_Cen_ID)">
                                                     </p-dropdown>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
-                                                    <p-dropdown [options]="StockList" name="Stack_Point" [(ngModel)]="ObjRepaAndMaintRdb.godown_id"  [disabled]="createrdbdisabled" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true"
+                                                    <p-dropdown [options]="StockList" name="Stack_Point" [(ngModel)]="ObjRepaAndMaintRdb.godown_id"  [disabled]="RDBListAdd.length" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true"
                                                         itemSize="30" #Stack_Point="ngModel" [styleClass]="RepairAndMaintRDBFormSubmit && Stack_Point.errors?.required ? 'clearance' : '' " 
                                                         [required]="true">
                                                     </p-dropdown>

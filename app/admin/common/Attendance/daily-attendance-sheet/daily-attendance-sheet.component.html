@@ -40,6 +40,9 @@
                           <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                        </button>
                             </div>
+                            <div class="col-sm-6">
+                                <span  class="fa fa-question-circle pull-right"  (click)="information()"></span>
+                            </div>
                         </div>
 
                             <div class="clearfix"></div>
@@ -132,4 +135,36 @@
          </button>
             </div>
         </p-footer>
+</p-dialog>
+
+<!-- INFORMATION -->
+<p-dialog header="" appendTo="body" [(visible)]="DetailsModal" [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;" [minY]="80" 
+[maximizable]="true" [baseZIndex]="10000">
+
+<p><b>Type of Attendence:</b></p>
+<br>
+<p>Present</p>
+<p>Present in Weekly Off</p> 
+<p>Present in Public Holiday</p>
+<p>Holiday</p>
+<p>Public Holiday</p>
+<p>Weekly Off</p>
+<p>Sick Leave</p> 
+<p>Casual Leave</p>
+<p>Prevlage Leave</p>
+<p>Compensatory Off</p>
+<p>Absent</p>
+<p>Leave Without Pay</p>
+<p>Left</p>
+<br>
+<p>Present = Present + Present in Weekly Off + Present in Public Holiday</p>
+<br>
+<p>Holiday = Holiday+ Public Holiday + Weekly Off</p>
+<br>
+<p>Leave =Sick Leave + Casual Leave + Prevlage Leave + Compensatory Off</p>
+<br>
+<p>Without Pay = Leave Without Pay + Left</p>
+<br>
+<p>Paid Days = Present + Holiday + Leave</p>
+
 </p-dialog>
