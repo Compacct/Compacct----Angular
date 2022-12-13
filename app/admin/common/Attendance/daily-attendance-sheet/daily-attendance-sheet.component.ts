@@ -402,7 +402,18 @@ onConfirm(){}
 onReject(){
   this.compacctToast.clear("c");
 }
-information(){
-  this.DetailsModal = true;
+information() {
+  // if(DocNo) {
+  const objtemp = {
+    "SP_String": "HR_Txn_Attn_Sheet",
+    "Report_Name_String": "Attendance_Details_HTML"
+    }
+  this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+    var printlink = data[0].Column1;
+    // this.DetailsModal = true;
+  if(printlink) {
+  window.open(printlink, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+  }
+  })
 }
 }

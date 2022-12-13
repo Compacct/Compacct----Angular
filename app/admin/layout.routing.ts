@@ -303,6 +303,7 @@ import { NepalPurchaseOrderDocumenMasterComponent } from "./common/Procurement/n
 import { RawMaterialStockReportComponent } from './common/MaterialManagement/Report/raw-material-stock-report/raw-material-stock-report.component';
 import { BSHPLHfFollowUpComponent } from "./common/CRM/BSHPL-FOLLOWUP/bshpl-hf-follow-up/bshpl-hf-follow-up.component";
 import { DoctorsAppointmentNewOAEComponent } from "./common/PatientManagement/doctors-appointment-new-oae/doctors-appointment-new-oae.component";
+import { DoctorsAppointmentNewSpTestComponent } from "./common/PatientManagement/doctors-appointment-new-sp-test/doctors-appointment-new-sp-test.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2277,6 +2278,13 @@ path: 'MICL_Cost_Center_Master',
     component: DoctorsAppointmentNewOAEComponent,
     data: {
       title: 'Doctors Appointment New OAE'
+}
+},
+{
+  path: 'Doctors_Appointment_New_Special_Tests',
+    component: DoctorsAppointmentNewSpTestComponent,
+    data: {
+      title: 'Doctors Appointment New Special Tests'
 }
 },
     
