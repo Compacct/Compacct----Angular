@@ -25,24 +25,25 @@
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]"leftIcon="glyphicon glyphicon-tags">
-                            <form name="ameyoKBForm" #ameyoKBForm="ngForm" novalidate>
+                            <form name="regularForm" #regularForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">User<sup class="text-danger">*</sup></label>
-                                        <p-dropdown [options]="" name="User" 
+                                        <p-dropdown [options]="userList" name="User"#User="ngModel"[(ngModel)]="UsertypeREGULAR"
                                             [showClear]="true" [emptyFilterMessage]="' No User Found'" [filter]="true"
                                             filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select User'"
-                                            [virtualScroll]="true" itemSize="30" >
+                                            [virtualScroll]="true" itemSize="30"
+                                            [ngClass]="{'clearance': FormSubmittedREG && User?.errors?.required }"required>
                                         </p-dropdown>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Followup Till<sup
                                                 class="text-danger">*</sup></label>
-                                        <ejs-datepicker [(value)]="FollowupDate"></ejs-datepicker>
+                                        <ejs-datepicker [(value)]="FollowupDateReg"></ejs-datepicker>
                                     </div>
                                     <div class="col-sm-1">
                                         <button class="btn btn-primary" style="margin-top: 28px" data-toggle="modal"
-                                            (click)="GetSearchedList(ameyoKBForm.form.valid)" id="load"
+                                            (click)="GetSearchedReg(regularForm.form.valid)" 
                                             [disabled]="seachSpinner">
                                             <p-progressSpinner *ngIf="seachSpinner"
                                                 [style]="{width: '15px', height: '15px'}" strokeWidth="8"
@@ -50,35 +51,21 @@
                                             <span *ngIf="!seachSpinner"
                                                 class="glyphicon glyphicon-search"></span>&nbsp;Search
                                         </button>
-                                    </div>
-                                <div class="col-sm-1"></div>
-                                    <div class="col-sm-2">
-                                        <button class="btn btn-primary" style="margin-top: 28px" data-toggle="modal"
-                                            (click)="Appointment()" id="load" [disabled]="seachSpinner">
-                                            <p-progressSpinner *ngIf="seachSpinner"
-                                                [style]="{width: '15px', height: '15px'}" strokeWidth="8"
-                                                animationDuration=".5s"></p-progressSpinner>
-                                            <span *ngIf="!seachSpinner"
-                                                class="fa fa-fw fa-calendar-times-o"></span>&nbsp;Appointment Details
-                                        </button>
-                                    </div>
-                                    <div class="col-sm-2">
-
-                                    </div>
+                                    </div>                                
                                 </div>
                             </form>
                             <div class="no-padding">
-                                <p-table [value]="getAllFollowUpdata"
-                                    [paginator]="" [rows]="10" [rowHover]="true"
-                                    [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30]"
+                                <p-table [value]="userListReg"
+                                    [paginator]="userListReg ? true : false" [rows]="100" [rowHover]="true"
+                                    [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]"
                                     [rowHover]="true"
-                                    [globalFilterFields]='["Cost_Cen_Name","Mobile","Email1","Address1"]' #dtimp>
+                                    [globalFilterFields]='["Contact_Name","Mobile","Mobile_2","Followup_Action","User_Name","Prefered_Location","Next_Followup"]' #dt>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
 
                                             <div class="col-sm-3 pull-right" style="text-align: right">
                                                 <input type="text" pInputText size="50" placeholder="Search"
-                                                    (input)="dtimp.filterGlobal($event.target.value, 'contains')"
+                                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
                                                     class="searchInput form-control">
                                             </div>
                                         </div>
@@ -107,11 +94,10 @@
                                                         <span class="caret"></span>
                                                     </button>
                                                     <ul class="dropdown-menu">
-                                                        <li *ngIf="Param_Flag != 'N'"><a (click)="call(col.Mobile)"> <i
-                                                                    class="fa fa-phone"> </i>Call</a></li>
                                                         <li><a
-                                                                (click)="followup(col.Foot_Fall_ID,col.Sent_To,col.Mobile)">
-                                                                <i class="fa fa-commenting-o"> </i>Followup</a></li>
+                                                                (click)="followup(col)">
+                                                                <i class="fa fa-commenting-o"> </i>Followup</a>
+                                                        </li>
                                                         <li><a (click)="redirectPatientDetails(col)"><i
                                                                     class="fa fa-fw fa fa-clone"></i>View Details</a>
                                                         </li>
@@ -121,19 +107,16 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <td></td>
-                                            <!-- <td nowrap="nowrap"><a (click)="call(col.Mobile)"
-                                                    href="{{'tel:+91'+col.Mobile}}"><i class="fa fa-fw fa-phone-square"
-                                                        *ngIf="col.Mobile"></i>{{col.Mobile}}</a></td> --> 
-                                            <!-- <td nowrap="nowrap"><a (click)="call(col.Mobile_2)"
-                                                    href="{{'tel:+91'+col.Mobile_2}}"><i
-                                                        class="fa fa-fw fa-phone-square"
-                                                        *ngIf="col.Mobile_2"></i>{{col.Mobile_2}}</a></td> -->
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
+                                            <td>{{col.Contact_Name ? col.Contact_Name : '-' }}</td>
+                                            <td nowrap="nowrap"><a href="{{'tel:+91'+col.Mobile}}"><i class="fa fa-fw fa-phone-square"
+                                                        *ngIf="col.Mobile"></i>{{col.Mobile}}</a></td>
+                                            <td nowrap="nowrap" style="text-align: center;"><a href="{{'tel:+91'+col.Mobile_2}}"><i class="fa fa-fw fa-phone-square"
+                                                        *ngIf="col.Mobile_2"></i>{{col.Mobile_2 ? col.Mobile_2 :'-'}}</a></td>
+                                            <td style="text-align: center;">{{col.Mobile_3_WP ? col.Mobile_3_WP : '-' }}</td>
+                                            <td>{{col.Followup_Action ? col.Followup_Action : '-'}}</td>
+                                            <td>{{col.Next_Followup ? (col.Next_Followup|date:"dd/MMM/yyyy h:mma") :"-"}}</td>
+                                            <td>{{col.Prefered_Location ? col.Prefered_Location :'-'}}</td>
+                                            <td>{{col.User_Name ? col.User_Name :'-'}}</td>
                                         </tr>
                                     </ng-template>
                                     
@@ -141,51 +124,41 @@
                             </div>
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="fa fa-globe">
-                            <form name="ameyoKBForm" #ameyoKBForm="ngForm" novalidate>
+                            <form name="webForm" #webForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">User<sup class="text-danger">*</sup></label>
-                                        <p-dropdown [options]="" name="User" [showClear]="true" [emptyFilterMessage]="' No User Found'" [filter]="true"
+                                        <p-dropdown [options]="userList"[showClear]="true"name="User"#User="ngModel"[(ngModel)]="UsertypeWEBSITE" 
+                                        [emptyFilterMessage]="' No User Found'" [filter]="true"
                                             filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select User'" [virtualScroll]="true"
-                                            itemSize="30">
+                                            itemSize="30"[ngClass]="{'clearance': FormSubmittedWEB && User?.errors?.required }"required>
                                         </p-dropdown>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Followup Till<sup class="text-danger">*</sup></label>
-                                        <ejs-datepicker [(value)]="FollowupDate"></ejs-datepicker>
+                                        <ejs-datepicker [(value)]="FollowupDateWeb"></ejs-datepicker>
                                     </div>
                                     <div class="col-sm-1">
                                         <button class="btn btn-primary" style="margin-top: 28px" data-toggle="modal"
-                                            (click)="GetSearchedList(ameyoKBForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                            (click)="GetSearchedWeb(webForm.form.valid)"  [disabled]="seachSpinner">
                                             <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
                                                 animationDuration=".5s"></p-progressSpinner>
                                             <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                         </button>
                                     </div>
-                                    <div class="col-sm-1"></div>
-                                    <div class="col-sm-2">
-                                        <button class="btn btn-primary" style="margin-top: 28px" data-toggle="modal" (click)="Appointment()"
-                                            id="load" [disabled]="seachSpinner">
-                                            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
-                                                animationDuration=".5s"></p-progressSpinner>
-                                            <span *ngIf="!seachSpinner" class="fa fa-fw fa-calendar-times-o"></span>&nbsp;Appointment Details
-                                        </button>
-                                    </div>
-                                    <div class="col-sm-2">
-                        
-                                    </div>
+                                    <div class="col-sm-1"></div>                                   
                                 </div>
                             </form>
                             <div class="no-padding">
-                                <p-table [value]="getAllFollowUpdata" [paginator]="" [rows]="10" [rowHover]="true" [autoLayout]="true"
-                                    sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [rowHover]="true"
-                                    [globalFilterFields]='["Cost_Cen_Name","Mobile","Email1","Address1"]' #dtimp>
+                                <p-table [value]="userListWeb" [paginator]="userListWeb ? true :false" [rows]="100" [rowHover]="true" [autoLayout]="true"
+                                    sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [rowHover]="true"
+                                    [globalFilterFields]='["Contact_Name","Mobile","Mobile_2","Followup_Action","User_Name","Prefered_Location","Next_Followup"]' #ti>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                         
                                             <div class="col-sm-3 pull-right" style="text-align: right">
                                                 <input type="text" pInputText size="50" placeholder="Search"
-                                                    (input)="dtimp.filterGlobal($event.target.value, 'contains')"
+                                                    (input)="ti.filterGlobal($event.target.value, 'contains')"
                                                     class="searchInput form-control">
                                             </div>
                                         </div>
@@ -213,10 +186,8 @@
                                                         <i class="fa fa-fw fa-bars"></i>
                                                         <span class="caret"></span>
                                                     </button>
-                                                    <ul class="dropdown-menu">
-                                                        <li *ngIf="Param_Flag != 'N'"><a (click)="call(col.Mobile)"> <i class="fa fa-phone">
-                                                                </i>Call</a></li>
-                                                        <li><a (click)="followup(col.Foot_Fall_ID,col.Sent_To,col.Mobile)">
+                                                    <ul class="dropdown-menu">                                                      
+                                                        <li><a (click)="followup(col)">
                                                                 <i class="fa fa-commenting-o"> </i>Followup</a></li>
                                                         <li><a (click)="redirectPatientDetails(col)"><i class="fa fa-fw fa fa-clone"></i>View
                                                                 Details</a>
@@ -227,19 +198,16 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <td></td>
-                                            <!-- <td nowrap="nowrap"><a (click)="call(col.Mobile)"
-                                                                            href="{{'tel:+91'+col.Mobile}}"><i class="fa fa-fw fa-phone-square"
-                                                                                *ngIf="col.Mobile"></i>{{col.Mobile}}</a></td> -->
-                                            <!-- <td nowrap="nowrap"><a (click)="call(col.Mobile_2)"
-                                                                            href="{{'tel:+91'+col.Mobile_2}}"><i
-                                                                                class="fa fa-fw fa-phone-square"
-                                                                                *ngIf="col.Mobile_2"></i>{{col.Mobile_2}}</a></td> -->
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
+                                            <td>{{col.Contact_Name ? col.Contact_Name : '-' }}</td>
+                                            <td nowrap="nowrap"><a href="{{'tel:+91'+col.Mobile}}"><i class="fa fa-fw fa-phone-square"
+                                                        *ngIf="col.Mobile"></i>{{col.Mobile}}</a></td>
+                                            <td nowrap="nowrap" style="text-align: center;"><a href="{{'tel:+91'+col.Mobile_2}}"><i class="fa fa-fw fa-phone-square"
+                                                        *ngIf="col.Mobile_2"></i>{{col.Mobile_2 ? col.Mobile_2 :'-'}}</a></td>
+                                            <td style="text-align: center;">{{col.Mobile_3_WP ? col.Mobile_3_WP : '-' }}</td>
+                                            <td>{{col.Followup_Action ? col.Followup_Action : '-'}}</td>
+                                            <td>{{col.Next_Followup ? (col.Next_Followup|date:"dd/MMM/yyyy h:mma") :"-"}}</td>
+                                            <td>{{col.Prefered_Location ? col.Prefered_Location :'-'}}</td>
+                                            <td>{{col.User_Name ? col.User_Name :'-'}}</td>
                                         </tr>
                                     </ng-template>
                         
@@ -247,51 +215,40 @@
                             </div>
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="fa fa-stethoscope">
-                            <form name="ameyoKBForm" #ameyoKBForm="ngForm" novalidate>
+                            <form name="DoctorForm" #DoctorForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">User<sup class="text-danger">*</sup></label>
-                                        <p-dropdown [options]="" name="User" [showClear]="true" [emptyFilterMessage]="' No User Found'" [filter]="true"
-                                            filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select User'" [virtualScroll]="true"
-                                            itemSize="30">
+                                        <p-dropdown [options]="userList" name="User"#User="ngModel"[(ngModel)]="UsertypeDOCTOR" 
+                                        [showClear]="true" [emptyFilterMessage]="' No User Found'" [filter]="true"                 
+                                        filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select User'" [virtualScroll]="true"
+                                        itemSize="30"[ngClass]="{'clearance': FormSubmittedDOC && User?.errors?.required }"required>
                                         </p-dropdown>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Followup Till<sup class="text-danger">*</sup></label>
-                                        <ejs-datepicker [(value)]="FollowupDate"></ejs-datepicker>
+                                        <ejs-datepicker [(value)]="FollowupDateDoc"></ejs-datepicker>
                                     </div>
                                     <div class="col-sm-1">
                                         <button class="btn btn-primary" style="margin-top: 28px" data-toggle="modal"
-                                            (click)="GetSearchedList(ameyoKBForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                            (click)="GetSearchedDoc(DoctorForm.form.valid)"  [disabled]="seachSpinner">
                                             <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
                                                 animationDuration=".5s"></p-progressSpinner>
                                             <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                         </button>
                                     </div>
-                                    <div class="col-sm-1"></div>
-                                    <div class="col-sm-2">
-                                        <button class="btn btn-primary" style="margin-top: 28px" data-toggle="modal" (click)="Appointment()"
-                                            id="load" [disabled]="seachSpinner">
-                                            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
-                                                animationDuration=".5s"></p-progressSpinner>
-                                            <span *ngIf="!seachSpinner" class="fa fa-fw fa-calendar-times-o"></span>&nbsp;Appointment Details
-                                        </button>
-                                    </div>
-                                    <div class="col-sm-2">
-                        
-                                    </div>
                                 </div>
                             </form>
                             <div class="no-padding">
-                                <p-table [value]="getAllFollowUpdata" [paginator]="" [rows]="10" [rowHover]="true" [autoLayout]="true"
-                                    sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [rowHover]="true"
-                                    [globalFilterFields]='["Cost_Cen_Name","Mobile","Email1","Address1"]' #dtimp>
+                                <p-table [value]="userListDoc" [paginator]="userListDoc ?true :false" [rows]="100" [rowHover]="true" [autoLayout]="true"
+                                    sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [rowHover]="true"
+                                    [globalFilterFields]='["Contact_Name","Mobile","Mobile_2","Followup_Action","User_Name","Prefered_Location","Next_Followup"]' #mp>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                         
                                             <div class="col-sm-3 pull-right" style="text-align: right">
                                                 <input type="text" pInputText size="50" placeholder="Search"
-                                                    (input)="dtimp.filterGlobal($event.target.value, 'contains')"
+                                                    (input)="mp.filterGlobal($event.target.value, 'contains')"
                                                     class="searchInput form-control">
                                             </div>
                                         </div>
@@ -320,9 +277,7 @@
                                                         <span class="caret"></span>
                                                     </button>
                                                     <ul class="dropdown-menu">
-                                                        <li *ngIf="Param_Flag != 'N'"><a (click)="call(col.Mobile)"> <i class="fa fa-phone">
-                                                                </i>Call</a></li>
-                                                        <li><a (click)="followup(col.Foot_Fall_ID,col.Sent_To,col.Mobile)">
+                                                        <li><a (click)="followup(col)">
                                                                 <i class="fa fa-commenting-o"> </i>Followup</a></li>
                                                         <li><a (click)="redirectPatientDetails(col)"><i class="fa fa-fw fa fa-clone"></i>View
                                                                 Details</a>
@@ -333,71 +288,57 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <td></td>
-                                            <!-- <td nowrap="nowrap"><a (click)="call(col.Mobile)"
-                                                                            href="{{'tel:+91'+col.Mobile}}"><i class="fa fa-fw fa-phone-square"
-                                                                                *ngIf="col.Mobile"></i>{{col.Mobile}}</a></td> -->
-                                            <!-- <td nowrap="nowrap"><a (click)="call(col.Mobile_2)"
-                                                                            href="{{'tel:+91'+col.Mobile_2}}"><i
-                                                                                class="fa fa-fw fa-phone-square"
-                                                                                *ngIf="col.Mobile_2"></i>{{col.Mobile_2}}</a></td> -->
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
+                                            <td>{{col.Contact_Name ? col.Contact_Name : '-' }}</td>
+                                            <td nowrap="nowrap"><a href="{{'tel:+91'+col.Mobile}}"><i class="fa fa-fw fa-phone-square"
+                                                        *ngIf="col.Mobile"></i>{{col.Mobile}}</a></td>
+                                            <td nowrap="nowrap" style="text-align: center;"><a href="{{'tel:+91'+col.Mobile_2}}"><i class="fa fa-fw fa-phone-square"
+                                                        *ngIf="col.Mobile_2"></i>{{col.Mobile_2 ? col.Mobile_2 :'-'}}</a></td>
+                                            <td style="text-align: center;">{{col.Mobile_3_WP ? col.Mobile_3_WP : '-' }}</td>
+                                            <td>{{col.Followup_Action ? col.Followup_Action : '-'}}</td>
+                                            <td>{{col.Next_Followup ? (col.Next_Followup|date:"dd/MMM/yyyy h:mma") :"-"}}</td>
+                                            <td>{{col.Prefered_Location ? col.Prefered_Location :'-'}}</td>
+                                            <td>{{col.User_Name ? col.User_Name :'-'}}</td>
                                         </tr>
                                     </ng-template>
                         
                                 </p-table>
                             </div>
                         </p-tabPanel>
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-gift">
-                            <form name="ameyoKBForm" #ameyoKBForm="ngForm" novalidate>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="fa fa-book">
+                            <form name="SaleForm" #SaleForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">User<sup class="text-danger">*</sup></label>
-                                        <p-dropdown [options]="" name="User" [showClear]="true" [emptyFilterMessage]="' No User Found'" [filter]="true"
-                                            filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select User'" [virtualScroll]="true"
-                                            itemSize="30">
+                                        <p-dropdown [options]="userList" name="User"#User="ngModel"[(ngModel)]="UsertypeSALE" 
+                                         [showClear]="true" [emptyFilterMessage]="' No User Found'" [filter]="true"
+                                         filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select User'" [virtualScroll]="true"
+                                         itemSize="30"[ngClass]="{'clearance': FormSubmittedSALE && User?.errors?.required }"required>
                                         </p-dropdown>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Followup Till<sup class="text-danger">*</sup></label>
-                                        <ejs-datepicker [(value)]="FollowupDate"></ejs-datepicker>
+                                        <ejs-datepicker [(value)]="FollowupDateSale"></ejs-datepicker>
                                     </div>
                                     <div class="col-sm-1">
                                         <button class="btn btn-primary" style="margin-top: 28px" data-toggle="modal"
-                                            (click)="GetSearchedList(ameyoKBForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                            (click)="GetSearchedSale(SaleForm.form.valid)" [disabled]="seachSpinner">
                                             <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
                                                 animationDuration=".5s"></p-progressSpinner>
                                             <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                         </button>
                                     </div>
-                                    <div class="col-sm-1"></div>
-                                    <div class="col-sm-2">
-                                        <button class="btn btn-primary" style="margin-top: 28px" data-toggle="modal" (click)="Appointment()"
-                                            id="load" [disabled]="seachSpinner">
-                                            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
-                                                animationDuration=".5s"></p-progressSpinner>
-                                            <span *ngIf="!seachSpinner" class="fa fa-fw fa-calendar-times-o"></span>&nbsp;Appointment Details
-                                        </button>
-                                    </div>
-                                    <div class="col-sm-2">
-                        
-                                    </div>
                                 </div>
                             </form>
                             <div class="no-padding">
-                                <p-table [value]="getAllFollowUpdata" [paginator]="" [rows]="10" [rowHover]="true" [autoLayout]="true"
-                                    sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [rowHover]="true"
-                                    [globalFilterFields]='["Cost_Cen_Name","Mobile","Email1","Address1"]' #dtimp>
+                                <p-table [value]="userListSale" [paginator]="userListSale ? true :false" [rows]="100" [rowHover]="true" [autoLayout]="true"
+                                    sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [rowHover]="true"
+                                    [globalFilterFields]='["Contact_Name","Mobile","Mobile_2","Followup_Action","User_Name","Prefered_Location","Next_Followup"]' #d>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                         
                                             <div class="col-sm-3 pull-right" style="text-align: right">
                                                 <input type="text" pInputText size="50" placeholder="Search"
-                                                    (input)="dtimp.filterGlobal($event.target.value, 'contains')"
+                                                    (input)="d.filterGlobal($event.target.value, 'contains')"
                                                     class="searchInput form-control">
                                             </div>
                                         </div>
@@ -426,9 +367,7 @@
                                                         <span class="caret"></span>
                                                     </button>
                                                     <ul class="dropdown-menu">
-                                                        <li *ngIf="Param_Flag != 'N'"><a (click)="call(col.Mobile)"> <i class="fa fa-phone">
-                                                                </i>Call</a></li>
-                                                        <li><a (click)="followup(col.Foot_Fall_ID,col.Sent_To,col.Mobile)">
+                                                        <li><a (click)="followup(col)">
                                                                 <i class="fa fa-commenting-o"> </i>Followup</a></li>
                                                         <li><a (click)="redirectPatientDetails(col)"><i class="fa fa-fw fa fa-clone"></i>View
                                                                 Details</a>
@@ -439,22 +378,18 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <td></td>
-                                            <!-- <td nowrap="nowrap"><a (click)="call(col.Mobile)"
-                                                                            href="{{'tel:+91'+col.Mobile}}"><i class="fa fa-fw fa-phone-square"
-                                                                                *ngIf="col.Mobile"></i>{{col.Mobile}}</a></td> -->
-                                            <!-- <td nowrap="nowrap"><a (click)="call(col.Mobile_2)"
-                                                                            href="{{'tel:+91'+col.Mobile_2}}"><i
-                                                                                class="fa fa-fw fa-phone-square"
-                                                                                *ngIf="col.Mobile_2"></i>{{col.Mobile_2}}</a></td> -->
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
+                                        <td>{{col.Contact_Name ? col.Contact_Name : '-' }}</td>
+                                        <td nowrap="nowrap"><a  href="{{'tel:+91'+col.Mobile}}"><i class="fa fa-fw fa-phone-square"
+                                                    *ngIf="col.Mobile"></i>{{col.Mobile}}</a></td>
+                                        <td nowrap="nowrap"style="text-align: center;"><a href="{{'tel:+91'+col.Mobile_2}}"><i
+                                                    class="fa fa-fw fa-phone-square" *ngIf="col.Mobile_2"></i>{{col.Mobile_2 ? col.Mobile_2 :'-'}}</a></td>
+                                        <td style="text-align: center;">{{col.Mobile_3_WP ? col.Mobile_3_WP : '-' }}</td>
+                                        <td>{{col.Followup_Action ? col.Followup_Action : '-'}}</td>
+                                        <td>{{col.Next_Followup ? (col.Next_Followup|date:"dd/MMM/yyyy h:mma") :"-"}}</td>
+                                        <td>{{col.Prefered_Location ? col.Prefered_Location :'-'}}</td>
+                                        <td>{{col.User_Name ? col.User_Name :'-'}}</td>
                                         </tr>
                                     </ng-template>
-                        
                                 </p-table>
                             </div>
                         </p-tabPanel>
@@ -464,3 +399,108 @@
         </div>
     </div>
 </div>
+
+
+<p-dialog header="{{Fname}}" [(visible)]="FollowupModal" [modal]="true" [responsive]="true"
+    [style]="{width: '90vw', minWidth: '200px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+     <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <div class="form-horizontal">
+                    <div class="box-body ">
+                        <div class="timelinescroll style-3">
+                            <ul class="timeline ">
+                                <li class="time-label" style="margin-bottom: -20px" *ngFor="let objMain of distinctDateArray" >
+                                    <span class="" style="background-color:rgb(236, 205, 51)">{{objMain}}</span>
+                                    <ul class="timeline" style="margin: 7px 0 30px 0">
+                                        <li *ngFor="let objSub of getFollowupByDate(objMain)">
+                                            <i class="fa fa-user bg-blue"></i>
+                                            <div class="timeline-item">
+                                                <h3 class="timeline-header"><a href="#">{{objSub.CreatedBy}}</a>                                                   
+                                                </h3>
+                                                <div class="timeline-body">
+                                                    {{objSub.Last_Remarks}}
+                                                </div>
+                                                <div class="timeline-footer" style="padding-bottom: 10px">
+                                                    <a class="btn btn-primary btn-social  btn-xs" *ngIf="objSub.CreatedBy != objSub.SentTo_Name"
+                                                        >
+                                                        <i class="fa fa-user"></i>&nbsp;{{objSub.SentTo_Name}}
+                                                    </a>
+                                                    <div class="btn btn-reddit btn-social  btn-xs" style="white-space: pre-line;">
+                                                        <i class="fa fa-comments"></i> Remarks : <span
+                                                            style="font-weight: 600;">{{objSub.Followup_Details}}</span>
+                                                        <hr style="margin:1px"> Follow up Date&Time :<b>&nbsp;{{objSub.Posted_On | date:"dd/MMM/yyyy h:mma"}}</b>                        
+                                                    </div>                     
+                                                    <a class="btn btn-danger btn-social  btn-xs">
+                                                        Action Taken :
+                                                        <i class="fa fa-angle-double-right"></i>&nbsp;{{objSub.Current_Action}}
+                                                    </a>
+                                                    <br>                                                 
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-horizontal">
+                    <div class="box-body">
+                        <form name="followupForm" #followupForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label class="control-label">Action Taken<sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                      [ngClass]="{'clearance':folloupFormSubmit && actiontakenFollowUpCreation?.errors?.required}"
+                                      name="actiontakenFollowUpCreation"
+                                       #actiontakenFollowUpCreation="ngModel"
+                                      [(ngModel)]="objFollowUpCreation.Followup_Action" 
+                                      (change)="FollowupActionChanged()" required>
+                                        <option [ngValue]="undefined">Select</option>
+                                        <option *ngFor=" let data of ActionList" value="{{data.Request_Type}}">
+                                            {{data.Request_Type}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-12">
+                                    <label class="control-label">Remarks</label>
+                                <textarea class="form-control" rows="2" 
+                                name="remarkFollowUpCreation" #remarkFollowUpCreation="ngModel"
+                                 [(ngModel)]="objFollowUpCreation.Followup_Details" 
+                                 placeholder="Remarks" ></textarea>                                      
+                                </div>
+                                <div class="col-sm-12">
+                                    <label class="control-label">Next Followup<sup class="text-danger">*</sup></label>
+                                    <input type="datetime-local" class="form-control" 
+                                        #NextFollowup="ngModel" name="NextFollowup"
+                                        [ngModel]="NxtFollowupDate | date:'yyyy-MM-ddTHH:mm'" 
+                                        (ngModelChange)="NxtFollowupDate = $event"
+                                        [ngClass]="{'clearance':folloupFormSubmit && NextFollowup?.errors?.required}"
+                                         [min]="TodayDate" required>
+                                </div>
+                                <div class="col-sm-12">
+                                    <label class="control-label">Forward To<sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="ForwardList" name="Forward" #Forward="ngModel" [(ngModel)]="objFollowUpCreation.Forward_to" [showClear]="true"
+                                        [emptyFilterMessage]="' No Forward Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                        [placeholder]="'Select Forward To'" [virtualScroll]="true" itemSize="30"
+                                        [ngClass]="{'clearance': folloupFormSubmit && Forward?.errors?.required }" required>
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="box-footer">
+                                <button class="btn btn-primary pull-right" (click)="saveFollowUp(followupForm.form.valid)"
+                                    id="load" [disabled]="followupSpinner">
+                                    <p-progressSpinner *ngIf="followupSpinner" [style]="{width: '15px', height: '15px'}"
+                                        strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!followupSpinner" class="fa fa-save"></span> Save
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-dialog>
