@@ -93,6 +93,7 @@ ngOnInit(){
     this.getcompany();
     this.GetSupplier();
     this.GetCostCenter();
+    this.ObjTopCreat.godown_id = this.Godownlist.length ? this.Godownlist[0].godown_id : undefined;
     this.Finyear();
     this.GettermAmt();
 }
@@ -104,6 +105,8 @@ TabClick(e){
      this.Spinner = false;
     //  this.TabFlag =true;
      this.clearData();
+    //  this.ObjTopCreat.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    //  this.GetGodown();
      this.DocNo = undefined;
      this.AddTermList = [];
 }
@@ -117,8 +120,10 @@ this.SENo = "";
 this.INVNo = "";
 this.ObjTopCreat.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
 this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
-this.ObjTopCreat.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-this.GetGodown();
+// this.ObjTopCreat.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+// this.GetGodown();
+this.GetCostCenter();
+this.ObjTopCreat.godown_id = this.Godownlist.length ? this.Godownlist[0].godown_id : undefined;
 this.disabledflaguom = false;
 this.disabledflaghsn = false;
 this.RDBMcreatFormSubmitted =false;
@@ -127,8 +132,8 @@ this.RDBNolist = [];
 this.productaddSubmit = [];
 this.ObjLowerCreat = new LowerCreat();
 this.createListObj ={};
-this.SearchedlistPanding =[];
-this.Searchedlist =[];
+// this.SearchedlistPanding =[];
+// this.Searchedlist =[];
 }
 getDateRange(dateRangeObj) {
   if (dateRangeObj.length) {
@@ -214,7 +219,9 @@ const obj = {
 }
 this.GlobalAPI.getData(obj).subscribe((data:any)=>{
    this.Godownlist = data;
-   this.ObjTopCreat.godown_id = this.Godownlist.length ? this.Godownlist[0].godown_id : undefined;
+  //  if (this.buttonname != "Save") {
+  //  this.ObjTopCreat.godown_id = this.Godownlist.length ? this.Godownlist[0].godown_id : undefined;
+  //  }
  //console.log("Godownlist======",this.Godownlist);
 });
 }
@@ -572,6 +579,7 @@ const obj = {
   this.GetRDBNo();
   this.ObjTopCreat.Cost_Cen_ID = this.createListObj.Cost_Cen_ID;
   this.GetGodown();
+  this.ObjTopCreat.godown_id = res[0].Godown_ID;
   this.ObjTopCreat.RDB_No = this.createListObj.RDB_No;
   this.ObjLowerCreat.Quality_Rejection_Remarks = res[0].Ins_Remarks;
   setTimeout(() => {
@@ -768,7 +776,8 @@ onConfirmSave(){
      this.ObjTopCreat.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
      this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
      this.ObjTopCreat.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-     this.GetGodown();
+    //  this.GetGodown();
+     this.ObjTopCreat.godown_id = this.Godownlist.length ? this.Godownlist[0].godown_id : undefined;
      this.AddTermList = [];
      if (this.buttonname === "Update") {
       this.tabIndexToView = 0;
@@ -831,6 +840,7 @@ Edit(col){
     this.ObjTopCreat = data[0];
     this.ObjLowerCreat = data[0];
     this.GetGodown();
+    this.ObjTopCreat.godown_id = data[0].godown_id;
     this.GRN_Date = new Date(data[0].GRN_Date);
     this.ObjTopCreat.RDB_No = data[0].RDB_No;
     this.PODate = new Date(data[0].RDB_Date);
@@ -1074,6 +1084,7 @@ onConfirm(){
           detail: "Succefully Deleted"
         });
         this.GetSearchedlist(true);
+        this.GetSearchedpandinglist(true);
       }
       else {
         this.compacctToast.clear();
