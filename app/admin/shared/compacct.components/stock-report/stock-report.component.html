@@ -132,7 +132,7 @@
                 <label class="control-label">Material Type <span class="text-danger"></span></label>
                 <p-multiSelect [options]="DistMaterialType" [(ngModel)]="SelectedDistMaterial" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Material_Type"></p-multiSelect>
             </div>
-            <div class="col-sm-3" *ngIf="report_Type == 'Cost_Center_Wise' && report_Type == 'Product_Type_Wise_Stock'">
+            <div class="col-sm-3" *ngIf="report_Type == 'Cost_Center_Wise' || report_Type == 'Product_Type_Wise_Stock'">
                 <label class="control-label">Product Type <span class="text-danger"></span></label>
                 <p-multiSelect [options]="DistProductType" [(ngModel)]="SelectedDistProduct" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Product_Type"></p-multiSelect>
             </div>
@@ -187,11 +187,11 @@
         <ng-template pTemplate="header">
             <tr>
                 <th *ngIf="report_Type == 'Product_Wise'">Cost Center Name</th>
-                <th>Stock Point</th>
-                <th>Material Type</th>
+                <th *ngIf="report_Type != 'Product_Type_Wise_Stock'">Stock Point</th>
+                <th *ngIf="report_Type != 'Product_Type_Wise_Stock'">Material Type</th>
                 <th>Product Type</th>
-                <th>Product Sub Type</th>
-                <th>Product Name</th>
+                <th *ngIf="report_Type != 'Product_Type_Wise_Stock'">Product Sub Type</th>
+                <th *ngIf="report_Type != 'Product_Type_Wise_Stock'">Product Name</th>
                 <th>Opening</th>
                 <th>Recieve</th>
                 <th>Issue/Used</th>
@@ -205,7 +205,7 @@
                 <td *ngIf="report_Type != 'Product_Type_Wise_Stock'">{{col.Type_Of_Product}}</td>
                 <td>{{col.Product_Type }}</td>
                 <td *ngIf="report_Type != 'Product_Type_Wise_Stock'">{{col.Product_Sub_Type}}</td>
-                <td>{{col.PRODUCT_DESCRIPTION}}</td>
+                <td *ngIf="report_Type != 'Product_Type_Wise_Stock'">{{col.PRODUCT_DESCRIPTION}}</td>
                 <td style="text-align: center;">
                     <a *ngIf="col.OPENING_QTY" style="cursor: pointer;" (click)="qtyDetalis(col,'Get_Opening')" >
                         {{col.OPENING_QTY}}
