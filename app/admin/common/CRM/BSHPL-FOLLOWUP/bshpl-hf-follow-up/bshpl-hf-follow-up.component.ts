@@ -49,6 +49,8 @@ export class BSHPLHfFollowUpComponent implements OnInit {
   ActionList: any = [];
   mobileData: any = undefined;
   ForwardList: any = [];
+  TodayDate:Date;
+  followupSpinner = false;
   constructor(
     private $http: HttpClient,  
     private Header: CompacctHeader,
@@ -69,6 +71,7 @@ export class BSHPLHfFollowUpComponent implements OnInit {
     this.userid = this.$CompacctAPI.CompacctCookies.User_ID
     this.getUsertype();
   }
+  FollowupActionChanged(){}
   onReject() { }
   clearData() {
   this.FormSubmittedREG = false; 

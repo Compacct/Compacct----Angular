@@ -92,6 +92,7 @@ export class AttendanceSheetComponent implements OnInit {
   generate = false;
   download = false;
   AllattendancestatusFormSubmitted = false;
+  DetailsModal = false;
   constructor(
     private route : ActivatedRoute,
     private Header: CompacctHeader,
@@ -556,14 +557,16 @@ export class AttendanceSheetComponent implements OnInit {
     // if (value === null) {
     //   value = 2;
     // }
-   if(col != "Emp_ID" || col != "Emp_Code" || col != "Emp_Name"){
+   if(col != "Emp_ID" || col != "Emp_Code" || col != "Emp_Name" || col != "Designation" || col != "Present" ||
+      col != "Holiday" || col != "Leave" || col != "Absent" || col != "Without_Pay" || col != "Paid_Days"){
      let attArrFilter:any = this.AttenTypelist.filter((el:any)=> Number(el.Atten_Type_ID) == Number(value))
       if(attArrFilter.length){
      flag = attArrFilter[0].Sht_Desc
      } 
     
    }
-   if(col === 'Emp_ID' || col === "Emp_Code" || col === "Emp_Name"){
+   if(col === 'Emp_ID' || col === "Emp_Code" || col === "Emp_Name" || col === "Designation" || col === "Present" || 
+    col === "Holiday" || col === "Leave" || col === "Absent" || col === "Without_Pay" || col === "Paid_Days"){
     flag = value
    }
    this.attendance_value = flag;
@@ -820,6 +823,9 @@ export class AttendanceSheetComponent implements OnInit {
       }
       
     })
+  }
+  information(){
+    this.DetailsModal = true;
   }
   
 }

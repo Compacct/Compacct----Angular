@@ -1578,6 +1578,7 @@ Edit(eROW){
   }
 geteditlist(Adv_Order_No){
     //this.DocNO = Adv_Order_No;
+    // window.location.reload();
       const Tempobj = {
         Doc_No : this.Objcustomerdetail.Adv_Order_No
       }

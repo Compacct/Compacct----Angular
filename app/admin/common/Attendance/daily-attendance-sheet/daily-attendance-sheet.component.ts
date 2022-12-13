@@ -35,6 +35,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
   employeename: any;
   checkbuttonname: any;
   AttendanceTypeList:any = [];
+  DetailsModal = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -400,5 +401,8 @@ export class DailyAttendanceSheetComponent implements OnInit {
 onConfirm(){}
 onReject(){
   this.compacctToast.clear("c");
+}
+information(){
+  this.DetailsModal = true;
 }
 }

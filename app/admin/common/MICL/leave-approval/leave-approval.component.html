@@ -1,5 +1,5 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
-<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true" baseZIndex="99999">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
             <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
@@ -48,7 +48,7 @@
                             </ng-template>
                             <ng-template pTemplate="header">
                                 <tr>
-                                    <!-- <th nowrap="nowrap">Action</th> -->
+                                    <th nowrap="nowrap">Action</th>
                                     <th nowrap="nowrap">Employee Name</th>
                                     <th nowrap="nowrap">Leave Type</th>
                                     <th nowrap="nowrap">Leave Apply From</th>
@@ -60,12 +60,12 @@
                                     <th nowrap="nowrap">Remarks of Business Manager</th>
                                     <th nowrap="nowrap">Reporting Manager</th>
                                     <th nowrap="nowrap">Remarks of Reporting Manager</th>
-                                    <th nowrap="nowrap">Action</th>
+                                    <!-- <th nowrap="nowrap">Action</th> -->
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
                                 <tr>
-                                    <!-- <td>
+                                    <td>
                                         <div class="dropdown">
                                             <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                             <i class="fa fa-fw fa-bars"></i>
@@ -80,24 +80,24 @@
                                                
                                             </ul>
                                         </div>
-                                    </td> -->
+                                    </td>
 
                                     <td>{{col.Emp_Name}}</td>
                                     <td>{{col.Leave_Type}}</td>
                                     <td>{{col.Apply_From_Date | date : 'dd/MMM/yyyy'}}</td>
                                     <td>{{col.Apply_To_Date | date : 'dd/MMM/yyyy'}}</td>
                                     <td nowrap="nowrap">{{col.Remarks ? col.Remarks : '-'}}</td>
-                                    <!-- <td>{{col.Issued_From_Date  | date : 'dd/MMM/yyyy'}}</td>
-                                    <td>{{col.Issued_To_Date  | date : 'dd/MMM/yyyy'}}</td> -->
-                                    <td> 
+                                    <td>{{col.Issued_From_Date  | date : 'dd/MMM/yyyy'}}</td>
+                                    <td>{{col.Issued_To_Date  | date : 'dd/MMM/yyyy'}}</td>
+                                    <!-- <td> 
                                         <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='col.Issued_From_Date'></ejs-datepicker>
                                     </td>
                                     <td>
                                         <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='col.Issued_To_Date'></ejs-datepicker>
-                                    </td>
-                                    <!-- <td>{{col.Approved_Status_Business_Manager ? col.Approved_Status_Business_Manager : "-"}}</td>
-                                    <td>{{col.Approved_Note_Business_Manager ? col.Approved_Note_Business_Manager : "-"}}</td> -->
-                                    <td nowrap="nowrap">
+                                    </td> -->
+                                    <td>{{col.Approved_Status_Business_Manager ? col.Approved_Status_Business_Manager : "-"}}</td>
+                                    <td>{{col.Approved_Note_Business_Manager ? col.Approved_Note_Business_Manager : "-"}}</td>
+                                    <!-- <td nowrap="nowrap">
                                         <select class="form-control" name="col.Emp_ID" [(ngModel)]="col.Approved_Status_Business_Manager" [disabled]="Bussidisabled">
                                             <option  [ngValue]="undefined">Select</option>
                                             <option  Value="Y">YES</option>
@@ -106,10 +106,10 @@
                                     </td>
                                     <td>
                                         <input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Approved_Note_Business_Manager' class="form-control" [disabled]="Bussidisabled"/>
-                                    </td>
-                                    <!-- <td>{{col.Approved_Status_Reporting_Manager ? col.Approved_Status_Reporting_Manager : "-"}}</td>
-                                    <td>{{col.Approved_Note_Reporting_Manager ? col.Approved_Note_Reporting_Manager : "-"}}</td> -->
-                                    <td nowrap="nowrap">
+                                    </td> -->
+                                    <td>{{col.Approved_Status_Reporting_Manager ? col.Approved_Status_Reporting_Manager : "-"}}</td>
+                                    <td>{{col.Approved_Note_Reporting_Manager ? col.Approved_Note_Reporting_Manager : "-"}}</td>
+                                    <!-- <td nowrap="nowrap">
                                         <select class="form-control" name="col.Emp_ID" [(ngModel)]="col.Approved_Status_Reporting_Manager" [disabled]="Reportdisabled">
                                             <option  [ngValue]="undefined">Select</option>
                                             <option  Value="Y">YES</option>
@@ -118,12 +118,12 @@
                                     </td>
                                     <td nowrap="nowrap">
                                         <input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Approved_Note_Reporting_Manager' class="form-control" [disabled]="Reportdisabled"/>
-                                    </td>
-                                    <td nowrap="nowrap">
+                                    </td> -->
+                                    <!-- <td nowrap="nowrap">
                                         <button class="btn btn-primary custombtn" [disabled]="col.approvedisabled" (click)='ApprovedLeave(col)' type="button" [id]="col.Emp_ID"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
                                             Save
                                         </button>
-                                    </td>
+                                    </td> -->
                                     <!-- <td>
                                         <p-dropdown [options]="vendorlist" name="Appvendor" [(ngModel)]="col.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="crdchange(rowIndex)" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Vendor'"
                                             [virtualScroll]="true" itemSize="30" #Appvendor="ngModel">
@@ -298,7 +298,7 @@
                 </div>
                 <div class="col-sm-4">
                     <label class="control-label">Department</label>
-                    <div class="label-t" >{{ShowObj.Department ? ShowObj.Department : "-"}}</div>
+                    <div class="label-t" >{{ShowObj.Dept_Name ? ShowObj.Dept_Name : "-"}}</div>
                 </div>
                 <div class="col-sm-4">
                     <label class="control-label">Type of Leave</label>
@@ -331,10 +331,35 @@
 <div>
 <label>Present Leave Taken (Last 30 Days) :</label>
 <br>
+   <ng-container>
+    <table class="table table-bordered">
+   <thead>
+        <tr>
+            <th>Leave Type</th>
+            <th>No. of Days</th>
+            <th>From</th>
+            <th>To</th>
+            </tr>
+   </thead>
+   <tbody>
+        <tr *ngFor="let col of leaveapplyempownlist">
+            <td>{{col.Leave_Type}}</td>
+            <td>{{col.No_Of_Days_Apply}}</td>
+            <td>{{col.Apply_From_Date | date : 'dd/MMM/yyyy'}}</td>
+            <td>{{col.Apply_To_Date | date : 'dd/MMM/yyyy'}}</td>
+        </tr>
+   </tbody>
+ </table>
+</ng-container> 
+</div>  
+<div>
+    <label>Persons in Leave in this Department Taken Between {{Issued_From_Date  | date : 'dd/MMM/yyyy'}} - {{Issued_To_Date  | date : 'dd/MMM/yyyy'}} :</label>
+    <br>
     <ng-container>
         <table class="table table-bordered">
        <thead>
             <tr>
+                <th>Emp Name</th>
                 <th>Leave Type</th>
                 <th>No. of Days</th>
                 <th>From</th>
@@ -342,63 +367,43 @@
             </tr>
        </thead>
        <tbody>
-            <tr *ngFor="let col of AllEmpLeaveList">
+            <tr *ngFor="let col of leaveapplyemplist">
+                <td>{{col.Emp_Name}}</td>
                 <td>{{col.Leave_Type}}</td>
-                <td>{{col.No_of_Days}}</td>
-                <td>{{col.Apply_From_Date}}</td>
-                <td>{{col.Apply_To_Date}}</td>
+                <td>{{col.No_Of_Days_Apply}}</td>
+                <td>{{col.Apply_From_Date | date : 'dd/MMM/yyyy'}}</td>
+                <td>{{col.Apply_To_Date | date : 'dd/MMM/yyyy'}}</td>
             </tr>
        </tbody>
      </table>
    </ng-container>  
-</div>  
-<div>
-    <label>Person in Leave in this Department Between From - To :</label>
-    <br>
-        <ng-container>
-            <table class="table table-bordered">
-           <thead>
-                <tr>
-                    <th>Leave Type</th>
-                    <th>No. of Days</th>
-                    <th>From</th>
-                    <th>To</th>
-                    </tr>
-           </thead>
-           <tbody>
-                <tr *ngFor="let col of AllEmpLeaveList">
-                    <td>{{col.Leave_Type}}</td>
-                    <td>{{col.No_of_Days}}</td>
-                    <td>{{col.Apply_From_Date}}</td>
-                    <td>{{col.Apply_To_Date}}</td>
-                </tr>
-           </tbody>
-         </table>
-       </ng-container>  
 </div>
 <br>
+<form name="ApproveForm" #ApproveForm="ngForm" novalidate>
     <div class="form-group">
     <div class="col-sm-4"> 
         <label class="control-label">Approved From Date  <sup class="text-danger">*</sup></label>
-        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Issued_From_Date'></ejs-datepicker>
+        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Apply_From_Date'></ejs-datepicker>
     </div>
     <div class="col-sm-4">
         <label class="control-label">Approved To Date  <sup class="text-danger">*</sup></label>
-        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Issued_To_Date'></ejs-datepicker>
+        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Apply_To_Date'></ejs-datepicker>
     </div> 
     <div class="col-sm-4" *ngIf="Bussidisabled && !Reportdisabled">
         <label class="control-label">Remarks of Business Manager  <sup class="text-danger">*</sup></label>
-        <input type="text" [name]="BMremarks" [(ngModel)]='Approved_Note_Business_Manager' class="form-control" />
+        <input type="text" name="BMremarks" #BMremarks="ngModel"  [(ngModel)]='Approved_Note_Business_Manager' class="form-control" 
+        [ngClass]="{'clearance': ApproveFormSubmit && BMremarks?.errors?.required}" required/>
     </div>
     <div class="col-sm-4" *ngIf="Reportdisabled && !Bussidisabled">
         <label class="control-label">Remarks of Reporting Manager  <sup class="text-danger">*</sup></label>
-        <input type="text" [name]="RMremarks" [(ngModel)]='Approved_Note_Reporting_Manager' class="form-control" />
+        <input type="text" name="RMremarks" #RMremarks="ngModel" [(ngModel)]='Approved_Note_Reporting_Manager' class="form-control" 
+        [ngClass]="{'clearance': ApproveFormSubmit && RMremarks?.errors?.required}" required/>
     </div>
     </div>
-
+</form>
     <p-footer> 
-        <button type="button" (click)="DisapprovedPo()" class="btn btn-danger"><i class="pi pi-times"></i> DisApproved</button>
-        <button type="button"  (click)="ApprovedPo()" class="btn btn-success"><i class=" pi pi-check"></i>Approved</button>    
+        <button type="button" (click)="DisapprovedLeaves(ApproveForm.form.valid)" class="btn btn-danger"><i class="pi pi-times"></i>DisApproved</button>
+        <button type="button"  (click)="ApprovedLeaves(ApproveForm.form.valid)" class="btn btn-success"><i class=" pi pi-check"></i>Approved</button>    
     </p-footer>
 </p-dialog>
 
