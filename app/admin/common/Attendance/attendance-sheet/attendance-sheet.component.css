@@ -220,6 +220,12 @@ div.table-responsive.table-id>p-table>div>div {
   /* .L{
     text-align: center;
   } */
+  .PWO,
+  .PPH {
+    background-color:#42ca6d !important;
+    color: #ffff;
+    text-align: center;
+  }
   
   #picker {
     background-image: none !important;
