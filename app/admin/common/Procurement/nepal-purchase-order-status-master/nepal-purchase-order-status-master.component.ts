@@ -41,8 +41,8 @@ export class NepalPurchaseOrderStatusMasterComponent implements OnInit {
 ngOnInit() {
     this.items = ["Status Master"];
     this.Header.pushHeader({
-      Header: "PO Status Master",
-      Link: " Procurement ->  Nepal BL Txn Purchase Order status Master"
+      Header: "PO To-Do Master",
+      Link: " Procurement ->  PO To-Do Master"
     });
     this.getPrType();
     this.getBottomList();

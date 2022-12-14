@@ -42,7 +42,7 @@ ngOnInit() {
     this.items = ["Document Master"];
     this.Header.pushHeader({
       Header: "PO Document Master",
-      Link: " Procurement ->  Nepal Purchase Order Document Master"
+      Link: " Procurement ->  PO Document Master"
     });
     this.getPrType();
     this.getBottomList();
