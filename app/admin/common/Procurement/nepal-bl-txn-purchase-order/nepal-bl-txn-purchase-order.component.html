@@ -116,6 +116,11 @@
                                                             </a>
                                                         </li>
                                                         <li>
+                                                            <a (click)="ActivityPlan(col)">
+                                                                <i class='fa fa-tasks'></i> PO Activity Plan
+                                                            </a>
+                                                        </li>
+                                                        <li>
                                                             <a (click)="PoUpdate(col)">
                                                                 <i class='fa fa-edit green-color'></i> PO Update
                                                             </a>
@@ -385,7 +390,7 @@
 
 <p-dialog [header]="'PO Update Status( '+titleHeder+' )'" [appendTo]="'body'" [visible]="ViewPoTypeModal" [closeOnEscape]="true"
     [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
-    style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    style="text-align: center;" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
     <div class="table-responsive no-padding">
         <p-table [value]="POupdateList" [rowHover]="true">
             <ng-template pTemplate="header">
@@ -427,7 +432,7 @@
 <!-- VIEWS -->
 <p-dialog [header]="'View Company CC Email'" [appendTo]="'body'" [visible]="ViewCompanyModal" [closeOnEscape]="true"
     [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
-    style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    style="text-align: center;" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
     <div class="table-responsive no-padding">
         <p-table [value]="CompanyEmailList" [rowHover]="true">
             <ng-template pTemplate="header">
@@ -456,7 +461,7 @@
 <!-- CREATE -->
 <p-dialog [header]="'Create Company CC Email'" [appendTo]="'body'" [visible]="CreateEmailModal" [closeOnEscape]="true"
     [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
-    style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    style="text-align: center;" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
     <div class="form-horizontal">
         <form name="EmailTypeForm" #EmailTypeForm="ngForm" novalidate>
             <div class="form-group">
@@ -474,6 +479,103 @@
         <button type="submit" name="bill" class="btn btn-primary pull-right custombutton"
             (click)="CreateEmailType(EmailTypeForm.form.valid)">
             <span class="glyphicon glyphicon-save"></span>&nbsp;Create
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!-- pO Activity Plan -->
+<p-dialog [header]="'PO Activity Plan'" [appendTo]="'body'" [visible]="ActivityPlanModal" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '200px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+    <div class="form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-3" style="padding-left: 32px;">
+                    <label class="control-label">PO Activity Start<sup class="text-danger">*</sup></label>
+                    <div class="input-group date">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <input CompacctNepaliDatepicker id="ASdate" name="ASdate" #ASdate="ngModel" Class="form-control"
+                            (ngModelChange)="ASDate= $event" [(ngModel)]="ASDate">
+                    </div>
+                </div>
+            </div> <br>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-horizontal">
+                            <div class="box-body ">
+                                <div class="table table-responsive" >
+                                    <div><strong style="color:#af31bf;margin-left: 2px;font-size: 18px;">To-Do</strong></div>
+                                     <table class="table table-bordered">
+                                        <thead>
+                                            <tr style="background-color:#3c8dbc;color:white;">
+                                                <th style="vertical-align:middle; width: 58px;">Sl. No.</th>
+                                                <th>To-Do</th>
+                                                <th style="width: 23%;">Expected Days</th>
+                                                <th>Date</th>
+                                            </tr>
+                                       </thead>
+                                        <tbody>
+                                            <tr id="H123" *ngFor="let item of ToDoList ;let i = index">
+                                                <td>{{i+1}}</td>
+                                                <td>{{item.Status_Name}}</td>
+                                                <td>
+                                                <input Class="form-control"  CompacctDigitonly="true"[(ngModel)]="ExpectedDaysToDo"
+                                                    placeholder="Type Days"(ngModelChange)="getdateCh(i)">
+                                                </td>
+                                                <td>
+                                                    <input CompacctNepaliDatepicker id="todate" name="todate" #todate="ngModel" Class="form-control"
+                                                         [(ngModel)]="ToDate" disabled>
+                                            </td>
+                                           </tr>
+                                           
+                                        </tbody>
+                                       </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-horizontal">
+                            <div class="box-body">
+                            <div class="table table-responsive">
+                                <div><strong style="color:#004eff;margin-left: 2px;font-size: 18px;">Document</strong></div>
+                                <table class="table table-bordered">
+                                   <thead>
+                                        <tr style="background-color:#3c8dbc;color:white;">
+                                            <th style="vertical-align:middle; width: 58px;">Sl. No.</th>
+                                            <th>Document</th>
+                                            <th style="width: 23%;">Expected Days</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr id="H123" *ngFor="let it of Doclist; let i = index">
+                                            <td>{{i+1}}</td>
+                                            <td>{{it.Document_Name}}</td>
+                                            <td>
+                                                <input Class="form-control" CompacctDigitonly="true" placeholder="Type Days"[(ngModel)]="ExpectedDaysDoc">
+                                            </td>
+                                            <td>
+                                               <input CompacctNepaliDatepicker id="DCOdate" name="DCOdate" #DCOdate="ngModel" Class="form-control"
+                                                     [(ngModel)]="docDate" disabled>
+                                             </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ActivityPlanModal = false" class="btn btn-info">Cancel</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton"
+            (click)="CreateEmailType()">
+            <span class="glyphicon glyphicon-save"></span>&nbsp;Save
         </button>
     </p-footer>
 </p-dialog>

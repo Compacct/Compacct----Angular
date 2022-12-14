@@ -7,6 +7,7 @@ import { CompacctHeader } from '../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { DateNepalConvertService } from "../../../shared/compacct.global/dateNepal.service"
 import { UnsubscriptionError } from 'rxjs';
+import { createClient } from 'http';
 
 @Component({
   selector: 'app-nepal-bl-txn-purchase-order',
@@ -23,6 +24,9 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   DocDate: any = {};
   BrowseStartDate: any = {};
   BrowseEndDate: any = {};
+  ASDate: any = {};
+  ToDate: any = {};
+  docDate: any = {};
   PurchaseOrderForm: boolean = false;
   SearchFormSubmit: boolean = false;
   TotalRate:number = 0;
@@ -64,6 +68,11 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   ApproverTwoS: any = undefined;
   ApproverTwo: any = undefined;
   ApproverOne: any = undefined;
+  ActivityPlanModal: boolean = false;
+  ToDoList: any = [];
+  Doclist: any = [];
+  ExpectedDaysDoc: number = 0;
+  ExpectedDaysToDo: number = 0;
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -83,6 +92,9 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.DocDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
     this.BrowseStartDate =this.DateNepalConvertService.GetNepaliCurrentDateNew();
     this.BrowseEndDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
+    this.ASDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
+    this.ToDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
+    this.docDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
     this.getGodown();
     this.getVendor();
     this.getCompany();
@@ -661,6 +673,53 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
         }
 
   }
+  ActivityPlan(PoPlan) { 
+    this.PoCode = undefined;
+    if (PoPlan.Doc_No) { 
+      this.PoCode = PoPlan.Doc_No;
+     setTimeout(() => {
+       this.ActivityPlanModal = true  
+      }, 300); 
+       this.getPlanList(this.PoCode) 
+        this.getDocList(this.PoCode)
+   }  
+  }
+  getPlanList(Docid) {
+    this.ToDoList = [];
+    const obj = {
+      "SP_String": "sp_PO_Activity_Plan",
+      "Report_Name_String": "Get_To_Do_List",
+      "Json_Param_String": JSON.stringify([{Doc_No : Docid}])
+    }
+     this.GlobalAPI.getData(obj).subscribe((data: any) => {
+       console.log("ToDoList==",data)
+      if(data.length){
+        this.ToDoList = data;   
+       }
+    });
+     
+  }
+  getDocList(DocId) {
+    this.Doclist =[]
+    const obj = {
+      "SP_String": "sp_PO_Activity_Plan",
+      "Report_Name_String": "Get_Document_List",
+      "Json_Param_String": JSON.stringify([{Doc_No : DocId}])
+    }
+     this.GlobalAPI.getData(obj).subscribe((data: any) => {
+       console.log("Doclist==",data)
+      if(data.length){
+        this.Doclist = data;
+
+        
+       }
+    });
+     
+  }
+  getdateCh(i: any) {
+   this.ToDate[i] = this.ToDate.setDate( this.ToDate.getDate() + Number(this.ExpectedDaysToDo[i])) 
+  }
+  
   // toEmailChange(){
   //   console.log("toEmailList", this.toEmailList)
   //   console.log("CCEmailList",this.CCEmailList)
