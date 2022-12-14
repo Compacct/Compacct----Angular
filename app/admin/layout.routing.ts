@@ -304,6 +304,7 @@ import { RawMaterialStockReportComponent } from './common/MaterialManagement/Rep
 import { BSHPLHfFollowUpComponent } from "./common/CRM/BSHPL-FOLLOWUP/bshpl-hf-follow-up/bshpl-hf-follow-up.component";
 import { DoctorsAppointmentNewOAEComponent } from "./common/PatientManagement/doctors-appointment-new-oae/doctors-appointment-new-oae.component";
 import { DoctorsAppointmentNewSpTestComponent } from "./common/PatientManagement/doctors-appointment-new-sp-test/doctors-appointment-new-sp-test.component";
+import { DoctorsAppointmentNewGlycerolTestComponent } from "./common/PatientManagement/doctors-appointment-new-glycerol-test/doctors-appointment-new-glycerol-test.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2285,6 +2286,13 @@ path: 'MICL_Cost_Center_Master',
     component: DoctorsAppointmentNewSpTestComponent,
     data: {
       title: 'Doctors Appointment New Special Tests'
+}
+},
+{
+  path: 'Doctors_Appointment_New_Glycerol_Test',
+    component: DoctorsAppointmentNewGlycerolTestComponent,
+    data: {
+      title: 'Doctors Appointment New Glycerol Test'
 }
 },
     

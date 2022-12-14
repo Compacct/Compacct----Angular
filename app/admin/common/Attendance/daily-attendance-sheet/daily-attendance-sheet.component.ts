@@ -36,6 +36,19 @@ export class DailyAttendanceSheetComponent implements OnInit {
   checkbuttonname: any;
   AttendanceTypeList:any = [];
   DetailsModal = false;
+  Total_Present: any;
+  Total_Present_in_Weekly_Off: any;
+  Total_Present_in_Public_Holiday: any;
+  Total_Holiday: any;
+  Total_Public_Holiday: any;
+  Total_Weekly_Off: any;
+  Total_Sick_Leave: any;
+  Total_Casual_Leave: any;
+  Total_Prevlage_Leave: any;
+  Total_Compensatory_Off: any;
+  Total_Absent: any;
+  Leave_Without_Pay: any;
+  Total_Left: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -107,7 +120,62 @@ export class DailyAttendanceSheetComponent implements OnInit {
           val["OTdisabled"] = false;
         }
       })
+      this.TotalLeaveType();
      })
+  }
+  TotalLeaveType(){
+    
+    var present = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "P")
+    this.Total_Present = present.length ? present.length : undefined;
+    console.log("this.Total_Present===",this.Total_Present);
+
+    var pwoff = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "PWO")
+    this.Total_Present_in_Weekly_Off = pwoff.length ? pwoff.length : undefined;
+    console.log("this.Total_Present_in_Weekly_Off===",this.Total_Present_in_Weekly_Off);
+
+    var pph = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "PPH")
+    this.Total_Present_in_Public_Holiday = pph.length ? pph.length : undefined;
+    console.log("this.Total_Present_in_Public_Holiday===",this.Total_Present_in_Public_Holiday);
+
+    var holiday = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "HL")
+    this.Total_Holiday = holiday.length ? holiday.length : undefined;
+    console.log("this.Total_Holiday===",this.Total_Holiday);
+
+    var pholiday = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "PH")
+    this.Total_Public_Holiday = pholiday.length ? pholiday.length : undefined;
+    console.log("this.Total_Public_Holiday===",this.Total_Public_Holiday);
+
+    var woff = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "WO")
+    this.Total_Weekly_Off = woff.length ? woff.length : undefined;
+    console.log("this.Total_Weekly_Off===",this.Total_Weekly_Off);
+    
+    var sickle = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "SL")
+    this.Total_Sick_Leave = sickle.length ? sickle.length : undefined;
+    console.log("this.Total_Sick_Leave===",this.Total_Sick_Leave);
+
+    var casualle = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "CL")
+    this.Total_Casual_Leave = casualle.length ? casualle.length : undefined;
+    console.log("this.Total_Casual_Leave===",this.Total_Casual_Leave);
+
+    var prle = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "PL")
+    this.Total_Prevlage_Leave = prle.length ? prle.length : undefined;
+    console.log("this.Total_Prevlage_Leave===",this.Total_Prevlage_Leave);
+
+    var comoff = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "CO")
+    this.Total_Compensatory_Off = comoff.length ? comoff.length : undefined;
+    console.log("this.Total_Compensatory_Off===",this.Total_Compensatory_Off);
+
+    var absent = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "A")
+    this.Total_Absent = absent.length ? absent.length : undefined;
+    console.log("this.Total_Absent===",this.Total_Absent);
+
+    var leavewthoutpay = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "LWP")
+    this.Leave_Without_Pay = leavewthoutpay.length ? leavewthoutpay.length : undefined;
+    console.log("this.Leave_Without_Pay===",this.Leave_Without_Pay);
+
+    var left = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "L")
+    this.Total_Left = left.length ? left.length : undefined;
+    console.log("this.Total_Left===",this.Total_Left);
   }
   getAttenTypedropdown(atnid){
     const obj = {
