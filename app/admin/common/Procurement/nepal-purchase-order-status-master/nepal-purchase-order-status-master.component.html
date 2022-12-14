@@ -28,7 +28,7 @@
                             <form name="POForms" #POForms="ngForm" novalidate>
                                 <div class="form-group">                                 
                                     <div class="col-sm-6">
-                                        <label class="control-label">Status Name<sup class="text-danger">*</sup></label>
+                                        <label class="control-label">To-Do<sup class="text-danger">*</sup></label>
                                         <textarea class="form-control" name="Status" #Status="ngModel"[(ngModel)]="ObjMaster.Status_Name"
                                         [ngClass]="{'clearance': PoFormSuccess && Status?.errors?.required}" required>
                                         </textarea>
@@ -83,7 +83,7 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th>Sl No.</th>
-                                            <th>Status Name</th>
+                                            <th>To-Do</th>
                                             <th>Purchase Type </th>
                                             <th>payment Type</th>
                                             <th>Delivery Terms</th>

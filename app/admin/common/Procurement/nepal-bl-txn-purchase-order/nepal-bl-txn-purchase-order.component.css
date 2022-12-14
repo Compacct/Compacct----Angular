@@ -46,3 +46,6 @@ body .ui-dropdown.ui-dropdown-clearable .ui-dropdown-label {
     width: 100%;
     background-color: rgb(235, 242, 248);
 }
+#H123:nth-of-type(even){
+ background-color:#EBEDEF;
+}

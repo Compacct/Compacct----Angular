@@ -2242,7 +2242,7 @@ path: 'MICL_Cost_Center_Master',
   path: 'Nepal_BL_Txn_Purchase_Order_Status_Master',
     component: NepalPurchaseOrderStatusMasterComponent,
     data: {
-      title: 'Nepal BL Txn Purchase Order Status Master'
+      title: 'PO To-Do Master'
 }
 },
 {
@@ -2256,7 +2256,7 @@ path: 'MICL_Cost_Center_Master',
   path: 'Nepal_BL_Txn_Purchase_Order_Document_Master',
     component: NepalPurchaseOrderDocumenMasterComponent,
     data: {
-      title: 'Nepal BL Txn Purchase Order Document Master'
+      title: 'PO Document Master'
 }
 },
 {
