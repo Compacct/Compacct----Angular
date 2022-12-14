@@ -87,6 +87,45 @@
                                 </p-table>
                             </div>
                             
+                            <div class="table-responsive no-padding">
+                                <table class="table bidopen table-bordered" *ngIf="EmpDailyAttenList.length">
+                                    <thead>
+                                      <tr>
+                                            <th style=" width: 7% ;" *ngIf="Total_Present">Present</th>
+                                            <th style=" width: 8% ;" *ngIf="Total_Present_in_Weekly_Off">Present in Weekly Off</th>
+                                            <th style=" width: 8% ;" *ngIf="Total_Present_in_Public_Holiday">Present in Public Holiday</th>
+                                            <th style=" width: 7% ;" *ngIf="Total_Holiday">Holiday</th>
+                                            <th style=" width: 8% ;" *ngIf="Total_Public_Holiday">Public Holiday</th>
+                                            <th style=" width: 8% ;" *ngIf="Total_Weekly_Off">Weekly Off</th>
+                                            <th style=" width: 8% ;" *ngIf="Total_Sick_Leave">Sick Leave</th>
+                                            <th style=" width: 8% ;" *ngIf="Total_Casual_Leave">Casual Leave</th>
+                                            <th style=" width: 8% ;" *ngIf="Total_Prevlage_Leave">Prevlage Leave</th>
+                                            <th style=" width: 8% ;" *ngIf="Total_Compensatory_Off">Compensatory Off</th>
+                                            <th style=" width: 7% ;" *ngIf="Total_Absent">Absent</th>
+                                            <th style=" width: 8% ;" *ngIf="Leave_Without_Pay">Leave Without Pay</th>
+                                            <th style=" width: 7% ;" *ngIf="Total_Left">Left</th>
+                                      </tr>
+                                      <tr>
+                                        <th style=" width: 7% ;" *ngIf="Total_Present">{{Total_Present ? Total_Present : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Total_Present_in_Weekly_Off">{{Total_Present_in_Weekly_Off ? Total_Present_in_Weekly_Off : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Total_Present_in_Public_Holiday">{{Total_Present_in_Public_Holiday ? Total_Present_in_Public_Holiday : 0}}</th>
+                                        <th style=" width: 7% ;" *ngIf="Total_Holiday">{{Total_Holiday ? Total_Holiday : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Total_Public_Holiday">{{Total_Public_Holiday ? Total_Public_Holiday : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Total_Weekly_Off">{{Total_Weekly_Off ? Total_Weekly_Off : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Total_Sick_Leave">{{Total_Sick_Leave ? Total_Sick_Leave : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Total_Casual_Leave">{{Total_Casual_Leave ? Total_Casual_Leave : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Total_Prevlage_Leave">{{Total_Prevlage_Leave ? Total_Prevlage_Leave : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Total_Compensatory_Off">{{Total_Compensatory_Off ? Total_Compensatory_Off : 0}}</th>
+                                        <th style=" width: 7% ;" *ngIf="Total_Absent">{{Total_Absent ? Total_Absent : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Leave_Without_Pay">{{Leave_Without_Pay ? Leave_Without_Pay : 0}}</th>
+                                        <th style=" width: 7% ;" *ngIf="Total_Left">{{Total_Left ? Total_Left : 0}}</th>
+                                  </tr>
+                              
+                                    </thead>
+                                    
+                                  </table>
+                            </div>
+
                            <div class="row">
                                <div class="col-sm-8">
                                    <h5><strong></strong></h5>
