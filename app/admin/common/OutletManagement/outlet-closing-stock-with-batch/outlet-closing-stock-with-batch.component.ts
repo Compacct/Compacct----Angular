@@ -54,6 +54,8 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
   EODstatus: any;
   datedisable = true;
   ShowSpinner = false;
+  savereturndata:any = [];
+  doublebatchpopup = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -85,6 +87,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
     this.buttonname = "Save";
     this.clearData();
     this.getbilldate();
+    this.Doc_No = undefined;
   }
   getbilldate(){
     const obj = {
@@ -222,6 +225,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
         this.GetProduct();
       } 
       else if (data[0].Closing_Stock_Status === "YES") {
+        this.ShowSpinner = false;
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -250,6 +254,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.productlist = data;
+      if (data.length) {
       this.ShowSpinner = false;
      // this.productlist[0].Issue_Qty = this.productlist[0].batch_Qty
        console.log(" product List ===",this.productlist);
@@ -259,7 +264,102 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
         this.productlist[i].Expiry_Date = this.DateService.dateTimeConverterForSearch(new Date(this.productlist[i].Expiry_Date))
        }
        console.log("Date===",this.productlist)
+      }
+      else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "d",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+      }
     })
+  }
+  SaveOTcloingWithoutProductConfirm(){
+       this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "p",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+  }
+  SaveOTcloingWithoutProduct(){
+    this.ngxService.start();
+    //if(valid){
+      const proobj = {
+        Doc_No	 : "A",
+        Doc_Date : this.DateService.dateConvert(new Date(this.BillDate)),
+        Cost_Cen_ID	: this.ObjOTclosingwithbatch.Cost_Cen_ID,
+        Godown_ID	: this.ObjOTclosingwithbatch.godown_id,
+        User_ID	: this.$CompacctAPI.CompacctCookies.User_ID,
+        Product_Type_ID : 0,
+        Product_ID : 0,
+        UOM : 'NA',
+        Batch_No : 'NA',
+        Closing_Qty	: 0,
+        Remarks : 'NA'
+      }
+      const obj = {
+        "SP_String": "SP_Outlet_Closing_Stock_With_Batch",
+        "Report_Name_String" : "Save_Outlet_Closing_Stock_With_Batch",
+       "Json_Param_String": JSON.stringify([proobj])
+
+      }
+      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+        //console.log(data);
+        this.savereturndata = data;
+        var tempID = data[0].Column1;
+       // this.Objproduction.Doc_No = data[0].Column1;
+        if(data[0].Column1){
+          this.ShowSpinner = false;
+          this.ngxService.stop();
+          this.compacctToast.clear();
+          this.Spinner = false;
+          const mgs = this.buttonname === "Save" ? "Saved" : "Updated";
+          this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "success",
+           summary: "Doc_No  " + tempID,
+           detail: "Succesfully  "  + mgs
+         });
+        //  if (this.buttonname == "Save & Print") {
+        //  this.saveNprintProVoucher();
+        //  }
+        if (this.buttonname != "Save") {
+          this.tabIndexToView = 0
+          this.items = ["BROWSE", "CREATE"];
+          this.buttonname = "Save";
+          this.clearData();
+          this.getbilldate();
+          this.GetSearchedList(true);
+        } else {
+         this.clearData();
+         this.getbilldate();
+        }
+        // this.IssueStockFormSubmitted = false;
+
+        } 
+        // else if (!data[0].Column1) {
+        //   this.doublebatchpopup = true;
+        // }
+        else{
+          this.ShowSpinner = false;
+          this.Spinner = false;
+          this.ngxService.stop();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+        }
+      })
+    //}
   }
   getTotalValue(key){
     let Amtval = 0;
@@ -352,13 +452,15 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
       }
       this.GlobalAPI.postData(obj).subscribe((data:any)=>{
         //console.log(data);
+        this.savereturndata = data;
         var tempID = data[0].Column1;
        // this.Objproduction.Doc_No = data[0].Column1;
-        if(data[0].Column1 != "Something Wrong"){
+        if(data[0].Column1){
           this.ngxService.stop();
           this.compacctToast.clear();
           this.Spinner = false;
           const mgs = this.buttonname === "Save" ? "Saved" : "Updated";
+          this.GetSearchedList(true);
           this.compacctToast.add({
            key: "compacct-toast",
            severity: "success",
@@ -375,13 +477,18 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
           this.clearData();
           this.getbilldate();
           this.GetSearchedList(true);
+          this.Doc_No = undefined;
         } else {
          this.clearData();
          this.getbilldate();
         }
         // this.IssueStockFormSubmitted = false;
 
-        } else{
+        } 
+        else if (!data[0].Column1) {
+          this.doublebatchpopup = true;
+        }
+        else{
           this.Spinner = false;
           this.ngxService.stop();
           this.compacctToast.clear();
@@ -394,6 +501,14 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
         }
       })
     //}
+  }
+  closepopup(){
+    this.doublebatchpopup = false;
+    this.Spinner = false;
+    this.ngxService.stop();
+    this.compacctToast.clear("c");
+    this.compacctToast.clear("s");
+
   }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
@@ -572,7 +687,10 @@ const obj = {
    onReject(){
      this.compacctToast.clear("c");
      this.compacctToast.clear("s");
+     this.compacctToast.clear("d");
+     this.compacctToast.clear("p");
      this.Spinner = false;
+     this.ShowSpinner = false;
    }
    exportoexcel(Arr,fileName): void {
      let temp:any = [];

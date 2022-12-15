@@ -77,7 +77,7 @@ fieldset {
 	border-radius:4px;
 	background-color:#f5f5f5;
 	padding-left:10px!important;
-	}
+}
   legend {
 	font-size: 14px;
     font-weight: bold;
@@ -87,4 +87,8 @@ fieldset {
     border-radius: 4px;
     padding: 0px 10px 0px 10px;
     background-color: #ffffff;
-	}
+}
+
+.text-red-active > td {
+    color:red;
+}

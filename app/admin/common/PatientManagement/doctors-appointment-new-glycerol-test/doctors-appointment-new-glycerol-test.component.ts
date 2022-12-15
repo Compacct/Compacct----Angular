@@ -175,7 +175,15 @@ export class DoctorsAppointmentNewGlycerolTestComponent implements OnInit {
       Gly_Left_Ear_3_4000Hz: this.ObjGlycerolTest.Gly_Left_Ear_3_4000Hz, 
       Gly_Right_Ear_INTERPRETATION: this.ObjGlycerolTest.Gly_Right_Ear_INTERPRETATION, 
       Gly_Left_Ear_INTERPRETATION: this.ObjGlycerolTest.Gly_Left_Ear_INTERPRETATION,
-      Gly_Comment: this.ObjGlycerolTest.Gly_Comment
+      Gly_Comment: this.ObjGlycerolTest.Gly_Comment,
+      Gly_right_baseline_500: this.ObjGlycerolTest.Gly_right_baseline_500,
+      Gly_right_baseline_1000: this.ObjGlycerolTest.Gly_right_baseline_1000,
+      Gly_right_baseline_2000: this.ObjGlycerolTest.Gly_right_baseline_2000,
+      Gly_right_baseline_4000: this.ObjGlycerolTest.Gly_right_baseline_4000,
+      Gly_left_baseline_500: this.ObjGlycerolTest.Gly_left_baseline_500,
+      Gly_left_baseline_1000: this.ObjGlycerolTest.Gly_left_baseline_1000,
+      Gly_left_baseline_2000: this.ObjGlycerolTest.Gly_left_baseline_2000,
+      Gly_left_baseline_4000: this.ObjGlycerolTest.Gly_left_baseline_4000
     }
    //  console.log("TempObj",TempObj);
 
@@ -296,6 +304,14 @@ export class DoctorsAppointmentNewGlycerolTestComponent implements OnInit {
     this.ObjGlycerolTest.Gly_Left_Ear_INTERPRETATION= undefined; 
     this.ObjGlycerolTest.Gly_Comment= undefined; 
     this.CheckBoxRECOMMENDATION=[];
+    this.ObjGlycerolTest.Gly_right_baseline_500= undefined;
+    this.ObjGlycerolTest.Gly_right_baseline_1000= undefined;
+    this.ObjGlycerolTest.Gly_right_baseline_2000= undefined;
+    this.ObjGlycerolTest.Gly_right_baseline_4000= undefined;
+    this.ObjGlycerolTest.Gly_left_baseline_500= undefined;
+    this.ObjGlycerolTest.Gly_left_baseline_1000= undefined;
+    this.ObjGlycerolTest.Gly_left_baseline_2000= undefined;
+    this.ObjGlycerolTest.Gly_left_baseline_4000= undefined;
   }
 
   editData(){
@@ -342,6 +358,14 @@ export class DoctorsAppointmentNewGlycerolTestComponent implements OnInit {
       this.ObjGlycerolTest.Gly_Right_Ear_INTERPRETATION= this.EditDataList.Gly_Right_Ear_INTERPRETATION ? this.EditDataList.Gly_Right_Ear_INTERPRETATION : undefined; 
       this.ObjGlycerolTest.Gly_Left_Ear_INTERPRETATION= this.EditDataList.Gly_Left_Ear_INTERPRETATION ? this.EditDataList.Gly_Left_Ear_INTERPRETATION : undefined;
       this.ObjGlycerolTest.Gly_Comment= this.EditDataList.Gly_Comment; 
+      this.ObjGlycerolTest.Gly_right_baseline_500= this.EditDataList.Gly_right_baseline_500;
+      this.ObjGlycerolTest.Gly_right_baseline_1000= this.EditDataList.Gly_right_baseline_1000;
+      this.ObjGlycerolTest.Gly_right_baseline_2000= this.EditDataList.Gly_right_baseline_2000;
+      this.ObjGlycerolTest.Gly_right_baseline_4000= this.EditDataList.Gly_right_baseline_4000;
+      this.ObjGlycerolTest.Gly_left_baseline_500= this.EditDataList.Gly_left_baseline_500;
+      this.ObjGlycerolTest.Gly_left_baseline_1000= this.EditDataList.Gly_left_baseline_1000;
+      this.ObjGlycerolTest.Gly_left_baseline_2000= this.EditDataList.Gly_left_baseline_2000;
+      this.ObjGlycerolTest.Gly_left_baseline_4000= this.EditDataList.Gly_left_baseline_4000;
    
 
       this.Get_TXN_ID=data[0].Txn_ID;
@@ -443,4 +467,12 @@ class GlycerolTest{
   Gly_Right_Ear_INTERPRETATION: any; 
   Gly_Left_Ear_INTERPRETATION: any;
   Gly_Comment: any;
+  Gly_right_baseline_500: any;
+  Gly_right_baseline_1000: any;
+  Gly_right_baseline_2000: any;
+  Gly_right_baseline_4000: any;
+  Gly_left_baseline_500: any;
+  Gly_left_baseline_1000: any;
+  Gly_left_baseline_2000: any;
+  Gly_left_baseline_4000: any;
 }
