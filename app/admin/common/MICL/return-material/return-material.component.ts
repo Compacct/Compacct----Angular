@@ -47,21 +47,23 @@ export class ReturnMaterialComponent implements OnInit {
   EditModal:boolean = false;
 
   Del_Right : string = "";
+  Pendreturn_start_date: Date;
+  Pendreturn_end_date: Date;
+  seachSpinnerPendReturn = false;
+  PendReturnList:any = [];
+  BackupPendReturnList:any = [];
+  BackupPendReturnListFilter:any = [];
 
-  // seachSpinnerPendUtil = false;
-  // PendUtil_start_date: Date;
-  // PendUtil_end_date: Date;
-  // PendUtilList:any = [];
-  // DynamicHeaderforPendUtilList:any = [];
-  // allTotalObj:any = {}
-  // BackupPendUtilList:any = [];
-  // BackupPendUtilListFilter:any = []
-  // SelectedDistDepartmentPendUtil:any = [];
-  // SelectedDistCostCen:any = [];
-  // DistDepartmentPendUtil:any = [];
-  // DistCostCen:any = [];
-  // DistStockPoint:any =[];
-  // SelectedDistStockPoint:any = [];
+  DynamicHeaderforPendReturnList:any = [];
+  allTotalObj:any = {}
+  SelectedDistDepartmentPendReturn:any = [];
+  SelectedDistCostCen:any = [];
+  DistDepartmentPendReturn:any = [];
+  DistCostCen:any = [];
+  DistStockPoint:any =[];
+  SelectedDistStockPoint:any = [];
+  TotalQty: any;
+  TotalAccptQty: any;
 
   constructor(
     private $http : HttpClient,
@@ -75,7 +77,7 @@ export class ReturnMaterialComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE", "PENDING UTILIZATION"];
+    this.items = ["BROWSE", "CREATE", "PENDING RETURN"];
     this.Header.pushHeader({
       Header:  "Return Material " ,
       Link: "Return Material " 
@@ -89,23 +91,27 @@ export class ReturnMaterialComponent implements OnInit {
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "PENDING RETURN"];
     this.buttonname = "Create";
     this.clearData();
     //this.Editdisable = false;
+    this.Searchedlist = this.tabIndexToView ? this.Searchedlist : [];
+    this.ObjReturnMat = this.tabIndexToView ? this.ObjReturnMat : new ReturnMat();
+    this.Entry_Date = this.tabIndexToView ? this.Entry_Date : new Date();
+    this.ObjReturnMat.Cost_Cen_ID = this.tabIndexToView ? this.ObjReturnMat.Cost_Cen_ID : this.getCostcenter();
   }
   clearData(){
-    this.ObjBrowse = new Browse();
-    this.ObjReturnMat = new ReturnMat();
+    // this.ObjBrowse = new Browse();
+    // this.ObjReturnMat = new ReturnMat();
     this.ReturnMaterialFormSubmitted = false;
     this.BrowseFormSubmitted = false;
-    this.Searchedlist = [];
+    // this.Searchedlist = [];
     this.Browselist=[];
-    this.Entry_Date = new Date();
+    // this.Entry_Date = new Date();
     // this.initDate = [new Date(),new Date()]
     this.Finyear();
     
-    this.getCostcenter();
+    // this.getCostcenter();
   }
   Finyear() {
     this.$http
@@ -135,7 +141,7 @@ export class ReturnMaterialComponent implements OnInit {
   }
   GetGodown(){
     const tempobj={
-      Cost_Cen_ID : this.ObjBrowse.Cost_Cen_ID
+      Cost_Cen_ID : this.ObjReturnMat.Cost_Cen_ID
     }
     const obj = {
       "SP_String": "Sp_Return_Material_Module",
@@ -174,7 +180,8 @@ export class ReturnMaterialComponent implements OnInit {
       const tempobj = {
         from_Date : start,
         to_date : end,
-        Cost_Cen_ID : this.ObjBrowse.Cost_Cen_ID ? this.ObjBrowse.Cost_Cen_ID : 0
+        Cost_Cen_ID : this.ObjBrowse.Cost_Cen_ID ? this.ObjBrowse.Cost_Cen_ID : 0,
+        User_ID : this.$CompacctAPI.CompacctCookies.User_ID
         }
 
       const obj = {
@@ -218,6 +225,7 @@ export class ReturnMaterialComponent implements OnInit {
       console.log('Search list=====',this.Searchedlist)
       this.seachSpinner = false;
       this.ReturnMaterialFormSubmitted = false;
+      this.totalqty();
     })
     }
     else {
@@ -245,6 +253,7 @@ export class ReturnMaterialComponent implements OnInit {
         }
        
       }
+      this.totalqty();
     }
    
   }
@@ -265,7 +274,24 @@ export class ReturnMaterialComponent implements OnInit {
  
 }
   return Flag;
-}
+  }
+  totalqty(){
+    this.TotalQty = undefined;
+    // this.TotalAccptQty = undefined;
+    let count = 0;
+    let count1 = 0;
+    this.Searchedlist.forEach(item => {
+      // count = count + Number(item.Balance_Qty);
+      if(item.Issue_Qty) {
+      count1 = count1 + Number(item.Issue_Qty);
+      }
+    });
+    this.TotalQty = (count1).toFixed(2);
+    console.log('this.TotalQty ====',this.TotalQty)
+    // this.TotalAccptQty = (count1).toFixed(2);
+    // console.log('this.TotalAccptQty ====',this.TotalAccptQty)
+  }
+
 saveqtyChk(){
   let Flag = false;
   for(let i = 0; i < this.Searchedlist.length ; i++){
@@ -292,7 +318,7 @@ saveqtyChk(){
     }
     //  this.Spinner = false;
 
-  }
+ }
   onConfirmSave(){
     let temparr:any = [];
     this.Searchedlist.forEach((item : any)=>
@@ -300,15 +326,33 @@ saveqtyChk(){
       if(item.Issue_Qty && Number(item.Issue_Qty) != 0)
       {
       const tenpobj = {
-        Cost_Cen_ID : this.ObjReturnMat.Cost_Cen_ID,
-        godown_id : this.ObjReturnMat.godown_id,
-        Issue_Qty : item.Issue_Qty,
-        Remarks : item.Remarks,
-        User_ID : this.commonApi.CompacctCookies.User_ID, 
-        Serial_No: item.Serial_No,
-        Product_ID : item.Product_ID,
+        // Cost_Cen_ID : this.ObjReturnMat.Cost_Cen_ID,
+        // godown_id : this.ObjReturnMat.godown_id,
+        // Issue_Qty : item.Issue_Qty,
+        // Remarks : item.Remarks,
+        // User_ID : this.commonApi.CompacctCookies.User_ID, 
+        // Serial_No: item.Serial_No,
+        // Product_ID : item.Product_ID,
+        // Batch_No : item.Batch_No,
+        // UOM : item.uom,
+
+        Doc_No : "A",
+        Doc_Date : this.DateService.dateConvert(new Date(this.Entry_Date)),
+        Cost_Cen_ID : Number(this.ObjReturnMat.Cost_Cen_ID),
+        godown_id : Number(this.ObjReturnMat.godown_id),
+        Product_ID : Number(item.Product_ID),
+        Qty : Number(item.Issue_Qty),
+        Accepted_Qty : 0,
+        Rate : 0,
+				UOM : item.uom,
         Batch_No : item.Batch_No,
-        UOM : item.uom
+        Serial_No : item.Serial_No,
+        User_ID : this.commonApi.CompacctCookies.User_ID,
+        Entry_Date : this.DateService.dateConvert(new Date()),
+        Status : 'NA',
+        Remarks : item.Remarks ? item.Remarks : 'NA',
+        Total_Qty :	Number(this.TotalQty),
+        Total_Accepted_Qty : 0
         
       }
       temparr.push(tenpobj);
@@ -338,8 +382,13 @@ saveqtyChk(){
       
       this.clearData();
       this.Getsearchlist(true);
+      this.getCostcenter();
       this.Spinner = false;
       this.tabIndexToView = 0;
+      this.ObjReturnMat = new ReturnMat();
+      this.ReturnMaterialFormSubmitted = false;
+      this.Searchedlist = [];
+      this.Entry_Date = new Date();
       }
       else{
         this.compacctToast.clear();
@@ -354,7 +403,7 @@ saveqtyChk(){
       }
      });
     
-}
+  }
 Edit(Doc_No) {
   console.log('Doc_No', Doc_No);
   const obj = {
@@ -496,6 +545,197 @@ onConfirm(){
 
 
   }
+
+  // Pending Utilization
+getDateRangePenReturn(dateRangeObj) {
+  if (dateRangeObj.length) {
+    this.Pendreturn_start_date = dateRangeObj[0];
+    this.Pendreturn_end_date = dateRangeObj[1];
+  }
+}
+GetPenReturn(){
+    // this.PendingIndentFormSubmitted = true;
+    this.seachSpinnerPendReturn = true;
+    const start = this.Pendreturn_start_date
+    ? this.DateService.dateConvert(new Date(this.Pendreturn_start_date))
+    : this.DateService.dateConvert(new Date());
+    const end = this.Pendreturn_end_date
+    ? this.DateService.dateConvert(new Date(this.Pendreturn_end_date))
+    : this.DateService.dateConvert(new Date());
+    if (start && end) {
+    const tempobj = {
+      From_Date : start,
+      To_Date  : end,
+      User_ID : this.$CompacctAPI.CompacctCookies.User_ID 
+    //  To_Cost_Cen_ID : this.ObjPendingIndent.Cost_Cen_ID,
+    //  proj : "N"
+    }
+    // if (valid) {
+    const obj = {
+      "SP_String": "Sp_Return_Material_Module",
+      "Report_Name_String": "Pending_Return_Material",
+      "Json_Param_String": JSON.stringify([tempobj])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.PendReturnList = data;
+      this.BackupPendReturnList = data;
+      this.BackupPendReturnListFilter = data;
+      // this.GetDistinctPenUtil();
+      this.GetDeptDist()
+      this.GetCostCenterDist()
+      this.getStockPoint()
+      if(this.PendReturnList.length){
+        this.DynamicHeaderforPendReturnList = Object.keys(data[0]);
+      }
+      else {
+        this. DynamicHeaderforPendReturnList = [];
+      }
+      this.seachSpinnerPendReturn = false;
+      this.TotalValue(this.PendReturnList);
+      // console.log("DynamicHeaderforPendReturnList",this.DynamicHeaderforPendReturnList);
+    })
+    }
+    else {
+      this.seachSpinnerPendReturn = false;
+      // this.ngxService.stop();
+      this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Something Wrong"
+        });
+    }
+}
+exportexcelPenUtil(Arr,fileName): void {
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, fileName+'.xlsx');
+}
+FilterDistPenReturn(v:any) {
+  let department:any = [];
+  let costcen:any = [];
+  let stockpoint:any = [];
+  let SearchFieldsPenUtil:any =[];
+if (this.SelectedDistDepartmentPendReturn.length) {
+  SearchFieldsPenUtil.push('Dept_Name');
+  department = this.SelectedDistDepartmentPendReturn;
+  console.log("department",department)
+}
+if (this.SelectedDistCostCen.length) {
+  SearchFieldsPenUtil.push('Cost_Cen_Name');
+  costcen = this.SelectedDistCostCen;
+}
+if (this.SelectedDistStockPoint.length) {
+  SearchFieldsPenUtil.push('Stock_Point');
+  stockpoint = this.SelectedDistStockPoint;
+}
+this.PendReturnList = [];
+console.log("SearchFieldsPenUtil",SearchFieldsPenUtil)
+console.log("BackupPendUtilList",this.BackupPendReturnList)
+if (SearchFieldsPenUtil.length) {
+  let LeadArr = this.BackupPendReturnList.filter(function (e) {
+    return (department.length ? department.includes(e['Dept_Name']) : true)
+    && (costcen.length ? costcen.includes(e['Cost_Cen_Name']) : true)
+    && (stockpoint.length ? stockpoint.includes(e['Stock_Point']) : true)
+  });
+  console.log("LeadArr",LeadArr)
+this.PendReturnList = LeadArr.length ? LeadArr : [];
+
+} else {
+this.PendReturnList = [...this.BackupPendReturnList] ;
+}
+this.TotalValue(this.PendReturnList);
+if(v === "Dept_Name"){
+  this.getStockPoint()
+  this.GetCostCenterDist()
+  
+}
+if(v === "Cost_Cen_Name"){
+  this.getStockPoint()
+}
+if(v != "Stock_Point"){
+ // this.getStockPoint()
+}
+if(!this.SelectedDistDepartmentPendReturn.length && !this.SelectedDistCostCen.length && !this.SelectedDistStockPoint.length){
+  this.GetDeptDist()
+  this.getStockPoint()
+  this.GetCostCenterDist()
+}
+}
+GetDistinctPenUtil() {
+  //let department:any = [];
+  let costcen:any = [];
+  let stockpoint:any = [];
+  // this.DistDepartmentPendReturn =[];
+  // this.SelectedDistDepartmentPendReturn =[];
+  // this.DistCostCen =[];
+  // this.SelectedDistCostCen =[];
+  this.DistStockPoint =[];
+  this.SelectedDistStockPoint = [];
+  this.PendReturnList.forEach((item) => {
+// if (department.indexOf(item.Dept_Name) === -1) {
+//   department.push(item.Dept_Name);
+//   this.DistDepartmentPendReturn.push({ label: item.Dept_Name, value: item.Dept_Name });
+//   }
+//  if (costcen.indexOf(item.Cost_Cen_Name) === -1) {
+//   costcen.push(item.Cost_Cen_Name);
+//  this.DistCostCen.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
+//  }
+ if (stockpoint.indexOf(item.Stock_Point) === -1) {
+  stockpoint.push(item.Stock_Point);
+ this.DistStockPoint.push({ label: item.Stock_Point, value: item.Stock_Point });
+ }
+});
+   this.BackupPendReturnList = [...this.PendReturnList];
+}
+
+GetDeptDist(){
+  let department:any = [];
+  this.DistDepartmentPendReturn =[];
+  this.SelectedDistDepartmentPendReturn =[];
+  this.PendReturnList.forEach((item) => {
+    if (department.indexOf(item.Dept_Name) === -1) {
+      department.push(item.Dept_Name);
+      this.DistDepartmentPendReturn.push({ label: item.Dept_Name, value: item.Dept_Name });
+      }
+      this.BackupPendReturnList = [...this.BackupPendReturnListFilter];
+  })
+}
+GetCostCenterDist(){
+  let costcen:any = [];
+  this.DistCostCen =[];
+  this.SelectedDistCostCen =[];
+  console.log("Pend Util List",this.PendReturnList)
+  this.PendReturnList.forEach((item) => {
+    if (costcen.indexOf(item.Cost_Cen_Name) === -1) {
+      costcen.push(item.Cost_Cen_Name);
+     this.DistCostCen.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
+     }
+      this.BackupPendReturnList = [...this.BackupPendReturnListFilter];
+  })
+}
+getStockPoint(){
+  let stockpoint:any = [];
+  this.DistStockPoint =[];
+  this.SelectedDistStockPoint = [];
+  this.PendReturnList.forEach((item) => {
+    if (stockpoint.indexOf(item.Stock_Point) === -1) {
+      stockpoint.push(item.Stock_Point);
+     this.DistStockPoint.push({ label: item.Stock_Point, value: item.Stock_Point });
+     }
+      this.BackupPendReturnList = [...this.BackupPendReturnListFilter];
+  })
+}
+TotalValue(arrList:any){
+  if(arrList.length){
+    this.allTotalObj.Value =0
+    arrList.forEach(ele => {
+      this.allTotalObj.Value = Number(Number(ele.Value) + Number(this.allTotalObj.Value)).toFixed(2)
+    });
+  }
+  console.log(this.allTotalObj)
+}
 
 }
 class Browse{
