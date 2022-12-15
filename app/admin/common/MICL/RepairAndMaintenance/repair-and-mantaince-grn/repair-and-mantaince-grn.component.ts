@@ -1121,6 +1121,18 @@ onRejectsave(){
    this.ngxService.stop();
   //  this.deleteError = false;
 }
+Printrdb(DocNo) {
+  if(DocNo) {
+  const objtemp = {
+    "SP_String": "SP_Repair_And_Maintenance_RDB",
+    "Report_Name_String": "RDB_Print"
+    }
+  this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+    var printlink = data[0].Column1;
+    window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+  })
+  }
+}
 }
 class Browse {
   Company_ID : any;

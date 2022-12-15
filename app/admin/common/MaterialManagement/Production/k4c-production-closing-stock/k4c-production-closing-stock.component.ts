@@ -67,6 +67,8 @@ export class K4cProductionClosingStockComponent implements OnInit {
   BackupProList:any = [];
   Doc_Date: any;
   productlistforexcel:any = [];
+  datepickerdisable = true;
+  Checklist:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -112,6 +114,7 @@ export class K4cProductionClosingStockComponent implements OnInit {
      this.BackupIndentList = [];
      this.TIndentList = [];
      this.SelectedIndent = [];
+     this.datepickerdisable = true;
    }
    onReject() {
     this.compacctToast.clear("c");
@@ -217,10 +220,10 @@ export class K4cProductionClosingStockComponent implements OnInit {
   }
 
   // FOR PRODUCT TABLE
-  GetProduct(valid){
-    this.ProClosingStockFormSubmitted = true;
-    if(valid){
-      this.ShowSpinner = true;
+  GetProduct(){
+    // this.ProClosingStockFormSubmitted = true;
+    // this.ShowSpinner = true;
+    // if(valid){
       this.ObjProClosingStock.Doc_Date = this.DateService.dateConvert(new Date(this.todayDate));
     const TempObj = {
       Doc_Date : this.ObjProClosingStock.Doc_Date,
@@ -252,7 +255,7 @@ export class K4cProductionClosingStockComponent implements OnInit {
     this.GetProductType();
    console.log("this.ProductList======",this.ProductList);
    })
-  }
+  // }
   }
   checkdecimal(obj){
     if (obj.Receive_Qty) {
@@ -568,6 +571,7 @@ ConsumptionCal(indx,obj){
          this.tabIndexToView = 0 ;
          this.items = ["BROWSE", "CREATE"];
          this.buttonname = "Save";
+         this.datepickerdisable = true;
          this.GetSearchedList(true);
          this.clearData();
          this.ProductList =[];
@@ -638,7 +642,48 @@ const obj = {
    this.ProClosingStockSearchFormSubmitted = false;
  })
 }
-}
+  }
+  checkbeforegetproduct(valid){
+  this.Checklist = [];
+  this.ProClosingStockFormSubmitted = true;
+  this.ShowSpinner = true;
+  if (valid){
+    this.ObjProClosingStock.Doc_Date = this.DateService.dateConvert(new Date(this.todayDate));
+    const tempobj = {
+            Doc_Date : this.ObjProClosingStock.Doc_Date,
+            Cost_Cen_ID : this.ObjProClosingStock.Cost_Cen_ID ? this.ObjProClosingStock.Cost_Cen_ID : 0,
+            Godown_ID : this.ObjProClosingStock.godown_id ? this.ObjProClosingStock.godown_id : 0,
+            Material_Type : this.MaterialType_Flag ? this.MaterialType_Flag : 'NA'
+
+          }
+    const obj = {
+    "SP_String": "SP_Production_Closing_Stock",
+    "Report_Name_String": "Check_Production_Closing_Stock",
+    "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.Checklist = data;
+     console.log('Check list=====',this.Checklist)
+
+     if (this.Checklist.length) {
+      if (data[0].Doc_No) {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Already Saved !",
+          detail: "Please go to browse and update"
+        })
+      this.ShowSpinner = false;
+      this.ProClosingStockFormSubmitted = false;
+      } 
+     }
+     else {
+      this.GetProduct();
+     }
+    })
+    }
+  }
 
   clearData(){
     this.ObjProClosingStock.Cost_Cen_ID = 2;
@@ -738,6 +783,7 @@ EditIntStock(col){
    this.items = ["BROWSE", "UPDATE"];
    this.buttonname = "Update";
    this.todayDate = this.Doc_Date;
+   this.datepickerdisable = false;
   //  this.GetProduct(true); // await
   //  const ctrl = this;
   //  setTimeout(function () {

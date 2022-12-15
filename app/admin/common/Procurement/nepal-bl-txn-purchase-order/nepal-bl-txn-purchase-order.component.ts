@@ -644,7 +644,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   this.CompantEmailName = undefined;
   this.CreateEmailModal =true 
   }
-  CreateEmailType(valid){
+  CreateEmailType(valid?){
   this.NewEmailFormSubmitted = true;
   if(valid){
            const tempSave = {

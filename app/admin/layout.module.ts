@@ -401,6 +401,7 @@ import { BSHPLHfFollowUpComponent } from './common/CRM/BSHPL-FOLLOWUP/bshpl-hf-f
 import { DoctorsAppointmentNewOAEComponent } from "./common/PatientManagement/doctors-appointment-new-oae/doctors-appointment-new-oae.component";
 import { DoctorsAppointmentNewSpTestComponent } from "./common/PatientManagement/doctors-appointment-new-sp-test/doctors-appointment-new-sp-test.component";
 import { DoctorsAppointmentNewGlycerolTestComponent } from "./common/PatientManagement/doctors-appointment-new-glycerol-test/doctors-appointment-new-glycerol-test.component";
+import { AcceptReturnMaterialComponent } from './common/MICL/accept-return-material/accept-return-material.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -718,7 +719,8 @@ import { DoctorsAppointmentNewGlycerolTestComponent } from "./common/PatientMana
     BSHPLHfFollowUpComponent,
     DoctorsAppointmentNewOAEComponent,
     DoctorsAppointmentNewSpTestComponent,
-    DoctorsAppointmentNewGlycerolTestComponent
+    DoctorsAppointmentNewGlycerolTestComponent,
+    AcceptReturnMaterialComponent
   ],
   imports: [
     CommonModule,

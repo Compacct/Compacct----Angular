@@ -54,3 +54,12 @@ textarea.form-control {
     margin-top: 2px;
     margin-left: 600px;
 }
+.custombutton3 {
+    margin-top: 2px;
+    margin-left: 676px;
+}
+.table-bordered > thead > tr > th{
+    color: #fff;
+    background-color: #3c8dbc;
+  
+  }

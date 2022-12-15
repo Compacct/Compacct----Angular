@@ -151,7 +151,7 @@
                                             <div class="form-group">
                                                 <div class="col-sm-2">
                                                     <label class="control-label">Date </label>
-                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='todayDate'></ejs-datepicker>
+                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='todayDate' [enabled]='datepickerdisable'></ejs-datepicker>
                                                     <!-- <input class="form-control" name="Date" [disabled]="true" [ngModel]='todayDate  | date :"dd-MMM-yyyy"'> [enabled]='datepickerdisable'-->
                                                 </div>
                                                 <div class="col-sm-2">
@@ -189,7 +189,7 @@
                                     </select>
                                                 </div>
                                                 <div class="col-sm-2">
-                                                    <button class="btn btn-primary custombutton1" (click)="GetProduct(ProClosingStockForm.form.valid)" id="load" [disabled]="ProductList.length" [disabled]="ShowSpinner">
+                                                    <button class="btn btn-primary custombutton1" (click)="checkbeforegetproduct(ProClosingStockForm.form.valid)" id="load" [disabled]="ProductList.length" [disabled]="ShowSpinner">
                                                         <p-progressSpinner *ngIf="ShowSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                                     <span *ngIf="!ShowSpinner" class="glyphicon glyphicon-save"></span>&nbsp;Show Products
                                                 </button>
