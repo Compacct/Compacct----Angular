@@ -700,31 +700,39 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
        let data = JSON.parse(res[0].topper)
        this.ToDoList = data[0].hasOwnProperty("bottom_To_Do_List")? data[0].bottom_To_Do_List :[]
        this.Doclist = data[0].hasOwnProperty("bottom_Document")? data[0].bottom_Document :[]
-       this.ActivityDetailsObj =  data[0].hasOwnProperty("bottom_Activity_Details")? data[0].bottom_Activity_Details[0] :{}
-       this.ASDate = this.DateNepalConvertService.convertEngDateToNepaliDateObj(this.ActivityDetailsObj.Activity_Statrt_Date)
-      this.caldateTodo()
-      this.caldateDoc()
+       this.ActivityDetailsObj =  data[0].bottom_Activity_Details? data[0].bottom_Activity_Details[0] :{}
+       if(Object.keys(this.ActivityDetailsObj).length != 0){
+        this.ASDate = this.ActivityDetailsObj.Activity_Statrt_Date ? this.DateNepalConvertService.convertNewEngToNepaliDateObj(this.ActivityDetailsObj.Activity_Statrt_Date) : this.DateNepalConvertService.GetNepaliCurrentDateNew();
+        this.caldateTodo()
+        this.caldateDoc()
+       }
+       else{
+        this.ASDate = this.DateNepalConvertService.GetNepaliCurrentDateNew()
+        this.caldateTodo()
+        this.caldateDoc()
+       }
     });
      
   }
   caldateTodo(){
     if(this.ToDoList.length){
       this.ToDoList.forEach((ele:any) => {
-        let engdate = this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)
+        let engdate = this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate) 
+         console.log("engdate",engdate)
          ele['Task_End_Date'] =ele.Expected_Days? 
-        this.DateNepalConvertService.convertEngDateToNepaliDateObj(new Date(new Date().setDate(new Date(engdate).getDate() + Number(ele.Expected_Days)))) : 
+        this.DateNepalConvertService.convertNewEngToNepaliDateObj(new Date(new Date().setDate(new Date(engdate).getDate() + Number(ele.Expected_Days)))) : 
         null;
+      
        });
-      console.log("ToDoList Date",this.ToDoList)
+      
      }
   }
   caldateDoc(){
   if(this.Doclist.length){
       this.Doclist.forEach((ele:any) => {
         let engdate = this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)
-        console.log("add date Doc",this.DateNepalConvertService.convertEngDateToNepaliDateObj(new Date(new Date().setDate(new Date(engdate).getDate() + 10))))
         ele['Task_End_Date'] =ele.Expected_Days? 
-        this.DateNepalConvertService.convertEngDateToNepaliDateObj(new Date(new Date().setDate(new Date(engdate).getDate() + Number(ele.Expected_Days)))) : 
+        this.DateNepalConvertService.convertNewEngToNepaliDateObj(new Date(new Date().setDate(new Date(engdate).getDate() + Number(ele.Expected_Days)))) : 
         null;
         
       });
@@ -765,17 +773,34 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.caldateDoc()
   }
   saveActivityPlan(){
+    this.ActivityPlanModal = false
     this.ToDoList.forEach((ele:any) => {
       let endDate = ele.Task_End_Date? this.DateNepalConvertService.convertNepaliDateToEngDate(ele.Task_End_Date) :null
       ele.Task_End_Date = endDate? this.DateService.dateConvert(new Date(endDate)) : null
+      if(ele.Task_End_Date){
+        ele.Status = ele.Status ? ele.Status : "PENDING"
+        ele.Remarks = ele.Remarks ? ele.Remarks : "PENDING"
+      }
+      else {
+        ele.Status =null
+        ele.Remarks = null
+        ele.Expected_Days = null
+      }
     });
     this.Doclist.forEach((ele:any) => {
       let endDate = ele.Task_End_Date? this.DateNepalConvertService.convertNepaliDateToEngDate(ele.Task_End_Date) :null
       ele.Task_End_Date = endDate? this.DateService.dateConvert(new Date(endDate)) :null
+      if(ele.Task_End_Date){
+        ele.Status = ele.Status ? ele.Status : "PENDING"
+      }
+      else {
+        ele.Expected_Days = null
+      }
     });
     let saveData = {
       PO_Doc_No : this.PoCode,
       Activity_Statrt_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)),
+      Posted_By : this.$CompacctAPI.CompacctCookies.User_ID,
       bottom_To_Do : this.ToDoList,
       bottom_Document: this.Doclist
     }
@@ -787,7 +812,14 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       "Json_Param_String": JSON.stringify([saveData])
     }
      this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      console.log("data",data)
+      if(data[0].Column1 == "Done"){
+        this.compacctToast.clear();
+        this.compacctToast.add({ 
+         key: "compacct-toast",
+         severity: "success",
+         detail: "Succesfully Created" 
+        });
+      }
      })
   }
   // toEmailChange(){
