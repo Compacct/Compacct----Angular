@@ -447,13 +447,12 @@
                         <th>Product Sub Type</th>
                         <th>Product Description</th>
                         <th>UOM</th>
-
                         <th>Batch No</th>
-
                         <!-- <th >Current Stock in Department</th> -->
-                        <th>Issue Qty</th>
+                        <th>Qty</th>
+                        <th>Accepted Qty</th>
                         <th>Remarks</th>
-                        <th>Action</th>
+                        <th>Store Remarks</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-col>
@@ -467,13 +466,21 @@
                         <td>{{col.Product_Sub_Type}}</td>
                         <td>{{col.Product_Description }}</td>
                         <td>{{col.UOM}}</td>
-
                         <td>{{col.Batch_No}}</td>
+                        <!-- <td>{{col.Issue_Qty}}</td> -->
+                        <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Qty' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                        <td>{{col.Accepted_Qty}}</td>
+                        <td><input type="text" [name]="col.Product_ID+'remark'" [(ngModel)]='col.Remarks' class="form-control" style="width: 120px;" /></td>
+                        <td><input type="text" [name]="col.Product_ID+'storeremark'" [(ngModel)]='col.Store_Remarks' [disabled]="true" class="form-control" style="width: 120px;" /></td>
+                        <!-- <td>{{col.Remarks}}</td> -->
+                        <!-- <td><button (click)="Delete(col)" class="btn danger"><i class="fa fa-trash"></i></button></td> -->
 
-                        <td>{{col.Issue_Qty}}</td>
-                        <td>{{col.Remarks}}</td>
-                        <td><button (click)="Delete(col)" class="btn danger"><i class="fa fa-trash"></i></button></td>
-
+                    </tr>
+                    <tr *ngIf='i === (EditList.length - 1)'>
+                        <td colspan="2" class="text-right">Total</td>
+                        <td>{{getTotal('Qty')}}</td>
+                        <td>{{getTotal('Accepted_Qty')}}</td>
+                        <td></td>
                     </tr>
                 </ng-template>
             </p-table>
@@ -482,9 +489,11 @@
 
     </form>
     <p-footer>
-        <button type="button" (click)="EditModal = false" class="btn btn-default">
-CLOSE
-</button>
+        <button type="button" (click)="EditModal = false" class="btn btn-default"> CLOSE </button>
+        <button type="button" class="btn btn-primary pull-right" (click)="saveeditreturn()" id="load" [disabled]="editSpinner">
+            <p-progressSpinner *ngIf="editSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+            <span *ngIf="!editSpinner" class="glyphicon glyphicon-save"></span> Update
+        </button>
     </p-footer>
 </p-dialog>
 
@@ -530,12 +539,12 @@ CLOSE
                         <th>Product Sub Type</th>
                         <th>Product Description</th>
                         <th>UOM</th>
-
                         <th>Batch No</th>
-
                         <!-- <th >Current Stock in Department</th> -->
-                        <th>Issue Qty</th>
+                        <th>Qty</th>
+                        <th>Accepted Qty</th>
                         <th>Remarks</th>
+                        <th>Store Remarks</th>
 
                     </tr>
                 </ng-template>
@@ -550,11 +559,11 @@ CLOSE
                         <td>{{col.Product_Sub_Type}}</td>
                         <td>{{col.Product_Description }}</td>
                         <td>{{col.UOM}}</td>
-
                         <td>{{col.Batch_No}}</td>
-
-                        <td>{{col.Issue_Qty}}</td>
+                        <td>{{col.Qty}}</td>
+                        <td>{{col.Accepted_Qty}}</td>
                         <td>{{col.Remarks}}</td>
+                        <td>{{col.Store_Remarks}}</td>
 
 
                     </tr>

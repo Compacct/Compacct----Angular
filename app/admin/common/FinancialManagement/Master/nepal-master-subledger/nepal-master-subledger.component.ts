@@ -656,6 +656,49 @@ export class NepalMasterSubledgerComponent implements OnInit {
     this.ObjContact = new Contact();
     this.ContactEditFlag = false;
   }
+  // DELETE CONTACT
+  DeleteContact(col){
+    if(col.Contact_ID && confirm('Are you Sure ?')) {
+      const obj = {
+        "SP_String": "SP_Create_Subledger_New",
+        "Report_Name_String": "Delete_Subledger_Contacts",
+        "Json_Param_String": JSON.stringify([{ 'Contact_ID' : col.Contact_ID}])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data) => {
+          if (data[0].Column1 === 'Done'  ) {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: 'Subledger ID : ' + this.ObjSubledger.Sub_Ledger_ID,
+              detail: "Contact Succesfully Deleted"
+            });
+            this.ClearData2();
+            this.GetContactList();
+        } else if(data[0].Column1 === 'Sorry, This Contact has been used already'){
+          this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "warn",
+              summary: 'Subledger ID : ' + this.ObjSubledger.Sub_Ledger_ID,
+              detail: data[0].Column1
+            });
+            this.ClearData2();
+            this.GetContactList();
+
+        } else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "error",
+              detail: "Error Occured"
+            });
+        }
+        });
+    }
+  }
+
   // EDIT LOCATION
   EditLocationList(i){
     this.ObjLocation = new Location();
@@ -846,4 +889,5 @@ class Contact{
   Contact_Number:String;                 
   Contact_Name:String;   
   Email_ID:String; 
+  Country_Code:any;
 }
