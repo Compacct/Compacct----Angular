@@ -64,6 +64,7 @@ export class ReturnMaterialComponent implements OnInit {
   SelectedDistStockPoint:any = [];
   TotalQty: any;
   TotalAccptQty: any;
+  editSpinner = false;
 
   constructor(
     private $http : HttpClient,
@@ -86,6 +87,7 @@ export class ReturnMaterialComponent implements OnInit {
     this.getCostcenter();
     this.Finyear();
     //this.Getsearchlist2();
+    this.ObjBrowse.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.Del_Right = this.$CompacctAPI.CompacctCookies.Del_Right;
     
   }
@@ -132,7 +134,6 @@ export class ReturnMaterialComponent implements OnInit {
     }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.ToBcostcenlist = data;
-       this.ObjBrowse.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
        this.ObjReturnMat.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
        console.log('ToBcostcenlist=====',this.ToBcostcenlist)
        this.GetGodown();
@@ -351,6 +352,7 @@ saveqtyChk(){
         Entry_Date : this.DateService.dateConvert(new Date()),
         Status : 'NA',
         Remarks : item.Remarks ? item.Remarks : 'NA',
+        Store_Remarks : item.Store_Remarks ? item.Store_Remarks : 'NA',
         Total_Qty :	Number(this.TotalQty),
         Total_Accepted_Qty : 0
         
@@ -438,6 +440,84 @@ Edit(Doc_No) {
     this.EditModal = true;
   }, 200);
 
+}
+getTotal(key){
+  let TotalAmt = 0;
+  this.EditList.forEach((item)=>{
+    TotalAmt += Number(item[key]);
+  });
+
+  return  TotalAmt.toFixed(2);
+}
+saveeditreturn(){
+  // if(this.productDetails.length){
+    // if(this.saveReason()){
+      // this.ngxService.start();
+      this.editSpinner = true;
+      let temparr:any = [];
+    this.EditList.forEach((item : any)=> {
+       if(item.Qty && Number(item.Qty) != 0) {
+        const saveObj = {
+          Doc_No : item.Doc_No,
+          Doc_Date : this.DateService.dateConvert(new Date(item.Doc_Date)),
+          Cost_Cen_ID : Number(item.Cost_Cen_ID),
+          godown_id : Number(item.godown_id),
+          Product_ID : Number(item.Product_ID),
+          Qty : Number(item.Qty),
+          Accepted_Qty : Number(item.Accepted_Qty),
+          Rate : 0,
+          UOM : item.UOM,
+          Batch_No : item.Batch_No,
+          Serial_No : item.Serial_No,
+          User_ID : this.commonApi.CompacctCookies.User_ID,
+          Entry_Date : this.DateService.dateConvert(new Date()),
+          Status : 'NA',
+          Remarks : item.Remarks ? item.Remarks : 'NA',
+          Store_Remarks : item.Store_Remarks ? item.Store_Remarks : 'NA',
+          Total_Qty :	Number(this.getTotal('Qty')),
+          Total_Accepted_Qty : Number(this.getTotal('Accepted_Qty'))
+        }
+        temparr.push(saveObj)
+      }
+    })
+    // if(this.saveData.length){
+      console.log("temparr",temparr);
+      const obj = {
+        "SP_String": "Sp_Return_Material_Module",
+        "Report_Name_String":"Txn_Return_Material_Create",
+        "Json_Param_String": JSON.stringify(temparr) 
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        console.log('data=',data[0].Column1);
+     //if (data[0].Sub_Ledger_ID)
+     if(data[0].Column1)
+     {
+       //this.SubLedgerID = data[0].Column1
+      this.compacctToast.clear();
+      this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "success",
+      summary: "Consumption Create Succesfully ",
+      detail: "Succesfully Created"
+    });
+    this.EditModal = false;
+    this.Getsearchlist(true);
+    // this.getCostcenter();
+    this.editSpinner = false;
+    // this.ngxService.stop();
+    }
+    else{
+      this.editSpinner = false;
+      // this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Error",
+      detail: "Something Wrong"
+    });
+    }
+  })
 }
 Delete(col){
   this.Productid = undefined;
