@@ -486,7 +486,7 @@
 <!-- pO Activity Plan -->
 <p-dialog [header]="'PO Activity Plan'" [appendTo]="'body'" [visible]="ActivityPlanModal" [closeOnEscape]="true"
     [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '200px' }"
-    style="text-align: center;" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+    style="text-align: center;" [minY]="70" [maximizable]="false">
     <div class="form-horizontal">
             <div class="form-group">
                 <div class="col-sm-3" style="padding-left: 32px;">
@@ -496,7 +496,7 @@
                             <i class="fa fa-calendar"></i>
                         </div>
                         <input CompacctNepaliDatepicker id="ASdate" name="ASdate" #ASdate="ngModel" Class="form-control"
-                            (ngModelChange)="ASDate= $event" [(ngModel)]="ASDate">
+                            [(ngModel)]="ASDate"  (ngModelChange)="changeDate($event)"  >
                     </div>
                 </div>
             </div> <br>
@@ -521,12 +521,11 @@
                                                 <td>{{i+1}}</td>
                                                 <td>{{item.Status_Name}}</td>
                                                 <td>
-                                                <input Class="form-control"  CompacctDigitonly="true"[(ngModel)]="ExpectedDaysToDo"
-                                                    placeholder="Type Days"(ngModelChange)="getdateCh(i)">
+                                                <input Class="form-control" [name]="'id'+item.Status_ID"  CompacctDigitonly="true"[(ngModel)]="item.Expected_Days"
+                                                    placeholder="Type Days"(ngModelChange)="dateChToDo(i)">
                                                 </td>
                                                 <td>
-                                                    <input CompacctNepaliDatepicker id="todate" name="todate" #todate="ngModel" Class="form-control"
-                                                         [(ngModel)]="ToDate" disabled>
+                                                    {{item.Task_End_Date ? item.Task_End_Date : ''}}
                                             </td>
                                            </tr>
                                            
@@ -555,11 +554,11 @@
                                             <td>{{i+1}}</td>
                                             <td>{{it.Document_Name}}</td>
                                             <td>
-                                                <input Class="form-control" CompacctDigitonly="true" placeholder="Type Days"[(ngModel)]="ExpectedDaysDoc">
+                                                <input Class="form-control" [name]="'DocumentID'+it.Document_ID"  CompacctDigitonly="true"[(ngModel)]="it.Expected_Days"
+                                                placeholder="Type Days"(ngModelChange)="dateChDocument(i)">
                                             </td>
                                             <td>
-                                               <input CompacctNepaliDatepicker id="DCOdate" name="DCOdate" #DCOdate="ngModel" Class="form-control"
-                                                     [(ngModel)]="docDate" disabled>
+                                                {{it.Task_End_Date ? it.Task_End_Date : ''}}
                                              </td>
                                         </tr>
                                     </tbody>
@@ -574,7 +573,7 @@
     <p-footer>
         <button type="button" (click)="ActivityPlanModal = false" class="btn btn-info">Cancel</button>
         <button type="submit" name="bill" class="btn btn-primary pull-right custombutton"
-            (click)="CreateEmailType()">
+            (click)="saveActivityPlan()">
             <span class="glyphicon glyphicon-save"></span>&nbsp;Save
         </button>
     </p-footer>
