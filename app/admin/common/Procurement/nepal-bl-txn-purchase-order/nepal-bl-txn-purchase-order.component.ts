@@ -73,6 +73,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   Doclist: any = [];
   ExpectedDaysDoc: number = 0;
   ExpectedDaysToDo: number = 0;
+  ActivityDetailsObj:any = {}
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -317,11 +318,12 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         if(data.length){
+         console.log("Searchedlist",data)
           this.Searchedlist = data
            data.forEach((y:any) => {
           y.Doc_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(y.Doc_Date);
           });
-        // console.log("Searchedlist",this.Searchedlist)
+     
         }
       })
     }  
@@ -644,7 +646,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   this.CompantEmailName = undefined;
   this.CreateEmailModal =true 
   }
-  CreateEmailType(valid?){
+  CreateEmailType(valid){
   this.NewEmailFormSubmitted = true;
   if(valid){
            const tempSave = {
@@ -681,23 +683,53 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
        this.ActivityPlanModal = true  
       }, 300); 
        this.getPlanList(this.PoCode) 
-        this.getDocList(this.PoCode)
+       // this.getDocList(this.PoCode)
    }  
   }
   getPlanList(Docid) {
     this.ToDoList = [];
+    this.Doclist = []
+    this.ActivityDetailsObj = {}
     const obj = {
       "SP_String": "sp_PO_Activity_Plan",
-      "Report_Name_String": "Get_To_Do_List",
+      "Report_Name_String": "Get_Activity_Plan",
       "Json_Param_String": JSON.stringify([{Doc_No : Docid}])
     }
-     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-       console.log("ToDoList==",data)
-      if(data.length){
-        this.ToDoList = data;   
-       }
+     this.GlobalAPI.getData(obj).subscribe((res: any) => {
+       console.log("ToDoList==",JSON.parse(res[0].topper))
+       let data = JSON.parse(res[0].topper)
+       this.ToDoList = data[0].hasOwnProperty("bottom_To_Do_List")? data[0].bottom_To_Do_List :[]
+       this.Doclist = data[0].hasOwnProperty("bottom_Document")? data[0].bottom_Document :[]
+       this.ActivityDetailsObj =  data[0].hasOwnProperty("bottom_Activity_Details")? data[0].bottom_Activity_Details[0] :{}
+       this.ASDate = this.DateNepalConvertService.convertEngDateToNepaliDateObj(this.ActivityDetailsObj.Activity_Statrt_Date)
+      this.caldateTodo()
+      this.caldateDoc()
     });
      
+  }
+  caldateTodo(){
+    if(this.ToDoList.length){
+      this.ToDoList.forEach((ele:any) => {
+        let engdate = this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)
+         ele['Task_End_Date'] =ele.Expected_Days? 
+        this.DateNepalConvertService.convertEngDateToNepaliDateObj(new Date(new Date().setDate(new Date(engdate).getDate() + Number(ele.Expected_Days)))) : 
+        null;
+       });
+      console.log("ToDoList Date",this.ToDoList)
+     }
+  }
+  caldateDoc(){
+  if(this.Doclist.length){
+      this.Doclist.forEach((ele:any) => {
+        let engdate = this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)
+        console.log("add date Doc",this.DateNepalConvertService.convertEngDateToNepaliDateObj(new Date(new Date().setDate(new Date(engdate).getDate() + 10))))
+        ele['Task_End_Date'] =ele.Expected_Days? 
+        this.DateNepalConvertService.convertEngDateToNepaliDateObj(new Date(new Date().setDate(new Date(engdate).getDate() + Number(ele.Expected_Days)))) : 
+        null;
+        
+      });
+      
+     }
   }
   getDocList(DocId) {
     this.Doclist =[]
@@ -710,16 +742,54 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
        console.log("Doclist==",data)
       if(data.length){
         this.Doclist = data;
-
+        this.Doclist.forEach((ele:any) => {
+          ele['Task_End_Date'] =ele.Expected_Days? this.DateNepalConvertService.convertNewEngToNepaliDateObj(new Date(new Date().setDate(new Date(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)).getDate() + Number(ele.Expected_Days)))) : null;
+          
+        });
         
        }
     });
      
   }
-  getdateCh(i: any) {
-   this.ToDate[i] = this.ToDate.setDate( this.ToDate.getDate() + Number(this.ExpectedDaysToDo[i])) 
+  dateChToDo(i:any) {
+    // 
+    this.caldateTodo()
   }
-  
+  dateChDocument(i:any){
+    // this.Doclist[i].Task_End_Date = this.Doclist[i].Expected_Days ? this.DateNepalConvertService.convertNewEngToNepaliDateObj(new Date(new Date().setDate(new Date(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)).getDate() + Number(this.Doclist[i].Expected_Days)))) : null;
+    this.caldateDoc()
+  }
+  changeDate(e:any){
+    this.ASDate= e
+    this.caldateTodo()
+    this.caldateDoc()
+  }
+  saveActivityPlan(){
+    this.ToDoList.forEach((ele:any) => {
+      let endDate = ele.Task_End_Date? this.DateNepalConvertService.convertNepaliDateToEngDate(ele.Task_End_Date) :null
+      ele.Task_End_Date = endDate? this.DateService.dateConvert(new Date(endDate)) : null
+    });
+    this.Doclist.forEach((ele:any) => {
+      let endDate = ele.Task_End_Date? this.DateNepalConvertService.convertNepaliDateToEngDate(ele.Task_End_Date) :null
+      ele.Task_End_Date = endDate? this.DateService.dateConvert(new Date(endDate)) :null
+    });
+    let saveData = {
+      PO_Doc_No : this.PoCode,
+      Activity_Statrt_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)),
+      bottom_To_Do : this.ToDoList,
+      bottom_Document: this.Doclist
+    }
+    console.log("saveData",saveData)
+    console.log("saveData",JSON.stringify(saveData))
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Order_Activity",
+      "Report_Name_String": "Create_PO_Activity",
+      "Json_Param_String": JSON.stringify([saveData])
+    }
+     this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      console.log("data",data)
+     })
+  }
   // toEmailChange(){
   //   console.log("toEmailList", this.toEmailList)
   //   console.log("CCEmailList",this.CCEmailList)

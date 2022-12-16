@@ -978,10 +978,10 @@
                                                     class="form-control" 
                                                     name="Mobile_No" 
                                                     #Mobile_No="ngModel" 
-                                                    CompacctDigitonly="true" 
+                                                    pattern="[0-9]+"
                                                     [ngClass]="{clearance: (SubledgerContactPersonSubmitted && Mobile_No.errors?.required) ||
-                                                        (Mobile_No.errors?.minlength && Mobile_No.touched)}"
-                                                    [(ngModel)]="ObjContact.Contact_Number" placeholder="Mobile Number" minlength="10" maxlength="10" required />
+                                                        (Mobile_No.errors?.pattern && Mobile_No.touched)}"
+                                                    [(ngModel)]="ObjContact.Contact_Number" placeholder="Mobile Number" required />
                                             </div>
                                             <div class="col-sm-4">
                                                 <button class="btn btn-primary custombutton" (click)='SaveContactForm(ContactDetailsForm.form.valid)'>
