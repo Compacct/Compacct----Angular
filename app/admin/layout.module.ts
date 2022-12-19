@@ -402,6 +402,7 @@ import { DoctorsAppointmentNewOAEComponent } from "./common/PatientManagement/do
 import { DoctorsAppointmentNewSpTestComponent } from "./common/PatientManagement/doctors-appointment-new-sp-test/doctors-appointment-new-sp-test.component";
 import { DoctorsAppointmentNewGlycerolTestComponent } from "./common/PatientManagement/doctors-appointment-new-glycerol-test/doctors-appointment-new-glycerol-test.component";
 import { AcceptReturnMaterialComponent } from './common/MICL/accept-return-material/accept-return-material.component';
+import { EInvoiceConfirmationFormComponent } from './common/OutletManagement/e-invoice-confirmation-form/e-invoice-confirmation-form.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -720,7 +721,8 @@ import { AcceptReturnMaterialComponent } from './common/MICL/accept-return-mater
     DoctorsAppointmentNewOAEComponent,
     DoctorsAppointmentNewSpTestComponent,
     DoctorsAppointmentNewGlycerolTestComponent,
-    AcceptReturnMaterialComponent
+    AcceptReturnMaterialComponent,
+    EInvoiceConfirmationFormComponent
   ],
   imports: [
     CommonModule,

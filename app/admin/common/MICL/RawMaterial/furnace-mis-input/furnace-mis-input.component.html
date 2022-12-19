@@ -36,6 +36,24 @@
         </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" key="d" (onClose)="onReject()" [modal]="true" [autoZIndex]="true" baseZIndex="99999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirmdelreason()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -727,6 +745,10 @@
                              </div>
                             <div class="col-sm-3">
                                 <label class="control-label">Reason<sup class="text-danger">*</sup></label>
+                                <div class="pull-right">
+                                    <!-- <button (click)="ViewReason()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; -->
+                                    <button (click)="ReasonPopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                </div>
                                 <select class="form-control" 
                                 name="reason" 
                                 #reason="ngModel" 
@@ -753,6 +775,7 @@
                                         <tr style="background-color:#4fa1d1;color:white;">
                                             <th>From</th>
                                             <th>To</th>
+                                            <th>Duration (In Min)</th>
                                             <th>Reason</th>
                                             <th></th>
                                         </tr>
@@ -761,6 +784,7 @@
                                         <tr *ngFor="let obj of AddShutdownList; let ind = index;">
                                             <td>{{obj.From_Time}}</td>
                                             <td>{{obj.To_Time}}</td>
+                                            <td>{{obj.Time_Duration}}</td>
                                             <td>{{obj.Reason_Des}}</td>
                                             <td><button (click)="Shutdowndelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                         </tr>
@@ -770,7 +794,7 @@
                         </div>
                     </p-tabPanel>
                     <!-- Product Characteristics -->
-                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[6]" leftIcon="fa fa-file-text-o">
+                    <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[6]" leftIcon="fa fa-file-text-o">
                         <div class="box-footer">
                             <div class="no-padding">
                                 <p-table [value]="ProCharList"
@@ -794,33 +818,12 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <!-- <th style="width:5em">Action</th> -->
                                             <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforProCharList">{{option.replaceAll('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr>
     
-                                            <!-- <td>
-                                                <div class="dropdown">
-                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
-                                                                    <i class="fa fa-fw fa-bars"></i>
-                                                                    <span class="caret"></span>
-                                                                </button>
-                                                    <ul class="dropdown-menu">
-                                                        <li>
-                                                            <a (click)="CreateGRN(col)">
-                                                                    <i class="fa fa-fw fa-pencil"></i> Create GRN 
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a (click)="PrintPRDB(col.RDB_No)">
-                                                                <i class="fa fa-fw fa-print"></i> Print
-                                                            </a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </td> -->
                                             <ng-container *ngFor="let option of DynamicHeaderforProCharList">
                                                 <td nowrap="nowrap">{{col[option]}}</td>
                                             </ng-container>
@@ -834,9 +837,9 @@
                             </div>
                             <div *ngIf='!ProCharList.length'><b>No Data Found.</b></div>
                         </div>
-                    </p-tabPanel>
+                    </p-tabPanel> -->
                     <!-- Despatches -->
-                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[7]" leftIcon="fa fa-truck">
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[6]" leftIcon="fa fa-truck">
                         <div class="box-footer">
                             <div class="no-padding">
                                 <p-table [value]="DispatchList"
@@ -902,7 +905,7 @@
                         </div>
                     </p-tabPanel>
                     <!-- Critical Issue -->
-                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[8]" leftIcon="fa fa-pencil-square-o">
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[7]" leftIcon="fa fa-pencil-square-o">
                          <div class="form-group">
                             <!-- <h5 style="
                                     padding: 0.5em 1em;
@@ -955,3 +958,66 @@
 </div>
 </div>
 </div>
+
+<!-- REASON VIEW -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewReasonModal" [modal]="true" [responsive]="true" [minY]="70" [maximizable]="true" [closeOnEscape]="true" [style]="{ width: '40%', minWidth: '200px' }"  
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="ReasonList">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th width="50%">Reason</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Reason_Des}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteReason(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewReasonModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+
+<!-- REASON CREATE -->
+<p-dialog [header]="'Create MOC'" [appendTo]="'body'" [visible]="CreateReasonModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="CreateReasonForm" #CreateReasonForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Reason Description<sup class="text-danger">*</sup
+  ></label>
+                    <input type="text" class="form-control" name="createreason" #createreason="ngModel" [(ngModel)]="Reason_Des" placeholder="Reason Description"
+                     [ngClass]="{clearance: CreateReasonFormSubmitted && createreason?.errors?.required}" required />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="CreateReasonModal = false" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreateReason(CreateReasonForm.form.valid)" id="load2" [disabled]="Spinnerreas">
+<p-progressSpinner
+  *ngIf="Spinnerreas"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinnerreas"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;CREATE
+</button>
+    </p-footer>
+</p-dialog>
