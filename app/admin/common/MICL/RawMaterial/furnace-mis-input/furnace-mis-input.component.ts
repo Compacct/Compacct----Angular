@@ -66,6 +66,13 @@ export class FurnaceMisInputComponent implements OnInit {
 
   DispatchList:any = [];
   DynamicHeaderforDispatchList:any = [];
+  ViewReasonModal = false;
+  reasonid: any;
+  CreateReasonModal = false;
+  Reason_Des: any;
+  Spinnerreas = false;
+  CreateReasonFormSubmitted = false;
+  Time_Duration: any;
   
   constructor(
     private $http: HttpClient,
@@ -81,8 +88,7 @@ export class FurnaceMisInputComponent implements OnInit {
 
   ngOnInit() {
     this.items = ["DAILY PERFORMANCE PARAMETER", "RAW MATERIAL CONSUMPTION", "CONSUMABLE CONSUMPTION",
-                  "PRODUCTION", "WASTE SLAG", "SHUTDOWN DETAILS", "PRODUCT CHARACTERISTICS",
-                  "DISPATCHES", "CRITICAL ISSUE"];
+                  "PRODUCTION", "WASTE SLAG", "SHUTDOWN DETAILS", "DISPATCHES", "CRITICAL ISSUE"];
     this.Header.pushHeader({
       Header: "Furnace MIS Input",
       Link: "Material Management -> Production -> Furnace MIS Input"
@@ -99,16 +105,17 @@ export class FurnaceMisInputComponent implements OnInit {
   onReject(){
     this.compacctToast.clear("c");
     this.compacctToast.clear("s");
+    this.compacctToast.clear("d");
     this.ngxService.stop();
     this.Spinner = false;
+    this.Spinnerreas = false;
   }
   onConfirm(){}
   TabClick(e) {
     //console.log(e)
     this.tabIndexToView = e.index;
     this.items = ["DAILY PERFORMANCE PARAMETER", "RAW MATERIAL CONSUMPTION", "CONSUMABLE CONSUMPTION",
-                  "PRODUCTION", "WASTE SLAG", "SHUTDOWN DETAILS", "PRODUCT CHARACTERISTICS",
-                  "DISPATCHES", "CRITICAL ISSUE"];
+                  "PRODUCTION", "WASTE SLAG", "SHUTDOWN DETAILS", "DISPATCHES", "CRITICAL ISSUE"];
     //this.buttonname = "Save";
     //this.clearData();
   }
@@ -178,7 +185,7 @@ export class FurnaceMisInputComponent implements OnInit {
       // ? this.DateService.dateConvert(new Date(this.ObjPendingRDB.end_date))
       // : this.DateService.dateConvert(new Date());
       const tempobj = {
-      //  Furnace_No : this.ObjFurnaceMISinput.Furnace_No,
+      Furnace_ID : Number(this.ObjFurnaceMISinput.Furnace_No),
       Furnace_Date : this.DateService.dateConvert(new Date(this.Doc_Date))
       }
       const obj = {
@@ -187,23 +194,23 @@ export class FurnaceMisInputComponent implements OnInit {
         "Json_Param_String": JSON.stringify([tempobj])
         }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        this.ConsumableConsList = data;
+        this.RawMatConsList = data;
         // this.BackupSearchedlist = data;
         // this.GetDistinct();
-        if(this.ConsumableConsList.length){
-          this.DynamicHeaderforCC = Object.keys(data[0]);
+        if(this.RawMatConsList.length){
+          this.DynamicHeaderforRMC = Object.keys(data[0]);
         }
         else {
-          this.DynamicHeaderforCC = [];
+          this.DynamicHeaderforRMC = [];
         }
-        console.log("ConsumableConsList",this.ConsumableConsList);
+        console.log("RawMatConsList",this.RawMatConsList);
       })
   }
 
   // CONSUMABLE CONSUMPTION
   GetConsConsumption() {
     const tempobj = {
-    //  Furnace_No : this.ObjFurnaceMISinput.Furnace_No,
+    Furnace_ID : Number(this.ObjFurnaceMISinput.Furnace_No),
     Furnace_Date : this.DateService.dateConvert(new Date(this.Doc_Date))
     }
     const obj = {
@@ -212,16 +219,16 @@ export class FurnaceMisInputComponent implements OnInit {
       "Json_Param_String": JSON.stringify([tempobj])
       }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      this.RawMatConsList = data;
+      this.ConsumableConsList = data;
       // this.BackupSearchedlist = data;
       // this.GetDistinct();
-      if(this.RawMatConsList.length){
-        this.DynamicHeaderforRMC = Object.keys(data[0]);
+      if(this.ConsumableConsList.length){
+        this.DynamicHeaderforCC = Object.keys(data[0]);
       }
       else {
-        this.DynamicHeaderforRMC = [];
+        this.DynamicHeaderforCC = [];
       }
-      console.log("RawMatConsList",this.RawMatConsList);
+      console.log("ConsumableConsList",this.ConsumableConsList);
     })
   }
 
@@ -371,9 +378,11 @@ export class FurnaceMisInputComponent implements OnInit {
     console.log("this.ObjFurMISinputShutdoun.To_Time",this.ObjFurMISinputShutdoun.To_Time)
  
     if(valid){
+      this.CalculateTime();
         this.AddShutdownList.push({
           From_Time: furdate + " " + this.transform(this.ObjFurMISinputShutdoun.From_Time),
           To_Time: furdate +" "+ this.transform(this.ObjFurMISinputShutdoun.To_Time),
+          Time_Duration: this.Time_Duration,
           Reason_ID: Number(this.ObjFurMISinputShutdoun.Reason_ID),
           Reason_Des: reson[0].Reason_Des,
         })
@@ -395,6 +404,109 @@ export class FurnaceMisInputComponent implements OnInit {
     hour = (hour+'').length == 1 ? `0${hour}` : hour;
     return `${hour}:${min}${part}`
   }
+
+  //REASON
+  // ViewReason(){
+  //   this.ReasonList = [];
+  //   this.GetReason();
+  //   setTimeout(() => {
+  //   this.ViewReasonModal = true;
+  //   }, 300);
+  // }
+  // deleteReason(reasonid){
+  //   this.reasonid = undefined;
+  //   if(reasonid.Reason_ID){
+  //     this.reasonid = reasonid.Reason_ID;
+  //    // this.cnfrm2_popup = true;
+  //     this.compacctToast.clear();
+  //     this.compacctToast.add({
+  //       key: "d",
+  //       sticky: true,
+  //       severity: "warn",
+  //       summary: "Are you sure?",
+  //       detail: "Confirm to proceed"
+  //     });
+  //   }
+  // }
+  ReasonPopup(){
+    this.CreateReasonFormSubmitted = false;
+    this.Reason_Des = undefined;
+    this.CreateReasonModal = true;
+    this.Spinnerreas = false;
+  }
+  CreateReason(valid){
+    this.CreateReasonFormSubmitted = true;
+    this.Spinnerreas = true;
+      const Obj = {
+        Reason_Des : this.Reason_Des
+      }
+      if(valid){
+         const obj = {
+           "SP_String": "SP_Furnace_MIS_Input",
+           "Report_Name_String" : "Create_Reason_For_Dropdown",
+           "Json_Param_String": JSON.stringify([Obj])
+       
+         }
+         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+           console.log(data);
+           var tempID = data[0].Column1;
+           if(data[0].Column1){
+            this.compacctToast.clear();
+            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+            this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: "Reason  ",
+             detail: "Succesfully Created" //+ mgs
+           });
+           this.CreateReasonFormSubmitted = false;
+           this.Reason_Des = undefined;
+           this.CreateReasonModal = false;
+           this.Spinnerreas = false;
+           this.GetReason();
+       
+           } else{
+             this.Spinnerreas = false;
+             this.compacctToast.clear();
+             this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "error",
+               summary: "Warn Message",
+               detail: "Error Occured "
+             });
+           }
+         })
+       
+        }
+        else {
+          this.Spinnerreas = false;
+        }
+  }
+  CalculateTime(){
+    // console.log("obj.Off_Out_Time",new Date(obj.Off_Out_Time))
+    // console.log("obj.Off_In_Time",new Date(obj.Off_In_Time))
+      // obj.Work_Minute = undefined;
+        this.Time_Duration = undefined;
+        if (this.ObjFurMISinputShutdoun.From_Time && this.ObjFurMISinputShutdoun.To_Time) {
+          // console.log("obj.Off_Out_Time",obj.Off_In_Time)
+          // console.log("obj.Off_In_Time",obj.Off_In_Time)
+          var totime:any = this.ObjFurMISinputShutdoun.To_Time.split(":");
+          var fromtime:any = this.ObjFurMISinputShutdoun.From_Time.split(":");
+          // console.log("getOut_Time",outtime.getTime())
+          // console.log("getIn_Time",intime.getTime())
+        // var minutes = Math.abs(outtime.getTime() - intime.getTime()) / 36e5 * 60;
+        // var minutes = (Math.abs(totime - fromtime) / (1000 * 60));
+        var subhours = (totime[0] - fromtime[0]);
+        var submin = (totime[1] - fromtime[1]);
+        var minutes = ((Math.abs(subhours)  * 60) + submin);
+        this.Time_Duration = minutes;
+        console.log('this.Time_Duration===',this.Time_Duration)
+        // console.log(this.DateService.dateTimeConvert(new Date(this.objemployee.Off_In_Time)));
+        // console.log(this.DateService.dateTimeConvert(new Date(this.objemployee.Off_Out_Time)));
+      } 
+      
+  }
+
  GetFurnaceNo(){
   const obj = {
     "SP_String": "SP_Furnace_MIS_Input",

@@ -41,6 +41,7 @@ export class AcceptReturnMaterialComponent implements OnInit {
   viewproductDetails:any = [];
   initDate:any = [];
   ObjBrowseData : BrowseData = new BrowseData ()
+  DistributionSearchFormSubmitted = false;
   ToBcostcenlist:any = [];
   ToBGodownList:any = [];
   AcceptRMSearchFormSubmitted = false;
