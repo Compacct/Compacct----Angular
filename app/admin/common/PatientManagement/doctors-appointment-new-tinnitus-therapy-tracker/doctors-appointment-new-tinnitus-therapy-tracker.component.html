@@ -1,0 +1,720 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+           <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+
+                        <form name="DoctorsAppointmentNewTinnitusTherapyTracker" #DoctorsAppointmentNewTinnitusTherapyTrackerForm="ngForm" novalidate>
+
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    name="Name"
+                                    #Name="ngModel" 
+                                    [(ngModel)]="ObjTinnitusTherapy.Name"
+                                    placeholder="Write Your Name"
+                                    disabled
+                                    > 
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Patient ID<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    name="PatientID"
+                                    #PatientID="ngModel"
+                                    [(ngModel)]="ObjTinnitusTherapy.PatientID" 
+                                    CompacctDigitonly="true"
+                                    placeholder="Type Patient ID"
+                                    disabled
+                                    > 
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Sex<sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                    name="Sex"
+                                    #Sex="ngModel"
+                                    [(ngModel)]="ObjTinnitusTherapy.Sex"
+                                    disabled
+                                     >
+                                     <option  [ngValue]="undefined">Select</option>
+                                     <option  *ngFor="let option of GenderList" value="{{option}}">
+                                         {{option}}
+                                     </option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Age<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    name="Age"
+                                    #Age="ngModel"
+                                    [(ngModel)]="ObjTinnitusTherapy.Age" 
+                                    CompacctDigitonly="true"
+                                    placeholder="Put Your Age"
+                                    disabled
+                                    > 
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{Appo_Date ? (Appo_Date | date: "dd/MMM/yyyy") : '-'}}</div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Reffered By<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    name="RefferedBy"
+                                    #RefferedBy="ngModel"
+                                    [(ngModel)]="ObjTinnitusTherapy.RefferedBy" 
+                                    placeholder="Type Reffered By"
+                                    disabled
+                                    > 
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Centre<sup class="text-danger">*</sup></label>                                 
+                                    <p-dropdown [options]="CentreList"
+                                            name="Centre" 
+                                            #Centre="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Centre"
+                                            [showClear]="true" 
+                                            [emptyFilterMessage]="' No Centre Found'" 
+                                            [filter]="true" filterBy="label,value.name" 
+                                            [resetFilterOnHide]="true" 
+                                            [placeholder]="'Select Centre'" 
+                                            [virtualScroll]="true"
+                                            itemSize="30"
+                                            [required]="true"
+                                            disabled> 
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-sm-3">
+                                </div>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <div class="row"  style="overflow-x:auto;">
+                                <table class="table-responsive">
+                                    <tr>
+                                        <th class="table-header"></th>
+                                        <th class="table-header">1st Assessment Results</th>
+                                        <th class="table-header">Session 1</th>
+                                        <th class="table-header">Session 2</th>
+                                        <th class="table-header">Session 3</th>
+                                        <th class="table-header">Session 4</th>
+                                        <th class="table-header">Session 5</th>
+                                        <th class="table-header">Session 6</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;" class="text-nowrap">Date</th>
+                                        <td>
+                                            <ejs-datepicker 
+                                            [(value)]="Tinnitus_Therapy_Date_Assessment" 
+                                            [format]="'dd/MMM/yyyy'"
+                                            name="Tinnitus_Therapy_Date_Assessment"
+                                            ></ejs-datepicker>
+                                        </td>
+                                        <td>
+                                            <ejs-datepicker 
+                                            [(value)]="Tinnitus_Therapy_Date_Session_1" 
+                                            [format]="'dd/MMM/yyyy'"
+                                            name="Tinnitus_Therapy_Date_Session_1"
+                                            ></ejs-datepicker>
+                                        </td>
+                                        <td>
+                                            <ejs-datepicker 
+                                            [(value)]="Tinnitus_Therapy_Date_Session_2" 
+                                            [format]="'dd/MMM/yyyy'"
+                                            name="Tinnitus_Therapy_Date_Session_2"
+                                            ></ejs-datepicker>
+                                        </td>
+                                        <td>
+                                            <ejs-datepicker 
+                                            [(value)]="Tinnitus_Therapy_Date_Session_3" 
+                                            [format]="'dd/MMM/yyyy'"
+                                            name="Tinnitus_Therapy_Date_Session_3"
+                                            ></ejs-datepicker>
+                                        </td>
+                                        <td>
+                                            <ejs-datepicker 
+                                            [(value)]="Tinnitus_Therapy_Date_Session_4" 
+                                            [format]="'dd/MMM/yyyy'"
+                                            name="Tinnitus_Therapy_Date_Session_4"
+                                            ></ejs-datepicker>
+                                        </td>
+                                        <td>
+                                            <ejs-datepicker 
+                                            [(value)]="Tinnitus_Therapy_Date_Session_5" 
+                                            [format]="'dd/MMM/yyyy'"
+                                            name="Tinnitus_Therapy_Date_Session_5"
+                                            ></ejs-datepicker>
+                                        </td>
+                                        <td>
+                                            <ejs-datepicker 
+                                            [(value)]="Tinnitus_Therapy_Date_Session_6" 
+                                            [format]="'dd/MMM/yyyy'"
+                                            name="Tinnitus_Therapy_Date_Session_6"
+                                            ></ejs-datepicker>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;" class="text-nowrap">Degree of Loss</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Tinnitus_Therapy_Degree_Loss_Assessment"
+                                                #Tinnitus_Therapy_Degree_Loss_Assessment="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Assessment"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of DegreeList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Tinnitus_Therapy_Degree_Loss_Session_1"
+                                                #Tinnitus_Therapy_Degree_Loss_Session_1="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_1"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of DegreeList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Tinnitus_Therapy_Degree_Loss_Session_2"
+                                            #Tinnitus_Therapy_Degree_Loss_Session_2="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_2"
+                                            >
+                                             <option  [ngValue]="undefined">Select</option>
+                                             <option  *ngFor="let option of DegreeList" value="{{option}}">
+                                                 {{option}}
+                                             </option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Tinnitus_Therapy_Degree_Loss_Session_3"
+                                            #Tinnitus_Therapy_Degree_Loss_Session_3="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_3"
+                                            >
+                                             <option  [ngValue]="undefined">Select</option>
+                                             <option  *ngFor="let option of DegreeList" value="{{option}}">
+                                                 {{option}}
+                                             </option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Tinnitus_Therapy_Degree_Loss_Session_4"
+                                            #Tinnitus_Therapy_Degree_Loss_Session_4="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_4"
+                                            >
+                                             <option  [ngValue]="undefined">Select</option>
+                                             <option  *ngFor="let option of DegreeList" value="{{option}}">
+                                                 {{option}}
+                                             </option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Tinnitus_Therapy_Degree_Loss_Session_5"
+                                            #Tinnitus_Therapy_Degree_Loss_Session_5="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_5"
+                                            >
+                                             <option  [ngValue]="undefined">Select</option>
+                                             <option  *ngFor="let option of DegreeList" value="{{option}}">
+                                                 {{option}}
+                                             </option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Tinnitus_Therapy_Degree_Loss_Session_6"
+                                            #Tinnitus_Therapy_Degree_Loss_Session_6="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_6"
+                                            >
+                                             <option  [ngValue]="undefined">Select</option>
+                                             <option  *ngFor="let option of DegreeList" value="{{option}}">
+                                                 {{option}}
+                                             </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;" class="text-nowrap">Type of Loss</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Tinnitus_Therapy_Type_Loss_Assessment"
+                                                #Tinnitus_Therapy_Type_Loss_Assessment="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Assessment"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of TypeList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Tinnitus_Therapy_Type_Loss_Session_1"
+                                                #Tinnitus_Therapy_Type_Loss_Session_1="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_1"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of TypeList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Tinnitus_Therapy_Type_Loss_Session_2"
+                                            #Tinnitus_Therapy_Type_Loss_Session_2="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_2"
+                                            >
+                                             <option  [ngValue]="undefined">Select</option>
+                                             <option  *ngFor="let option of TypeList" value="{{option}}">
+                                                 {{option}}
+                                             </option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Tinnitus_Therapy_Type_Loss_Session_3"
+                                            #Tinnitus_Therapy_Type_Loss_Session_3="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_3"
+                                            >
+                                             <option  [ngValue]="undefined">Select</option>
+                                             <option  *ngFor="let option of TypeList" value="{{option}}">
+                                                 {{option}}
+                                             </option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Tinnitus_Therapy_Type_Loss_Session_4"
+                                            #Tinnitus_Therapy_Type_Loss_Session_4="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_4"
+                                            >
+                                             <option  [ngValue]="undefined">Select</option>
+                                             <option  *ngFor="let option of TypeList" value="{{option}}">
+                                                 {{option}}
+                                             </option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Tinnitus_Therapy_Type_Loss_Session_5"
+                                            #Tinnitus_Therapy_Type_Loss_Session_5="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_5"
+                                            >
+                                             <option  [ngValue]="undefined">Select</option>
+                                             <option  *ngFor="let option of TypeList" value="{{option}}">
+                                                 {{option}}
+                                             </option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Tinnitus_Therapy_Type_Loss_Session_6"
+                                            #Tinnitus_Therapy_Type_Loss_Session_6="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_6"
+                                            >
+                                             <option  [ngValue]="undefined">Select</option>
+                                             <option  *ngFor="let option of TypeList" value="{{option}}">
+                                                 {{option}}
+                                             </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;" class="text-nowrap">THI score</th>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_THI_Score_Assessment"
+                                                #Tinnitus_Therapy_THI_Score_Assessment="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_THI_Score_Assessment"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_THI_Score_Session_1"
+                                                #Tinnitus_Therapy_THI_Score_Session_1="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_THI_Score_Session_1"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_THI_Score_Session_2"
+                                                #Tinnitus_Therapy_THI_Score_Session_2="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_THI_Score_Session_2"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_THI_Score_Session_3"
+                                                #Tinnitus_Therapy_THI_Score_Session_3="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_THI_Score_Session_3"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_THI_Score_Session_4"
+                                                #Tinnitus_Therapy_THI_Score_Session_4="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_THI_Score_Session_4"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_THI_Score_Session_5"
+                                                #Tinnitus_Therapy_THI_Score_Session_5="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_THI_Score_Session_5"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_THI_Score_Session_6"
+                                                #Tinnitus_Therapy_THI_Score_Session_6="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_THI_Score_Session_6"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;" class="text-nowrap">Severity</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Tinnitus_Therapy_Severity_Assessment"
+                                                #Tinnitus_Therapy_Severity_Assessment="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Severity_Assessment"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of SeverityList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Tinnitus_Therapy_Severity_Session_1"
+                                                #Tinnitus_Therapy_Severity_Session_1="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Severity_Session_1"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of SeverityList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Tinnitus_Therapy_Severity_Session_2"
+                                                #Tinnitus_Therapy_Severity_Session_2="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Severity_Session_2"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of SeverityList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Tinnitus_Therapy_Severity_Session_3"
+                                                #Tinnitus_Therapy_Severity_Session_3="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Severity_Session_3"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of SeverityList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Tinnitus_Therapy_Severity_Session_4"
+                                                #Tinnitus_Therapy_Severity_Session_4="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Severity_Session_4"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of SeverityList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Tinnitus_Therapy_Severity_Session_5"
+                                                #Tinnitus_Therapy_Severity_Session_5="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Severity_Session_5"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of SeverityList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Tinnitus_Therapy_Severity_Session_6"
+                                                #Tinnitus_Therapy_Severity_Session_6="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Severity_Session_6"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of SeverityList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px" class="text-nowrap">Device Name</th>
+                                        <td>
+                                            <p-dropdown [options]="HearingAIdList" name="Tinnitus_Therapy_Device_Name_Assessment" #Tinnitus_Therapy_Device_Name_Assessment="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Assessment" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                            [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select'"
+                                            [virtualScroll]="true" itemSize="30" >
+                                            </p-dropdown>
+                                        </td>
+                                        <td>
+                                            <p-dropdown [options]="HearingAIdList" name="Tinnitus_Therapy_Device_Name_Session_1" #Tinnitus_Therapy_Device_Name_Session_1="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_1" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                            [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select'"
+                                            [virtualScroll]="true" itemSize="30" >
+                                            </p-dropdown>
+                                        </td>
+                                        <td>
+                                            <p-dropdown [options]="HearingAIdList" name="Tinnitus_Therapy_Device_Name_Session_2" #Tinnitus_Therapy_Device_Name_Session_2="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_2" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                            [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select'"
+                                            [virtualScroll]="true" itemSize="30" >
+                                            </p-dropdown>
+                                        </td>
+                                        <td>
+                                            <p-dropdown [options]="HearingAIdList" name="Tinnitus_Therapy_Device_Name_Session_3" #Tinnitus_Therapy_Device_Name_Session_3="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_3" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                            [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select'"
+                                            [virtualScroll]="true" itemSize="30" >
+                                            </p-dropdown>
+                                        </td>
+                                        <td>
+                                            <p-dropdown [options]="HearingAIdList" name="Tinnitus_Therapy_Device_Name_Session_4" #Tinnitus_Therapy_Device_Name_Session_4="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_4" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                            [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select'"
+                                            [virtualScroll]="true" itemSize="30" >
+                                            </p-dropdown>
+                                        </td>
+                                        <td>
+                                            <p-dropdown [options]="HearingAIdList" name="Tinnitus_Therapy_Device_Name_Session_5" #Tinnitus_Therapy_Device_Name_Session_5="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_5" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                            [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select'"
+                                            [virtualScroll]="true" itemSize="30" >
+                                            </p-dropdown>
+                                        </td>
+                                        <td>
+                                            <p-dropdown [options]="HearingAIdList" name="Tinnitus_Therapy_Device_Name_Session_6" #Tinnitus_Therapy_Device_Name_Session_6="ngModel" 
+                                            [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_6" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                            [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select'"
+                                            [virtualScroll]="true" itemSize="30" >
+                                            </p-dropdown>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;" class="text-nowrap">Counselling Time (mins)</th>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_Counselling_Time_Assessment"
+                                                #Tinnitus_Therapy_Counselling_Time_Assessment="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Counselling_Time_Assessment"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            >
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_Counselling_Time_Session_1"
+                                                #Tinnitus_Therapy_Counselling_Time_Session_1="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Counselling_Time_Session_1"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_Counselling_Time_Session_2"
+                                                #Tinnitus_Therapy_Counselling_Time_Session_2="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Counselling_Time_Session_2"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_Counselling_Time_Session_3"
+                                                #Tinnitus_Therapy_Counselling_Time_Session_3="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Counselling_Time_Session_3"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_Counselling_Time_Session_4"
+                                                #Tinnitus_Therapy_Counselling_Time_Session_4="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Counselling_Time_Session_4"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_Counselling_Time_Session_5"
+                                                #Tinnitus_Therapy_Counselling_Time_Session_5="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Counselling_Time_Session_5"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_Counselling_Time_Session_6"
+                                                #Tinnitus_Therapy_Counselling_Time_Session_6="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Counselling_Time_Session_6"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;" class="text-nowrap">Therapy Duration (mins)</th>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_Therapy_Duration_Assessment"
+                                                #Tinnitus_Therapy_Therapy_Duration_Assessment="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Therapy_Duration_Assessment"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_Therapy_Duration_Session_1"
+                                                #Tinnitus_Therapy_Therapy_Duration_Session_1="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Therapy_Duration_Session_1"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_Therapy_Duration_Session_2"
+                                                #Tinnitus_Therapy_Therapy_Duration_Session_2="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Therapy_Duration_Session_2"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_Therapy_Duration_Session_3"
+                                                #Tinnitus_Therapy_Therapy_Duration_Session_3="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Therapy_Duration_Session_3"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_Therapy_Duration_Session_4"
+                                                #Tinnitus_Therapy_Therapy_Duration_Session_4="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Therapy_Duration_Session_4"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_Therapy_Duration_Session_5"
+                                                #Tinnitus_Therapy_Therapy_Duration_Session_5="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Therapy_Duration_Session_5"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                                name="Tinnitus_Therapy_Therapy_Duration_Session_6"
+                                                #Tinnitus_Therapy_Therapy_Duration_Session_6="ngModel" 
+                                                [(ngModel)]="ObjTinnitusTherapy.Tinnitus_Therapy_Therapy_Duration_Session_6"
+                                                placeholder="Write Here..."
+                                                CompacctDigitonly="true"
+                                            > 
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <div class="form-group">
+                                <update-consultancy #consultancy (saveData)="updateConsultancysave($event)"></update-consultancy>
+                            </div>
+
+                            <div class="form-group" style="padding: 1em;">
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-2"></div>
+                                <div class="col-sm-2">
+                                    <button *ngIf="buttonValid" class="btn btn-primary pull-right" (click)="saveDocAppo(DoctorsAppointmentNewTinnitusTherapyTrackerForm.form.valid)"  id="load"   [disabled]="">
+                                        <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                    </button>
+                                </div> 
+                            </div> 
+
+                        </form>
+
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
