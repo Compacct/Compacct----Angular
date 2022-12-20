@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
@@ -8,6 +8,9 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
 import { DateNepalConvertService } from "../../../shared/compacct.global/dateNepal.service"
 import { UnsubscriptionError } from 'rxjs';
 import { createClient } from 'http';
+import { FileUpload } from "primeng/primeng";
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-nepal-bl-txn-purchase-order',
@@ -17,9 +20,9 @@ import { createClient } from 'http';
   encapsulation: ViewEncapsulation.None
 })
 export class NepalBLTxnPurchaseOrderComponent implements OnInit {
-  tabIndexToView:number = 0;
-  items :any = [] ;
-  buttonname :string = "Save";
+  tabIndexToView: number = 0;
+  items: any = [];
+  buttonname: string = "Save";
   ObjPurchase: Purchase = new Purchase();
   DocDate: any = {};
   BrowseStartDate: any = {};
@@ -29,7 +32,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   docDate: any = {};
   PurchaseOrderForm: boolean = false;
   SearchFormSubmit: boolean = false;
-  TotalRate:number = 0;
+  TotalRate: number = 0;
   BillingTolist: any = [];
   ShippingTolist: any = [];
   VendorList: any = [];
@@ -38,10 +41,10 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   ProductQtyTotal: number = 0;
   QtyTotal: number = 0;
   Searchedlist: any = [];
-  masterDoc:any = undefined;
-  PoCode:any = undefined;
-  Spinner:boolean = false;
-  editorDis:boolean = false;
+  masterDoc: any = undefined;
+  PoCode: any = undefined;
+  Spinner: boolean = false;
+  editorDis: boolean = false;
   EditList: any = [];
   UpdatePono: any = {};
   ViewPoTypeModal: boolean = false;
@@ -54,9 +57,9 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   CreateEmailModal: boolean = false;
   CaptionList: any = [];
   CompanyList: any = [];
-  CurentSID :any = undefined;
+  CurentSID: any = undefined;
   CompanyEmailList: any = [];
-  EmailId :any = undefined;
+  EmailId: any = undefined;
   NewEmailFormSubmitted: boolean = false;
   CompantEmailName: any = undefined;
   toEmailList: any = [];
@@ -73,25 +76,35 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   Doclist: any = [];
   ExpectedDaysDoc: number = 0;
   ExpectedDaysToDo: number = 0;
-  ActivityDetailsObj:any = {}
+  ActivityDetailsObj: any = {};
+  ViewPoVaultModal: boolean = false;
+  PODocVList: any = [];
+  PDFFlag: boolean = false;
+  ProductPDFFile: any = [];
+  ValidationNoUpload: any = undefined;
+  DocIdD: any = undefined
+  DocUplodeDate: any
+  @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
     private Header: CompacctHeader,
     private DateService: DateTimeConvertService,
-    private DateNepalConvertService : DateNepalConvertService,
+    private DateNepalConvertService: DateNepalConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
-  this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE"];
     this.Header.pushHeader({
       Header: "Purchase Order",
       Link: " Procurement ->  Nepal BL Txn Purchase Order"
     });
     this.DocDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
-    this.BrowseStartDate =this.DateNepalConvertService.GetNepaliCurrentDateNew();
+    this.BrowseStartDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
     this.BrowseEndDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
     this.ASDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
     this.ToDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
@@ -131,48 +144,48 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   }
   getGodown() {
     this.BillingTolist = [];
-    this.ShippingTolist =[]
+    this.ShippingTolist = []
     const obj = {
-        "SP_String": "sp_Bl_Txn_Purchase_Order_Nepal",
-        "Report_Name_String": "Get_Godown_Details",
+      "SP_String": "sp_Bl_Txn_Purchase_Order_Nepal",
+      "Report_Name_String": "Get_Godown_Details",
     }
-     this.GlobalAPI.getData(obj).subscribe((data: any) => {
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
       // console.log("GodownList==",data)
-      if(data.length){
-        data.forEach((xy:any) => {
-         xy['label'] = xy.Godown
-         xy['value'] = xy.Godown
+      if (data.length) {
+        data.forEach((xy: any) => {
+          xy['label'] = xy.Godown
+          xy['value'] = xy.Godown
         });
-       }
-       this.BillingTolist = data
-       this.ObjPurchase.Godown1 = data[0].Godown
-       this.Alladdress()
-       this.ShippingTolist = data
-       this.ObjPurchase.Godown2 = data[0].Godown
-       this.Alladdress()
+      }
+      this.BillingTolist = data
+      this.ObjPurchase.Godown1 = data[0].Godown
+      this.Alladdress()
+      this.ShippingTolist = data
+      this.ObjPurchase.Godown2 = data[0].Godown
+      this.Alladdress()
 
     });
     
   }
   getVendor() {
     this.VendorList = []
-   const obj = {
-        "SP_String": "sp_Bl_Txn_Requisition_From_Salesman",
-        "Report_Name_String": "Get_Sub_Ledger_For_Purchase",
-   }
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Requisition_From_Salesman",
+      "Report_Name_String": "Get_Sub_Ledger_For_Purchase",
+    }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      if(data.length){
-        data.forEach((xy:any) => {
-         xy['label'] = xy.Sub_Ledger_Name
-         xy['value'] = xy.Sub_Ledger_ID
+      if (data.length) {
+        data.forEach((xy: any) => {
+          xy['label'] = xy.Sub_Ledger_Name
+          xy['value'] = xy.Sub_Ledger_ID
         });
         this.VendorList = data
-       // console.log("VendorList==",this.VendorList)
-      } 
-     });  
+        // console.log("VendorList==",this.VendorList)
+      }
+    });
   }
   getVaddress() {
-    this.ObjPurchase.Subledger_Address =[]
+    this.ObjPurchase.Subledger_Address = []
     if (this.ObjPurchase.Address_Caption) {
       const AddressTyp = this.CaptionList.filter(items => items.Address_Caption === this.ObjPurchase.Address_Caption);
       this.ObjPurchase.Subledger_Address = AddressTyp[0].Subledger_Address
@@ -189,89 +202,89 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
         "Json_Param_String": JSON.stringify([{ Sub_Ledger_ID: this.ObjPurchase.Sub_Ledger_ID }])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        if(data.length){
-          data.forEach((xy:any) => {
-           xy['label'] = xy.Purchase_Request_No_Text
-           xy['value'] = xy.Purchase_Request_No
+        if (data.length) {
+          data.forEach((xy: any) => {
+            xy['label'] = xy.Purchase_Request_No_Text
+            xy['value'] = xy.Purchase_Request_No
           });
           this.POnoList = data
-         // console.log("POnoList==",this.POnoList)
-        } 
+          // console.log("POnoList==",this.POnoList)
+        }
       });
-    } 
+    }
     this.getCaption()
     this.getEmailId(this.ObjPurchase.Sub_Ledger_ID)
   }
   getPRoduct() {
     const obj = {
-         "SP_String": "sp_Bl_Txn_Purchase_Request",
-         "Report_Name_String": "Get_Details_with_Purchase_Request_No",
-         "Json_Param_String": JSON.stringify([{ Purchase_Request_No :this.ObjPurchase.Purchase_Request_No}])
-        }
-       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      "SP_String": "sp_Bl_Txn_Purchase_Request",
+      "Report_Name_String": "Get_Details_with_Purchase_Request_No",
+      "Json_Param_String": JSON.stringify([{ Purchase_Request_No: this.ObjPurchase.Purchase_Request_No }])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
        
-         this.ProductList = data 
-         this.ObjPurchase.Qty = data.Purchase_Request_Qty,
-           this.ObjPurchase.Rate = data.Rate
-         this.ProductList.forEach(ele => {
-          ele.Line_Total = Number(ele.Purchase_Request_Qty)* Number(ele.Rate)
-         });
-         //this.getTotalClc();
-         this.GetTotalPro();
-         this.getTotal();
-        // console.log("ProductList",this.ProductList)
-       })
+      this.ProductList = data
+      this.ObjPurchase.Qty = data.Purchase_Request_Qty,
+        this.ObjPurchase.Rate = data.Rate
+      this.ProductList.forEach(ele => {
+        ele.Line_Total = Number(ele.Purchase_Request_Qty) * Number(ele.Rate)
+      });
+      //this.getTotalClc();
+      this.GetTotalPro();
+      this.getTotal();
+      // console.log("ProductList",this.ProductList)
+    })
   }
-  getTotalClc(i:any) { 
+  getTotalClc(i: any) {
     this.ProductList[i].Line_Total = Number(this.ProductList[i].Purchase_Request_Qty) * Number(this.ProductList[i].Rate)
   }
-  GetTotalPro(){
-   let flg:Number = 0
-   this.ProductList.forEach((ele:any) => {
-     (flg) = Number(ele.Purchase_Request_Qty) + Number(flg)
-   });
-   this.ProductQtyTotal = Number(Number(flg).toFixed())
-   return this.ProductQtyTotal
+  GetTotalPro() {
+    let flg: Number = 0
+    this.ProductList.forEach((ele: any) => {
+      (flg) = Number(ele.Purchase_Request_Qty) + Number(flg)
+    });
+    this.ProductQtyTotal = Number(Number(flg).toFixed())
+    return this.ProductQtyTotal
   }
   getTotal() {
-     let flg:Number = 0
-   this.ProductList.forEach((ele:any) => {
-     (flg) = Number(ele.Line_Total) + Number(flg)
-   });
-   this.QtyTotal = Number(Number(flg).toFixed())
-   return this.QtyTotal
+    let flg: Number = 0
+    this.ProductList.forEach((ele: any) => {
+      (flg) = Number(ele.Line_Total) + Number(flg)
+    });
+    this.QtyTotal = Number(Number(flg).toFixed())
+    return this.QtyTotal
   }
   SavePo(vaild) {
     this.PurchaseOrderForm = true;
-    let ArrData:any =[];
+    let ArrData: any = [];
     this.ProductList.forEach(element => {
-    const TempObj = {
-    Doc_No : this.PoCode ? this.PoCode : "A",                                        
-    Purchase_Request_No : this.ObjPurchase.Purchase_Request_No ?  this.ObjPurchase.Purchase_Request_No : this.UpdatePono.Purchase_Request_No ,                   
-    Doc_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate)) ,                                
-    Cost_Center_ID : 2,                     
-    Sub_Ledger_ID: this.ObjPurchase.Sub_Ledger_ID,
-    Address_Caption : this.ObjPurchase.Address_Caption,
-    Sub_Ledger_Address : this.ObjPurchase.Shipping_Address,                           
-    Shipping_To : this.ObjPurchase.Godown2,                               
-    Billing_To : this.ObjPurchase.Godown1,    
-    Company_Name : this.ObjPurchase.Company_Name,
-    Remarks : this.ObjPurchase.Remarks,                                     
-    Heading : this.ObjPurchase.Heading,
-    Current_Status: this.CurentSID ? this.CurentSID : "",
-    Approver_One_Status :this.ApproverOneS ? this.ApproverOneS : "",                           
-		Approver_Two_Status: this.ApproverTwoS ? this.ApproverTwoS : "",                       
-		Approver_One : this.ApproverOne ? this.ApproverOne : "",                             
-		Approver_Two: this.ApproverTwo ? this.ApproverTwo : "",
-    Product_ID : element.Product_ID,                                        				                  
-    Qty: element.Purchase_Request_Qty,                                            
-    Rate: element.Rate,
-    UOM : element.UOM,  
-    Line_Total:element.Line_Total ,                                
-    Grant_Total :this.getTotal() ,                                                                   			 
-    Posted_By:  this.$CompacctAPI.CompacctCookies.User_ID,                                         
+      const TempObj = {
+        Doc_No: this.PoCode ? this.PoCode : "A",
+        Purchase_Request_No: this.ObjPurchase.Purchase_Request_No ? this.ObjPurchase.Purchase_Request_No : this.UpdatePono.Purchase_Request_No,
+        Doc_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate)),
+        Cost_Center_ID: 2,
+        Sub_Ledger_ID: this.ObjPurchase.Sub_Ledger_ID,
+        Address_Caption: this.ObjPurchase.Address_Caption,
+        Sub_Ledger_Address: this.ObjPurchase.Shipping_Address,
+        Shipping_To: this.ObjPurchase.Godown2,
+        Billing_To: this.ObjPurchase.Godown1,
+        Company_Name: this.ObjPurchase.Company_Name,
+        Remarks: this.ObjPurchase.Remarks,
+        Heading: this.ObjPurchase.Heading,
+        Current_Status: this.CurentSID ? this.CurentSID : "",
+        Approver_One_Status: this.ApproverOneS ? this.ApproverOneS : "",
+        Approver_Two_Status: this.ApproverTwoS ? this.ApproverTwoS : "",
+        Approver_One: this.ApproverOne ? this.ApproverOne : "",
+        Approver_Two: this.ApproverTwo ? this.ApproverTwo : "",
+        Product_ID: element.Product_ID,
+        Qty: element.Purchase_Request_Qty,
+        Rate: element.Rate,
+        UOM: element.UOM,
+        Line_Total: element.Line_Total,
+        Grant_Total: this.getTotal(),
+        Posted_By: this.$CompacctAPI.CompacctCookies.User_ID,
       }
-       ArrData.push(TempObj)
+      ArrData.push(TempObj)
     })
     if (vaild) {
       const obj = {
@@ -286,30 +299,30 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
             key: "compacct-toast",
             severity: "success",
             summary: this.PoCode ? this.PoCode : "Purchase Order",
-            detail: "Succesfully" + this.buttonname ,
-          });  
+            detail: "Succesfully" + this.buttonname,
+          });
           this.tabIndexToView = 0;
           this.ObjPurchase = new Purchase();
           this.PurchaseOrderForm = false;
           this.items = ["BROWSE", "CREATE"];
           this.Searchedlist = [];
-         if (data[0].Column1) {
-          window.open("/Report/Crystal_Files/Nepal/Purchase_Order_Nepal.aspx?Doc_No=" + data[0].Column1, 
-          'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
-          );
-        }    
+          if (data[0].Column1) {
+            window.open("/Report/Crystal_Files/Nepal/Purchase_Order_Nepal.aspx?Doc_No=" + data[0].Column1,
+              'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+            );
+          }
         }
       })
 
     }
   }
   BrowseSearch(valid) {
-   this.SearchFormSubmit = true
-    if(valid){
+    this.SearchFormSubmit = true
+    if (valid) {
       this.Searchedlist = []
       const tempobj = {
-        From_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseStartDate)),
-        To_Date  : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseEndDate)),
+        From_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseStartDate)),
+        To_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseEndDate)),
       }
       const obj = {
         "SP_String": "sp_Bl_Txn_Purchase_Order_Nepal",
@@ -317,16 +330,16 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
         "Json_Param_String": JSON.stringify([tempobj])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        if(data.length){
-         console.log("Searchedlist",data)
+        if (data.length) {
+          console.log("Searchedlist", data)
           this.Searchedlist = data
-           data.forEach((y:any) => {
-          y.Doc_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(y.Doc_Date);
+          data.forEach((y: any) => {
+            y.Doc_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(y.Doc_Date);
           });
      
         }
       })
-    }  
+    }
   }
   DeleteBrowse(DocID) {
     this.masterDoc = undefined;
@@ -343,38 +356,38 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     }
   }
   onConfirm() {
-   if(this.masterDoc){
-    const obj = {
-      "SP_String": "sp_Bl_Txn_Purchase_Order_Nepal",
-      "Report_Name_String": "Delete_Purchase_Order",
-      "Json_Param_String": JSON.stringify([{Doc_No : this.masterDoc}])
+    if (this.masterDoc) {
+      const obj = {
+        "SP_String": "sp_Bl_Txn_Purchase_Order_Nepal",
+        "Report_Name_String": "Delete_Purchase_Order",
+        "Json_Param_String": JSON.stringify([{ Doc_No: this.masterDoc }])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        if (data[0].Column1) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Doc ID: " + this.masterDoc,
+            detail: "Succesfully Deleted"
+          });
+          this.BrowseSearch(true);
+        }
+      })
     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      if (data[0].Column1){
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "success",
-          summary: "Doc ID: " + this.masterDoc,
-          detail: "Succesfully Deleted"
-        });
-        this.BrowseSearch(true);
-       }
-    })
-  } 
   }
   EditBrowse(Update) {
     this.EditList = [];
-  if (Update.Doc_No) {
-    this.PoCode = undefined;
-    this.tabIndexToView = 1;
-    this.items = ["BROWSE", "UPDATE"];
-    this.buttonname = "Update";
-    this.clearData();
-    this.PoCode = Update.Doc_No
-    this.CurentSID = Update.Current_Status
-    this.GetEdit(Update.Doc_No)
-   }  
+    if (Update.Doc_No) {
+      this.PoCode = undefined;
+      this.tabIndexToView = 1;
+      this.items = ["BROWSE", "UPDATE"];
+      this.buttonname = "Update";
+      this.clearData();
+      this.PoCode = Update.Doc_No
+      this.CurentSID = Update.Current_Status
+      this.GetEdit(Update.Doc_No)
+    }
   }
   GetEdit(Uid) {
     const obj = {
@@ -383,7 +396,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{ Doc_No: Uid }])
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-     // console.log("data", data);
+      // console.log("data", data);
       if (data.length) {
         this.EditList = [];
         this.UpdatePono = data[0];
@@ -393,98 +406,123 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
           this.Alladdress(),
           this.ObjPurchase.Subledger_Address = data[0].Subledger_Address,
           this.ObjPurchase.Remarks = data[0].Remarks,
-            this.ObjPurchase.Heading = data[0].Remarks1,
-            this.ObjPurchase.Company_Name = data[0].Company_Name
-            this.ObjPurchase.Sub_Ledger_ID = data[0].Sub_Ledger_ID,
+          this.ObjPurchase.Heading = data[0].Remarks1,
+          this.ObjPurchase.Company_Name = data[0].Company_Name
+        this.ObjPurchase.Sub_Ledger_ID = data[0].Sub_Ledger_ID,
           this.getPRno(),
           this.ObjPurchase.Address_Caption = data[0].Address_Caption,
-              setTimeout(() => {
-                this.getVaddress() 
-              }, 300); 
+          setTimeout(() => {
+            this.getVaddress()
+          }, 300);
         this.ApproverOneS = data[0].Approver_One_Status;
         this.ApproverTwoS = data[0].Approver_Two_Status;
         this.ApproverTwo = data[0].Approver_Two;
         this.ApproverOne = data[0].Approver_One;
-          data.forEach(element => {
-            const TempObj = {
-              Product_Description: element.Product_Description,
-              Product_ID : element.Product_ID, 
-              Purchase_Request_Qty: Number(element.Qty),
-              Rate: element.Rate,
-              UOM: element.UOM,
-              Line_Total: element.Line_Total,
-              Grant_Total: this.getTotal(),
-            }
-            this.ProductList.push(TempObj);
-          })
+        data.forEach(element => {
+          const TempObj = {
+            Product_Description: element.Product_Description,
+            Product_ID: element.Product_ID,
+            Purchase_Request_Qty: Number(element.Qty),
+            Rate: element.Rate,
+            UOM: element.UOM,
+            Line_Total: element.Line_Total,
+            Grant_Total: this.getTotal(),
+          }
+          this.ProductList.push(TempObj);
+        })
       }
-    }) 
+    })
   }
   Print(Doc) {
-   if (Doc.Doc_No) {
-          window.open("/Report/Crystal_Files/Nepal/Purchase_Order_Nepal.aspx?Doc_No=" + Doc.Doc_No, 
-          'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
-          );
-        }  
+    if (Doc.Doc_No) {
+      window.open("/Report/Crystal_Files/Nepal/Purchase_Order_Nepal.aspx?Doc_No=" + Doc.Doc_No,
+        'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+      );
+    }
   }
-  PoUpdate(po: any) {
-    this.POPform = false;
-    this.POupdateList = [];
-    this.DocID = po.Doc_No;
-    this.titleHeder =""
-    if (this.DocID) {
-      this.titleHeder = this.DocID;
-     const obj = {
-      "SP_String": "sp_Bl_Txn_Purchase_Order_Nepal",
-      "Report_Name_String": "Get_Status_With_Doc_No",
-      "Json_Param_String": JSON.stringify([{ Doc_No: this.DocID}])
-    }
-      this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        // console.log("data", data);
-        if (data.length) {
-          this.POupdateList = data;
-          data.forEach((el: any) => {
-            el.Status_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(el.Status_Date);
-          });
-        }
-      }) 
-    }
-    setTimeout(() => {
-       this.ViewPoTypeModal = true   
-    },600);
+  // PoUpdate(po: any) {
+  //   this.POPform = false;
+  //   this.POupdateList = [];
+  //   this.DocID = po.Doc_No;
+  //   this.titleHeder =""
+  //   if (this.DocID) {
+  //     this.titleHeder = this.DocID;
+  //    const obj = {
+  //     "SP_String": "sp_Bl_Txn_Purchase_Order_Nepal",
+  //     "Report_Name_String": "Get_Status_With_Doc_No",
+  //     "Json_Param_String": JSON.stringify([{ Doc_No: this.DocID}])
+  //   }
+  //     this.GlobalAPI.getData(obj).subscribe((data: any) => {
+  //       // console.log("data", data);
+  //       if (data.length) {
+  //         this.POupdateList = data;
+  //         data.forEach((el: any) => {
+  //           el.Status_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(el.Status_Date);
+  //         });
+  //       }
+  //     }) 
+  //   }
+  //   setTimeout(() => {
+  //      this.ViewPoTypeModal = true   
+  //   },600);
 
-  }
-  UpdatePOP() {
-    this.POPform = true
-    if (this.StatusForPop) {
-      const PopData = {
-        Doc_No: this.DocID,
-        Status: this.StatusForPop,
-        Posted_By: this.$CompacctAPI.CompacctCookies.User_ID
-      }
+  // }
+  // UpdatePOP() {
+  //   this.POPform = true
+  //   if (this.StatusForPop) {
+  //     const PopData = {
+  //       Doc_No: this.DocID,
+  //       Status: this.StatusForPop,
+  //       Posted_By: this.$CompacctAPI.CompacctCookies.User_ID
+  //     }
+  //     const obj = {
+  //       "SP_String": "sp_Bl_Txn_Purchase_Order_Nepal",
+  //       "Report_Name_String": "Update_Status_With_Doc_No",
+  //       "Json_Param_String": JSON.stringify(PopData)
+  //     }
+  //     this.GlobalAPI.postData(obj).subscribe((data: any) => {
+  //       if (data[0].Column1) {
+  //         this.compacctToast.clear();
+  //         this.compacctToast.add({
+  //           key: "compacct-toast",
+  //           severity: "success",
+  //           summary:"Purchase Order Status",
+  //           detail: "Succesfully Update" 
+  //         });
+  //         this.BrowseSearch(true);
+  //       }
+  //     })
+  //   this.StatusForPop = undefined;
+  //   this.POPform = false;
+  //   this.ViewPoTypeModal = false;
+    
+  //   }
+    
+  // }
+  PoDCoVault(DocNo: any) {
+    this.ProductPDFFile = {};
+    this.ValidationNoUpload = undefined;
+    if (DocNo) {
+      this.ValidationNoUpload = DocNo;
+      this.PODocVList = [];
       const obj = {
-        "SP_String": "sp_Bl_Txn_Purchase_Order_Nepal",
-        "Report_Name_String": "Update_Status_With_Doc_No",
-        "Json_Param_String": JSON.stringify(PopData)
+        "SP_String": "sp_Bl_Txn_Purchase_Order_Activity",
+        "Report_Name_String": "Get_Po_Document_Vault",
+        "Json_Param_String": JSON.stringify([{ PO_Doc_No: this.ValidationNoUpload }])
       }
-      this.GlobalAPI.postData(obj).subscribe((data: any) => {
-        if (data[0].Column1) {
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "success",
-            summary:"Purchase Order Status",
-            detail: "Succesfully Update" 
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("PODocVList", data);
+        if (data.length) {
+          this.PODocVList = data;
+          data.forEach((el: any) => {
+            el.Task_End_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(el.Task_End_Date);
           });
-          this.BrowseSearch(true);
         }
       })
-    this.StatusForPop = undefined;
-    this.POPform = false;
-    this.ViewPoTypeModal = false;
-    
+      setTimeout(() => {
+        this.ViewPoVaultModal = true
+      }, 200);
     }
-    
   }
   getCaption() {
     this.CaptionList = []
@@ -492,50 +530,50 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.ObjPurchase.Subledger_Address = undefined
     if (this.ObjPurchase.Sub_Ledger_ID) {
       const obj = {
-      "SP_String": "sp_Bl_Txn_Purchase_Order_Nepal",
-      "Report_Name_String": "Get_Sub_Ledger_Address",
-      "Json_Param_String": JSON.stringify([{ Sub_Ledger_ID :this.ObjPurchase.Sub_Ledger_ID}])
-    }
-     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      // console.log("getCaption==",data)
-      if(data.length){
-        data.forEach((xy:any) => {
-         xy['label'] = xy.Address_Caption
-         xy['value'] = xy.Address_Caption
-        });
-         this.CaptionList = data
-       }    
-    });   
+        "SP_String": "sp_Bl_Txn_Purchase_Order_Nepal",
+        "Report_Name_String": "Get_Sub_Ledger_Address",
+        "Json_Param_String": JSON.stringify([{ Sub_Ledger_ID: this.ObjPurchase.Sub_Ledger_ID }])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        // console.log("getCaption==",data)
+        if (data.length) {
+          data.forEach((xy: any) => {
+            xy['label'] = xy.Address_Caption
+            xy['value'] = xy.Address_Caption
+          });
+          this.CaptionList = data
+        }
+      });
     }
    
   }
   getCompany() {
     this.CompanyList = []
-   const obj = {
-        "SP_String": "sp_Bl_Txn_Purchase_Request",
-        "Report_Name_String": "Get_Company_For_PO",
-   }
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Request",
+      "Report_Name_String": "Get_Company_For_PO",
+    }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      if(data.length){
-        data.forEach((xy:any) => {
-         xy['label'] = xy.Company_Name
-         xy['value'] = xy.Company_Name
+      if (data.length) {
+        data.forEach((xy: any) => {
+          xy['label'] = xy.Company_Name
+          xy['value'] = xy.Company_Name
         });
         this.CompanyList = data
-       // console.log("VendorList==",this.VendorList)
-      } 
-     });    
+        // console.log("VendorList==",this.VendorList)
+      }
+    });
   }
   Alladdress() {
     this.ObjPurchase.Billing_Address = undefined;
-    this.ObjPurchase.Shipping_Address =undefined
+    this.ObjPurchase.Shipping_Address = undefined
     if (this.ObjPurchase.Godown1) {
       const AddressTyp = this.BillingTolist.filter(items => items.Godown === this.ObjPurchase.Godown1);
       this.ObjPurchase.Billing_Address = AddressTyp[0].Billing_Address
     }
-    if(this.ObjPurchase.Godown2) {
-     const SAddressTyp = this.ShippingTolist.filter(items => items.Godown === this.ObjPurchase.Godown2);
-      this.ObjPurchase.Shipping_Address = SAddressTyp[0].Shipping_Address 
+    if (this.ObjPurchase.Godown2) {
+      const SAddressTyp = this.ShippingTolist.filter(items => items.Godown === this.ObjPurchase.Godown2);
+      this.ObjPurchase.Shipping_Address = SAddressTyp[0].Shipping_Address
     }
   }
   getEmailId(col) {
@@ -546,145 +584,145 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.CCEmailSelect = undefined
     this.CompantEmailName = undefined
     if (col) {
-    const obj = {
-      "SP_String": "sp_Bl_Txn_Purchase_Request",
+      const obj = {
+        "SP_String": "sp_Bl_Txn_Purchase_Request",
         "Report_Name_String": "Get_Subledger_Email_ID",
-       "Json_Param_String": JSON.stringify([{Sub_Ledger_ID: col }])
-    }
-    this.GlobalAPI.getData(obj).subscribe((data: any) => {
-     // console.log("data",data)
-      if(data.length) {
-        data.forEach(element => {
-          element['label'] = element.email,
-          element['value'] = element.email
-        });
-        this.toEmailList = data;
-         this.CCEmailList = data
+        "Json_Param_String": JSON.stringify([{ Sub_Ledger_ID: col }])
       }
-       else {
-        this.toEmailList = [];
-         this.CCEmailList = []
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        // console.log("data",data)
+        if (data.length) {
+          data.forEach(element => {
+            element['label'] = element.email,
+              element['value'] = element.email
+          });
+          this.toEmailList = data;
+          this.CCEmailList = data
+        }
+        else {
+          this.toEmailList = [];
+          this.CCEmailList = []
   
-      }
-     // console.log("toEmailList",this.toEmailList)
-    })    
+        }
+        // console.log("toEmailList",this.toEmailList)
+      })
     }
       
   }
   ClickCheck() {
     if (this.EmailCheck === false) {
-      this.ToEmailSelect  = undefined;
+      this.ToEmailSelect = undefined;
       this.CCEmailSelect = undefined;
       this.CompantEmailName = undefined;
     }
   }
   getCompanyMail() {
-  this.CompanyEmailList =[]
+    this.CompanyEmailList = []
     const obj = {
       "SP_String": "sp_Bl_Txn_Purchase_Request",
-        "Report_Name_String": "Get_Company_Email",
+      "Report_Name_String": "Get_Company_Email",
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       //console.log("dataEmail",data)
-      if(data.length) {
+      if (data.length) {
         data.forEach(element => {
           element['label'] = element.Email_ID,
-          element['value'] = element.Email_ID
+            element['value'] = element.Email_ID
         });
         this.CompanyEmailList = data;
       }
-       else {
-        this.CompanyEmailList = []; 
+      else {
+        this.CompanyEmailList = [];
       }
-    })    
+    })
 
         
   }
   deleteEmailId(valid: any) {
-     this.EmailId = undefined
+    this.EmailId = undefined
     if (valid.Email_ID) {
-    this.EmailId = valid.Email_ID
-   this.compacctToast.clear();
-   this.compacctToast.add({
-     key: "A",
-     sticky: true,
-     severity: "warn",
-     summary: "Are you sure?",
-     detail: "Confirm to proceed"
-   });
- }
-  }
-  onConfirm1(){
-  if(this.EmailId){
-    const obj = {
-      "SP_String": "sp_Bl_Txn_Purchase_Request",
-      "Report_Name_String": "Delete_Company_Email",
-      "Json_Param_String": JSON.stringify([{Email_ID : this.EmailId}])
+      this.EmailId = valid.Email_ID
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "A",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      if (data[0].Column1){
-        this.onReject();
-        this.getCompanyMail();
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity:'success',
-          summary: "Email ID:- " + this.EmailId,
-          detail: "Succesfully Delete"
-        });
-      }
-    })
   }
+  onConfirm1() {
+    if (this.EmailId) {
+      const obj = {
+        "SP_String": "sp_Bl_Txn_Purchase_Request",
+        "Report_Name_String": "Delete_Company_Email",
+        "Json_Param_String": JSON.stringify([{ Email_ID: this.EmailId }])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        if (data[0].Column1) {
+          this.onReject();
+          this.getCompanyMail();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: 'success',
+            summary: "Email ID:- " + this.EmailId,
+            detail: "Succesfully Delete"
+          });
+        }
+      })
+    }
   }
   ViewCompEmail() {
-      setTimeout(() => {
-        this.ViewCompanyModal = true;
-        }, 200);
+    setTimeout(() => {
+      this.ViewCompanyModal = true;
+    }, 200);
   }
   CompCreatPopup() {
-  this.NewEmailFormSubmitted = false;
-  this.CompantEmailName = undefined;
-  this.CreateEmailModal =true 
+    this.NewEmailFormSubmitted = false;
+    this.CompantEmailName = undefined;
+    this.CreateEmailModal = true
   }
-  CreateEmailType(valid){
-  this.NewEmailFormSubmitted = true;
-  if(valid){
-           const tempSave = {
-            Email_ID : this.CompantEmailName,
-          }
-           const obj = {
-             "SP_String": "sp_Bl_Txn_Purchase_Request",
-             "Report_Name_String" : "Create_Company_Email",
-             "Json_Param_String": JSON.stringify([tempSave])
-           }
-           this.GlobalAPI.postData(obj).subscribe((data:any)=>{
-             if(data[0].Column1){
-              this.compacctToast.clear();
-              this.compacctToast.add({
-               key: "compacct-toast",
-               severity: "success",
-               summary: "Email ID:- "+ this.CompantEmailName,
-               detail: "Succesfully Created" 
-              });
-             this.getCompanyMail();
-             this.NewEmailFormSubmitted = false;
-             this.CompantEmailName = undefined;
-             this.CreateEmailModal = false;        
-             }       
-           })        
+  CreateEmailType(valid) {
+    this.NewEmailFormSubmitted = true;
+    if (valid) {
+      const tempSave = {
+        Email_ID: this.CompantEmailName,
+      }
+      const obj = {
+        "SP_String": "sp_Bl_Txn_Purchase_Request",
+        "Report_Name_String": "Create_Company_Email",
+        "Json_Param_String": JSON.stringify([tempSave])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data: any) => {
+        if (data[0].Column1) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Email ID:- " + this.CompantEmailName,
+            detail: "Succesfully Created"
+          });
+          this.getCompanyMail();
+          this.NewEmailFormSubmitted = false;
+          this.CompantEmailName = undefined;
+          this.CreateEmailModal = false;
         }
+      })
+    }
 
   }
-  ActivityPlan(PoPlan) { 
+  ActivityPlan(PoPlan) {
     this.PoCode = undefined;
-    if (PoPlan.Doc_No) { 
+    if (PoPlan.Doc_No) {
       this.PoCode = PoPlan.Doc_No;
-     setTimeout(() => {
-       this.ActivityPlanModal = true  
-      }, 300); 
-       this.getPlanList(this.PoCode) 
-       // this.getDocList(this.PoCode)
-   }  
+      setTimeout(() => {
+        this.ActivityPlanModal = true
+      }, 300);
+      this.getPlanList(this.PoCode)
+      // this.getDocList(this.PoCode)
+    }
   }
   getPlanList(Docid) {
     this.ToDoList = [];
@@ -693,104 +731,104 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     const obj = {
       "SP_String": "sp_PO_Activity_Plan",
       "Report_Name_String": "Get_Activity_Plan",
-      "Json_Param_String": JSON.stringify([{Doc_No : Docid}])
+      "Json_Param_String": JSON.stringify([{ Doc_No: Docid }])
     }
-     this.GlobalAPI.getData(obj).subscribe((res: any) => {
-       console.log("ToDoList==",JSON.parse(res[0].topper))
-       let data = JSON.parse(res[0].topper)
-       this.ToDoList = data[0].hasOwnProperty("bottom_To_Do_List")? data[0].bottom_To_Do_List :[]
-       this.Doclist = data[0].hasOwnProperty("bottom_Document")? data[0].bottom_Document :[]
-       this.ActivityDetailsObj =  data[0].bottom_Activity_Details? data[0].bottom_Activity_Details[0] :{}
-       if(Object.keys(this.ActivityDetailsObj).length != 0){
+    this.GlobalAPI.getData(obj).subscribe((res: any) => {
+      console.log("ToDoList==", JSON.parse(res[0].topper))
+      let data = JSON.parse(res[0].topper)
+      this.ToDoList = data[0].hasOwnProperty("bottom_To_Do_List") ? data[0].bottom_To_Do_List : []
+      this.Doclist = data[0].hasOwnProperty("bottom_Document") ? data[0].bottom_Document : []
+      this.ActivityDetailsObj = data[0].bottom_Activity_Details ? data[0].bottom_Activity_Details[0] : {}
+      if (Object.keys(this.ActivityDetailsObj).length != 0) {
         this.ASDate = this.ActivityDetailsObj.Activity_Statrt_Date ? this.DateNepalConvertService.convertNewEngToNepaliDateObj(this.ActivityDetailsObj.Activity_Statrt_Date) : this.DateNepalConvertService.GetNepaliCurrentDateNew();
         this.caldateTodo()
         this.caldateDoc()
-       }
-       else{
+      }
+      else {
         this.ASDate = this.DateNepalConvertService.GetNepaliCurrentDateNew()
         this.caldateTodo()
         this.caldateDoc()
-       }
+      }
     });
      
   }
-  caldateTodo(){
-    if(this.ToDoList.length){
-      this.ToDoList.forEach((ele:any) => {
-        let engdate = this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate) 
-         console.log("engdate",engdate)
-         ele['Task_End_Date'] =ele.Expected_Days? 
-        this.DateNepalConvertService.convertNewEngToNepaliDateObj(new Date(new Date().setDate(new Date(engdate).getDate() + Number(ele.Expected_Days)))) : 
-        null;
-      
-       });
-      
-     }
-  }
-  caldateDoc(){
-  if(this.Doclist.length){
-      this.Doclist.forEach((ele:any) => {
+  caldateTodo() {
+    if (this.ToDoList.length) {
+      this.ToDoList.forEach((ele: any) => {
         let engdate = this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)
-        ele['Task_End_Date'] =ele.Expected_Days? 
-        this.DateNepalConvertService.convertNewEngToNepaliDateObj(new Date(new Date().setDate(new Date(engdate).getDate() + Number(ele.Expected_Days)))) : 
-        null;
+        console.log("engdate", engdate)
+        ele['Task_End_Date'] = ele.Expected_Days ?
+          this.DateNepalConvertService.convertNewEngToNepaliDateObj(new Date(new Date().setDate(new Date(engdate).getDate() + Number(ele.Expected_Days)))) :
+          null;
+      
+      });
+      
+    }
+  }
+  caldateDoc() {
+    if (this.Doclist.length) {
+      this.Doclist.forEach((ele: any) => {
+        let engdate = this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)
+        ele['Task_End_Date'] = ele.Expected_Days ?
+          this.DateNepalConvertService.convertNewEngToNepaliDateObj(new Date(new Date().setDate(new Date(engdate).getDate() + Number(ele.Expected_Days)))) :
+          null;
         
       });
       
-     }
+    }
   }
   getDocList(DocId) {
-    this.Doclist =[]
+    this.Doclist = []
     const obj = {
       "SP_String": "sp_PO_Activity_Plan",
       "Report_Name_String": "Get_Document_List",
-      "Json_Param_String": JSON.stringify([{Doc_No : DocId}])
+      "Json_Param_String": JSON.stringify([{ Doc_No: DocId }])
     }
-     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-       console.log("Doclist==",data)
-      if(data.length){
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      console.log("Doclist==", data)
+      if (data.length) {
         this.Doclist = data;
-        this.Doclist.forEach((ele:any) => {
-          ele['Task_End_Date'] =ele.Expected_Days? this.DateNepalConvertService.convertNewEngToNepaliDateObj(new Date(new Date().setDate(new Date(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)).getDate() + Number(ele.Expected_Days)))) : null;
+        this.Doclist.forEach((ele: any) => {
+          ele['Task_End_Date'] = ele.Expected_Days ? this.DateNepalConvertService.convertNewEngToNepaliDateObj(new Date(new Date().setDate(new Date(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)).getDate() + Number(ele.Expected_Days)))) : null;
           
         });
         
-       }
+      }
     });
      
   }
-  dateChToDo(i:any) {
+  dateChToDo(i: any) {
     // 
     this.caldateTodo()
   }
-  dateChDocument(i:any){
+  dateChDocument(i: any) {
     // this.Doclist[i].Task_End_Date = this.Doclist[i].Expected_Days ? this.DateNepalConvertService.convertNewEngToNepaliDateObj(new Date(new Date().setDate(new Date(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)).getDate() + Number(this.Doclist[i].Expected_Days)))) : null;
     this.caldateDoc()
   }
-  changeDate(e:any){
-    this.ASDate= e
+  changeDate(e: any) {
+    this.ASDate = e
     this.caldateTodo()
     this.caldateDoc()
   }
-  saveActivityPlan(){
+  saveActivityPlan() {
     this.ActivityPlanModal = false
-    this.ToDoList.forEach((ele:any) => {
-      let endDate = ele.Task_End_Date? this.DateNepalConvertService.convertNepaliDateToEngDate(ele.Task_End_Date) :null
-      ele.Task_End_Date = endDate? this.DateService.dateConvert(new Date(endDate)) : null
-      if(ele.Task_End_Date){
+    this.ToDoList.forEach((ele: any) => {
+      let endDate = ele.Task_End_Date ? this.DateNepalConvertService.convertNepaliDateToEngDate(ele.Task_End_Date) : null
+      ele.Task_End_Date = endDate ? this.DateService.dateConvert(new Date(endDate)) : null
+      if (ele.Task_End_Date) {
         ele.Status = ele.Status ? ele.Status : "PENDING"
         ele.Remarks = ele.Remarks ? ele.Remarks : "PENDING"
       }
       else {
-        ele.Status =null
+        ele.Status = null
         ele.Remarks = null
         ele.Expected_Days = null
       }
     });
-    this.Doclist.forEach((ele:any) => {
-      let endDate = ele.Task_End_Date? this.DateNepalConvertService.convertNepaliDateToEngDate(ele.Task_End_Date) :null
-      ele.Task_End_Date = endDate? this.DateService.dateConvert(new Date(endDate)) :null
-      if(ele.Task_End_Date){
+    this.Doclist.forEach((ele: any) => {
+      let endDate = ele.Task_End_Date ? this.DateNepalConvertService.convertNepaliDateToEngDate(ele.Task_End_Date) : null
+      ele.Task_End_Date = endDate ? this.DateService.dateConvert(new Date(endDate)) : null
+      if (ele.Task_End_Date) {
         ele.Status = ele.Status ? ele.Status : "PENDING"
       }
       else {
@@ -798,30 +836,124 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       }
     });
     let saveData = {
-      PO_Doc_No : this.PoCode,
-      Activity_Statrt_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)),
-      Posted_By : this.$CompacctAPI.CompacctCookies.User_ID,
-      bottom_To_Do : this.ToDoList,
+      PO_Doc_No: this.PoCode,
+      Activity_Statrt_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)),
+      Posted_By: this.$CompacctAPI.CompacctCookies.User_ID,
+      bottom_To_Do: this.ToDoList,
       bottom_Document: this.Doclist
     }
-    console.log("saveData",saveData)
-    console.log("saveData",JSON.stringify(saveData))
+    console.log("saveData", saveData)
+    console.log("saveData", JSON.stringify(saveData))
     const obj = {
       "SP_String": "sp_Bl_Txn_Purchase_Order_Activity",
       "Report_Name_String": "Create_PO_Activity",
       "Json_Param_String": JSON.stringify([saveData])
     }
-     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      if(data[0].Column1 == "Done"){
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      if (data[0].Column1 == "Done") {
         this.compacctToast.clear();
-        this.compacctToast.add({ 
-         key: "compacct-toast",
-         severity: "success",
-         detail: "Succesfully Created" 
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          detail: "Succesfully Created"
         });
       }
-     })
+    })
   }
+  getColor(Document_Status) {
+    //console.log("Document_Status",Document_Status)
+    switch (Document_Status) {
+      case 'PENDING':
+        return 'blue';
+      case 'PENDING AND CROSSED TARGET DATE':
+        return 'red';
+      case 'COMPLETED WITHIN TARGET DATE':
+        return 'green';
+      case 'COMPLETED BUT NOT IN TARGET DATE':
+        return 'orange';
+    }
+  }
+  handleFileSelect(event: any, DOC: any, Date: any) {
+    console.log("event", event)
+    console.log("DOC", DOC)
+    console.log("Date", Date)
+    this.PDFFlag = false;
+    this.ProductPDFFile = {};
+    this.DocIdD = undefined;
+    this.DocUplodeDate = undefined
+    if (event) {
+      this.ProductPDFFile = event.files[0];
+      this.DocIdD = DOC
+      this.DocUplodeDate = Date
+      this.PDFFlag = true;
+      this.SaveUploadDoc()
+    }
+  }
+  SaveUploadDoc() {
+    if (this.ProductPDFFile['size']) {
+      this.ngxService.start();
+      this.GlobalAPI.CommonFileUpload(this.ProductPDFFile)
+        .subscribe((data: any) => {
+          console.log("eventdata", data)
+          if (data.file_url) {
+            this.saveDocFinal(data.file_url)
+          }
+          else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Error",
+              detail: "Fail to upload"
+            });
+          }
+        })
+    }
+  }
+  saveDocFinal(fileUrl) {
+    const tempSaveDataObj = {
+      PO_Doc_No: this.ValidationNoUpload,
+      Document_ID: this.DocIdD,
+      File_Path: fileUrl,
+      Task_End_Date: this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocUplodeDate)
+    }
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Order_Activity",
+      "Report_Name_String": "Update_For_Upload_Document",
+      "Json_Param_String": JSON.stringify(tempSaveDataObj)
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+      console.log("file save data", data);
+      if (data[0].Column1) {
+        this.PDFFlag = false;
+        this.ProductPDFFile = {};
+        this.PoDCoVault(this.ValidationNoUpload)
+        this.fileInput.clear();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          detail: "File Succesfully Upload"
+        });
+        this.ngxService.stop();
+      }
+      else {
+        this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+    })
+  }
+  DownloadFile(UrlAll) {
+    //console.log("UrlAll", UrlAll)
+    window.open(UrlAll)
+  }
+}
   // toEmailChange(){
   //   console.log("toEmailList", this.toEmailList)
   //   console.log("CCEmailList",this.CCEmailList)
@@ -832,7 +964,6 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   //     this.CCEmailList = this.CCEmailList.length ? this.CCEmailList : []
   //   }
   // }
-}
 class Purchase{
 Doc_No :any;	            
 Purchase_Request_No	:any;	
