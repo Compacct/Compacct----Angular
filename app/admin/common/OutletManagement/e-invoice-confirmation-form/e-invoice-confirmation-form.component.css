@@ -51,4 +51,8 @@ div.table-responsive.table-id > p-table > div > div {
     margin-top: 30px;
     /* margin-left: -35%; */
   }
+  body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+    border-bottom: 1px solid #c1c1c1 !important;
+    margin-bottom: 0px;
+}
   

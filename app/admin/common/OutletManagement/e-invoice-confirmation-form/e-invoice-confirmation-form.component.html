@@ -1,1 +1,220 @@
-<p>e-invoice-confirmation-form works!</p>
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p *ngIf="checkSave">{{message.detail}}</p>
+        </div>
+
+        <div *ngIf="checkSave" class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="InvoiceForm" #InvoiceForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"  required>
+                                        </app-compacct-daterangepicker>
+
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary pull-right1" data-toggle="modal" (click)="GetInvoicelist()" id="load" [disabled]="invoiceSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="seachSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!seachSpinner"
+                                        class="glyphicon glyphicon-search"
+                                      ></span
+                                      >&nbsp;Search
+                                    </button>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h5><strong></strong></h5>
+                                </div>
+                            </div>
+                            <div class="table-responsive table-id">
+                                <p-table [value]="Invoicelist" #dt [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Doc_No","Doc_Date","Cost_Cen_Name","Sub_Ledger_Name","Bill_Gross_Amt","Bill_Net_Amt"]'>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Inv No</th>
+                                            <th>Date</th>
+                                            <th>Cost Center</th>
+                                            <th>Sub Ledger</th>
+                                            <!-- <th>Gross Amount</th> -->
+                                            <th>Bill Amount</th>
+                                            <th>Action</th>
+                                            <th>Confirmation for E-Inv</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td>{{col.Doc_No}}</td>
+                                            <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{col.Cost_Cen_Name}}</td>
+                                            <td>{{col.Sub_Ledger_Name}}</td>
+                                            <!-- <td>{{col.Bill_Gross_Amt}}</td> -->
+                                            <td>{{col.Bill_Net_Amt}}</td>
+                                            <td style="text-align:center">
+                                                <button class="btn btn-primary custombtn" (click)='ViewInvoice(col)' type="button" [id]="col.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                                    View
+                                                </button>
+                                            </td>
+                                            <td style="text-align:center">
+                                                <!-- <input type="checkbox" id="col.confirmationInv" name="col.confirmationInv" value="col.confirmation_Inv"> -->
+                                                <p-checkbox name="col.confirmationInv" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" [binary]="true"></p-checkbox>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+
+                            </div>
+
+                            <hr class="box boxboxDivide-primary ng-scope">
+
+                            <div class="box-footer">
+                                <div class="text-right">
+                                    <button class="btn btn-primary pull-right" (click)="SaveInvoice()" id="load" [disabled]="Spinner">
+                           <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                       <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Save
+                   </button>
+                                </div>
+                            </div>
+
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="CreditNoteForm" #CreditNoteForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRangeCrNote($event)" required>
+                                        </app-compacct-daterangepicker>
+
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary pull-right1" data-toggle="modal" (click)="GetCrNotelist()" id="load" [disabled]="crnoteSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="crnoteSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!crnoteSpinner"
+                                        class="glyphicon glyphicon-search"
+                                      ></span
+                                      >&nbsp;Search
+                                    </button>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h5><strong></strong></h5>
+                                </div>
+                            </div>
+                            <div class="table-responsive table-id">
+                                <p-table [value]="CrNotelist" #dt1 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Doc_No","Doc_Date","Cost_Cen_Name","Sub_Ledger_Name","Bill_Gross_Amt","Bill_Net_Amt"]'>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Cr Note No</th>
+                                            <th>Date</th>
+                                            <th>Cost Center</th>
+                                            <th>Sub Ledger</th>
+                                            <!-- <th>Gross Amount</th> -->
+                                            <th>Note Amount</th>
+                                            <th>Action</th>
+                                            <th>Confirmation for E-Inv</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-obj>
+                                        <tr>
+                                                <td>{{obj.Doc_No}}</td>
+                                                <td>{{obj.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
+                                                <td>{{obj.Cost_Cen_Name}}</td>
+                                                <td>{{obj.Sub_Ledger_Name}}</td>
+                                                <!-- <td>{{obj.Bill_Gross_Amt}}</td> -->
+                                                <td>{{obj.Bill_Net_Amt}}</td>
+                                                <td style="text-align:center">
+                                                    <button class="btn btn-primary custombtn" (click)='ViewCrNote(obj)' type="button" [id]="obj.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                                        View
+                                                    </button>
+                                                </td>
+                                                <td style="text-align:center">
+                                                    <!-- <input type="checkbox" id="obj.confirmationCrNote" name="obj.confirmationCrNote" value="obj.confirmation_Credit_Note"> -->
+                                                    <p-checkbox name="obj.confirmationCrNote" value="obj.confirmationCrNote" [(ngModel)]="obj.confirmation_Credit_Note" [binary]="true"></p-checkbox>
+                                                </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+
+                            </div>
+
+                            <hr class="box boxboxDivide-primary ng-scope">
+
+                            <div class="box-footer">
+                                <div class="text-right">
+                                    <button class="btn btn-primary pull-right" (click)="SaveCrNote()" id="load" [disabled]="Spinner">
+                           <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                       <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Save 
+                   </button>
+                                </div>
+                            </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
