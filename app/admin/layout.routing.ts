@@ -308,6 +308,8 @@ import { DoctorsAppointmentNewGlycerolTestComponent } from "./common/PatientMana
 import { AcceptReturnMaterialComponent } from './common/MICL/accept-return-material/accept-return-material.component';
 import { EInvoiceConfirmationFormComponent } from './common/OutletManagement/e-invoice-confirmation-form/e-invoice-confirmation-form.component';
 import { MiclFinishMasterProductComponent } from './common/ProductionManagement/Master/micl-finish-master-product/micl-finish-master-product.component';
+import { DoctorsAppointmentNewTinnitusReportComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-report/doctors-appointment-new-tinnitus-report.component";
+import { DoctorsAppointmentNewTinnitusTherapyTrackerComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-therapy-tracker/doctors-appointment-new-tinnitus-therapy-tracker.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2317,6 +2319,20 @@ path: 'MICL_Cost_Center_Master',
     component: MiclFinishMasterProductComponent,
     data: {
       title: 'Finish Master Product'
+}
+},
+{
+  path: 'Doctors_Appointment_New_Tinnitus_Report',
+    component: DoctorsAppointmentNewTinnitusReportComponent,
+    data: {
+      title: 'Doctors Appointment New Tinnitus Report'
+}
+},
+{
+  path: 'Doctors_Appointment_New_Tinnitus_Therapy_Tracker',
+    component: DoctorsAppointmentNewTinnitusTherapyTrackerComponent,
+    data: {
+      title: 'Doctors Appointment New Therapy Tracker'
 }
 },
     
