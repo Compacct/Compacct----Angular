@@ -120,9 +120,14 @@
                                                                 <i class='fa fa-tasks'></i> PO Activity Plan
                                                             </a>
                                                         </li>
-                                                        <li>
+                                                        <!-- <li>
                                                             <a (click)="PoUpdate(col)">
                                                                 <i class='fa fa-edit green-color'></i> PO Update
+                                                            </a>
+                                                        </li> -->
+                                                        <li>
+                                                            <a (click)="PoDCoVault(col.Doc_No)">
+                                                                <i class='fa fa-file'></i> PO DOC Vault
                                                             </a>
                                                         </li>
                                                          <li >
@@ -575,6 +580,61 @@
         <button type="submit" name="bill" class="btn btn-primary pull-right custombutton"
             (click)="saveActivityPlan()">
             <span class="glyphicon glyphicon-save"></span>&nbsp;Save
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!--PO Doc Vault-->
+<p-dialog [header]="'PO Document Vault'" [appendTo]="'body'" [visible]="ViewPoVaultModal"
+    [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true"
+    [style]="{ width: '75%', minWidth: '200px' }"[minY]="70" [maximizable]="false"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="PODocVList" [rowHover]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 5em;">SL No.</th>
+                    <th>Document Name </th>
+                    <th style="width: 110px;" >Target Date </th>
+                    <th style="text-align: center;">Document</th>
+                    <th>Status</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                    <td>{{i+1}}</td>
+                    <td>{{col.Document_Name}}</td>
+                    <td>{{col.Task_End_Date}}</td>
+                    <td>
+                        <div class="col-sm-12">
+                            <div class="col-sm-6">
+                                <p-fileUpload #fileInput mode="basic" name="aFile566" accept=".pdf, .png, .jpg, .jpeg, .xls, .xlsx"
+                                    maxFileSize="1000000" (onSelect)="handleFileSelect($event,col.Document_ID,col.Task_End_Date)" [auto]="true"
+                                    chooseLabel="Upload"></p-fileUpload>
+                            </div>
+                         
+                        <div class="col-sm">
+                            <button pButton type="button"(click)="DownloadFile(col.File_Path)" class="ui-button-success" style="width: 42%;
+                                                        border-radius: 5px !important;
+                                                        height: 32px; padding: 5px;
+                                                        margin-left: 1em !important;
+                                                        border: 1px solid #2a8b21;" >
+                                <i class="fa fa-download"></i>Download</button>
+                        </div>
+                      
+                        </div>
+                    </td>
+                    <td >
+                        <span [style.color]="getColor(col.Document_Status)" style="color: white;border-radius: 4px;" >{{col.Document_Status}}</span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <p-footer>
+        <button type="button" (click)="ViewPoVaultModal= false" class="btn btn-info">
+            Cancel
         </button>
     </p-footer>
 </p-dialog>
