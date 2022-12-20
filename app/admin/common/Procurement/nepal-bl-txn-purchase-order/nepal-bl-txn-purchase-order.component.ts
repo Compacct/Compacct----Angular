@@ -467,6 +467,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   //   },600);
 
   // }
+  UpdatePOP(){}
   // UpdatePOP() {
   //   this.POPform = true
   //   if (this.StatusForPop) {
