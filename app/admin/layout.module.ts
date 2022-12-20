@@ -403,6 +403,7 @@ import { DoctorsAppointmentNewSpTestComponent } from "./common/PatientManagement
 import { DoctorsAppointmentNewGlycerolTestComponent } from "./common/PatientManagement/doctors-appointment-new-glycerol-test/doctors-appointment-new-glycerol-test.component";
 import { AcceptReturnMaterialComponent } from './common/MICL/accept-return-material/accept-return-material.component';
 import { EInvoiceConfirmationFormComponent } from './common/OutletManagement/e-invoice-confirmation-form/e-invoice-confirmation-form.component';
+import { MiclFinishMasterProductComponent } from './common/ProductionManagement/Master/micl-finish-master-product/micl-finish-master-product.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -722,7 +723,8 @@ import { EInvoiceConfirmationFormComponent } from './common/OutletManagement/e-i
     DoctorsAppointmentNewSpTestComponent,
     DoctorsAppointmentNewGlycerolTestComponent,
     AcceptReturnMaterialComponent,
-    EInvoiceConfirmationFormComponent
+    EInvoiceConfirmationFormComponent,
+    MiclFinishMasterProductComponent
   ],
   imports: [
     CommonModule,
