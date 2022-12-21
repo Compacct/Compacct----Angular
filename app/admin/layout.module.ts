@@ -406,6 +406,7 @@ import { EInvoiceConfirmationFormComponent } from './common/OutletManagement/e-i
 import { MiclFinishMasterProductComponent } from './common/ProductionManagement/Master/micl-finish-master-product/micl-finish-master-product.component';
 import { DoctorsAppointmentNewTinnitusReportComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-report/doctors-appointment-new-tinnitus-report.component";
 import { DoctorsAppointmentNewTinnitusTherapyTrackerComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-therapy-tracker/doctors-appointment-new-tinnitus-therapy-tracker.component";
+import { MiclWastageMasterProductComponent } from './common/ProductionManagement/Master/micl-wastage-master-product/micl-wastage-master-product.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -728,7 +729,8 @@ import { DoctorsAppointmentNewTinnitusTherapyTrackerComponent } from "./common/P
     EInvoiceConfirmationFormComponent,
     MiclFinishMasterProductComponent,
     DoctorsAppointmentNewTinnitusReportComponent,
-    DoctorsAppointmentNewTinnitusTherapyTrackerComponent
+    DoctorsAppointmentNewTinnitusTherapyTrackerComponent,
+    MiclWastageMasterProductComponent
   ],
   imports: [
     CommonModule,

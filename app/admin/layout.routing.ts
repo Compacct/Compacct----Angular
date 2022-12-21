@@ -310,6 +310,7 @@ import { EInvoiceConfirmationFormComponent } from './common/OutletManagement/e-i
 import { MiclFinishMasterProductComponent } from './common/ProductionManagement/Master/micl-finish-master-product/micl-finish-master-product.component';
 import { DoctorsAppointmentNewTinnitusReportComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-report/doctors-appointment-new-tinnitus-report.component";
 import { DoctorsAppointmentNewTinnitusTherapyTrackerComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-therapy-tracker/doctors-appointment-new-tinnitus-therapy-tracker.component";
+import { MiclWastageMasterProductComponent } from './common/ProductionManagement/Master/micl-wastage-master-product/micl-wastage-master-product.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2333,6 +2334,13 @@ path: 'MICL_Cost_Center_Master',
     component: DoctorsAppointmentNewTinnitusTherapyTrackerComponent,
     data: {
       title: 'Doctors Appointment New Therapy Tracker'
+}
+},
+{
+  path: 'Wastage_Master_Product',
+    component: MiclWastageMasterProductComponent,
+    data: {
+      title: 'Wastage Master Product'
 }
 },
     
