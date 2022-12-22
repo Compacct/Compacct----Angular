@@ -408,6 +408,7 @@ import { DoctorsAppointmentNewTinnitusReportComponent } from "./common/PatientMa
 import { DoctorsAppointmentNewTinnitusTherapyTrackerComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-therapy-tracker/doctors-appointment-new-tinnitus-therapy-tracker.component";
 import { MiclWastageMasterProductComponent } from './common/ProductionManagement/Master/micl-wastage-master-product/micl-wastage-master-product.component';
 import { DoctorsAppointmentNewTinnitusEvaluationComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-evaluation/doctors-appointment-new-tinnitus-evaluation.component";
+import { DoctorsAppointmentNewTinnitusHandicapComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-handicap/doctors-appointment-new-tinnitus-handicap.component";
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -732,7 +733,8 @@ import { DoctorsAppointmentNewTinnitusEvaluationComponent } from "./common/Patie
     DoctorsAppointmentNewTinnitusReportComponent,
     DoctorsAppointmentNewTinnitusTherapyTrackerComponent,
     MiclWastageMasterProductComponent,
-    DoctorsAppointmentNewTinnitusEvaluationComponent
+    DoctorsAppointmentNewTinnitusEvaluationComponent,
+    DoctorsAppointmentNewTinnitusHandicapComponent
   ],
   imports: [
     CommonModule,

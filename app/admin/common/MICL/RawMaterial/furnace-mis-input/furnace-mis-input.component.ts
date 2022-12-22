@@ -41,16 +41,22 @@ export class FurnaceMisInputComponent implements OnInit {
   
   CostCenterList:any = [];
   GodownList:any = [];
+  ProGodownList:any = [];
+  SLGodownList:any = [];
   ProdList:any = [];
   WasteProList:any = [];
 
   ObjFurMISinputPro : FurMISinputPro = new FurMISinputPro();
   // ProductionList:any = [];
+  ProProductTypeList:any = [];
+  ProproductSubTypeList:any = [];
   AddProductionList:any = [];
   Productionvalid = false;
 
   ObjFurMISinputWaste : FurMISinputWaste = new FurMISinputWaste();
   // WasteSlagList:any = [];
+  SlagProductTypeList:any = [];
+  SlagproductSubTypeList:any = [];
   AddWasteSlagList:any = [];
   wasteslagvalid = false;
   ReasonList:any = [];
@@ -97,8 +103,11 @@ export class FurnaceMisInputComponent implements OnInit {
     this.GetRaWMatConsumption();
     this.GetConsConsumption();
     this.getCostcenter();
-    this.GetGodown();
-    this.GetProduction();
+    this.GetProductionGodown();
+    this.getProProductTyp();
+    this.GetSlagGodown();
+    this.getSlagProductTyp();
+    // this.GetProduction();
     this.GetReason();
     this.GetFurnaceNo();
   }
@@ -244,37 +253,86 @@ export class FurnaceMisInputComponent implements OnInit {
       this.ObjFurMISinputWaste.Cost_Cent_ID = 36;
    })
   }
-  GetGodown() {
+  // PRODUCTION
+  GetProductionGodown() {
     const obj = {
      "SP_String": "SP_Furnace_MIS_Input",
-     "Report_Name_String": "Get_Cost_Center_Godown"
+     "Report_Name_String": "Get_Production_Cost_Center_Godown"
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      this.GodownList = data;
-      //console.log("this.toGodownList",this.GodownList);
+      this.ProGodownList = data;
+      //console.log("this.ProGodownList",this.ProGodownList);
       })
   }
-  GetProduction() {
+  getProProductTyp(){
+    this.ProProductTypeList = [];
+       const obj = {
+        "SP_String": "SP_Furnace_MIS_Input",
+        "Report_Name_String":"Get_Master_Product_Type_For_Production",
+       }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       if(data.length) {
+           data.forEach(element => {
+             element['label'] = element.Product_Type,
+             element['value'] = element.Product_Type_ID
+           });
+           this.ProProductTypeList = data;
+         }
+         else {
+           this.ProProductTypeList = [];
+         }
+      })
+ }
+ getProProductSubTyp(ProductTypeID){
+  if(ProductTypeID){
+   this.ProproductSubTypeList = [];
     const obj = {
       "SP_String": "SP_Furnace_MIS_Input",
-      "Report_Name_String": "Get_Products"
+      "Report_Name_String":"Get_Master_Product_Sub_Type",
+      "Json_Param_String": JSON.stringify([{Product_Type_ID:ProductTypeID}]) 
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     if(data.length) {
+      data.forEach(element => {
+        element['label'] = element.Product_Sub_Type,
+        element['value'] = element.Product_Sub_Type_ID
+      });
+      this.ProproductSubTypeList = data;
     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      //this.ProductionlList = data;
-      if(data.length) {
-        data.forEach(element => {
-          element['label'] = element.Product_Description,
-          element['value'] = element.Product_ID
-        });
-        this.ProdList = data;
-        this.WasteProList = data;
-      } else {
-       this.ProdList = [];
-       this.WasteProList = [];
-      }
+    else {
+      this.ProproductSubTypeList = [];
+    }
+    })
+    
+   }
+ }
+ GetProProduction() {
+  this.ProdList = [];
+  if (this.ObjFurMISinputPro.Product_Sub_Type_ID) {
+   const proobj = {
+     Product_Type_ID : this.ObjFurMISinputPro.Product_Type_ID,
+     Product_Sub_Type_ID : this.ObjFurMISinputPro.Product_Sub_Type_ID
+   }
+   const obj = {
+     "SP_String": "SP_Furnace_MIS_Input",
+     "Report_Name_String": "Get_Products",
+     "Json_Param_String": JSON.stringify([proobj])
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     //this.ProductionlList = data;
+     if(data.length) {
+       data.forEach(element => {
+         element['label'] = element.Product_Description,
+         element['value'] = element.Product_ID
+       });
+       this.ProdList = data;
+     } else {
+      this.ProdList = [];
+     }
      console.log("Production List ===",this.ProdList);
-  })
+    })
   }
+ }
   getProData(proid) {
     this.ObjFurMISinputPro.Product_Description = undefined;
     this.ObjFurMISinputPro.UOM = undefined;
@@ -285,25 +343,20 @@ export class FurnaceMisInputComponent implements OnInit {
       this.ObjFurMISinputPro.Product_Description = prodata[0].Product_Description;
     }
   }
-  getwasteProData(wasteproid) {
-    this.ObjFurMISinputWaste.Product_Description = undefined;
-    this.ObjFurMISinputWaste.UOM = undefined;
-    if (wasteproid) {
-      console.log("wasteproid ====",wasteproid)
-      var WasteProuom = this.WasteProList.filter(el=> Number(el.Product_ID) === Number(wasteproid))
-      this.ObjFurMISinputWaste.UOM = WasteProuom[0].UOM;
-      this.ObjFurMISinputWaste.Product_Description = WasteProuom[0].Product_Description
-    }
-  }
-  // PRODUCTION
   addProduction(valid) {
   this.Productionvalid = true;
-  var stockpoint = this.GodownList.filter(el=> Number(el.Godown_ID) === Number(this.ObjFurMISinputPro.Godown_ID));
+  var stockpoint = this.ProGodownList.filter(el=> Number(el.Godown_ID) === Number(this.ObjFurMISinputPro.Godown_ID));
+  var protype = this.ProProductTypeList.filter(el=> Number(el.Product_Type_ID) === Number(this.ObjFurMISinputPro.Product_Type_ID));
+  var prosubtype = this.ProproductSubTypeList.filter(el=> Number(el.Product_Sub_Type_ID) === Number(this.ObjFurMISinputPro.Product_Sub_Type_ID));
   if(valid){
       this.AddProductionList.push({
         Cost_Cent_ID : this.ObjFurMISinputPro.Cost_Cent_ID,
         Godown_ID : Number(this.ObjFurMISinputPro.Godown_ID),
         Godown_Name : stockpoint[0].godown_name,
+        Product_Type_ID : Number(this.ObjFurMISinputPro.Product_Type_ID),
+        Product_Type : protype[0].Product_Type,
+        Product_Sub_Type_ID : Number(this.ObjFurMISinputPro.Product_Sub_Type_ID),
+        Product_Sub_Type : prosubtype[0].Product_Sub_Type,
         Product_ID : this.ObjFurMISinputPro.Product_ID,
         Product_Description: this.ObjFurMISinputPro.Product_Description,
         Batch_No: this.ObjFurMISinputPro.Batch_No,
@@ -320,14 +373,109 @@ export class FurnaceMisInputComponent implements OnInit {
   }
 
   // WASTE SLAG
+  GetSlagGodown() {
+    const obj = {
+     "SP_String": "SP_Furnace_MIS_Input",
+     "Report_Name_String": "Get_Slag_Cost_Center_Godown"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.SLGodownList = data;
+      //console.log("this.SLGodownList",this.SLGodownList);
+      })
+  }
+  getSlagProductTyp(){
+    this.SlagProductTypeList = [];
+       const obj = {
+        "SP_String": "SP_Furnace_MIS_Input",
+        "Report_Name_String":"Get_Master_Product_Type_For_Wastage",
+       }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       if(data.length) {
+           data.forEach(element => {
+             element['label'] = element.Product_Type,
+             element['value'] = element.Product_Type_ID
+           });
+           this.SlagProductTypeList = data;
+         }
+         else {
+           this.SlagProductTypeList = [];
+         }
+      })
+ }
+ getslagProductSubTyp(ProductTypeID){
+  if(ProductTypeID){
+   this.SlagproductSubTypeList = [];
+    const obj = {
+      "SP_String": "SP_Furnace_MIS_Input",
+      "Report_Name_String":"Get_Master_Product_Sub_Type",
+      "Json_Param_String": JSON.stringify([{Product_Type_ID:ProductTypeID}]) 
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     if(data.length) {
+      data.forEach(element => {
+        element['label'] = element.Product_Sub_Type,
+        element['value'] = element.Product_Sub_Type_ID
+      });
+      this.SlagproductSubTypeList = data;
+    }
+    else {
+      this.SlagproductSubTypeList = [];
+    }
+    })
+    
+   }
+ }
+GetSlagProduction() {
+  this.WasteProList = [];
+  if (this.ObjFurMISinputWaste.Product_Sub_Type_ID) {
+  const Slagobj = {
+    Product_Type_ID : this.ObjFurMISinputWaste.Product_Type_ID,
+    Product_Sub_Type_ID : this.ObjFurMISinputWaste.Product_Sub_Type_ID
+  }
+  const obj = {
+    "SP_String": "SP_Furnace_MIS_Input",
+    "Report_Name_String": "Get_Products",
+    "Json_Param_String": JSON.stringify([Slagobj])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    //this.ProductionlList = data;
+    if(data.length) {
+      data.forEach(element => {
+        element['label'] = element.Product_Description,
+        element['value'] = element.Product_ID
+      });
+      this.WasteProList = data;
+    } else {
+     this.WasteProList = [];
+    }
+     console.log("Production List ===",this.ProdList);
+    })
+  }
+}
+  getwasteProData(wasteproid) {
+    this.ObjFurMISinputWaste.Product_Description = undefined;
+    this.ObjFurMISinputWaste.UOM = undefined;
+    if (wasteproid) {
+      console.log("wasteproid ====",wasteproid)
+      var WasteProuom = this.WasteProList.filter(el=> Number(el.Product_ID) === Number(wasteproid))
+      this.ObjFurMISinputWaste.UOM = WasteProuom[0].UOM;
+      this.ObjFurMISinputWaste.Product_Description = WasteProuom[0].Product_Description
+    }
+  }
   addWasteSlag(valid) {
     this.wasteslagvalid = true;
-    var stockpointw = this.GodownList.filter(el=> Number(el.Godown_ID) === Number(this.ObjFurMISinputWaste.Godown_ID));
+    var stockpointw = this.SLGodownList.filter(el=> Number(el.Godown_ID) === Number(this.ObjFurMISinputWaste.Godown_ID));
+    var protype = this.SlagProductTypeList.filter(el=> Number(el.Product_Type_ID) === Number(this.ObjFurMISinputWaste.Product_Type_ID));
+    var prosubtype = this.SlagproductSubTypeList.filter(el=> Number(el.Product_Sub_Type_ID) === Number(this.ObjFurMISinputWaste.Product_Sub_Type_ID));
     if(valid){
         this.AddWasteSlagList.push({
           Cost_Cent_ID : this.ObjFurMISinputWaste.Cost_Cent_ID,
           Godown_ID : Number(this.ObjFurMISinputWaste.Godown_ID),
           Godown_Name : stockpointw[0].godown_name,
+          Product_Type_ID : Number(this.ObjFurMISinputWaste.Product_Type_ID),
+          Product_Type : protype[0].Product_Type,
+          Product_Sub_Type_ID : Number(this.ObjFurMISinputWaste.Product_Sub_Type_ID),
+          Product_Sub_Type : prosubtype[0].Product_Sub_Type,
           Product_ID : this.ObjFurMISinputWaste.Product_ID,
           Product_Description: this.ObjFurMISinputWaste.Product_Description,
           Batch_No: this.ObjFurMISinputWaste.Batch_No,
@@ -645,6 +793,9 @@ export class FurnaceMisInputComponent implements OnInit {
     this.AddProductionList = [];
     this.AddWasteSlagList = [];
     this.AddShutdownList = [];
+    this.Productionvalid = false;
+    this.wasteslagvalid = false;
+    this.Shutdownvalid = false;
     this.ObjFurnaceMISinput.Furnace_Date = this.DateService.dateConvert(new Date(this.Doc_Date));
     if (this.ObjFurnaceMISinput.Furnace_No && this.ObjFurnaceMISinput.Furnace_Date) {
       const obj = {
@@ -703,6 +854,8 @@ class DailyPerformance {
 class FurMISinputPro {
   Cost_Cent_ID : any;
   Godown_ID : any;
+  Product_Type_ID : any;
+  Product_Sub_Type_ID : any;
   Product_ID : any;
   Product_Description : any;
   Batch_No : any;
@@ -712,6 +865,8 @@ class FurMISinputPro {
 class FurMISinputWaste {
   Cost_Cent_ID : any;
   Godown_ID : any;
+  Product_Type_ID : any;
+  Product_Sub_Type_ID : any;
   Product_ID : any;
   Product_Description : any;
   Batch_No : any;

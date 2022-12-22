@@ -312,6 +312,7 @@ import { DoctorsAppointmentNewTinnitusReportComponent } from "./common/PatientMa
 import { DoctorsAppointmentNewTinnitusTherapyTrackerComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-therapy-tracker/doctors-appointment-new-tinnitus-therapy-tracker.component";
 import { MiclWastageMasterProductComponent } from './common/ProductionManagement/Master/micl-wastage-master-product/micl-wastage-master-product.component';
 import { DoctorsAppointmentNewTinnitusEvaluationComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-evaluation/doctors-appointment-new-tinnitus-evaluation.component";
+import { DoctorsAppointmentNewTinnitusHandicapComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-handicap/doctors-appointment-new-tinnitus-handicap.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2349,6 +2350,13 @@ path: 'MICL_Cost_Center_Master',
     component: DoctorsAppointmentNewTinnitusEvaluationComponent,
     data: {
       title: 'Doctors Appointment New Tinnitus Evaluation'
+}
+},
+{
+  path: 'Doctors_Appointment_New_Tinnitus_Handicap',
+    component: DoctorsAppointmentNewTinnitusHandicapComponent,
+    data: {
+      title: 'Doctors Appointment New Tinnitus Handicap'
 }
 },
     
