@@ -1,0 +1,624 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+           <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+
+                        <form name="DoctorsAppointmentNewTinnitusHandicap" #DoctorsAppointmentNewTinnitusHandicapForm="ngForm" novalidate>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    name="Name"
+                                    #Name="ngModel" 
+                                    [(ngModel)]="ObjAppoID.Name"
+                                    placeholder="Write Your Name"
+                                    disabled
+                                    > 
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Patient ID<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    name="PatientID"
+                                    #PatientID="ngModel"
+                                    [(ngModel)]="ObjAppoID.PatientID" 
+                                    CompacctDigitonly="true"
+                                    placeholder="Type Patient ID"
+                                    disabled
+                                    > 
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Sex<sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                    name="Sex"
+                                    #Sex="ngModel"
+                                    [(ngModel)]="ObjAppoID.Sex"
+                                    disabled
+                                     >
+                                     <option  [ngValue]="undefined">Select</option>
+                                     <option  *ngFor="let option of GenderList" value="{{option}}">
+                                         {{option}}
+                                     </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <div class="row">
+                                <div class="label-Tinnitus">The aim of this questionnaire is to find out what problem tinnitus might be giving you. Tick Yes, 
+                                    Sometimes, or No for each question.</div>
+
+                                <!-- 1 to 5 -->
+
+                                <div class="row mrgn">
+                                        <div class="col-sm-7"> 
+                                            <strong>Because of your tinnitus is it difficult for you to concentrate?</strong>
+                                        </div>
+                                        <div class="col-sm-2"> 
+                                            <select class="form-control"
+                                                        name="concentrate"
+                                                        #concentrate="ngModel" 
+                                                        [(ngModel)]="ObjTinnitusHandicap.concentrate"
+                                                        >
+                                                        <option  [ngValue]="undefined">Select</option>
+                                                        <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                            {{option}}
+                                                        </option>
+                                            </select>
+                                        </div>
+                                </div>   
+                                
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Does the loudness of your tinnitus make it difficult for you to hear?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="loudness"
+                                                    #loudness="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.loudness"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Does your tinnitus make you angry?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="angry"
+                                                    #angry="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.angry"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Does your tinnitus make you feel confused?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="confused"
+                                                    #confused="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.confused"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Because of your tinnitus do you feel desperate?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="desperate"
+                                                    #desperate="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.desperate"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- 6 to 10 -->
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Do you complain a great deal about your tinnitus?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="complain"
+                                                    #complain="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.complain"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Because of your tinnitus do you have trouble falling asleep?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="asleep"
+                                                    #asleep="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.asleep"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Do you feel as though you cannot escape your tinnitus?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="escape1"
+                                                    #escape1="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.escape1"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Does your tinnitus interfere with your ability to enjoy social activities such as going out to dinner, cinema?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="social_activities"
+                                                    #social_activities="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.social_activities"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Because of your tinnitus do you feel frustrated?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="frustrated"
+                                                    #frustrated="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.frustrated"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                 <!--11 to 15 -->
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Because of your tinnitus do you feel you have a terrible disease?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="disease"
+                                                    #disease="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.disease"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Does your tinnitus make it difficult for you to enjoy life?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="life"
+                                                    #life="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.life"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Does your tinnitus interfere with your job or household responsibilities?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="household"
+                                                    #household="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.household"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Because of your tinnitus do you find that you are often irritable?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="irritable"
+                                                    #irritable="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.irritable"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Because of your tinnitus is it difficult for you to read?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="read1"
+                                                    #read1="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.read1"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!--16 to 20 -->
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Does your tinnitus make you upset?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="upset"
+                                                    #upset="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.upset"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Do you feel that your tinnitus has placed stress on your relationship with members of your family, friends?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="relationship"
+                                                    #relationship="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.relationship"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Do you find it difficult to focus your attention away from you tinnitus and on to other things?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="focus"
+                                                    #focus="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.focus"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Do you feel that you have no control over your tinnitus?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="control1"
+                                                    #control1="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.control1"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Because of your tinnitus are you often tired?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="tired"
+                                                    #tired="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.tired"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!--21 to 25 -->
+                                
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Because of your tinnitus do you feel depressed?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="depressed"
+                                                    #depressed="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.depressed"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Does your tinnitus make you feel anxious?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="anxious"
+                                                    #anxious="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.anxious"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Do you feel that you can no longer cope with your tinnitus?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="cope"
+                                                    #cope="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.cope"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Does your tinnitus get worse when you are under stress?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="stress"
+                                                    #stress="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.stress"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-7"> 
+                                        <strong>Does your tinnitus make you feel insecure?</strong>
+                                    </div>
+                                    <div class="col-sm-2"> 
+                                        <select class="form-control"
+                                                    name="insecure"
+                                                    #insecure="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusHandicap.insecure"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DropdownList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <div class="row">
+                                <div class="col-sm-7">
+                                    <label class="label-THI-L">Scoring: YES = 4; SOMETIMES = 2; NO = 0</label>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="label-THI-C">TOTAL SCORE </label>
+                                </div>  
+                                <div class="col-sm-3">
+                                    <input 
+                                    class="form-control label-THI-R"
+                                    name="total_score"
+                                    #total_score="ngModel" 
+                                    [(ngModel)]="ObjTinnitusHandicap.total_score"
+                                    placeholder=" Your Score... "
+                                    disabled
+                                    > 
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <th class="table-header">LEVEL</th>
+                                        <th class="table-header">REMARKS</th>
+                                    </tr>
+                                    <tr>
+                                        <td class="label-table">
+                                            <label>0 to 17 Level 1</label>
+                                        </td>
+                                        <td class="label-table">
+                                            <label>Minimal Reaction to Tinnitus</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label-table">
+                                            <label>18 to 36 Level 2</label>
+                                        </td>
+                                        <td class="label-table">
+                                            <label>Mild Reaction to Tinnitus</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label-table">
+                                            <label>37 to 57 Level 3</label>
+                                        </td>
+                                        <td class="label-table">
+                                            <label>Moderate Reaction to Tinnitus</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label-table">
+                                            <label>58 to 76 Level 4</label>
+                                        </td>
+                                        <td class="label-table">
+                                            <label>Severe Reaction to Tinnitus</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label-table">
+                                            <label>77 and above Level 5</label>
+                                        </td>
+                                        <td class="label-table">
+                                            <label>Catastrophic Reaction to Tinnitus</label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- <div class="form-group" style="padding: 1em;">
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-2"></div>
+                                <div class="col-sm-2">
+                                    <button *ngIf="buttonValid" class="btn btn-primary pull-right" (click)="saveDocAppo(DoctorsAppointmentNewTinnitusHandicapForm.form.valid)"  id="load"   [disabled]="">
+                                        <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                    </button>
+                                </div> 
+                            </div>  -->
+
+                        </form>
+
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

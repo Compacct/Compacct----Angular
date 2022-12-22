@@ -1,0 +1,53 @@
+.custombutton {
+    margin-top: 25px;
+  }
+  hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+  }
+  div.label-t {
+    padding: 6px 12px;
+    background: rgb(206 216 216 / 51%);
+  }
+.table-header {
+  color: #ffffff !important;
+  background-color: #3c8dbc !important;
+}
+th{
+  text-align: center;
+}
+table, th, td {
+  border: 1px solid #ffffff !important;
+  padding: 5px;
+}
+.mrgn{
+  margin-top: 15px;
+}
+.label-Tinnitus{
+  text-align: center;
+  color: #000000 !important;
+  background-color: #c5d1ce !important;
+  font-size: 17px;
+  border-radius: 10px;
+}
+strong{
+  font-size: 14px;
+  margin-left: 30px;
+}
+.label-THI-L{
+  margin-left: 30px;
+  font-size: 17px;
+}
+.label-THI-C{
+  font-size: 17px;
+  margin-left: 70px;
+}
+.label-THI-R{
+  margin-right: 30px;
+}
+.label-table{
+  font-size: 15px;
+  text-align: center;
+}
