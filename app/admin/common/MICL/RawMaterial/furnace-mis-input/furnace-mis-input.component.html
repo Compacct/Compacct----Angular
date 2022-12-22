@@ -490,7 +490,7 @@
                     <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="fa fa-product-hunt">
                         <form name="ProductionForm" #ProductionForm="ngForm" novalidate>
                         <div class="form-group">
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
                                 <select class="form-control" 
                                 name="Pro_Godown_ID" 
@@ -500,10 +500,49 @@
                                 required 
                                 >
                                     <option  [ngValue]="undefined">Select</option>
-                                    <option *ngFor="let option of GodownList" [value]="option.Godown_ID">{{option.godown_name}}</option>
+                                    <option *ngFor="let option of ProGodownList" [value]="option.Godown_ID">{{option.godown_name}}</option>
                             </select>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
+                                <label class="control-label">Product Type<sup class="text-danger">*</sup></label>
+                                <p-dropdown 
+                                [options]="ProProductTypeList" 
+                                name="Product_Type"
+                                [(ngModel)]="ObjFurMISinputPro.Product_Type_ID"
+                                #Product_Type="ngModel" 
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Product Found'" 
+                                [filter]="true" filterBy="label,value.name" 
+                                [resetFilterOnHide]="true" 
+                                [placeholder]="'Select Product Type'" 
+                                [virtualScroll]="true" 
+                                itemSize="30"
+                                (onChange)="getProProductSubTyp(ObjFurMISinputPro.Product_Type_ID)"
+                                [styleClass]="Productionvalid && Product_Type.errors?.required ? 'clearance': ''"
+                                [required]="true">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Product Sub Type<sup class="text-danger">*</sup></label>
+                                <p-dropdown 
+                                [options]="ProproductSubTypeList" 
+                                name="Product_Sub_Type"
+                                [(ngModel)]="ObjFurMISinputPro.Product_Sub_Type_ID"
+                                #Product_Sub_Type="ngModel" 
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Item Found'" 
+                                [filter]="true" filterBy="label,value.name" 
+                                [resetFilterOnHide]="true" 
+                                [placeholder]="'Select Product Sub Type'" 
+                                [virtualScroll]="true" 
+                                itemSize="30"
+                                (onChange)="GetProProduction()"
+                                [styleClass]="Productionvalid && Product_Sub_Type.errors?.required ? 'clearance': ''"  [required]="true">
+                                </p-dropdown>  
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-4">
                                 <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
                                 <p-dropdown [options]="ProdList" 
                                 name="production" 
@@ -572,6 +611,8 @@
                                     <thead>
                                         <tr style="background-color:#4fa1d1;color:white;">
                                             <th>Stock Point</th>
+                                            <th>Product Type</th>
+                                            <th>Product Sub Type</th>
                                             <th>Product Description</th>
                                             <th>Lot No.</th>
                                             <th>Qty</th>
@@ -583,6 +624,8 @@
                                     <tbody>
                                         <tr *ngFor="let obj of AddProductionList; let ind = index;">
                                             <td>{{obj.Godown_Name}}</td>
+                                            <td>{{obj.Product_Type}}</td>
+                                            <td>{{obj.Product_Sub_Type}}</td>
                                             <td>{{obj.Product_Description}}</td>
                                             <td>{{obj.Batch_No}}</td>
                                             <td>{{obj.Qty}}</td>
@@ -599,7 +642,7 @@
                     <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[4]" leftIcon="fa fa-trash-o">
                         <form name="WasteForm" #WasteForm="ngForm" novalidate>
                         <div class="form-group">
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
                                 <select class="form-control" 
                                 name="waste_Godown_ID" 
@@ -608,10 +651,49 @@
                                 [ngClass]="{'clearance': wasteslagvalid && waste_Godown_ID?.errors?.required}"
                                 required>
                                     <option  [ngValue]="undefined">Select</option>
-                                    <option *ngFor="let option of GodownList" [value]="option.Godown_ID">{{option.godown_name}}</option>
+                                    <option *ngFor="let option of SLGodownList" [value]="option.Godown_ID">{{option.godown_name}}</option>
                             </select>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
+                                <label class="control-label">Product Type<sup class="text-danger">*</sup></label>
+                                <p-dropdown 
+                                [options]="SlagProductTypeList" 
+                                name="Product_Type"
+                                [(ngModel)]="ObjFurMISinputWaste.Product_Type_ID"
+                                #Product_Type="ngModel" 
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Product Found'" 
+                                [filter]="true" filterBy="label,value.name" 
+                                [resetFilterOnHide]="true" 
+                                [placeholder]="'Select Product Type'" 
+                                [virtualScroll]="true" 
+                                itemSize="30"
+                                (onChange)="getslagProductSubTyp(ObjFurMISinputWaste.Product_Type_ID)"
+                                [styleClass]="wasteslagvalid && Product_Type.errors?.required ? 'clearance': ''"
+                                [required]="true">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Product Sub Type<sup class="text-danger">*</sup></label>
+                                <p-dropdown 
+                                [options]="SlagproductSubTypeList" 
+                                name="Product_Sub_Type"
+                                [(ngModel)]="ObjFurMISinputWaste.Product_Sub_Type_ID"
+                                #Product_Sub_Type="ngModel" 
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Item Found'" 
+                                [filter]="true" filterBy="label,value.name" 
+                                [resetFilterOnHide]="true" 
+                                [placeholder]="'Select Product Sub Type'" 
+                                [virtualScroll]="true" 
+                                itemSize="30"
+                                (onChange)="GetSlagProduction()"
+                                [styleClass]="wasteslagvalid && Product_Sub_Type.errors?.required ? 'clearance': ''"  [required]="true">
+                                </p-dropdown>  
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-4">
                                 <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
                                 <p-dropdown [options]="WasteProList" 
                                 name="wasteslag" 
@@ -675,6 +757,8 @@
                                     <thead>
                                         <tr style="background-color:#4fa1d1;color:white;">
                                             <th>Stock Point</th>
+                                            <th>Product Type</th>
+                                            <th>Product Sub Type</th>
                                             <th>Product Description</th>
                                             <th>Lot No.</th>
                                             <th>Qty</th>
@@ -686,6 +770,8 @@
                                     <tbody>
                                         <tr *ngFor="let obj of AddWasteSlagList; let ind = index;">
                                             <td>{{obj.Godown_Name}}</td>
+                                            <td>{{obj.Product_Type}}</td>
+                                            <td>{{obj.Product_Sub_Type}}</td>
                                             <td>{{obj.Product_Description}}</td>
                                             <td>{{obj.Batch_No}}</td>
                                             <td>{{obj.Qty}}</td>
