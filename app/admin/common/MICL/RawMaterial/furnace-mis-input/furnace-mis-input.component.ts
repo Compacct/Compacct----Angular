@@ -88,7 +88,7 @@ export class FurnaceMisInputComponent implements OnInit {
 
   ngOnInit() {
     this.items = ["DAILY PERFORMANCE PARAMETER", "RAW MATERIAL CONSUMPTION", "CONSUMABLE CONSUMPTION",
-                  "PRODUCTION", "WASTE SLAG", "SHUTDOWN DETAILS", "DISPATCHES", "CRITICAL ISSUE"];
+                  "PRODUCTION", "SLAG", "SHUTDOWN DETAILS", "DISPATCHES", "CRITICAL ISSUE"];
     this.Header.pushHeader({
       Header: "Furnace MIS Input",
       Link: "Material Management -> Production -> Furnace MIS Input"
@@ -115,7 +115,7 @@ export class FurnaceMisInputComponent implements OnInit {
     //console.log(e)
     this.tabIndexToView = e.index;
     this.items = ["DAILY PERFORMANCE PARAMETER", "RAW MATERIAL CONSUMPTION", "CONSUMABLE CONSUMPTION",
-                  "PRODUCTION", "WASTE SLAG", "SHUTDOWN DETAILS", "DISPATCHES", "CRITICAL ISSUE"];
+                  "PRODUCTION", "SLAG", "SHUTDOWN DETAILS", "DISPATCHES", "CRITICAL ISSUE"];
     //this.buttonname = "Save";
     //this.clearData();
   }
