@@ -311,6 +311,7 @@ import { MiclFinishMasterProductComponent } from './common/ProductionManagement/
 import { DoctorsAppointmentNewTinnitusReportComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-report/doctors-appointment-new-tinnitus-report.component";
 import { DoctorsAppointmentNewTinnitusTherapyTrackerComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-therapy-tracker/doctors-appointment-new-tinnitus-therapy-tracker.component";
 import { MiclWastageMasterProductComponent } from './common/ProductionManagement/Master/micl-wastage-master-product/micl-wastage-master-product.component';
+import { DoctorsAppointmentNewTinnitusEvaluationComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-evaluation/doctors-appointment-new-tinnitus-evaluation.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2341,6 +2342,13 @@ path: 'MICL_Cost_Center_Master',
     component: MiclWastageMasterProductComponent,
     data: {
       title: 'Wastage Master Product'
+}
+},
+{
+  path: 'Doctors_Appointment_New_Tinnitus_Evaluation',
+    component: DoctorsAppointmentNewTinnitusEvaluationComponent,
+    data: {
+      title: 'Doctors Appointment New Tinnitus Evaluation'
 }
 },
     
