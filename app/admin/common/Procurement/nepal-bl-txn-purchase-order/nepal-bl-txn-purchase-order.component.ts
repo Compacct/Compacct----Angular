@@ -10,8 +10,6 @@ import { UnsubscriptionError } from 'rxjs';
 import { createClient } from 'http';
 import { FileUpload } from "primeng/primeng";
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { DomSanitizer } from '@angular/platform-browser';
-
 @Component({
   selector: 'app-nepal-bl-txn-purchase-order',
   templateUrl: './nepal-bl-txn-purchase-order.component.html',
@@ -21,7 +19,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   tabIndexToView: number = 0;
+  tabIndex: number = 0;
   items: any = [];
+  items1: any = [];
   buttonname: string = "Save";
   ObjPurchase: Purchase = new Purchase();
   DocDate: any = {};
@@ -82,8 +82,24 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   PDFFlag: boolean = false;
   ProductPDFFile: any = [];
   ValidationNoUpload: any = undefined;
-  DocIdD: any = undefined
-  DocUplodeDate: any
+  DocIdD: any = undefined;
+  DocUplodeDate: any;
+  viewTodoModal: boolean = false;
+  ViewTOdoNameModal: boolean = false;
+  dataList: any = [];
+  todoNameList: any = [];
+  PendingList: any = [];
+  StatusID: any = undefined;
+  POid: any = undefined;
+  PendingTodo: any = undefined;
+  StatusDetails: any = undefined;
+  RemarksDetails: any = undefined;
+  TodoForm: boolean = false;
+  UpdatePopIdDoc: any = undefined;
+  UpdatePopIdDate: any = undefined;
+  backUPdataList: any = [];
+  SelectedDistPresentStatus: any = [];
+  DistPresentStatus:any = [];
   @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
   constructor(
     private $http: HttpClient,
@@ -94,11 +110,11 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
     private ngxService: NgxUiLoaderService,
-    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
     this.items = ["BROWSE", "CREATE"];
+    this.items1 = ["TO-DO View", "TO-DO Update"];
     this.Header.pushHeader({
       Header: "Purchase Order",
       Link: " Procurement ->  Nepal BL Txn Purchase Order"
@@ -119,6 +135,11 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.clearData();
+  }
+  TabClick1(r) {
+    this.tabIndex = r.index;
+    this.items1 = ["TO-DO View", "TO-DO Update"];
+    this.clearData1()
   }
   onReject() {
     this.compacctToast.clear("c");
@@ -141,6 +162,13 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.Searchedlist = [];
     this.UpdatePono = {};
     this.DocDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
+  }
+  clearData1() {
+    this.TodoForm = false;
+    this.PendingTodo = undefined;
+    this.StatusDetails = undefined;
+    this.RemarksDetails = undefined;
+    
   }
   getGodown() {
     this.BillingTolist = [];
@@ -953,6 +981,149 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   DownloadFile(UrlAll) {
     //console.log("UrlAll", UrlAll)
     window.open(UrlAll)
+  }
+  ToDoUpdate(PODoc: any) {
+    this.UpdatePopIdDoc = PODoc;
+    this.getTodoPanding(this.UpdatePopIdDoc);
+    this.getTodoView(this.UpdatePopIdDoc);
+    setTimeout(() => {
+      this.viewTodoModal = true;
+      this.tabIndex = 0;
+    },300);
+  }
+  getTodoPanding(Doc) {
+    this.PendingList = []
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Order_Activity",
+      "Report_Name_String": "Get_Pending_To_Do",
+      "Json_Param_String": JSON.stringify([{ PO_Doc_No: Doc }])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      if (data.length) {
+        data.forEach((xy: any) => {
+          xy['label'] = xy.Status_Name
+          xy['value'] = xy.Status_ID
+        });
+        this.PendingList = data
+        // console.log("VendorList==",this.VendorList)
+      }
+    });
+  }
+  getTodoView(TODoc) {
+    this.dataList = [];
+    this.backUPdataList = [];
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Order_Activity",
+      "Report_Name_String": "Get_To_Do_with_Doc_No",
+      "Json_Param_String": JSON.stringify([{ PO_Doc_No: TODoc }])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      if (data.length) {
+        this.dataList = data;
+        this.backUPdataList = data;
+        data.forEach((y: any) => {
+          y.Task_End_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(y.Task_End_Date);
+          y.Completed_On = this.DateNepalConvertService.convertNewEngToNepaliDateObj(y.Completed_On)
+        });
+        console.log("dataList==", this.dataList)
+        this.GetDistinct()
+      }
+    });
+  }
+  GetDistinct() {
+    let Status:any = [];
+    this.DistPresentStatus = [];
+    this.dataList.forEach((item) => {
+  if (Status.indexOf(item.Last_Status) === -1) {
+    Status.push(item.Last_Status);
+  this.DistPresentStatus.push({ label: item.Last_Status, value: item.Last_Status });
+  }
+  });
+    this.backUPdataList = [...this.dataList];
+  }
+  FilterDist() {
+    let PresentStatus: any = [];
+    let SearchFields:any =[];
+  if (this.SelectedDistPresentStatus.length) {
+    SearchFields.push('Last_Status');
+    PresentStatus = this.SelectedDistPresentStatus;
+  }
+  this.dataList = [];
+  if (SearchFields.length) {
+    let LeadArr = this.backUPdataList.filter(function (e) {
+      return (PresentStatus.length ? PresentStatus.includes(e['Last_Status']) : true) 
+    });
+  this.dataList = LeadArr.length ? LeadArr : [];
+  } else {
+  this.dataList = [...this.backUPdataList] ;
+  }
+
+  }
+  DetailsPoUp(Valid: any) {
+    this.StatusID = Valid.Status_ID;
+    this.POid = Valid.PO_Doc_No;
+    this.getTodoName(this.StatusID, this.POid)
+    setTimeout(() => {
+      this.ViewTOdoNameModal = true
+    }, 300);
+  }
+  getTodoName(Typeof, ONtype) {
+    this.todoNameList = []
+    const temData = {
+      PO_Doc_No: ONtype,
+      Status_ID: Typeof
+    }
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Order_Activity",
+      "Report_Name_String": "Get_To_Do_with_Doc_No_Details",
+      "Json_Param_String": JSON.stringify([temData])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      if (data.length) {
+        this.todoNameList = data;
+        data.forEach((yr: any) => {
+          yr.Posted_On = this.DateNepalConvertService.convertNewEngToNepaliDateObj(yr.Posted_On);
+        });
+        //console.log("todoNameList==",this.todoNameList)
+      }
+    });
+  }
+  UpdateFormPop(valid: any) {
+    this.TodoForm = true;
+    if (valid) {
+      const FilterData = this.PendingList.filter(items => items.Status_ID === this.PendingTodo);
+      const ArrData = {
+        PO_Doc_No:this.UpdatePopIdDoc,  
+        Status_ID	:this.PendingTodo,			
+        Last_Status	:this.StatusDetails,
+        Last_Remarks:this.RemarksDetails,	
+        Posted_By	:this.$CompacctAPI.CompacctCookies.User_ID,
+        Task_End_Date: this.DateService.dateConvert(FilterData[0].Task_End_Date),
+      }
+      const obj = {
+        "SP_String": "sp_Bl_Txn_Purchase_Order_Activity",
+        "Report_Name_String": "Update_To_Do_Status",
+        "Json_Param_String": JSON.stringify(ArrData)
+      }
+      this.GlobalAPI.postData(obj).subscribe((data: any) => {
+        if (data[0].Column1) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary:"TO-DO List",
+            detail: "Succesfully Update" ,
+          });
+          this.tabIndex = 0;
+          this.items1 = ["TO-DO View", "TO-DO Update"];
+          this.TodoForm = false;
+          this.PendingTodo = undefined;
+          this.StatusDetails = undefined;
+          this.RemarksDetails = undefined;
+          this.getTodoView(this.UpdatePopIdDoc);
+        }
+      })
+    }
   }
 }
   // toEmailChange(){
