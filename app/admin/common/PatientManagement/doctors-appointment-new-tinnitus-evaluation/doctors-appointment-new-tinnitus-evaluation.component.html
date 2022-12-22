@@ -1,0 +1,715 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+           <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                    
+                        <form name="DoctorsAppointmentNewTinnitusEvaluation" #DoctorsAppointmentNewTinnitusEvaluationForm="ngForm" novalidate>
+
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    name="Name"
+                                    #Name="ngModel" 
+                                    [(ngModel)]="ObjAppoID.Name"
+                                    placeholder="Write Your Name"
+                                    disabled
+                                    > 
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Patient ID<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    name="PatientID"
+                                    #PatientID="ngModel"
+                                    [(ngModel)]="ObjAppoID.PatientID" 
+                                    CompacctDigitonly="true"
+                                    placeholder="Type Patient ID"
+                                    disabled
+                                    > 
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Sex<sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                    name="Sex"
+                                    #Sex="ngModel"
+                                    [(ngModel)]="ObjAppoID.Sex"
+                                    disabled
+                                     >
+                                     <option  [ngValue]="undefined">Select</option>
+                                     <option  *ngFor="let option of GenderList" value="{{option}}">
+                                         {{option}}
+                                     </option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Age<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    name="Age"
+                                    #Age="ngModel"
+                                    [(ngModel)]="ObjAppoID.Age" 
+                                    CompacctDigitonly="true"
+                                    placeholder="Put Your Age"
+                                    disabled
+                                    > 
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{Appo_Date ? (Appo_Date | date: "dd/MMM/yyyy") : '-'}}</div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Reffered By<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    name="RefferedBy"
+                                    #RefferedBy="ngModel"
+                                    [(ngModel)]="ObjAppoID.RefferedBy" 
+                                    placeholder="Type Reffered By"
+                                    disabled
+                                    > 
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Centre<sup class="text-danger">*</sup></label>                                 
+                                    <p-dropdown [options]="CentreList"
+                                            name="Centre" 
+                                            #Centre="ngModel" 
+                                            [(ngModel)]="ObjAppoID.Centre"
+                                            [showClear]="true" 
+                                            [emptyFilterMessage]="' No Centre Found'" 
+                                            [filter]="true" filterBy="label,value.name" 
+                                            [resetFilterOnHide]="true" 
+                                            [placeholder]="'Select Centre'" 
+                                            [virtualScroll]="true"
+                                            itemSize="30"
+                                            [required]="true"
+                                            disabled> 
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-sm-3">
+                                </div>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- NATURE -->
+                            <div class="row">
+                                <div class="label-Tinnitus">NATURE</div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Have you been exposed to continuous loud noises?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <select class="form-control"
+                                                    name="Nature_Sound"
+                                                    #Nature_Sound="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.Nature_Sound"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of NatureSoundList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Where do you find tinnitus to be/more from?</strong>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <select class="form-control"
+                                                    name="Find_Tinnitus"
+                                                    #Find_Tinnitus="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.Find_Tinnitus"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of FindTinnitusList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>When and how did you notice the sound sensation for the first time?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <input 
+                                            class="form-control"
+                                            name="Sound_Sensation"
+                                            #Sound_Sensation="ngModel" 
+                                            [(ngModel)]="ObjTinnitusEvaluation.Sound_Sensation"
+                                            placeholder="Write Here..."
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Under what circumstances do you find tinnitus to be more disturbing?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <input 
+                                            class="form-control"
+                                            name="Tinnitus_Disturbing"
+                                            #Tinnitus_Disturbing="ngModel" 
+                                            [(ngModel)]="ObjTinnitusEvaluation.Tinnitus_Disturbing"
+                                            placeholder="Write Here..."
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Have you undergone any treatment before for tinnitus?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <input 
+                                            class="form-control"
+                                            name="Tinnitus_Treatment"
+                                            #Tinnitus_Treatment="ngModel" 
+                                            [(ngModel)]="ObjTinnitusEvaluation.Tinnitus_Treatment"
+                                            placeholder="Write Here..."
+                                        >
+                                    </div>
+                                </div>
+
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- HISTORY -->
+                            <div class="row">
+                                <div class="label-Tinnitus">HISTORY</div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Have you been exposed to continuous loud noises?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <select class="form-control"
+                                                    name="Loud_Noises"
+                                                    #Loud_Noises="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.Loud_Noises"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of LoudNoisesList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Have you been exposed to sudden loud noises?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <select class="form-control"
+                                                    name="Sudden_Loud_Noises"
+                                                    #Sudden_Loud_Noises="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.Sudden_Loud_Noises"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of SuddenLoudNoisesList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Did you work in environments having solvents, aerosols, thinners or alcohol-based cleaners?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <select class="form-control"
+                                                    name="Alcohol_Cleaner"
+                                                    #Alcohol_Cleaner="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.Alcohol_Cleaner"
+                                                    (change)="ShowYes()"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn" *ngIf="IfYes1">
+                                    <div class="col-sm-6"> 
+                                        <strong class="yesColor">If yes, how long</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <input 
+                                            class="form-control"
+                                            name="Alcohol_Cleaner_Yes"
+                                            #Alcohol_Cleaner_Yes="ngModel" 
+                                            [(ngModel)]="ObjTinnitusEvaluation.Alcohol_Cleaner_Yes"
+                                            placeholder="Write Here..."
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Do you have hyper/hypotension?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <select class="form-control"
+                                                    name="Hypotension"
+                                                    #Hypotension="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.Hypotension"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Did you have any head injuries, trauma, skull fracture or concussion?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <select class="form-control"
+                                                    name="Trauma"
+                                                    #Trauma="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.Trauma"
+                                                    (change)="ShowYes()"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn" *ngIf="IfYes2">
+                                    <div class="col-sm-6"> 
+                                        <strong class="yesColor">If yes, details</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <input 
+                                            class="form-control"
+                                            name="Trauma_Yes"
+                                            #Trauma_Yes="ngModel" 
+                                            [(ngModel)]="ObjTinnitusEvaluation.Trauma_Yes"
+                                            placeholder="Write Here..."
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Have you ever undergone surgery in head, ear?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <select class="form-control"
+                                                    name="Undergone_Surgery"
+                                                    #Undergone_Surgery="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.Undergone_Surgery"
+                                                    (change)="ShowYes()"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn" *ngIf="IfYes3">
+                                    <div class="col-sm-6"> 
+                                        <strong class="yesColor">If yes, details</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <input 
+                                            class="form-control"
+                                            name="Undergone_Surgery_Yes"
+                                            #Undergone_Surgery_Yes="ngModel" 
+                                            [(ngModel)]="ObjTinnitusEvaluation.Undergone_Surgery_Yes"
+                                            placeholder="Write Here..."
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Had you under gone any long-term treatment for any disease/disorder?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <select class="form-control"
+                                                    name="DisOrder"
+                                                    #DisOrder="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.DisOrder"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of DisOrderList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Do you have migraine or balancing issues?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <select class="form-control"
+                                                    name="Migraine"
+                                                    #Migraine="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.Migraine"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Do you suffer from sleep related disorders?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <select class="form-control"
+                                                    name="Sleep"
+                                                    #Sleep="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.Sleep"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>How is your stress level?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <input 
+                                            class="form-control"
+                                            name="Stress_Level"
+                                            #Stress_Level="ngModel" 
+                                            [(ngModel)]="ObjTinnitusEvaluation.Stress_Level"
+                                            placeholder="Write Here..."
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Do you smoke/drink?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <select class="form-control"
+                                                    name="Smoke"
+                                                    #Smoke="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.Smoke"
+                                                    (change)="ShowYes()"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn" *ngIf="IfYes4">
+                                    <div class="col-sm-6"> 
+                                        <strong class="yesColor">If yes, details</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <input 
+                                            class="form-control"
+                                            name="Smoke_Yes"
+                                            #Smoke_Yes="ngModel" 
+                                            [(ngModel)]="ObjTinnitusEvaluation.Smoke_Yes"
+                                            placeholder="Write Here..."
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Do you have any other health issues?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <select class="form-control"
+                                                    name="Health_Issues"
+                                                    #Health_Issues="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.Health_Issues"
+                                                    (change)="ShowYes()"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn" *ngIf="IfYes5">
+                                    <div class="col-sm-6"> 
+                                        <strong class="yesColor">If yes, details</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <input 
+                                            class="form-control"
+                                            name="Health_Issues_Yes"
+                                            #Health_Issues_Yes="ngModel" 
+                                            [(ngModel)]="ObjTinnitusEvaluation.Health_Issues_Yes"
+                                            placeholder="Write Here..."
+                                        >
+                                    </div>
+                                </div>
+
+                            </div>  
+                            <hr class="box boxboxDivide-primary"> 
+
+                             <!-- HEARING HEALTH -->
+                            <div class="row">
+                                <div class="label-Tinnitus">HEARING HEALTH</div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Do you have any difficulties in understanding speech in background noise?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <select class="form-control"
+                                                    name="Background_Noise"
+                                                    #Background_Noise="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.Background_Noise"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Do you have any infections or discharge from your ear?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <select class="form-control"
+                                                    name="Infections"
+                                                    #Infections="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.Infections"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Do you have difficulties in understanding speech in group conversations?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <select class="form-control"
+                                                    name="Group_Conversations"
+                                                    #Group_Conversations="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.Group_Conversations"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Do you have an aversion towards any particular sound?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <select class="form-control"
+                                                    name="Particular_Sound"
+                                                    #Particular_Sound="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.Particular_Sound"
+                                                    (change)="ShowYes()"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn" *ngIf="IfYes6">
+                                    <div class="col-sm-6"> 
+                                        <strong class="yesColor">If yes, details</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <input 
+                                            class="form-control"
+                                            name="Particular_Sound_Yes"
+                                            #Particular_Sound_Yes="ngModel" 
+                                            [(ngModel)]="ObjTinnitusEvaluation.Particular_Sound_Yes"
+                                            placeholder="Write Here..."
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn">
+                                    <div class="col-sm-6"> 
+                                        <strong>Do you find certain sound levels to be louder/intolerant for you?</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <select class="form-control"
+                                                    name="Louder"
+                                                    #Louder="ngModel" 
+                                                    [(ngModel)]="ObjTinnitusEvaluation.Louder"
+                                                    (change)="ShowYes()"
+                                                    >
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                        {{option}}
+                                                    </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mrgn" *ngIf="IfYes7">
+                                    <div class="col-sm-6"> 
+                                        <strong class="yesColor">If yes, details</strong>
+                                    </div>
+                                    <div class="col-sm-4"> 
+                                        <input 
+                                            class="form-control"
+                                            name="Louder_Yes"
+                                            #Louder_Yes="ngModel" 
+                                            [(ngModel)]="ObjTinnitusEvaluation.Louder_Yes"
+                                            placeholder="Write Here..."
+                                        >
+                                    </div>
+                                </div>
+
+                            </div>
+                            <hr class="box boxboxDivide-primary"> 
+
+                            <!-- Arrange -->
+                            <div class="row">
+                                <p class="P-Arrange">Please arrange the problems that you face by severity wise</p>
+                                <table style="width:100%">
+                                    <tr>
+                                        <th class="table-header">Arrange</th>
+                                        <th class="table-header">Problems</th>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 100px;">
+                                            <p class="P-Arrange123">1</p>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Arrange_1"
+                                            #Arrange_1="ngModel" 
+                                            [(ngModel)]="ObjTinnitusEvaluation.Arrange_1"
+                                            >
+                                             <option  [ngValue]="undefined">Select</option>
+                                             <option  *ngFor="let option of ProblemList" value="{{option}}">
+                                                 {{option}}
+                                             </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 100px;">
+                                            <p class="P-Arrange123">2</p>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Arrange_2"
+                                            #Arrange_2="ngModel" 
+                                            [(ngModel)]="ObjTinnitusEvaluation.Arrange_2"
+                                            >
+                                             <option  [ngValue]="undefined">Select</option>
+                                             <option  *ngFor="let option of ProblemList" value="{{option}}">
+                                                 {{option}}
+                                             </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 100px;">
+                                            <p class="P-Arrange123">3</p>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Arrange_3"
+                                            #Arrange_3="ngModel" 
+                                            [(ngModel)]="ObjTinnitusEvaluation.Arrange_3"
+                                            >
+                                             <option  [ngValue]="undefined">Select</option>
+                                             <option  *ngFor="let option of ProblemList" value="{{option}}">
+                                                 {{option}}
+                                             </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>  
+
+                            <div class="form-group" style="padding: 1em;">
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-2"></div>
+                                <div class="col-sm-2">
+                                    <button *ngIf="buttonValid" class="btn btn-primary pull-right" (click)="saveDocAppo(DoctorsAppointmentNewTinnitusEvaluationForm.form.valid)"  id="load"   [disabled]="">
+                                        <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                    </button>
+                                </div> 
+                            </div> 
+
+                        </form>
+
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

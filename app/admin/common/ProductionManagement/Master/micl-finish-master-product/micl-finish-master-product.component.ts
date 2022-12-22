@@ -33,7 +33,8 @@ export class MiclFinishMasterProductComponent implements OnInit {
   can_popup = false;
   act_popup = false;
   productCode : any ;
-  masterProductId : number;
+  masterProductId : any;
+  masterProductIdActi : any;
   ProductTypeFormSubmitted = false;
   ProductTypeName = undefined;
   ProTypeModal = false;
@@ -145,6 +146,32 @@ export class MiclFinishMasterProductComponent implements OnInit {
       this.FinishBrowseList = data;
       console.log("Browse data==",this.FinishBrowseList);
       });
+  }
+exportexcel(Arr): void {
+  this.EXCELSpinner =true
+   let excelData:any = []
+  Arr.forEach(ele => {
+      excelData.push({
+          // 'Material Type': ele.Material_Type,
+          'Prodct Type': ele.Product_Type,
+          'Product Sub Type': ele.Product_Sub_Type,
+          'Product Description': ele.Product_Description,
+          // 'MOC (Material of Cons.)': ele.MOC_Description,
+          // 'Size/Capacity': ele.Capacity_Size_Desc,
+          // 'Product Feature': ele.Product_Feature_Desc,
+          // 'Grade': ele.Grade_Description,
+          'Unit of Mesurement (UOM)': ele.UOM,
+          'HSN Code': ele.HSN_NO,
+          'Remarks': ele.Remarks,
+          'GST %': ele.GST_Percentage,
+          'Manufacture Name (Optional)': ele.Mfg_Company
+          })
+   });
+
+ const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(excelData);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, 'Finish_Master_Product.xlsx');
+  this.EXCELSpinner = false
 }
   //Product Type
 getProductTyp(){
@@ -594,6 +621,8 @@ onConfirmuomdel(){
     this.compacctToast.clear("c");
     this.compacctToast.clear("p");
     this.compacctToast.clear("u");
+    this.compacctToast.clear("ia");
+    this.compacctToast.clear("a");
   }
 
   CheckDescription(){
@@ -753,6 +782,7 @@ saveData(valid:any){
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        console.log("Edit data==",data);
        this.Objproduct = data[0];
+       this.getDesModelDetalis();
        this.ObjFinancialComponentData = data[0];
       //  this.ProductDetailsInput.EditProductDetalis(data[0].Product_Type_ID,data[0].Product_Sub_Type_ID,data[0].Product_Description,data[0].Product_Code,data[0].Rack_NO)
 
@@ -771,8 +801,92 @@ saveData(valid:any){
        
        });
    }
+   // Active And Inactive
+   InactiveProduct(obj){
+    this.masterProductId = undefined ;
+    if(obj.Product_ID){
+      this.Is_View = true;
+      this.masterProductId = obj.Product_ID ;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "ia",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+ }
+ onConfirmInactive(){
+  console.log(this.Objproduct.Product_ID)
+    if(this.masterProductId){
+      const obj = {
+        "SP_String": "SP_Harbauer_Master_Product_Electrical",
+        "Report_Name_String": "InActive_Master_Product",
+        "Json_Param_String": JSON.stringify([{Product_ID : this.masterProductId}])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        // console.log("del Data===", data[0].Column1)
+        if (data[0].Column1 === "Done"){
+          this.onReject();
+          this.getBrowseFinishProduct();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Product Id: " + this.masterProductId.toString(),
+            detail: "Succesfully Inactivated"
+          });
+        }
+      })
+    }
+    //this.ParamFlaghtml = undefined;
+ }
 
-}class product{
+Active(masterProduct){ 
+  this.masterProductIdActi = undefined;
+   if(masterProduct.Product_ID){
+    this.is_Active = true;
+     this.masterProductIdActi = masterProduct.Product_ID ;
+     this.compacctToast.clear();
+     this.compacctToast.add({
+       key: "a",
+       sticky: true,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+     });
+   }
+}
+   onConfirmActive(){
+    console.log(this.Objproduct.Product_ID)
+      if(this.masterProductId){
+        const obj = {
+          "SP_String": "SP_Harbauer_Master_Product_Electrical",
+          "Report_Name_String": "Active_Master_Product",
+          "Json_Param_String": JSON.stringify([{Product_ID : this.masterProductIdActi}])
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          // console.log("del Data===", data[0].Column1)
+          if (data[0].Column1 === "Done"){
+            this.onReject();
+            this.getBrowseFinishProduct();
+            this.act_popup = false;
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: "Product Id: " + this.masterProductId.toString(),
+              detail: "Succesfully Activated"
+            });
+          }
+        })
+      }
+      //this.ParamFlaghtml = undefined;
+   }
+
+}
+class product{
   Material_ID:number;
   Material_Type = "NA";
   Product_Code:any;			
