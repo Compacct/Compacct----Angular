@@ -46,8 +46,10 @@ strong{
 }
 .label-THI-R{
   margin-right: 30px;
+  text-align: center;
 }
 .label-table{
   font-size: 15px;
   text-align: center;
+  font-weight: bolder;
 }

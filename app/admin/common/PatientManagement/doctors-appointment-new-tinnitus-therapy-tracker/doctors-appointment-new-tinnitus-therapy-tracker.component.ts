@@ -189,20 +189,34 @@ export class DoctorsAppointmentNewTinnitusTherapyTrackerComponent implements OnI
     Tinnitus_Therapy_Date_Session_4: this.Tinnitus_Therapy_Date_Session_4 ? this.DateService.dateConvert(this.Tinnitus_Therapy_Date_Session_4) : "",
     Tinnitus_Therapy_Date_Session_5: this.Tinnitus_Therapy_Date_Session_5 ?  this.DateService.dateConvert(this.Tinnitus_Therapy_Date_Session_5) : "",
     Tinnitus_Therapy_Date_Session_6: this.Tinnitus_Therapy_Date_Session_6 ? this.DateService.dateConvert(this.Tinnitus_Therapy_Date_Session_6) : "",
-    Tinnitus_Therapy_Degree_Loss_Assessment: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Assessment,   
-    Tinnitus_Therapy_Degree_Loss_Session_1: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_1,
-    Tinnitus_Therapy_Degree_Loss_Session_2: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_2, 
-    Tinnitus_Therapy_Degree_Loss_Session_3: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_3, 
-    Tinnitus_Therapy_Degree_Loss_Session_4: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_4, 
-    Tinnitus_Therapy_Degree_Loss_Session_5: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_5, 
-    Tinnitus_Therapy_Degree_Loss_Session_6: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_6, 
-    Tinnitus_Therapy_Type_Loss_Assessment: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Assessment,  
-    Tinnitus_Therapy_Type_Loss_Session_1: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_1, 
-    Tinnitus_Therapy_Type_Loss_Session_2: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_2,
-    Tinnitus_Therapy_Type_Loss_Session_3: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_3,
-    Tinnitus_Therapy_Type_Loss_Session_4: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_4,
-    Tinnitus_Therapy_Type_Loss_Session_5: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_5,
-    Tinnitus_Therapy_Type_Loss_Session_6: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_6,
+    Tinnitus_Therapy_Degree_Loss_Left_Assessment: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Left_Assessment,   
+    Tinnitus_Therapy_Degree_Loss_Left_Session_1: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Left_Session_1,
+    Tinnitus_Therapy_Degree_Loss_Left_Session_2: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Left_Session_2, 
+    Tinnitus_Therapy_Degree_Loss_Left_Session_3: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Left_Session_3, 
+    Tinnitus_Therapy_Degree_Loss_Left_Session_4: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Left_Session_4, 
+    Tinnitus_Therapy_Degree_Loss_Left_Session_5: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Left_Session_5, 
+    Tinnitus_Therapy_Degree_Loss_Left_Session_6: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Left_Session_6, 
+    Tinnitus_Therapy_Degree_Loss_Right_Assessment: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Right_Assessment,   
+    Tinnitus_Therapy_Degree_Loss_Right_Session_1: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Right_Session_1,
+    Tinnitus_Therapy_Degree_Loss_Right_Session_2: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Right_Session_2, 
+    Tinnitus_Therapy_Degree_Loss_Right_Session_3: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Right_Session_3,
+    Tinnitus_Therapy_Degree_Loss_Right_Session_4: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Right_Session_4, 
+    Tinnitus_Therapy_Degree_Loss_Right_Session_5: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Right_Session_5, 
+    Tinnitus_Therapy_Degree_Loss_Right_Session_6: this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Right_Session_6, 
+    Tinnitus_Therapy_Type_Loss_Left_Assessment: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Left_Assessment,  
+    Tinnitus_Therapy_Type_Loss_Left_Session_1: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Left_Session_1, 
+    Tinnitus_Therapy_Type_Loss_Left_Session_2: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Left_Session_2,
+    Tinnitus_Therapy_Type_Loss_Left_Session_3: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Left_Session_3,
+    Tinnitus_Therapy_Type_Loss_Left_Session_4: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Left_Session_4,
+    Tinnitus_Therapy_Type_Loss_Left_Session_5: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Left_Session_5,
+    Tinnitus_Therapy_Type_Loss_Left_Session_6: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Left_Session_6,
+    Tinnitus_Therapy_Type_Loss_Right_Assessment: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Right_Assessment,  
+    Tinnitus_Therapy_Type_Loss_Right_Session_1: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Right_Session_1, 
+    Tinnitus_Therapy_Type_Loss_Right_Session_2: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Right_Session_2,
+    Tinnitus_Therapy_Type_Loss_Right_Session_3: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Right_Session_3,
+    Tinnitus_Therapy_Type_Loss_Right_Session_4: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Right_Session_4,
+    Tinnitus_Therapy_Type_Loss_Right_Session_5: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Right_Session_5,
+    Tinnitus_Therapy_Type_Loss_Right_Session_6: this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Right_Session_6,
     Tinnitus_Therapy_THI_Score_Assessment: this.ObjTinnitusTherapy.Tinnitus_Therapy_THI_Score_Assessment, 
     Tinnitus_Therapy_THI_Score_Session_1: this.ObjTinnitusTherapy.Tinnitus_Therapy_THI_Score_Session_1, 
     Tinnitus_Therapy_THI_Score_Session_2: this.ObjTinnitusTherapy.Tinnitus_Therapy_THI_Score_Session_2, 
@@ -217,13 +231,20 @@ export class DoctorsAppointmentNewTinnitusTherapyTrackerComponent implements OnI
     Tinnitus_Therapy_Severity_Session_4: this.ObjTinnitusTherapy.Tinnitus_Therapy_Severity_Session_4,
     Tinnitus_Therapy_Severity_Session_5: this.ObjTinnitusTherapy.Tinnitus_Therapy_Severity_Session_5,
     Tinnitus_Therapy_Severity_Session_6: this.ObjTinnitusTherapy.Tinnitus_Therapy_Severity_Session_6,
-    Tinnitus_Therapy_Device_Name_Assessment: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Assessment,
-    Tinnitus_Therapy_Device_Name_Session_1: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_1,
-    Tinnitus_Therapy_Device_Name_Session_2: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_2,
-    Tinnitus_Therapy_Device_Name_Session_3: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_3,
-    Tinnitus_Therapy_Device_Name_Session_4: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_4,
-    Tinnitus_Therapy_Device_Name_Session_5: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_5,
-    Tinnitus_Therapy_Device_Name_Session_6: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_6,
+    Tinnitus_Therapy_Device_Name_Left_Assessment: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Left_Assessment,
+    Tinnitus_Therapy_Device_Name_Left_Session_1: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Left_Session_1,
+    Tinnitus_Therapy_Device_Name_Left_Session_2: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Left_Session_2,
+    Tinnitus_Therapy_Device_Name_Left_Session_3: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Left_Session_3,
+    Tinnitus_Therapy_Device_Name_Left_Session_4: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Left_Session_4,
+    Tinnitus_Therapy_Device_Name_Left_ession_5: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Left_ession_5,
+    Tinnitus_Therapy_Device_Name_Left_Session_6: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Left_Session_6,
+    Tinnitus_Therapy_Device_Name_Right_Assessment: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Right_Assessment,
+    Tinnitus_Therapy_Device_Name_Right_Session_1: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Right_Session_1,
+    Tinnitus_Therapy_Device_Name_Right_Session_2: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Right_Session_2,
+    Tinnitus_Therapy_Device_Name_Right_Session_3: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Right_Session_3,
+    Tinnitus_Therapy_Device_Name_Right_Session_4: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Right_Session_4,
+    Tinnitus_Therapy_Device_Name_Right_Session_5: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Right_Session_5,
+    Tinnitus_Therapy_Device_Name_Right_Session_6: this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Right_Session_6,
     Tinnitus_Therapy_Counselling_Time_Assessment: this.ObjTinnitusTherapy.Tinnitus_Therapy_Counselling_Time_Assessment,
     Tinnitus_Therapy_Counselling_Time_Session_1: this.ObjTinnitusTherapy.Tinnitus_Therapy_Counselling_Time_Session_1,
     Tinnitus_Therapy_Counselling_Time_Session_2: this.ObjTinnitusTherapy.Tinnitus_Therapy_Counselling_Time_Session_2,
@@ -237,10 +258,16 @@ export class DoctorsAppointmentNewTinnitusTherapyTrackerComponent implements OnI
     Tinnitus_Therapy_Therapy_Duration_Session_3: this.ObjTinnitusTherapy.Tinnitus_Therapy_Therapy_Duration_Session_3,
     Tinnitus_Therapy_Therapy_Duration_Session_4: this.ObjTinnitusTherapy.Tinnitus_Therapy_Therapy_Duration_Session_4,
     Tinnitus_Therapy_Therapy_Duration_Session_5: this.ObjTinnitusTherapy.Tinnitus_Therapy_Therapy_Duration_Session_5,
-    Tinnitus_Therapy_Therapy_Duration_Session_6: this.ObjTinnitusTherapy.Tinnitus_Therapy_Therapy_Duration_Session_6
-  
+    Tinnitus_Therapy_Therapy_Duration_Session_6: this.ObjTinnitusTherapy.Tinnitus_Therapy_Therapy_Duration_Session_6,
+    Tinnitus_Therapy_Comment_Assessment: this.ObjTinnitusTherapy.Tinnitus_Therapy_Comment_Assessment,
+    Tinnitus_Therapy_Comment_Session_1: this.ObjTinnitusTherapy.Tinnitus_Therapy_Comment_Session_1,
+    Tinnitus_Therapy_Comment_Session_2: this.ObjTinnitusTherapy.Tinnitus_Therapy_Comment_Session_2,
+    Tinnitus_Therapy_Comment_Session_3: this.ObjTinnitusTherapy.Tinnitus_Therapy_Comment_Session_3,
+    Tinnitus_Therapy_Comment_Session_4: this.ObjTinnitusTherapy.Tinnitus_Therapy_Comment_Session_4,
+    Tinnitus_Therapy_Comment_Session_5: this.ObjTinnitusTherapy.Tinnitus_Therapy_Comment_Session_5,
+    Tinnitus_Therapy_Comment_Session_6: this.ObjTinnitusTherapy.Tinnitus_Therapy_Comment_Session_6
   }
-   console.log("TempObj",TempObj);
+  //  console.log("TempObj",TempObj);
 
   const tempSaveJ2 = {
     Appo_ID : this.AppoIDvalue
@@ -339,20 +366,34 @@ export class DoctorsAppointmentNewTinnitusTherapyTrackerComponent implements OnI
     this.Tinnitus_Therapy_Date_Session_4= undefined;
     this.Tinnitus_Therapy_Date_Session_5= undefined;
     this.Tinnitus_Therapy_Date_Session_6= undefined;
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Assessment= undefined;   
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_1= undefined;
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_2= undefined; 
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_3= undefined; 
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_4= undefined; 
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_5= undefined; 
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Session_6= undefined; 
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Assessment= undefined;  
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_1= undefined; 
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_2= undefined;
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_3= undefined;
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_4= undefined;
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_5= undefined;
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Session_6= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Left_Assessment= undefined;   
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Left_Session_1= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Left_Session_2= undefined; 
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Left_Session_3= undefined; 
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Left_Session_4= undefined; 
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Left_Session_5= undefined; 
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Left_Session_6= undefined; 
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Right_Assessment= undefined;   
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Right_Session_1= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Right_Session_2= undefined; 
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Right_Session_3= undefined; 
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Right_Session_4= undefined; 
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Right_Session_5= undefined; 
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Degree_Loss_Right_Session_6= undefined; 
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Left_Assessment= undefined;  
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Left_Session_1= undefined; 
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Left_Session_2= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Left_Session_3= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Left_Session_4= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Left_Session_5= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Left_Session_6= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Right_Assessment= undefined;  
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Right_Session_1= undefined; 
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Right_Session_2= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Right_Session_3= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Right_Session_4= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Right_Session_5= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Type_Loss_Right_Session_6= undefined;
     this.ObjTinnitusTherapy.Tinnitus_Therapy_THI_Score_Assessment= undefined; 
     this.ObjTinnitusTherapy.Tinnitus_Therapy_THI_Score_Session_1= undefined; 
     this.ObjTinnitusTherapy.Tinnitus_Therapy_THI_Score_Session_2= undefined; 
@@ -367,13 +408,20 @@ export class DoctorsAppointmentNewTinnitusTherapyTrackerComponent implements OnI
     this.ObjTinnitusTherapy.Tinnitus_Therapy_Severity_Session_4= undefined;
     this.ObjTinnitusTherapy.Tinnitus_Therapy_Severity_Session_5= undefined;
     this.ObjTinnitusTherapy.Tinnitus_Therapy_Severity_Session_6= undefined;
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Assessment= undefined;
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_1= undefined;
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_2= undefined;
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_3= undefined;
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_4= undefined;
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_5= undefined;
-    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Session_6= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Left_Assessment= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Left_Session_1= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Left_Session_2= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Left_Session_3= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Left_Session_4= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Left_ession_5= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Left_Session_6= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Right_Assessment= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Right_Session_1= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Right_Session_2= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Right_Session_3= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Right_Session_4= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Right_Session_5= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Device_Name_Right_Session_6= undefined;
     this.ObjTinnitusTherapy.Tinnitus_Therapy_Counselling_Time_Assessment= undefined;
     this.ObjTinnitusTherapy.Tinnitus_Therapy_Counselling_Time_Session_1= undefined;
     this.ObjTinnitusTherapy.Tinnitus_Therapy_Counselling_Time_Session_2= undefined;
@@ -388,11 +436,18 @@ export class DoctorsAppointmentNewTinnitusTherapyTrackerComponent implements OnI
     this.ObjTinnitusTherapy.Tinnitus_Therapy_Therapy_Duration_Session_4= undefined;
     this.ObjTinnitusTherapy.Tinnitus_Therapy_Therapy_Duration_Session_5= undefined;
     this.ObjTinnitusTherapy.Tinnitus_Therapy_Therapy_Duration_Session_6= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Comment_Assessment= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Comment_Session_1= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Comment_Session_2= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Comment_Session_3= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Comment_Session_4= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Comment_Session_5= undefined;
+    this.ObjTinnitusTherapy.Tinnitus_Therapy_Comment_Session_6= undefined;
+  
   }
 
   editData(){
     this.GetHearingAId();
-    this.HearingAIdList=[];
     const TempEditObj={
       Appo_ID: this.AppoIDvalue
     }
@@ -404,10 +459,10 @@ export class DoctorsAppointmentNewTinnitusTherapyTrackerComponent implements OnI
       "Json_Param_String": JSON.stringify(TempEditObj)
     }
     this.GlobalAPI.getData(Editobj).subscribe((data: any) => {
-      console.log("Edit Data",data);
+      // console.log("Edit Data",data);
 
       this.EditDataList= JSON.parse(data[0].Test_Details);  
-      console.log("EditDataList",this.EditDataList);
+      // console.log("EditDataList",this.EditDataList);
 
       this.ObjTinnitusTherapy= JSON.parse(data[0].Test_Details);
 
@@ -434,7 +489,7 @@ export class DoctorsAppointmentNewTinnitusTherapyTrackerComponent implements OnI
       "Json_Param_String": JSON.stringify([TempDropdownObj])
     }
     this.GlobalAPI.getData(Dropdownobj).subscribe((data:any)=>{
-     console.log("GetAllDataAppoID For dropdown",data);
+    //  console.log("GetAllDataAppoID For dropdown",data);
       if(data.length){
        const editObj = {
           Level_1_Status: data[0].Level_1_Status.toString() ? data[0].Level_1_Status.toString() : '',
@@ -468,20 +523,34 @@ class TinnitusTherapy{
   Tinnitus_Therapy_Date_Session_4: any;  
   Tinnitus_Therapy_Date_Session_5: any;  
   Tinnitus_Therapy_Date_Session_6: any; 
-  Tinnitus_Therapy_Degree_Loss_Assessment: any;   
-  Tinnitus_Therapy_Degree_Loss_Session_1: any;
-  Tinnitus_Therapy_Degree_Loss_Session_2: any; 
-  Tinnitus_Therapy_Degree_Loss_Session_3: any; 
-  Tinnitus_Therapy_Degree_Loss_Session_4: any; 
-  Tinnitus_Therapy_Degree_Loss_Session_5: any; 
-  Tinnitus_Therapy_Degree_Loss_Session_6: any; 
-  Tinnitus_Therapy_Type_Loss_Assessment: any;  
-  Tinnitus_Therapy_Type_Loss_Session_1: any; 
-  Tinnitus_Therapy_Type_Loss_Session_2: any;
-  Tinnitus_Therapy_Type_Loss_Session_3: any;
-  Tinnitus_Therapy_Type_Loss_Session_4: any;
-  Tinnitus_Therapy_Type_Loss_Session_5: any;
-  Tinnitus_Therapy_Type_Loss_Session_6: any;
+  Tinnitus_Therapy_Degree_Loss_Left_Assessment: any;   
+  Tinnitus_Therapy_Degree_Loss_Left_Session_1: any;
+  Tinnitus_Therapy_Degree_Loss_Left_Session_2: any; 
+  Tinnitus_Therapy_Degree_Loss_Left_Session_3: any; 
+  Tinnitus_Therapy_Degree_Loss_Left_Session_4: any; 
+  Tinnitus_Therapy_Degree_Loss_Left_Session_5: any; 
+  Tinnitus_Therapy_Degree_Loss_Left_Session_6: any; 
+  Tinnitus_Therapy_Degree_Loss_Right_Assessment: any;   
+  Tinnitus_Therapy_Degree_Loss_Right_Session_1: any;
+  Tinnitus_Therapy_Degree_Loss_Right_Session_2: any; 
+  Tinnitus_Therapy_Degree_Loss_Right_Session_3: any; 
+  Tinnitus_Therapy_Degree_Loss_Right_Session_4: any; 
+  Tinnitus_Therapy_Degree_Loss_Right_Session_5: any; 
+  Tinnitus_Therapy_Degree_Loss_Right_Session_6: any; 
+  Tinnitus_Therapy_Type_Loss_Left_Assessment: any;  
+  Tinnitus_Therapy_Type_Loss_Left_Session_1: any; 
+  Tinnitus_Therapy_Type_Loss_Left_Session_2: any;
+  Tinnitus_Therapy_Type_Loss_Left_Session_3: any;
+  Tinnitus_Therapy_Type_Loss_Left_Session_4: any;
+  Tinnitus_Therapy_Type_Loss_Left_Session_5: any;
+  Tinnitus_Therapy_Type_Loss_Left_Session_6: any;
+  Tinnitus_Therapy_Type_Loss_Right_Assessment: any;  
+  Tinnitus_Therapy_Type_Loss_Right_Session_1: any; 
+  Tinnitus_Therapy_Type_Loss_Right_Session_2: any;
+  Tinnitus_Therapy_Type_Loss_Right_Session_3: any;
+  Tinnitus_Therapy_Type_Loss_Right_Session_4: any;
+  Tinnitus_Therapy_Type_Loss_Right_Session_5: any;
+  Tinnitus_Therapy_Type_Loss_Right_Session_6: any;
   Tinnitus_Therapy_THI_Score_Assessment: any; 
   Tinnitus_Therapy_THI_Score_Session_1: any; 
   Tinnitus_Therapy_THI_Score_Session_2: any; 
@@ -496,13 +565,20 @@ class TinnitusTherapy{
   Tinnitus_Therapy_Severity_Session_4: any;
   Tinnitus_Therapy_Severity_Session_5: any;
   Tinnitus_Therapy_Severity_Session_6: any;
-  Tinnitus_Therapy_Device_Name_Assessment: any;
-  Tinnitus_Therapy_Device_Name_Session_1: any;
-  Tinnitus_Therapy_Device_Name_Session_2: any;
-  Tinnitus_Therapy_Device_Name_Session_3: any;
-  Tinnitus_Therapy_Device_Name_Session_4: any;
-  Tinnitus_Therapy_Device_Name_Session_5: any;
-  Tinnitus_Therapy_Device_Name_Session_6: any;
+  Tinnitus_Therapy_Device_Name_Left_Assessment: any;
+  Tinnitus_Therapy_Device_Name_Left_Session_1: any;
+  Tinnitus_Therapy_Device_Name_Left_Session_2: any;
+  Tinnitus_Therapy_Device_Name_Left_Session_3: any;
+  Tinnitus_Therapy_Device_Name_Left_Session_4: any;
+  Tinnitus_Therapy_Device_Name_Left_ession_5: any;
+  Tinnitus_Therapy_Device_Name_Left_Session_6: any;
+  Tinnitus_Therapy_Device_Name_Right_Assessment: any;
+  Tinnitus_Therapy_Device_Name_Right_Session_1: any;
+  Tinnitus_Therapy_Device_Name_Right_Session_2: any;
+  Tinnitus_Therapy_Device_Name_Right_Session_3: any;
+  Tinnitus_Therapy_Device_Name_Right_Session_4: any;
+  Tinnitus_Therapy_Device_Name_Right_Session_5: any;
+  Tinnitus_Therapy_Device_Name_Right_Session_6: any;
   Tinnitus_Therapy_Counselling_Time_Assessment: any;
   Tinnitus_Therapy_Counselling_Time_Session_1: any;
   Tinnitus_Therapy_Counselling_Time_Session_2: any;
@@ -517,4 +593,11 @@ class TinnitusTherapy{
   Tinnitus_Therapy_Therapy_Duration_Session_4: any;
   Tinnitus_Therapy_Therapy_Duration_Session_5: any;
   Tinnitus_Therapy_Therapy_Duration_Session_6: any;
+  Tinnitus_Therapy_Comment_Assessment: any;
+  Tinnitus_Therapy_Comment_Session_1: any;
+  Tinnitus_Therapy_Comment_Session_2: any;
+  Tinnitus_Therapy_Comment_Session_3: any;
+  Tinnitus_Therapy_Comment_Session_4: any;
+  Tinnitus_Therapy_Comment_Session_5: any;
+  Tinnitus_Therapy_Comment_Session_6: any;
 }
