@@ -81,6 +81,7 @@
                                                         name="concentrate"
                                                         #concentrate="ngModel" 
                                                         [(ngModel)]="ObjTinnitusHandicap.concentrate"
+                                                        (change)="Calculation()"
                                                         >
                                                         <option  [ngValue]="undefined">Select</option>
                                                         <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -99,6 +100,7 @@
                                                     name="loudness"
                                                     #loudness="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.loudness"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -117,6 +119,7 @@
                                                     name="angry"
                                                     #angry="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.angry"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -135,6 +138,7 @@
                                                     name="confused"
                                                     #confused="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.confused"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -153,6 +157,7 @@
                                                     name="desperate"
                                                     #desperate="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.desperate"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -173,6 +178,7 @@
                                                     name="complain"
                                                     #complain="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.complain"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -191,6 +197,7 @@
                                                     name="asleep"
                                                     #asleep="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.asleep"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -209,6 +216,7 @@
                                                     name="escape1"
                                                     #escape1="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.escape1"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -227,6 +235,7 @@
                                                     name="social_activities"
                                                     #social_activities="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.social_activities"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -245,6 +254,7 @@
                                                     name="frustrated"
                                                     #frustrated="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.frustrated"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -265,6 +275,7 @@
                                                     name="disease"
                                                     #disease="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.disease"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -283,6 +294,7 @@
                                                     name="life"
                                                     #life="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.life"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -301,6 +313,7 @@
                                                     name="household"
                                                     #household="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.household"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -319,6 +332,7 @@
                                                     name="irritable"
                                                     #irritable="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.irritable"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -337,6 +351,7 @@
                                                     name="read1"
                                                     #read1="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.read1"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -357,6 +372,7 @@
                                                     name="upset"
                                                     #upset="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.upset"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -375,6 +391,7 @@
                                                     name="relationship"
                                                     #relationship="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.relationship"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -393,6 +410,7 @@
                                                     name="focus"
                                                     #focus="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.focus"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -411,6 +429,7 @@
                                                     name="control1"
                                                     #control1="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.control1"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -429,6 +448,7 @@
                                                     name="tired"
                                                     #tired="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.tired"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -449,6 +469,7 @@
                                                     name="depressed"
                                                     #depressed="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.depressed"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -467,6 +488,7 @@
                                                     name="anxious"
                                                     #anxious="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.anxious"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -485,6 +507,7 @@
                                                     name="cope"
                                                     #cope="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.cope"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -503,6 +526,7 @@
                                                     name="stress"
                                                     #stress="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.stress"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -521,6 +545,7 @@
                                                     name="insecure"
                                                     #insecure="ngModel" 
                                                     [(ngModel)]="ObjTinnitusHandicap.insecure"
+                                                    (change)="Calculation()"
                                                     >
                                                     <option  [ngValue]="undefined">Select</option>
                                                     <option  *ngFor="let option of DropdownList" value="{{option}}">
@@ -540,13 +565,12 @@
                                 <div class="col-sm-2">
                                     <label class="label-THI-C">TOTAL SCORE </label>
                                 </div>  
-                                <div class="col-sm-3">
+                                <div class="col-sm-1">
                                     <input 
                                     class="form-control label-THI-R"
                                     name="total_score"
                                     #total_score="ngModel" 
                                     [(ngModel)]="ObjTinnitusHandicap.total_score"
-                                    placeholder=" Your Score... "
                                     disabled
                                     > 
                                 </div>
@@ -602,7 +626,7 @@
                             </div>
                             <hr class="box boxboxDivide-primary">
 
-                            <!-- <div class="form-group" style="padding: 1em;">
+                            <div class="form-group" style="padding: 1em;">
                                 <div class="col-sm-4"></div>
                                 <div class="col-sm-4"></div>
                                 <div class="col-sm-2"></div>
@@ -612,7 +636,7 @@
                                       <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
                                     </button>
                                 </div> 
-                            </div>  -->
+                            </div> 
 
                         </form>
 
