@@ -179,9 +179,9 @@ export class FurnaceMisInputComponent implements OnInit {
       }
   }
   ChangeConsumption() {
+    if (this.ObjFurnaceMISinput.Furnace_No && this.Doc_Date) {
     this.GetRaWMatConsumption();
     this.GetConsConsumption();
-    if (this.ObjFurnaceMISinput.Furnace_No && this.Doc_Date) {
     this.GetData();
     }
   }

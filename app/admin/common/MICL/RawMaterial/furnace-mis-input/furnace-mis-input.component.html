@@ -79,7 +79,7 @@
                                              name="furnaceno" 
                                              #furnaceno="ngModel" 
                                              [(ngModel)]="ObjFurnaceMISinput.Furnace_No" 
-                                             (change)="GetData()"
+                                             (change)="ChangeConsumption()"
                                              [ngClass]="{'clearance ': FurnaceMISinputFormSubmitted && furnaceno.errors?.required}"
                                               required 
                                               >
