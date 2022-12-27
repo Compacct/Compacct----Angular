@@ -795,9 +795,8 @@
                                         <i class="fa fa-clock-o"></i>
                                     </div>
                                     <input class="form-control" 
-                                    type="time" 
+                                    type="datetime-local" 
                                     name="F_Time" 
-                                    #F_Time="ngModel" 
                                     [(ngModel)]="ObjFurMISinputShutdoun.From_Time" 
                                     [ngClass]="{'clearance': Shutdownvalid && F_Time?.errors?.required}"
                                     required>
@@ -813,7 +812,7 @@
                                         <i class="fa fa-clock-o"></i>
                                     </div>
                                     <input class="form-control" 
-                                    type="time" 
+                                    type="datetime-local" 
                                     name="T_Time" 
                                     #T_Time="ngModel" 
                                     [(ngModel)]="ObjFurMISinputShutdoun.To_Time" 
@@ -868,8 +867,8 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let obj of AddShutdownList; let ind = index;">
-                                            <td>{{obj.From_Time}}</td>
-                                            <td>{{obj.To_Time}}</td>
+                                            <td>{{obj.From_Time | date : 'dd-MMM-yyyy hh:mm a'}}</td>
+                                            <td>{{obj.To_Time | date : 'dd-MMM-yyyy hh:mm a'}}</td>
                                             <td>{{obj.Time_Duration}}</td>
                                             <td>{{obj.Reason_Des}}</td>
                                             <td><button (click)="Shutdowndelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
