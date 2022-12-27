@@ -99,7 +99,8 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   UpdatePopIdDate: any = undefined;
   backUPdataList: any = [];
   SelectedDistPresentStatus: any = [];
-  DistPresentStatus:any = [];
+  DistPresentStatus: any = [];
+  ColorModel: boolean = false;
   @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
   constructor(
     private $http: HttpClient,
@@ -114,7 +115,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
 
   ngOnInit() {
     this.items = ["BROWSE", "CREATE"];
-    this.items1 = ["TO-DO View", "TO-DO Update"];
+    this.items1 = ["TO-DO Status", "TO-DO Update"];
     this.Header.pushHeader({
       Header: "Purchase Order",
       Link: " Procurement ->  Nepal BL Txn Purchase Order"
@@ -138,7 +139,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   }
   TabClick1(r) {
     this.tabIndex = r.index;
-    this.items1 = ["TO-DO View", "TO-DO Update"];
+    this.items1 = ["TO-DO Status", "TO-DO Update"];
     this.clearData1()
   }
   onReject() {
@@ -359,7 +360,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         if (data.length) {
-          console.log("Searchedlist", data)
+         // console.log("Searchedlist", data)
           this.Searchedlist = data
           data.forEach((y: any) => {
             y.Doc_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(y.Doc_Date);
@@ -540,7 +541,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
         "Json_Param_String": JSON.stringify([{ PO_Doc_No: this.ValidationNoUpload }])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        console.log("PODocVList", data);
+        //console.log("PODocVList", data);
         if (data.length) {
           this.PODocVList = data;
           data.forEach((el: any) => {
@@ -763,7 +764,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{ Doc_No: Docid }])
     }
     this.GlobalAPI.getData(obj).subscribe((res: any) => {
-      console.log("ToDoList==", JSON.parse(res[0].topper))
+     // console.log("ToDoList==", JSON.parse(res[0].topper))
       let data = JSON.parse(res[0].topper)
       this.ToDoList = data[0].hasOwnProperty("bottom_To_Do_List") ? data[0].bottom_To_Do_List : []
       this.Doclist = data[0].hasOwnProperty("bottom_Document") ? data[0].bottom_Document : []
@@ -785,7 +786,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     if (this.ToDoList.length) {
       this.ToDoList.forEach((ele: any) => {
         let engdate = this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)
-        console.log("engdate", engdate)
+        //console.log("engdate", engdate)
         ele['Task_End_Date'] = ele.Expected_Days ?
           this.DateNepalConvertService.convertNewEngToNepaliDateObj(new Date(new Date().setDate(new Date(engdate).getDate() + Number(ele.Expected_Days)))) :
           null;
@@ -814,7 +815,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{ Doc_No: DocId }])
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      console.log("Doclist==", data)
+     // console.log("Doclist==", data)
       if (data.length) {
         this.Doclist = data;
         this.Doclist.forEach((ele: any) => {
@@ -871,8 +872,8 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       bottom_To_Do: this.ToDoList,
       bottom_Document: this.Doclist
     }
-    console.log("saveData", saveData)
-    console.log("saveData", JSON.stringify(saveData))
+    //console.log("saveData", saveData)
+    //console.log("saveData", JSON.stringify(saveData))
     const obj = {
       "SP_String": "sp_Bl_Txn_Purchase_Order_Activity",
       "Report_Name_String": "Create_PO_Activity",
@@ -903,9 +904,9 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     }
   }
   handleFileSelect(event: any, DOC: any, Date: any) {
-    console.log("event", event)
-    console.log("DOC", DOC)
-    console.log("Date", Date)
+    //console.log("event", event)
+   // console.log("DOC", DOC)
+   // console.log("Date", Date)
     this.PDFFlag = false;
     this.ProductPDFFile = {};
     this.DocIdD = undefined;
@@ -923,7 +924,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       this.ngxService.start();
       this.GlobalAPI.CommonFileUpload(this.ProductPDFFile)
         .subscribe((data: any) => {
-          console.log("eventdata", data)
+          //console.log("eventdata", data)
           if (data.file_url) {
             this.saveDocFinal(data.file_url)
           }
@@ -952,7 +953,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       "Json_Param_String": JSON.stringify(tempSaveDataObj)
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
-      console.log("file save data", data);
+     // console.log("file save data", data);
       if (data[0].Column1) {
         this.PDFFlag = false;
         this.ProductPDFFile = {};
@@ -1025,7 +1026,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
           y.Task_End_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(y.Task_End_Date);
           y.Completed_On = this.DateNepalConvertService.convertNewEngToNepaliDateObj(y.Completed_On)
         });
-        console.log("dataList==", this.dataList)
+       // console.log("dataList==", this.dataList)
         this.GetDistinct()
       }
     });
@@ -1124,6 +1125,9 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
         }
       })
     }
+  }
+  ColourInfo() {
+    this.ColorModel = true
   }
 }
   // toEmailChange(){

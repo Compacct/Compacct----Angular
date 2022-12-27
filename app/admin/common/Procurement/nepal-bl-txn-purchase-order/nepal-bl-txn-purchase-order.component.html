@@ -650,14 +650,17 @@
                     <div class="box-body">
                         <p-tabView [activeIndex]="tabIndex" (onChange)="TabClick1($event)">
                             <p-tabPanel headerStyleClass="compacct-tabs" [header]="items1[0]"
-                                leftIcon="glyphicon glyphicon-th-list">                              
+                                leftIcon="glyphicon glyphicon-th-list"> 
+                                <div>
+                                <button type="button" class="btn btn-info" (click)="ColourInfo()" style="margin-left: 91%;"><i class="fa fa-info-circle"></i></button>
+                                </div>                             
                                 <div class="table-responsive no-padding">
                                     <p-table #d [value]="dataList"
                                     [globalFilterFields]="['Status_Name','Last_Status','Task_End_Date','Last_Remarks','Completed_On','Over_Days']"
                                     [paginator]="true" [rows]="10" [rowHover]="true" [autoLayout]="true"
                                     sortMode="multiple" >
                                         <ng-template pTemplate="caption">
-                                            <div class="row" style="width:100%;margin-left:1px;">
+                                            <div class="row" style="width:100%;margin-left:1px;margin-top: -19px;">
                                                 <div class="form-group">
                                                             <div class="col-sm-4" style="text-align: left;">
                                                                 <label class="control-label">Present Status</label>
@@ -681,7 +684,7 @@
                                                 <th>TO-DO</th>
                                                 <th>Present Status</th>
                                                 <th>Target Date</th>
-                                                <th>Over Days</th>
+                                                <th>Over Due Days</th>
                                                 <th>Last Remarks</th>
                                                 <th>Completed On</th>
                                                 
@@ -708,7 +711,7 @@
                                                 <td>{{i+1}}</td>
                                                 <td>{{col.Status_Name ? col.Status_Name :"-" }}</td>
                                                 <td style="color: white;text-align: center;" >
-                                                    <span [ngStyle]="{'background-color': col.Color}" style="padding: 5px;">
+                                                    <span [ngStyle]="{'background-color': col.Color}" style="padding: 5px;border-radius: 5px;">
                                                         {{col.Last_Status ? col.Last_Status :"-" }}
                                                     </span>
                                                 </td>
@@ -810,6 +813,83 @@
     </div>
     <p-footer>
         <button type="button" (click)="ViewTOdoNameModal= false" class="btn btn-info">
+            Close
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!--Colour Info-->
+<p-dialog [header]="'Color Info'" [appendTo]="'body'" [visible]="ColorModel" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '50%', minWidth: '200px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+    <table class="table table-bordered">
+        <thead>
+            <tr style="background-color:#3c8dbc;color:white;">
+                <th style="width: 5em;">SL No.</th>
+                <th>Present Status </th>
+                <th>Traget Date</th>
+                <th>Color Code</th>
+           </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Pending</td>
+                <td>If Within Target Date</td>
+                <td style="text-align: center;">
+                    <span style="color: white;background-color: blue;padding: 9px;
+                       border-radius: 20px;">Blue</span>
+                </td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Pending</td>
+                <td>Out Of Target Date</td>
+                <td style="text-align: center;">
+                    <span style="color: white;background-color: red;padding: 9px;
+                       border-radius: 20px;">Red</span>
+                </td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Working</td>
+                <td>If Within Target Date</td>
+                <td style="text-align: center;">
+                    <span style="color: white;background-color: blue;padding: 9px;
+                      border-radius: 20px;">Blue</span>
+                </td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Working</td>
+                <td>Out of Target Date</td>
+                <td style="text-align: center;">
+                    <span style="color: white;background-color: red;padding: 9px;
+                     border-radius: 20px;">Red</span>
+                </td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Completed</td>
+                <td>If Within Target Date</td>
+                <td style="text-align: center;">
+                    <span style="color: white;background-color: green;padding: 9px;
+                     border-radius: 20px;">Green</span>
+                </td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Completed</td>
+                <td>Out of Target Date</td>
+                <td style="text-align: center;">
+                    <span style="color: black;background-color:#f57d02;padding: 9px;
+                     border-radius: 20px;">Orange</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p-footer>
+        <button type="button" (click)="ColorModel= false" class="btn btn-info">
             Close
         </button>
     </p-footer>
