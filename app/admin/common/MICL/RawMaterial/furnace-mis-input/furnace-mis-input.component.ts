@@ -12,7 +12,7 @@ import { CompacctHeader } from "../../../../shared/compacct.services/common.head
 import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service";
 import { CompacctProjectComponent } from "../../../../shared/compacct.components/compacct.forms/compacct-project/compacct-project.component";
 import { ActivatedRoute } from "@angular/router";
-
+import * as moment from 'moment';
 @Component({
   selector: 'app-furnace-mis-input',
   templateUrl: './furnace-mis-input.component.html',
@@ -79,7 +79,7 @@ export class FurnaceMisInputComponent implements OnInit {
   Spinnerreas = false;
   CreateReasonFormSubmitted = false;
   Time_Duration: any;
-  
+  dateTime:any = new Date().toISOString().slice(0, 16)
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -110,6 +110,8 @@ export class FurnaceMisInputComponent implements OnInit {
     // this.GetProduction();
     this.GetReason();
     this.GetFurnaceNo();
+    this.ObjFurMISinputShutdoun.From_Time = new Date().toISOString().slice(0, 16)
+    this.ObjFurMISinputShutdoun.To_Time = new Date().toISOString().slice(0, 16)
   }
   onReject(){
     this.compacctToast.clear("c");
@@ -127,6 +129,8 @@ export class FurnaceMisInputComponent implements OnInit {
                   "PRODUCTION", "SLAG", "SHUTDOWN DETAILS", "DISPATCHES", "CRITICAL ISSUE"];
     //this.buttonname = "Save";
     //this.clearData();
+    this.ObjFurMISinputShutdoun.From_Time = new Date().toISOString().slice(0, 16)
+    this.ObjFurMISinputShutdoun.To_Time = new Date().toISOString().slice(0, 16)
   }
   clearData() {
     this.ObjFurnaceMISinput = new FurnaceMISinput();
@@ -154,8 +158,9 @@ export class FurnaceMisInputComponent implements OnInit {
           //this.flag = false;
           const p1 = /^[-+]?[0-9]+\.[0-9]{1,1}$/;
           const p2 = /^[-+]?[0-9]+\.[0-9]{2,2}$/;
+          const p3 = /^[-+]?[0-9]+\.[0-9]{3,3}$/;
           //console.log("col.Oty==", inputtxt.match(p2))
-          return inputtxt.match(p1) || inputtxt.match(p2) ? false : true;
+          return inputtxt.match(p1) || inputtxt.match(p2) || inputtxt.match(p3)? false : true;
         } 
         else {
           if (inputtxt) {
@@ -528,14 +533,16 @@ GetSlagProduction() {
     if(valid){
       this.CalculateTime();
         this.AddShutdownList.push({
-          From_Time: furdate + " " + this.transform(this.ObjFurMISinputShutdoun.From_Time),
-          To_Time: furdate +" "+ this.transform(this.ObjFurMISinputShutdoun.To_Time),
+          From_Time: this.DateService.dateTimeConvert(new Date(this.ObjFurMISinputShutdoun.From_Time)),
+          To_Time: this.DateService.dateTimeConvert(new Date(this.ObjFurMISinputShutdoun.To_Time)),
           Time_Duration: this.Time_Duration,
           Reason_ID: Number(this.ObjFurMISinputShutdoun.Reason_ID),
           Reason_Des: reson[0].Reason_Des,
         })
         this.Shutdownvalid = false;
         this.ObjFurMISinputShutdoun = new FurMISinputShutdoun()
+        this.ObjFurMISinputShutdoun.From_Time = new Date().toISOString().slice(0, 16)
+        this.ObjFurMISinputShutdoun.To_Time = new Date().toISOString().slice(0, 16)
       }
   }
   Shutdowndelete(i) {
@@ -631,28 +638,17 @@ GetSlagProduction() {
         }
   }
   CalculateTime(){
-    // console.log("obj.Off_Out_Time",new Date(obj.Off_Out_Time))
-    // console.log("obj.Off_In_Time",new Date(obj.Off_In_Time))
-      // obj.Work_Minute = undefined;
-        this.Time_Duration = undefined;
-        if (this.ObjFurMISinputShutdoun.From_Time && this.ObjFurMISinputShutdoun.To_Time) {
-          // console.log("obj.Off_Out_Time",obj.Off_In_Time)
-          // console.log("obj.Off_In_Time",obj.Off_In_Time)
-          var totime:any = this.ObjFurMISinputShutdoun.To_Time.split(":");
-          var fromtime:any = this.ObjFurMISinputShutdoun.From_Time.split(":");
-          // console.log("getOut_Time",outtime.getTime())
-          // console.log("getIn_Time",intime.getTime())
-        // var minutes = Math.abs(outtime.getTime() - intime.getTime()) / 36e5 * 60;
-        // var minutes = (Math.abs(totime - fromtime) / (1000 * 60));
-        var subhours = (totime[0] - fromtime[0]);
-        var submin = (totime[1] - fromtime[1]);
-        var minutes = ((Math.abs(subhours)  * 60) + submin);
-        this.Time_Duration = minutes;
-        console.log('this.Time_Duration===',this.Time_Duration)
-        // console.log(this.DateService.dateTimeConvert(new Date(this.objemployee.Off_In_Time)));
-        // console.log(this.DateService.dateTimeConvert(new Date(this.objemployee.Off_Out_Time)));
-      } 
-      
+    var FromTime:any = new Date(this.ObjFurMISinputShutdoun.From_Time);
+    var ToTime:any = new Date(this.ObjFurMISinputShutdoun.To_Time);
+    var diffMs:any = (ToTime - FromTime); // milliseconds between now & Christmas
+    var diffDays = Math.floor(diffMs / 86400000); // days
+    var diffHrs = Math.floor((diffMs % 86400000) / 3600000); // hours
+    var diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+    console.log(diffDays + " days, " + diffHrs + " hours, " + diffMins + " minutes until Christmas =)");
+    this.Time_Duration = diffDays + " days, " + diffHrs + " hours, " + diffMins + " minutes"
+    let d = diffDays? diffDays * 24 * 60 : 0
+    let h = diffHrs? diffHrs * 60 : 0
+    this.Time_Duration = d + h + diffMins
   }
 
  GetFurnaceNo(){
@@ -806,24 +802,29 @@ GetSlagProduction() {
         this.GlobalAPI.getData(obj).subscribe((res)=>{
               console.log("Get Data",res)
               console.log("Get Data Main",JSON.parse(res[0].main))
-              // JSON.parse(res[0].main)
-              let data = JSON.parse(res[0].main)
-              // this.EmployeeDetailsList = data;
-            //  console.log("EmployeeDetailsList=",this.EmployeeDetailsList);
-            //  const editlist = data ? data[0] : undefined;
-            //   console.log("editlist=",editlist);
-            //  if (this.objselect.Emp_ID) {
-            //  this.objemployee = editlist;
-            // }
-            // else {
-            //   this.objemployee = new Employee();
-            // }
-            this.ObjFurnaceMISinput.Critical_Issue = data ? data[0].Critical_Issue : undefined;
-            this.ObjDailyPerformancet = data? data[0].Daily_Performance[0] : new DailyPerformance();
-            console.log("this.ObjDailyPerformancet ===", this.ObjDailyPerformancet)
-            this.AddProductionList = data ? data[0].Production : [];
-            this.AddWasteSlagList = data ? data[0].Waste_Slag : [];
-            this.AddShutdownList = data ? data[0].Shut_Down : [];
+             let data = JSON.parse(res[0].main)
+             this.ObjFurnaceMISinput.Critical_Issue = data ? data[0].Critical_Issue : undefined;
+             this.ObjDailyPerformancet = data? data[0].Daily_Performance[0] : new DailyPerformance();
+             console.log("this.ObjDailyPerformancet ===", this.ObjDailyPerformancet)
+             this.AddProductionList = data ? data[0].Production : [];
+             this.AddWasteSlagList = data ? data[0].Waste_Slag : [];
+             this.AddShutdownList = data ? data[0].Shut_Down : [];
+             if(this.AddShutdownList.length){
+             this.AddShutdownList.forEach((zx:any) => {
+              var FromTime:any = new Date( zx.From_Time);
+              var ToTime:any = new Date( zx.To_Time);
+              var diffMs:any = (ToTime - FromTime); // milliseconds between now & Christmas
+              var diffDays = Math.floor(diffMs / 86400000); // days
+              var diffHrs = Math.floor((diffMs % 86400000) / 3600000); // hours
+              var diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+              this.Time_Duration = diffDays + " days, " + diffHrs + " hours, " + diffMins + " minutes"
+              let d = diffDays ? diffDays * 24 * 60 : 0
+              let h = diffHrs ? diffHrs * 60 : 0
+              zx.Time_Duration = d + h + diffMins
+             });
+            }
+            console.log("data[0].Shut_Down ",data[0].Shut_Down )
+            console.log("AddShutdownList",this.AddShutdownList)
             });
           }
           // else {
