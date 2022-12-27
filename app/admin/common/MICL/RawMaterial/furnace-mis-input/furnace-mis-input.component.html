@@ -795,9 +795,8 @@
                                         <i class="fa fa-clock-o"></i>
                                     </div>
                                     <input class="form-control" 
-                                    type="time" 
+                                    type="datetime-local" 
                                     name="F_Time" 
-                                    #F_Time="ngModel" 
                                     [(ngModel)]="ObjFurMISinputShutdoun.From_Time" 
                                     [ngClass]="{'clearance': Shutdownvalid && F_Time?.errors?.required}"
                                     required>
@@ -813,7 +812,7 @@
                                         <i class="fa fa-clock-o"></i>
                                     </div>
                                     <input class="form-control" 
-                                    type="time" 
+                                    type="datetime-local" 
                                     name="T_Time" 
                                     #T_Time="ngModel" 
                                     [(ngModel)]="ObjFurMISinputShutdoun.To_Time" 

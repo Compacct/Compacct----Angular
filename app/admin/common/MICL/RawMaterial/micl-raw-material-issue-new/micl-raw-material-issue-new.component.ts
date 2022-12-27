@@ -455,6 +455,9 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
     Doc_No : this.AddProDetails.length ? this.AddProDetails[0].Doc_No : "A",
     Product_ID : this.ObjproductAdd.Product_ID,
     Product_Description : this.ObjproductAdd.Product_Description,
+    To_Cost_Cen_ID : this.objRMissue.To_Cost_Cen_ID,
+    To_Godown_ID : this.objRMissue.To_Godown_ID,
+    F_Cost_Cen_ID : this.objRMissue.F_Cost_Cen_ID,
     F_Godown_ID : this.objRMissue.F_Godown_ID,
     F_Godown_Name : yard[0].godown_name,
     Batch_No : this.ObjproductAdd.Batch_No,
@@ -484,7 +487,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
  if(sameProdTypeFlag == false) {
   this.AddProDetails.push(productObj);
  }
-
+ console.log("AddProDetails",this.AddProDetails)
  //console.log("this.productSubmit",this.productSubmit);
   this.AddProDetailsFormSubmitted = false;
   this.ObjproductAdd = new productAdd();
@@ -681,25 +684,42 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
         //  saveData.push(save)
         //  })
          this.saveData = [];
+         console.log("AddProDetails",this.AddProDetails)
          this.objRMissue.Doc_Date = this.DateService.dateConvert(new Date(this.RM_Issue_Date));
         //  this.objRMissue.Req_Date = this.DateService.dateConvert(new Date(this.RM_Issue_Date));
          this.AddProDetails.forEach(el=>{
           // if(el.Delivery_Qty){      //&& Number(el.Delivery_Qty) !== 0
-            const saveObj = {
-              Doc_No: el.Doc_No,
-              Product_ID: el.Product_ID,
-              Batch_No: el.Batch_No,
-              Qty: el.Qty,
-              Accepted_Qty: el.Delivery_Qty,
-              UOM: el.UOM,
-              Note_Description: el.Note_Description,
-              // Req_No: this.SelectedIndent,
-              Created_By: this.$CompacctAPI.CompacctCookies.User_ID
-            }
-            this.saveData.push({...saveObj,...this.objRMissue})
+            // const saveObj = {
+            //   Doc_No: el.Doc_No,
+            //   Product_ID: el.Product_ID,
+            //   Batch_No: el.Batch_No,
+            //   Qty: el.Qty,
+            //   Accepted_Qty: el.Delivery_Qty,
+            //   UOM: el.UOM,
+            //   Note_Description: el.Note_Description,
+            //   Req_No: this.SelectedIndent,
+            //   Created_By: this.$CompacctAPI.CompacctCookies.User_ID
+            // }
+            // this.saveData.push({...saveObj,...this.objRMissue})
           // }
+          this.saveData.push({
+            Doc_No: el.Doc_No,
+            Product_ID: el.Product_ID,
+            Batch_No: el.Batch_No,
+            Qty: el.Qty,
+            UOM: el.UOM,
+            Note_Description: el.Note_Description,
+            Created_By: this.$CompacctAPI.CompacctCookies.User_ID,
+            Vehicle_Details: "NA",
+            To_Cost_Cen_ID: el.To_Cost_Cen_ID,
+            F_Cost_Cen_ID: el.F_Cost_Cen_ID,
+            To_Godown_ID: el.To_Godown_ID,
+            Remarks: this.objRMissue.Remarks,
+            F_Godown_ID: el.F_Godown_ID,
+            Doc_Date: this.objRMissue.Doc_Date
+          })
         })
-         //console.log("Save Data",saveData);
+         console.log("Save Data",this.saveData);
          const obj = {
           "SP_String": "SP_MICL_Raw_Material_Issue_New",
           "Report_Name_String": "Create_MICL_Raw_Material_Consumables_Issue",
