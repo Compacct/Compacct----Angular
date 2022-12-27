@@ -21,7 +21,8 @@ export class DoctorsAppointmentNewTinnitusReportComponent implements OnInit {
   EditPage:any;
   TinnitusReportFormSubmitted:boolean= false;
   Spinner:boolean=false;
-  buttonname:any='Create';
+  // buttonname:any='Create';
+  buttonname:any='Save';
   Level_1_Status:any=undefined;
   Level_2_Status:any=undefined;
   Level_3_Status:any=undefined;
@@ -220,7 +221,8 @@ export class DoctorsAppointmentNewTinnitusReportComponent implements OnInit {
 
     this.GlobalAPI.postData(obj2).subscribe((data: any) => {
       // console.log("save data2",data);
-       var msg= this.EditPage ?  "update" : "create";
+      //  var msg= this.EditPage ?  "update" : "create";
+      var msg= "Save";
        if (data[0].Column1){
          this.Spinner=false;
          this.buttonValid = false;
@@ -268,7 +270,8 @@ export class DoctorsAppointmentNewTinnitusReportComponent implements OnInit {
       Appo_ID: this.AppoIDvalue
     }
   // console.log("TempEditObj",TempEditObj);
-    this.buttonname='Edit';
+    // this.buttonname='Edit';
+    this.buttonname='Save';
     const Editobj = {
       "SP_String": "SP_BL_Txn_Doctor_Appo_ALL",
       "Report_Name_String": "Retrieve_BL_Txn_Doctor_Appo_ALL_Data",

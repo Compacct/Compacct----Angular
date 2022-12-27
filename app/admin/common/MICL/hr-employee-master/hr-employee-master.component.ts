@@ -387,17 +387,17 @@ getEmployee(){
 }
 getempdetailsforU(){
   this.objselect.Emp_ID = undefined;
-  if(this.$CompacctAPI.CompacctCookies.User_Type === "U") {
+  if(this.$CompacctAPI.CompacctCookies.User_Type === "A" && this.$CompacctAPI.CompacctCookies.Del_Right === "Y") {
+    this.objselect.Emp_ID = undefined;
+    this.userdisabled = false;
+    this.userdatedisabled = true;
+  }
+  else{
     const userid = this.AllEmployeeList.filter(ele=> Number(ele.User_ID)===Number(this.$CompacctAPI.CompacctCookies.User_ID));
     this.objselect.Emp_ID = userid ? userid[0].Emp_ID : undefined;
     this.getEmployeeDetails(this.objselect.Emp_ID);
     this.userdisabled = true;
     this.userdatedisabled = false;
-  }
-  else{
-    this.objselect.Emp_ID = undefined;
-    this.userdisabled = false;
-    this.userdatedisabled = true;
   }
 }
 

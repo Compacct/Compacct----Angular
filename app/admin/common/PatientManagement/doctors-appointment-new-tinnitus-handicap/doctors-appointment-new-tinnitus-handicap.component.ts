@@ -20,7 +20,8 @@ export class DoctorsAppointmentNewTinnitusHandicapComponent implements OnInit {
   EditPage:any;
   TinnitusHandicapFormSubmitted:boolean= false;
   Spinner:boolean=false;
-  buttonname:any='Create';
+  // buttonname:any='Create';
+  buttonname:any='Save';
   patientSearchList:any= [];
   CheckBoxRECOMMENDATION:any=[];
   TestName:any='Tinnitus_Handicap';
@@ -164,7 +165,8 @@ export class DoctorsAppointmentNewTinnitusHandicapComponent implements OnInit {
 
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
         // console.log("save data",data);
-        var msg= this.EditPage ?  "update" : "create";
+        // var msg= this.EditPage ?  "update" : "create";
+          var msg= "Save";
          if (data[0].Column1){
           this.Spinner=false;
           this.buttonValid = false;
@@ -266,7 +268,8 @@ export class DoctorsAppointmentNewTinnitusHandicapComponent implements OnInit {
       Appo_ID: this.AppoIDvalue
     }
   // console.log("TempEditObj",TempEditObj);
-    this.buttonname='Edit';
+    // this.buttonname='Edit';
+    this.buttonname='Save'
     const Editobj = {
       "SP_String": "SP_BL_Txn_Doctor_Appo_ALL",
       "Report_Name_String": "Retrieve_BL_Txn_Doctor_Appo_ALL_Data",

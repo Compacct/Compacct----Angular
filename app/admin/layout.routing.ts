@@ -313,6 +313,11 @@ import { DoctorsAppointmentNewTinnitusTherapyTrackerComponent } from "./common/P
 import { MiclWastageMasterProductComponent } from './common/ProductionManagement/Master/micl-wastage-master-product/micl-wastage-master-product.component';
 import { DoctorsAppointmentNewTinnitusEvaluationComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-evaluation/doctors-appointment-new-tinnitus-evaluation.component";
 import { DoctorsAppointmentNewTinnitusHandicapComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-handicap/doctors-appointment-new-tinnitus-handicap.component";
+import { TinnitusTherapyTrackerDashboardComponent } from "./common/PatientManagement/tinnitus-therapy-tracker-dashboard/tinnitus-therapy-tracker-dashboard.component";
+import { TinnitusEvauationReportDashboardComponent } from "./common/PatientManagement/tinnitus-evauation-report-dashboard/tinnitus-evauation-report-dashboard.component";
+import { PrintTinnitusTherapyTrackerDashboardComponent } from "./common/PatientManagement/print-tinnitus-therapy-tracker-dashboard/print-tinnitus-therapy-tracker-dashboard.component";
+import { PrintTinnitusEvauationReportDashboardComponent } from "./common/PatientManagement/print-tinnitus-evauation-report-dashboard/print-tinnitus-evauation-report-dashboard.component";
+
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2357,6 +2362,34 @@ path: 'MICL_Cost_Center_Master',
     component: DoctorsAppointmentNewTinnitusHandicapComponent,
     data: {
       title: 'Doctors Appointment New Tinnitus Handicap'
+}
+},
+{
+  path: 'Tinnitus_Therapy_Tracker_Dashboard',
+    component: TinnitusTherapyTrackerDashboardComponent,
+    data: {
+      title: 'Tinnitus Therapy Tracker Dashboard'
+}
+},
+{
+  path: 'Tinnitus_Evauation_Report_Dashboard',
+    component: TinnitusEvauationReportDashboardComponent,
+    data: {
+      title: 'Tinnitus Evaluation Report Dashboard'
+}
+},
+{
+  path: 'Print_Tinnitus_Therapy_Tracker_Dashboard',
+    component: PrintTinnitusTherapyTrackerDashboardComponent,
+    data: {
+      title: 'Print Tinnitus Therapy Tracker Dashboard'
+}
+},
+{
+  path: 'Print_Tinnitus_Evauation_Report_Dashboard',
+    component: PrintTinnitusEvauationReportDashboardComponent,
+    data: {
+      title: 'Print Tinnitus Evauation Report Dashboard'
 }
 },
     

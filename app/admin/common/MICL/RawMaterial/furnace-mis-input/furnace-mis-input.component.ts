@@ -289,8 +289,8 @@ export class FurnaceMisInputComponent implements OnInit {
       })
  }
  getProProductSubTyp(ProductTypeID){
+  this.ProproductSubTypeList = [];
   if(ProductTypeID){
-   this.ProproductSubTypeList = [];
     const obj = {
       "SP_String": "SP_Furnace_MIS_Input",
       "Report_Name_String":"Get_Master_Product_Sub_Type",
@@ -313,7 +313,7 @@ export class FurnaceMisInputComponent implements OnInit {
  }
  GetProProduction() {
   this.ProdList = [];
-  if (this.ObjFurMISinputPro.Product_Sub_Type_ID) {
+  if (this.ObjFurMISinputPro.Product_Type_ID && this.ObjFurMISinputPro.Product_Sub_Type_ID) {
    const proobj = {
      Product_Type_ID : this.ObjFurMISinputPro.Product_Type_ID,
      Product_Sub_Type_ID : this.ObjFurMISinputPro.Product_Sub_Type_ID
@@ -370,6 +370,8 @@ export class FurnaceMisInputComponent implements OnInit {
       })
       this.Productionvalid = false;
       this.ObjFurMISinputPro = new FurMISinputPro();
+      this.ProproductSubTypeList = [];
+      this.ProdList = [];
       this.ObjFurMISinputPro.Cost_Cent_ID = 36;
     }
   }
@@ -489,6 +491,8 @@ GetSlagProduction() {
         })
         this.wasteslagvalid = false;
         this.ObjFurMISinputWaste = new FurMISinputWaste();
+        this.SlagproductSubTypeList = [];
+        this.WasteProList = [];
         this.ObjFurMISinputWaste.Cost_Cent_ID = 36;
       }
   }
@@ -750,6 +754,12 @@ GetSlagProduction() {
        this.Spinner = false;
        this.ngxService.stop();
        this.clearData();
+       this.ProproductSubTypeList = [];
+       this.ProdList = [];
+       this.SlagproductSubTypeList = [];
+       this.WasteProList = [];
+       this.ObjFurMISinputShutdoun.From_Time = new Date().toISOString().slice(0, 16)
+       this.ObjFurMISinputShutdoun.To_Time = new Date().toISOString().slice(0, 16)
     //  if(this.DocNo){
     //    this.ngxService.stop();
     //    this.tabIndexToView = 0;

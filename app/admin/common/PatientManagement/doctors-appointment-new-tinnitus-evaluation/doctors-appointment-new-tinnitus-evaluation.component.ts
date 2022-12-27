@@ -20,7 +20,8 @@ export class DoctorsAppointmentNewTinnitusEvaluationComponent implements OnInit 
   EditPage:any;
   TinnitusEvaluationFormSubmitted:boolean= false;
   Spinner:boolean=false;
-  buttonname:any='Create';
+  // buttonname:any='Create';
+  buttonname:any='Save';
   Level_1_Status:any=undefined;
   Level_2_Status:any=undefined;
   Level_3_Status:any=undefined;
@@ -37,7 +38,7 @@ export class DoctorsAppointmentNewTinnitusEvaluationComponent implements OnInit 
   LoudNoisesList: any =[];
   SuddenLoudNoisesList: any =[];
   YesNoList: any= [];
-  DisOrderList: any= [];
+  // DisOrderList: any= [];
   ProblemList: any=[];
   IfYes1: boolean =false;
   IfYes2: boolean =false;
@@ -46,6 +47,7 @@ export class DoctorsAppointmentNewTinnitusEvaluationComponent implements OnInit 
   IfYes5: boolean =false;
   IfYes6: boolean =false;
   IfYes7: boolean =false;
+  CheckBoxSelect:any =[];
 
   ObjAppoID: AppoID = new AppoID();
   ObjTinnitusEvaluation: TinnitusEvaluation = new TinnitusEvaluation();
@@ -83,7 +85,7 @@ export class DoctorsAppointmentNewTinnitusEvaluationComponent implements OnInit 
     this.LoudNoisesList= ['Work places noise','industrial noise'];
     this.SuddenLoudNoisesList= ['Gunshot','explosion','concert','function'];
     this.YesNoList= ['Yes', 'No'];
-    this.DisOrderList=['Cancer','Infectious diseases','Renal disorders',' Excessive stress','cardiovascular disorders'];
+    // this.DisOrderList=['Cancer','Infectious diseases','Renal disorders',' Excessive stress','cardiovascular disorders'];
     this.ProblemList=['Hearing difficulties','Tinnitus','Increased sensitivity to sounds'];
   }
 
@@ -140,6 +142,7 @@ export class DoctorsAppointmentNewTinnitusEvaluationComponent implements OnInit 
   }
 
   saveDocAppo(valid:any){
+    // console.log("CheckBoxSelect",this.CheckBoxSelect);
     //console.log('CheckBoxRECOMMENDATION value',this.CheckBoxRECOMMENDATION);
     let tempSaveJ1:any= [];
     if(this.CheckBoxRECOMMENDATION.length){
@@ -172,7 +175,7 @@ export class DoctorsAppointmentNewTinnitusEvaluationComponent implements OnInit 
       Trauma_Yes: this.ObjTinnitusEvaluation.Trauma_Yes,
       Undergone_Surgery: this.ObjTinnitusEvaluation.Undergone_Surgery,
       Undergone_Surgery_Yes: this.ObjTinnitusEvaluation.Undergone_Surgery_Yes,
-      DisOrder: this.ObjTinnitusEvaluation.DisOrder,
+      DisOrder: this.CheckBoxSelect,
       Migraine: this.ObjTinnitusEvaluation.Migraine,
       Sleep: this.ObjTinnitusEvaluation.Sleep,
       Stress_Level: this.ObjTinnitusEvaluation.Stress_Level,
@@ -216,7 +219,8 @@ export class DoctorsAppointmentNewTinnitusEvaluationComponent implements OnInit 
    }
    this.GlobalAPI.postData(obj).subscribe((data: any) => {
     // console.log("save data",data);
-    var msg= this.EditPage ?  "update" : "create";
+    // var msg= this.EditPage ?  "update" : "create";
+    var msg= "Save";
      if (data[0].Column1){
       this.Spinner=false;
       this.buttonValid = false;
@@ -262,7 +266,7 @@ export class DoctorsAppointmentNewTinnitusEvaluationComponent implements OnInit 
     this.ObjTinnitusEvaluation.Trauma_Yes= undefined;
     this.ObjTinnitusEvaluation.Undergone_Surgery= undefined;
     this.ObjTinnitusEvaluation.Undergone_Surgery_Yes= undefined;
-    this.ObjTinnitusEvaluation.DisOrder= undefined;
+    this.CheckBoxSelect= [];
     this.ObjTinnitusEvaluation.Migraine= undefined;
     this.ObjTinnitusEvaluation.Sleep= undefined;
     this.ObjTinnitusEvaluation.Stress_Level= undefined;
@@ -283,11 +287,13 @@ export class DoctorsAppointmentNewTinnitusEvaluationComponent implements OnInit 
   }
   
   editData(){
+    this.CheckBoxSelect=[];
     const TempEditObj={
       Appo_ID: this.AppoIDvalue
     }
   // console.log("TempEditObj",TempEditObj);
-    this.buttonname='Edit';
+    // this.buttonname='Edit';
+    this.buttonname='Save';
     const Editobj = {
       "SP_String": "SP_BL_Txn_Doctor_Appo_ALL",
       "Report_Name_String": "Retrieve_BL_Txn_Doctor_Appo_ALL_Data",
@@ -300,6 +306,7 @@ export class DoctorsAppointmentNewTinnitusEvaluationComponent implements OnInit 
       console.log("EditDataList",this.EditDataList);
 
       this.ObjTinnitusEvaluation= JSON.parse(data[0].Test_Details);
+      this.CheckBoxSelect= this.EditDataList.DisOrder;
       this.ShowYes();
 
     });
@@ -388,7 +395,7 @@ class TinnitusEvaluation{
   Trauma_Yes: any;
   Undergone_Surgery: any;
   Undergone_Surgery_Yes: any;
-  DisOrder: any;
+  // DisOrder: any;
   Migraine: any;
   Sleep: any;
   Stress_Level: any;

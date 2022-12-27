@@ -365,7 +365,7 @@
                                     <div class="col-sm-6"> 
                                         <strong>Had you under gone any long-term treatment for any disease/disorder?</strong>
                                     </div>
-                                    <div class="col-sm-4"> 
+                                    <!-- <div class="col-sm-4"> 
                                         <select class="form-control"
                                                     name="DisOrder"
                                                     #DisOrder="ngModel" 
@@ -376,6 +376,47 @@
                                                         {{option}}
                                                     </option>
                                         </select>
+                                    </div> -->
+                                    <div class="col-sm-4">
+                                        <p-checkbox 
+                                        label="Cancer"
+                                        value="Cancer"
+                                        name="SelectItem"
+                                        [(ngModel)]="CheckBoxSelect"
+                                        inputId="RC1">
+                                        </p-checkbox>
+                                        <br>
+                                        <p-checkbox 
+                                        label="Infectious diseases"
+                                        value="Infectious diseases"
+                                        name="SelectItem"
+                                        [(ngModel)]="CheckBoxSelect"
+                                        inputId="RC2">
+                                        </p-checkbox>
+                                        <br>
+                                        <p-checkbox 
+                                        label="Renal disorders"
+                                        value="Renal disorders"
+                                        name="SelectItem"
+                                        [(ngModel)]="CheckBoxSelect"
+                                        inputId="RC3">
+                                        </p-checkbox>
+                                        <br>
+                                        <p-checkbox 
+                                        label="Excessive stress"
+                                        value="Excessive stress"
+                                        name="SelectItem"
+                                        [(ngModel)]="CheckBoxSelect"
+                                        inputId="RC4">
+                                        </p-checkbox>
+                                        <br>
+                                        <p-checkbox 
+                                        label="cardiovascular disorders"
+                                        value="cardiovascular disorders"
+                                        name="SelectItem"
+                                        [(ngModel)]="CheckBoxSelect"
+                                        inputId="RC5">
+                                        </p-checkbox>
                                     </div>
                                 </div>
 
