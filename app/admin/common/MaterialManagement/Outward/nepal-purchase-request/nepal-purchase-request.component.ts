@@ -159,7 +159,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
             data.forEach((ele:any) => {
              const filterEdit = editData.find((z:any)=> Number(z.Product_ID) == Number(ele.Product_ID))
              if(filterEdit){
-              ele.Purchase_Request_Qty = filterEdit.Purchase_Request_Qty
+              ele.Purchase_Req_Qty = filterEdit.Purchase_Req_Qty
              }
             });
           }
@@ -231,7 +231,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
         Product_Description : filterproductList ? filterproductList.Product_Name : "",            
         Requisition_Qty: this.objpurchaseRequest.Requisition_Qty,
         UOM : this.objpurchaseRequest.UOM,
-        Purchase_Request_Qty: this.objpurchaseRequest.Purchase_Request_Qty,
+        Purchase_Req_Qty: this.objpurchaseRequest.Purchase_Req_Qty,
         User_ID : this.$CompacctAPI.CompacctCookies.User_ID
        })
        this.objpurchaseRequest = new purchaseRequest()
@@ -246,15 +246,15 @@ export class NepalPurchaseRequestComponent implements OnInit {
     this.addpurchaList = []
      this.productList.forEach((xz:any) => {
      
-      if(xz.Purchase_Request_Qty){
+      if(xz.Purchase_Req_Qty){
        let saveTemp = {
         Purchase_Request_No: this.PurchaseRequestNo ? this.PurchaseRequestNo : "A",
         Purchase_Request_Date :  this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate)),
         User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
-        Cat_ID : Number(this.objpurchaseRequest.Cat_ID)
+        Cat_ID : Number(this.objpurchaseRequest.Cat_ID),
+        Purchase_Request_Qty: Number(xz.Purchase_Req_Qty)
       }
-      xz.Purchase_Request_Qty = Number(xz.Purchase_Request_Qty)
-        this.addpurchaList.push({...xz,...saveTemp})
+      this.addpurchaList.push({...xz,...saveTemp})
       }
       
      });
@@ -480,7 +480,6 @@ export class NepalPurchaseRequestComponent implements OnInit {
         
       }
     });
-    console.log(checkL)
     let l = checkL * 9.5
     flg = l.toString()+'px'
     return flg
@@ -498,6 +497,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
   
  //  return flg
   }
+  
 }
 class purchaseRequest{
   Purchase_Request_No:any
@@ -506,6 +506,6 @@ class purchaseRequest{
   Product_ID :any			                  
   Requisition_Qty:any
   UOM :any
-  Purchase_Request_Qty:any
+  Purchase_Req_Qty:any
   Cat_ID:any
 }
