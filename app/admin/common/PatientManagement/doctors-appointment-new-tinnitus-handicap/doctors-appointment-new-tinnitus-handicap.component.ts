@@ -265,21 +265,22 @@ export class DoctorsAppointmentNewTinnitusHandicapComponent implements OnInit {
 
   editData(){
     const TempEditObj={
-      Appo_ID: this.AppoIDvalue
+      Appo_ID: this.AppoIDvalue,
+      Test_Name: this.TestName
     }
   // console.log("TempEditObj",TempEditObj);
     // this.buttonname='Edit';
     this.buttonname='Save'
     const Editobj = {
       "SP_String": "SP_BL_Txn_Doctor_Appo_ALL",
-      "Report_Name_String": "Retrieve_BL_Txn_Doctor_Appo_ALL_Data",
+      "Report_Name_String": "Retrieve_BL_Txn_Doctor_Appo_ALL_Data_Multiple_Test",
       "Json_Param_String": JSON.stringify(TempEditObj)
     }
     this.GlobalAPI.getData(Editobj).subscribe((data: any) => {
-      console.log("Edit Data",data);
+      // console.log("Edit Data",data);
 
       this.EditDataList= JSON.parse(data[0].Test_Details);  
-      console.log("EditDataList",this.EditDataList);
+      // console.log("EditDataList",this.EditDataList);
 
       this.ObjTinnitusHandicap= JSON.parse(data[0].Test_Details);
 

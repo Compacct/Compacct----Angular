@@ -665,13 +665,13 @@ GetSlagProduction() {
     this.FurnaceNoList = data
   })
  }
-  SaveFurnace() {
+  SaveFurnace(valid,valid2) {
     // console.log("save valid ===",valid)
     this.FurnaceMISinputFormSubmitted = true;
     this.Spinner = true;
-    this.ObjFurnaceMISinput.Furnace_No = this.ObjFurnaceMISinput.Furnace_No ? this.ObjFurnaceMISinput.Furnace_No : "A";
+    // this.ObjFurnaceMISinput.Furnace_No = this.ObjFurnaceMISinput.Furnace_No ? this.ObjFurnaceMISinput.Furnace_No : "A";
     this.ObjFurnaceMISinput.Furnace_Date = this.DateService.dateConvert(new Date(this.Doc_Date));
-    if (this.ObjFurnaceMISinput.Furnace_No && this.ObjFurnaceMISinput.Furnace_Date && this.AddProductionList.length && this.AddWasteSlagList.length && this.AddShutdownList.length) {
+    if (valid && valid2 && this.ObjFurnaceMISinput.Furnace_Date) {
       this.FurnaceMISinputFormSubmitted = false;
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -702,7 +702,7 @@ GetSlagProduction() {
   //  const tempCost = this.costCenterList.filter(el=> Number(el.Cost_Cen_ID) === Number(this.objpurchase.Cost_Cen_ID))[0]
   //  const tempsub = this.SubLedgerDataList.filter(el=> Number(el.Sub_Ledger_ID) === Number(this.objpurchase.Sub_Ledger_ID))[0]
   //  const tempCurr = this.currencyList.filter(el=> Number(el.Currency_ID) === Number(this.objpurchase.Currency_ID))
-   this.ObjFurnaceMISinput.Furnace_No = this.ObjFurnaceMISinput.Furnace_No ? Number(this.ObjFurnaceMISinput.Furnace_No) : "A";
+  //  this.ObjFurnaceMISinput.Furnace_No = this.ObjFurnaceMISinput.Furnace_No ? Number(this.ObjFurnaceMISinput.Furnace_No) : "A";
    this.ObjFurnaceMISinput.Furnace_ID = Number(this.ObjFurnaceMISinput.Furnace_No);
    this.ObjFurnaceMISinput.Furnace_Date = this.DateService.dateConvert(new Date(this.Doc_Date));
    this.ObjFurnaceMISinput.User_ID  = this.$CompacctAPI.CompacctCookies.User_ID;
@@ -796,8 +796,15 @@ GetSlagProduction() {
   GetData(){
     this.ObjFurnaceMISinput.Critical_Issue = undefined;
     // this.ObjFurnaceMISinput.Daily_Performance = new DailyPerformance();
+    this.ObjFurMISinputPro = new FurMISinputPro();
+    this.ObjFurMISinputPro.Cost_Cent_ID = 36;
     this.AddProductionList = [];
+    this.ObjFurMISinputWaste = new FurMISinputWaste();
+    this.ObjFurMISinputWaste.Cost_Cent_ID = 36;
     this.AddWasteSlagList = [];
+    this.ObjFurMISinputShutdoun = new FurMISinputShutdoun();
+    this.ObjFurMISinputShutdoun.From_Time = new Date().toISOString().slice(0, 16)
+    this.ObjFurMISinputShutdoun.To_Time = new Date().toISOString().slice(0, 16)
     this.AddShutdownList = [];
     this.Productionvalid = false;
     this.wasteslagvalid = false;
@@ -816,9 +823,9 @@ GetSlagProduction() {
              this.ObjFurnaceMISinput.Critical_Issue = data ? data[0].Critical_Issue : undefined;
              this.ObjDailyPerformancet = data? data[0].Daily_Performance[0] : new DailyPerformance();
              console.log("this.ObjDailyPerformancet ===", this.ObjDailyPerformancet)
-             this.AddProductionList = data ? data[0].Production : [];
-             this.AddWasteSlagList = data ? data[0].Waste_Slag : [];
-             this.AddShutdownList = data ? data[0].Shut_Down : [];
+             this.AddProductionList = data ? data[0].Production ? data[0].Production : [] : [];
+             this.AddWasteSlagList = data ? data[0].Waste_Slag ? data[0].Waste_Slag : [] : [];
+             this.AddShutdownList = data ? data[0].Shut_Down ? data[0].Shut_Down : [] : [];
              if(this.AddShutdownList.length){
              this.AddShutdownList.forEach((zx:any) => {
               var FromTime:any = new Date( zx.From_Time);
