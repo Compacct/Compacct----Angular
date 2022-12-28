@@ -797,6 +797,7 @@
                                     <input class="form-control" 
                                     type="datetime-local" 
                                     name="F_Time" 
+                                    #F_Time="ngModel"
                                     [(ngModel)]="ObjFurMISinputShutdoun.From_Time" 
                                     [ngClass]="{'clearance': Shutdownvalid && F_Time?.errors?.required}"
                                     required>
@@ -1025,7 +1026,7 @@
                     </p-tabPanel>
                     <div class="box-footer">
                         <button class="btn btn-primary pull-right"
-                                (click)="SaveFurnace()"
+                                (click)="SaveFurnace(FurnaceMISinputForm.form.valid,DailyPerForm.form.valid)"
                                 id="load"
                                 [disabled]="Spinner">
                                 <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>

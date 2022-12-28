@@ -267,20 +267,21 @@ export class DoctorsAppointmentNewTinnitusReportComponent implements OnInit {
   editData(){
     this.CheckBoxRECOMMENDATION=[];
     const TempEditObj={
-      Appo_ID: this.AppoIDvalue
+      Appo_ID: this.AppoIDvalue,
+      Test_Name: this.TestName
     }
   // console.log("TempEditObj",TempEditObj);
     // this.buttonname='Edit';
     this.buttonname='Save';
     const Editobj = {
       "SP_String": "SP_BL_Txn_Doctor_Appo_ALL",
-      "Report_Name_String": "Retrieve_BL_Txn_Doctor_Appo_ALL_Data",
+      "Report_Name_String": "Retrieve_BL_Txn_Doctor_Appo_ALL_Data_Multiple_Test",
       "Json_Param_String": JSON.stringify(TempEditObj)
     }
     this.GlobalAPI.getData(Editobj).subscribe((data: any) => {
-      console.log("Edit Data",data);
+      // console.log("Edit Data",data);
       this.EditDataList= JSON.parse(data[0].Test_Details);
-      console.log("EditDataList",this.EditDataList);
+      // console.log("EditDataList",this.EditDataList);
 
       this.ObjTinnitusReport.Tinnitus_Right_Pitch_Matching= this.EditDataList.Tinnitus_Right_Pitch_Matching;
       this.ObjTinnitusReport.Tinnitus_Left_Pitch_Matching= this.EditDataList.Tinnitus_Left_Pitch_Matching;
@@ -293,7 +294,7 @@ export class DoctorsAppointmentNewTinnitusReportComponent implements OnInit {
 
 
       this.Get_TXN_ID=data[0].Txn_ID;
-      console.log("check Get_TXN_ID",this.Get_TXN_ID);
+      // console.log("check Get_TXN_ID",this.Get_TXN_ID);
       this.editData1(this.Get_TXN_ID);
     });
   }
@@ -309,7 +310,7 @@ export class DoctorsAppointmentNewTinnitusReportComponent implements OnInit {
       "Json_Param_String": JSON.stringify(TempTxnIDObj)
     }
     this.GlobalAPI.getData(Recmdobj).subscribe((data: any) => {
-      console.log("Edit Data2",data);
+      // console.log("Edit Data2",data);
       let BoxArray:any = [];
       data.forEach((ele:any) => {
         BoxArray.push(ele.Recommend)

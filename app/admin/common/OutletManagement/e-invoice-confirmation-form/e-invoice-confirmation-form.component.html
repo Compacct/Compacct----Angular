@@ -78,7 +78,7 @@
                                             <!-- <th>Gross Amount</th> -->
                                             <th>Bill Amount</th>
                                             <th>Action</th>
-                                            <th>Confirmation for E-Inv</th>
+                                            <th>Confirmation for E-INV</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -96,7 +96,7 @@
                                             </td>
                                             <td style="text-align:center">
                                                 <!-- <input type="checkbox" id="col.confirmationInv" name="col.confirmationInv" value="col.confirmation_Inv"> -->
-                                                <p-checkbox name="col.confirmationInv" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" [binary]="true"></p-checkbox>
+                                                <p-checkbox name="col.confirmationInv" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" (ngModelChange)='CheckInvQueuelength()' [binary]="true"></p-checkbox>
                                             </td>
                                         </tr>
                                     </ng-template>
@@ -172,7 +172,7 @@
                                             <!-- <th>Gross Amount</th> -->
                                             <th>Note Amount</th>
                                             <th>Action</th>
-                                            <th>Confirmation for E-Inv</th>
+                                            <th>Confirmation for E-CRN</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-obj>
@@ -190,7 +190,7 @@
                                                 </td>
                                                 <td style="text-align:center">
                                                     <!-- <input type="checkbox" id="obj.confirmationCrNote" name="obj.confirmationCrNote" value="obj.confirmation_Credit_Note"> -->
-                                                    <p-checkbox name="obj.confirmationCrNote" value="obj.confirmationCrNote" [(ngModel)]="obj.confirmation_Credit_Note" [binary]="true"></p-checkbox>
+                                                    <p-checkbox name="obj.confirmationCrNote" value="obj.confirmationCrNote" [(ngModel)]="obj.confirmation_Credit_Note" (ngModelChange)='CheckNoteQueuelength()' [binary]="true"></p-checkbox>
                                                 </td>
                                         </tr>
                                     </ng-template>

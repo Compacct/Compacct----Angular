@@ -413,6 +413,7 @@ import { TinnitusTherapyTrackerDashboardComponent } from "./common/PatientManage
 import { TinnitusEvauationReportDashboardComponent } from "./common/PatientManagement/tinnitus-evauation-report-dashboard/tinnitus-evauation-report-dashboard.component";
 import { PrintTinnitusTherapyTrackerDashboardComponent } from "./common/PatientManagement/print-tinnitus-therapy-tracker-dashboard/print-tinnitus-therapy-tracker-dashboard.component";
 import { PrintTinnitusEvauationReportDashboardComponent } from "./common/PatientManagement/print-tinnitus-evauation-report-dashboard/print-tinnitus-evauation-report-dashboard.component";
+import { OutwardChallanComponent } from './common/MICL/outward-challan/outward-challan.component';
 
 @NgModule({
   declarations: [
@@ -743,7 +744,8 @@ import { PrintTinnitusEvauationReportDashboardComponent } from "./common/Patient
     TinnitusTherapyTrackerDashboardComponent,
     TinnitusEvauationReportDashboardComponent,
     PrintTinnitusTherapyTrackerDashboardComponent,
-    PrintTinnitusEvauationReportDashboardComponent
+    PrintTinnitusEvauationReportDashboardComponent,
+    OutwardChallanComponent
   ],
   imports: [
     CommonModule,

@@ -16,6 +16,8 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
 export class TinnitusEvauationReportDashboardComponent implements OnInit {
   AppoIDvalue:number;
 
+  tabIndexToView : any = 0;
+
   constructor(
     private GlobalAPI:CompacctGlobalApiService,
     private compacctToast:MessageService,
