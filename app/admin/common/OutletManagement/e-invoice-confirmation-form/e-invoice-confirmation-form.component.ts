@@ -10,6 +10,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import { Console } from 'console';
 import { NgxUiLoaderService } from "ngx-ui-loader";
+import { collectExternalReferences } from '@angular/compiler/src/output/output_ast';
+import { map, catchError } from 'rxjs/operators';
 declare var $:any;
 
 @Component({
@@ -108,7 +110,24 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       );
     }
   }
-  SaveInvoice() {
+  CheckInvQueuelength() {
+    var invquelength = this.Invoicelist.filter(el=> el.confirmation_Inv === true);
+    if (invquelength.length <= 50) {
+      return false;
+      }
+      else {
+        this.Spinner = false;
+        this.ngxService.stop();
+        this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Can't Create More Than Fifty Queue."
+            });
+      }
+  }
+  async SaveInvoice() {
     this.Spinner = false;
     this.ngxService.start();
   if(this.Invoicelist.length){
@@ -124,16 +143,14 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       }
 
     })
-  //}
     if(updateData.length){
+     if(updateData.length <= 50) {
      console.log("updateData",updateData);
-      const obj = {
-        "SP_String": "SP_E_Invoice_For_Confirmation_Form",
-        "Report_Name_String": "Update Franchise Bill And B2B Bill For E-Invoice",
-        "Json_Param_String": JSON.stringify(updateData)
-      }
-      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        if(data[0].Column1){
+     this.$http.post(`https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==`,updateData)
+     .subscribe((data:any)=>{
+      console.log("data",data)
+
+      if(data[0].status === "success"){
         this.GetInvoicelist();
         this.Spinner = false;
         this.ngxService.stop();
@@ -142,7 +159,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
           key: "compacct-toast",
           severity: "success",
           summary: "Invoice ",
-          detail: "Update Succesfully"
+          detail: data[0].msg
         });
         }
         else{
@@ -156,7 +173,19 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
                 detail: "Something Wrong"
               });
         }
-    })
+     })
+     }
+     else{
+       this.Spinner = false;
+       this.ngxService.stop();
+       this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "error",
+             summary: "Warn Message",
+             detail: "Can't Create More Than Fifty Queue."
+           });
+      }
     }
     else{
       this.Spinner = false;
@@ -183,6 +212,8 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
         });
   }
   }
+
+  // CREDIT NOTE
   getDateRangeCrNote(dateRangeObj) {
     if (dateRangeObj.length) {
       this.ObjCrNote.start_date = dateRangeObj[0];
@@ -224,10 +255,27 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       );
     }
   }
+  CheckNoteQueuelength() {
+    var quelength = this.CrNotelist.filter(el=> el.confirmation_Credit_Note === true);
+    if (quelength.length <= 50) {
+      return false;
+      }
+      else {
+        this.Spinner = false;
+        this.ngxService.stop();
+        this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Can't Create More Than Fifty Queue."
+            });
+      }
+  }
   SaveCrNote() {
     this.Spinner = false;
     this.ngxService.start();
-  if(this.CrNotelist.length){
+  if(this.CrNotelist.length) {
     let updateData:any = [];
     this.CrNotelist.forEach(el=>{
       console.log("confirmation_Credit_Note ====",el.confirmation_Credit_Note)
@@ -241,15 +289,13 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
 
     })
   //}
-    if(updateData.length){
+    if(updateData.length) {
+     if(updateData.length <= 50) {
      console.log("updateData",updateData);
-      const obj = {
-        "SP_String": "SP_E_Invoice_For_Confirmation_Form",
-        "Report_Name_String": "Update Credit Note For E-Invoice",
-        "Json_Param_String": JSON.stringify(updateData)
-      }
-      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        if(data[0].Column1){
+      this.$http.post(`https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==`,updateData)
+     .subscribe((data:any)=>{
+      console.log("data",data)
+        if(data[0].status === "success"){
         this.GetCrNotelist();
         this.Spinner = false;
         this.ngxService.stop();
@@ -258,7 +304,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
           key: "compacct-toast",
           severity: "success",
           summary: "Credit Note ",
-          detail: "Update Succesfully"
+          detail: data[0].msg
         });
         }
         else{
@@ -282,10 +328,21 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
             key: "compacct-toast",
             severity: "error",
             summary: "Warn Message",
+            detail: "Can't Create More Than Fifty Queue."
+          });
+    }
+  }
+    else {
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
             detail: "Something Wrong"
           });
     }
-
   }
   else{
     this.Spinner = false;

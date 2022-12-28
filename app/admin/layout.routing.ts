@@ -317,6 +317,7 @@ import { TinnitusTherapyTrackerDashboardComponent } from "./common/PatientManage
 import { TinnitusEvauationReportDashboardComponent } from "./common/PatientManagement/tinnitus-evauation-report-dashboard/tinnitus-evauation-report-dashboard.component";
 import { PrintTinnitusTherapyTrackerDashboardComponent } from "./common/PatientManagement/print-tinnitus-therapy-tracker-dashboard/print-tinnitus-therapy-tracker-dashboard.component";
 import { PrintTinnitusEvauationReportDashboardComponent } from "./common/PatientManagement/print-tinnitus-evauation-report-dashboard/print-tinnitus-evauation-report-dashboard.component";
+import { OutwardChallanComponent } from './common/MICL/outward-challan/outward-challan.component';
 
 
 const layoutRoutes: Routes = [{
@@ -2390,6 +2391,13 @@ path: 'MICL_Cost_Center_Master',
     component: PrintTinnitusEvauationReportDashboardComponent,
     data: {
       title: 'Print Tinnitus Evauation Report Dashboard'
+}
+},
+{
+  path: 'Outward_Challan',
+    component: OutwardChallanComponent,
+    data: {
+      title: 'Outward Challan'
 }
 },
     

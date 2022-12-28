@@ -401,6 +401,13 @@ PrintRGP(obj) {
     );
   }
 }
+PrintChallan(obj) {
+  if (obj.Doc_No) {
+    window.open("/Report/Crystal_Files/MICL/DELIVER_CHALLEN_GP.aspx?DocNo=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+
+    );
+  }
+}
 GetDistinct(){
   let vendor:any = [];
   let CostCenter:any = [];
