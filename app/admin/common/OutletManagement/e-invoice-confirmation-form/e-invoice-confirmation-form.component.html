@@ -26,26 +26,26 @@
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
-                            <form name="InvoiceForm" #InvoiceForm="ngForm" novalidate>
+                            <form name="PenInvoiceForm" #PenInvoiceForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-3">
                                         <label class="control-label">Date</label>
 
-                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"  required>
+                                        <app-compacct-daterangepicker (DaterangeObj)="PengetDateRange($event)"  required>
                                         </app-compacct-daterangepicker>
 
                                     </div>
 
                                     <div class="col-sm-3">
-                                        <button class="btn btn-primary pull-right1" data-toggle="modal" (click)="GetInvoicelist()" id="load" [disabled]="invoiceSpinner">
+                                        <button class="btn btn-primary pull-right1" data-toggle="modal" (click)="GetPenInvoicelist()" id="load" [disabled]="peninvoiceSpinner">
                                       <p-progressSpinner
-                                        *ngIf="seachSpinner"
+                                        *ngIf="peninvoiceSpinner"
                                         [style]="{ width: '15px', height: '15px' }"
                                         strokeWidth="8"
                                         animationDuration=".5s"
                                       ></p-progressSpinner>
                                       <span
-                                        *ngIf="!seachSpinner"
+                                        *ngIf="!peninvoiceSpinner"
                                         class="glyphicon glyphicon-search"
                                       ></span
                                       >&nbsp;Search
@@ -60,7 +60,7 @@
                                 </div>
                             </div>
                             <div class="table-responsive table-id">
-                                <p-table [value]="Invoicelist" #dt [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Doc_No","Doc_Date","Cost_Cen_Name","Sub_Ledger_Name","Bill_Gross_Amt","Bill_Net_Amt"]'>
+                                <p-table [value]="PenInvoicelist" #dt [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Doc_No","Doc_Date","Cost_Cen_Name","Sub_Ledger_Name","Bill_Gross_Amt","Bill_Net_Amt"]'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
@@ -90,13 +90,13 @@
                                             <!-- <td>{{col.Bill_Gross_Amt}}</td> -->
                                             <td>{{col.Bill_Net_Amt}}</td>
                                             <td style="text-align:center">
-                                                <button class="btn btn-primary custombtn" (click)='ViewInvoice(col)' type="button" [id]="col.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                                <button class="btn btn-primary custombtn" (click)='ViewInvoice(col.Doc_No)' type="button" [id]="col.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
                                                     View
                                                 </button>
                                             </td>
                                             <td style="text-align:center">
                                                 <!-- <input type="checkbox" id="col.confirmationInv" name="col.confirmationInv" value="col.confirmation_Inv"> -->
-                                                <p-checkbox name="col.confirmationInv" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" (ngModelChange)='CheckInvQueuelength()' [binary]="true"></p-checkbox>
+                                                <p-checkbox name="col.confirmationInv" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" (ngModelChange)='CheckPenInvQueuelength()' [binary]="true"></p-checkbox>
                                             </td>
                                         </tr>
                                     </ng-template>
@@ -109,9 +109,16 @@
 
                             <hr class="box boxboxDivide-primary ng-scope">
 
+                            <div *ngIf="PenInvoicelist.length" class="checkBox" style="font-size: 15px;">
+                                <label>
+                                <p-checkbox  [(ngModel)]="PenINVconfirmcheckbox" name="peninvconfirmcheckbox" #peninvconfirmcheckbox="ngModel" [disabled]="PenInvflag" binary="true"></p-checkbox> 
+                                &nbsp; I Confirm that I want to generate E-Invoice for the selected documents. I also Confirm that no changes can be done after E-Invoice is Created.
+                                </label>
+                            </div>
+
                             <div class="box-footer">
                                 <div class="text-right">
-                                    <button class="btn btn-primary pull-right" (click)="SaveInvoice()" id="load" [disabled]="Spinner">
+                                    <button class="btn btn-primary pull-right" (click)="SavePenInvoice()" id="load" [disabled]="Spinner || !PenINVconfirmcheckbox">
                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Save
                    </button>
@@ -120,26 +127,26 @@
 
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt">
-                            <form name="CreditNoteForm" #CreditNoteForm="ngForm" novalidate>
+                            <form name="FailedInvoiceForm" #FailedInvoiceForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-3">
                                         <label class="control-label">Date</label>
 
-                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRangeCrNote($event)" required>
+                                        <app-compacct-daterangepicker (DaterangeObj)="FailedgetDateRange($event)"  required>
                                         </app-compacct-daterangepicker>
 
                                     </div>
 
                                     <div class="col-sm-3">
-                                        <button class="btn btn-primary pull-right1" data-toggle="modal" (click)="GetCrNotelist()" id="load" [disabled]="crnoteSpinner">
+                                        <button class="btn btn-primary pull-right1" data-toggle="modal" (click)="GetFailedInvoicelist()" id="load" [disabled]="FailedinvoiceSpinner">
                                       <p-progressSpinner
-                                        *ngIf="crnoteSpinner"
+                                        *ngIf="FailedinvoiceSpinner"
                                         [style]="{ width: '15px', height: '15px' }"
                                         strokeWidth="8"
                                         animationDuration=".5s"
                                       ></p-progressSpinner>
                                       <span
-                                        *ngIf="!crnoteSpinner"
+                                        *ngIf="!FailedinvoiceSpinner"
                                         class="glyphicon glyphicon-search"
                                       ></span
                                       >&nbsp;Search
@@ -154,11 +161,113 @@
                                 </div>
                             </div>
                             <div class="table-responsive table-id">
-                                <p-table [value]="CrNotelist" #dt1 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Doc_No","Doc_Date","Cost_Cen_Name","Sub_Ledger_Name","Bill_Gross_Amt","Bill_Net_Amt"]'>
+                                <p-table [value]="FailedInvoicelist" #dt1 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Doc_No","Doc_Date","Cost_Cen_Name","Sub_Ledger_Name","Bill_Gross_Amt","Bill_Net_Amt"]'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
                                                 <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Inv No</th>
+                                            <th>Date</th>
+                                            <th>Cost Center</th>
+                                            <th>Sub Ledger</th>
+                                            <!-- <th>Gross Amount</th> -->
+                                            <th>Bill Amount</th>
+                                            <th>Action</th>
+                                            <th>Status</th>
+                                            <th>Confirmation for E-INV</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td>{{col.Doc_No}}</td>
+                                            <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{col.Cost_Cen_Name}}</td>
+                                            <td>{{col.Sub_Ledger_Name}}</td>
+                                            <!-- <td>{{col.Bill_Gross_Amt}}</td> -->
+                                            <td>{{col.Bill_Net_Amt}}</td>
+                                            <td style="text-align:center">
+                                                <button class="btn btn-primary custombtn" (click)='ViewInvoice(col.Doc_No)' type="button" [id]="col.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                                    View
+                                                </button>
+                                            </td>
+                                            <td *ngIf="col.E_Invoice_Status != 'Failed'">{{col.E_Invoice_Status}}</td>
+                                                <td *ngIf="col.E_Invoice_Status === 'Failed'"><a (click)="ViewInvPopup(col)">{{col.E_Invoice_Status}}</a></td>
+                                            <td style="text-align:center">
+                                                <!-- <input type="checkbox" id="col.confirmationInv" name="col.confirmationInv" value="col.confirmation_Inv"> -->
+                                                <p-checkbox name="col.confirmationInv" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" (ngModelChange)='CheckFailedInvQueuelength()' [binary]="true"></p-checkbox>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+
+                            </div>
+
+                            <hr class="box boxboxDivide-primary ng-scope">
+                            <div *ngIf="FailedInvoicelist.length" class="checkBox" style="font-size: 15px;">
+                            <label>
+                            <p-checkbox  [(ngModel)]="failedINVconfirmcheckbox" name="failedinvconfirmcheckbox" #failedinvconfirmcheckbox="ngModel" [disabled]="FailedInvflag"  binary="true"></p-checkbox> 
+                            &nbsp; I Confirm that I want to generate E-Invoice for the selected documents. I also Confirm that no changes can be done after E-Invoice is Created.
+                            </label>
+                            </div>
+                            <div class="box-footer">
+                                <div class="text-right">
+                                    <button class="btn btn-primary pull-right" (click)="SaveFailedInvoice()" id="load" [disabled]="Spinner || !failedINVconfirmcheckbox">
+                           <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                       <!-- <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> --> Put In E-Invoice Genaration-Queue 
+                   </button>
+                                </div>
+                            </div>
+
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="PenCreditNoteForm" #PenCreditNoteForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+
+                                        <app-compacct-daterangepicker (DaterangeObj)="getPenDateRangeCrNote($event)" required>
+                                        </app-compacct-daterangepicker>
+
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary pull-right1" data-toggle="modal" (click)="GetPenCrNotelist()" id="load" [disabled]="pencrnoteSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="pencrnoteSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!pencrnoteSpinner"
+                                        class="glyphicon glyphicon-search"
+                                      ></span
+                                      >&nbsp;Search
+                                    </button>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h5><strong></strong></h5>
+                                </div>
+                            </div>
+                            <div class="table-responsive table-id">
+                                <p-table [value]="PenCrNotelist" #dt3 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Doc_No","Doc_Date","Cost_Cen_Name","Sub_Ledger_Name","Bill_Gross_Amt","Bill_Net_Amt"]'>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt3.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                             </div>
                                         </div>
 
@@ -184,13 +293,13 @@
                                                 <!-- <td>{{obj.Bill_Gross_Amt}}</td> -->
                                                 <td>{{obj.Bill_Net_Amt}}</td>
                                                 <td style="text-align:center">
-                                                    <button class="btn btn-primary custombtn" (click)='ViewCrNote(obj)' type="button" [id]="obj.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                                    <button class="btn btn-primary custombtn" (click)='ViewCrNote(obj.Doc_No)' type="button" [id]="obj.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
                                                         View
                                                     </button>
                                                 </td>
                                                 <td style="text-align:center">
                                                     <!-- <input type="checkbox" id="obj.confirmationCrNote" name="obj.confirmationCrNote" value="obj.confirmation_Credit_Note"> -->
-                                                    <p-checkbox name="obj.confirmationCrNote" value="obj.confirmationCrNote" [(ngModel)]="obj.confirmation_Credit_Note" (ngModelChange)='CheckNoteQueuelength()' [binary]="true"></p-checkbox>
+                                                    <p-checkbox name="obj.confirmationCrNote" value="obj.confirmationCrNote" [(ngModel)]="obj.confirmation_Credit_Note" (ngModelChange)='CheckPenNoteQueuelength()' [binary]="true"></p-checkbox>
                                                 </td>
                                         </tr>
                                     </ng-template>
@@ -203,11 +312,119 @@
 
                             <hr class="box boxboxDivide-primary ng-scope">
 
+                            <div *ngIf="PenCrNotelist.length" class="checkBox" style="font-size: 15px;">
+                                <label>
+                                <p-checkbox  [(ngModel)]="PenCRNoteconfirmcheckbox" name="pencrnoteconfirmcheckbox" #pencrnoteconfirmcheckbox="ngModel" [disabled]="PenCrflag"  binary="true"></p-checkbox> 
+                                &nbsp; I Confirm that I want to generate E-Invoice for the selected documents. I also Confirm that no changes can be done after E-Invoice is Created.
+                                </label>
+                            </div>
                             <div class="box-footer">
                                 <div class="text-right">
-                                    <button class="btn btn-primary pull-right" (click)="SaveCrNote()" id="load" [disabled]="Spinner">
+                                    <button class="btn btn-primary pull-right" (click)="SavePenCrNote()" id="load" [disabled]="Spinner || !PenCRNoteconfirmcheckbox">
                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Save 
+                   </button>
+                                </div>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="FailedCreditNoteForm" #FailedCreditNoteForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+
+                                        <app-compacct-daterangepicker (DaterangeObj)="getFailedDateRangeCrNote($event)" required>
+                                        </app-compacct-daterangepicker>
+
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary pull-right1" data-toggle="modal" (click)="GetFailedCrNotelist()" id="load" [disabled]="failedcrnoteSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="failedcrnoteSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!failedcrnoteSpinner"
+                                        class="glyphicon glyphicon-search"
+                                      ></span
+                                      >&nbsp;Search
+                                    </button>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h5><strong></strong></h5>
+                                </div>
+                            </div>
+                            <div class="table-responsive table-id">
+                                <p-table [value]="FailedCrNotelist" #dt4 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Doc_No","Doc_Date","Cost_Cen_Name","Sub_Ledger_Name","Bill_Gross_Amt","Bill_Net_Amt"]'>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt4.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Cr Note No</th>
+                                            <th>Date</th>
+                                            <th>Cost Center</th>
+                                            <th>Sub Ledger</th>
+                                            <!-- <th>Gross Amount</th> -->
+                                            <th>Note Amount</th>
+                                            <th>Action</th>
+                                            <th>Status</th>
+                                            <th>Confirmation for E-CRN</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-obj>
+                                        <tr>
+                                                <td>{{obj.Doc_No}}</td>
+                                                <td>{{obj.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
+                                                <td>{{obj.Cost_Cen_Name}}</td>
+                                                <td>{{obj.Sub_Ledger_Name}}</td>
+                                                <!-- <td>{{obj.Bill_Gross_Amt}}</td> -->
+                                                <td>{{obj.Bill_Net_Amt}}</td>
+                                                <td style="text-align:center">
+                                                    <button class="btn btn-primary custombtn" (click)='ViewCrNote(obj.Doc_No)' type="button" [id]="obj.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                                        View
+                                                    </button>
+                                                </td>
+                                                <td *ngIf="obj.E_Invoice_Status != 'Failed'">{{obj.E_Invoice_Status}}</td>
+                                                <td *ngIf="obj.E_Invoice_Status === 'Failed'"><a (click)="ViewCrPopup(obj)">{{obj.E_Invoice_Status}}</a></td>
+                                                <td style="text-align:center">
+                                                    <!-- <input type="checkbox" id="obj.confirmationCrNote" name="obj.confirmationCrNote" value="obj.confirmation_Credit_Note"> -->
+                                                    <p-checkbox name="obj.confirmationCrNote" value="obj.confirmationCrNote" [(ngModel)]="obj.confirmation_Credit_Note" (ngModelChange)='CheckFailedNoteQueuelength()' [binary]="true"></p-checkbox>
+                                                </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+
+                            </div>
+
+                            <hr class="box boxboxDivide-primary ng-scope">
+
+                            <div *ngIf="FailedCrNotelist.length" class="checkBox" style="font-size: 15px;">
+                                <label>
+                                <p-checkbox  [(ngModel)]="FailedCRNoteconfirmcheckbox" name="failedcrnoteconfirmcheckbox" #failedcrnoteconfirmcheckbox="ngModel" [disabled]="failedcrflag" binary="true"></p-checkbox> 
+                                &nbsp; I Confirm that I want to generate E-Invoice for the selected documents. I also Confirm that no changes can be done after E-Invoice is Created.
+                                </label>
+                            </div>
+                            <div class="box-footer">
+                                <div class="text-right">
+                                    <button class="btn btn-primary pull-right" (click)="SaveFailedCrNote()" id="load" [disabled]="Spinner || !FailedCRNoteconfirmcheckbox">
+                           <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                       <!-- <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> --> Put In E-Invoice Genaration-Queue  
                    </button>
                                 </div>
                             </div>
@@ -218,3 +435,16 @@
         </div>
     </div>
 </div>
+<p-dialog header="" appendTo="body" [(visible)]="FailedInvDetailsModal" [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;" [minY]="80" 
+[maximizable]="true" [baseZIndex]="10000">
+
+<p style="width: 160px;" >{{ShowJSON}}</p>
+
+</p-dialog>
+
+<p-dialog header="" appendTo="body" [(visible)]="FailedCrDetailsModal" [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;" [minY]="80" 
+[maximizable]="true" [baseZIndex]="10000">
+
+<p style="width: 160px;" >{{ShowJSON}}</p>
+
+</p-dialog>
