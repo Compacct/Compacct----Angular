@@ -102,6 +102,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   view_Doc_No = undefined;
   view_Doc_date = undefined;
   view_Order_No = undefined;
+  viewbuttondisabled = false;
   flagbox = false;
 
   Cancle_Remarks : string;
@@ -793,6 +794,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   // }
 
   searchData(){
+    this.seachSpinner = true;
     this.ObjBrowseData.Cost_Cen_ID = this.ObjBrowseData.Cost_Cen_ID === undefined ? 0 : this.ObjBrowseData.Cost_Cen_ID ;
     console.log("this.ObjBrowseData.Cost_Cen_ID",this.ObjBrowseData.Cost_Cen_ID);
     const start = this.ObjBrowseData.From_Date
@@ -817,6 +819,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
       this.BackUPGetAllDataList = data;
       console.log("this.GetAllDataList",this.GetAllDataList);
       this.GetDist1();
+      this.seachSpinner = false;
       })
 
   }
@@ -825,6 +828,12 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   this.clearData();
   if(row.Doc_No){
   this.view_Doc_No = row.Doc_No;
+  if (row.E_Invoice_PDF_Link) {
+    this.viewbuttondisabled = true;
+  }
+  else {
+    this.viewbuttondisabled = false;
+  }
   //this.ViewPoppup = true;
   this.GetViewData(this.view_Doc_No);
   }
@@ -934,6 +943,12 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
     window.open("/Report/Crystal_Files/K4C/Adv_Custom_Order_Dispatch.aspx?DocNo=" + Objp.Adv_Order_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
     );
   }
+  }
+  DownloadEINV(obj) {
+    if (obj) {
+        window.open(obj, '_self');
+      
+    }
   }
   exportoexcel(Arr,fileName): void {
     let temp = [];

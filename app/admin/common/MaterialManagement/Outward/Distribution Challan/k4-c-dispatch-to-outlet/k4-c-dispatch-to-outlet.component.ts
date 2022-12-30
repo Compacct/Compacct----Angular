@@ -1094,6 +1094,7 @@ getConfirmDateRange(dateRangeObj) {
 }
 searchData(valid){
   this.RequistionSearchFormSubmit = true;
+  this.seachSpinner = true;
   if(valid){
     console.log("this.ObjBrowseData.Cost_Cen_ID",this.ObjBrowseData.Cost_Cen_ID);
     const start = this.ObjBrowseData.From_Date
@@ -1121,6 +1122,7 @@ searchData(valid){
       this.clearData();
       this.todayDate = new Date();
       this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+      this.seachSpinner = false;
      // this.Objdispatch.From_Godown_ID = this.FromGodownList.length === 1 ? this.FromGodownList[0].From_Godown_ID : undefined;
     })
   }
@@ -1752,6 +1754,12 @@ Print(Doc_No){
     window.open("/Report/Crystal_Files/K4C/K4C_Dispatch_Challan_print.aspx?DocNo=" + Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
 
     );
+  }
+}
+DownloadEINV(obj) {
+  if (obj) {
+      window.open(obj, '_self');
+    
   }
 }
 // UPDATE QTY START
