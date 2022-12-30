@@ -143,6 +143,11 @@
                                                                 <i class="fa fa-bars" aria-hidden="true"></i> Regenerate Bill
                                                             </a>
                                                         </li>
+                                                        <li *ngIf="col.E_Invoice_PDF_Link && col.Bill_No">
+                                                            <a (click)="DownloadEINV(col.E_Invoice_PDF_Link)">
+                                                                <i class="fa fa-fw fa-download"></i> Download E-INV
+                                                            </a>
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </td>

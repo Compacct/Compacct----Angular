@@ -440,6 +440,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
   }
   GetSearchedList(){
     this.Searchedlist = [];
+    this.seachSpinner = true;
   const start = this.ObjBrowse.start_date
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
   : this.DateService.dateConvert(new Date());
@@ -529,6 +530,12 @@ const obj = {
       window.open("/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
   
       );
+    }
+  }
+  DownloadEINV(obj) {
+    if (obj) {
+        window.open(obj, '_self');
+      
     }
   }
   clearData(){
