@@ -1599,6 +1599,11 @@ Print(Doc_No){
     );
   }
 }
+DownloadEINV(obj) {
+  if (obj) {
+    window.open(obj, '_self');
+  }
+}
 // editmaster(masterProduct){
 //   if(masterProduct.Doc_No){
 //     this.doc_no = masterProduct.Doc_No ;

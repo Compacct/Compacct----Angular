@@ -318,6 +318,7 @@ import { TinnitusEvauationReportDashboardComponent } from "./common/PatientManag
 import { PrintTinnitusTherapyTrackerDashboardComponent } from "./common/PatientManagement/print-tinnitus-therapy-tracker-dashboard/print-tinnitus-therapy-tracker-dashboard.component";
 import { PrintTinnitusEvauationReportDashboardComponent } from "./common/PatientManagement/print-tinnitus-evauation-report-dashboard/print-tinnitus-evauation-report-dashboard.component";
 import { OutwardChallanComponent } from './common/MICL/outward-challan/outward-challan.component';
+import { NepalVendorInteractionComponent } from "./common/Procurement/nepal-vendor-interaction/nepal-vendor-interaction.component";
 
 
 const layoutRoutes: Routes = [{
@@ -2398,6 +2399,13 @@ path: 'MICL_Cost_Center_Master',
     component: OutwardChallanComponent,
     data: {
       title: 'Outward Challan'
+}
+},
+{
+  path: 'Nepal_BL_Txn_Vendor_Interaction',
+    component: NepalVendorInteractionComponent,
+    data: {
+      title: 'Vendor Interaction Managemnet'
 }
 },
     
