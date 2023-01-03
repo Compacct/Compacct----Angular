@@ -15,8 +15,7 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
 })
 export class PrintTinnitusEvauationReportDashboardComponent implements OnInit {
   AppoIDvalue:number;
-
-  tabIndexToView : any = 0;
+  tabIndexToView = 0;
 
   constructor(
     private GlobalAPI:CompacctGlobalApiService,
@@ -51,6 +50,10 @@ export class PrintTinnitusEvauationReportDashboardComponent implements OnInit {
 
   action_Click_Print_Consent_Form(){
     window.open("Report/Crystal_Files/CRM/joh_Form/CONSENT_Form.aspx" + "?Appo_ID=" + this.AppoIDvalue, 'Print Report', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+  }
+
+  action_Click_Print_Tinnitus_Handicap(){
+    window.open("Report/Crystal_Files/CRM/joh_Form/HANDICAP_INVENTORY.aspx" + "?Appo_ID=" + this.AppoIDvalue, 'Print Report', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
   }
 
 }

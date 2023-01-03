@@ -13,6 +13,7 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
 import { collectExternalReferences } from '@angular/compiler/src/output/output_ast';
 import { map, catchError } from 'rxjs/operators';
 declare var $:any;
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-e-invoice-confirmation-form',
@@ -59,6 +60,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   ObjSuccessCrNote : SuccessCrNote = new SuccessCrNote ();
   SuccessCrNotelist:any = [];
   successcrnoteSpinner = false;
+  exportSpinner = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -522,7 +524,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       console.log("confirmation_Credit_Note ====",el.confirmation_Credit_Note)
       if (el.confirmation_Credit_Note === true) {
         const updateObj = {
-          Doc_No : el.Doc_No
+          Doc_No : el.Note_No
         }
         updateData.push(updateObj)
         console.log("updateData",updateData);
@@ -691,7 +693,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       console.log("confirmation_Credit_Note ====",el.confirmation_Credit_Note)
       if (el.confirmation_Credit_Note === true) {
         const updateObj = {
-          Doc_No : el.Doc_No
+          Doc_No : el.Note_No
         }
         updateData.push(updateObj)
         console.log("updateData",updateData);
@@ -800,6 +802,20 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      this.seachSpinner = false;
    })
    }
+  }
+
+  DownloadEINV(obj) {
+    if (obj) {
+        window.open(obj, '_self');
+      
+    }
+  }
+  exportoexcel(Arr,fileName): void {
+    this.exportSpinner = true;
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+    this.exportSpinner = false;
   }
 
 }

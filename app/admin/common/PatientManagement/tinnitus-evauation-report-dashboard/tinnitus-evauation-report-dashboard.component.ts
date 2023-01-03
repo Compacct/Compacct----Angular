@@ -15,8 +15,7 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
 })
 export class TinnitusEvauationReportDashboardComponent implements OnInit {
   AppoIDvalue:number;
-
-  tabIndexToView : any = 0;
+  tabIndexToView = 0;
 
   constructor(
     private GlobalAPI:CompacctGlobalApiService,
@@ -47,6 +46,10 @@ export class TinnitusEvauationReportDashboardComponent implements OnInit {
 
   action_Click_Tinnitus_Evaluation(){
     window.open("Doctors_Appointment_New_Tinnitus_Evaluation" + "?Appo_ID=" + this.AppoIDvalue + "&ed=y", '_blank');
+  }
+
+  action_Click_Tinnitus_Handicap(){
+    window.open("Doctors_Appointment_New_Tinnitus_Handicap" + "?Appo_ID=" + this.AppoIDvalue + "&ed=y", '_blank');
   }
 
   
