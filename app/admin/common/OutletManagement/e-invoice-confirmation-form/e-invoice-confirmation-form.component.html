@@ -25,7 +25,8 @@
             <div class="form-horizontal">
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                        <!-- PENDING INV -->
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="fa fa-pause">
                             <form name="PenInvoiceForm" #PenInvoiceForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-3">
@@ -51,6 +52,21 @@
                                       >&nbsp;Search
                                     </button>
                                     </div>
+                                    <div class="col-sm-3" *ngIf="PenInvoicelist.length">
+                                        <button class="btn btn-success pull-right1" data-toggle="modal" (click)="exportoexcel(PenInvoicelist,'Pending_Invoice')" id="load" [disabled]="exportSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="exportSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!exportSpinner"
+                                        class="glyphicon glyphicon-download"
+                                      ></span
+                                      >&nbsp;Export to Excel
+                                    </button>
+                                    </div>
                                 </div>
 
                             </form>
@@ -60,7 +76,8 @@
                                 </div>
                             </div>
                             <div class="table-responsive table-id">
-                                <p-table [value]="PenInvoicelist" #dt [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Doc_No","Doc_Date","Cost_Cen_Name","Sub_Ledger_Name","Bill_Gross_Amt","Bill_Net_Amt"]'>
+                                <p-table [value]="PenInvoicelist" #dt [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" 
+                                [globalFilterFields]='["Sub_Ledger_GST","Billing_Name","STATE","POS","Doc_No","Doc_Date","Reverse_Charge","Invoice_Type","Taxable_Amount","CGST_Amount","SGST_Amount","IGST_Amount","Invoice_Value"]'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
@@ -71,33 +88,62 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
+                                            <th>Confirmation for E-INV</th>
+                                            <th>Action</th>
+                                            <th>Sub Ledger GST</th>
+                                            <th>Billing Name</th>
+                                            <th>STATE</th>
+                                            <th>POS</th>
+                                            <th>INV No</th>
+                                            <th>Date</th>
+                                            <th>Reverse Charge</th>
+                                            <th>Invoice Type</th>
+                                            <th>ECOMM GSTN</th>
+                                            <th>Taxable Amount</th>
+                                            <th>CGST Amount</th>
+                                            <th>SGST Amount</th>
+                                            <th>IGST Amount</th>
+                                            <th>Invoice Value</th>
+                                            
+                                            <!-- <th>Action</th>
                                             <th>Inv No</th>
                                             <th>Date</th>
                                             <th>Cost Center</th>
                                             <th>Sub Ledger</th>
-                                            <!-- <th>Gross Amount</th> -->
-                                            <th>Bill Amount</th>
-                                            <th>Action</th>
-                                            <th>Confirmation for E-INV</th>
+                                            <th>Bill Amount</th> -->
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr>
+                                            <td>
+                                                <!-- style="text-align:center" <input type="checkbox" id="col.confirmationInv" name="col.confirmationInv" value="col.confirmation_Inv"> -->
+                                                <p-checkbox name="col.confirmationInv" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" (ngModelChange)='CheckPenInvQueuelength()' [binary]="true"></p-checkbox>
+                                            </td>
+                                            <td style="text-align:center">
+                                                <button class="btn btn-primary custombtn" (click)='ViewInvoice(col.Doc_No)' type="button" [id]="col.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                                    <i class="fa fa-fw fa-print" aria-hidden="true"></i> Print Bill
+                                                </button>
+                                            </td>
+                                            <td>{{col.Sub_Ledger_GST}}</td>
+                                            <td>{{col.Billing_Name}}</td>
+                                            <td>{{col.STATE}}</td>
+                                            <td>{{col.POS}}</td>
                                             <td>{{col.Doc_No}}</td>
+                                            <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{col.Reverse_Charge}}</td>
+                                            <td>{{col.Invoice_Type}}</td>
+                                            <td>{{col.ECOMM_GSTN ? col.ECOMM_GSTN : '-'}}</td>
+                                            <td>{{col.Taxable_Amount}}</td>
+                                            <td>{{col.CGST_Amount}}</td>
+                                            <td>{{col.SGST_Amount}}</td>
+                                            <td>{{col.IGST_Amount}}</td>
+                                            <td>{{col.Invoice_Value}}</td>
+
+                                            <!-- <td>{{col.Doc_No}}</td>
                                             <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
                                             <td>{{col.Cost_Cen_Name}}</td>
                                             <td>{{col.Sub_Ledger_Name}}</td>
-                                            <!-- <td>{{col.Bill_Gross_Amt}}</td> -->
-                                            <td>{{col.Bill_Net_Amt}}</td>
-                                            <td style="text-align:center">
-                                                <button class="btn btn-primary custombtn" (click)='ViewInvoice(col.Doc_No)' type="button" [id]="col.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
-                                                    View
-                                                </button>
-                                            </td>
-                                            <td style="text-align:center">
-                                                <!-- <input type="checkbox" id="col.confirmationInv" name="col.confirmationInv" value="col.confirmation_Inv"> -->
-                                                <p-checkbox name="col.confirmationInv" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" (ngModelChange)='CheckPenInvQueuelength()' [binary]="true"></p-checkbox>
-                                            </td>
+                                            <td>{{col.Bill_Net_Amt}}</td> -->
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -126,7 +172,8 @@
                             </div>
 
                         </p-tabPanel>
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt">
+                        <!-- FAILED INV -->
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="fa fa-exclamation-triangle">
                             <form name="FailedInvoiceForm" #FailedInvoiceForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-3">
@@ -152,6 +199,21 @@
                                       >&nbsp;Search
                                     </button>
                                     </div>
+                                    <div class="col-sm-3" *ngIf="FailedInvoicelist.length">
+                                        <button class="btn btn-success pull-right1" data-toggle="modal" (click)="exportoexcel(FailedInvoicelist,'Failed_Invoice')" id="load" [disabled]="exportSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="exportSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!exportSpinner"
+                                        class="glyphicon glyphicon-download"
+                                      ></span
+                                      >&nbsp;Export to Excel
+                                    </button>
+                                    </div>
                                 </div>
 
                             </form>
@@ -161,7 +223,8 @@
                                 </div>
                             </div>
                             <div class="table-responsive table-id">
-                                <p-table [value]="FailedInvoicelist" #dt1 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Doc_No","Doc_Date","Cost_Cen_Name","Sub_Ledger_Name","Bill_Gross_Amt","Bill_Net_Amt"]'>
+                                <p-table [value]="FailedInvoicelist" #dt1 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" 
+                                [globalFilterFields]='["Sub_Ledger_GST","Billing_Name","STATE","POS","Doc_No","Doc_Date","Reverse_Charge","Invoice_Type","Taxable_Amount","CGST_Amount","SGST_Amount","IGST_Amount","Invoice_Value"]'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
@@ -172,36 +235,54 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th>Inv No</th>
-                                            <th>Date</th>
-                                            <th>Cost Center</th>
-                                            <th>Sub Ledger</th>
-                                            <!-- <th>Gross Amount</th> -->
-                                            <th>Bill Amount</th>
+                                            <th>Sl No</th>
+                                            <th>Confirmation for E-INV</th>
                                             <th>Action</th>
                                             <th>Status</th>
-                                            <th>Confirmation for E-INV</th>
+                                            <th>Sub Ledger GST</th>
+                                            <th>Billing Name</th>
+                                            <th>STATE</th>
+                                            <th>POS</th>
+                                            <th>INV No</th>
+                                            <th>Date</th>
+                                            <th>Reverse Charge</th>
+                                            <th>Invoice Type</th>
+                                            <th>ECOMM GSTN</th>
+                                            <th>Taxable Amount</th>
+                                            <th>CGST Amount</th>
+                                            <th>SGST Amount</th>
+                                            <th>IGST Amount</th>
+                                            <th>Invoice Value</th>
                                         </tr>
                                     </ng-template>
-                                    <ng-template pTemplate="body" let-col>
-                                        <tr>
-                                            <td>{{col.Doc_No}}</td>
-                                            <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
-                                            <td>{{col.Cost_Cen_Name}}</td>
-                                            <td>{{col.Sub_Ledger_Name}}</td>
-                                            <!-- <td>{{col.Bill_Gross_Amt}}</td> -->
-                                            <td>{{col.Bill_Net_Amt}}</td>
+                                    <ng-template pTemplate="body" let-col let-i = "rowIndex">
+                                        <tr [class]='col.E_Invoice_Status === "Failed" ? "text-red-active" : ""'>
+                                            <td align="center">{{ i + 1 }}</td>
+                                            <td>
+                                                <!-- <input type="checkbox" id="col.confirmationInv" name="col.confirmationInv" value="col.confirmation_Inv"> -->
+                                                <p-checkbox name="col.failedconfirmationInv" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" (ngModelChange)='CheckFailedInvQueuelength()' [binary]="true"></p-checkbox>
+                                            </td>
                                             <td style="text-align:center">
                                                 <button class="btn btn-primary custombtn" (click)='ViewInvoice(col.Doc_No)' type="button" [id]="col.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
-                                                    View
+                                                    <i class="fa fa-fw fa-print" aria-hidden="true"></i> Print Bill
                                                 </button>
                                             </td>
                                             <td *ngIf="col.E_Invoice_Status != 'Failed'">{{col.E_Invoice_Status}}</td>
-                                                <td *ngIf="col.E_Invoice_Status === 'Failed'"><a (click)="ViewInvPopup(col)">{{col.E_Invoice_Status}}</a></td>
-                                            <td style="text-align:center">
-                                                <!-- <input type="checkbox" id="col.confirmationInv" name="col.confirmationInv" value="col.confirmation_Inv"> -->
-                                                <p-checkbox name="col.confirmationInv" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" (ngModelChange)='CheckFailedInvQueuelength()' [binary]="true"></p-checkbox>
-                                            </td>
+                                            <td *ngIf="col.E_Invoice_Status === 'Failed'"><a (click)="ViewInvPopup(col)">{{col.E_Invoice_Status}}</a></td>
+                                            <td>{{col.Sub_Ledger_GST}}</td>
+                                            <td>{{col.Billing_Name}}</td>
+                                            <td>{{col.STATE}}</td>
+                                            <td>{{col.POS}}</td>
+                                            <td>{{col.Doc_No}}</td>
+                                            <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{col.Reverse_Charge}}</td>
+                                            <td>{{col.Invoice_Type}}</td>
+                                            <td>{{col.ECOMM_GSTN ? col.ECOMM_GSTN : '-'}}</td>
+                                            <td>{{col.Taxable_Amount}}</td>
+                                            <td>{{col.CGST_Amount}}</td>
+                                            <td>{{col.SGST_Amount}}</td>
+                                            <td>{{col.IGST_Amount}}</td>
+                                            <td>{{col.Invoice_Value}}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -228,7 +309,142 @@
                             </div>
 
                         </p-tabPanel>
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-list-alt">
+                        <!-- SUCCESS INV -->
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="fa fa-check-square-o">
+                            <form name="SuccessInvoiceForm" #SuccessInvoiceForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+
+                                        <app-compacct-daterangepicker (DaterangeObj)="SuccessgetDateRange($event)"  required>
+                                        </app-compacct-daterangepicker>
+
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary pull-right1" data-toggle="modal" (click)="GetSuccessInvoicelist()" id="load" [disabled]="successinvoiceSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="successinvoiceSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!successinvoiceSpinner"
+                                        class="glyphicon glyphicon-search"
+                                      ></span
+                                      >&nbsp;Search
+                                    </button>
+                                    </div>
+                                    <div class="col-sm-3" *ngIf="SuccessInvoicelist.length">
+                                        <button class="btn btn-success pull-right1" data-toggle="modal" (click)="exportoexcel(SuccessInvoicelist,'Success_Invoice')" id="load" [disabled]="exportSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="exportSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!exportSpinner"
+                                        class="glyphicon glyphicon-download"
+                                      ></span
+                                      >&nbsp;Export to Excel
+                                    </button>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h5><strong></strong></h5>
+                                </div>
+                            </div>
+                            <div class="table-responsive table-id">
+                                <p-table [value]="SuccessInvoicelist" #dt2 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" 
+                                [globalFilterFields]='["Sub_Ledger_GST","Billing_Name","STATE","POS","Doc_No","Doc_Date","Reverse_Charge","Invoice_Type","Taxable_Amount","CGST_Amount","SGST_Amount","IGST_Amount","Invoice_Value"]'>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <!-- <th>Confirmation for E-INV</th> -->
+                                            <th>Action</th>
+                                            <th>Sub Ledger GST</th>
+                                            <th>Billing Name</th>
+                                            <th>STATE</th>
+                                            <th>POS</th>
+                                            <th>Doc No</th>
+                                            <th>Date</th>
+                                            <th>Reverse Charge</th>
+                                            <th>Cr Note Type</th>
+                                            <th>ECOMM GSTN</th>
+                                            <th>Taxable Amount</th>
+                                            <th>CGST Amount</th>
+                                            <th>SGST Amount</th>
+                                            <th>IGST Amount</th>
+                                            <th>Cr Note Value</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="ViewInvoice(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-print" aria-hidden="true"></i> Print Bill
+                                                            </a>
+                                                        </li>
+                                                         <li > <!-- *ngIf="col.E_Invoice_PDF_Link" -->
+                                                            <a (click)="DownloadEINV(col.E_Invoice_PDF_Link)">
+                                                                <i class="fa fa-fw fa-download"></i> Download E-INV
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <!-- <td style="text-align:center">
+                                                <button class="btn btn-primary custombtn" (click)='ViewInvoice(col.Doc_No)' type="button" [id]="col.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                                    View
+                                                </button>
+                                            </td> -->
+                                            <td>{{col.Sub_Ledger_GST}}</td>
+                                            <td>{{col.Billing_Name}}</td>
+                                            <td>{{col.STATE}}</td>
+                                            <td>{{col.POS}}</td>
+                                            <td>{{col.Doc_No}}</td>
+                                            <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{col.Reverse_Charge}}</td>
+                                            <td>{{col.Invoice_Type}}</td>
+                                            <td>{{col.ECOMM_GSTN ? col.ECOMM_GSTN : '-'}}</td>
+                                            <td>{{col.Taxable_Amount}}</td>
+                                            <td>{{col.CGST_Amount}}</td>
+                                            <td>{{col.SGST_Amount}}</td>
+                                            <td>{{col.IGST_Amount}}</td>
+                                            <td>{{col.Invoice_Value}}</td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+
+                            </div>
+
+
+                        </p-tabPanel>
+
+                        <!-- PENDING Cr NOTE -->
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="fa fa-pause">
                             <form name="PenCreditNoteForm" #PenCreditNoteForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-3">
@@ -254,6 +470,21 @@
                                       >&nbsp;Search
                                     </button>
                                     </div>
+                                    <div class="col-sm-3" *ngIf="PenCrNotelist.length">
+                                        <button class="btn btn-success pull-right1" data-toggle="modal" (click)="exportoexcel(PenCrNotelist,'Pending_Cr_Note')" id="load" [disabled]="exportSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="exportSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!exportSpinner"
+                                        class="glyphicon glyphicon-download"
+                                      ></span
+                                      >&nbsp;Export to Excel
+                                    </button>
+                                    </div>
                                 </div>
 
                             </form>
@@ -263,7 +494,8 @@
                                 </div>
                             </div>
                             <div class="table-responsive table-id">
-                                <p-table [value]="PenCrNotelist" #dt3 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Doc_No","Doc_Date","Cost_Cen_Name","Sub_Ledger_Name","Bill_Gross_Amt","Bill_Net_Amt"]'>
+                                <p-table [value]="PenCrNotelist" #dt3 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" 
+                                [globalFilterFields]='["GSTIN_UIN_of_Recipient","Receiver_Name","STATE","POS","Invoice_No","Invoice_Date","Note_No","Note_Date","Doc_Type","Taxable_Amt","CGST_Amt","SGST_Amt","IGST_Amt","Note_Amount"]'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
@@ -274,33 +506,49 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th>Cr Note No</th>
-                                            <th>Date</th>
-                                            <th>Cost Center</th>
-                                            <th>Sub Ledger</th>
-                                            <!-- <th>Gross Amount</th> -->
-                                            <th>Note Amount</th>
-                                            <th>Action</th>
                                             <th>Confirmation for E-CRN</th>
+                                            <th>Action</th>
+                                            <th>GSTIN/UIN of Recipient</th>
+                                            <th>Receiver Name</th>
+                                            <th>STATE</th>
+                                            <th>POS</th>
+                                            <th>INV No</th>
+                                            <th>INV Date</th>
+                                            <th>Cr Note No</th>
+                                            <th>Cr Note Date</th>
+                                            <th>Cr Note Type</th>
+                                            <th>Taxable Amount</th>
+                                            <th>CGST Amount</th>
+                                            <th>SGST Amount</th>
+                                            <th>IGST Amount</th>
+                                            <th>Cr Note Amount</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-obj>
                                         <tr>
-                                                <td>{{obj.Doc_No}}</td>
-                                                <td>{{obj.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
-                                                <td>{{obj.Cost_Cen_Name}}</td>
-                                                <td>{{obj.Sub_Ledger_Name}}</td>
-                                                <!-- <td>{{obj.Bill_Gross_Amt}}</td> -->
-                                                <td>{{obj.Bill_Net_Amt}}</td>
-                                                <td style="text-align:center">
-                                                    <button class="btn btn-primary custombtn" (click)='ViewCrNote(obj.Doc_No)' type="button" [id]="obj.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
-                                                        View
-                                                    </button>
-                                                </td>
-                                                <td style="text-align:center">
-                                                    <!-- <input type="checkbox" id="obj.confirmationCrNote" name="obj.confirmationCrNote" value="obj.confirmation_Credit_Note"> -->
-                                                    <p-checkbox name="obj.confirmationCrNote" value="obj.confirmationCrNote" [(ngModel)]="obj.confirmation_Credit_Note" (ngModelChange)='CheckPenNoteQueuelength()' [binary]="true"></p-checkbox>
-                                                </td>
+                                            <td>
+                                                <!-- <input type="checkbox" id="obj.confirmationCrNote" name="obj.confirmationCrNote" value="obj.confirmation_Credit_Note"> -->
+                                                <p-checkbox name="obj.confirmationCrNote" value="obj.confirmationCrNote" [(ngModel)]="obj.confirmation_Credit_Note" (ngModelChange)='CheckPenNoteQueuelength()' [binary]="true"></p-checkbox>
+                                            </td>
+                                            <td style="text-align:center">
+                                                <button class="btn btn-primary custombtn" (click)='ViewCrNote(obj.Note_No)' type="button" [id]="obj.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                                    <i class="fa fa-fw fa-print" aria-hidden="true"></i> Print Cr Note
+                                                </button>
+                                            </td>
+                                            <td>{{obj.GSTIN_UIN_of_Recipient}}</td>
+                                            <td>{{obj.Receiver_Name}}</td>
+                                            <td>{{obj.STATE}}</td>
+                                            <td>{{obj.POS}}</td>
+                                            <td>{{obj.Invoice_No}}</td>
+                                            <td>{{obj.Invoice_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{obj.Note_No}}</td>
+                                            <td>{{obj.Note_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{obj.Doc_Type}}</td>
+                                            <td>{{obj.Taxable_Amt}}</td>
+                                            <td>{{obj.CGST_Amt}}</td>
+                                            <td>{{obj.SGST_Amt}}</td>
+                                            <td>{{obj.IGST_Amt}}</td>
+                                            <td>{{obj.Note_Amount}}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -327,7 +575,8 @@
                                 </div>
                             </div>
                         </p-tabPanel>
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-list-alt">
+                        <!-- FAILED Cr NOTE -->
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[4]" leftIcon="fa fa-exclamation-triangle">
                             <form name="FailedCreditNoteForm" #FailedCreditNoteForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-3">
@@ -353,6 +602,21 @@
                                       >&nbsp;Search
                                     </button>
                                     </div>
+                                    <div class="col-sm-3" *ngIf="FailedCrNotelist.length">
+                                        <button class="btn btn-success pull-right1" data-toggle="modal" (click)="exportoexcel(FailedCrNotelist,'Failed_Cr_Note')" id="load" [disabled]="exportSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="exportSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!exportSpinner"
+                                        class="glyphicon glyphicon-download"
+                                      ></span
+                                      >&nbsp;Export to Excel
+                                    </button>
+                                    </div>
                                 </div>
 
                             </form>
@@ -362,7 +626,8 @@
                                 </div>
                             </div>
                             <div class="table-responsive table-id">
-                                <p-table [value]="FailedCrNotelist" #dt4 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Doc_No","Doc_Date","Cost_Cen_Name","Sub_Ledger_Name","Bill_Gross_Amt","Bill_Net_Amt"]'>
+                                <p-table [value]="FailedCrNotelist" #dt4 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" 
+                                [globalFilterFields]='["GSTIN_UIN_of_Recipient","Receiver_Name","STATE","POS","Invoice_No","Invoice_Date","Note_No","Note_Date","Doc_Type","Taxable_Amt","CGST_Amt","SGST_Amt","IGST_Amt","Note_Amount"]'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
@@ -373,36 +638,54 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th>Cr Note No</th>
-                                            <th>Date</th>
-                                            <th>Cost Center</th>
-                                            <th>Sub Ledger</th>
-                                            <!-- <th>Gross Amount</th> -->
-                                            <th>Note Amount</th>
+                                            <th>Sl No</th>
+                                            <th>Confirmation for E-CRN</th>
                                             <th>Action</th>
                                             <th>Status</th>
-                                            <th>Confirmation for E-CRN</th>
+                                            <th>GSTIN/UIN of Recipient</th>
+                                            <th>Receiver Name</th>
+                                            <th>STATE</th>
+                                            <th>POS</th>
+                                            <th>INV No</th>
+                                            <th>INV Date</th>
+                                            <th>Cr Note No</th>
+                                            <th>Cr Note Date</th>
+                                            <th>Cr Note Type</th>
+                                            <th>Taxable Amount</th>
+                                            <th>CGST Amount</th>
+                                            <th>SGST Amount</th>
+                                            <th>IGST Amount</th>
+                                            <th>Cr Note Amount</th>
                                         </tr>
                                     </ng-template>
-                                    <ng-template pTemplate="body" let-obj>
-                                        <tr>
-                                                <td>{{obj.Doc_No}}</td>
-                                                <td>{{obj.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
-                                                <td>{{obj.Cost_Cen_Name}}</td>
-                                                <td>{{obj.Sub_Ledger_Name}}</td>
-                                                <!-- <td>{{obj.Bill_Gross_Amt}}</td> -->
-                                                <td>{{obj.Bill_Net_Amt}}</td>
-                                                <td style="text-align:center">
-                                                    <button class="btn btn-primary custombtn" (click)='ViewCrNote(obj.Doc_No)' type="button" [id]="obj.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
-                                                        View
-                                                    </button>
-                                                </td>
-                                                <td *ngIf="obj.E_Invoice_Status != 'Failed'">{{obj.E_Invoice_Status}}</td>
-                                                <td *ngIf="obj.E_Invoice_Status === 'Failed'"><a (click)="ViewCrPopup(obj)">{{obj.E_Invoice_Status}}</a></td>
-                                                <td style="text-align:center">
-                                                    <!-- <input type="checkbox" id="obj.confirmationCrNote" name="obj.confirmationCrNote" value="obj.confirmation_Credit_Note"> -->
-                                                    <p-checkbox name="obj.confirmationCrNote" value="obj.confirmationCrNote" [(ngModel)]="obj.confirmation_Credit_Note" (ngModelChange)='CheckFailedNoteQueuelength()' [binary]="true"></p-checkbox>
-                                                </td>
+                                    <ng-template pTemplate="body" let-obj let-i = "rowIndex">
+                                        <tr [class]='obj.E_Invoice_Status === "Failed" ? "text-red-active" : ""'>
+                                            <td align="center">{{ i + 1 }}</td>
+                                            <td>
+                                                <!-- <input type="checkbox" id="obj.confirmationCrNote" name="obj.confirmationCrNote" value="obj.confirmation_Credit_Note"> -->
+                                                <p-checkbox name="obj.failedconfirmationCrNote" value="obj.confirmationCrNote" [(ngModel)]="obj.confirmation_Credit_Note" (ngModelChange)='CheckFailedNoteQueuelength()' [binary]="true"></p-checkbox>
+                                            </td>
+                                            <td style="text-align:center">
+                                                <button class="btn btn-primary custombtn" (click)='ViewCrNote(obj.Note_No)' type="button" [id]="obj.Note_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                                    <i class="fa fa-fw fa-print" aria-hidden="true"></i> Print Cr Note
+                                                </button>
+                                            </td>
+                                            <td *ngIf="obj.E_Invoice_Status != 'Failed'">{{obj.E_Invoice_Status}}</td>
+                                            <td *ngIf="obj.E_Invoice_Status === 'Failed'"><a (click)="ViewCrPopup(obj)">{{obj.E_Invoice_Status}}</a></td>
+                                            <td>{{obj.GSTIN_UIN_of_Recipient}}</td>
+                                            <td>{{obj.Receiver_Name}}</td>
+                                            <td>{{obj.STATE}}</td>
+                                            <td>{{obj.POS}}</td>
+                                            <td>{{obj.Invoice_No}}</td>
+                                            <td>{{obj.Invoice_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{obj.Note_No}}</td>
+                                            <td>{{obj.Note_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{obj.Doc_Type}}</td>
+                                            <td>{{obj.Taxable_Amt}}</td>
+                                            <td>{{obj.CGST_Amt}}</td>
+                                            <td>{{obj.SGST_Amt}}</td>
+                                            <td>{{obj.IGST_Amt}}</td>
+                                            <td>{{obj.Note_Amount}}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -429,20 +712,151 @@
                                 </div>
                             </div>
                         </p-tabPanel>
+                        <!-- SUCCESS Cr NOTE -->
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[5]" leftIcon="fa fa-check-square-o">
+                            <form name="SuccessCreditNoteForm" #SuccessCreditNoteForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+
+                                        <app-compacct-daterangepicker (DaterangeObj)="getSuccessDateRangeCrNote($event)" required>
+                                        </app-compacct-daterangepicker>
+
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary pull-right1" data-toggle="modal" (click)="GetsuccessCrNotelist()" id="load" [disabled]="successcrnoteSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="successcrnoteSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!successcrnoteSpinner"
+                                        class="glyphicon glyphicon-search"
+                                      ></span
+                                      >&nbsp;Search
+                                    </button>
+                                    </div>
+                                    <div class="col-sm-3" *ngIf="SuccessCrNotelist.length">
+                                        <button class="btn btn-success pull-right1" data-toggle="modal" (click)="exportoexcel(SuccessCrNotelist,'Success_Cr_Note')" id="load" [disabled]="exportSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="exportSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!exportSpinner"
+                                        class="glyphicon glyphicon-download"
+                                      ></span
+                                      >&nbsp;Export to Excel
+                                    </button>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h5><strong></strong></h5>
+                                </div>
+                            </div>
+                            <div class="table-responsive table-id">
+                                <p-table [value]="SuccessCrNotelist" #dt5 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" 
+                                [globalFilterFields]='["GSTIN_UIN_of_Recipient","Receiver_Name","STATE","POS","Invoice_No","Invoice_Date","Note_No","Note_Date","Doc_Type","Taxable_Amt","CGST_Amt","SGST_Amt","IGST_Amt","Note_Amount"]'>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt5.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Action</th>
+                                            <th>GSTIN/UIN of Recipient</th>
+                                            <th>Receiver Name</th>
+                                            <th>STATE</th>
+                                            <th>POS</th>
+                                            <th>INV No</th>
+                                            <th>INV Date</th>
+                                            <th>Cr Note No</th>
+                                            <th>Cr Note Date</th>
+                                            <th>Cr Note Type</th>
+                                            <th>Taxable Amount</th>
+                                            <th>CGST Amount</th>
+                                            <th>SGST Amount</th>
+                                            <th>IGST Amount</th>
+                                            <th>Cr Note Amount</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-obj>
+                                        <tr>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="ViewCrNote(obj.Note_No)">
+                                                                <i class="fa fa-fw fa-eye" aria-hidden="true"></i> Print Cr Note
+                                                            </a>
+                                                        </li>
+                                                        <li >
+                                                            <a (click)="DownloadEINV(obj.E_Invoice_PDF_Link)">
+                                                                <i class="fa fa-fw fa-download"></i> Download E-Cr Note
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <!-- <td style="text-align:center">
+                                                <button class="btn btn-primary custombtn" (click)='ViewCrNote(obj.Doc_No)' type="button" [id]="obj.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                                    View
+                                                </button>
+                                            </td> -->
+                                            <td>{{obj.GSTIN_UIN_of_Recipient}}</td>
+                                            <td>{{obj.Receiver_Name}}</td>
+                                            <td>{{obj.STATE}}</td>
+                                            <td>{{obj.POS}}</td>
+                                            <td>{{obj.Invoice_No}}</td>
+                                            <td>{{obj.Invoice_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{obj.Note_No}}</td>
+                                            <td>{{obj.Note_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{obj.Doc_Type}}</td>
+                                            <td>{{obj.Taxable_Amt}}</td>
+                                            <td>{{obj.CGST_Amt}}</td>
+                                            <td>{{obj.SGST_Amt}}</td>
+                                            <td>{{obj.IGST_Amt}}</td>
+                                            <td>{{obj.Note_Amount}}</td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+
+                            </div>
+
+                        </p-tabPanel>
                     </p-tabView>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<p-dialog header="" appendTo="body" [(visible)]="FailedInvDetailsModal" [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;" [minY]="80" 
+<p-dialog header="" appendTo="body" [(visible)]="FailedInvDetailsModal" [modal]="true" [responsive]="true" [style]="{ width: '25%', minWidth: '200px' }" style="text-align: center;" [minY]="80" 
 [maximizable]="true" [baseZIndex]="10000">
 
 <p style="width: 160px;" >{{ShowJSON}}</p>
 
 </p-dialog>
 
-<p-dialog header="" appendTo="body" [(visible)]="FailedCrDetailsModal" [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;" [minY]="80" 
+<p-dialog header="" appendTo="body" [(visible)]="FailedCrDetailsModal" [modal]="true" [responsive]="true" [style]="{ width: '25%', minWidth: '200px' }" style="text-align: center;" [minY]="80" 
 [maximizable]="true" [baseZIndex]="10000">
 
 <p style="width: 160px;" >{{ShowJSON}}</p>

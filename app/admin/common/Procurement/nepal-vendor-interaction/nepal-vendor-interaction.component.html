@@ -25,7 +25,7 @@
                 <div class="box-body">
 
                     <div class="row">
-                        <div class="col-sm-6">
+                        <div class="col-sm-6" style="margin-left: 15px;">
                             <label class="control-label">Vendor Name<sup class="text-danger">*</sup></label>
                             <p-dropdown [options]="VendorList" 
                             name="Vendor_Name" 
@@ -89,7 +89,7 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <label class="control-label">Email 2</label>
                                     <input 
                                         Class="form-control"
@@ -100,7 +100,7 @@
                                         disabled
                                     >
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <label class="control-label">PAN No</label>
                                     <input 
                                         Class="form-control"
@@ -111,21 +111,7 @@
                                         disabled
                                     >
                                 </div>
-                                <div class="col-sm-4">
-                                    <label class="control-label">Sales Man</label>
-                                    <select class="form-control"
-                                        name="Sales_Man_ID"
-                                        #Sales_Man_ID="ngModel" 
-                                        [(ngModel)]="ObjVendorInteraction.Sales_Man_ID"
-                                        disabled
-                                    >
-                                        <option  [ngValue]="undefined">Select Sales Man</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <label class="control-label">Address</label>
                                     <textarea 
                                         name="Sub_Ledger_Address_1" 
@@ -137,13 +123,13 @@
                                     > 
                                     </textarea>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <label class="control-label">SEZ</label><br>
                                     <div class="col-sm-3" style="margin-top: 16px;">
-                                        <p-radioButton name="groupname" label="Yes" value="true" [(ngModel)]="ObjVendorInteraction.IS_SEZ" [disabled]="true"></p-radioButton>
+                                        <p-radioButton name="groupname" label="Yes" value="Yes" [(ngModel)]="ObjVendorInteraction.IS_SEZ" [disabled]="true"></p-radioButton>
                                     </div>
                                      <div class="col-sm-3" style="margin-top: 16px;">
-                                        <p-radioButton name="groupname" label="No" value="false" [(ngModel)]="ObjVendorInteraction.IS_SEZ" [disabled]="true"></p-radioButton>
+                                        <p-radioButton name="groupname" label="No" value="No" [(ngModel)]="ObjVendorInteraction.IS_SEZ" [disabled]="true"></p-radioButton>
                                     </div>
                                 </div>
                             </div>
@@ -193,12 +179,159 @@
                         </p-tabPanel>
 
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt" >
+
+                            <div class="table-responsive no-padding">
+                                <p-table #dt [value]="Searchedlist"
+                                    [globalFilterFields]="allDetalisHeader"
+                                    [paginator]="" [rows]="100" [rowHover]="true" [autoLayout]="true"
+                                    sortMode="multiple" [rowsPerPageOptions]="[100,300,500]" [rowHover]="true">
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right;">
+                                                <input type="text" pInputText size="50" placeholder="Search"
+                                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                    class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr style="width: 100%;">
+                                            <th style="padding: 7px 10px">Action</th>
+                                            <th style="padding: 7px 40px">Doc No</th>
+                                            <th style="padding: 7px 30px">Doc Date</th>
+                                            <th style="padding: 7px 40px">Billing To</th>
+                                            <th style="padding: 7px 40px">Sub Ledger Name</th>
+                                            <th style="padding: 7px 40px">Purchase Request No</th>
+                                            <th style="padding: 7px 40px">Grant Total</th>
+                                            <th style="padding: 7px 40px">Current Status</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                        type="button" data-toggle="dropdown" style="height:27px">
+                                                        <i class="fa fa-fw fa-bars"></i>
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="GetPrint(col)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td>{{col.Doc_No ? col.Doc_No : '-'}}</td>
+                                            <td>{{col.Doc_Date ? col.Doc_Date : '-'}}</td>
+                                            <td>{{col.Billing_To ? col.Billing_To : '-'}}</td>
+                                            <td>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
+                                            <td>{{col.Purchase_Request_No ? col.Purchase_Request_No : '-'}}</td>
+                                            <td>{{col.Grant_Total ? col.Grant_Total : '-'}}</td>     
+                                            <td>{{col.Current_Status ? col.Current_Status : '-'}}</td>                                     
+                                        </tr>
+                                    </ng-template>                                 
+                                </p-table>
+                            </div>
+
                         </p-tabPanel>
 
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon glyphicon-file" >
+
+                            <div class="table-responsive no-padding">
+                                <p-table #dt [value]="DocumentPendingList"
+                                    [globalFilterFields]="DocumentDetalisHeader"
+                                    [paginator]="" [rows]="100" [rowHover]="true" [autoLayout]="true"
+                                    sortMode="multiple" [rowsPerPageOptions]="[100,300,500]" [rowHover]="true">
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right;">
+                                                <input type="text" pInputText size="50" placeholder="Search"
+                                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                    class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr style="width: 100%;">
+                                            <th style="padding: 7px 30px">SL No.</th>
+                                            <th style="padding: 7px 100px">Document No</th>
+                                            <th style="padding: 7px 80px">Document Name</th>
+                                            <th style="padding: 7px 50px">Target Date</th>
+                                            <th style="padding: 7px 160px">Status</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col let-i="rowIndex">
+                                        <tr>
+                                            <td>
+                                              {{ i + 1 }}
+                                            </td>
+                                            <td>{{col.PO_Doc_No ? col.PO_Doc_No : '-'}}</td>
+                                            <td>{{col.Document_Name ? col.Document_Name : '-'}}</td>
+                                            <td>{{col.Task_End_Date ? col.Task_End_Date : '-'}}</td>
+                                            <td >
+                                                <span [style.color]="getColor(col.Document_Status)" style="color: white;border-radius: 4px;" >{{col.Document_Status}}</span>
+                                            </td>                                   
+                                        </tr>
+                                    </ng-template>                                 
+                                </p-table>
+                            </div>
+
                         </p-tabPanel>
 
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon glyphicon-file" >
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-list-alt" >
+
+                            <div class="table-responsive no-padding">
+                                <p-table #dt [value]="ProductPurchasedList"
+                                    [globalFilterFields]="ProductDetalisHeader"
+                                    [paginator]="" [rows]="100" [rowHover]="true" [autoLayout]="true"
+                                    sortMode="multiple" [rowsPerPageOptions]="[100,300,500]" [rowHover]="true">
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right;">
+                                                <input type="text" pInputText size="50" placeholder="Search"
+                                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                    class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr style="width: 100%;">
+                                            <th style="padding: 7px 20px">SL No.</th>
+                                            <th style="padding: 7px 65px">Product Name</th>
+                                            <th style="padding: 7px 20px">Qty</th>
+                                            <th style="padding: 7px 40px">Unit</th>
+                                            <th style="padding: 7px 40px">Rate</th>
+                                            <th style="padding: 7px 40px">Total</th>
+                                            <th style="padding: 7px 65px">PO. No.</th>
+                                            <th style="padding: 7px 30px">PO. Date</th>
+                                            <th style="padding: 7px 65px">Status</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col let-i="rowIndex">
+                                        <tr>
+                                            <td>
+                                                {{ i + 1 }}
+                                            </td>
+                                            <td>{{col.Product_Description ? col.Product_Description : '-'}}</td>
+                                            <td>{{col.Qty ? col.Qty : '-'}}</td>
+                                            <td>{{col.UOM ? col.UOM : '-'}}</td>
+                                            <td>{{col.Rate ? col.Rate : '-'}}</td> 
+                                            <td>{{col.Line_Total ? col.Line_Total : '-'}}</td>  
+                                            <td>{{col.Doc_No ? col.Doc_No : '-'}}</td>  
+                                            <td>{{col.Doc_Date ? col.Doc_Date : '-'}}</td>  
+                                            <td>{{col.Current_Status ? col.Current_Status : '-'}}</td>                                     
+                                        </tr>
+                                    </ng-template>                                 
+                                </p-table>
+                            </div>
+
+
                         </p-tabPanel>
 
                     </p-tabView>

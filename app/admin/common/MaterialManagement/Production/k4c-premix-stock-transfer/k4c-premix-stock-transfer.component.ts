@@ -364,6 +364,15 @@ qtyChq(col){
 
              }
     }
+    this.checkdecimal(col);
+}
+checkdecimal(obj){
+  if (obj.Issue_Qty) {
+    var val = obj.Issue_Qty;
+    if(val[0] === '.'){
+      obj.Issue_Qty = 0+val; 
+    }
+  }
 }
 saveqty() {
     let flag = true;
