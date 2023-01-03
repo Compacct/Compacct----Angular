@@ -98,6 +98,7 @@
                                             <th>Doc Date</th>
                                             <th>Cost Center</th>
                                             <th>Stock Point</th>
+                                            <th>Production Qty</th>
                                             <th>Wastage Qty</th>
                                         </tr>
                                     </ng-template>
@@ -133,6 +134,7 @@
                                             <td>{{col.Doc_Date | date: "dd/MMM/yyyy"}}</td>
                                             <td>{{col.Cost_Cen_Name}}</td>
                                             <td>{{col.Godown_Name}}</td>
+                                            <td>{{col.Production_Qty}}</td>
                                             <td>{{col.Wastage_Qty}}</td>
                                         </tr>
                                     </ng-template>
@@ -215,6 +217,15 @@
                                     <span class="glyphicon glyphicon-save"></span> Export to excel
                                  </button>
                                 </div>
+                                <div class="col-sm-2" *ngIf="EditList.length">
+                                    <label class="control-label"></label>
+                                    <div class="checkBox">
+                                        <label class="pull-right" style="margin-top: 8px;">
+                                       <p-checkbox  [(ngModel)]="QtyfilterFLag"  name="Qtyfilter"  (onChange)="QtyFilter()"  binary="true" ></p-checkbox>
+                                       Filter Qty
+                                   </label>
+                                    </div>
+                                </div>
                             </div>
                             <div class="table-responsive no-padding">
                                 <p-table [value]="ProductList" [autoLayout]="true" sortMode="multiple" [globalFilterFields]="['Product_Type','Product_Description','Stock_Qty','Batch_No','Batch_Qty']" [rowHover]="true" #dt1>
@@ -239,11 +250,12 @@
                                             <th>Product Type</th>
                                             <th>Product Description</th>
                                             <th>UOM</th>
-                                            <th>Opening Qty</th>
-                                            <th *ngIf="MaterialType_Flag != 'Semi Finished'">Receive Qty</th>
-                                            <th *ngIf="MaterialType_Flag === 'Semi Finished'">Production Qty</th>
-                                            <th>Closing Qty</th>
-                                            <th>Wastage Qty</th>
+                                            <!-- <th>Opening Qty</th> -->
+                                            <!-- <th *ngIf="MaterialType_Flag != 'Semi Finished'">Receive Qty</th>
+                                            <th *ngIf="MaterialType_Flag === 'Semi Finished'">Production Qty</th> -->
+                                            <th>Production Qty</th>
+                                            <!-- <th>Closing Qty</th> -->
+                                            <th>Wastage Qty</th> 
                                             <th>Reason</th>
                                             <th>Consumption Qty</th>
                                         </tr>
@@ -254,11 +266,11 @@
                                             <td>{{col.Product_Type}}</td>
                                             <td>{{col.Product_Description }}</td>
                                             <td>{{col.UOM}}</td>
-                                            <td>{{col.Opening_Qty}}</td>
-                                            <td *ngIf="MaterialType_Flag != 'Semi Finished'">{{col.Receive_Qty}}</td> 
-                                            <td *ngIf="MaterialType_Flag === 'Semi Finished'"><input type="text" [name]="col.Product_ID +'3'" [(ngModel)]='col.Receive_Qty' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
-                                            <td><input type="text" [name]="col.Product_ID +'1'" [(ngModel)]='col.Closing_Qty' (ngModelChange)='ConsumptionCal(rowIndex)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
-                                            <td><input type="text" [name]="col.Product_ID +'2'" [(ngModel)]='col.Wastage_Qty' (ngModelChange)='ConsumptionCal(rowIndex)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                            <!-- <td>{{col.Opening_Qty}}</td> -->
+                                            <!-- <td *ngIf="MaterialType_Flag != 'Semi Finished'">{{col.Receive_Qty}}</td>  -->
+                                            <td><input type="text" [name]="col.Product_ID +'3'" [(ngModel)]='col.Receive_Qty' (ngModelChange)='checkdecimal(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                            <!-- <td><input type="text" [name]="col.Product_ID +'1'" [(ngModel)]='col.Closing_Qty' (ngModelChange)='ConsumptionCal(rowIndex)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td> -->
+                                            <td><input type="text" [name]="col.Product_ID +'2'" [(ngModel)]='col.Wastage_Qty' (ngModelChange)='ConsumptionCal(rowIndex,col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Remarks' [disabled]="col.remarkdisabled" class="form-control" style="width: 200px;" /></td>
                                             <td>{{col.Consumption_Qty}}</td>
                                         </tr>

@@ -13,6 +13,7 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
 import { collectExternalReferences } from '@angular/compiler/src/output/output_ast';
 import { map, catchError } from 'rxjs/operators';
 declare var $:any;
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-e-invoice-confirmation-form',
@@ -41,6 +42,9 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   failedINVconfirmcheckbox = false;
   PenInvflag = true;
   FailedInvflag = true;
+  ObjSuccessInvoice : SuccessInvoice = new SuccessInvoice ();
+  SuccessInvoicelist:any = [];
+  successinvoiceSpinner = false;
 
   pencrnoteSpinner = false;
   ObjPenCrNote : PenCrNote = new PenCrNote ();
@@ -53,6 +57,10 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   FailedCRNoteconfirmcheckbox = false;
   PenCrflag = true;
   failedcrflag = true;
+  ObjSuccessCrNote : SuccessCrNote = new SuccessCrNote ();
+  SuccessCrNotelist:any = [];
+  successcrnoteSpinner = false;
+  exportSpinner = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -69,7 +77,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   ngOnInit() {
     $(".content-header").removeClass("collapse-pos");
     $(".content").removeClass("collapse-pos");
-    this.items = ["PENDING INVOICE", "FAILED INVOICE", "PENDING CREDIT NOTES", "FAILED CREDIT NOTES"];
+    this.items = ["PENDING INV", "FAILED / QUEUE INV", "SUCCESS INV", "PENDING CR NOTES", "FAILED / QUEUE CR NOTES", "SUCCESS CR NOTES"];
     this.Header.pushHeader({
       Header: "E-Invoice Confirmation",
       Link: " E-Invoice Confirmation "
@@ -79,13 +87,14 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   TabClick(e){
     //console.log(e)
     this.tabIndexToView = e.index;
-    this.items = ["PENDING INVOICE", "FAILED INVOICE", "PENDING CREDIT NOTES", "FAILED CREDIT NOTES"];
+    this.items = ["PENDING INV", "FAILED / QUEUE INV", "SUCCESS INV", "PENDING CR NOTES", "FAILED / QUEUE CR NOTES", "SUCCESS CR NOTES"];
     this.buttonname = "Save";
     // this.productaddSubmit =[];
     // this.clearData();
   }
   onReject(){}
   onConfirm(){}
+  // PENDING INV
   PengetDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
       this.ObjPenInvoice.start_date = dateRangeObj[0];
@@ -121,59 +130,6 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      this.seachSpinner = false;
    })
    }
-  }
-  FailedgetDateRange(dateRangeObj) {
-    if (dateRangeObj.length) {
-      this.ObjFailedInvoice.start_date = dateRangeObj[0];
-      this.ObjFailedInvoice.end_date = dateRangeObj[1];
-    }
-  }
-  GetFailedInvoicelist() {
-    this.FailedInvoicelist = [];
-    this.peninvoiceSpinner = true;
-    this.seachSpinner = true;
-    this.FailedInvflag = true;
-    this.failedINVconfirmcheckbox = false;
-    const start = this.ObjFailedInvoice.start_date
-    ? this.DateService.dateConvert(new Date(this.ObjFailedInvoice.start_date))
-    : this.DateService.dateConvert(new Date());
-  const end = this.ObjFailedInvoice.end_date
-    ? this.DateService.dateConvert(new Date(this.ObjFailedInvoice.end_date))
-    : this.DateService.dateConvert(new Date());
-    if(start && end){
-  const tempobj = {
-    From_Date : start,
-    To_Date : end,
-  }
-  const obj = {
-    "SP_String": "SP_E_Invoice_For_Confirmation_Form",
-    "Report_Name_String": "Browse Failed Franchise Sale Challan And B2B Bill",
-    "Json_Param_String": JSON.stringify([tempobj])
-  }
-   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.FailedInvoicelist = data;
-     console.log('Failed Invoice list=====',this.FailedInvoicelist)
-     this.peninvoiceSpinner = false;
-     this.seachSpinner = false;
-   })
-   }
-  }
-  ViewInvPopup(col) {
-    //console.log("col",col)
-    this.ShowJSON = undefined;
-    if(col.E_Invoice_Responce_JSON) {
-    var data = JSON.parse(col.E_Invoice_Responce_JSON);
-    console.log("msg===",data)
-    this.ShowJSON = data.results.errorMessage;
-    this.FailedInvDetailsModal = true;
-    }
-  }
-  ViewInvoice(obj) {
-    if (obj) {
-      window.open("/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?DocNo=" + obj, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
-  
-      );
-    }
   }
   CheckPenInvQueuelength() {
     var invquelength = this.PenInvoicelist.filter(el=> el.confirmation_Inv === true);
@@ -288,6 +244,63 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
         });
   }
   }
+
+  
+  ViewInvPopup(col) {
+    //console.log("col",col)
+    this.ShowJSON = undefined;
+    if(col.E_Invoice_Responce_JSON) {
+    var data = JSON.parse(col.E_Invoice_Responce_JSON);
+    console.log("msg===",data)
+    this.ShowJSON = data.results.errorMessage;
+    this.FailedInvDetailsModal = true;
+    }
+  }
+  ViewInvoice(obj) {
+    if (obj) {
+      window.open("/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" + obj, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+  
+      );
+    }
+  }
+
+  // FAILED INV
+  FailedgetDateRange(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjFailedInvoice.start_date = dateRangeObj[0];
+      this.ObjFailedInvoice.end_date = dateRangeObj[1];
+    }
+  }
+  GetFailedInvoicelist() {
+    this.FailedInvoicelist = [];
+    this.peninvoiceSpinner = true;
+    this.seachSpinner = true;
+    this.FailedInvflag = true;
+    this.failedINVconfirmcheckbox = false;
+    const start = this.ObjFailedInvoice.start_date
+    ? this.DateService.dateConvert(new Date(this.ObjFailedInvoice.start_date))
+    : this.DateService.dateConvert(new Date());
+  const end = this.ObjFailedInvoice.end_date
+    ? this.DateService.dateConvert(new Date(this.ObjFailedInvoice.end_date))
+    : this.DateService.dateConvert(new Date());
+    if(start && end){
+  const tempobj = {
+    From_Date : start,
+    To_Date : end,
+  }
+  const obj = {
+    "SP_String": "SP_E_Invoice_For_Confirmation_Form",
+    "Report_Name_String": "Browse Failed Franchise Sale Challan And B2B Bill",
+    "Json_Param_String": JSON.stringify([tempobj])
+  }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.FailedInvoicelist = data;
+     console.log('Failed Invoice list=====',this.FailedInvoicelist)
+     this.peninvoiceSpinner = false;
+     this.seachSpinner = false;
+   })
+   }
+  }
   CheckFailedInvQueuelength() {
     var invquelength = this.FailedInvoicelist.filter(el=> el.confirmation_Inv === true);
     if (invquelength.length <= 50) {
@@ -401,8 +414,43 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
         });
   }
   }
+  // SUCCESS INV
+  SuccessgetDateRange(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjSuccessInvoice.start_date = dateRangeObj[0];
+      this.ObjSuccessInvoice.end_date = dateRangeObj[1];
+    }
+  }
+  GetSuccessInvoicelist() {
+    this.SuccessInvoicelist = [];
+    this.successinvoiceSpinner = true;
+    this.seachSpinner = true;
+    const start = this.ObjSuccessInvoice.start_date
+    ? this.DateService.dateConvert(new Date(this.ObjSuccessInvoice.start_date))
+    : this.DateService.dateConvert(new Date());
+  const end = this.ObjSuccessInvoice.end_date
+    ? this.DateService.dateConvert(new Date(this.ObjSuccessInvoice.end_date))
+    : this.DateService.dateConvert(new Date());
+    if(start && end){
+  const tempobj = {
+    From_Date : start,
+    To_Date : end,
+  }
+  const obj = {
+    "SP_String": "SP_E_Invoice_For_Confirmation_Form",
+    "Report_Name_String": "Browse Success Franchise Sale Challan And B2B Bill",
+    "Json_Param_String": JSON.stringify([tempobj])
+  }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.SuccessInvoicelist = data;
+     //console.log('Invoice list=====',this.SuccessInvoicelist)
+     this.successinvoiceSpinner = false;
+     this.seachSpinner = false;
+   })
+   }
+  }
 
-  // CREDIT NOTE
+  // PENDING CREDIT NOTE
   getPenDateRangeCrNote(dateRangeObj) {
     if (dateRangeObj.length) {
       this.ObjPenCrNote.start_date = dateRangeObj[0];
@@ -438,59 +486,6 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      this.seachSpinner = false;
    })
    }
-  }
-  getFailedDateRangeCrNote(dateRangeObj) {
-    if (dateRangeObj.length) {
-      this.ObjfailedCrNote.start_date = dateRangeObj[0];
-      this.ObjfailedCrNote.end_date = dateRangeObj[1];
-    }
-  }
-  GetFailedCrNotelist() {
-    this.FailedCrNotelist = [];
-    this.failedcrnoteSpinner = true;
-    this.seachSpinner = true;
-    this.failedcrflag = true;
-    this.FailedCRNoteconfirmcheckbox = false;
-    const start = this.ObjfailedCrNote.start_date
-    ? this.DateService.dateConvert(new Date(this.ObjfailedCrNote.start_date))
-    : this.DateService.dateConvert(new Date());
-  const end = this.ObjfailedCrNote.end_date
-    ? this.DateService.dateConvert(new Date(this.ObjfailedCrNote.end_date))
-    : this.DateService.dateConvert(new Date());
-    if(start && end){
-  const tempobj = {
-    From_Date : start,
-    To_Date : end,
-  }
-  const obj = {
-    "SP_String": "SP_E_Invoice_For_Confirmation_Form",
-    "Report_Name_String": "Browse Failed Credit Note",
-    "Json_Param_String": JSON.stringify([tempobj])
-  }
-   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.FailedCrNotelist = data;
-     //console.log('FailedCrNote list=====',this.FailedCrNotelist)
-     this.failedcrnoteSpinner = false;
-     this.seachSpinner = false;
-   })
-   }
-  }
-  ViewCrPopup(col) {
-    //console.log("col",col)
-    this.ShowJSON = undefined;
-    if(col.E_Invoice_Responce_JSON) {
-    var data = JSON.parse(col.E_Invoice_Responce_JSON);
-    console.log("msg===",data)
-    this.ShowJSON = data.results.errorMessage;
-    this.FailedCrDetailsModal = true;
-    }
-  }
-  ViewCrNote(col) {
-    if (col) {
-      window.open("/Report/Crystal_Files/Finance/SaleBill/Credit_Note_K4C.aspx?DocNo=" + col, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
-  
-      );
-    }
   }
   CheckPenNoteQueuelength() {
     var quelength = this.PenCrNotelist.filter(el=> el.confirmation_Credit_Note === true);
@@ -529,7 +524,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       console.log("confirmation_Credit_Note ====",el.confirmation_Credit_Note)
       if (el.confirmation_Credit_Note === true) {
         const updateObj = {
-          Doc_No : el.Doc_No
+          Doc_No : el.Note_No
         }
         updateData.push(updateObj)
         console.log("updateData",updateData);
@@ -604,6 +599,63 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
         });
   }
   }
+
+  
+  ViewCrPopup(col) {
+    //console.log("col",col)
+    this.ShowJSON = undefined;
+    if(col.E_Invoice_Responce_JSON) {
+    var data = JSON.parse(col.E_Invoice_Responce_JSON);
+    console.log("msg===",data)
+    this.ShowJSON = data.results.errorMessage;
+    this.FailedCrDetailsModal = true;
+    }
+  }
+  ViewCrNote(col) {
+    if (col) {
+      window.open("/Report/Crystal_Files/Finance/SaleBill/Credit_Note_K4C.aspx?Doc_No=" + col, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+  
+      );
+    }
+  }
+
+  // FAILED CREDIT NOTE
+  getFailedDateRangeCrNote(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjfailedCrNote.start_date = dateRangeObj[0];
+      this.ObjfailedCrNote.end_date = dateRangeObj[1];
+    }
+  }
+  GetFailedCrNotelist() {
+    this.FailedCrNotelist = [];
+    this.failedcrnoteSpinner = true;
+    this.seachSpinner = true;
+    this.failedcrflag = true;
+    this.FailedCRNoteconfirmcheckbox = false;
+    const start = this.ObjfailedCrNote.start_date
+    ? this.DateService.dateConvert(new Date(this.ObjfailedCrNote.start_date))
+    : this.DateService.dateConvert(new Date());
+  const end = this.ObjfailedCrNote.end_date
+    ? this.DateService.dateConvert(new Date(this.ObjfailedCrNote.end_date))
+    : this.DateService.dateConvert(new Date());
+    if(start && end){
+  const tempobj = {
+    From_Date : start,
+    To_Date : end,
+  }
+  const obj = {
+    "SP_String": "SP_E_Invoice_For_Confirmation_Form",
+    "Report_Name_String": "Browse Failed Credit Note",
+    "Json_Param_String": JSON.stringify([tempobj])
+  }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.FailedCrNotelist = data;
+     //console.log('FailedCrNote list=====',this.FailedCrNotelist)
+     this.failedcrnoteSpinner = false;
+     this.seachSpinner = false;
+   })
+   }
+  }
   CheckFailedNoteQueuelength() {
     var quelength = this.FailedCrNotelist.filter(el=> el.confirmation_Credit_Note === true);
     if (quelength.length <= 50) {
@@ -641,7 +693,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       console.log("confirmation_Credit_Note ====",el.confirmation_Credit_Note)
       if (el.confirmation_Credit_Note === true) {
         const updateObj = {
-          Doc_No : el.Doc_No
+          Doc_No : el.Note_No
         }
         updateData.push(updateObj)
         console.log("updateData",updateData);
@@ -716,6 +768,55 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
         });
   }
   }
+  //SUCCESS CREDIT NOTE
+  getSuccessDateRangeCrNote(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjSuccessCrNote.start_date = dateRangeObj[0];
+      this.ObjSuccessCrNote.end_date = dateRangeObj[1];
+    }
+  }
+  GetsuccessCrNotelist() {
+    this.SuccessCrNotelist = [];
+    this.successcrnoteSpinner = true;
+    this.seachSpinner = true;
+    const start = this.ObjSuccessCrNote.start_date
+    ? this.DateService.dateConvert(new Date(this.ObjSuccessCrNote.start_date))
+    : this.DateService.dateConvert(new Date());
+  const end = this.ObjSuccessCrNote.end_date
+    ? this.DateService.dateConvert(new Date(this.ObjSuccessCrNote.end_date))
+    : this.DateService.dateConvert(new Date());
+    if(start && end){
+  const tempobj = {
+    From_Date : start,
+    To_Date : end,
+  }
+  const obj = {
+    "SP_String": "SP_E_Invoice_For_Confirmation_Form",
+    "Report_Name_String": "Browse Success Credit Note",
+    "Json_Param_String": JSON.stringify([tempobj])
+  }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.SuccessCrNotelist = data;
+     //console.log('CrNote list=====',this.SuccessCrNotelist)
+     this.successcrnoteSpinner = false;
+     this.seachSpinner = false;
+   })
+   }
+  }
+
+  DownloadEINV(obj) {
+    if (obj) {
+        window.open(obj, '_self');
+      
+    }
+  }
+  exportoexcel(Arr,fileName): void {
+    this.exportSpinner = true;
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+    this.exportSpinner = false;
+  }
 
 }
 class PenInvoice {
@@ -726,11 +827,19 @@ class FailednInvoice {
   start_date : Date;
   end_date : Date;
 }
+class SuccessInvoice {
+  start_date : Date;
+  end_date : Date;
+}
 class PenCrNote {
   start_date : Date;
   end_date : Date;
 }
 class FailedCrNote {
+  start_date : Date;
+  end_date : Date;
+}
+class SuccessCrNote {
   start_date : Date;
   end_date : Date;
 }

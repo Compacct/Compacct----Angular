@@ -67,6 +67,8 @@ export class K4cPremixInventoryComponent implements OnInit {
   BackupProList:any = [];
   Doc_Date: any;
   productlistforexcel:any = [];
+  QtyfilterFLag = false;
+  backupeditprolist:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -109,6 +111,8 @@ export class K4cPremixInventoryComponent implements OnInit {
      this.items = ["BROWSE", "CREATE"];
      this.buttonname = "Save";
      this.clearData();
+     this.EditList = [];
+     this.ProductList = [];
      this.BackupIndentList = [];
      this.TIndentList = [];
      this.SelectedIndent = [];
@@ -276,15 +280,16 @@ export class K4cPremixInventoryComponent implements OnInit {
     const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
     XLSX.writeFile(workbook, fileName+'.xlsx');
   }
+  
   // product Filter
 
   filterProduct(){
     if(this.SelectedProductType.length){
       let tempProduct:any = [];
       this.SelectedProductType.forEach(item => {
-        this.BackupIndentList.forEach((el,i)=>{
+        this.BackupProList.forEach((el,i)=>{
 
-          const ProductObj = this.BackupIndentList.filter((elem) => elem.Product_Type == item)[i];
+          const ProductObj = this.BackupProList.filter((elem) => elem.Product_Type == item)[i];
           //const ProductObj = el;
          // console.log("ProductObj",ProductObj);
           if(ProductObj)
@@ -292,6 +297,7 @@ export class K4cPremixInventoryComponent implements OnInit {
         })
         })
      this.ProductList  = [...tempProduct];
+     this.QtyFilter();
    }
     else {
     this.ProductList  = [...this.BackupIndentList];
@@ -336,6 +342,7 @@ saveRemarks(){
         //flag = false;
         if(this.ProductList[i]['Remarks'] === undefined){
           // this.ngxService.stop();
+          this.Spinner = false;
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -352,12 +359,13 @@ saveRemarks(){
 
   return flag;
 }
-ConsumptionCal(indx){
+ConsumptionCal(indx,col){
   this.ProductList[indx]['Consumption_Qty'] = 0;
   if(this.ProductList[indx]['Wastage_Qty']){
-    var openrec = (this.ProductList[indx]['Opening_Qty'] + Number((this.ProductList[indx]['Receive_Qty']))).toFixed(2);
-    var subclosing = (Number(openrec) - this.ProductList[indx]['Closing_Qty']).toFixed(2);
-    this.ProductList[indx]['Consumption_Qty'] = (Number(subclosing) - this.ProductList[indx]['Wastage_Qty']).toFixed(2);
+    // var openrec = (this.ProductList[indx]['Opening_Qty'] + Number((this.ProductList[indx]['Receive_Qty']))).toFixed(2);
+    // var subclosing = (Number(openrec) - this.ProductList[indx]['Closing_Qty']).toFixed(2);
+    // this.ProductList[indx]['Consumption_Qty'] = (Number(subclosing) - this.ProductList[indx]['Wastage_Qty']).toFixed(2);
+    this.ProductList[indx]['Consumption_Qty'] = (Number(this.ProductList[indx]['Receive_Qty']) - this.ProductList[indx]['Wastage_Qty']).toFixed(2);
     // var posNum = (Number(num) < 0) ? Number(num) * -1 : num;
     // this.ProductList[indx]['Consumption_Qty'] = Number(posNum).toFixed(2);
   }
@@ -374,6 +382,21 @@ ConsumptionCal(indx){
     }
 
   })
+  this.checkdecimal(col);
+}
+checkdecimal(obj){
+  if (obj.Receive_Qty) {
+    var val = obj.Receive_Qty;
+    if(val[0] === '.'){
+      obj.Receive_Qty = 0+val; 
+    }
+  }
+  if (obj.Wastage_Qty) {
+    var val = obj.Wastage_Qty;
+    if(val[0] === '.'){
+      obj.Wastage_Qty = 0+val; 
+    }
+  }
 }
 
   // GET PRODUCT LIST
@@ -460,7 +483,7 @@ ConsumptionCal(indx){
   // SAVE AND UPDATE
   SaveBeforeCheck(){
     this.Spinner = true;
-     if (this.ProductList.length) {
+     if (this.BackupProList.length) {
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "s",
@@ -474,10 +497,10 @@ ConsumptionCal(indx){
   dataforSaveRawMaterialIssue(){
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
      this.ObjProClosingStock.Doc_Date = this.DateService.dateConvert(new Date(this.todayDate));
-    if(this.ProductList.length) {
+    if(this.BackupProList.length) {
       // if(this.saveRemarks()){
       let tempArr:any =[]
-      this.ProductList.forEach(item => {
+      this.BackupProList.forEach(item => {
         // if(item.Wastage_Qty && Number(item.Wastage_Qty) != 0) {
         //  var Prorecqty = this.MaterialType_Flag === "Semi Finished" ? "Production_Qty" : "Receive_Qty"
      const TempObj = {
@@ -541,6 +564,7 @@ ConsumptionCal(indx){
            summary: "Production Voucher  " + tempID,
            detail: "Succesfully  " + mgs
          });
+         this.Spinner = false;
          this.tabIndexToView = 0 ;
          this.items = ["BROWSE", "CREATE"];
          this.buttonname = "Save";
@@ -549,6 +573,7 @@ ConsumptionCal(indx){
          this.ProductList =[];
          this.IndentListFormSubmitted = false;
         } else{
+          this.Spinner = false;
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -613,6 +638,7 @@ const obj = {
 }
 
   clearData(){
+    this.QtyfilterFLag = false;
     this.ObjProClosingStock.Cost_Cen_ID = 2;
     this.ObjProClosingStock.godown_id = 126;
     // this.GetGodown();
@@ -751,6 +777,8 @@ GetdataforEdit(){
             remarkdisabled : element.Wastage_Qty || element.Wastage_Qty != 0 ? false : true
           };
            this.ProductList.push(productObj);
+           this.backupeditprolist = this.ProductList;
+           this.BackupProList = this.ProductList;
            this.BackupIndentList = [...this.ProductList];
            //this.backUpproductList = this.productList;
           //  this.BackupIndentList = this.IndentNoList;
@@ -781,6 +809,20 @@ GetdataforEdit(){
     // }, 600)
     //   this.ProductList = [...this.ProductList];
     })
+}
+QtyFilter(){
+  this.ProductList = []
+   if(this.QtyfilterFLag){
+    this.BackupProList.forEach(el=>{
+      if(Number(el.Receive_Qty) > 0){
+        this.ProductList.push(el);
+      }
+    })
+  }
+  else{
+    this.ProductList = this.BackupProList;
+  }
+  // console.log("Qty SF flag ==",this.getsemifinishedtabledata)
 }
 GetEditProductType(){
   let DOrderBy:any = [];

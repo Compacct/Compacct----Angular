@@ -44,4 +44,9 @@ body .ui-dropdown.ui-dropdown-clearable .ui-dropdown-label {
   table, th, td {
     border: 1px solid #ffffff !important;
     padding: 5px;
+    text-align: center;
   }
+  .pd{
+    padding: 7px 45px;
+  }
+ 
