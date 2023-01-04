@@ -319,6 +319,7 @@ import { PrintTinnitusTherapyTrackerDashboardComponent } from "./common/PatientM
 import { PrintTinnitusEvauationReportDashboardComponent } from "./common/PatientManagement/print-tinnitus-evauation-report-dashboard/print-tinnitus-evauation-report-dashboard.component";
 import { OutwardChallanComponent } from './common/MICL/outward-challan/outward-challan.component';
 import { NepalVendorInteractionComponent } from "./common/Procurement/nepal-vendor-interaction/nepal-vendor-interaction.component";
+import { K4cPremixItemClosingStockComponent } from './common/MaterialManagement/Production/k4c-premix-item-closing-stock/k4c-premix-item-closing-stock.component';
 
 
 const layoutRoutes: Routes = [{
@@ -2406,6 +2407,13 @@ path: 'MICL_Cost_Center_Master',
     component: NepalVendorInteractionComponent,
     data: {
       title: 'Vendor Interaction Managemnet'
+}
+},
+{
+  path: 'Premix_Item_Closing_Stock',
+    component: K4cPremixItemClosingStockComponent,
+    data: {
+      title: 'Premix Item Closing Stock'
 }
 },
     
