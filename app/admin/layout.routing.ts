@@ -2203,7 +2203,7 @@ path: 'MICL_Cost_Center_Master',
   path: 'Premix_Inventory',
     component: K4cPremixInventoryComponent,
     data: {
-      title: 'Premix Inventory'
+      title: 'Premix Production'
 }
 },
 {
