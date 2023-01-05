@@ -320,6 +320,7 @@ import { PrintTinnitusEvauationReportDashboardComponent } from "./common/Patient
 import { OutwardChallanComponent } from './common/MICL/outward-challan/outward-challan.component';
 import { NepalVendorInteractionComponent } from "./common/Procurement/nepal-vendor-interaction/nepal-vendor-interaction.component";
 import { K4cPremixItemClosingStockComponent } from './common/MaterialManagement/Production/k4c-premix-item-closing-stock/k4c-premix-item-closing-stock.component';
+import { SaleBillComponent } from "./common/MICL/sale-bill/sale-bill.component";
 
 
 const layoutRoutes: Routes = [{
@@ -2414,6 +2415,13 @@ path: 'MICL_Cost_Center_Master',
     component: K4cPremixItemClosingStockComponent,
     data: {
       title: 'Premix Item Closing Stock'
+}
+},
+{
+  path: 'MICL_Sale_Bill',
+    component: SaleBillComponent,
+    data: {
+      title: 'Sale Bill'
 }
 },
     

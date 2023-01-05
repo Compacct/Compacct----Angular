@@ -97,8 +97,8 @@ export class K4cPremixInventoryComponent implements OnInit {
   ngOnInit() {
     this.items = ["BROWSE", "CREATE"];
     this.Header.pushHeader({
-      Header: "Premix - " + this.MaterialType_Flag, //this.MaterialType_Flag + 
-      Link: " Material Management -> Premix - " + this.MaterialType_Flag
+      Header: "Premix Production ",
+      Link: " Material Management -> Premix Production "
     });
     this.GetBrand();
     this.GetCostCen();
@@ -133,14 +133,14 @@ export class K4cPremixInventoryComponent implements OnInit {
     })
   }
    GetCostCen(){
-    const tempObj = {
-      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-      Material_Type : this.MaterialType_Flag ? this.MaterialType_Flag : 'NA'
-    }
+    // const tempObj = {
+    //   Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+    //   Material_Type : this.MaterialType_Flag ? this.MaterialType_Flag : 'NA'
+    // }
     const obj = {
-      "SP_String": "SP_K4C_Premix_Inventory",
-      "Report_Name_String": "Get Cost Centre Non outlet",
-      "Json_Param_String": JSON.stringify([tempObj])
+      "SP_String": "SP_K4C_Premix_Item_Production",
+      "Report_Name_String": "Get Cost Centre Non outlet"
+      // "Json_Param_String": JSON.stringify([tempObj])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.CostCenList = data;
@@ -155,10 +155,9 @@ export class K4cPremixInventoryComponent implements OnInit {
     if(this.ObjProClosingStock.Cost_Cen_ID){
       const tempObj = {
         Cost_Cen_ID : this.ObjProClosingStock.Cost_Cen_ID,
-        Material_Type : this.MaterialType_Flag ? this.MaterialType_Flag : 'NA'
       }
       const obj = {
-        "SP_String": "SP_K4C_Premix_Inventory",
+        "SP_String": "SP_K4C_Premix_Item_Production",
         "Report_Name_String": "Get - Godown",
         "Json_Param_String": JSON.stringify([tempObj])
       }
@@ -179,7 +178,7 @@ export class K4cPremixInventoryComponent implements OnInit {
   }
   GetBCostCen(){
     const obj = {
-      "SP_String": "SP_K4C_Premix_Inventory",
+      "SP_String": "SP_K4C_Premix_Item_Production",
       "Report_Name_String": "Get Cost Centre Non outlet",
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -193,11 +192,10 @@ export class K4cPremixInventoryComponent implements OnInit {
     this.BGodownList = [];
     //if(this.ObjBrowse.To_Cost_Cen_ID){
       const tempObj = {
-        Cost_Cen_ID : this.ObjBrowse.Cost_Cen_ID,
-        Material_Type : this.MaterialType_Flag
+        Cost_Cen_ID : this.ObjBrowse.Cost_Cen_ID
       }
       const obj = {
-        "SP_String": "SP_K4C_Premix_Inventory",
+        "SP_String": "SP_K4C_Premix_Item_Production",
         "Report_Name_String": "Get - Godown",
         "Json_Param_String": JSON.stringify([tempObj])
       }
@@ -229,12 +227,12 @@ export class K4cPremixInventoryComponent implements OnInit {
     const TempObj = {
       Doc_Date : this.ObjProClosingStock.Doc_Date,
       Cost_Cen_ID : this.ObjProClosingStock.Cost_Cen_ID ? this.ObjProClosingStock.Cost_Cen_ID : 0,
-      Godown_ID : this.ObjProClosingStock.godown_id ? this.ObjProClosingStock.godown_id : 0,
+      // Godown_ID : this.ObjProClosingStock.godown_id ? this.ObjProClosingStock.godown_id : 0,
       Material_Type : this.MaterialType_Flag ? this.MaterialType_Flag : 'NA',
       Brand_ID : this.ObjProClosingStock.Brand_ID ? this.ObjProClosingStock.Brand_ID : 0
      }
    const obj = {
-    "SP_String": "SP_K4C_Premix_Inventory",
+    "SP_String": "SP_K4C_Premix_Item_Production",
     "Report_Name_String" : "Get Product",
    "Json_Param_String": JSON.stringify([TempObj])
 
@@ -247,6 +245,9 @@ export class K4cPremixInventoryComponent implements OnInit {
     element['Wastage_Qty'] = undefined;
     element['remarkdisabled'] = true;
     element['Remarks'] = undefined;
+    // if (element['Receive_Qty'] || element['Wastage_Qty']) {
+    // element['Consumption_Qty'] = element['Receive_Qty'] - element['Wastage_Qty'];
+    // }
  });
    this.ProductList = tempData;
    this.BackupProList = data;
@@ -322,11 +323,11 @@ ChangeRemarks(obj){
    this.ProductList.forEach(el=>{
      if(obj.Product_ID === el.Product_ID){
       // var consqty = obj.Consumption_Qty;
-      if(obj.Wastage_Qty){
+      if(obj.Wastage_Qty > 0){
         obj.remarkdisabled = false;
-        var openrec = (obj.Opening_Qty + obj.Receive_Qty).toFixed(2);
-        var subclosing = (Number(openrec) - obj.Receive_Qty).toFixed(2);
-        obj.Consumption_Qty = (Number(subclosing) - obj.Wastage_Qty).toFixed(2);
+        // var openrec = (obj.Opening_Qty + obj.Receive_Qty).toFixed(2);
+        // var subclosing = (Number(openrec) - obj.Receive_Qty).toFixed(2);
+        obj.Consumption_Qty = (Number(obj.Receive_Qty) - obj.Wastage_Qty).toFixed(2);
        } else {
         obj.remarkdisabled = true;
         obj.Consumption_Qty = obj.Consumption_Qty;
@@ -340,7 +341,7 @@ saveRemarks(){
  for(let i = 0; i < this.ProductList.length;i++){
       if(this.ProductList[i]['remarkdisabled'] === false){
         //flag = false;
-        if(this.ProductList[i]['Remarks'] === undefined){
+        if(this.ProductList[i]['Remarks'] === undefined || this.ProductList[i]['Remarks'] === null){
           // this.ngxService.stop();
           this.Spinner = false;
           this.compacctToast.clear();
@@ -361,18 +362,16 @@ saveRemarks(){
 }
 ConsumptionCal(indx,col){
   this.ProductList[indx]['Consumption_Qty'] = 0;
-  if(this.ProductList[indx]['Wastage_Qty']){
-    // var openrec = (this.ProductList[indx]['Opening_Qty'] + Number((this.ProductList[indx]['Receive_Qty']))).toFixed(2);
-    // var subclosing = (Number(openrec) - this.ProductList[indx]['Closing_Qty']).toFixed(2);
-    // this.ProductList[indx]['Consumption_Qty'] = (Number(subclosing) - this.ProductList[indx]['Wastage_Qty']).toFixed(2);
+  if(this.ProductList[indx]['Receive_Qty'] && !this.ProductList[indx]['Wastage_Qty']){
+    this.ProductList[indx]['Consumption_Qty'] = Number(this.ProductList[indx]['Receive_Qty']).toFixed(2);
+  }
+  if(this.ProductList[indx]['Receive_Qty'] && this.ProductList[indx]['Wastage_Qty']){
     this.ProductList[indx]['Consumption_Qty'] = (Number(this.ProductList[indx]['Receive_Qty']) - this.ProductList[indx]['Wastage_Qty']).toFixed(2);
-    // var posNum = (Number(num) < 0) ? Number(num) * -1 : num;
-    // this.ProductList[indx]['Consumption_Qty'] = Number(posNum).toFixed(2);
   }
   //this.changeRemarks(indx);
   this.ProductList.forEach(el=>{
     if(this.ProductList[indx]['Product_ID'] === el.Product_ID){
-     if(this.ProductList[indx]['Wastage_Qty']){
+     if(this.ProductList[indx]['Wastage_Qty'] > 0){
        // this.Remarksdisabled = true;
        this.ProductList[indx]['remarkdisabled'] = false;
       } else {
@@ -400,25 +399,25 @@ checkdecimal(obj){
 }
 
   // GET PRODUCT LIST
-  dataforproduct(){
-    if(this.SelectedIndent.length) {
-      let Arr:any =[]
-      this.SelectedIndent.forEach(el => {
-        if(el){
-          const Dobj = {
-            Doc_No : el,
-            Cost_Cen_ID : this.ObjProClosingStock.Cost_Cen_ID,
-            Godown_ID : this.ObjProClosingStock.godown_id,
-            Material_Type : this.MaterialType_Flag
-            }
-      Arr.push(Dobj)
-        }
+  // dataforproduct(){
+  //   if(this.SelectedIndent.length) {
+  //     let Arr:any =[]
+  //     this.SelectedIndent.forEach(el => {
+  //       if(el){
+  //         const Dobj = {
+  //           Doc_No : el,
+  //           Cost_Cen_ID : this.ObjProClosingStock.Cost_Cen_ID,
+  //           Godown_ID : this.ObjProClosingStock.godown_id,
+  //           Material_Type : this.MaterialType_Flag
+  //           }
+  //     Arr.push(Dobj)
+  //       }
 
-    });
-      console.log("Table Data ===", Arr)
-      return Arr.length ? JSON.stringify(Arr) : '';
-    }
-  }
+  //   });
+  //     console.log("Table Data ===", Arr)
+  //     return Arr.length ? JSON.stringify(Arr) : '';
+  //   }
+  // }
 //   GetProduct(arr){
 //     // const TempObj = {
 //     //   Cost_Cen_ID : this.ObjRawMateriali.From_Cost_Cen_ID,
@@ -512,12 +511,12 @@ checkdecimal(obj){
             Product_ID	: item.Product_ID,
             Product_Description	: item.Product_Description,
             Product_Type_ID	: item.Product_Type_ID,
-            Production_Qty : item.Receive_Qty,
-            Closing_Qty	: item.Closing_Qty,
-            Wastage_Qty : item.Wastage_Qty ? item.Wastage_Qty : 0,
+            Production_Qty : item.Receive_Qty ? Number(item.Receive_Qty) : 0,
+            Closing_Qty	: item.Closing_Qty ? Number(item.Closing_Qty) : 0,
+            Wastage_Qty : item.Wastage_Qty ? Number(item.Wastage_Qty) : 0,
             UOM	: item.UOM,
             Remarks	: item.Remarks,
-            Consumption_Qty : item.Consumption_Qty,
+            Consumption_Qty : Number(item.Consumption_Qty),
             Created_By	:this.$CompacctAPI.CompacctCookies.User_ID,
             // Created_On : item.Batch_No
          }
@@ -545,8 +544,8 @@ checkdecimal(obj){
     // if(this.saveqty()){
       if(this.saveRemarks()){
       const obj = {
-        "SP_String": "SP_K4C_Premix_Inventory",
-        "Report_Name_String" : "Save_K4C_Premix_Inventory",
+        "SP_String": "SP_K4C_Premix_Item_Production",
+        "Report_Name_String" : "Save_K4C_Premix_Item_Production",
        "Json_Param_String": this.dataforSaveRawMaterialIssue()
 
       }
@@ -614,6 +613,7 @@ const end = this.ObjBrowse.end_date
   : this.DateService.dateConvert(new Date());
 
   this.PremixInvSearchFormSubmitted = true;
+  this.seachSpinner = true;
   if (valid){
 const tempobj = {
   From_date : start,
@@ -624,8 +624,8 @@ const tempobj = {
 
 }
 const obj = {
-  "SP_String": "SP_K4C_Premix_Inventory",
-  "Report_Name_String": "Browse_K4C_Premix_Inventory",
+  "SP_String": "SP_K4C_Premix_Item_Production",
+  "Report_Name_String": "Browse_K4C_Premix_Item_Production",
   "Json_Param_String": JSON.stringify([tempobj])
 }
  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -747,7 +747,7 @@ EditIntStock(col){
 GetdataforEdit(){
   //this.OTclosingstockwithbatchFormSubmitted = false;
     const obj = {
-      "SP_String": "SP_K4C_Premix_Inventory",
+      "SP_String": "SP_K4C_Premix_Item_Production",
       "Report_Name_String": "Get_Edit_Data",
       "Json_Param_String": JSON.stringify([{Doc_No  : this.ObjProClosingStock.Doc_No, Doc_Date : this.DateService.dateConvert(new Date(this.Doc_Date))}])
 
@@ -854,13 +854,13 @@ View(DocNo){
   // this.ViewPoppup = true;
   //this.tabIndexToView = 1;
    //console.log("this.EditDoc_No ", this.Adv_Order_No );
-   this.geteditmaster(DocNo.Doc_No)
+   this.getviewdata(DocNo.Doc_No)
   }
 }
-geteditmaster(Doc_No){
+getviewdata(Doc_No){
   const obj = {
-    "SP_String": "SP_K4C_Premix_Inventory",
-    "Report_Name_String": "View_K4C_Premix_Inventory",
+    "SP_String": "SP_K4C_Premix_Item_Production",
+    "Report_Name_String": "View_K4C_Premix_Item_Production",
     "Json_Param_String": JSON.stringify([{Doc_No:Doc_No}])
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -910,8 +910,8 @@ onConfirm(){
       Doc_No : this.ObjProClosingStock.Doc_No
     }
     const objj = {
-      "SP_String": "SP_K4C_Premix_Inventory",
-      "Report_Name_String": "Delete_K4C_Premix_Inventory",
+      "SP_String": "SP_K4C_Premix_Item_Production",
+      "Report_Name_String": "Delete_K4C_Premix_Item_Production",
       "Json_Param_String": JSON.stringify([Tempdata])
     }
     this.GlobalAPI.getData(objj).subscribe((data:any)=>{
