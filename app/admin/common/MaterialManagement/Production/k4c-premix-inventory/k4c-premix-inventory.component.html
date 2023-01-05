@@ -268,7 +268,7 @@
                                             <td>{{col.UOM}}</td>
                                             <!-- <td>{{col.Opening_Qty}}</td> -->
                                             <!-- <td *ngIf="MaterialType_Flag != 'Semi Finished'">{{col.Receive_Qty}}</td>  -->
-                                            <td><input type="text" [name]="col.Product_ID +'3'" [(ngModel)]='col.Receive_Qty' (ngModelChange)='checkdecimal(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                            <td><input type="text" [name]="col.Product_ID +'3'" [(ngModel)]='col.Receive_Qty' (ngModelChange)='ConsumptionCal(rowIndex,col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <!-- <td><input type="text" [name]="col.Product_ID +'1'" [(ngModel)]='col.Closing_Qty' (ngModelChange)='ConsumptionCal(rowIndex)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td> -->
                                             <td><input type="text" [name]="col.Product_ID +'2'" [(ngModel)]='col.Wastage_Qty' (ngModelChange)='ConsumptionCal(rowIndex,col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Remarks' [disabled]="col.remarkdisabled" class="form-control" style="width: 200px;" /></td>
