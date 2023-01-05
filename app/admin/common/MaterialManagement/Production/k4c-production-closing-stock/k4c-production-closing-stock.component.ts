@@ -621,6 +621,7 @@ const end = this.ObjBrowse.end_date
   : this.DateService.dateConvert(new Date());
 
   this.ProClosingStockSearchFormSubmitted = true;
+  this.seachSpinner = true;
   if (valid){
 const tempobj = {
   From_date : start,

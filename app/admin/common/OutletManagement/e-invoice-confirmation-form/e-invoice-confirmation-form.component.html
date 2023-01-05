@@ -77,7 +77,7 @@
                             </div>
                             <div class="table-responsive table-id">
                                 <p-table [value]="PenInvoicelist" #dt [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" 
-                                [globalFilterFields]='["Sub_Ledger_GST","Billing_Name","STATE","POS","Doc_No","Doc_Date","Reverse_Charge","Invoice_Type","Taxable_Amount","CGST_Amount","SGST_Amount","IGST_Amount","Invoice_Value"]'>
+                                [globalFilterFields]='["Sub_Ledger_GST","Billing_Name","STATE","POS","Doc_No","Doc_Date","Reverse_Charge","Invoice_Type","ECOMM_GSTN","Taxable_Amount","CGST_Amount","SGST_Amount","IGST_Amount","Invoice_Value"]'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
@@ -88,6 +88,7 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
+                                            <th>Sl No</th>
                                             <th>Confirmation for E-INV</th>
                                             <th>Action</th>
                                             <th>Sub Ledger GST</th>
@@ -113,8 +114,9 @@
                                             <th>Bill Amount</th> -->
                                         </tr>
                                     </ng-template>
-                                    <ng-template pTemplate="body" let-col>
+                                    <ng-template pTemplate="body" let-col let-i = "rowIndex">
                                         <tr>
+                                            <td align="center">{{ i + 1 }}</td>
                                             <td>
                                                 <!-- style="text-align:center" <input type="checkbox" id="col.confirmationInv" name="col.confirmationInv" value="col.confirmation_Inv"> -->
                                                 <p-checkbox name="col.confirmationInv" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" (ngModelChange)='CheckPenInvQueuelength()' [binary]="true"></p-checkbox>
@@ -224,7 +226,7 @@
                             </div>
                             <div class="table-responsive table-id">
                                 <p-table [value]="FailedInvoicelist" #dt1 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" 
-                                [globalFilterFields]='["Sub_Ledger_GST","Billing_Name","STATE","POS","Doc_No","Doc_Date","Reverse_Charge","Invoice_Type","Taxable_Amount","CGST_Amount","SGST_Amount","IGST_Amount","Invoice_Value"]'>
+                                [globalFilterFields]='["E_Invoice_Status","Sub_Ledger_GST","Billing_Name","STATE","POS","Doc_No","Doc_Date","Reverse_Charge","Invoice_Type","ECOMM_GSTN","Taxable_Amount","CGST_Amount","SGST_Amount","IGST_Amount","Invoice_Value"]'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
@@ -361,7 +363,7 @@
                             </div>
                             <div class="table-responsive table-id">
                                 <p-table [value]="SuccessInvoicelist" #dt2 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" 
-                                [globalFilterFields]='["Sub_Ledger_GST","Billing_Name","STATE","POS","Doc_No","Doc_Date","Reverse_Charge","Invoice_Type","Taxable_Amount","CGST_Amount","SGST_Amount","IGST_Amount","Invoice_Value"]'>
+                                [globalFilterFields]='["Sub_Ledger_GST","Billing_Name","STATE","POS","Doc_No","Doc_Date","Reverse_Charge","Invoice_Type","ECOMM_GSTN","Taxable_Amount","CGST_Amount","SGST_Amount","IGST_Amount","Invoice_Value"]'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
@@ -374,6 +376,7 @@
                                         <tr>
                                             <!-- <th>Confirmation for E-INV</th> -->
                                             <th>Action</th>
+                                            <!-- <th>Sl No</th> -->
                                             <th>Sub Ledger GST</th>
                                             <th>Billing Name</th>
                                             <th>STATE</th>
@@ -390,7 +393,7 @@
                                             <th>Cr Note Value</th>
                                         </tr>
                                     </ng-template>
-                                    <ng-template pTemplate="body" let-col>
+                                    <ng-template pTemplate="body" let-col let-i = "rowIndex">
                                         <tr>
                                             <td>
                                                 <div class="dropdown">
@@ -412,6 +415,7 @@
                                                     </ul>
                                                 </div>
                                             </td>
+                                            <!-- <td align="center">{{ i + 1 }}</td> -->
                                             <!-- <td style="text-align:center">
                                                 <button class="btn btn-primary custombtn" (click)='ViewInvoice(col.Doc_No)' type="button" [id]="col.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
                                                     View
@@ -506,6 +510,7 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
+                                            <th>Sl No</th>
                                             <th>Confirmation for E-CRN</th>
                                             <th>Action</th>
                                             <th>GSTIN/UIN of Recipient</th>
@@ -524,8 +529,9 @@
                                             <th>Cr Note Amount</th>
                                         </tr>
                                     </ng-template>
-                                    <ng-template pTemplate="body" let-obj>
+                                    <ng-template pTemplate="body" let-obj let-i = "rowIndex">
                                         <tr>
+                                            <td align="center">{{ i + 1 }}</td>
                                             <td>
                                                 <!-- <input type="checkbox" id="obj.confirmationCrNote" name="obj.confirmationCrNote" value="obj.confirmation_Credit_Note"> -->
                                                 <p-checkbox name="obj.confirmationCrNote" value="obj.confirmationCrNote" [(ngModel)]="obj.confirmation_Credit_Note" (ngModelChange)='CheckPenNoteQueuelength()' [binary]="true"></p-checkbox>
@@ -627,7 +633,7 @@
                             </div>
                             <div class="table-responsive table-id">
                                 <p-table [value]="FailedCrNotelist" #dt4 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" 
-                                [globalFilterFields]='["GSTIN_UIN_of_Recipient","Receiver_Name","STATE","POS","Invoice_No","Invoice_Date","Note_No","Note_Date","Doc_Type","Taxable_Amt","CGST_Amt","SGST_Amt","IGST_Amt","Note_Amount"]'>
+                                [globalFilterFields]='["E_Invoice_Status","GSTIN_UIN_of_Recipient","Receiver_Name","STATE","POS","Invoice_No","Invoice_Date","Note_No","Note_Date","Doc_Type","Taxable_Amt","CGST_Amt","SGST_Amt","IGST_Amt","Note_Amount"]'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
@@ -776,6 +782,7 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th>Action</th>
+                                            <!-- <th>Sl No</th> -->
                                             <th>GSTIN/UIN of Recipient</th>
                                             <th>Receiver Name</th>
                                             <th>STATE</th>
@@ -792,7 +799,7 @@
                                             <th>Cr Note Amount</th>
                                         </tr>
                                     </ng-template>
-                                    <ng-template pTemplate="body" let-obj>
+                                    <ng-template pTemplate="body" let-obj let-i = "rowIndex">
                                         <tr>
                                             <td>
                                                 <div class="dropdown">
@@ -814,6 +821,7 @@
                                                     </ul>
                                                 </div>
                                             </td>
+                                            <!-- <td align="center">{{ i + 1 }}</td> -->
                                             <!-- <td style="text-align:center">
                                                 <button class="btn btn-primary custombtn" (click)='ViewCrNote(obj.Doc_No)' type="button" [id]="obj.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
                                                     View

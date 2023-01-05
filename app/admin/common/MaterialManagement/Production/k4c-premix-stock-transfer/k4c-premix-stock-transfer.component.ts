@@ -140,15 +140,15 @@ GetBToCostCen(){
         el['value'] = el.Cost_Cen_ID;
       });
       this.ToBcostcenlist = data;
-      if (this.CostCentId_Flag) {
-        this.ObjBrowse.To_Cost_Cen_ID = Number(this.CostCentId_Flag);
+      // if (this.CostCentId_Flag) {
+        this.ObjBrowse.To_Cost_Cen_ID = 49;//Number(this.CostCentId_Flag);
         this.TBCdisableflag = true;
         this.GetBToGodown();
-      } else {
-        this.ObjBrowse.To_Cost_Cen_ID = undefined;
-        this.TBCdisableflag = false;
-        this.GetBToGodown();
-      }
+      // } else {
+      //   this.ObjBrowse.To_Cost_Cen_ID = undefined;
+      //   this.TBCdisableflag = false;
+      //   this.GetBToGodown();
+      // }
       //console.log("To B Cost Cen List ===", this.ToBcostcenlist);
     }
     })
@@ -185,22 +185,24 @@ GetBToGodown(){
 GetFromCostCen(){
     const tempObj = {
       Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      Material_Type : this.MaterialType_Flag ? this.MaterialType_Flag : 'NA'
     }
     const obj = {
-      "SP_String": "SP_K4C_Premix_Stock_Transfer",
-      "Report_Name_String": "Get Cost Centre",
+      "SP_String": "SP_K4C_Premix_Inventory",
+      "Report_Name_String": "Get Cost Centre Non outlet",
       "Json_Param_String": JSON.stringify([tempObj])
     }
   this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      if (data.length) {
-         data.forEach((el:any) => {
-        el['label'] = el.Cost_Cen_Name;
-        el['value'] = el.Cost_Cen_ID;
-         });
+      // if (data.length) {
+      //    data.forEach((el:any) => {
+      //   el['label'] = el.Cost_Cen_Name;
+      //   el['value'] = el.Cost_Cen_ID;
+      //    });
         this.Fcostcenlist = data;
-        this.ObjpremixST.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+        // this.ObjpremixST.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+        this.ObjpremixST.From_Cost_Cen_ID = 2;
       this.GetFromGodown();
-      }
+      // }
      })
 }
 GetFromGodown(){
@@ -214,21 +216,15 @@ GetFromGodown(){
         "Json_Param_String": JSON.stringify([tempObj])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        if (data.length) {
-           data.forEach(el => {
-            el['label'] = el.godown_name;
-            el['value'] = el.godown_id;
-           });
+        // if (data.length) {
+        //    data.forEach(el => {
+        //     el['label'] = el.godown_name;
+        //     el['value'] = el.godown_id;
+        //    });
           this.FromGodownList = data;
-          // this.ObjpremixST.From_godown_id = this.FromGodownList.length === 1 ? this.FromGodownList[0].godown_id : undefined;
           this.ObjpremixST.From_godown_id = 126;
-          // if (this.FromGodownList.length === 1) {
-            // this.FGdisableflag = true;
-          // } else {
-          //   this.FGdisableflag = false;
-          // }
           //console.log("From Godown List ===", this.FromGodownList);
-        }
+        // }
       })
     }
 
@@ -239,23 +235,18 @@ GetToCostCen(){
       "Report_Name_String": "Get Cost Centre Non outlet",
     }
   this.GlobalAPI.getData(obj).subscribe((data: any) => {
-    if (data.length) {
-      data.forEach((el: any) => {
-        el['label'] = el.Cost_Cen_Name;
-        el['value'] = el.Cost_Cen_ID;
-      });
+    // if (data.length) {
+    //   data.forEach((el: any) => {
+    //     el['label'] = el.Cost_Cen_Name;
+    //     el['value'] = el.Cost_Cen_ID;
+    //   });
       this.Tocostcenlist = data;
-      if (this.CostCentId_Flag) {  
-        this.ObjpremixST.To_Cost_Cen_ID = Number(this.CostCentId_Flag);
+      // if (this.CostCentId_Flag) {  
+        this.ObjpremixST.To_Cost_Cen_ID = 49;//Number(this.CostCentId_Flag);
         this.TCdisableflag = true;
         this.GetToGodown();
-      } else {
-        this.ObjpremixST.To_Cost_Cen_ID = undefined;
-        this.TCdisableflag = false;
-        this.GetToGodown();
-      }
      // console.log("To Cost Cen List ===", this.Tocostcenlist);
-    }
+    // }
     })
 }
 GetToGodown(){
@@ -270,11 +261,11 @@ GetToGodown(){
         "Json_Param_String": JSON.stringify([tempObj])
       }
   this.GlobalAPI.getData(obj).subscribe((data: any) => {
-    if (data.length) {
-      data.forEach((el: any) => {
-        el['label'] = el.godown_name;
-        el['value'] = el.godown_id;
-      });
+    // if (data.length) {
+    //   data.forEach((el: any) => {
+    //     el['label'] = el.godown_name;
+    //     el['value'] = el.godown_id;
+    //   });
       this.ToGodownList = data;
       if (this.ToGodownList.length === 1) {
         this.ObjpremixST.To_godown_id = this.ToGodownList[0].godown_id;
@@ -284,7 +275,7 @@ GetToGodown(){
         this.TGdisableflag = false;
       }
      // console.log("To Godown List ===", this.ToGodownList);
-    }
+    // }
       })
 }
 GetIndentList(valid){
@@ -421,7 +412,7 @@ dataforSaveRawMaterialIssue(){
             Product_ID	: item.Product_ID,
             Product_Description	: item.Product_Description,
             Product_Type_ID	: item.Product_Type_ID,
-            Qty	: item.Issue_Qty,
+            Qty	: Number(item.Issue_Qty),
             UOM	: item.UOM,
             Remarks	: " ",
             User_ID	:this.$CompacctAPI.CompacctCookies.User_ID,
@@ -600,23 +591,23 @@ onConfirm(){
   }
 }
 clearData(){
-    this.ObjpremixST.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.ObjpremixST.From_Cost_Cen_ID = 2;
 
-    if (this.CostCentId_Flag) {
-      this.ObjpremixST.To_Cost_Cen_ID = String(this.CostCentId_Flag);
+    // if (this.CostCentId_Flag) {
+      this.ObjpremixST.To_Cost_Cen_ID = 49;//String(this.CostCentId_Flag);
       this.TCdisableflag = true;
       this.GetToGodown();
-      this.ObjBrowse.To_Cost_Cen_ID = String(this.CostCentId_Flag);
+      this.ObjBrowse.To_Cost_Cen_ID = 49;//String(this.CostCentId_Flag);
       this.TBCdisableflag = true;
       this.GetBToGodown();
-      } else {
-        this.ObjpremixST.To_Cost_Cen_ID = undefined;
-        this.TCdisableflag = false;
-        this.GetToGodown();
-        this.ObjBrowse.To_Cost_Cen_ID = undefined;
-        this.TBCdisableflag = false;
-        this.GetBToGodown();
-      }
+      // } else {
+      //   this.ObjpremixST.To_Cost_Cen_ID = undefined;
+      //   this.TCdisableflag = false;
+      //   this.GetToGodown();
+      //   this.ObjBrowse.To_Cost_Cen_ID = undefined;
+      //   this.TBCdisableflag = false;
+      //   this.GetBToGodown();
+      // }
      
       this.ObjpremixST.From_godown_id = 126;
     // this.ObjpremixST.From_godown_id = this.FromGodownList.length === 1 ? this.FromGodownList[0].godown_id : undefined;

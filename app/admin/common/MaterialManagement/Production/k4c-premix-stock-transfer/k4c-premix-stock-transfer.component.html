@@ -161,7 +161,13 @@
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <label class="control-label">From Cost Cent<sup class="text-danger">*</sup></label>
-                                                    <p-dropdown [options]="Fcostcenlist" 
+                                                    <select class="form-control" name="From_Cost_Cen_ID" #From_Cost_Cen_ID="ngModel" [(ngModel)]="ObjpremixST.From_Cost_Cen_ID" (change)="GetFromGodown()" [attr.disabled]="true" [ngClass]="{'clearance':PremixIssueFormSubmitted && From_Cost_Cen_ID?.errors?.required}" required>
+                                                        <option  [ngValue]="undefined">Select</option>
+                                                        <option *ngFor = "let option of Fcostcenlist" [value] ="option.Cost_Cen_ID">
+                                                         {{option.Cost_Cen_Name}}
+                                                        </option>
+                                                    </select>
+                                                    <!-- <p-dropdown [options]="Fcostcenlist" 
                                                         [showClear]="true" 
                                                         [emptyFilterMessage]="' No Cost Cent Found'" 
                                                         [filter]="true" filterBy="label,value.name"
@@ -171,13 +177,19 @@
                                                         [(ngModel)]="ObjpremixST.From_Cost_Cen_ID"
                                                         [ngClass]="{'clearance': PremixIssueFormSubmitted && From_Cost_Cen_ID?.errors?.required}" 
                                                         (onChange)="GetFromGodown()"
-                                                        [disabled]="true"
+                                                        [attr.disabled]="true"
                                                         [required]="true">
-                                                    </p-dropdown>
+                                                    </p-dropdown> -->
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <label class="control-label">From Stock Point<sup class="text-danger">*</sup></label>
-                                                    <p-dropdown [options]="FromGodownList"
+                                                    <select class="form-control" name="From_godown_id" #From_godown_id="ngModel" [(ngModel)]="ObjpremixST.From_godown_id" [attr.disabled]="true" [ngClass]="{'clearance':PremixIssueFormSubmitted && From_godown_id?.errors?.required}" required>
+                                                        <option  [ngValue]="undefined">Select</option>
+                                                        <option *ngFor = "let option of FromGodownList" [value] ="option.godown_id">
+                                                         {{option.godown_name}}
+                                                        </option>
+                                                    </select>
+                                                    <!-- <p-dropdown [options]="FromGodownList"
                                                         [showClear]="true" [emptyFilterMessage]="' No Stock Point Found'"
                                                          [filter]="true" filterBy="label,value.name"
                                                         [resetFilterOnHide]="true" [placeholder]="'Select Stock Point'" 
@@ -185,37 +197,50 @@
                                                          name="From_godown_id" #From_godown_id="ngModel"
                                                         [(ngModel)]="ObjpremixST.From_godown_id"
                                                         [ngClass]="{'clearance': PremixIssueFormSubmitted && From_godown_id?.errors?.required}" 
-                                                        [disabled]="true" 
+                                                        [attr.disabled]="true" 
                                                         [required]="true">
-                                                    </p-dropdown>
+                                                    </p-dropdown> -->
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <label class="control-label">To Cost Cent<sup class="text-danger">*</sup></label>
-                                                    <p-dropdown [options]="Tocostcenlist" 
-                                                        [showClear]="true" [emptyFilterMessage]="' No Cost Cent Found'"
-                                                         [filter]="true" filterBy="label,value.name"
+                                                    <select class="form-control" name="To_Cost_Cen_ID" #To_Cost_Cen_ID="ngModel" [(ngModel)]="ObjpremixST.To_Cost_Cen_ID" (change)="GetFromGodown()" [attr.disabled]="TCdisableflag ? true : null" [ngClass]="{'clearance':PremixIssueFormSubmitted && To_Cost_Cen_ID?.errors?.required}" required>
+                                                        <option  [ngValue]="undefined">Select</option>
+                                                        <option *ngFor = "let option of Tocostcenlist" [value] ="option.Cost_Cen_ID">
+                                                         {{option.Cost_Cen_Name}}
+                                                        </option>
+                                                    </select>
+                                                    <!-- <p-dropdown [options]="Tocostcenlist" 
+                                                        [showClear]="true" 
+                                                        [emptyFilterMessage]="' No Cost Cent Found'" 
+                                                        [filter]="true" filterBy="label,value.name"
                                                         [resetFilterOnHide]="true" [placeholder]="'Select Cost Cent'" 
                                                         [virtualScroll]="true" itemSize="30"
-                                                        name="To_Cost_Cen_ID" #To_Cost_Cen_ID="ngModel" 
-                                                        [(ngModel)]="ObjpremixST.To_Cost_Cen_ID" 
+                                                        name="To_Cost_Cen_ID" #To_Cost_Cen_ID="ngModel"
+                                                        [(ngModel)]="ObjpremixST.To_Cost_Cen_ID"
                                                         [ngClass]="{'clearance': PremixIssueFormSubmitted && To_Cost_Cen_ID?.errors?.required}" 
                                                         (onChange)="GetToGodown()"
-                                                        [disabled]="TCdisableflag"
-                                                        [required]="true">
-                                                    </p-dropdown>
+                                                        [attr.disabled]="TCdisableflag ? true : null "
+                                                        [required]="!TCdisableflag">
+                                                    </p-dropdown> -->
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <label class="control-label">To Stock Point<sup class="text-danger">*</sup></label>
-                                                <p-dropdown [options]="ToGodownList" 
+                                                    <select class="form-control" name="To_godown_id" #To_godown_id="ngModel" [(ngModel)]="ObjpremixST.To_godown_id" [attr.disabled]="TGdisableflag ? true : null" [ngClass]="{'clearance':PremixIssueFormSubmitted && To_godown_id?.errors?.required}" required>
+                                                        <option  [ngValue]="undefined">Select</option>
+                                                        <option *ngFor = "let option of ToGodownList" [value] ="option.godown_id">
+                                                         {{option.godown_name}}
+                                                        </option>
+                                                    </select>
+                                                <!-- <p-dropdown [options]="ToGodownList" 
                                                     [showClear]="true" [emptyFilterMessage]="' No Stock Point Found'" 
                                                     [filter]="true" filterBy="label,value.name"
                                                     [resetFilterOnHide]="true" [placeholder]="'Select Stock Point'" 
                                                     [virtualScroll]="true" itemSize="30"
                                                     name="To_godown_id" #To_godown_id="ngModel" [(ngModel)]="ObjpremixST.To_godown_id"
                                                     [ngClass]="{'clearance': PremixIssueFormSubmitted && To_godown_id?.errors?.required}" 
-                                                    [disabled]="TGdisableflag"
-                                                    [required]="true">
-                                                </p-dropdown>
+                                                    [attr.disabled]="TGdisableflag ? true : null"
+                                                    [required]="!TGdisableflag">
+                                                </p-dropdown> -->
                                                 </div>
                                             </div>
                                         </form>
@@ -273,7 +298,8 @@
                                             <th>Stock Qty</th>
                                             <th>Batch No</th>
                                             <th>Batch Qty</th>                                        
-                                            <th>Issue Qty</th>
+                                            <th *ngIf="MaterialType_Flag == 'Semi Finished'">Issue Qty</th>
+                                            <th *ngIf="MaterialType_Flag == 'Raw Material'">Return Qty</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col >
