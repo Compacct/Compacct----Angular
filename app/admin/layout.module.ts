@@ -416,6 +416,7 @@ import { PrintTinnitusEvauationReportDashboardComponent } from "./common/Patient
 import { OutwardChallanComponent } from './common/MICL/outward-challan/outward-challan.component';
 import { NepalVendorInteractionComponent } from "./common/Procurement/nepal-vendor-interaction/nepal-vendor-interaction.component";
 import { K4cPremixItemClosingStockComponent } from './common/MaterialManagement/Production/k4c-premix-item-closing-stock/k4c-premix-item-closing-stock.component';
+import { SaleBillComponent } from './common/MICL/sale-bill/sale-bill.component';
 
 @NgModule({
   declarations: [
@@ -749,7 +750,8 @@ import { K4cPremixItemClosingStockComponent } from './common/MaterialManagement/
     PrintTinnitusEvauationReportDashboardComponent,
     OutwardChallanComponent,
     NepalVendorInteractionComponent,
-    K4cPremixItemClosingStockComponent
+    K4cPremixItemClosingStockComponent,
+    SaleBillComponent
   ],
   imports: [
     CommonModule,
