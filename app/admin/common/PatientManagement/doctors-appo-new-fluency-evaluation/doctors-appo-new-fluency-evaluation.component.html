@@ -1,0 +1,802 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+           <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView">
+
+                        <form name="DoctorsAppoNewFluencyEvaluation" #DoctorsAppoNewFluencyEvaluationForm="ngForm" novalidate>
+
+                            <!-- Common Part -->
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    name="Name"
+                                    #Name="ngModel" 
+                                    [(ngModel)]="ObjFLUENCY.Name"
+                                    placeholder="Write Your Name"
+                                    disabled
+                                    > 
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Patient ID<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    name="Foot_Fall_ID"
+                                    #Foot_Fall_ID="ngModel"
+                                    [(ngModel)]="ObjFLUENCY.Foot_Fall_ID" 
+                                    CompacctDigitonly="true"
+                                    placeholder="Type Patient ID"
+                                    disabled
+                                    > 
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Sex<sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                    name="Sex"
+                                    #Sex="ngModel"
+                                    [(ngModel)]="ObjFLUENCY.Sex"
+                                    disabled
+                                     >
+                                     <option  [ngValue]="undefined">Select</option>
+                                     <option  *ngFor="let option of GenderList" value="{{option}}">
+                                         {{option}}
+                                     </option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Age<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                    name="Age"
+                                    #Age="ngModel"
+                                    [(ngModel)]="ObjFLUENCY.Age" 
+                                    CompacctDigitonly="true"
+                                    placeholder="Put Your Age"
+                                    disabled
+                                    > 
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                        <div class="label-t">{{Appo_Date ? (Appo_Date | date: "dd/MMM/yyyy") : '-'}}</div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Reffered By<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="Referredby"
+                                        #Referredby="ngModel"
+                                        [(ngModel)]="ObjFLUENCY.Referredby" 
+                                        placeholder="Type Reffered By"
+                                        disabled
+                                        > 
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Centre<sup class="text-danger">*</sup></label> 
+                                        <p-dropdown [options]="CentreList"
+                                                name="Cost_Cen_ID" 
+                                                #Cost_Cen_ID="ngModel" 
+                                                [(ngModel)]="ObjFLUENCY.Cost_Cen_ID"
+                                                [showClear]="true" 
+                                                [emptyFilterMessage]="' No Centre Found'" 
+                                                [filter]="true" 
+                                                filterBy="label,value.name" 
+                                                [resetFilterOnHide]="true" 
+                                                [placeholder]="'Select Centre'" 
+                                                [virtualScroll]="true"
+                                                itemSize="30"
+                                                disabled> 
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Language</label>                                 
+                                        <input class="form-control"
+                                        name="Language1"
+                                        #Language1="ngModel"
+                                        [(ngModel)]="ObjFLUENCY.Language1" 
+                                        placeholder="Type Language"
+                                        > 
+                                    </div>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- GENERAL COMPLAINT -->
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="reactions">GENERAL COMPLAINT</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input class="form-control"
+                                    name="Complaint"
+                                    #Complaint="ngModel" 
+                                    [(ngModel)]="ObjFLUENCY.Complaint"
+                                    placeholder="Write Here..."
+                                    > 
+                                </div>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                             <!-- HISTORY -->
+                             <div class="row">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <th class="table-header" colspan="2">HISTORY</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">First exhibition of dysfluencies</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="dysfluencies"
+                                            #dysfluencies="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.dysfluencies"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">Gradual/sudden onset</th>
+                                        <td>
+                                            <select class="form-control"
+                                            name="onset"
+                                            #onset="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.onset"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of HistoryList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">First noticed by whom</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="noticed"
+                                            #noticed="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.noticed"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">What were the related circumstances</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="circumstances"
+                                            #circumstances="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.circumstances"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">Is the severity increasing/ decreasing</th>
+                                        <td>
+                                            <select class="form-control"
+                                            name="severity"
+                                            #severity="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.severity"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of SeverityList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">Have any family members ever stuttered</th>
+                                        <td>
+                                            <select class="form-control"
+                                            name="stuttered"
+                                            #stuttered="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.stuttered"
+                                            (change)="ShowYes()"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr  *ngIf="IfYes">
+                                        <th style="width: 400px; color: blue;">Describe in case of Yes</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="stuttered_Yes"
+                                            #stuttered_Yes="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.stuttered_Yes"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">History of contact with a stutterer(Relationship, Duration)</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="contact"
+                                            #contact="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.contact"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>  
+                            <hr class="box boxboxDivide-primary">                          
+
+                            <!-- REACTIONS -->
+                            <div class="row">
+                                <p class="reactions">REACTIONS</p>
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <th class="table-header" colspan="2">Reaction to the problem</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">By parents</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="By_parents"
+                                            #By_parents="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.By_parents"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">By self</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="By_self"
+                                            #By_self="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.By_self"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">By others</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="By_others"
+                                            #By_others="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.By_others"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                             <!-- SEVERITY -->
+                            <div class="row">
+                                <p class="reactions">SEVERITY</p>
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <th class="table-header" colspan="2">Variations in stuttering with</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Respect to specific situation</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="situation"
+                                            #situation="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.situation"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Respect to specific individuals</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="individuals"
+                                            #individuals="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.individuals"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Respect to specific sounds</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="sounds"
+                                            #sounds="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.sounds"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Respect to sentence structure</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="structure"
+                                            #structure="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.structure"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="row">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <th class="table-header">AVOIDANCE BEHAVIOUR (SPECIFY)</th>
+                                        <th class="table-header">SITUATION</th>
+                                        <th class="table-header">SOUNDS</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Coping mechanism used</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="coping_situation"
+                                            #coping_situation="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.coping_situation"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                            name="coping_sounds"
+                                            #coping_sounds="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.coping_sounds"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Reported</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="reported_situation"
+                                            #reported_situation="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.reported_situation"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                            name="reported_sounds"
+                                            #reported_sounds="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.reported_sounds"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Observed</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="observed_situation"
+                                            #observed_situation="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.observed_situation"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                        <td>
+                                            <input class="form-control"
+                                            name="observed_sounds"
+                                            #observed_sounds="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.observed_sounds"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- ANALYSIS AND SAMPLE RECORDING -->
+                            <div class="row">
+                                <p class="reactions">ANALYSIS AND SAMPLE RECORDING</p>
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <th class="table-header" colspan="2">Variations in stuttering with</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Number of prolongations</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="prolongations"
+                                            #prolongations="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.prolongations"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Number of reptations</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="reptations"
+                                            #reptations="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.reptations"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Number of hesitations</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="hesitations"
+                                            #hesitations="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.hesitations"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Number of blocks</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="blocks"
+                                            #blocks="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.blocks"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Secondary behaviours</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="behaviours"
+                                            #behaviours="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.behaviours"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- ORAL MOTOR ASSESSMENT -->
+                            <div class="row">
+                                <p class="reactions">ORAL MOTOR ASSESSMENT</p>
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <th class="table-header"></th>
+                                        <th class="table-header">Structurally</th>
+                                        <th class="table-header">Functionally</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Lips</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Structurally_Lips"
+                                                #Structurally_Lips="ngModel" 
+                                                [(ngModel)]="ObjFLUENCY.Structurally_Lips"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of OralList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Functionally_Lips"
+                                            #Functionally_Lips="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.Functionally_Lips"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Tongue</th>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Structurally_Tongue"
+                                            #Structurally_Tongue="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.Structurally_Tongue"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Functionally_Tongue"
+                                                #Functionally_Tongue="ngModel" 
+                                                [(ngModel)]="ObjFLUENCY.Functionally_Tongue"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of OralList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Teeth</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Structurally_Teeth"
+                                                #Structurally_Teeth="ngModel" 
+                                                [(ngModel)]="ObjFLUENCY.Structurally_Teeth"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of OralList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select> 
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Functionally_Teeth"
+                                            #Functionally_Teeth="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.Functionally_Teeth"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Hard Palate</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Structurally_Hard_Palate"
+                                                #Structurally_Hard_Palate="ngModel" 
+                                                [(ngModel)]="ObjFLUENCY.Structurally_Hard_Palate"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of OralList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select> 
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Functionally_Hard_Palate"
+                                            #Functionally_Hard_Palate="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.Functionally_Hard_Palate"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Soft Palate</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Structurally_Soft_Palate"
+                                                #Structurally_Soft_Palate="ngModel" 
+                                                [(ngModel)]="ObjFLUENCY.Structurally_Soft_Palate"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of OralList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select> 
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Functionally_Soft_Palate"
+                                            #Functionally_Soft_Palate="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.Functionally_Soft_Palate"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Mandible</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Structurally_Mandible"
+                                                #Structurally_Mandible="ngModel" 
+                                                [(ngModel)]="ObjFLUENCY.Structurally_Mandible"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of OralList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select> 
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Functionally_Mandible"
+                                            #Functionally_Mandible="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.Functionally_Mandible"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Comment</th>
+                                        <td colspan="2">
+                                            <input class="form-control"
+                                            name="Comment"
+                                            #Comment="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.Comment"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- FORMAL ASSESSMENT FINDINGS -->
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="reactions">FORMAL ASSESSMENT FINDINGS</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input class="form-control"
+                                    name="Findings"
+                                    #Findings="ngModel" 
+                                    [(ngModel)]="ObjFLUENCY.Findings"
+                                    placeholder="Write Here..."
+                                    > 
+                                </div>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- PROVISIONAL DIAGNOSIS -->
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="reactions">PROVISIONAL DIAGNOSIS</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input class="form-control"
+                                    name="Diagnosis"
+                                    #Diagnosis="ngModel" 
+                                    [(ngModel)]="ObjFLUENCY.Diagnosis"
+                                    placeholder="Write Here..."
+                                    > 
+                                </div>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- Overall Comment -->
+                            <div class="row">
+                                <table style="width:100%">
+                                    <tr>
+                                        <th style="width: 100px;">COMMENT</th>
+                                        <td>
+                                            <input 
+                                            class="form-control"
+                                            style="width: 100%; height: 40px;"
+                                            name="Final_Comment"
+                                            #Final_Comment="ngModel" 
+                                            [(ngModel)]="ObjFLUENCY.Final_Comment"
+                                            placeholder="Write Here...">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- RECOMMENDATION & PROGNOSIS -->
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="row mrg"> 
+                                        <label class="control-label">RECOMMENDATION:</label>
+                                        <br>
+                                        <p-checkbox 
+                                        label="Consult Back to Doctor"
+                                        value="Consult Back to Doctor"
+                                        name="RECOMMENDATION"
+                                        [(ngModel)]="CheckBoxRECOMMENDATION"
+                                        inputId="RC1">
+                                        </p-checkbox>
+                                        <br>
+                                        <p-checkbox 
+                                        label="Speech Therapy" 
+                                        value="Speech Therapy" 
+                                        name="RECOMMENDATION"
+                                        [(ngModel)]="CheckBoxRECOMMENDATION"
+                                        inputId="RC2">
+                                        </p-checkbox>
+                                        <br>
+                                        <p-checkbox 
+                                        label="Psychological Evaluation"
+                                        value="Psychological Evaluation"
+                                        name="RECOMMENDATION"
+                                        [(ngModel)]="CheckBoxRECOMMENDATION"
+                                        inputId="RC3">
+                                        </p-checkbox>
+                                        <br>
+                                        <p-checkbox 
+                                        label="Audiological Evaluation"
+                                        value="Audiological Evaluation"
+                                        name="RECOMMENDATION"
+                                        [(ngModel)]="CheckBoxRECOMMENDATION"
+                                        inputId="RC4">
+                                        </p-checkbox>
+                                        <br>
+                                        <p-checkbox 
+                                        label="Follow Up"
+                                        value="Follow Up"
+                                        name="RECOMMENDATION"
+                                        [(ngModel)]="CheckBoxRECOMMENDATION"
+                                        inputId="RC5">
+                                        </p-checkbox>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="control-label">PROGNOSIS</label>
+                                    <select class="form-control"
+                                    name="Prognosis"
+                                    #Prognosis="ngModel"
+                                    [(ngModel)]="ObjFLUENCY.Prognosis"
+                                     >
+                                     <option  [ngValue]="undefined">Select</option>
+                                     <option  *ngFor="let option of PrognosisList" value="{{option}}">
+                                         {{option}}
+                                     </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Button -->
+                            <div class="form-group" style="padding: 1em;">
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-2"></div>
+                                <div class="col-sm-2">
+                                    <button *ngIf="buttonValid" class="btn btn-primary pull-right" (click)="saveDocAppo(DoctorsAppoNewFluencyEvaluationForm.form.valid)"  id="load"   [disabled]="">
+                                        <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                    </button>
+                                </div> 
+                            </div>
+
+                        </form>
+
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
