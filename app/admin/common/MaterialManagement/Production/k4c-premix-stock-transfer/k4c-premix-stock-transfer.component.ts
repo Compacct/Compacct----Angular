@@ -581,11 +581,20 @@ onConfirm(){
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
-          severity: "error",
+          severity: "success",
           summary: "Doc No.: " + this.ObjpremixST.Doc_No.toString(),
           detail: "Succesfully Deleted"
         });
         this.clearData();
+      }
+      else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error occured"
+          });
       }
     })
   }
