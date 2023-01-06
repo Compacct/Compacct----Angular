@@ -321,6 +321,9 @@ import { OutwardChallanComponent } from './common/MICL/outward-challan/outward-c
 import { NepalVendorInteractionComponent } from "./common/Procurement/nepal-vendor-interaction/nepal-vendor-interaction.component";
 import { K4cPremixItemClosingStockComponent } from './common/MaterialManagement/Production/k4c-premix-item-closing-stock/k4c-premix-item-closing-stock.component';
 import { SaleBillComponent } from "./common/MICL/sale-bill/sale-bill.component";
+import { DoctorsAppoNewFluencyEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-fluency-evaluation/doctors-appo-new-fluency-evaluation.component";
+import { PrintSpeechEvauationReportDashboardComponent } from "./common/PatientManagement/print-speech-evauation-report-dashboard/print-speech-evauation-report-dashboard.component";
+import { SpeechEvauationReportDashboardComponent } from "./common/PatientManagement/speech-evauation-report-dashboard/speech-evauation-report-dashboard.component";
 
 
 const layoutRoutes: Routes = [{
@@ -2422,6 +2425,27 @@ path: 'MICL_Cost_Center_Master',
     component: SaleBillComponent,
     data: {
       title: 'Sale Bill'
+}
+},
+{
+  path: 'Doctors_Appo_New_Fluency_Evaluation',
+    component: DoctorsAppoNewFluencyEvaluationComponent,
+    data: {
+      title: 'FLUENCY EVALUATION REPORT'
+}
+},
+{
+  path: 'Print_Speech_Evauation_Report_Dashboard',
+    component: PrintSpeechEvauationReportDashboardComponent,
+    data: {
+      title: 'Print Speech Evauation Report Dashboard'
+}
+},
+{
+  path: 'Speech_Evauation_Report_Dashboard',
+    component: SpeechEvauationReportDashboardComponent,
+    data: {
+      title: 'Speech Evauation Report Dashboard'
 }
 },
     
