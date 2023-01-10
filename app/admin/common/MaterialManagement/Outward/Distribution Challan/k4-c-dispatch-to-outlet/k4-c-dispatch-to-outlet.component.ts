@@ -196,6 +196,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
     this.ObjBrowseData.Brand_ID = undefined;
     this.ObjBrowseData.Cost_Cen_ID = undefined;
     this.clearData();
+    this.seachSpinner = false;
     this.todayDate = new Date();
     this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
     this.SelectedIndent = [];
@@ -1125,6 +1126,9 @@ searchData(valid){
       this.seachSpinner = false;
      // this.Objdispatch.From_Godown_ID = this.FromGodownList.length === 1 ? this.FromGodownList[0].From_Godown_ID : undefined;
     })
+  }
+  else {
+    this.seachSpinner = false;
   }
 
 }

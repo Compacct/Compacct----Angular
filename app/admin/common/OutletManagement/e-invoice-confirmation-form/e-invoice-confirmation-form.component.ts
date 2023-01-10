@@ -83,6 +83,10 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       Link: " E-Invoice Confirmation "
     });
     // this.getMaterialType();
+  //   setInterval(() => {
+  //     this.GetFailedInvoicelist();
+  //     this.GetFailedCrNotelist();
+  //  }, 60000);
   }
   TabClick(e){
     //console.log(e)
