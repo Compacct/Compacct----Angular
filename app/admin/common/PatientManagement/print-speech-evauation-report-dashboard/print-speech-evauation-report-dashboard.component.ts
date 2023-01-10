@@ -15,6 +15,7 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
 })
 export class PrintSpeechEvauationReportDashboardComponent implements OnInit {
   AppoIDvalue:number;
+  tabIndexToView = 0;
 
   constructor(
     private GlobalAPI:CompacctGlobalApiService,

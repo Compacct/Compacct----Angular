@@ -40,6 +40,7 @@ export class SaleBillComponent implements OnInit {
   SerarchSaleBill: any = [];
   SerarchSaleBillHeader: any = [];
   DocNo :any  = undefined;
+  Spinner = false;
   constructor(
     private Header: CompacctHeader,
     private $http: HttpClient,
