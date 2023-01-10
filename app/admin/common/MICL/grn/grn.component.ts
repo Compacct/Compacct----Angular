@@ -374,9 +374,9 @@ export class GrnComponent implements OnInit {
  }
  Calculate() {
   //this.ExpiredProductFLag = false;
- if(Number(this.ObjGRN.Received_Qty) && Number(this.ObjGRN.Accepted_Qty)) {
-   this.ObjGRN.Rejected_Qty = Number(Number(this.ObjGRN.Received_Qty) - Number(this.ObjGRN.Accepted_Qty)).toFixed(2);
-  //  this.ObjGRN.Rejected = Number(Number(this.ObjGRN.Challan) - Number(this.ObjGRN.Received)).toFixed(2);
+ if(Number(this.ObjGRN.Challan_Qty) && Number(this.ObjGRN.Accepted_Qty)) {
+  //  this.ObjGRN.Rejected_Qty = Number(Number(this.ObjGRN.Received_Qty) - Number(this.ObjGRN.Accepted_Qty)).toFixed(2);
+   this.ObjGRN.Rejected_Qty = Number(Number(this.ObjGRN.Challan_Qty) - Number(this.ObjGRN.Accepted_Qty)).toFixed(2);
   //  this.ObjGRN.Accepted = Number(Number(this.ObjGRN.Challan) - Number(this.ObjGRN.Rejected)).toFixed(2);
   }
   else {

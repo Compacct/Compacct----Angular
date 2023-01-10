@@ -196,6 +196,7 @@ export class K4cFactoryReturnComponent implements OnInit {
     this.ExpiredProductFLag = false;
     this.getReturnReason("N");
     this.checkboxdisable = false;
+    this.seachSpinner = false;
   }
   // CREATE TAB
   getDate(){
@@ -882,6 +883,7 @@ export class K4cFactoryReturnComponent implements OnInit {
  GetSearchedlist(valid){
   this.SearchFactoryFormSubmit = true;
   this.Searchedlist = [];
+  this.seachSpinner = true;
   const start = this.ObjBrowse.start_date
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
   : this.DateService.dateConvert(new Date());
@@ -2047,6 +2049,40 @@ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
  }
 
  })
+}
+
+UpdateQty(objdata){
+  if(objdata.Doc_No){
+    const tempobj = {
+      Doc_No : objdata.Doc_No
+    }
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "RTF Update Qty For Resubmit",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data[0].Column1){
+        this.compacctToast.clear();
+           this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Doc No. " + data[0].Column1,
+            detail: "Succesfully Update Qty"
+          });
+          this.GetSearchedlist(true);
+        }
+        else {
+         this.compacctToast.clear();
+         this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "error",
+           summary: "Warn Message",
+           detail: "Error Occured "
+         });
+       }
+     })
+     }
 }
 
 

@@ -127,6 +127,11 @@
                                                                 <i class="fa fa-print" aria-hidden="true"></i> Print
                                                             </a>
                                                         </li>
+                                                        <li *ngIf="col.CR_No === 'NA' && col.Bill_No === 'NA' && col.franchise === 'Y'">
+                                                            <a (click)="UpdateQty(col)">
+                                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update Qty
+                                                            </a>
+                                                        </li>
                                                         <li *ngIf="col.Accepted_Qty == 0  &&  $CompacctAPI.CompacctCookies.Cost_Cen_ID != col.To_Cost_Cen_ID">
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-trash" aria-hidden="true"></i> Delete

@@ -1729,7 +1729,7 @@ gettermsdetails(){
     //console.log("tempobj==",tempobj)
     const obj = {
     "SP_String": "Sp_Returnable_Gate_Pass",
-    "Report_Name_String": "Browse_Pending_Maintenance_Indent",
+    "Report_Name_String": "Browse_Pending_Maintenance_Indent_For_Work_Order",
     "Json_Param_String": JSON.stringify([tempobj])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
