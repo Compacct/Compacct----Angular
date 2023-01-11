@@ -420,6 +420,8 @@ import { SaleBillComponent } from './common/MICL/sale-bill/sale-bill.component';
 import { DoctorsAppoNewFluencyEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-fluency-evaluation/doctors-appo-new-fluency-evaluation.component";
 import { PrintSpeechEvauationReportDashboardComponent } from "./common/PatientManagement/print-speech-evauation-report-dashboard/print-speech-evauation-report-dashboard.component";
 import { SpeechEvauationReportDashboardComponent } from "./common/PatientManagement/speech-evauation-report-dashboard/speech-evauation-report-dashboard.component";
+import { DoctorsAppoNewChildSpeechEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-child-speech-evaluation/doctors-appo-new-child-speech-evaluation.component";
+import { DoctorsAppoNewAdultSpeechEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-adult-speech-evaluation/doctors-appo-new-adult-speech-evaluation.component";
 
 @NgModule({
   declarations: [
@@ -757,7 +759,9 @@ import { SpeechEvauationReportDashboardComponent } from "./common/PatientManagem
     SaleBillComponent,
     DoctorsAppoNewFluencyEvaluationComponent,
     PrintSpeechEvauationReportDashboardComponent,
-    SpeechEvauationReportDashboardComponent
+    SpeechEvauationReportDashboardComponent,
+    DoctorsAppoNewChildSpeechEvaluationComponent,
+    DoctorsAppoNewAdultSpeechEvaluationComponent
   ],
   imports: [
     CommonModule,

@@ -149,8 +149,9 @@ export class MiclPurchaseBillComponent implements OnInit {
   SelectedDistProject:any = []
   DistSubledger:any = []
   SelectedSubledger:any = []
-  bckUpQty:any = undefined
-  bckUpQtyValid:boolean = false
+  bckUpQty:any = undefined;
+  bckUpQtyValid:boolean = false;
+  editDocNo : any;
 
   constructor(
     private Header: CompacctHeader,
@@ -209,6 +210,7 @@ export class MiclPurchaseBillComponent implements OnInit {
      this.POorderlist = [];
     //  this.GetProductdetails();
      this.ObjProductInfo = new ProductInfo();
+     this.editDocNo = undefined;
    }
    clearData(){
      this.ObjPurChaseBill = new PurChaseBill();
@@ -494,28 +496,6 @@ export class MiclPurchaseBillComponent implements OnInit {
       //  this.ChangePurchaseOrder();
     //  }
   }
-  //  GetProductdetails(){
-  //   this.ProductDetails = [];
-  //   this.ObjProductInfo.Product_ID = undefined;
-  //     const obj = {
-  //       "SP_String": "SP_MICL_Purchase_Bill_New",
-  //       "Report_Name_String": "Get_All_Products"
-  //     }
-  //     this.GlobalAPI.getData(obj).subscribe((data:any)=> {
-  //       // data.forEach(element => {
-  //       //   element['label'] = element.Product_Description,
-  //       //   element['value'] = element.Product_ID
-  //       // });
-  //       this.ProductDetails = data;
-  //     // } else {
-  //     //   this.ProductDetails = [];
-  //     // }
-  //       //this.SpinnerShow = false;
-  //      // console.log("this.ProductDetails",this.ProductDetails);
-  //     })
-  //   //  }
-  
-  // }
 GetGRNNoProductdetails(){
   this.GRNNoProlist = [];
   if (this.ObjProductInfo.GRN_No) {
@@ -529,7 +509,7 @@ GetGRNNoProductdetails(){
     this.GRNNoProlist.forEach(item=>{
       item.Product_ID = item.value;
       item.Product_Name = item.label;
-      item.Discount_Type_Amt = 0;
+      item.Discount_Type_Amount = 0;
       item.Discount = 0;
     })
     this.CalculateCessAmt();
@@ -540,66 +520,6 @@ GetGRNNoProductdetails(){
 }
 
 }
-GetGRNNoProlistdetails2(){
-  this.ProductDetails = [];
-  this.ObjProductInfo.Product_Specification = undefined;
-  const obj = {
-    "SP_String": "SP_MICL_Purchase_Bill_New",
-    "Report_Name_String": "Get_GRN_Product_list",
-    "Json_Param_String": JSON.stringify([{GRN_No : this.ObjProductInfo.GRN_No,}])
-  }
-  this.GlobalAPI.getData(obj).subscribe((data:any)=> {
-      this.ProductDetails = data;
-   // console.log("this.ProductDetails",this.ProductDetails);
-  })
-
-}
-  ProductChange(){
-    this.ObjProductInfo.Product_Specification = undefined;
-    this.Is_Service = false;
-    this.Maintain_Serial_No = false;
-    this.ObjProductInfo.Product_Expiry = false;
-    this.ObjProductInfo.HSN_No = undefined;
-    this.ObjProductInfo.Qty = 0;
-    this.ObjProductInfo.UOM = undefined;
-    this.ObjProductInfo.Rate = undefined;
-    this.Cess_Ledger_ID = undefined;
-    if(this.ObjProductInfo.Product_ID) {
-      const ctrl = this;
-      const ProductObj = $.grep(ctrl.ProductDetails,function(item: any) {return item.value == ctrl.ObjProductInfo.Product_ID})[0];
-      console.log(ProductObj);
-      this.ObjProductInfo.Product_Specification = ProductObj.label;
-      this.Is_Service = ProductObj.Is_Service;
-      this.Maintain_Serial_No = ProductObj.Maintain_Serial_No;
-      if (this.Maintain_Serial_No) {
-        this.ObjProductInfo.Qty = 1;
-      } 
-      else {
-      this.ObjProductInfo.Qty = ProductObj.Qty;
-      }
-       this.bckUpQty = this.ObjProductInfo.Qty
-      this.Batch_No = ProductObj.Batch_No
-      this.ObjProductInfo.Batch_Number = ProductObj.Batch_No;
-      this.ObjProductInfo.Product_Expiry = ProductObj.Product_Expiry;
-      if (this.ObjProductInfo.Product_Expiry === 'true') {
-        this.ProductExpirydisabled = true;
-      } else {
-        this.ProductExpirydisabled = false;
-      }
-      this.ObjProductInfo.HSN_No = ProductObj.HSN_No;
-      this.ObjProductInfo.UOM = ProductObj.UOM;
-      this.ObjProductInfo.Rate = ProductObj.MRP;
-       this.CalCulateTotalAmt();
-      this.ObjProductInfo.CGST_Rate = ProductObj.CGST_Rate;
-      this.ObjProductInfo.SGST_Rate = ProductObj.SGST_Rate;
-      this.ObjProductInfo.IGST_Rate = ProductObj.IGST_Rate;
-      this.Cess_Ledger_ID = ProductObj.Cess_Ledger_ID;
-      if (this.Cess_Ledger_ID == 0)
-        this.cessdisabled = true;
-     } else {
-      this.cessdisabled = false;
-     }
-  }
   CalCulateTotalAmt(){
     this.ObjProductInfo.Amount = 0;
     if (this.ObjProductInfo.Qty && this.ObjProductInfo.Rate) {
@@ -628,7 +548,7 @@ GetGRNNoProlistdetails2(){
   }
   DiscChange(col){
     if(!col.Discount_Type){
-      col.Discount_Type_Amt = 0;
+      col.Discount_Type_Amount = 0;
       col.Discount = 0;
       this.AfterDiscCalChange(col);
       this.calculategstamt();
@@ -636,7 +556,7 @@ GetGRNNoProlistdetails2(){
       this.calculatenetamt();
     } 
     else {
-      col.Discount_Type_Amt = undefined;
+      col.Discount_Type_Amount = undefined;
       col.Discount = undefined;
       this.AfterDiscCalChange(col);
       this.calculategstamt();
@@ -647,16 +567,16 @@ GetGRNNoProlistdetails2(){
   AfterDiscCalChange(col){
     col.Discount = 0;
     col.Taxable_Amount = 0;
-    if (col.Discount_Type_Amt) { 
+    if (col.Discount_Type_Amount) { 
       var disamt;
       var taxamt;
     if(col.Discount_Type == "%") {
-      disamt = Number((Number(col.Amount) * Number(col.Discount_Type_Amt)) / 100).toFixed(2);
+      disamt = Number((Number(col.Amount) * Number(col.Discount_Type_Amount)) / 100).toFixed(2);
       col.Discount =Number(disamt);
       this.ListofTotalAmount();
     }
     if(col.Discount_Type == "AMT") {
-      col.Discount = Number(col.Discount_Type_Amt);
+      col.Discount = Number(col.Discount_Type_Amount);
       this.ListofTotalAmount();
     }
     taxamt = Number(Number(col.Amount) - Number(col.Discount)).toFixed(2);
@@ -777,7 +697,7 @@ GetGRNNoProlistdetails2(){
       Rate : this.ObjProductInfo.Rate,
       Amount : Number(this.ObjProductInfo.Amount),
       Discount_Type : this.ObjProductInfo.Discount_Type,
-      Discount_Type_Amount : this.ObjProductInfo.Discount_Type_Amt ? Number(this.ObjProductInfo.Discount_Type_Amt) : 0,
+      Discount_Type_Amount : this.ObjProductInfo.Discount_Type_Amount ? Number(this.ObjProductInfo.Discount_Type_Amount) : 0,
       Discount : this.ObjProductInfo.Discount ? Number(this.ObjProductInfo.Discount) : 0,
       Taxable_Amount : Number(this.ObjProductInfo.Taxable_Amount),
       CGST_Rate : Number(this.ObjProductInfo.CGST_Rate),
@@ -1092,9 +1012,9 @@ GetGRNNoProlistdetails2(){
     // }
    }
   clearProject(){
-    if(this.openProject === "Y"){
-      this.ProjectInput.clearData()
-    }
+    // if(this.openProject === "Y"){
+    //   this.ProjectInput.clearData()
+    // }
   }
    whateverCopy(obj) {
     return JSON.parse(JSON.stringify(obj))
@@ -1115,6 +1035,7 @@ GetGRNNoProlistdetails2(){
     return projectData
    }
   DataForSavePurchaseBill(){
+    this.ObjPurChaseBill.Doc_No = this.editDocNo ? this.editDocNo : "A";
     this.ObjPurChaseBill.Doc_Date = this.DateService.dateConvert(new Date(this.DocDate));
     this.ObjPurChaseBill.Supp_Ref_Date = this.DateService.dateConvert(new Date(this.SupplierBillDate));
     this.ObjPurChaseBill.CN_Date = this.ObjPurChaseBill.CN_Date ? this.DateService.dateConvert(new Date(this.CNDate)) : "01/Jan/1900";
@@ -1261,6 +1182,12 @@ GetGRNNoProlistdetails2(){
        this.GetSerarchPurBill(true);
        this.GetPendingPO(true);
        this.GetPendingGRN(true);
+       if(this.editDocNo) {
+        this.editDocNo = undefined;
+        this.tabIndexToView = 0;
+        this.items = [ 'BROWSE', 'CREATE','PENDING GRN'];
+        this.buttonname = "Create";
+       }
       // }
      }
     else if (data[0].Column1 === "Total Dr Amt And Cr Amt Not matched") {
@@ -1362,6 +1289,41 @@ GetGRNNoProlistdetails2(){
    // console.log("Get All Data",this.SerarchPurBillList);
   })
   }
+  }
+  EditPurchaseBill(col){
+    this.editDocNo = undefined;
+    if(col.Doc_No){
+     this.editDocNo = col.Doc_No
+     this.tabIndexToView = 1;
+    this.items = [ 'BROWSE', 'UPDATE','PENDING GRN'];
+    this.buttonname = "Update";
+    this.geteditData(col.Doc_No);
+    }
+  }
+  geteditData(Dno){
+    const obj = {
+      "SP_String": "SP_MICL_Purchase_Bill_New",
+      "Report_Name_String": "Purchase_Bill_Edit_Data",
+      "Json_Param_String": JSON.stringify([{Doc_No : Dno}])
+   }
+    this.GlobalAPI.getData(obj).subscribe((res:any)=>{
+      let data = JSON.parse(res[0].Column1)
+      console.log("Edit data",data);
+      this.ObjPurChaseBill = data[0],
+      this.maindisabled = true;
+      this.ObjPurChaseBill.Choose_Address = "MAIN";
+      // this.getreq();
+      this.DocDate = new Date(data[0].Doc_Date);
+      this.SupplierBillDate = new Date(data[0].Supp_Ref_Date);
+      this.CNDate = new Date(data[0].CN_Date);
+      this.GRNNoProlist = data[0].L_element;
+      this.AddTermList = data[0].TERM_element ? data[0].TERM_element : [] ;
+      this.AddTdsDetails = data[0].TDS_element ? data[0].TDS_element : [] ;
+      // console.log("addPurchaseList",this.addPurchaseList)
+      if(this.GRNNoProlist.length || this.AddTermList.length){
+        this.ListofTotalAmount()
+      }
+    })
   }
   Print(DocNo) {
     if(DocNo) {
@@ -1603,6 +1565,7 @@ GetGRNNoProlistdetails2(){
   }
 }
 class PurChaseBill {
+  Doc_No : any;
   Choose_Address : any;
   Doc_Date : any;
   Company_ID: any;
@@ -1704,7 +1667,7 @@ class ProductInfo {
   MRP = 0;
   Amount: number;
   Discount_Type = undefined;
-  Discount_Type_Amt : number;
+  Discount_Type_Amount : number;
   Discount : number;
   Taxable_Amount : number;
   Godown_Id: any;
