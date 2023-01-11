@@ -118,7 +118,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.items1 = ["TO-DO Status", "TO-DO Update"];
     this.Header.pushHeader({
       Header: "Purchase Order",
-      Link: " Procurement ->  Nepal BL Txn Purchase Order"
+      Link: " Procurement -> Transaction ->  Purchase Order"
     });
     this.DocDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
     this.BrowseStartDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
@@ -360,7 +360,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         if (data.length) {
-         // console.log("Searchedlist", data)
+          console.log("Searchedlist", data)
           this.Searchedlist = data
           data.forEach((y: any) => {
             y.Doc_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(y.Doc_Date);

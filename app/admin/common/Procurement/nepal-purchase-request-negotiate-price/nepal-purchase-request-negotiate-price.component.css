@@ -36,3 +36,7 @@ body .ui-dropdown.ui-dropdown-clearable .ui-dropdown-label{
     border-radius: 3px !important;
     margin-top: 5px !important;
 }
+ div.label-t {
+     padding: 6px 12px;
+     background: rgb(206 216 216 / 51%);
+ }
