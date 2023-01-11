@@ -153,11 +153,11 @@
                                                                         <span class="caret"></span>
                                                                     </button>
                                                         <ul class="dropdown-menu">
-                                                            <!-- <li>
-                                                                    <a (click)="Edit(col)">
+                                                            <li>
+                                                                    <a (click)="EditPurchaseBill(col)">
                                                                         <i class="fa fa-fw fa-pencil"></i> Edit
                                                                     </a>
-                                                                </li> -->
+                                                                </li>
                                                                 <li>
                                                                     <a (click)="Print(col.Doc_No)">
                                                                         <i class="fa fa-fw fa-print"></i> Print
@@ -522,225 +522,6 @@
                                             </div>
                                             
                                             <br>
-                                            <!-- <hr class="box boxboxDivide-primary ng-scope">
-                                                <div class="form-group">
-                                                <div [ngClass]="ProductExpirydisabled ? 'col-sm-3' : 'col-sm-6'">
-                                                  <label class="control-label"
-                                                    >Product Details&nbsp;<span class="text-danger">*</span></label>
-                                                  <p-dropdown
-                                                    [options]="ProductDetails"
-                                                    name="product"
-                                                    [(ngModel)]="ObjProductInfo.Product_ID"
-                                                    [showClear]="true"
-                                                    [emptyFilterMessage]="' No Product Found'"
-                                                    (onChange)="ProductChange()"
-                                                    [filter]="true"
-                                                    filterBy="label,value.name"
-                                                    [placeholder]="'Select Product'"
-                                                    [virtualScroll]="true"
-                                                    itemSize="30"
-                                                    #product="ngModel"
-                                                    [styleClass]="
-                                                      ProductInfoSubmitted && product.errors?.required
-                                                        ? 'clearance'
-                                                        : ''
-                                                    "
-                                                    [required]="true"
-                                                  >
-                                                  </p-dropdown>
-                                                </div>
-                                                <div Class="col-sm-3">
-                                                  <label class="control-label">Product Specification<sup class="text-danger"></sup></label>
-                                                  <input
-                                                    class="form-control"
-                                                    name="Description"
-                                                    #Description="ngModel"
-                                                    [(ngModel)]="ObjProductInfo.Product_Specification"
-                                                    [required]="true"
-                                                    placeholder="Product Specification"/>
-                                                </div>
-                                                <div class="col-sm-3" *ngIf="Maintain_Serial_No">
-                                                    <label class="control-label">Serial No<sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="serialno" #serialno="ngModel"
-                                                      [ngClass]="{clearance:ProductInfoSubmitted && serialno?.errors?.required}"
-                                                      [(ngModel)]="ObjProductInfo.Serial_No"
-                                                      required
-                                                      id = "serialnumber"
-                                                      placeholder="Serial No"/>
-                                                  </div>
-                                                  <div class="col-sm-3" *ngIf="!Maintain_Serial_No">
-                                                    <label class="control-label">Batch No.<sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="batchno" #batchno="ngModel"
-                                                      [ngClass]="{clearance:ProductInfoSubmitted && batchno?.errors?.required}"
-                                                      [(ngModel)]="ObjProductInfo.Batch_Number"
-                                                      [required]="true"
-                                                      [disabled]="Is_Service"
-                                                      placeholder="Batch No"
-                                                    />
-                                                  </div>
-                                                 <div class="col-sm-3" *ngIf="ProductExpirydisabled">
-                                                  <label class="control-label"
-                                                    >Expriy Date<sup class="text-danger">*</sup></label
-                                                  >
-                                                  <div class="input-group date">
-                                                    <div class="input-group-addon">
-                                                      <i class="fa fa-calendar"></i>
-                                                    </div>
-                                                    <input style="width: 90%;" type="month" name="exdate" #exdate="ngModel" [(ngModel)]="expiryDate" [ngClass]="{clearance:ProductInfoSubmitted && exdate?.errors?.required}" required>
-                                                  </div>
-                                                </div>
-                                                </div>
-                                                <div class="form-group">
-                                                <div class="col-sm-3">
-                                                    <label class="control-label">HSN No<sup class="text-danger"></sup></label>
-                                                    <input class="form-control" name="HSNNo" #HSNNo="ngModel"
-                                                      [ngClass]="{clearance:ProductInfoSubmitted && HSNNo?.errors?.required}"
-                                                      [(ngModel)]="ObjProductInfo.HSN_No"
-                                                      [required]="false"
-                                                      [disabled]="true"
-                                                      placeholder="HSN No"
-                                                    />
-                                                  </div>
-                                                  <div class="col-sm-3">
-                                                      <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
-                                                      <select class="form-control" 
-                                                      name="godown" 
-                                                      #godown="ngModel" 
-                                                      [(ngModel)]="ObjProductInfo.Godown_Id"
-                                                      [disabled]="Is_Service || openProject === 'Y'"
-                                                      [ngClass]="{clearance:ProductInfoSubmitted && godown?.errors?.required}" required
-                                                      >
-                                                      <option  [ngValue]="undefined">Select</option>
-                                                         <option *ngFor = "let option of GodownList" [value] ="option.godown_id">
-                                                            {{option.godown_name}}
-                                                          </option>
-                                                    </select>
-                                                  </div>
-                          
-                                                <div class="col-sm-1">
-                                                    <label class="control-label">Qty<sup class="text-danger">*</sup></label>
-                                                
-                                                    <input class="form-control" 
-                                                    name="qty" #qty="ngModel" 
-                                                    [(ngModel)]="ObjProductInfo.Qty" (ngModelChange)="CalCulateTotalAmt()"
-                                                    [ngClass]="{clearance:(ProductInfoSubmitted && qty?.errors?.required) || chkqut() }" [disabled]="Maintain_Serial_No" [required]="true"
-                                                      CompacctDigitonly="true" placeholder="Qty"/>
-                                                    
-                                                </div>
-                                                <div class="col-sm-1" style="width: 8.33333333%; margin-top: 7px; margin-left: -1.8pc;">
-                                                    <label></label>
-                                                  <input class="form-control" name="unit" #unit="ngModel" [(ngModel)]="ObjProductInfo.UOM"
-                                                    [ngClass]="{clearance:ProductInfoSubmitted && unit?.errors?.required}"
-                                                     disabled="true" placeholder="Unit" />
-                                                </div>
-                                                <div class="col-sm-2">
-                                                    <label class="control-label">Rate<sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="rate" type="text"
-                                                      [ngClass]="{clearance:ProductInfoSubmitted && rate?.errors?.required}"
-                                                      #rate="ngModel"
-                                                      [(ngModel)]="ObjProductInfo.Rate"
-                                                      (ngModelChange)="CalCulateTotalAmt()"
-                                                      CompacctDigitonly="true"
-                                                      [required]="true"
-                                                      placeholder="Rate"
-                                                      [disabled]="ObjProductInfo.Pur_Order_No"
-                                                    />
-                                                  </div>
-                                                <div class="col-sm-2">
-                                                  <label class="control-label"
-                                                    >Total Amount<sup class="text-danger">*</sup></label>
-                                                  <input class="form-control" name="tolamt" #tolamt="ngModel" [(ngModel)]="ObjProductInfo.Amount" 
-                                                  [disabled]="true" CompacctDigitonly="true" placeholder="Total Amount"/>
-                                                </div>
-                                                </div>
-                                                <div class="form-group">
-                                                <div class="col-sm-2">
-                                                    <label class="control-label">Discount Type<sup class="text-danger"></sup></label>
-                                                    
-                                                    <select class="form-control" 
-                                                    name="DiscountType" 
-                                                    #DiscountType="ngModel" 
-                                                    [(ngModel)]="ObjProductInfo.Discount_Type"
-                                                    (ngModelChange)="DiscChange()">
-                                                       <option  [ngValue]="undefined">Select</option>
-                                                       <option value ="%">%</option>
-                                                       <option value ="AMT">AMT</option>
-                                                  </select>
-                                                  
-                                                </div>
-                                                <div class="col-sm-1" style="width: 8.33333333%; margin-top: 7px; margin-left: -1.8pc;">
-                                                    <label></label>
-                                                    
-                                                    <input type="text"
-                                                    class="form-control"
-                                                    name="Discount"
-                                                    #Discount="ngModel"
-                                                    [(ngModel)]="ObjProductInfo.Discount_Type_Amt"
-                                                    (ngModelChange)="AfterDiscCalChange()"
-                                                    [disabled]="!ObjProductInfo.Discount_Type"
-                                                    placeholder="Discount"
-                                                    CompacctDigitonly="true"
-                                                    >
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <label class="control-label">Discount Amount<sup class="text-danger"></sup></label>
-                                                <input type="text"
-                                                class="form-control"
-                                                name="Discount_AMT"
-                                                #Discount_AMT="ngModel"
-                                                [(ngModel)]="ObjProductInfo.Discount"
-                                                placeholder="Discount AMT"
-                                                CompacctDigitonly="true"
-                                                 disabled>
-                                            </div>
-                                            
-                                    <div class="col-sm-3">
-                                        <label class="control-label">Taxable Amount<sup class="text-danger"></sup></label>
-                                            <input type="text"
-                                        class="form-control"
-                                        name="taxable_AMT"
-                                        #taxable_AMT="ngModel"
-                                        [(ngModel)]="ObjProductInfo.Taxable_Amount"
-                                        CompacctDigitonly="true"
-                                        placeholder="Taxable AMT"
-                                        disabled
-                                        >
-                                        </div>
-                                        
-                                        <div class="col-sm-2">
-                                            <label>CESS Percentage<sup class="text-danger"></sup></label>
-                                            <div class="input-group">
-                                              <input class="form-control" name="CESSPercentage" #CESSPercentage="ngModel" [(ngModel)]="ObjProductInfo.CESS_Percentage"
-                                               (ngModelChange)="CalculateCessAmt()" [disabled]="cessdisabled" CompacctDigitonly="true" placeholder="CESS">
-                                              <span class="input-group-addon" id="basic-addon1">%</span>
-                                            </div>
-                                           
-                                          </div>
-                                          <div class="col-sm-2" style="width: 8.33333333%; margin-top: 5px; margin-left: -1.8pc;">
-                                            <label></label>
-                                            
-                                            <input type="text"
-                                            class="form-control"
-                                            name="cessamt"
-                                            #cessamt="ngModel"
-                                            [(ngModel)]="ObjProductInfo.CESS_AMT"
-                                            [disabled]="cessdisabled"
-                                            placeholder="CESS"
-                                            CompacctDigitonly="true"
-                                            >
-                                    </div>
-                                                
-                                                <div class="col-sm-3 pull-right">
-                                                  <button
-                                                    id="row-Add"
-                                                    class="btn btn-primary custombutton pull-right"
-                                                    (click)="AddProductInfo(ProductForm.form.valid)"
-                                                  >
-                                                    <span class="glyphicon glyphicon-plus"></span
-                                                    >&nbsp;Add
-                                                  </button>
-                                                </div>
-                                                </div> -->
                                           </form>
                             <br>
                             <div class="table-responsive no-padding">
@@ -785,7 +566,7 @@
                                     <tbody>
                                         <tr *ngFor="let obj of GRNNoProlist ; let ind = index;">
                                             <td>{{ ind + 1 }}</td>
-                                            <td>{{obj.label}}</td>
+                                            <td>{{obj.Product_Name}}</td>
                                             <td>{{obj.HSN_NO ? obj.HSN_NO : '-'}}</td>
                                             <!-- <td>{{obj.Batch_Number ? obj.Batch_Number : '-'}}</td>
                                             <td>{{obj.Serial_No ? obj.Serial_No : '-'}}</td>
@@ -811,7 +592,7 @@
                                                 <input type="text"
                                                     class="form-control"
                                                     name="obj.DiscountTypeAmt"
-                                                    [(ngModel)]="obj.Discount_Type_Amt"
+                                                    [(ngModel)]="obj.Discount_Type_Amount"
                                                     (ngModelChange)="AfterDiscCalChange(obj)"
                                                     [disabled]="!obj.Discount_Type"
                                                     placeholder="Discount"
@@ -842,7 +623,7 @@
                                             <!-- <td>{{obj.Godown_Name ? obj.Godown_Name : '-'}}</td> -->
                                             <td>{{obj.GRN_No ? obj.GRN_No : '-'}}</td>
                                             <!-- <td>{{obj.Pur_Order_No ? obj.Pur_Order_No : '-'}}</td> -->
-                                            <td><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                            <td *ngIf="buttonname != 'Update'"><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1076,106 +857,6 @@
                    </button>
                             </div>
                         </p-tabPanel>
-
-                        <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-hourglass">
-                            <form name="PendingPOForm" #PendingPOForm="ngForm" novalidate>
-                            <div class="form-group">
-                                <div class="col-sm-4">
-                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>
-                                    <select class="form-control" 
-                                    name="ppocompany" 
-                                    #ppocompany="ngModel" 
-                                    [(ngModel)]="ObjPendingPO.Company_ID"
-                                    [ngClass]="{'clearance': PendingPOFormSubmitted && ppocompany?.errors?.required}"
-                                    required>
-                                    <option  [ngValue]="undefined">Select</option>
-                                       <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
-                                          {{option.Company_Name}}
-                                        </option>
-                                  </select>
-                                </div>
-                                <div class="col-sm-3">
-                                    <label class="control-label">Date</label>
-
-                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRangeppo($event)" [HardCodeDateOpt]="initDate">
-                                    </app-compacct-daterangepicker>
-
-                                </div>
-
-                                <div class="col-sm-3">
-                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPendingPO(PendingPOForm.form.valid)" id="load" [disabled]="seachSpinner">
-                                      <p-progressSpinner
-                                        *ngIf="seachSpinner"
-                                        [style]="{ width: '15px', height: '15px' }"
-                                        strokeWidth="8"
-                                        animationDuration=".5s"
-                                      ></p-progressSpinner>
-                                      <span
-                                        *ngIf="!seachSpinner"
-                                        class="glyphicon glyphicon-search"
-                                      ></span
-                                      >&nbsp;Search
-                                    </button>
-                                </div>
-                            </div>
-                            </form> 
-                            <div class="no-padding">
-                                <p-table [value]="PendingPOList"
-                                [paginator]="PendingPOList.length ? true : false"
-                                *ngIf='PendingPOList.length'
-                                [paginator]="true" 
-                                [rows]="100" 
-                                [rowHover]="true" 
-                                [autoLayout]="true" 
-                                sortMode="multiple" 
-                                [rowsPerPageOptions]="[100,200,300]" 
-                                [globalFilterFields]='DynamicHeaderforPPO'
-                                    [rowHover]="true" #dt2>
-                                    <ng-template pTemplate="caption">
-                                        <div class="row">
-                                            <div class="col-sm-3 pull-right" style="text-align: right">
-                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
-                                            </div>
-                                        </div>
-    
-                                    </ng-template>
-                                    <ng-template pTemplate="header">
-                                        <tr>
-                                            <th style="width:5em">Action</th>
-                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforPPO">{{option.replace('_',' ')}}</th> 
-                                        </tr>
-                                    </ng-template>
-                                    <ng-template pTemplate="body" let-col>
-                                        <tr>
-    
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
-                                                                    <i class="fa fa-fw fa-bars"></i>
-                                                                    <span class="caret"></span>
-                                                                </button>
-                                                    <ul class="dropdown-menu">
-                                                        <li>
-                                                            <a (click)="PrintPPO(col.Doc_No)">
-                                                                <i class="fa fa-fw fa-print"></i> Print
-                                                            </a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </td>
-                                            <ng-container *ngFor="let option of DynamicHeaderforPPO">
-                                                <td nowrap="nowrap">{{col[option]}}</td>
-                                            </ng-container>
-                                            
-                                        </tr>
-                                    </ng-template>
-                                    <ng-template pTemplate="paginatorright" let-state>
-                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
-                                    </ng-template>
-                                </p-table>
-                            </div>
-
-                        </p-tabPanel> -->
 
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-hourglass">
                             <form name="PendingGRNForm" #PendingGRNForm="ngForm" novalidate>

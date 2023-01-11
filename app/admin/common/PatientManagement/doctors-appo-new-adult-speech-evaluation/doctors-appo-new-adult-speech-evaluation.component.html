@@ -1,0 +1,1620 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast
+  position="center"
+  key="c"
+  (onClose)="onReject()"
+  [modal]="true"
+  [autoZIndex]="true"
+>
+  <ng-template let-message pTemplate="message">
+    <div style="text-align: center">
+      <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+      <h3>{{ message.summary }}</h3>
+      <p>{{ message.detail }}</p>
+    </div>
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-6">
+        <button
+          type="button"
+          pButton
+          (click)="onConfirm()"
+          label="Yes"
+          class="ui-button-success"
+        ></button>
+      </div>
+      <div class="ui-g-6">
+        <button
+          type="button"
+          pButton
+          (click)="onReject()"
+          label="No"
+          class="ui-button-secondary"
+        ></button>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box box-primary">
+      <div class="form-horizontal">
+        <div class="box-body">
+          <p-tabView [activeIndex]="tabIndexToView">
+            <p-tabPanel
+              headerStyleClass="compacct-tabs"
+              header="Appointment"
+              leftIcon="glyphicon glyphicon-user"
+            >
+              <form
+                name="AdultSpeechEvaluation"
+                #AdultSpeechEvaluation="ngForm"
+                novalidate
+              >
+                <div class="row">
+                  <div class="col-sm-3">
+                    <label class="control-label">Name</label>
+                    <div class="label-t">
+                      {{ ObjAdultSpeech.Name ? ObjAdultSpeech.Name : "-" }}
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="control-label">Patient ID</label>
+                    <div class="label-t">
+                      {{
+                        ObjAdultSpeech.Foot_Fall_ID
+                          ? ObjAdultSpeech.Foot_Fall_ID
+                          : "-"
+                      }}
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="control-label">Age</label>
+                    <div class="label-t">
+                      {{ ObjAdultSpeech.Age ? ObjAdultSpeech.Age : "-" }}
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="control-label">Sex</label>
+                    <div class="label-t">
+                      {{ ObjAdultSpeech.Sex ? ObjAdultSpeech.Sex : "-" }}
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3">
+                    <label class="control-label">Referred By</label>
+                    <div class="label-t">
+                      {{
+                        ObjAdultSpeech.ReferredBy
+                          ? ObjAdultSpeech.ReferredBy
+                          : "-"
+                      }}
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="control-label">Date</label>
+                    <div class="label-t">
+                      {{
+                        ObjAdultSpeech.Txn_Date
+                          ? (ObjAdultSpeech.Txn_Date | date : "dd/MMM/yyyy")
+                          : "-"
+                      }}
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="control-lable">Centre</label>
+                    <p-dropdown
+                      [options]="CentreList"
+                      name="Centre"
+                      #Centre="ngModel"
+                      [(ngModel)]="ObjAdultSpeech.Cost_Cent_ID"
+                      [showClear]="true"
+                      [emptyFilterMessage]="' No Centre Found'"
+                      [filter]="true"
+                      filterBy="label,value"
+                      [resetFilterOnHide]="true"
+                      [placeholder]="'Select Centre'"
+                      [virtualScroll]="true"
+                      itemSize="30"
+                      disabled
+                    >
+                    </p-dropdown>
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="control-label">Language</label>
+                    <input
+                      class="form-control"
+                      name="language1"
+                      #Language1="ngModel"
+                      [(ngModel)]="ObjAdultSpeech.Language1"
+                      placeholder="Language..."
+                    />
+                  </div>
+                </div>
+
+                <hr class="box boxboxDivide-primary" />
+                <div class="row">
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-3">
+                    <label class="control-label">GENERAL COMPLAINT</label>
+                  </div>
+                  <div class="col-sm-8">
+                    <input
+                      type="text"
+                      class="form-control"
+                      style="width: 100%; height: 35px"
+                      name="General_Complaint"
+                      [(ngModel)]="ObjAdultSpeech.General_Complaint"
+                      placeholder="Write Complaint Here..."
+                    />
+                  </div>
+                </div>
+                <hr class="box boxboxDivide-primary" />
+                <div class="row">
+                  <table style="width: 100%">
+                    <tr>
+                      <th class="table-header" style="width: 40%">Symptom</th>
+                      <th class="table-header" style="width: 60%">
+                        Often/Sometimes/Never
+                      </th>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Hearing difficulty</label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Hearing_difficulty"
+                          [(ngModel)]="ObjAdultSpeech.Hearing_difficulty"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SymptomDropdown"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Difficulty in speaking fluently</label
+                        >
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Difficulty_inspeaking_fluently"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Difficulty_inspeaking_fluently
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SymptomDropdown"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Difficulty in speaking in 3 or more-word sentences
+                        </label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Difficulty_in_speaking_in_3"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Difficulty_in_speaking_in_3
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SymptomDropdown"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Difficulty in expressing thoughts to others
+                        </label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Difficulty_in_expressing"
+                          [(ngModel)]="ObjAdultSpeech.Difficulty_in_expressing"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SymptomDropdown"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Difficulty in understanding other’s speech
+                        </label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Difficulty_in_understanding"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Difficulty_in_understanding
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SymptomDropdown"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Difficulty in pronouncing sounds
+                        </label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Difficulty_in_pronouncing"
+                          [(ngModel)]="ObjAdultSpeech.Difficulty_in_pronouncing"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SymptomDropdown"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Other people find difficult to understand my speech
+                        </label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Other_people_find_difficult"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Other_people_find_difficult
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SymptomDropdown"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Difficulty in solving simple numerical problems
+                        </label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Difficulty_in_solving"
+                          [(ngModel)]="ObjAdultSpeech.Difficulty_in_solving"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SymptomDropdown"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Difficulty in focusing/attention
+                        </label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Difficulty_in_focusing"
+                          [(ngModel)]="ObjAdultSpeech.Difficulty_in_focusing"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SymptomDropdown"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Difficulty in reading/writing
+                        </label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Difficulty_in_reading"
+                          [(ngModel)]="ObjAdultSpeech.Difficulty_in_reading"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SymptomDropdown"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Difficulty in finding words and/or names
+                        </label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Difficulty_in_finding"
+                          [(ngModel)]="ObjAdultSpeech.Difficulty_in_finding"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SymptomDropdown"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Maintaining topic of conversation
+                        </label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Maintaining_topic"
+                          [(ngModel)]="ObjAdultSpeech.Maintaining_topic"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SymptomDropdown"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Following directions
+                        </label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Following_directions"
+                          [(ngModel)]="ObjAdultSpeech.Following_directions"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SymptomDropdown"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                       <label class="control-label" style="text-align: left;">
+                        Oral motor weakness (weakness, difficulty coordinating tongue, cheeks, lips, etc.)
+                      </label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Oral_motor_weakness"
+                          [(ngModel)]="ObjAdultSpeech.Oral_motor_weakness"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SymptomDropdown"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label"
+                          >Oro Facial Anomalies (CLP, Laryngectomy etc)
+                        </label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Oro_Facial_Anomalies"
+                          [(ngModel)]="ObjAdultSpeech.Oro_Facial_Anomalies"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SymptomDropdown"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label"
+                          >Voice quality difficulties
+                        </label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Voice_quality"
+                          [(ngModel)]="ObjAdultSpeech.Voice_quality"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SymptomDropdown"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label"
+                          >Any other (Please describe)
+                        </label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Any_other"
+                          [(ngModel)]="ObjAdultSpeech.Any_other"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SymptomDropdown"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <hr class="box boxboxDivide-primary" />
+                <div class="row">
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-3">
+                    <label class="control-label">MEDICAL HISTORY</label>
+                  </div>
+                  <div class="col-sm-8">
+                    <input
+                      type="text"
+                      class="form-control"
+                      style="width: 100%; height: 35px"
+                      name="Medical_History"
+                      [(ngModel)]="ObjAdultSpeech.Medical_History"
+                      placeholder="Write Medical History Here..."
+                    />
+                  </div>
+                </div>
+                <hr class="box boxboxDivide-primary" />
+                <div class="row">
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-3">
+                    <label class="control-label">PRE- MORBID STATUS</label>
+                  </div>
+                  <div class="col-sm-8">
+                    <select
+                      class="form-control"
+                      name="Pre_Morbid_Status"
+                      [(ngModel)]="ObjAdultSpeech.Pre_Morbid_Status"
+                    >
+                      <option [ngValue]="undefined">Select</option>
+                      <option
+                        *ngFor="let option of PreMorbidStatus"
+                        value="{{ option }}"
+                      >
+                        {{ option }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <hr class="box boxboxDivide-primary" />
+                <div class="row">
+                  <table style="width: 100%">
+                    <tr>
+                      <th class="table-header" colspan="3">
+                        ORAL MOTOR ASSESSMENT
+                      </th>
+                    </tr>
+                    <tr>
+                      <td style="width: 20%"></td>
+                      <td style="width: 40%; text-align: center">
+                        <b>Structurally</b>
+                      </td>
+                      <td style="width: 40%; text-align: center">
+                        <b>Functionally</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label class="control-label">Lips </label></td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OralMotorAssessment_lips_Structurally"
+                          [(ngModel)]="
+                            ObjAdultSpeech.OralMotorAssessment_lips_Structurally
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OralMotorAssessment_lips_Functionally"
+                          [(ngModel)]="
+                            ObjAdultSpeech.OralMotorAssessment_lips_Functionally
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label class="control-label">Tongue </label></td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OralMotorAssessment_Tongue_Structurally"
+                          [(ngModel)]="
+                            ObjAdultSpeech.OralMotorAssessment_Tongue_Structurally
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OralMotorAssessment_Tongue_Functionally"
+                          [(ngModel)]="
+                            ObjAdultSpeech.OralMotorAssessment_Tongue_Functionally
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label class="control-label">Teeth </label></td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OralMotorAssessment_Teeth_Structurally"
+                          [(ngModel)]="
+                            ObjAdultSpeech.OralMotorAssessment_Teeth_Structurally
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OralMotorAssessment_Teeth_Functionally"
+                          [(ngModel)]="
+                            ObjAdultSpeech.OralMotorAssessment_Teeth_Functionally
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label class="control-label">Hard Palate </label></td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OralMotorAssessment_HardPalate_Structurally"
+                          [(ngModel)]="
+                            ObjAdultSpeech.OralMotorAssessment_HardPalate_Structurally
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OralMotorAssessment_HardPalate_Functionally"
+                          [(ngModel)]="
+                            ObjAdultSpeech.OralMotorAssessment_HardPalate_Functionally
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label class="control-label">Soft Palate </label></td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OralMotorAssessment_SoftPalate_Structurally"
+                          [(ngModel)]="
+                            ObjAdultSpeech.OralMotorAssessment_SoftPalate_Structurally
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OralMotorAssessment_SoftPalate_Functionally"
+                          [(ngModel)]="
+                            ObjAdultSpeech.OralMotorAssessment_SoftPalate_Functionally
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label class="control-label">Mandible </label></td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OralMotorAssessment_Mandible_Structurally"
+                          [(ngModel)]="
+                            ObjAdultSpeech.OralMotorAssessment_Mandible_Structurally
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OralMotorAssessment_Mandible_Functionally"
+                          [(ngModel)]="
+                            ObjAdultSpeech.OralMotorAssessment_Mandible_Functionally
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label class="control-label">Comment </label></td>
+                      <td colspan="2">
+                        <input
+                          type="text"
+                          name="OralMotorAssessment_Comment"
+                          class="form-control"
+                          [(ngModel)]="
+                            ObjAdultSpeech.OralMotorAssessment_Comment
+                          "
+                          placeholder="Write Comment..."
+                        />
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <hr class="box boxboxDivide-primary" />
+                <div class="row">
+                  <table style="width: 100%">
+                    <tr>
+                      <th class="table-header" colspan="3">
+                        SWALLOWING EXAMINATION
+                      </th>
+                    </tr>
+                    <tr>
+                      <td style="width: 20%"></td>
+                      <td style="width: 40%; text-align: center">
+                        <b>Response</b>
+                      </td>
+                      <td style="width: 40%; text-align: center">
+                        <b>Swallowing Duration</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Liquid</label>
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="Swallowing_Examination_Liquid_Response"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Swallowing_Examination_Liquid_Response
+                          "
+                          placeholder="Write response here..."
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="Swallowing_Examination_Liquid_Duration"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Swallowing_Examination_Liquid_Duration
+                          "
+                          placeholder="Write Swallowing Duration here..."
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Semisolid</label>
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="Swallowing_Examination_Semisolid_Response"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Swallowing_Examination_Semisolid_Response
+                          "
+                          placeholder="Write response here..."
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="Swallowing_Examination_Semisolid_Duration"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Swallowing_Examination_Semisolid_Duration
+                          "
+                          placeholder="Write Swallowing Duration here..."
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Solid</label>
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="Swallowing_Examination_Solid_Response"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Swallowing_Examination_Solid_Response
+                          "
+                          placeholder="Write response here..."
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="Swallowing_Examination_Solid_Duration"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Swallowing_Examination_Solid_Duration
+                          "
+                          placeholder="Write Swallowing Duration here..."
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label class="control-label">Comment </label></td>
+                      <td colspan="2">
+                        <input
+                          type="text"
+                          name="Swallowing_Examinationt_Comment"
+                          class="form-control"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Swallowing_Examinationt_Comment
+                          "
+                          placeholder="Write Comment..."
+                        />
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <hr class="box boxboxDivide-primary" />
+                <div class="row">
+                  <table style="width: 100%">
+                    <tr>
+                      <th colspan="5">VOICE EVALUATION</th>
+                    </tr>
+                    <tr>
+                      <th class="table-header" style="width: 20%">Activity</th>
+                      <th class="table-header" style="width: 20%">Duration</th>
+                      <th class="table-header" style="width: 20%">Pitch</th>
+                      <th class="table-header" style="width: 20%">Loudness</th>
+                      <th class="table-header" style="width: 20%">Quality</th>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label"><b>Phonation</b></label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Phonation_Duration"
+                          [(ngModel)]="ObjAdultSpeech.Phonation_Duration"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of Duration"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Phonation_Pitch"
+                          [(ngModel)]="ObjAdultSpeech.Phonation_Pitch"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of Pitch"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Phonation_Loudness"
+                          [(ngModel)]="ObjAdultSpeech.Phonation_Loudness"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of Loudness"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Phonation_Quality"
+                          [(ngModel)]="ObjAdultSpeech.Phonation_Quality"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of Quality"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label for="" class="control-label">Speech</label></td>
+                      <td></td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Speech_Pitch"
+                          [(ngModel)]="ObjAdultSpeech.Speech_Pitch"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of Pitch"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Speech_Loudness"
+                          [(ngModel)]="ObjAdultSpeech.Speech_Loudness"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of Loudness"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Speech_Quality"
+                          [(ngModel)]="ObjAdultSpeech.Speech_Quality"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of Quality"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <th rowspan="2">
+                        Speech Alternate Motion Rates (AMRs) and Sequential Motor Rates (SMRs)
+                      </th>
+                      <th class="table-header" colspan="2">AMRs</th>
+                      <th class="table-header" colspan="2">SMRs</th>
+                    </tr>
+                    <tr>
+                      <td colspan="2">
+                        <div class="input-group" style="margin-bottom: 5px">
+                          <span class="input-group-addon">/p^/:</span>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="AMRs_p"
+                            [(ngModel)]="ObjAdultSpeech.AMRs_p"
+                          />
+                          <span class="input-group-addon">cps</span>
+                        </div>
+
+                        <div class="input-group" style="margin-bottom: 5px">
+                          <span class="input-group-addon">/t^/: </span>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="AMRs_t"
+                            [(ngModel)]="ObjAdultSpeech.AMRs_t"
+                          />
+                          <span class="input-group-addon">cps</span>
+                        </div>
+                        <div class="input-group">
+                          <span class="input-group-addon">/k^/:</span>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="AMRs_k"
+                            [(ngModel)]="ObjAdultSpeech.AMRs_k"
+                          />
+                          <span class="input-group-addon">cps</span>
+                        </div>
+                      </td>
+
+                      <td colspan="2">
+                        <div class="input-group">
+                          <span class="input-group-addon">/p^-t^-k^/: </span>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="SMRs_p_t_k"
+                            [(ngModel)]="ObjAdultSpeech.SMRs_p_t_k"
+                          />
+                          <span class="input-group-addon">cps</span>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <th rowspan="2">
+                        Maximum Phonation Time (MPT) & S:Z Ratio
+                      </th>
+                      <th colspan="2" class="table-header">MPT</th>
+                      <th colspan="2" class="table-header">S:Z Ratio</th>
+                    </tr>
+                    <tr>
+                      <td colspan="2">
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="Voice_MPT"
+                          [(ngModel)]="ObjAdultSpeech.Voice_MPT"
+                          placeholder="Enter Value"
+                        />
+                      </td>
+                      <td colspan="2">
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="Voice_S_Z_Ratio"
+                          [(ngModel)]="ObjAdultSpeech.Voice_S_Z_Ratio"
+                          placeholder="Enter Value"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label class="control-label">Comment</label></td>
+                      <td colspan="4">
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="write comment..."
+                          name="voice_comment"
+                          [(ngModel)]="ObjAdultSpeech.voice_comment"
+                        />
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <hr class="box boxboxDivide-primary" />
+
+                <div class="row">
+                  <table style="width: 100%">
+                    <tr>
+                      <th class="table-header" colspan="2">
+                        INFORMAL OBSERVATION
+                      </th>
+                    </tr>
+                    <tr>
+                      <td style="width: 30%">
+                        <label class="control-label">Hearing</label>
+                      </td>
+                      <td style="width: 70%">
+                        <select
+                          class="form-control"
+                          name="Informal_Observation_Hearing"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Informal_Observation_Hearing
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td >
+                        <label class="control-label">Oral-Facial</label>
+                      </td>
+                      <td >
+                        <select
+                          class="form-control"
+                          name="Informal_Observation_Oral_Facial"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Informal_Observation_Oral_Facial
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Articulation</label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Informal_Observation_Articulation"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Informal_Observation_Articulation
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Spontaneous Speech</label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Informal_Observation_Spontaneous_Speech"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Informal_Observation_Spontaneous_Speech
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Cognition/Memory</label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Informal_Observation_Cognition"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Informal_Observation_Cognition
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Naming</label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Informal_Observation_Naming"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Informal_Observation_Naming
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Repetition</label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Informal_Observation_Repetition"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Informal_Observation_Repetition
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Fluency</label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Informal_Observation_Fluency"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Informal_Observation_Fluency
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label"
+                          >Auditory Comprehension</label
+                        >
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Informal_Observation_Auditory_Comprehension"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Informal_Observation_Auditory_Comprehension
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label"
+                          >Voice and Speech Breathing</label
+                        >
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Informal_Observation_Voice"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Informal_Observation_Voice
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Resonance</label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Informal_Observation_Oral_Resonance"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Informal_Observation_Resonance
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label class="control-label">Prosody</label>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="Informal_Observation_Prosody"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Informal_Observation_Prosody
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OralMotorAssessment"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label class="control-label">Comment </label></td>
+                      <td colspan="2">
+                        <input
+                          type="text"
+                          name="Informal_Observation_Comment"
+                          class="form-control"
+                          [(ngModel)]="
+                            ObjAdultSpeech.Informal_Observation_Comment
+                          "
+                          placeholder="Write Comment..."
+                        />
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <hr class="box boxboxDivide-primary" />
+                <div class="row">
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-3">
+                    <label class="control-label"
+                      >FORMAL ASSESSMENT FINDINGS</label
+                    >
+                  </div>
+                  <div class="col-sm-8">
+                    <input
+                      type="text"
+                      class="form-control"
+                      style="width: 100%; height: 35px"
+                      name="Formal_Assessment_Finding"
+                      [(ngModel)]="ObjAdultSpeech.Formal_Assessment_Finding"
+                      placeholder="Write Formal Assessment Finding Here..."
+                    />
+                  </div>
+                </div>
+                <hr class="box boxboxDivide-primary" />
+                <div class="row">
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-3">
+                    <label class="control-label">COMMENT</label>
+                  </div>
+                  <div class="col-sm-8">
+                    <input
+                      type="text"
+                      class="form-control"
+                      style="width: 100%; height: 35px"
+                      name="Comment"
+                      [(ngModel)]="ObjAdultSpeech.Comment"
+                      placeholder="Write comment Here..."
+                    />
+                  </div>
+                </div>
+                <hr class="box boxboxDivide-primary" />
+                <div class="row">
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-3">
+                    <label class="control-label">PROVISIONAL DIAGNOSIS</label>
+                  </div>
+                  <div class="col-sm-8">
+                    <input
+                      type="text"
+                      class="form-control"
+                      style="width: 100%; height: 35px"
+                      name="Provisional_diagnosis"
+                      [(ngModel)]="ObjAdultSpeech.Provisional_diagnosis"
+                      placeholder="Write comment Here..."
+                    />
+                  </div>
+                </div>
+                <hr class="box boxboxDivide-primary" />
+                <div class="row">
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-5">
+                    <label class="control-label">RECOMMENDATION:</label>
+                    <br />
+                    <p-checkbox
+                      label="Consult Back to Doctor"
+                      value="Consult Back to Doctor"
+                      name="RECOMMENDATION"
+                      [(ngModel)]="CheckBoxRecommendation"
+                      inputId="RC1"
+                    >
+                    </p-checkbox>
+                    <br />
+                    <p-checkbox
+                      label="Speech Therapy"
+                      value="Speech Therapy"
+                      name="RECOMMENDATION"
+                      [(ngModel)]="CheckBoxRecommendation"
+                      inputId="RC2"
+                    >
+                    </p-checkbox>
+                    <br />
+                    <p-checkbox
+                      label="Psychological Evaluation"
+                      value="Psychological Evaluation"
+                      name="RECOMMENDATION"
+                      [(ngModel)]="CheckBoxRecommendation"
+                      inputId="RC3"
+                    >
+                    </p-checkbox>
+                    <br />
+                    <p-checkbox
+                      label="Audiological Evaluation"
+                      value="Audiological Evaluation"
+                      name="RECOMMENDATION"
+                      [(ngModel)]="CheckBoxRecommendation"
+                      inputId="RC4"
+                    >
+                    </p-checkbox>
+                    <br />
+                    <p-checkbox
+                      label="Physio Therapy"
+                      value="Physio Therapy"
+                      name="RECOMMENDATION"
+                      [(ngModel)]="CheckBoxRecommendation"
+                      inputId="RC5"
+                    >
+                    </p-checkbox>
+                    <br />
+                    <p-checkbox
+                      label="Follow Up"
+                      value="Follow Up"
+                      name="RECOMMENDATION"
+                      [(ngModel)]="CheckBoxRecommendation"
+                      inputId="RC5"
+                    >
+                    </p-checkbox>
+                  </div>
+                  <div class="col-sm-4">
+                    <label class="control-label">PROGNOSIS</label>
+                    <select
+                      class="form-control"
+                      name="Prognosis"
+                      [(ngModel)]="ObjAdultSpeech.Prognosis"
+                    >
+                      <option [ngValue]="undefined">Select</option>
+                      <option
+                        *ngFor="let option of PrognosisList"
+                        value="{{ option }}"
+                      >
+                        {{ option }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-sm-2"></div>
+                </div>
+
+
+<!-- API -->
+<div class="form-group" *ngIf="false">
+  <update-consultancy #consultancy (saveData)="updateConsultancysave($event)"></update-consultancy>
+</div>
+
+
+                <div class="row">
+                  <button
+                    *ngIf="buttonValid"
+                    class="btn btn-primary pull-right"
+                    (click)="saveDocAppo(AdultSpeechEvaluation.form.valid)"
+                  >
+                    <p-progressSpinner
+                      *ngIf="Spinner"
+                      [style]="{ width: '15px', height: '15px' }"
+                      strokeWidth="8"
+                      animationDuration=".5s"
+                    ></p-progressSpinner>
+                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"
+                      >Save</span
+                    >
+                  </button>
+                </div>
+              </form>
+            </p-tabPanel>
+          </p-tabView>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

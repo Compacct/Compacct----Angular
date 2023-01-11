@@ -1,0 +1,1694 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+           <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView">
+
+                        <form name="DoctorsAppoNewChildSpeechEvaluation" #DoctorsAppoNewChildSpeechEvaluationForm="ngForm" novalidate>
+
+                            <!-- Common Part -->
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{this.ObjChildSpeech.Name ? this.ObjChildSpeech.Name : '-'}}</div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Patient ID<sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{this.ObjChildSpeech.Foot_Fall_ID ? this.ObjChildSpeech.Foot_Fall_ID : '-'}}</div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Sex<sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{this.ObjChildSpeech.Sex ? this.ObjChildSpeech.Sex : '-'}}</div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Age<sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{this.ObjChildSpeech.Age ? this.ObjChildSpeech.Age : '-'}}</div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                        <div class="label-t">{{Appo_Date ? (Appo_Date | date: "dd/MMM/yyyy") : '-'}}</div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Reffered By<sup class="text-danger">*</sup></label>
+                                        <div class="label-t">{{this.ObjChildSpeech.Referredby ? this.ObjChildSpeech.Referredby : '-'}}</div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Centre<sup class="text-danger">*</sup></label> 
+                                        <p-dropdown [options]="CentreList"
+                                                name="Cost_Cen_ID" 
+                                                #Cost_Cen_ID="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Cost_Cen_ID"
+                                                [showClear]="true" 
+                                                [emptyFilterMessage]="' No Centre Found'" 
+                                                [filter]="true" 
+                                                filterBy="label,value.name" 
+                                                [resetFilterOnHide]="true" 
+                                                [placeholder]="'Select Centre'" 
+                                                [virtualScroll]="true"
+                                                itemSize="30"
+                                                disabled> 
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Language</label>                                 
+                                        <input class="form-control"
+                                        name="Language1"
+                                        #Language1="ngModel"
+                                        [(ngModel)]="ObjChildSpeech.Language1" 
+                                        placeholder="Type Language"
+                                        > 
+                                    </div>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- STATEMENT OF THE PROBLEM -->
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="reactions">STATEMENT OF THE PROBLEM</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input class="form-control"
+                                    name="Statement1"
+                                    #Statement1="ngModel" 
+                                    [(ngModel)]="ObjChildSpeech.Statement1"
+                                    placeholder="Write Here..."
+                                    > 
+                                </div>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- MEDICAL HISTORY -->
+                            <div class="row">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <th class="table-header" colspan="3">MEDICAL HISTORY</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;"></th>
+                                        <th style="width: 200px;">Describe the mother's health during pregnancy</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="pregnancy"
+                                                #pregnancy="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.pregnancy"
+                                                (change)="ShowYes()"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of PrognosisList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="IfYes1">
+                                        <th style="width: 200px;"></th>
+                                        <th style="width: 200px; color: blue;">If poor describe</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="pregnancy_Yes"
+                                            #pregnancy_Yes="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.pregnancy_Yes"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;"></th>
+                                        <th style="width: 200px;">Was pregnancy full term?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="pregnancy_full"
+                                                #pregnancy_full="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.pregnancy_full"
+                                                (change)="ShowYes()"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="IfYes2">
+                                        <th style="width: 200px;"></th>
+                                        <th style="width: 200px; color: blue;">If not how early or late</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="pregnancy_full_Yes"
+                                            #pregnancy_full_Yes="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.pregnancy_full_Yes"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;"></th>
+                                        <th style="width: 200px;">Was delivery normal?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="delivery"
+                                                #delivery="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.delivery"
+                                                (change)="ShowYes()"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="IfYes3">
+                                        <th style="width: 200px;"></th>
+                                        <th style="width: 200px; color: blue;">If not describe</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="delivery_Yes"
+                                            #delivery_Yes="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.delivery_Yes"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr><td colspan="3"><hr class="box boxboxDivide-primary"></td></tr>
+                                    <tr>
+                                        <th style="width: 200px;" rowspan="4">Did child had any medical conditions during or soon after the birth</th>
+                                        <th style="width: 200px;" >Was child kept in incubator or NICU</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="incubator"
+                                                #incubator="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.incubator"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;" >Child had neonatal jaundice</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="jaundice"
+                                                #jaundice="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.jaundice"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;" >Seizures</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Seizures"
+                                                #Seizures="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Seizures"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;" >others(describe)</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="birth"
+                                            #birth="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.birth"
+                                            placeholder="Write Here..."
+                                            >
+                                        </td>
+                                    </tr>
+                                    <tr><td colspan="3"><hr class="box boxboxDivide-primary"></td></tr>
+                                    <tr>
+                                        <th style="width: 200px;" rowspan="8">Did child had any medical conditions during first three years of age after discharge from hospital</th>
+                                        <th style="width: 200px;" >Infections</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Infections"
+                                                #Infections="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Infections"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;" >Feeding problems</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Feeding"
+                                                #Feeding="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Feeding"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;" >High fever</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="fever"
+                                                #fever="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.fever"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;" >Seizures</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Seizures1"
+                                                #Seizures1="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Seizures1"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;" >Trauma</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Trauma"
+                                                #Trauma="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Trauma"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;" >Frequent cold and cough</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="cough"
+                                                #cough="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.cough"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;" >Hearing loss </th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Hearing1"
+                                                #Hearing1="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Hearing1"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;" >others(describe)</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="hospital"
+                                            #hospital="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.hospital"
+                                            placeholder="Write Here..."
+                                            >
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- MOTOR-DEVELOPMENTAL HISTORY -->
+                            <div class="row">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <th class="table-header" colspan="2">MOTOR-DEVELOPMENTAL HISTORY</th>
+                                    <tr>
+                                        <th style="width: 300px;">Head Control</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="Control1"
+                                            #Control1="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Control1"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Crawling</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="Crawling"
+                                            #Crawling="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Crawling"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Roll Over</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="RollOver"
+                                            #RollOver="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.RollOver"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Sitting</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="Sitting"
+                                            #Sitting="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Sitting"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Standing</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="Standing"
+                                            #Standing="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Standing"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Walking with and without support</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="Walking"
+                                            #Walking="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Walking"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Bowel/Bladder Control</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="Bladder"
+                                            #Bladder="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Bladder"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- SOCIAL AND EMOTIONAL HISTORY -->
+                            <div class="row">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <th class="table-header" colspan="2">SOCIAL AND EMOTIONAL HISTORY</th>
+                                    <tr>
+                                        <th style="width: 300px;">Does child have opportunities to play with other children?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="children"
+                                                #children="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.children"
+                                                (change)="ShowYes()"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="IfYes4">
+                                        <th style="width: 300px; color: blue;">If not describe</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="children_Yes"
+                                            #children_Yes="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.children_Yes"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Does child recognize social smile?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="smile"
+                                                #smile="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.smile"
+                                                (change)="ShowYes()"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                   <tr *ngIf="IfYes5">
+                                        <th style="width: 300px; color: blue;">If not describe</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="smile_Yes"
+                                            #smile_Yes="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.smile_Yes"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Does child play well with friends/brothers/sisters/cousins?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="friends"
+                                                #friends="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.friends"
+                                                (change)="ShowYes()"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="IfYes6">
+                                        <th style="width: 300px; color: blue;">If not describe</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="friends_Yes"
+                                            #friends_Yes="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.friends_Yes"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Does child take turns during the play?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="during"
+                                                #during="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.during"
+                                                (change)="ShowYes()"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="IfYes7">
+                                        <th style="width: 300px; color: blue;">If not describe</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="during_Yes"
+                                            #during_Yes="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.during_Yes"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Does child adapt to new environments?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="environments"
+                                                #environments="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.environments"
+                                                (change)="ShowYes()"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of YesNoList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="IfYes8">
+                                        <th style="width: 300px; color: blue;">If not describe</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="environments_Yes"
+                                            #environments_Yes="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.environments_Yes"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Please check any that apply to child</th>
+                                        <td>
+                                            <br>
+                                            <p-checkbox 
+                                            label="Cooperative"
+                                            value="Cooperative"
+                                            name="child_check"
+                                            [(ngModel)]="ObjChildSpeech.child_check"
+                                            inputId="RC1">
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox 
+                                            label="Easily frustrated"
+                                            value="Easily frustrated"
+                                            name="child_check"
+                                            [(ngModel)]="ObjChildSpeech.child_check"
+                                            inputId="RC2">
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox 
+                                            label="Poor eye contact"
+                                            value="Poor eye contact"
+                                            name="child_check"
+                                            [(ngModel)]="ObjChildSpeech.child_check"
+                                            inputId="RC3">
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox 
+                                            label="Attentive"
+                                            value="Attentive"
+                                            name="child_check"
+                                            [(ngModel)]="ObjChildSpeech.child_check"
+                                            inputId="RC4">
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox 
+                                            label="Impulsive"
+                                            value="Impulsive"
+                                            name="child_check"
+                                            [(ngModel)]="ObjChildSpeech.child_check"
+                                            inputId="RC5"
+                                            >
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox 
+                                            label="Behaviour difficult to manage"
+                                            value="Behaviour difficult to manage"
+                                            name="child_check"
+                                            [(ngModel)]="ObjChildSpeech.child_check"
+                                            inputId="RC6"
+                                            >
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox 
+                                            label="Friendly/outgoing"
+                                            value="Friendly/outgoing"
+                                            name="child_check"
+                                            [(ngModel)]="ObjChildSpeech.child_check"
+                                            inputId="RC7"
+                                            >
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox 
+                                            label="Prefers to play alone"
+                                            value="Prefers to play alone"
+                                            name="child_check"
+                                            [(ngModel)]="ObjChildSpeech.child_check"
+                                            inputId="RC8"
+                                            >
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox 
+                                            label="Temper tantrums"
+                                            value="Temper tantrums"
+                                            name="child_check"
+                                            [(ngModel)]="ObjChildSpeech.child_check"
+                                            inputId="RC9"
+                                            >
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox 
+                                            label="Shy/quiet"
+                                            value="Shy/quiet"
+                                            name="child_check"
+                                            [(ngModel)]="ObjChildSpeech.child_check"
+                                            inputId="RC10"
+                                            >
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox 
+                                            label="Aggressive at times"
+                                            value="Aggressive at times"
+                                            name="child_check"
+                                            [(ngModel)]="ObjChildSpeech.child_check"
+                                            inputId="RC11"
+                                            >
+                                            </p-checkbox>
+                                            <br>
+                                            <p-checkbox 
+                                            label="Unusual interests"
+                                            value="Unusual interests"
+                                            name="child_check"
+                                            [(ngModel)]="ObjChildSpeech.child_check"
+                                            inputId="RC12"
+                                            >
+                                            </p-checkbox>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- BEHAVIOR HISTORY -->
+                            <div class="row">
+                                <p class="reactions">BEHAVIOR HISTORY</p>
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <th class="table-header">Symptom</th>
+                                        <th class="table-header">Often/Sometimes/Never</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">Does child seem unusually quiet?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="quiet"
+                                                #quiet="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.quiet"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of BehaviorList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">Does child seem to be restless or fidgety?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="fidgety"
+                                                #fidgety="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.fidgety"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of BehaviorList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">Does child get upset easily?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="upset"
+                                                #upset="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.upset"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of BehaviorList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">Does child rock his/her body?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="rock"
+                                                #rock="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.rock"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of BehaviorList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">Does child enjoy “messy” play?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="messy"
+                                                #messy="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.messy"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of BehaviorList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">Does child bump or push others?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="bump"
+                                                #bump="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.bump"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of BehaviorList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">Does child pinch, bite or hurt oneself?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="oneself"
+                                                #oneself="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.oneself"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of BehaviorList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">Does child have a difficult time with change?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="difficult"
+                                                #difficult="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.difficult"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of BehaviorList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">Is child easily distracted?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="distracted"
+                                                #distracted="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.distracted"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of BehaviorList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">Does child understand personal safety?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="safety1"
+                                                #safety1="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.safety1"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of BehaviorList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">Does child enjoy the company of other children?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="enjoy"
+                                                #enjoy="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.enjoy"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of BehaviorList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">Does child enjoy reading or having books read to him/her?</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="books"
+                                                #books="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.books"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of BehaviorList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 400px;">Any other (please describe)</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="describe"
+                                            #describe="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.describe"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- SPEECH DEVELOPMENT HISTORY -->
+                            <div class="row">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <th class="table-header" colspan="2">SPEECH DEVELOPMENT HISTORY</th>
+                                    <tr>
+                                        <th style="width: 300px;">Babbling (e.g., “ba, ba”)</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="Babbling"
+                                            #Babbling="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Babbling"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Use first words</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="first1"
+                                            #first1="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.first1"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Put 2-3 words together</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="together"
+                                            #together="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.together"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Use first sentences</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="sentences"
+                                            #sentences="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.sentences"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Engage in conversation</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="Engage"
+                                            #Engage="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Engage"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Understand directions</th>
+                                        <td>
+                                            <input class="form-control"
+                                            name="directions"
+                                            #directions="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.directions"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                             <!-- MODE OF COMMUNICATION -->
+                             <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="reactions">MODE OF COMMUNICATION</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <select class="form-control"
+                                                name="Communication"
+                                                #Communication="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Communication"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of CommunicationList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                </div>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- VERBAL COMMUNICATION -->
+                            <div class="row">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <th class="table-header" colspan="2">VERBAL COMMUNICATION</th>
+                                    <tr>
+                                        <th style="width: 300px;">COMPREHENSION</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Comprehension"
+                                                #Comprehension="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Comprehension"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of ComprehensionList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">EXPRESSION</th>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Expression"
+                                            #Expression="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Expression"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of ExpressionList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- NON-VERBAL COMMUNICATION -->
+                            <div class="row">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <th class="table-header" colspan="2">NON-VERBAL COMMUNICATION</th>
+                                    </tr>
+                                    <tr>
+                                        <div class="row">
+                                            <div class="col-sm-1">
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <label class="control-label">COMPREHENSION</label>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                    <p-checkbox 
+                                                    label="Signs"
+                                                    value="Signs"
+                                                    name="Comprehension1"
+                                                    [(ngModel)]="ObjChildSpeech.Comprehension1"
+                                                    inputId="RC1">
+                                                    </p-checkbox>
+                                                    <br>
+                                                    <p-checkbox 
+                                                    label="Gestures"
+                                                    value="Gestures"
+                                                    name="Comprehension1"
+                                                    [(ngModel)]="ObjChildSpeech.Comprehension1"
+                                                    inputId="RC2">
+                                                    </p-checkbox>
+                                                    <br>
+                                                    <p-checkbox 
+                                                    label="Facial expression"
+                                                    value="Facial expression"
+                                                    name="Comprehension1"
+                                                    [(ngModel)]="ObjChildSpeech.Comprehension1"
+                                                    inputId="RC3">
+                                                    </p-checkbox>
+                                            </div>
+                                            <div class="col-sm-2">
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <label class="control-label">EXPRESSION</label>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                    <p-checkbox 
+                                                    label="Signs"
+                                                    value="Signs"
+                                                    name="Expression1"
+                                                    [(ngModel)]="ObjChildSpeech.Expression1"
+                                                    inputId="RC1">
+                                                    </p-checkbox>
+                                                    <br>
+                                                    <p-checkbox 
+                                                    label="Gestures"
+                                                    value="Gestures"
+                                                    name="Expression1"
+                                                    [(ngModel)]="ObjChildSpeech.Expression1"
+                                                    inputId="RC2">
+                                                    </p-checkbox>
+                                            </div>
+                                            <div class="col-sm-1">
+                                            </div>
+                                        </div>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- ORAL MOTOR ASSESSMENT -->
+                            <div class="row">
+                                <p class="reactions">ORAL MOTOR ASSESSMENT</p>
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <th class="table-header"></th>
+                                        <th class="table-header">Structurally</th>
+                                        <th class="table-header">Functionally</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Lips</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Structurally_Lips"
+                                                #Structurally_Lips="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Structurally_Lips"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of OralList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Functionally_Lips"
+                                            #Functionally_Lips="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Functionally_Lips"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Tongue</th>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Structurally_Tongue"
+                                            #Structurally_Tongue="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Structurally_Tongue"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Functionally_Tongue"
+                                                #Functionally_Tongue="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Functionally_Tongue"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of OralList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Teeth</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Structurally_Teeth"
+                                                #Structurally_Teeth="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Structurally_Teeth"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of OralList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select> 
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Functionally_Teeth"
+                                            #Functionally_Teeth="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Functionally_Teeth"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Hard Palate</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Structurally_Hard_Palate"
+                                                #Structurally_Hard_Palate="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Structurally_Hard_Palate"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of OralList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select> 
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Functionally_Hard_Palate"
+                                            #Functionally_Hard_Palate="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Functionally_Hard_Palate"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Soft Palate</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Structurally_Soft_Palate"
+                                                #Structurally_Soft_Palate="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Structurally_Soft_Palate"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of OralList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select> 
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Functionally_Soft_Palate"
+                                            #Functionally_Soft_Palate="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Functionally_Soft_Palate"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Mandible</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Structurally_Mandible"
+                                                #Structurally_Mandible="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Structurally_Mandible"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of OralList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select> 
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Functionally_Mandible"
+                                            #Functionally_Mandible="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Functionally_Mandible"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 200px;">Comment</th>
+                                        <td colspan="2">
+                                            <input class="form-control"
+                                            name="Comment"
+                                            #Comment="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Comment"
+                                            placeholder="Write Here..."
+                                            > 
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- VOICE EXAMINATION -->
+                            <div class="row">
+                                <p class="reactions">VOICE EXAMINATION</p>
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <th class="table-header">Loudness</th>
+                                        <th class="table-header">Pitch</th>
+                                        <th class="table-header">Quality</th>
+                                        <th class="table-header">Phonation Duration</th>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Loudness"
+                                                #Loudness="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Loudness"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of LoudnessList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Pitch"
+                                                #Pitch="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Pitch"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of PitchList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Quality"
+                                                #Quality="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Quality"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of QualityList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Duration"
+                                                #Duration="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Duration"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of DurationList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- INFORMAL OBSERVATION -->
+                            <div class="row">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <th class="table-header" colspan="2">INFORMAL OBSERVATION</th>
+                                    <tr>
+                                        <th style="width: 300px;">Behaviour/Attention</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Behaviour"
+                                                #Behaviour="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Behaviour"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of OralList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Social and Emotional</th>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Social"
+                                            #Social="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Social"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Hearing</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Hearing"
+                                                #Hearing="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Hearing"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of OralList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select> 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Articulation</th>
+                                        <td>
+                                            <select class="form-control"
+                                                name="Articulation"
+                                                #Articulation="ngModel" 
+                                                [(ngModel)]="ObjChildSpeech.Articulation"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of OralList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                            </select> 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Receptive Language</th>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Receptive"
+                                            #Receptive="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Receptive"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Expressive Language</th>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Expressive"
+                                            #Expressive="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Expressive"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Cognition/Memory</th>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Cognition"
+                                            #Cognition="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Cognition"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Fluency</th>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Fluency"
+                                            #Fluency="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Fluency"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Voice and Speech Breathing</th>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Breathing"
+                                            #Breathing="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Breathing"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Resonance</th>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Resonance"
+                                            #Resonance="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Resonance"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Prosody</th>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Prosody"
+                                            #Prosody="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Prosody"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 300px;">Phonological Awareness</th>
+                                        <td>
+                                            <select class="form-control"
+                                            name="Phonological"
+                                            #Phonological="ngModel" 
+                                            [(ngModel)]="ObjChildSpeech.Phonological"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let option of OralList" value="{{option}}">
+                                                {{option}}
+                                            </option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- FORMAL ASSESSMENT FINDINGS -->
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="reactions">FORMAL ASSESSMENT FINDINGS</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input class="form-control"
+                                    name="Assessment"
+                                    #Assessment="ngModel" 
+                                    [(ngModel)]="ObjChildSpeech.Assessment"
+                                    placeholder="Write Here..."
+                                    > 
+                                </div>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- COMMENT -->
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="reactions">COMMENT</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input class="form-control"
+                                    name="Final_Comment"
+                                    #Final_Comment="ngModel" 
+                                    [(ngModel)]="ObjChildSpeech.Final_Comment"
+                                    placeholder="Write Here..."
+                                    > 
+                                </div>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- PROVISIONAL DIAGNOSIS -->
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="reactions">PROVISIONAL DIAGNOSIS</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input class="form-control"
+                                    name="Diagnosis"
+                                    #Diagnosis="ngModel" 
+                                    [(ngModel)]="ObjChildSpeech.Diagnosis"
+                                    placeholder="Write Here..."
+                                    > 
+                                </div>
+                            </div>
+                            <hr class="box boxboxDivide-primary">
+
+                            <!-- RECOMMENDATION & PROGNOSIS -->
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="row mrg"> 
+                                        <label class="control-label">RECOMMENDATION:</label>
+                                        <br>
+                                        <p-checkbox 
+                                        label="Consult Back to Doctor"
+                                        value="Consult Back to Doctor"
+                                        name="RECOMMENDATION"
+                                        [(ngModel)]="CheckBoxRECOMMENDATION"
+                                        inputId="RC1">
+                                        </p-checkbox>
+                                        <br>
+                                        <p-checkbox 
+                                        label="Speech Therapy" 
+                                        value="Speech Therapy" 
+                                        name="RECOMMENDATION"
+                                        [(ngModel)]="CheckBoxRECOMMENDATION"
+                                        inputId="RC2">
+                                        </p-checkbox>
+                                        <br>
+                                        <p-checkbox 
+                                        label="Psychological Evaluation"
+                                        value="Psychological Evaluation"
+                                        name="RECOMMENDATION"
+                                        [(ngModel)]="CheckBoxRECOMMENDATION"
+                                        inputId="RC3">
+                                        </p-checkbox>
+                                        <br>
+                                        <p-checkbox 
+                                        label="Audiological Evaluation"
+                                        value="Audiological Evaluation"
+                                        name="RECOMMENDATION"
+                                        [(ngModel)]="CheckBoxRECOMMENDATION"
+                                        inputId="RC4">
+                                        </p-checkbox>
+                                        <br>
+                                        <p-checkbox 
+                                        label="Follow Up"
+                                        value="Follow Up"
+                                        name="RECOMMENDATION"
+                                        [(ngModel)]="CheckBoxRECOMMENDATION"
+                                        inputId="RC5">
+                                        </p-checkbox>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="control-label">PROGNOSIS</label>
+                                    <select class="form-control"
+                                    name="Prognosis"
+                                    #Prognosis="ngModel"
+                                    [(ngModel)]="ObjChildSpeech.Prognosis"
+                                     >
+                                     <option  [ngValue]="undefined">Select</option>
+                                     <option  *ngFor="let option of PrognosisList" value="{{option}}">
+                                         {{option}}
+                                     </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- API -->
+                            <div class="form-group" *ngIf="false">
+                                <update-consultancy #consultancy (saveData)="updateConsultancysave($event)"></update-consultancy>
+                            </div>
+
+                            <!-- Button -->
+                            <div class="form-group" style="padding: 1em;">
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-2"></div>
+                                <div class="col-sm-2">
+                                    <button *ngIf="buttonValid" class="btn btn-primary pull-right" (click)="saveDocAppo(DoctorsAppoNewChildSpeechEvaluationForm.form.valid)"  id="load"   [disabled]="">
+                                        <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                    </button>
+                                </div> 
+                            </div>
+
+                        </form>
+
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

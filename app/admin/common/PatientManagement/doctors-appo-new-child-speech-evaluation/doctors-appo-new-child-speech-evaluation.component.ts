@@ -8,18 +8,17 @@ import { CompacctHeader } from '../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 
 @Component({
-  selector: 'app-doctors-appo-new-fluency-evaluation',
-  templateUrl: './doctors-appo-new-fluency-evaluation.component.html',
-  styleUrls: ['./doctors-appo-new-fluency-evaluation.component.css'],
+  selector: 'app-doctors-appo-new-child-speech-evaluation',
+  templateUrl: './doctors-appo-new-child-speech-evaluation.component.html',
+  styleUrls: ['./doctors-appo-new-child-speech-evaluation.component.css'],
   providers: [MessageService],
   encapsulation: ViewEncapsulation.None
 })
-export class DoctorsAppoNewFluencyEvaluationComponent implements OnInit {
+export class DoctorsAppoNewChildSpeechEvaluationComponent implements OnInit {
   tabIndexToView:number= 0;
-  GenderList:any=[];
   AppoIDvalue:number;
   EditPage:any;
-  FLUENCYEVALUATIONFormSubmitted:boolean= false;
+  ChildSpeechEvaluationFormSubmitted:boolean= false;
   Spinner:boolean=false;
   // buttonname:any='Create';
   buttonname:any='Save';
@@ -29,7 +28,7 @@ export class DoctorsAppoNewFluencyEvaluationComponent implements OnInit {
   patientSearchList:any= [];
   CheckBoxRECOMMENDATION:any=[];
   Appo_Date:any;
-  TestName:any='FLUENCY_EVALUATION';
+  TestName:any='Child_Speech_Evaluation';
   buttonValid:boolean= true;
   Get_TXN_ID:any;
   EditDataList:any=[];
@@ -37,12 +36,28 @@ export class DoctorsAppoNewFluencyEvaluationComponent implements OnInit {
 
   OralList:any= [];
   PrognosisList:any= [];
-  HistoryList:any= [];
-  SeverityList:any= [];
+  LoudnessList:any= [];
+  PitchList: any= [];
+  QualityList: any= [];
+  DurationList: any= [];
+  ComprehensionList: any= [];
+  ExpressionList: any= [];
+  BehaviorList: any= [];
   YesNoList:any= [];
-  IfYes: boolean= false;
+  CommunicationList:any= [];
 
-  ObjFLUENCY: FLUENCY = new FLUENCY();
+  IfYes1: boolean= false;
+  IfYes2: boolean= false;
+  IfYes3: boolean= false;
+  IfYes4: boolean= false;
+  IfYes5: boolean= false;
+  IfYes6: boolean= false;
+  IfYes7: boolean= false;
+  IfYes8: boolean= false;
+
+
+
+  ObjChildSpeech: ChildSpeech = new ChildSpeech();
   @ViewChild("consultancy", { static: false }) UpdateConsultancy: UpdateConsultancyComponent;
   constructor(
     private GlobalAPI:CompacctGlobalApiService,
@@ -51,7 +66,7 @@ export class DoctorsAppoNewFluencyEvaluationComponent implements OnInit {
     private Header: CompacctHeader,
     public $CompacctAPI: CompacctCommonApi,
     private route: ActivatedRoute
-  ) {
+  ) { 
     this.route.queryParams.subscribe(params => {
       // console.log("param",params);
       this.AppoIDvalue= params.Appo_ID;
@@ -62,22 +77,27 @@ export class DoctorsAppoNewFluencyEvaluationComponent implements OnInit {
           this.editData();
        } 
      })
-   }
+  }
 
   ngOnInit() {
     this.Header.pushHeader({
-      Header: "FLUENCY EVALUATION REPORT",
-      Link: " Patient Management -> FLUENCY EVALUATION REPORT"
+      Header: "Child Speech Evaluation",
+      Link: " Patient Management -> Child Speech Evaluation"
     });
-    this.GenderList=['Male','Female','Other'];
     this.Appo_Date= new Date();
     this.GetAllDataAppoID();
     this.GetCostCentre();
     this.OralList=['Adequate','Inadequate'];
     this.PrognosisList=['Good','Fair','Poor'];
-    this.HistoryList=['Gradual','Sudden Onset'];
-    this.SeverityList=['Increasing','Decreasing'];
+    this.LoudnessList=['Too Soft','Soft','Loud','Too Loud'];
+    this.PitchList=['Low','High','Monopitch','Diplophonia'];
+    this.QualityList=['Hoarse Voice','Harsh Voice','Breathy Voice'];
+    this.DurationList=['Within Normal Limit','Mildly Impaired','Moderately Impaired','Severely Impaired'];
+    this.ComprehensionList=['Words','Phrases','Simple Sentence','Complex Sentence'];
+    this.ExpressionList=['Vocalizations','Words','Phrases','Simple Sentence','Complex Sentence'];
+    this.BehaviorList= ['Often','Sometimes','Never'];
     this.YesNoList= ['Yes','No'];
+    this.CommunicationList= ['Verbal','Non-Verbal','Both'];
   }
 
   GetCostCentre(){
@@ -117,13 +137,13 @@ export class DoctorsAppoNewFluencyEvaluationComponent implements OnInit {
       if(data.length){
         this.patientSearchList=data[0];
 
-        this.ObjFLUENCY.Name=this.patientSearchList.Name;
-        this.ObjFLUENCY.Sex=this.patientSearchList.Sex;
-        this.ObjFLUENCY.Referredby=this.patientSearchList.Referredby;
-        this.ObjFLUENCY.Age=this.patientSearchList.Age;
+        this.ObjChildSpeech.Name=this.patientSearchList.Name;
+        this.ObjChildSpeech.Sex=this.patientSearchList.Sex;
+        this.ObjChildSpeech.Referredby=this.patientSearchList.Referredby;
+        this.ObjChildSpeech.Age=this.patientSearchList.Age;
 
-        this.ObjFLUENCY.Foot_Fall_ID=this.patientSearchList.Foot_Fall_ID;
-        this.ObjFLUENCY.Cost_Cen_ID=this.patientSearchList.Cost_Cen_ID;
+        this.ObjChildSpeech.Foot_Fall_ID=this.patientSearchList.Foot_Fall_ID;
+        this.ObjChildSpeech.Cost_Cen_ID=this.patientSearchList.Cost_Cen_ID;
 
         this.Appo_Date=this.patientSearchList.Appo_Dt ? this.patientSearchList.Appo_Dt : "-";
       }
@@ -148,7 +168,7 @@ export class DoctorsAppoNewFluencyEvaluationComponent implements OnInit {
       })
       });
     }
-    // console.log("tempSaveJ1",tempSaveJ1);
+    //  console.log("tempSaveJ1",tempSaveJ1);
 
     const tempSaveJ2 = {
       Appo_ID : this.AppoIDvalue
@@ -160,21 +180,21 @@ export class DoctorsAppoNewFluencyEvaluationComponent implements OnInit {
     }
   //  console.log("tempSaveJ3",tempSaveJ3);
 
-    this.ObjFLUENCY.Appo_ID= this.AppoIDvalue;
-    this.ObjFLUENCY.Posted_By= this.$CompacctAPI.CompacctCookies.User_ID;
-    this.ObjFLUENCY.Posted_On= this.DateService.dateConvert(new Date());
+    this.ObjChildSpeech.Appo_ID= this.AppoIDvalue;
+    this.ObjChildSpeech.Posted_By= this.$CompacctAPI.CompacctCookies.User_ID;
+    this.ObjChildSpeech.Posted_On= this.DateService.dateConvert(new Date());
 
-    this.ObjFLUENCY.Txn_Date= this.Appo_Date;
+    this.ObjChildSpeech.Txn_Date= this.Appo_Date;
 
-    // console.log("ObjFLUENCY",this.ObjFLUENCY);
+    // console.log("ObjFLUENCY",this.ObjChildSpeech);
 
-    this.FLUENCYEVALUATIONFormSubmitted=true;
+    this.ChildSpeechEvaluationFormSubmitted=true;
     if(valid){
       this.Spinner=true;
       const obj = {
         "SP_String": "SP_BL_Txn_Doctor_Appo_ALL",
         "Report_Name_String": "Create_BL_Txn_Doctors_Appo_Test",
-        "Json_Param_String": JSON.stringify(this.ObjFLUENCY),
+        "Json_Param_String": JSON.stringify(this.ObjChildSpeech),
         "Json_1_String": JSON.stringify(tempSaveJ1),
         "Json_2_String": JSON.stringify(tempSaveJ2),
         "Json_3_String": JSON.stringify(tempSaveJ3)
@@ -222,7 +242,7 @@ export class DoctorsAppoNewFluencyEvaluationComponent implements OnInit {
        if (data[0].Column1){
          this.Spinner=false;
          this.buttonValid = false;
-         this.FLUENCYEVALUATIONFormSubmitted=false;
+         this.ChildSpeechEvaluationFormSubmitted=false;
          this.compacctToast.clear();
          this.compacctToast.add({
            key: "compacct-toast",
@@ -250,7 +270,7 @@ export class DoctorsAppoNewFluencyEvaluationComponent implements OnInit {
 
   ClearData(){
     this.CheckBoxRECOMMENDATION= [];
-    this.ObjFLUENCY = new FLUENCY();
+    this.ObjChildSpeech = new ChildSpeech();
     this.ShowYes();
     this.GetAllDataAppoID();
   }
@@ -275,7 +295,7 @@ export class DoctorsAppoNewFluencyEvaluationComponent implements OnInit {
       this.EditDataList= JSON.parse(data[0].Test_Details);  
       // console.log("EditDataList",this.EditDataList);
 
-      this.ObjFLUENCY=  this.EditDataList;
+      this.ObjChildSpeech=  this.EditDataList;
       this.ShowYes();
 
       this.Get_TXN_ID=data[0].Txn_ID;
@@ -306,15 +326,62 @@ export class DoctorsAppoNewFluencyEvaluationComponent implements OnInit {
     });
   }
 
-
-
   ShowYes(){
-    if(this.ObjFLUENCY.stuttered == 'Yes'){
-      this.IfYes=true;
+    if(this.ObjChildSpeech.pregnancy == 'Poor'){
+      this.IfYes1=true;
     }
     else{
-      this.IfYes=false;
-      this.ObjFLUENCY.stuttered_Yes=undefined;
+      this.IfYes1=false;
+      this.ObjChildSpeech.pregnancy_Yes=undefined;
+    }
+    if(this.ObjChildSpeech.pregnancy_full == 'No'){
+      this.IfYes2=true;
+    }
+    else{
+      this.IfYes2=false;
+      this.ObjChildSpeech.pregnancy_full_Yes=undefined;
+    }
+    if(this.ObjChildSpeech.delivery == 'No'){
+      this.IfYes3=true;
+    }
+    else{
+      this.IfYes3=false;
+      this.ObjChildSpeech.delivery_Yes=undefined;
+    }
+    if(this.ObjChildSpeech.children == 'No'){
+      this.IfYes4=true;
+    }
+    else{
+      this.IfYes4=false;
+      this.ObjChildSpeech.children_Yes=undefined;
+    }
+    if(this.ObjChildSpeech.smile == 'No'){
+      this.IfYes5=true;
+    }
+    else{
+      this.IfYes5=false;
+      this.ObjChildSpeech.smile_Yes=undefined;
+    }
+    if(this.ObjChildSpeech.friends == 'No'){
+      this.IfYes6=true;
+    }
+    else{
+      this.IfYes6=false;
+      this.ObjChildSpeech.friends_Yes=undefined;
+    }
+    if(this.ObjChildSpeech.during == 'No'){
+      this.IfYes7=true;
+    }
+    else{
+      this.IfYes7=false;
+      this.ObjChildSpeech.during_Yes=undefined;
+    }
+    if(this.ObjChildSpeech.environments == 'No'){
+      this.IfYes8=true;
+    }
+    else{
+      this.IfYes8=false;
+      this.ObjChildSpeech.environments_Yes=undefined;
     }
   }
 
@@ -325,10 +392,12 @@ export class DoctorsAppoNewFluencyEvaluationComponent implements OnInit {
     this.compacctToast.clear("c");  
   }
 
+
+
 }
 
 
-class FLUENCY{
+class ChildSpeech{
   Name: any;
   Sex: any;
   Referredby:any;
@@ -343,33 +412,77 @@ class FLUENCY{
   Posted_On: any;
 
   Language1: any;
-  Complaint: any;
-  dysfluencies: any;
-  onset: any;
-  noticed: any;
-  circumstances: any;
-  severity: any;
-  stuttered: any;
-  stuttered_Yes: any;
-  contact: any;
-  By_parents: any;
-  By_self: any;
-  By_others: any;
-  situation: any;
-  individuals: any;
-  sounds: any;
-  structure: any;
-  coping_situation: any;
-  coping_sounds: any;
-  reported_situation: any;
-  reported_sounds: any;
-  observed_situation: any;
-  observed_sounds: any;
-  prolongations: any;
-  reptations: any;
-  hesitations: any;
-  blocks: any;
-  behaviours: any;
+
+  Statement1: any;
+
+  pregnancy: any;
+  pregnancy_Yes: any;
+  pregnancy_full: any;
+  pregnancy_full_Yes: any;
+  delivery: any;
+  delivery_Yes: any;
+  incubator: any;
+  jaundice: any;
+  Seizures: any;
+  birth: any;
+  Infections: any;
+  Feeding: any;
+  fever: any;
+  Seizures1: any;
+  Trauma: any;
+  cough: any;
+  Hearing1: any;
+  hospital: any;
+
+  Control1: any;
+  Crawling: any;
+  RollOver: any;
+  Sitting: any;
+  Standing: any;
+  Walking: any;
+  Bladder: any;
+
+  children: any;
+  children_Yes: any;
+  smile: any;
+  smile_Yes: any;
+  friends: any;
+  friends_Yes: any;
+  during: any;
+  during_Yes: any;
+  environments: any;
+  environments_Yes: any;
+  child_check: any =[];
+
+  quiet: any;
+  fidgety: any;
+  upset: any;
+  rock: any;
+  messy: any;
+  bump: any;
+  oneself: any;
+  difficult: any;
+  distracted: any;
+  safety1: any;
+  enjoy: any;
+  books: any;
+  describe: any;
+
+  Babbling: any;
+  first1: any;
+  together: any;
+  sentences: any;
+  Engage: any;
+  directions: any;
+
+  Communication: any;
+
+  Comprehension: any;
+  Expression: any;
+
+  Comprehension1: any =[];
+  Expression1: any =[];
+
   Structurally_Lips: any;
   Functionally_Lips: any;
   Structurally_Tongue: any;
@@ -383,8 +496,31 @@ class FLUENCY{
   Structurally_Mandible: any;
   Functionally_Mandible: any;
   Comment: any;
-  Findings: any;
-  Diagnosis: any;
+
+  Loudness: any;
+  Pitch: any;
+  Quality: any;
+  Duration: any;
+
+  Behaviour: any;
+  Social: any;
+  Hearing: any;
+  Articulation: any;
+  Receptive: any;
+  Expressive: any;
+  Cognition: any;
+  Fluency: any;
+  Breathing: any;
+  Resonance: any;
+  Prosody: any;
+  Phonological: any;
+
+  Assessment: any;
+
   Final_Comment: any;
+
+  Diagnosis: any;
+
   Prognosis: any;
+
 }
