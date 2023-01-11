@@ -324,6 +324,8 @@ import { SaleBillComponent } from "./common/MICL/sale-bill/sale-bill.component";
 import { DoctorsAppoNewFluencyEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-fluency-evaluation/doctors-appo-new-fluency-evaluation.component";
 import { PrintSpeechEvauationReportDashboardComponent } from "./common/PatientManagement/print-speech-evauation-report-dashboard/print-speech-evauation-report-dashboard.component";
 import { SpeechEvauationReportDashboardComponent } from "./common/PatientManagement/speech-evauation-report-dashboard/speech-evauation-report-dashboard.component";
+import { DoctorsAppoNewChildSpeechEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-child-speech-evaluation/doctors-appo-new-child-speech-evaluation.component";
+import { DoctorsAppoNewAdultSpeechEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-adult-speech-evaluation/doctors-appo-new-adult-speech-evaluation.component";
 
 
 const layoutRoutes: Routes = [{
@@ -2158,7 +2160,7 @@ path: 'MICL_Cost_Center_Master',
   path: 'Nepal_BL_Txn_Purchase_Order',
   component: NepalBLTxnPurchaseOrderComponent,
   data: {
-    title: 'Nepal BL Txn Purchase Order'
+    title: 'Purchase Order'
 }
 },
 {
@@ -2446,6 +2448,20 @@ path: 'MICL_Cost_Center_Master',
     component: SpeechEvauationReportDashboardComponent,
     data: {
       title: 'Speech Evauation Report Dashboard'
+}
+},
+{
+  path: 'Doctors_Appo_New_Child_Speech_Evaluation',
+    component: DoctorsAppoNewChildSpeechEvaluationComponent,
+    data: {
+      title: 'CHILD SPEECH AND LANGUAGE EVALUATION REPORT'
+}
+},
+{
+  path: 'Doctors_Appo_New_Adult_Speech_Evaluation',
+    component:DoctorsAppoNewAdultSpeechEvaluationComponent,
+    data: {
+      title: 'ADULT SPEECH AND LANGUAGE EVALUATION REPORT'
 }
 },
     

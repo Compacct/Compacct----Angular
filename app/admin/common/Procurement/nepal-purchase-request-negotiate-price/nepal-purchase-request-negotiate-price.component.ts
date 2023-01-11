@@ -19,48 +19,50 @@ import { isUndefined } from 'util';
   encapsulation: ViewEncapsulation.None
 })
 export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
-  items:any = []
-  tabIndexToView:number = 0
-  buttonname = "Save"
-  poRequestList:any = []
-  vendorSelectionFormSubmit:boolean = false
-  PoDate:any
-  Searchedlist:any = []
-  prList:any = []
-  Venderlist:any = []
-  VenderSelect:any = undefined
-  SaveSpinner:boolean = false
-  seachSpinner:boolean = false
-  BrowseStartDate:any = {}
-  BrowseEndDate:any = {}
-  SearchFormSubmit:boolean = false
-  ObjnegotiatePrice:negotiatePrice = new negotiatePrice()
-  PurchaseTypeList:any = []
-  PurchaseTypeSelect:any = undefined
-  PaymentMethodList: any = []
-  PaymentTermsList: any = []
-  DeliveryTermsList :any =[]
-  PaymentMethodSelect:any = undefined
-  CurrencyList:any = []
-  CurrencySelect:any = []
-  ViewPurchaseTypeModal :boolean = false
-  PurchaseId =undefined
-  PaymentId= undefined
-  ViewPaymentTypeModal :boolean =false
-  ViewCurrencyTypeModal:boolean =false
-  PurchaseTypeModal:boolean =false
-  PaymentTypeModal :boolean = false
-  CurrencyTypeModal :boolean =false
-  PurchaseTypeFormSubmitted :boolean =false
-  PaymentFormSubmitted :boolean = false
-  CurrencyFormSubmitted :boolean = false
+  items: any = [];
+  tabIndexToView: number = 0;
+  buttonname = "Save";
+  poRequestList: any = [];
+  vendorSelectionFormSubmit: boolean = false;
+  PoDate: any;
+  Searchedlist: any = [];
+  prList: any = [];
+  Venderlist: any = [];
+  VenderSelect: any = undefined;
+  SaveSpinner: boolean = false;
+  seachSpinner: boolean = false;
+  BrowseStartDate: any = {};
+  BrowseEndDate: any = {};
+  SearchFormSubmit: boolean = false;
+  ObjnegotiatePrice: negotiatePrice = new negotiatePrice();
+  PurchaseTypeList: any = [];
+  PurchaseTypeSelect: any = undefined;
+  PaymentMethodList: any = [];
+  PaymentTermsList: any = [];
+  DeliveryTermsList: any = [];
+  PaymentMethodSelect: any = undefined;
+  CurrencyList: any = [];
+  CurrencySelect: any = [];
+  ViewPurchaseTypeModal: boolean = false;
+  PurchaseId = undefined;
+  PaymentId = undefined;
+  ViewPaymentTypeModal: boolean = false;
+  ViewCurrencyTypeModal: boolean = false;
+  PurchaseTypeModal: boolean = false;
+  PaymentTypeModal: boolean = false;
+  CurrencyTypeModal: boolean = false;
+  PurchaseTypeFormSubmitted: boolean = false;
+  PaymentFormSubmitted: boolean = false;
+  CurrencyFormSubmitted: boolean = false;
   PurchaseTypeName = undefined;
-  PaymentTypeName = undefined
-  CurrencyId =undefined
-  CurrencyName = undefined
+  PaymentTypeName = undefined;
+  CurrencyId = undefined;
+  CurrencyName = undefined;
   Spinner: boolean = false;
-  PaymentTramsSelect: any = undefined
-  DeliveryMethodSelect :any =undefined
+  PaymentTramsSelect: any = undefined;
+  DeliveryMethodSelect: any = undefined;
+  EditPoDate: any = undefined;
+  DisableBUT: any = undefined;
   constructor( private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -76,7 +78,7 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
     this.items =  ["BROWSE", "CREATE"];
     this.Header.pushHeader({
      Header: "Purchase Request Negotiate Price",
-     Link: "Procurement -> Purchase Request Negotiate Price"
+     Link: "Procurement -> Transaction -> Negotiate Price"
    });
    this.BrowseStartDate =this.DateNepalConvertService.GetNepaliCurrentDateNew();
    this.BrowseEndDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
@@ -341,29 +343,37 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         if(data.length){
+        data.forEach((ele:any) => {
+                ele['Edit_Po_Date'] = ele.Date
+            });
         this.Searchedlist = data
-        data.forEach((y:any) => {
+        this.Searchedlist.forEach((y:any) => {
           y.Date = this.DateNepalConvertService.convertEngToNepaliFormatDateObj(y.Date);
-          });
+        });
+         
         // console.log("Searchedlist",this.Searchedlist)
         }
         this.seachSpinner = false
       })
     }
   }
-  EditNegotiate(col:any){
+  EditNegotiate(col: any) {
+    this.EditPoDate = undefined;
+    this.DisableBUT = undefined;
     if(col.Purchase_Request_No){
       this.items = ["BROWSE", "UPDATE"];
-      this.tabIndexToView = 1
-      this.buttonname = "Update"
-      this.ObjnegotiatePrice.Purchase_Request_No = col.Purchase_Request_No
-      this.purchaseRequestChange()
-      this.PurchaseTypeSelect = col.Purchase_Type_ID
-      this.PaymentMethodSelect = col.Payment_Term_ID
-      this.getPaymentMethod()
+      this.tabIndexToView = 1;
+      this.buttonname = "Update";
+      this.DisableBUT = col.PO_Order_No;
+      this.ObjnegotiatePrice.Purchase_Request_No = col.Purchase_Request_No;
+      this.purchaseRequestChange();
+      this.PurchaseTypeSelect = col.Purchase_Type_ID;
+      this.PaymentMethodSelect = col.Payment_Term_ID;
+      this.getPaymentMethod();
       this.DeliveryMethodSelect = col.Delivery_Term_ID;
       this.PaymentTramsSelect = col.Payment_Term_Details;
-      this.CurrencySelect = col.Currency
+      this.CurrencySelect = col.Currency;
+      this.EditPoDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(col.Edit_Po_Date);
     }
   }
   CreatPurchasePOP(valid?){}

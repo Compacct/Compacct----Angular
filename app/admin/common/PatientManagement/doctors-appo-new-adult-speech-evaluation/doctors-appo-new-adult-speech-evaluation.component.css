@@ -1,0 +1,32 @@
+             .label-t {
+                padding: 6px 12px;
+                background: rgb(206 216 216 / 51%);
+                cursor: no-drop;
+              }
+              .table-header {
+                color: #ffffff !important;
+                background-color: #3c8dbc !important;
+                
+              }
+              .custom-header{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #ffffff !important;
+                background-color: #3c8dbc !important;
+                padding: 4px;
+              }
+              
+              table, th, td {
+                border: 1px solid #ffffff !important;
+                padding: 5px;
+              }
+              th{
+                
+                text-align: center;
+              }
+
+              td>label{
+                margin-left: 30px;
+              }
+              

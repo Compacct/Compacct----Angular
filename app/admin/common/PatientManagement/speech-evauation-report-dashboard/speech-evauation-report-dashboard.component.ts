@@ -15,7 +15,7 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
 })
 export class SpeechEvauationReportDashboardComponent implements OnInit {
   AppoIDvalue:number;
-  tabIndexToView = 0;
+  tabIndexToView:number= 0;
 
   constructor(
     private GlobalAPI:CompacctGlobalApiService,
@@ -44,5 +44,12 @@ export class SpeechEvauationReportDashboardComponent implements OnInit {
     window.open("Doctors_Appo_New_Fluency_Evaluation" + "?Appo_ID=" + this.AppoIDvalue + "&ed=y", '_blank');
   }
 
+  action_Click_Child_Speech_Evaluation(){
+    window.open("Doctors_Appo_New_Child_Speech_Evaluation" + "?Appo_ID=" + this.AppoIDvalue + "&ed=y", '_blank');
+  }
+
+  action_Click_Adult_Speech_Evaluation(){
+    window.open("Doctors_Appo_New_Adult_Speech_Evaluation" + "?Appo_ID=" + this.AppoIDvalue + "&ed=y", '_blank');
+  }
 
 }
