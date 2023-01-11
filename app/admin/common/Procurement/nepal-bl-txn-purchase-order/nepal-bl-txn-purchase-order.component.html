@@ -115,17 +115,17 @@
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li>
-                                                        <li>
+                                                        <li *ngIf="col.Approver_One_Status == 'Approved' || col.Approver_Two_Status == 'Approved'">
                                                             <a (click)="ActivityPlan(col)">
                                                                 <i class='fa fa-tasks'></i> PO Activity Plan
                                                             </a>
                                                         </li>                                                      
-                                                        <li>
+                                                        <li *ngIf="col.Approver_One_Status == 'Approved' || col.Approver_Two_Status == 'Approved'">
                                                             <a (click)="PoDCoVault(col.Doc_No)">
                                                                 <i class='fa fa-file'></i> PO DOC Vault
                                                             </a>
                                                         </li>
-                                                        <li>
+                                                        <li *ngIf="col.Approver_One_Status == 'Approved' || col.Approver_Two_Status == 'Approved'">
                                                             <a (click)="ToDoUpdate(col.Doc_No)">
                                                             <i class="fa fa-refresh"></i> To-Do Update
                                                             </a>
@@ -652,7 +652,7 @@
                             <p-tabPanel headerStyleClass="compacct-tabs" [header]="items1[0]"
                                 leftIcon="glyphicon glyphicon-th-list"> 
                                 <div>
-                                <button type="button" class="btn btn-info" (click)="ColourInfo()" style="margin-left: 91%;"><i class="fa fa-info-circle"></i></button>
+                                <button type="button" title="Colour Info" class="btn btn-info" (click)="ColourInfo()" style="margin-left: 91%;"><i class="fa fa-info-circle"></i></button>
                                 </div>                             
                                 <div class="table-responsive no-padding">
                                     <p-table #d [value]="dataList"

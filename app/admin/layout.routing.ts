@@ -2158,7 +2158,7 @@ path: 'MICL_Cost_Center_Master',
   path: 'Nepal_BL_Txn_Purchase_Order',
   component: NepalBLTxnPurchaseOrderComponent,
   data: {
-    title: 'Nepal BL Txn Purchase Order'
+    title: 'Purchase Order'
 }
 },
 {

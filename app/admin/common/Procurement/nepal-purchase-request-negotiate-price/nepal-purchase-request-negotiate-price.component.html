@@ -169,10 +169,11 @@
                                                       <span class="caret"></span>
                                                   </button>
                                                     <ul class="dropdown-menu">
-                                                      <li>
-                                                            <a (click)="EditNegotiate(col)">
-                                                                <i class="fa fa-fw fa-pencil"></i> Edit
-                                                            </a>
+                                                      <li >
+                                                        <a (click)="EditNegotiate(col)">
+                                                            <i class="fa fa-fw fa-pencil"></i> Edit
+                                                        </a>
+                                               
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -197,6 +198,7 @@
                                         <label class="control-label">Purchase Request No<sup class="text-danger"></sup></label>
                                         <p-dropdown [options]="poRequestList" 
                                         name="Purchase_Request_No" 
+                                        *ngIf="buttonname === 'Save'"
                                         [(ngModel)]="ObjnegotiatePrice.Purchase_Request_No" 
                                         [showClear]="true" 
                                         [emptyFilterMessage]="' No Purchase Request No Found'" 
@@ -205,9 +207,9 @@
                                         [placeholder]="'Select Purchase Request No'" 
                                         [virtualScroll]="true"
                                         itemSize="30" #Purchase_Request_No="ngModel" 
-                                        (ngModelChange)="purchaseRequestChange()"
-                                        >
+                                        (ngModelChange)="purchaseRequestChange()">
                                     </p-dropdown>
+                                    <div class="label-t" *ngIf="buttonname === 'Update'">{{ObjnegotiatePrice.Purchase_Request_No}}</div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="control-label">Purchase Request Date</label>
@@ -216,9 +218,10 @@
                                                 <i class="fa fa-calendar"></i>
                                             </div>
                                             <input  CompacctNepaliDatepicker id="DPo" name="DPo" #PDate="ngModel"
-                                             Class="form-control" (ngModelChange)="PoDate= $event"
+                                             Class="form-control" (ngModelChange)="PoDate= $event"  *ngIf="buttonname === 'Save'"
                                              [(ngModel)]="PoDate"
                                              disabled />
+                                            <div class="label-t" *ngIf="buttonname === 'Update'">{{EditPoDate ? EditPoDate :"-"}}</div>
                                           </div>
                                     </div>
                                 </div>
@@ -349,8 +352,8 @@
                                 <button class="btn btn-primary pull-right" 
                                                 (click)="negotiateSave(vendorSelectionForm.form.valid)" 
                                                 id="Saveload"
-                                                *ngIf="ObjnegotiatePrice.Purchase_Request_No"
-                                                [disabled]="SaveSpinner">
+                                                *ngIf="ObjnegotiatePrice.Purchase_Request_No "
+                                                [disabled]="SaveSpinner || DisableBUT.length!== 0 " >
                                             <p-progressSpinner 
                                             *ngIf="SaveSpinner" 
                                             [style]="{width: '15px', height: '15px'}" 
