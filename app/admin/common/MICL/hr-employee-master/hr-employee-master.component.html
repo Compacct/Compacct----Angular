@@ -658,8 +658,9 @@
     </div>
 </div>
 
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewProTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '300px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
-    [baseZIndex]="100">
+<!-- Designation -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewProTypeModal"  [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '300px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
 
     <div class="table-responsive table-id no-padding" style="overflow-x: hidden !important;">
         <p-table [value]="ViewDesignationList" [globalFilterFields]='["Designation"]' [rowHover]="true" [autoLayout]="true" #dt2>
@@ -678,7 +679,7 @@
                     <th width='25%'>Receive Qty</th> -->
                     <th>Designation</th>
 
-                    <th>Action</th>
+                    <!-- <th>Action</th> -->
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-col>
@@ -689,7 +690,7 @@
                     <td>{{col.Rcv_Qty}}</td> -->
                     <td>{{col.Designation}}</td>
 
-                    <td><button (click)="DeleteDesignation(col)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                    <!-- <td><button (click)="DeleteDesignation(col)" class="btn danger"><i class="fa fa-trash"></i></button></td> -->
 
                 </tr>
             </ng-template>
@@ -728,8 +729,9 @@ CLOSE
     </p-footer>
 </p-dialog>
 
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewProTypeModal3" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '400px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
-    [baseZIndex]="100">
+<!-- Department -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewProTypeModal3" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '400px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
 
     <div class="table-responsive table-id no-padding" style="overflow-x: hidden !important;">
         <p-table [value]="ViewDepartmentList" [globalFilterFields]='["Dept_Name"]' [rowHover]="true" [autoLayout]="true" #dt3>
@@ -748,7 +750,7 @@ CLOSE
                     <th width='25%'>Receive Qty</th> -->
                     <th>Department</th>
 
-                    <th>Action</th>
+                    <!-- <th>Action</th> -->
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-col>
@@ -759,7 +761,7 @@ CLOSE
                     <td>{{col.Rcv_Qty}}</td> -->
                     <td>{{col.Dept_Name}}</td>
 
-                    <td><button (click)="DeleteDepartment(col)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                    <!-- <td><button (click)="DeleteDepartment(col)" class="btn danger"><i class="fa fa-trash"></i></button></td> -->
 
                 </tr>
             </ng-template>

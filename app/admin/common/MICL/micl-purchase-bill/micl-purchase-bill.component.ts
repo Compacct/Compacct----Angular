@@ -509,8 +509,9 @@ GetGRNNoProductdetails(){
     this.GRNNoProlist.forEach(item=>{
       item.Product_ID = item.value;
       item.Product_Name = item.label;
-      item.Discount_Type_Amount = 0;
-      item.Discount = 0;
+      item.Discount_Type = item.Discount_Type ? item.Discount_Type : undefined;
+      item.Discount_Type_Amount = item.Discount_Type_Amount ? item.Discount_Type_Amount : 0;
+      item.Discount = item.Discount_Amount ? item.Discount_Amount : 0;
     })
     this.CalculateCessAmt();
     this.calculategstamt();
@@ -1310,6 +1311,7 @@ GetGRNNoProductdetails(){
       let data = JSON.parse(res[0].Column1)
       console.log("Edit data",data);
       this.ObjPurChaseBill = data[0],
+      this.GetGRNno();
       this.maindisabled = true;
       this.ObjPurChaseBill.Choose_Address = "MAIN";
       // this.getreq();
