@@ -147,6 +147,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
   updateFromStokePoint = undefined;
   updatedate = undefined;
   billnumber = undefined;
+  expotSpinner = false;
 
   constructor(
     private $http: HttpClient,
@@ -1896,6 +1897,14 @@ exportoexcel(tempobj,fileName){
     XLSX.writeFile(workbook, fileName+'.xlsx');
     
   })
+}
+// Export Excel Browse
+exportoexcelbrowse(arr,fileName){
+  this.expotSpinner = true;
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+    this.expotSpinner = false;
 }
 
 // REGENERATE BILL FROM ADMIN

@@ -597,7 +597,7 @@ const obj = {
                Expiry_Date :  element.Expiry_Date,
                batch_Qty : element.batch_Qty,
                Closing_Qty : element.Closing_Qty,
-               Varience_Qty : element.Varience_Qty,
+               Varience_Qty : Number(element.batch_Qty - element.Closing_Qty).toFixed(2),
                Remarks : element.Remarks
              };
               this.productlist.push(productObj);

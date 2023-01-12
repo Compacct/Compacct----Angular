@@ -98,6 +98,7 @@ export class HREmployeeMasterComponent implements OnInit {
   userdatedisabled = true;
   leftdisabled = true;
   GradeList:any = [];
+  databaseName:any;
   constructor(
     private http : HttpClient,
     private commonApi : CompacctCommonApi,
@@ -127,6 +128,7 @@ export class HREmployeeMasterComponent implements OnInit {
     this.weakofflist2 = ["MONDAY", "TUESDAY", "WEDNESDAY", "THRUSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
     // this.Statuslist = ["WORKING-REJOIN", "WORKING-PROVISION", "WORKING-CASUAL", "WORKING-CONFIRMED", "WORKING-PARTTIME", "RETIRED", "LEFT", "SUSPENDED", "ABSCONDED", "PROBATION"];
     this.Statuslist = ["TRANNIE", "PROBATION", "PERMANENT", "RESIGNED", "SUSPENDED", "ABSCONDED"];
+    this.getDatabase();
     this.getDepartment();
     this.getWorkingCompany();
     this.getDesignation();
@@ -139,6 +141,15 @@ export class HREmployeeMasterComponent implements OnInit {
     this.leftdatechange();
     this.objemployee.Bank_ID = 1;
     
+  }
+  getDatabase(){
+    this.http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log(data)
+        });
   }
 
 leftdatechange(){
@@ -329,7 +340,7 @@ GetGrade(){
       }
         this.GlobalAPI.getData(obj).subscribe((data)=>{
           this.GradeList = data;
-          this.objemployee.Personal_Area = "HALDIA";
+          this.objemployee.Personal_Area = (this.databaseName === 'MICL_Demo' || this.databaseName === 'MICL') ? "HALDIA" : undefined;
           console.log("GradeList=",this.GradeList);
         });
 
@@ -425,7 +436,8 @@ getEmployeeDetails(Emp_ID){
          this.objemployee = editlist;
          this.CalculateTime();
          this.objemployee.Dept_ID = data[0].Dept_ID ? data[0].Dept_ID : undefined;
-         this.objemployee.Personal_Area = data[0].Personal_Area ? data[0].Personal_Area : "HALDIA";
+         this.objemployee.Personal_Area = (this.databaseName === 'MICL_Demo' || this.databaseName === 'MICL') ? data[0].Personal_Area ? data[0].Personal_Area : "HALDIA" : data[0].Personal_Area ? data[0].Personal_Area : undefined;
+        //  this.objemployee.Personal_Area = data[0].Personal_Area ? data[0].Personal_Area : "HALDIA";
          this.objemployee.Bank_Ac_Type = data[0].Bank_Ac_Type ? data[0].Bank_Ac_Type : undefined;
          this.objemployee.Physically_Chalanged = data[0].Physically_Chalanged === 1 ? 'YES' : 'NO';
          this.objemployee.Is_Biometric = data[0].Is_Biometric == "Y"? true : false;
@@ -827,7 +839,7 @@ ViewDesignationType(){
         });
         setTimeout(()=>{
           this.ViewProTypeModal = true;
-         },200);
+         },300);
       }
 
       DeleteDesignation(col){
@@ -983,7 +995,7 @@ ViewDesignationType(){
           });
           setTimeout(()=>{
             this.ViewProTypeModal3 = true;
-           },200);
+           },300);
 
   }
 
@@ -1153,7 +1165,7 @@ clearData(){
   this.DOB = new Date();
   this.objemployee.Present_Country = "India";
   this.objemployee.Perm_Country = "India";
-  this.objemployee.Personal_Area = "HALDIA";
+  this.objemployee.Personal_Area = (this.databaseName === 'MICL_Demo' || this.databaseName === 'MICL') ? "HALDIA" : undefined;
   this.ischeckaddress = false;
   this.Employeeid = undefined;
   this.objemployee.Bank_ID = 1;
