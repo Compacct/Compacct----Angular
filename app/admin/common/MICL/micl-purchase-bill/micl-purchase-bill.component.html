@@ -480,7 +480,7 @@
                                                 <label class="control-label">GRN No.&nbsp;<span class="text-danger"></span></label>
                                                     <p-dropdown [options]="GRNList" name="grnno" [(ngModel)]="ObjProductInfo.GRN_No"
                                                         [showClear]="true" [emptyFilterMessage]="' No GRN No Found'" (onChange)="ChangeGRN()"
-                                                        [filter]="true" filterBy="label,value.name" [placeholder]="'Select GRN No'" itemSize="30" #grnno="ngModel"
+                                                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select GRN No'" itemSize="30" #grnno="ngModel"
                                                         [styleClass]="ProductInfoSubmitted && grnno.errors?.required? 'clearance' : ''">
                                                     </p-dropdown>
                                             </div>
@@ -623,7 +623,7 @@
                                             <!-- <td>{{obj.Godown_Name ? obj.Godown_Name : '-'}}</td> -->
                                             <td>{{obj.GRN_No ? obj.GRN_No : '-'}}</td>
                                             <!-- <td>{{obj.Pur_Order_No ? obj.Pur_Order_No : '-'}}</td> -->
-                                            <td *ngIf="buttonname != 'Update'"><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                            <td><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                         </tr>
                                     </tbody>
                                 </table>

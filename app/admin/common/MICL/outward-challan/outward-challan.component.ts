@@ -136,8 +136,8 @@ export class OutwardChallanComponent implements OnInit {
       { label: 'Delete', icon: 'fa fa-fw fa-trash' }
     ];
     this.Header.pushHeader({
-      Header: "Outward challan",
-      Link: " Financial Management -> Sales ->  Outward Challan"
+      Header: "Sale challan",
+      Link: " Financial Management -> Sales ->  Sale Challan"
     });
     this.getDisable();
     this.Finyear();

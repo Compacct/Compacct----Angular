@@ -34,7 +34,7 @@
                                         </app-compacct-daterangepicker>
 
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-2">
                                         <label class="control-label">Brand &nbsp;<sup class="text-danger">*</sup>
                                         </label>
                                         <select class="form-control" name="Brand_ID1" #Brand_ID1="ngModel" [(ngModel)]="ObjBrowseData.Brand_ID" (change)="getCostcenterBro()" [ngClass]="{'clearance': RequistionSearchFormSubmit && Brand_ID1?.errors?.required}" required>
@@ -52,10 +52,16 @@
                                               <option *ngFor='let option of outletListBro' value="{{option.Cost_Cen_ID}}">{{option.Location}}</option>
                                       </select>
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-2">
                                         <button class="btn btn-primary custombutton" data-toggle="modal" (click)="searchData(RequistionSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
                                       <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                       <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                   </button>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-success custombutton" data-toggle="modal" (click)="exportoexcelbrowse(GetAllDataList,'Dispatch_Challan_Browse')" id="load" [disabled]="expotSpinner || !GetAllDataList.length">
+                                      <p-progressSpinner *ngIf="expotSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!expotSpinner" class="glyphicon glyphicon-save"></span>&nbsp;Export to excel
                                    </button>
                                     </div>
 
