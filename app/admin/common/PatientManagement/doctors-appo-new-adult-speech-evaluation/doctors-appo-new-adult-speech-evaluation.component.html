@@ -40,11 +40,7 @@
       <div class="form-horizontal">
         <div class="box-body">
           <p-tabView [activeIndex]="tabIndexToView">
-            <p-tabPanel
-              headerStyleClass="compacct-tabs"
-              header="Appointment"
-              leftIcon="glyphicon glyphicon-user"
-            >
+            
               <form
                 name="AdultSpeechEvaluation"
                 #AdultSpeechEvaluation="ngForm"
@@ -121,6 +117,24 @@
                     </p-dropdown>
                   </div>
                   <div class="col-sm-3">
+                    <label for="" class="control-label">Guardian Name</label>
+                    <div class="input-group">
+                      <div class="label-t" style="padding: 7px 12px;">
+                        {{G_Name ? G_Name :"-"}}
+                      </div>
+                      <span class="input-group-btn"
+                        ><button
+                          type="button"
+                          class="btn btn-primary"
+                          (click)="showModel()"
+                        >
+                          <i class="pi pi-pencil"></i></button
+                      ></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3">
                     <label class="control-label">Language</label>
                     <input
                       class="form-control"
@@ -131,6 +145,45 @@
                     />
                   </div>
                 </div>
+
+<!-- Model code Start -->
+<p-dialog
+                header="Guardian Name"
+                [(visible)]="display"
+                [modal]="true"
+                [draggable]="false"
+                [responsive]="true"
+                [style]="{ width: '350px', minWidth: '200px' }"
+                [minY]="70"
+                [baseZIndex]="10000"
+              >
+                <input
+                  name="Guardian_Name"
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter Guardian Name..."
+                  [(ngModel)]="Guardian_Name"
+                />
+
+                <p-footer>
+                  <button
+                    type="button"
+                    pButton
+                    icon="pi pi-check"
+                    (click)="updateGuardian()"
+                    label="Update"
+                  ></button>
+                  <button
+                    type="button"
+                    pButton
+                    icon="pi pi-times"
+                    (click)="display=false"
+                    label="Cancel"
+                  ></button>
+                </p-footer>
+              </p-dialog>
+              <!-- Model code End -->
+
 
                 <hr class="box boxboxDivide-primary" />
                 <div class="row">
@@ -1611,7 +1664,7 @@
                   </button>
                 </div>
               </form>
-            </p-tabPanel>
+            
           </p-tabView>
         </div>
       </div>

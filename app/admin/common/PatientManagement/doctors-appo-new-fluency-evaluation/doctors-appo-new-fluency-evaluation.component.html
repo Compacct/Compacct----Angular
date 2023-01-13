@@ -31,49 +31,19 @@
                             <div class="row">
                                 <div class="col-sm-3">
                                     <label class="control-label">Name<sup class="text-danger">*</sup></label>
-                                    <input class="form-control"
-                                    name="Name"
-                                    #Name="ngModel" 
-                                    [(ngModel)]="ObjFLUENCY.Name"
-                                    placeholder="Write Your Name"
-                                    disabled
-                                    > 
+                                    <div class="label-t">{{this.ObjFLUENCY.Name ? this.ObjFLUENCY.Name : '-'}}</div>
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Patient ID<sup class="text-danger">*</sup></label>
-                                    <input class="form-control"
-                                    name="Foot_Fall_ID"
-                                    #Foot_Fall_ID="ngModel"
-                                    [(ngModel)]="ObjFLUENCY.Foot_Fall_ID" 
-                                    CompacctDigitonly="true"
-                                    placeholder="Type Patient ID"
-                                    disabled
-                                    > 
+                                    <div class="label-t">{{this.ObjFLUENCY.Foot_Fall_ID ? this.ObjFLUENCY.Foot_Fall_ID : '-'}}</div>
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Sex<sup class="text-danger">*</sup></label>
-                                    <select class="form-control"
-                                    name="Sex"
-                                    #Sex="ngModel"
-                                    [(ngModel)]="ObjFLUENCY.Sex"
-                                    disabled
-                                     >
-                                     <option  [ngValue]="undefined">Select</option>
-                                     <option  *ngFor="let option of GenderList" value="{{option}}">
-                                         {{option}}
-                                     </option>
-                                    </select>
+                                    <div class="label-t">{{this.ObjFLUENCY.Sex ? this.ObjFLUENCY.Sex : '-'}}</div>
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Age<sup class="text-danger">*</sup></label>
-                                    <input class="form-control"
-                                    name="Age"
-                                    #Age="ngModel"
-                                    [(ngModel)]="ObjFLUENCY.Age" 
-                                    CompacctDigitonly="true"
-                                    placeholder="Put Your Age"
-                                    disabled
-                                    > 
+                                    <div class="label-t">{{this.ObjFLUENCY.Age ? this.ObjFLUENCY.Age : '-'}}</div>
                                 </div>
                             </div>
 
@@ -84,13 +54,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Reffered By<sup class="text-danger">*</sup></label>
-                                        <input class="form-control"
-                                        name="Referredby"
-                                        #Referredby="ngModel"
-                                        [(ngModel)]="ObjFLUENCY.Referredby" 
-                                        placeholder="Type Reffered By"
-                                        disabled
-                                        > 
+                                        <div class="label-t">{{this.ObjFLUENCY.Referredby ? this.ObjFLUENCY.Referredby : '-'}}</div>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Centre<sup class="text-danger">*</sup></label> 
@@ -110,14 +74,24 @@
                                         </p-dropdown>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">Language</label>                                 
-                                        <input class="form-control"
-                                        name="Language1"
-                                        #Language1="ngModel"
-                                        [(ngModel)]="ObjFLUENCY.Language1" 
-                                        placeholder="Type Language"
-                                        > 
+                                        <label class="control-label">Guardian Name</label>
+                                        <div class="input-group">
+                                            <div class="label-t" style="height: 35px;">{{this.ObjFLUENCY.Guardian_Name}}</div>
+                                            <span class="input-group-btn"><button type="button" class="btn btn-primary" (click)="showModel()"><i class="pi pi-pencil"></i></button></span>
+                                        </div>
                                     </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Language</label>
+                                    <input class="form-control"
+                                    name="Language1"
+                                    #Language1="ngModel"
+                                    [(ngModel)]="ObjFLUENCY.Language1" 
+                                    placeholder="Type Language"
+                                    > 
+                                </div>
                             </div>
                             <hr class="box boxboxDivide-primary">
 
@@ -805,3 +779,25 @@
         </div>
     </div>
 </div>
+
+<p-dialog 
+    header="Guardian Name" 
+    [(visible)]="display" 
+    [modal]="true" 
+    [responsive]="true" 
+    [style]="{width: '350px', minWidth: '200px'}" 
+    [minY]="70" 
+    [maximizable]="true" 
+    [baseZIndex]="10000">
+
+    <input 
+        class="form-control" 
+        name="G_Name"
+        [(ngModel)]="G_Name" 
+        placeholder="Enter Guardian Name">
+
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" (click)="Update_Guardian_Name()" label="Update"></button>
+        <button type="button" pButton icon="pi pi-times" (click)="display=false" label="Cancel"></button>
+    </p-footer>
+</p-dialog>

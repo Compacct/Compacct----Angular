@@ -327,6 +327,7 @@ import { SpeechEvauationReportDashboardComponent } from "./common/PatientManagem
 import { DoctorsAppoNewChildSpeechEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-child-speech-evaluation/doctors-appo-new-child-speech-evaluation.component";
 import { DoctorsAppoNewAdultSpeechEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-adult-speech-evaluation/doctors-appo-new-adult-speech-evaluation.component";
 import { SaleBillNewComponent } from './common/FinancialManagement/Transaction/Sales/sale-bill-new/sale-bill-new.component';
+import { DoctorsAppointmentNewFineTuningComponent } from "./common/PatientManagement/doctors-appointment-new-fine-tuning/doctors-appointment-new-fine-tuning.component";
 
 
 const layoutRoutes: Routes = [{
@@ -2470,6 +2471,13 @@ path: 'MICL_Cost_Center_Master',
     component:SaleBillNewComponent,
     data: {
       title: 'Sale_Bill_New'
+}
+},
+{
+  path: 'Doctors_Appointment_New_Fine_Tuning',
+    component:DoctorsAppointmentNewFineTuningComponent,
+    data: {
+      title: 'Doctors Appointment New Fine Tuning'
 }
 },
     

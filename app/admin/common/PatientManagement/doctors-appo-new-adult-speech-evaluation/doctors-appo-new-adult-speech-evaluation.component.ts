@@ -33,6 +33,10 @@ export class DoctorsAppoNewAdultSpeechEvaluationComponent implements OnInit {
   CheckBoxRecommendation:any = [];
   EditDataList:any = [];
   Get_TXN_ID:any;
+  G_Name:string;
+  Guardian_Name:string;
+  display:boolean = false;
+
   buttonValid:boolean = true;
   Spinner:boolean = false;
 
@@ -83,6 +87,49 @@ ObjAdultSpeech:any = new AdultSpeech();
 
   }
 
+  showModel(){
+    this.display = true;
+    this.Guardian_Name = this.G_Name;
+  }
+
+  updateGuardian(){
+    const tempObj = {
+      Guardian_Name : this.Guardian_Name,
+      Foot_Fall_ID : this.ObjAdultSpeech.Foot_Fall_ID
+    }
+    // console.log('temp obj', tempObj);
+const obj = {
+  "SP_String": "SP_BL_Txn_Doctor_Appo_ABR",
+  "Report_Name_String": "update_Guardian_Name",
+  "Json_Param_String": JSON.stringify(tempObj)
+}
+this.GlobalApi.postData(obj).subscribe((data:any)=>{
+  // console.log(data);
+  if(data[0].Column1){
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "success",
+      summary: "Updated Guardian Name",
+      detail: "Succesfully "
+    });
+    this.getDataAgainstAppoId();
+  }
+  
+    else {
+      
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message ",
+        detail:"Error occured "
+      });
+    }
+});
+this.display = false;
+  }
+
   updateConsultancysave(event){
     // console.log('event value',event);
     // console.log('event1',event.Level_1_Status);
@@ -111,6 +158,7 @@ ObjAdultSpeech:any = new AdultSpeech();
         this.ObjAdultSpeech.ReferredBy = data[0].Referredby;
         this.ObjAdultSpeech.Txn_Date = data[0].Appo_Dt;
         this.ObjAdultSpeech.Cost_Cent_ID = data[0].Cost_Cen_ID;
+        this.G_Name = data[0].Guardian_Name;
       }
     });
   }

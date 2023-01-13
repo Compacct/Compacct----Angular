@@ -48,8 +48,16 @@ export class PrintSpeechEvauationReportDashboardComponent implements OnInit {
     window.open("Report/Crystal_Files/CRM/joh_form/CHILD_SPEECH_eval.aspx" + "?Appo_ID=" + this.AppoIDvalue, 'Print Report', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
   }
 
-  // action_Click_Print_Adult_Speech_Evaluation(){
-  //   window.open("Report/Crystal_Files/CRM/joh_form/FLUENCY_EVALUATION.aspx" + "?Appo_ID=" + this.AppoIDvalue, 'Print Report', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
-  // }
+  action_Click_Print_Adult_Speech_Evaluation(){
+    window.open("Report/Crystal_Files/CRM/joh_form/ADULT_SPEECH_AND_LANGUAGE.aspx" + "?Appo_ID=" + this.AppoIDvalue, 'Print Report', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+  }
+
+  action_Click_Print_Consent_Form_For_Speech_Parents(){
+    window.open("Report\Crystal_Files\CRM\joh_form\CONSENT_FORM_FOR_SPEECH_PARENTS.aspx" + "?Appo_ID=" + this.AppoIDvalue, 'Print Report', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+  }
+
+  action_Click_Print_Consent_Form_For_Speech_By_Self(){
+    window.open("Report\Crystal_Files\CRM\joh_form\consent_from_for_speech_language_by_self.aspx" + "?Appo_ID=" + this.AppoIDvalue, 'Print Report', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+  }
 
 }
