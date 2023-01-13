@@ -1,0 +1,3594 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast
+  position="center"
+  key="c"
+  (onClose)="onReject()"
+  [modal]="true"
+  [autoZIndex]="true"
+>
+  <ng-template let-message pTemplate="message">
+    <div style="text-align: center">
+      <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+      <h3>{{ message.summary }}</h3>
+      <p>{{ message.detail }}</p>
+    </div>
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-6">
+        <button
+          type="button"
+          pButton
+          (click)="onConfirm()"
+          label="Yes"
+          class="ui-button-success"
+        ></button>
+      </div>
+      <div class="ui-g-6">
+        <button
+          type="button"
+          pButton
+          (click)="onReject()"
+          label="No"
+          class="ui-button-secondary"
+        ></button>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box box-primary">
+      <div class="form-horizontal">
+        <div class="box-body">
+          <p-tabView [activeIndex]="tabIndexToView">
+            <p-tabPanel
+              headerStyleClass="compacct-tabs"
+              header="Appointment"
+              leftIcon="glyphicon glyphicon-user"
+            >
+              <form
+                name="DoctorsAppointmentNewFineTuning"
+                #DoctorsAppointmentNewFineTuning="ngForm"
+                novalidate
+              >
+                <div class="row">
+                  <div class="col-sm-3">
+                    <label class="control-label"
+                      >Name <sup class="text-danger">*</sup></label
+                    >
+                    <input
+                      class="form-control"
+                      name="Name"
+                      #Name="ngModel"
+                      [(ngModel)]="ObjFineTuning.Name"
+                      placeholder="Your Name"
+                      disabled
+                    />
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="control-label"
+                      >Patient ID <sup class="text-danger">*</sup></label
+                    >
+                    <input
+                      class="form-control"
+                      name="PatientID"
+                      #PatientID="ngModel"
+                      [(ngModel)]="ObjFineTuning.Foot_Fall_ID"
+                      placeholder="Patient ID"
+                      disabled
+                    />
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="control-label"
+                      >Age <sup class="text-danger">*</sup></label
+                    >
+                    <input
+                      class="form-control"
+                      name="Age"
+                      #Age="ngModel"
+                      [(ngModel)]="ObjFineTuning.Age"
+                      placeholder="Age"
+                      disabled
+                    />
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="control-label"
+                      >Sex <sup class="text-danger">*</sup></label
+                    >
+                    <input
+                      class="form-control"
+                      name="Sex"
+                      #Sex="ngModel"
+                      [(ngModel)]="ObjFineTuning.Sex"
+                      placeholder="sex"
+                      disabled
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3">
+                    <label class="control-label"
+                      >Referred By <sup class="test-danger">*</sup></label
+                    >
+                    <input
+                      class="form-control"
+                      name="ReferredBy"
+                      #ReferredBy="ngModel"
+                      [(ngModel)]="ObjFineTuning.ReferredBy"
+                      placeholder="Referred By"
+                      disabled
+                    />
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="control-label"
+                      >Date <sup class="text-danger">*</sup></label
+                    >
+                    <div class="label-t">{{ObjFineTuning.Txn_Date ? (ObjFineTuning.Txn_Date | date: "dd/MMM/yyyy") : '-'}}</div>
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="control-label">User Type</label>
+                    <select
+                      name="Usertype"
+                      class="form-control"
+                      #Usertype="ngModel"
+                      [(ngModel)]="ObjFineTuning.UserType"
+                    >
+                      <option [ngValue]="undefined">Select</option>
+                      <option *ngFor="let option of User" value="{{ option }}">
+                        {{ option }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="control-label">Ear</label>
+                    <select
+                      name="Ear"
+                      class="form-control"
+                      #Ear="ngModel"
+                      [(ngModel)]="ObjFineTuning.Ear"
+                    >
+                      <option [ngValue]="undefined">Select</option>
+                      <option
+                        *ngFor="let option of userEar"
+                        value="{{ option }}"
+                      >
+                        {{ option }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-6">
+                    <label class="control-lable"
+                      >Centre <sup class="text-danger">*</sup></label
+                    >
+                    <p-dropdown
+                      [options]="CentreList"
+                      name="Centre"
+                      #Centre="ngModel"
+                      [(ngModel)]="ObjFineTuning.Cost_Cent_ID"
+                      [showClear]="true"
+                      [emptyFilterMessage]="' No Centre Found'"
+                      [filter]="true"
+                      filterBy="label,value.name"
+                      [resetFilterOnHide]="true"
+                      [placeholder]="'Select Centre'"
+                      [virtualScroll]="true"
+                      itemSize="30"
+                      disabled
+                    >
+                    </p-dropdown>
+                  </div>
+
+                  <div class="col-sm-3"></div>
+                  <div class="col-sm-3"></div>
+                </div>
+                <hr class="box boxboxDivide-primary" />
+
+                <div class="row">
+                  <table style="width: 100%">
+                    <tr>
+                      <th class="table-header" style="width: 12%">Category</th>
+                      <th class="table-header" style="width: 42%">
+                        Select a problem
+                      </th>
+                      <th class="table-header" style="width: 34%">
+                        Apply a solution
+                      </th>
+                      <th class="table-header" style="width: 12%">
+                        Final outcome
+                      </th>
+                    </tr>
+                    <tr>
+                      <th rowspan="15">Loudness</th>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Loudness"
+                          value="Sounds_in_general_are_too_loud"
+                          label="Sounds in general are too loud"
+                          [(ngModel)]="selectedLoudness"
+                          inputId="Loudness1"
+                          (onChange)="maxSelectionLoudness()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SoundsInGeneralSolution"
+                          [(ngModel)]="ObjFineTuning.Sounds_In_General_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SoundsInGeneralSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SoundsInGeneralFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.Sounds_In_General_FinalOutCome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SoundsInGeneralFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Loudness"
+                          value="Speech_is_too_loud_(speaker_is_too_loud)"
+                          label="Speech is too loud (speaker is too loud)"
+                          [(ngModel)]="selectedLoudness"
+                          inputId="Loudness2"
+                          (onChange)="maxSelectionLoudness()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SpeechIsTooLoudSolution"
+                          [(ngModel)]="ObjFineTuning.Speech_Is_TooLoud_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SpeechIsTooLoudSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SpeechIsTooLoudFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.Speech_Is_TooLoud_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SpeechIsTooLoudFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Loudness"
+                          value="High_frequency_sounds_are_too_loud_(dishes,_rattling,_paper_rustling,_water_running)"
+                          label="High frequency sounds are too loud (dishes, rattling, paper rustling, water running)"
+                          [(ngModel)]="selectedLoudness"
+                          inputId="Loudness3"
+                          (onChange)="maxSelectionLoudness()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="HighFrequencySoundsSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.HighFrequency_Sounds_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of HighFrequencySoundsSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="HighFrequencySoundsFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.HighFrequency_Sounds_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of HighFrequencySoundsFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Loudness"
+                          value="Low_frequency_sounds_are_too_loud_(toilet_flushing,_road_noise,_fans,_etc.)"
+                          label="Low frequency sounds are too loud (toilet flushing, road noise, fans, etc.)"
+                          [(ngModel)]="selectedLoudness"
+                          inputId="Loudness4"
+                          (onChange)="maxSelectionLoudness()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="LowFrequencySoundsSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.LowFrequency_Sounds_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of LowFrequencySoundsSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="LowFrequencySoundsFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.LowFrequency_Sounds_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of LowFrequencySoundsFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Loudness"
+                          value="The_sounds_of_many_people_talking_are_too_loud"
+                          label="The sounds of many people talking are too loud"
+                          [(ngModel)]="selectedLoudness"
+                          inputId="Loudness5"
+                          (onChange)="maxSelectionLoudness()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SoundsOfManyPeopleSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.SoundsOfMany_People_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SoundsOfManyPeopleSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SoundsOfManyPeopleFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.SoundsOfMany_People_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of SoundsOfManyPeopleFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Loudness"
+                          value="Loud_sounds_seem_distorted"
+                          label="Loud sounds seem distorted"
+                          [(ngModel)]="selectedLoudness"
+                          inputId="Loudness6"
+                          (onChange)="maxSelectionLoudness()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="LoudSoundsSeemDistortedSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.LoudSoundsSeem_Distorted_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of LoudSoundsSeemDistortedSolution
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="LoudSoundsSeemDistortedFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.LoudSoundsSeem_Distorted_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of LoudSoundsSeemDistortedFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Loudness"
+                          value="Sudden_noises_are_painfully_loud"
+                          label="Sudden noises are painfully loud"
+                          [(ngModel)]="selectedLoudness"
+                          inputId="Loudness7"
+                          (onChange)="maxSelectionLoudness()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SuddenNoisesArePainfullySolution"
+                          [(ngModel)]="
+                            ObjFineTuning.SuddenNoisesAre_Painfully_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of SuddenNoisesArePainfullySolution
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SuddenNoisesArePainfullyFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.SuddenNoisesAre_Painfully_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of SuddenNoisesArePainfullyFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Loudness"
+                          value="All_sounds_are_too_soft"
+                          label="All sounds are too soft"
+                          [(ngModel)]="selectedLoudness"
+                          inputId="Loudness8"
+                          (onChange)="maxSelectionLoudness()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="AllSoundsAreTooSoftSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.AllSoundsAre_TooSoft_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of AllSoundsAreTooSoftSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="AllSoundsAreTooSoftFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.AllSoundsAre_TooSoft_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of AllSoundsAreTooSoftFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Loudness"
+                          value="Soft_sounds_are_not_audible_in_quite_surroundings"
+                          label="Soft sounds are not audible in quite surroundings"
+                          [(ngModel)]="selectedLoudness"
+                          inputId="Loudness9"
+                          (onChange)="maxSelectionLoudness()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SoftSoundsAreNotSolution"
+                          [(ngModel)]="ObjFineTuning.SoftSounds_AreNot_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SoftSoundsAreNotSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SoftSoundsAreNotFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.SoftSounds_AreNot_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SoftSoundsAreNotFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Loudness"
+                          value="Soft_speech_is_not_audible"
+                          label="Soft speech is not audible"
+                          [(ngModel)]="selectedLoudness"
+                          inputId="Loudness10"
+                          (onChange)="maxSelectionLoudness()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SoftSpeechIsNotAudibleSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.SoftSpeechIsNot_Audible_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of SoftSpeechIsNotAudibleSolution
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SoftSpeechIsNotAudibleFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.SoftSpeechIsNot_Audible_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of SoftSpeechIsNotAudibleFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Loudness"
+                          value="Speech_is_Too_Soft"
+                          label="Speech is Too Soft"
+                          [(ngModel)]="selectedLoudness"
+                          inputId="Loudness11"
+                          (onChange)="maxSelectionLoudness()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SpeechIsTooSoftSolution"
+                          [(ngModel)]="ObjFineTuning.SpeechIs_TooSoft_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SpeechIsTooSoftSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SpeechIsTooSoftFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.SpeechIs_TooSoft_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SpeechIsTooSoftFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Loudness"
+                          value="High_frequency_sounds_are_too_soft_(birdsong,_doorbell,_telephone_ring)"
+                          label="High frequency sounds are too soft (birdsong, doorbell, telephone ring)"
+                          [(ngModel)]="selectedLoudness"
+                          inputId="Loudness12"
+                          (onChange)="maxSelectionLoudness()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="HighFrequencySoundsAreTooSoftSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.HighFrequencySounds_AreTooSoft_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of HighFrequencySoundsAreTooSoftSolution
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="HighFrequencySoundsAreTooSoftFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.HighFrequencySounds_AreTooSoft_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of HighFrequencySoundsAreTooSoftFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Loudness"
+                          value="Volume_control_needs_frequent_adjustment"
+                          label="Volume control needs frequent adjustment"
+                          [(ngModel)]="selectedLoudness"
+                          inputId="Loudness13"
+                          (onChange)="maxSelectionLoudness()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="VolumeControlNeedsSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.VolumeControl_Needs_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of VolumeControlNeedsSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="VolumeControlNeedsFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.VolumeControl_Needs_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of VolumeControlNeedsFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Loudness"
+                          value="Wind_noise_is_too_loud"
+                          label="Wind noise is too loud"
+                          [(ngModel)]="selectedLoudness"
+                          inputId="Loudness14"
+                          (onChange)="maxSelectionLoudness()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="WindNoiseSolution"
+                          [(ngModel)]="ObjFineTuning.WindNoise_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of WindNoiseSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="WindNoiseFinalOutcome"
+                          [(ngModel)]="ObjFineTuning.WindNoise_FinalOutcome"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of WindNoiseFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Loudness"
+                          value="Ambient_noise_is_too_noticeable_in_quite_surroundings"
+                          label="Ambient noise is too noticeable in quite surroundings"
+                          [(ngModel)]="selectedLoudness"
+                          inputId="Loudness15"
+                          (onChange)="maxSelectionLoudness()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="AmbientNoiseSolution"
+                          [(ngModel)]="ObjFineTuning.Ambient_Noise_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of AmbientNoiseSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="AmbientNoiseFinalOutcome"
+                          [(ngModel)]="ObjFineTuning.Ambient_Noise_FinalOutcome"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of AmbientNoiseFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="4">
+                        <hr class="box boxboxDivide-primary" />
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <th rowspan="20">Sound Quality</th>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Speech_is_unclear_muffled"
+                          label="Speech is unclear/muffled"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality1"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SpeechIsUnclearSolution"
+                          [(ngModel)]="ObjFineTuning.SpeechIs_Unclear_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SpeechIsUnclearSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SpeechIsUnclearFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.SpeechIs_Unclear_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SpeechIsUnclearFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Speech_is_boomy_or_has_an_echo"
+                          label="Speech is boomy or has an echo"
+                          [(ngModel)]="SelectedSoundQuality"
+                          (onChange)="maxSelectionSound()"
+                          inputId="SoundQuality2"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SpeechIsBoomySolution"
+                          [(ngModel)]="ObjFineTuning.SpeechIs_Boomy_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SpeechIsBoomySolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SpeechIsBoomyFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.SpeechIs_Boomy_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SpeechIsBoomyFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Male_voices_sound_boomy"
+                          label="Male voices sound boomy"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality3"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MaleVoicesBoomySolution"
+                          [(ngModel)]="ObjFineTuning.MaleVoices_Boomy_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MaleVoicesBoomySolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MaleVoicesBoomyFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.MaleVoices_Boomy_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MaleVoicesBoomyFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Male_voices_sound_tinny_or_metallic"
+                          label="Male voices sound tinny or metallic"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality4"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MaleVoicesTinnySolution"
+                          [(ngModel)]="ObjFineTuning.MaleVoices_Tinny_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MaleVoicesTinnySolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MaleVoicesTinnyFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.MaleVoices_Tinny_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MaleVoicesTinnyFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Male_voices_sound_dull"
+                          label="Male voices sound dull"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality5"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MaleVoicesDullSolution"
+                          [(ngModel)]="ObjFineTuning.MaleVoices_Dull_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MaleVoicesDullSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MaleVoicesDullFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.MaleVoices_Dull_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MaleVoicesDullFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Male_voices_sound_hollow"
+                          label="Male voices sound hollow"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality6"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MaleVoicesHollowSolution"
+                          [(ngModel)]="ObjFineTuning.MaleVoices_Hollow_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MaleVoicesHollowSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MaleVoicesHollowFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.MaleVoices_Hollow_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MaleVoicesHollowFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Male_voices_sound_sharp"
+                          label="Male voices sound sharp"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality7"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MaleVoicesSharpSolution"
+                          [(ngModel)]="ObjFineTuning.MaleVoices_Sharp_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MaleVoicesSharpSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MaleVoicesSharpFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.MaleVoices_Sharp_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MaleVoicesSharpFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Own_voices_sound_sharp"
+                          label="Own voices sound sharp"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality8"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OwnVoicesSharpSolution"
+                          [(ngModel)]="ObjFineTuning.OwnVoices_Sharp_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OwnVoicesSharpSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OwnVoicesSharpFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.OwnVoices_Sharp_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OwnVoicesSharpFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Own_voice_sounds_as_if_speaking_in_a_barrel_or_has_an_echo"
+                          label="Own voice sounds as if speaking “in a barrel” or has an “echo”"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality9"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OwnVoicesBarrelSolution"
+                          [(ngModel)]="ObjFineTuning.OwnVoices_Barrel_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OwnVoicesBarrelSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OwnVoicesBarrelFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.OwnVoices_Barrel_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OwnVoicesBarrelFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Own_voice_sounds_stuffed_up_or_closed"
+                          label="Own voice sounds “stuffed up” or “closed”"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality10"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OwnVoicesStuffingSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.OwnVoices_Stuffing_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OwnVoicesStuffingSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OwnVoicesStuffingFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.OwnVoices_Stuffing_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OwnVoicesStuffingFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Own_voice_is_not_acceptable"
+                          label="Own voice is not acceptable"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality11"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OwnVoicesNotAccepctSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.OwnVoicesNot_Accepct_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of OwnVoicesNotAccepctSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="OwnVoicesNotAccepctFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.OwnVoicesNot_Accepct_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of OwnVoicesNotAccepctFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Female_voices_sound_tinny_or_metallic"
+                          label="Female voices sound tinny or metallic"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality12"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="FemaleVoiceTinnySolution"
+                          [(ngModel)]="ObjFineTuning.FemaleVoice_Tinny_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of FemaleVoiceTinnySolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="FemaleVoiceTinnyFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.FemaleVoice_Tinny_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of FemaleVoiceTinnyFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Female_voices_sound_dull"
+                          label="Female voices sound dull"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality13"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="FemaleVoiceDullSolution"
+                          [(ngModel)]="ObjFineTuning.FemaleVoice_Dull_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of FemaleVoiceDullSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="FemaleVoiceDullFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.FemaleVoice_Dull_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of FemaleVoiceDullFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Female_voices_sound_hollow"
+                          label="Female voices sound hollow "
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality14"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="FemaleVoiceHollowSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.FemaleVoice_Hollow_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of FemaleVoiceHollowSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="FemaleVoiceHollowFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.FemaleVoice_Hollow_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of FemaleVoiceHollowFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Music_sound_boomy"
+                          label="Music sound boomy"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality15"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MusicSoundBoomySolution"
+                          [(ngModel)]="ObjFineTuning.MusicSound_Boomy_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MusicSoundBoomySolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MusicSoundBoomyFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.MusicSound_Boomy_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MusicSoundBoomyFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Music_sound_tinny_or_metallic"
+                          label="Music sound tinny or metallic"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality16"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MusicSoundTinnySolution"
+                          [(ngModel)]="ObjFineTuning.MusicSound_Tinny_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MusicSoundTinnySolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MusicSoundTinnyFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.MusicSound_Tinny_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MusicSoundTinnyFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Music_sound_dull"
+                          label="Music sound dull"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality17"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MusicSoundDullSolution"
+                          [(ngModel)]="ObjFineTuning.MusicSound_Dull_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MusicSoundDullSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MusicSoundDullFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.MusicSound_Dull_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MusicSoundDullFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Music_sound_hollow"
+                          label="Music sound hollow"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality18"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MusicSoundHollowSolution"
+                          [(ngModel)]="ObjFineTuning.MusicSound_Hollow_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MusicSoundHollowSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MusicSoundHollowFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.MusicSound_Hollow_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MusicSoundHollowFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="Music_sound_sharp"
+                          label="Music sound sharp"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality19"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MusicSoundSharpSolution"
+                          [(ngModel)]="ObjFineTuning.MusicSound_Sharp_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MusicSoundSharpSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MusicSoundSharpFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.MusicSound_Sharp_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MusicSoundSharpFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SoundQuality"
+                          value="High_frequency_sounds_are_dull"
+                          label="High frequency sounds are dull"
+                          [(ngModel)]="SelectedSoundQuality"
+                          inputId="SoundQuality20"
+                          (onChange)="maxSelectionSound()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="HighFrequencySoundsAreDullSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.HighFrequencySoundsAre_Dull_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of HighFrequencySoundsAreDullSolution
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="HighFrequencySoundsAreDullFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.HighFrequencySoundsAre_Dull_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of HighFrequencySoundsAreDullFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="4">
+                        <hr class="box boxboxDivide-primary" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th rowspan="9">Speech Intelligibility</th>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SpeechIntelligibility"
+                          value="Speech_is_unclear_in_moderate_background_noise"
+                          label="Speech is unclear in moderate background noise"
+                          [(ngModel)]="SelectedSpeechIntelligibility"
+                          inputId="SpeechIntelligibility1"
+                          (onChange)="maxSelectionSpeech()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SpeechIsModerateSolution"
+                          [(ngModel)]="ObjFineTuning.SpeechIs_Moderate_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SpeechIsModerateSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SpeechIsModerateFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.SpeechIs_Moderate_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SpeechIsModerateFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SpeechIntelligibility"
+                          value="Understanding_speech_when_in_a_car,_train,_airplane,_etc._is_difficult"
+                          label="Understanding speech when in a car, train, airplane, etc. is difficult"
+                          [(ngModel)]="SelectedSpeechIntelligibility"
+                          inputId="SpeechIntelligibility2"
+                          (onChange)="maxSelectionSpeech()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="UnderstandingSpeechSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.Understanding_Speech_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of UnderstandingSpeechSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="UnderstandingSpeechFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.Understanding_Speech_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of UnderstandingSpeechFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SpeechIntelligibility"
+                          value="Distance_voices_sounds_seem_louder_than_voices_sounds_nearby"
+                          label="Distance voices/sounds seem louder than voices/sounds nearby"
+                          [(ngModel)]="SelectedSpeechIntelligibility"
+                          inputId="SpeechIntelligibility3"
+                          (onChange)="maxSelectionSpeech()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="DistanceVoiceSolution"
+                          [(ngModel)]="ObjFineTuning.Distance_Voice_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of DistanceVoiceSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="DistanceVoiceFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.Distance_Voice_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of DistanceVoiceFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SpeechIntelligibility"
+                          value="Understanding_a_speaker_who_is_far_away_is_difficult"
+                          label="Understanding a speaker who is far away is difficult"
+                          [(ngModel)]="SelectedSpeechIntelligibility"
+                          inputId="SpeechIntelligibility4"
+                          (onChange)="maxSelectionSpeech()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="UnderstandingsSpeakerSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.Understandings_Speaker_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of UnderstandingsSpeakerSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="FinalUnderstandingsSpeakerFinalOutcomeOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.Understandings_Speaker_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of UnderstandingsSpeakerFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SpeechIntelligibility"
+                          value="Hear_distance_speech_better_than_close_speech"
+                          label="Hear distance speech better than close speech"
+                          [(ngModel)]="SelectedSpeechIntelligibility"
+                          inputId="SpeechIntelligibility5"
+                          (onChange)="maxSelectionSpeech()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="HearDistanceSpeechSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.HearDistance_Speech_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of HearDistanceSpeechSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="HearDistanceSpeechFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.HearDistance_Speech_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of HearDistanceSpeechFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SpeechIntelligibility"
+                          value="Sound_localization_is_difficult"
+                          label="Sound localization is difficult"
+                          [(ngModel)]="SelectedSpeechIntelligibility"
+                          inputId="SpeechIntelligibility6"
+                          (onChange)="maxSelectionSpeech()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SoundLocalizationSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.Sound_Localization_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SoundLocalizationSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SoundLocalizationFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.Sound_Localization_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SoundLocalizationFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SpeechIntelligibility"
+                          value="Poor_speech_perception_in_noise_(raised_speech_seems_muffled_or_dampened)"
+                          label="Poor speech perception in noise (raised speech seems muffled or dampened)"
+                          [(ngModel)]="SelectedSpeechIntelligibility"
+                          inputId="SpeechIntelligibility7"
+                          (onChange)="maxSelectionSpeech()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="PoorSpeechPerceptionSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.PoorSpeech_Perception_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of PoorSpeechPerceptionSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="PoorSpeechPerceptionFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.PoorSpeech_Perception_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of PoorSpeechPerceptionFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SpeechIntelligibility"
+                          value="Sound_is_turned_down_too_much_in_noisy_environments"
+                          label="Sound is turned down too much in noisy environments"
+                          [(ngModel)]="SelectedSpeechIntelligibility"
+                          inputId="SpeechIntelligibility8"
+                          (onChange)="maxSelectionSpeech()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SoundTurnedDownSolution"
+                          [(ngModel)]="ObjFineTuning.SoundTurned_Down_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SoundTurnedDownSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SoundTurnedDownFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.SoundTurned_Down_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SoundTurnedDownFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SpeechIntelligibility"
+                          value="Sound_is_distorted_or_very_uncomfortable_in_noisy_environments"
+                          label="Sound is distorted or very uncomfortable in noisy environments"
+                          [(ngModel)]="SelectedSpeechIntelligibility"
+                          inputId="SpeechIntelligibility9"
+                          (onChange)="maxSelectionSpeech()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SoundDistortedSolution"
+                          [(ngModel)]="ObjFineTuning.Sound_Distorted_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SoundDistortedSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SoundDistortedFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.Sound_Distorted_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SoundDistortedFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="4">
+                        <hr class="box boxboxDivide-primary" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th rowspan="3">Feedback</th>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Feedback"
+                          value="Hearing_aid_whistles_occasionally,_e.g._when_hugging_a_person,_putting_on_a_hat_or_while_chewing"
+                          label="Hearing aid whistles occasionally, e.g. when hugging a person, putting on a hat or while chewing"
+                          [(ngModel)]="SelectedFeedback"
+                          (onChange)="maxSelectionFeedback()"
+                          inputId="Feedback1"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="HearingOccasionallySolution"
+                          [(ngModel)]="
+                            ObjFineTuning.Hearing_Occasionally_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of HearingOccasionallySolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="HearingOccasionallyFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.Hearing_Occasionally_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of HearingOccasionallyFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Feedback"
+                          value="Feedback_occurs_with_the_use_of_the_telephone_and_or_other_dynamic_situations"
+                          label="Feedback occurs with the use of the telephone and/or other dynamic situations"
+                          [(ngModel)]="SelectedFeedback"
+                          (onChange)="maxSelectionFeedback()"
+                          inputId="Feedback2"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="FeedbackOccursSolution"
+                          [(ngModel)]="ObjFineTuning.Feedback_Occurs_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of FeedbackOccursSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="FeedbackOccursFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.Feedback_Occurs_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of FeedbackOccursFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Feedback"
+                          value="Hearing_aid_whistles_unprovoked"
+                          label="Hearing aid whistles unprovoked"
+                          [(ngModel)]="SelectedFeedback"
+                          (onChange)="maxSelectionFeedback()"
+                          inputId="Feedback3"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="HearingWhistlesSolution"
+                          [(ngModel)]="ObjFineTuning.Hearing_Whistles_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of HearingWhistlesSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="HearingWhistlesFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.Hearing_Whistles_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of HearingWhistlesFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="4">
+                        <hr class="box boxboxDivide-primary" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th rowspan="10">Tinnitus</th>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Tinnitus"
+                          value="ZEN_tone_TSG_synchronization_white_noise_is_too_soft"
+                          label="ZEN tone/TSG synchronization white noise is too soft"
+                          [(ngModel)]="SelectedTinnitus"
+                          inputId="Tinnitus1"
+                          (onChange)="maxSelectionTinnitus()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="ZENToneSynchronizationSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.ZENTone_Synchronization_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of ZENToneSynchronizationSolution
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="ZENToneSynchronizationFinalOutput"
+                          [(ngModel)]="
+                            ObjFineTuning.ZENTone_Synchronization_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of ZENToneSynchronizationFinalOutput
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Tinnitus"
+                          value="ZEN_tone_TSG_synchronization_white_noise_is_too_loud"
+                          label="ZEN tone/TSG synchronization white noise is too loud"
+                          [(ngModel)]="SelectedTinnitus"
+                          inputId="Tinnitus2"
+                          (onChange)="maxSelectionTinnitus()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="ZENToneSynchronizationKLoudSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.ZENToneSynchronizationK_Loud_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of ZENToneSynchronizationKLoudSolution
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="ZENToneSynchronizationKLoudFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.ZENToneSynchronizationK_Loud_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of ZENToneSynchronizationKLoudFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Tinnitus"
+                          value="Broadband_stimulation_is_not_effective"
+                          label="Broadband stimulation is not effective"
+                          [(ngModel)]="SelectedTinnitus"
+                          inputId="Tinnitus3"
+                          (onChange)="maxSelectionTinnitus()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="BroadbandStimulationSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.Broadband_Stimulation_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of BroadbandStimulationSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="BroadbandStimulationFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.Broadband_Stimulation_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of BroadbandStimulationFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Tinnitus"
+                          value="ZEN_tone_White_noise_is_not_effectively_interacting_with_the_tinnitus"
+                          label="ZEN tone/White noise is not effectively interacting with the tinnitus"
+                          [(ngModel)]="SelectedTinnitus"
+                          inputId="Tinnitus4"
+                          (onChange)="maxSelectionTinnitus()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="ZENToneWhiteNoiseSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.ZENToneWhite_Noise_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of ZENToneWhiteNoiseSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="ZENToneWhiteNoiseFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.ZENToneWhite_Noise_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of ZENToneWhiteNoiseFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Tinnitus"
+                          value="ZEN_tone_Continuous_stimulation_is_bothersome"
+                          label="ZEN tone/Continuous stimulation is bothersome"
+                          [(ngModel)]="SelectedTinnitus"
+                          inputId="Tinnitus5"
+                          (onChange)="maxSelectionTinnitus()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="ZENToneContinuousStimulationSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.ZENToneContinuous_Stimulation_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of ZENToneContinuousStimulationSolution
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="ZENToneContinuousStimulationFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.ZENToneContinuous_Stimulation_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of ZENToneContinuousStimulationFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Tinnitus"
+                          value="Amplitude_modulation_is_bothersome"
+                          label="Amplitude modulation is bothersome"
+                          [(ngModel)]="SelectedTinnitus"
+                          inputId="Tinnitus6"
+                          (onChange)="maxSelectionTinnitus()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="AmplitudeModulationSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.Amplitude_Modulation_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of AmplitudeModulationSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="AmplitudeModulationFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.Amplitude_Modulation_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of AmplitudeModulationFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Tinnitus"
+                          value="Other_stimuli_besides_ZEN_tone_white_noise_are_helpful"
+                          label="Other stimuli besides ZEN tone/white noise are helpful"
+                          [(ngModel)]="SelectedTinnitus"
+                          inputId="Tinnitus7"
+                          (onChange)="maxSelectionTinnitus()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="StimuliBesidesSolution"
+                          [(ngModel)]="ObjFineTuning.Stimuli_Besides_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of StimuliBesidesSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="StimuliBesidesFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.Stimuli_Besides_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of StimuliBesidesFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Tinnitus"
+                          value="Tinnitus_seems_worse"
+                          label="Tinnitus seems worse"
+                          [(ngModel)]="SelectedTinnitus"
+                          inputId="Tinnitus8"
+                          (onChange)="maxSelectionTinnitus()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="TinnitusSeemsWorseSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.TinnitusSeems_Worse_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of TinnitusSeemsWorseSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="TinnitusSeemsWorseFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.TinnitusSeems_Worse_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of TinnitusSeemsWorseFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Tinnitus"
+                          value="The_patient_is_requesting_an_automatic_volume_control_adjustment_for_TSG"
+                          label="The patient is requesting an automatic volume control adjustment for TSG"
+                          [(ngModel)]="SelectedTinnitus"
+                          inputId="Tinnitus9"
+                          (onChange)="maxSelectionTinnitus()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="PatientRequestingSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.Patient_Requesting_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of PatientRequestingSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="PatientRequestingFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.Patient_Requesting_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of PatientRequestingFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Tinnitus"
+                          value="ZEN_tone_TSG_white_noise_interferes_with_speech"
+                          label="ZEN tone/TSG white noise interferes with speech"
+                          [(ngModel)]="SelectedTinnitus"
+                          inputId="Tinnitus10"
+                          (onChange)="maxSelectionTinnitus()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="TSGWhiteNoiseSolution"
+                          [(ngModel)]="ObjFineTuning.TSGWhite_Noise_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of TSGWhiteNoiseSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="TSGWhiteNoiseFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.TSGWhite_Noise_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of TSGWhiteNoiseFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="4">
+                        <hr class="box boxboxDivide-primary" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th rowspan="2">Wireless Accessories</th>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="WirelessAccessories"
+                          value="Micro_Mini_Multi_mic_is_too_noisy"
+                          label="Micro/Mini/Multi mic is too noisy"
+                          [(ngModel)]="SelectedWirelessAccessories"
+                          (onChange)="maxSelectionWireless()"
+                          inputId="WirelessAccessories1"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MicroMiniMultiNoiseSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.MicroMiniMulti_Noise_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of MicroMiniMultiNoiseSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="MicroMiniMultiNoiseFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.MicroMiniMulti_Noise_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of MicroMiniMultiNoiseFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="WirelessAccessories"
+                          value="Phone_clip_is_not_functional_or_loud_enough"
+                          label="Phone clip is not functional or loud enough"
+                          [(ngModel)]="SelectedWirelessAccessories"
+                          (onChange)="maxSelectionWireless()"
+                          inputId="WirelessAccessories2"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="PhoneClipSolution"
+                          [(ngModel)]="ObjFineTuning.PhoneClip_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of PhoneClipSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="PhoneClipFinalOutcome"
+                          [(ngModel)]="ObjFineTuning.PhoneClip_FinalOutcome"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of PhoneClipFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="4">
+                        <hr class="box boxboxDivide-primary" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th rowspan="2">Synchronized Functionality</th>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SynchronizedFunctionality"
+                          value="The_patient_would_like_to_separate_functionality_for_each_ear"
+                          label="The patient would like to separate functionality for each ear"
+                          [(ngModel)]="SelectedSynchronizedFunctionality"
+                          (onChange)="maxSelectionSynchronized()"
+                          inputId="SynchronizedFunctionality1"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="functionalityEachEarSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.functionality_EachEar_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of functionalityEachEarSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="functionalityEachEarFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.functionality_EachEar_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of functionalityEachEarFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="SynchronizedFunctionality"
+                          value="Synched_push_bottom_volume_control_is_not_functioning"
+                          label="Synched push bottom/volume control is not functioning "
+                          [(ngModel)]="SelectedSynchronizedFunctionality"
+                          (onChange)="maxSelectionSynchronized()"
+                          inputId="SynchronizedFunctionality2"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SynchedPushBottomSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.SynchedPush_Bottom_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SynchedPushBottomSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SynchedPushBottomFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.SynchedPush_Bottom_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SynchedPushBottomFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="4">
+                        <hr class="box boxboxDivide-primary" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th rowspan="3">Physical Fit</th>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="PhysicalFit"
+                          value="The_earpiece_slips_out_of_the_ear"
+                          label="The earpiece slips out of the ear"
+                          [(ngModel)]="SelectedPhysicalFit"
+                          (onChange)="maxSelectionPhysicalFit()"
+                          inputId="PhysicalFit1"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SlipsOutEarSolution"
+                          [(ngModel)]="ObjFineTuning.Slips_OutEar_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SlipsOutEarSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="SlipsOutEarFinalOutcome"
+                          [(ngModel)]="ObjFineTuning.Slips_OutEar_FinalOutcome"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of SlipsOutEarFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="PhysicalFit"
+                          value="The_ear_piece_causes_irritation_or_pain_in_the_ear"
+                          label="The ear piece causes irritation or pain in the ear"
+                          [(ngModel)]="SelectedPhysicalFit"
+                          (onChange)="maxSelectionPhysicalFit()"
+                          inputId="PhysicalFit2"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="PainInEarSolution"
+                          [(ngModel)]="ObjFineTuning.PainInEar_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of PainInEarSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="PainInEarSolutionFinalOutcome"
+                          [(ngModel)]="ObjFineTuning.PainInEar_FinalOutcome"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of PainInEarSolutionFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="PhysicalFit"
+                          value="Patient_has_difficulties_placing_the_hearing_aid_or_earpiece_in_the_ear"
+                          label="Patient has difficulties placing the hearing aid or earpiece in the ear"
+                          [(ngModel)]="SelectedPhysicalFit"
+                          (onChange)="maxSelectionPhysicalFit()"
+                          inputId="PhysicalFit3"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="EarpieceInEarSolution"
+                          [(ngModel)]="ObjFineTuning.EarpieceIn_Ear_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of EarpieceInEarSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="EarpieceInEarFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.EarpieceIn_Ear_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of EarpieceInEarFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="4">
+                        <hr class="box boxboxDivide-primary" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th rowspan="5">Hearing Aid Handling & Maintance</th>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="HearingAid"
+                          value="Patienthas_difficulties_using_the_program_button"
+                          label="Patient has difficulties using the program button"
+                          [(ngModel)]="SelectedHearingAid"
+                          inputId="HearingAid1"
+                          (onChange)="maxSelectionHearing()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="UsingProgramButtonSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.UsingProgram_Button_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of UsingProgramButtonSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="UsingProgramButtonFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.UsingProgram_Button_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="
+                              let option of UsingProgramButtonFinalOutcome
+                            "
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="HearingAid"
+                          value="Patient_has_difficulties_using_the_preference_control"
+                          label="Patient has difficulties using the preference control"
+                          [(ngModel)]="SelectedHearingAid"
+                          inputId="HearingAid2"
+                          (onChange)="maxSelectionHearing()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="PreferenceControlSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.Preference_Control_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of PreferenceControlSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="PreferenceControlFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.Preference_Control_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of PreferenceControlFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="HearingAid"
+                          value="Patient_has_difficulties_turning_the_hearing_aid_on_off"
+                          label="Patient has difficulties turning the hearing aid on and off"
+                          [(ngModel)]="SelectedHearingAid"
+                          inputId="HearingAid3"
+                          (onChange)="maxSelectionHearing()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="HearingOnOffSolution"
+                          [(ngModel)]="ObjFineTuning.Hearing_OnOff_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of HearingOnOffSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="HearingOnOffFinalOutcome"
+                          [(ngModel)]="ObjFineTuning.Hearing_OnOff_FinalOutcome"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of HearingOnOffFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="HearingAid"
+                          value="Client_has_difficulties_changing_batteries"
+                          label="Client has difficulties changing batteries"
+                          [(ngModel)]="SelectedHearingAid"
+                          inputId="HearingAid4"
+                          (onChange)="maxSelectionHearing()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="ChangingBatteriesSolution"
+                          [(ngModel)]="
+                            ObjFineTuning.Changing_Batteries_Solution
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of ChangingBatteriesSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="ChangingBatteriesFinalOutcome"
+                          [(ngModel)]="
+                            ObjFineTuning.Changing_Batteries_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of ChangingBatteriesFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="HearingAid"
+                          value="Client_has_difficulties_changing_wax_protection_system"
+                          label="Client has difficulties changing wax protection system"
+                          [(ngModel)]="SelectedHearingAid"
+                          inputId="HearingAid5"
+                          (onChange)="maxSelectionHearing()"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="ProtectionSystemSolution"
+                          [(ngModel)]="ObjFineTuning.Protection_System_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of ProtectionSystemSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="ProtectionSystemFinalOutCome"
+                          [(ngModel)]="
+                            ObjFineTuning.Protection_System_FinalOutcome
+                          "
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of ProtectionSystemFinalOutCome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="4">
+                        <hr class="box boxboxDivide-primary" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Others</th>
+                      <td>
+                        <p-checkbox
+                          labelStyleClass="inline"
+                          name="Others"
+                          value="No_sound_from_the_hearing_aid"
+                          label="No sound from the hearing aid"
+                          [(ngModel)]="SelectedOthers"
+                          (onChange)="maxSelectionOthers()"
+                          inputId="Others1"
+                        ></p-checkbox>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="NoSoundSolution"
+                          [(ngModel)]="ObjFineTuning.NoSound_Solution"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of NoSoundSolution"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          class="form-control"
+                          name="NoSoundFinalOutcome"
+                          [(ngModel)]="ObjFineTuning.NoSound_FinalOutcome"
+                        >
+                          <option [ngValue]="undefined">Select</option>
+                          <option
+                            *ngFor="let option of NoSoundFinalOutcome"
+                            value="{{ option }}"
+                          >
+                            {{ option }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                  </table>
+
+                  <table style="width: 100%">
+                    <tr>
+                      <td colspan="2">
+                        <hr class="box boxboxDivide-primary" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th style="width: 100px">COMMENT</th>
+                      <td>
+                        <input
+                          class="form-control"
+                          style="width: 100%; height: 35px"
+                          name="Comment"
+                          #Comment="ngModel"
+                          [(ngModel)]="ObjFineTuning.comment"
+                          placeholder="Write Comment Here..."
+                        />
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <div style="height: 20px"></div>
+
+                <div class="row">
+                  <update-consultancy
+                    #consultancy
+                    (saveData)="updateConsultancysave($event)"
+                  ></update-consultancy>
+                </div>
+                <br />
+
+                <div class="row">
+                  <button
+                    *ngIf="buttonValid"
+                    class="btn btn-primary pull-right"
+                    (click)="
+                      saveDocAppo(DoctorsAppointmentNewFineTuning.form.valid)
+                    "
+                    id="load"
+                    [disabled]="Spinner"
+                  >
+                    <p-progressSpinner
+                      *ngIf="Spinner"
+                      [style]="{ width: '15px', height: '15px' }"
+                      strokeWidth="8"
+                      animationDuration=".5s"
+                    ></p-progressSpinner>
+                    <span class="glyphicon glyphicon-save">{{
+                      buttonname
+                    }}</span>
+                  </button>
+                </div>
+              </form>
+            </p-tabPanel>
+          </p-tabView>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

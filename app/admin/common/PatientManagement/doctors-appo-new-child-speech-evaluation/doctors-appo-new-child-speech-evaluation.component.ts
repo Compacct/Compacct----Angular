@@ -55,6 +55,9 @@ export class DoctorsAppoNewChildSpeechEvaluationComponent implements OnInit {
   IfYes7: boolean= false;
   IfYes8: boolean= false;
 
+  display:boolean = false;
+  G_Name:string;
+
 
 
   ObjChildSpeech: ChildSpeech = new ChildSpeech();
@@ -144,10 +147,60 @@ export class DoctorsAppoNewChildSpeechEvaluationComponent implements OnInit {
 
         this.ObjChildSpeech.Foot_Fall_ID=this.patientSearchList.Foot_Fall_ID;
         this.ObjChildSpeech.Cost_Cen_ID=this.patientSearchList.Cost_Cen_ID;
+        this.ObjChildSpeech.Guardian_Name=this.patientSearchList.Guardian_Name;
+        this.G_Name=this.patientSearchList.Guardian_Name;
 
         this.Appo_Date=this.patientSearchList.Appo_Dt ? this.patientSearchList.Appo_Dt : "-";
       }
     });
+  }
+
+  showModel(){
+    this.display = true;
+    this.G_Name = this.ObjChildSpeech.Guardian_Name;
+  }
+
+  Update_Guardian_Name(){
+    // console.log("G_Name",this.G_Name);
+    // console.log("Guardian_Name",this.ObjChildSpeech.Guardian_Name);
+    // console.log("Foot_Fall_ID",this.ObjChildSpeech.Foot_Fall_ID);
+
+    this.ObjChildSpeech.Guardian_Name= this.G_Name;
+
+    const UpdateObj = {
+      Foot_Fall_ID : this.ObjChildSpeech.Foot_Fall_ID,
+      Guardian_Name : this.ObjChildSpeech.Guardian_Name           
+    }
+    const Uobj = {
+      "SP_String": "SP_BL_Txn_Doctor_Appo_ABR",
+      "Report_Name_String": "update_Guardian_Name",
+      "Json_Param_String": JSON.stringify(UpdateObj)
+    }
+
+    this.GlobalAPI.postData(Uobj).subscribe((data: any) => {
+      // console.log("Update Guardian Name",data);
+      if (data[0].Column1){
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Guardian Name Updated",
+          detail: "Succesfully "
+        });
+      }
+      else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message ",
+          detail:"Error occured "
+        });
+      }
+    });
+    this.GetAllDataAppoID();
+    this.display=false;
+
   }
 
   updateConsultancysave(event){
@@ -406,6 +459,7 @@ class ChildSpeech{
   Foot_Fall_ID: any;
   Txn_Date: any; 
   Cost_Cen_ID: any;
+  Guardian_Name: any;
 
   Appo_ID: any; 
   Posted_By: any;

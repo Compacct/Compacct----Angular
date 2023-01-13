@@ -16,7 +16,6 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
 })
 export class DoctorsAppoNewFluencyEvaluationComponent implements OnInit {
   tabIndexToView:number= 0;
-  GenderList:any=[];
   AppoIDvalue:number;
   EditPage:any;
   FLUENCYEVALUATIONFormSubmitted:boolean= false;
@@ -41,6 +40,9 @@ export class DoctorsAppoNewFluencyEvaluationComponent implements OnInit {
   SeverityList:any= [];
   YesNoList:any= [];
   IfYes: boolean= false;
+
+  display:boolean = false;
+  G_Name:string;
 
   ObjFLUENCY: FLUENCY = new FLUENCY();
   @ViewChild("consultancy", { static: false }) UpdateConsultancy: UpdateConsultancyComponent;
@@ -69,7 +71,6 @@ export class DoctorsAppoNewFluencyEvaluationComponent implements OnInit {
       Header: "FLUENCY EVALUATION REPORT",
       Link: " Patient Management -> FLUENCY EVALUATION REPORT"
     });
-    this.GenderList=['Male','Female','Other'];
     this.Appo_Date= new Date();
     this.GetAllDataAppoID();
     this.GetCostCentre();
@@ -124,10 +125,60 @@ export class DoctorsAppoNewFluencyEvaluationComponent implements OnInit {
 
         this.ObjFLUENCY.Foot_Fall_ID=this.patientSearchList.Foot_Fall_ID;
         this.ObjFLUENCY.Cost_Cen_ID=this.patientSearchList.Cost_Cen_ID;
+        this.ObjFLUENCY.Guardian_Name=this.patientSearchList.Guardian_Name;
+        this.G_Name=this.patientSearchList.Guardian_Name;
 
         this.Appo_Date=this.patientSearchList.Appo_Dt ? this.patientSearchList.Appo_Dt : "-";
       }
     });
+  }
+
+  showModel(){
+    this.display = true;
+    this.G_Name = this.ObjFLUENCY.Guardian_Name;
+  }
+
+  Update_Guardian_Name(){
+    // console.log("G_Name",this.G_Name);
+    // console.log("Guardian_Name",this.ObjFLUENCY.Guardian_Name);
+    // console.log("Foot_Fall_ID",this.ObjFLUENCY.Foot_Fall_ID);
+
+    this.ObjFLUENCY.Guardian_Name= this.G_Name;
+
+    const UpdateObj = {
+      Foot_Fall_ID : this.ObjFLUENCY.Foot_Fall_ID,
+      Guardian_Name : this.ObjFLUENCY.Guardian_Name           
+    }
+    const Uobj = {
+      "SP_String": "SP_BL_Txn_Doctor_Appo_ABR",
+      "Report_Name_String": "update_Guardian_Name",
+      "Json_Param_String": JSON.stringify(UpdateObj)
+    }
+
+    this.GlobalAPI.postData(Uobj).subscribe((data: any) => {
+      console.log("Update Guardian Name",data);
+      if (data[0].Column1){
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Guardian Name Updated",
+          detail: "Succesfully "
+        });
+      }
+      else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message ",
+          detail:"Error occured "
+        });
+      }
+    });
+    this.GetAllDataAppoID();
+    this.display=false;
+
   }
 
   updateConsultancysave(event){
@@ -337,6 +388,7 @@ class FLUENCY{
   Foot_Fall_ID: any;
   Txn_Date: any; 
   Cost_Cen_ID: any;
+  Guardian_Name: any;
 
   Appo_ID: any; 
   Posted_By: any;

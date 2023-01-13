@@ -200,7 +200,7 @@
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3">
-                                                <button class="btn btn-primary pull-left" (click)="SaveBeforeCheck()" id="load" [disabled]="Spinner">
+                                                <button class="btn btn-primary" style="margin-left: 800px;" (click)="SaveBeforeCheck()" id="load" [disabled]="Spinner">
                                                     <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                                 <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                             </button>

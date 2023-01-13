@@ -6,6 +6,7 @@ import { CompacctHeader } from "../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service"
 import { ActivatedRoute, Router } from "@angular/router";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-k4c-rsns-closing-stock',
@@ -74,6 +75,7 @@ export class K4cRsnsClosingStockComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) {
     this.route.queryParams.subscribe(params => {
       // console.log(params);
@@ -149,6 +151,8 @@ export class K4cRsnsClosingStockComponent implements OnInit {
      this.productListFilter = [];
      this.Gdisableflag = false;
      this.ViewDoc_No = undefined;
+     this.seachSpinner = false;
+     this.ngxService.stop();
      if (this.buttonname === "Save") {
       this.Doc_No = undefined;
       this.Doc_date = undefined;
@@ -513,6 +517,7 @@ getDateRange(dateRangeObj) {
 GetSearchedList(valid){
   this.RSNSSearchFormSubmitted = true;
     this.Searchedlist = [];
+    this.seachSpinner = true;
   const start = this.ObjBrowse.start_date
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
   : this.DateService.dateConvert(new Date());
@@ -552,6 +557,7 @@ this.Cost_Cent_ID = undefined;
 this.Godown_ID = undefined;
 this.remarks = undefined;
 if(DocNo.Doc_No){
+  this.ngxService.start();
   this.ProductList = [];
   this.BackupProList = [];
 this.Doc_No = DocNo.Doc_No;
@@ -631,7 +637,7 @@ GetdataforEdit(Doc_No){
     }, 600)
     //   this.ProductList = [...this.ProductList];
      
-      
+    this.ngxService.stop();
       // FOR VIEW
       // this.Doc_No = data[0].Doc_No;
       // this.Doc_date = new Date(data[0].Doc_Date);
