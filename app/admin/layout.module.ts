@@ -423,6 +423,7 @@ import { SpeechEvauationReportDashboardComponent } from "./common/PatientManagem
 import { DoctorsAppoNewChildSpeechEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-child-speech-evaluation/doctors-appo-new-child-speech-evaluation.component";
 import { DoctorsAppoNewAdultSpeechEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-adult-speech-evaluation/doctors-appo-new-adult-speech-evaluation.component";
 import { SaleBillNewComponent } from './common/FinancialManagement/Transaction/Sales/sale-bill-new/sale-bill-new.component';
+import { DoctorsAppointmentNewFineTuningComponent } from "./common/PatientManagement/doctors-appointment-new-fine-tuning/doctors-appointment-new-fine-tuning.component";
 
 @NgModule({
   declarations: [
@@ -763,7 +764,8 @@ import { SaleBillNewComponent } from './common/FinancialManagement/Transaction/S
     SpeechEvauationReportDashboardComponent,
     DoctorsAppoNewChildSpeechEvaluationComponent,
     DoctorsAppoNewAdultSpeechEvaluationComponent,
-    SaleBillNewComponent
+    SaleBillNewComponent,
+    DoctorsAppointmentNewFineTuningComponent
   ],
   imports: [
     CommonModule,
