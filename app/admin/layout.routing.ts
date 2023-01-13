@@ -2084,7 +2084,7 @@ path: 'Employee_Salary_Master_Harbauer',
    path: 'Nepal_BL_Txn_Purchase_Request_Vendor_Selection',
    component: NepalPurchaseRequestVendorSelectionComponent,
    data: {
-     title: 'Purchase Request Vendor Selection'
+     title: 'Vendor Selection'
 }
 },
 {

@@ -142,6 +142,7 @@
                                         <label class="control-label">Purchase Request No<sup class="text-danger">*</sup></label>
                                         <p-dropdown [options]="poRequestList" 
                                         name="Purchase_Request_No" 
+                                        *ngIf="buttonname === 'Save'"
                                         [(ngModel)]="objvendorSelection.Purchase_Request_No" 
                                         [showClear]="true" 
                                         [emptyFilterMessage]="' No Purchase Request No Found'" 
@@ -150,9 +151,9 @@
                                         [placeholder]="'Select Purchase Request No'"
                                         [virtualScroll]="true"
                                         itemSize="30" #Purchase_Request_No="ngModel" 
-                                        (ngModelChange)="purchaseRequestChange()"
-                                        >
+                                        (ngModelChange)="purchaseRequestChange()">
                                     </p-dropdown>
+                                    <div class="label-t" *ngIf="buttonname ==='Update'">{{objvendorSelection.Purchase_Request_No}}</div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="control-label">Purchase Request Date</label>
@@ -161,9 +162,10 @@
                                                 <i class="fa fa-calendar"></i>
                                             </div>
                                             <input  CompacctNepaliDatepicker id="DPo" name="DPo" #PDate="ngModel"
-                                             Class="form-control" (ngModelChange)="PoDate= $event"
+                                             Class="form-control" (ngModelChange)="PoDate= $event"*ngIf="buttonname === 'Save'"
                                              [(ngModel)]="PoDate"
                                              disabled />
+                                            <div class="label-t" *ngIf="buttonname ==='Update'">{{EditPoDate ? EditPoDate :"-"}}</div>
                                           </div>
                                     </div>
                                 </div>
@@ -274,7 +276,7 @@
                                                 (click)="SavevendorSeletction()" 
                                                 id="Saveload"
                                                 *ngIf="VenderSelect && objvendorSelection.Purchase_Request_No"
-                                                [disabled]="SaveSpinner">
+                                                [disabled]="SaveSpinner || DisableBUT ">
                                             <p-progressSpinner 
                                             *ngIf="SaveSpinner" 
                                             [style]="{width: '15px', height: '15px'}" 
