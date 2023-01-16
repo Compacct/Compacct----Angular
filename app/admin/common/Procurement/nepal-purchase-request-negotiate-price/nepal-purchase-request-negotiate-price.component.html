@@ -192,7 +192,7 @@
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]"
                             leftIcon="glyphicon glyphicon-floppy-save">
-                            <form name="vendorSelectionForm" #vendorSelectionForm="ngForm" novalidate>
+                            <form name="NpriceSelectionForm" #NpriceSelectionForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-md-6">
                                         <label class="control-label">Purchase Request No<sup class="text-danger"></sup></label>
@@ -350,10 +350,10 @@
                             </div>
                             <div class="box-footer">
                                 <button class="btn btn-primary pull-right" 
-                                                (click)="negotiateSave(vendorSelectionForm.form.valid)" 
+                                                (click)="negotiateSave(NpriceSelectionForm.form.valid)" 
                                                 id="Saveload"
                                                 *ngIf="ObjnegotiatePrice.Purchase_Request_No "
-                                                [disabled]="SaveSpinner || DisableBUT.length!== 0 " >
+                                                [disabled]="SaveSpinner || DisableBUT " >
                                             <p-progressSpinner 
                                             *ngIf="SaveSpinner" 
                                             [style]="{width: '15px', height: '15px'}" 

@@ -62,7 +62,7 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
   PaymentTramsSelect: any = undefined;
   DeliveryMethodSelect: any = undefined;
   EditPoDate: any = undefined;
-  DisableBUT: any = undefined;
+  DisableBUT: boolean = false;
   constructor( private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -106,6 +106,7 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
   this.CurrencySelect = undefined;
   this.DeliveryMethodSelect = undefined;
   this.PaymentMethodSelect = undefined;
+  this.DisableBUT = false;
   }
   onReject(){
     this.compacctToast.clear("c");
@@ -116,7 +117,7 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
   getPRno(){
     const obj = {
       "SP_String": "sp_Bl_Txn_Purchase_Request",
-      "Report_Name_String": "Get_Purchase_Request_Doc_No"
+      "Report_Name_String": "Get_Purchase_Request_Doc_No_Negotiate_Price"
     }
     this.GlobalAPI.getData(obj)
     .subscribe((data: any) => {
@@ -359,12 +360,14 @@ export class NepalPurchaseRequestNegotiatePriceComponent implements OnInit {
   }
   EditNegotiate(col: any) {
     this.EditPoDate = undefined;
-    this.DisableBUT = undefined;
-    if(col.Purchase_Request_No){
+    this.DisableBUT = false;
+    if (col.Purchase_Request_No) {
+      if (col.PO_Order_No.length !== 0) {
+        this.DisableBUT = true; 
+      }
       this.items = ["BROWSE", "UPDATE"];
       this.tabIndexToView = 1;
       this.buttonname = "Update";
-      this.DisableBUT = col.PO_Order_No;
       this.ObjnegotiatePrice.Purchase_Request_No = col.Purchase_Request_No;
       this.purchaseRequestChange();
       this.PurchaseTypeSelect = col.Purchase_Type_ID;

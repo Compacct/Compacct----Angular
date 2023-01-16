@@ -53,7 +53,8 @@ export class NepalPurchaseRequestComponent implements OnInit {
   ProductSpinner:Boolean = false
   editDisdate:boolean = false
   ProductCategoryList:any = []
-  editFlg:boolean = false
+  editFlg: boolean = false
+  DynamicSearchedlist: any = [];
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -89,7 +90,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
     this.clearData();
   }
   clearData(){
-    console.log("call")
+   // console.log("call")
     this.items = ["BROWSE", "CREATE"];
    // this.tabIndexToView = 0
     this.buttonname = "Save"
@@ -102,7 +103,6 @@ export class NepalPurchaseRequestComponent implements OnInit {
     this.viewPurchasePopup = false
     this.BrandId = undefined
     this.purchaseRequestFormSubmit = false
-    this.GetSearchedList(true)
     this.scrollableCols = [];
     this.productListHeader = []
     this.ProductSpinner = false
@@ -122,7 +122,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
       "Report_Name_String": "Get_Brand_Product"
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      console.log("BrandList",data)
+      //console.log("BrandList",data)
       if(data.length){
 
         data.forEach((xy:any) => {
@@ -153,7 +153,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
       this.$http.get('Nepal_BL_Txn_Purchase_Request/Get_All_Data_For_Purchase_Request?to_date='+this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate))+'&Cat_ID='+Number(this.objpurchaseRequest.Cat_ID)).pipe(map((data:any) => data ? JSON.parse(data) : []))
         .subscribe((data:any)=>{
           this.ngxService.start();
-        console.log("productList",data)
+        //console.log("productList",data)
         if(data.length){
           if(editData ? editData.length : false){
             data.forEach((ele:any) => {
@@ -221,7 +221,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
    }
    addpur(valid:any){
     this.purchaseRequestFormSubmit = true
-    console.log(valid)
+    //console.log(valid)
     if(valid){
       const filterproductList = this.productList.find((x:any)=> Number(x.Product_ID) == Number(this.objpurchaseRequest.Product_ID) )
        this.addpurchaList.push({
@@ -258,7 +258,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
       }
       
      });
-      console.log("addpurchaList",this.addpurchaList)
+      //console.log("addpurchaList",this.addpurchaList)
      if(this.addpurchaList.length){
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -278,12 +278,12 @@ export class NepalPurchaseRequestComponent implements OnInit {
       "Json_Param_String": JSON.stringify(this.addpurchaList)
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log("data",data)
+     // console.log("data",data)
       if(data[0].Column1){
         this.GetSearchedList(true)
        
         this.onReject()
-        console.log("PurchaseRequestNo",this.PurchaseRequestNo)
+        //console.log("PurchaseRequestNo",this.PurchaseRequestNo)
         if(this.PurchaseRequestNo){
          this.tabIndexToView = 0
         }
@@ -323,13 +323,14 @@ export class NepalPurchaseRequestComponent implements OnInit {
         "Json_Param_String": JSON.stringify([tempobj])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        console.log("search Data",data)
+        //console.log("search Data",data)
         if(data.length){
          data.forEach((y:any) => {
           y.Date = this.DateNepalConvertService.convertEngToNepaliFormatDateObj(y.Date);
           });
-         this.Searchedlist = data
-         console.log("Searchedlist",this.Searchedlist)
+          this.Searchedlist = data
+          this.DynamicSearchedlist = Object.keys(data[0]);
+         //console.log("Searchedlist",this.Searchedlist)
         }
         this.seachSpinner = false
       })
@@ -355,7 +356,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{ Purchase_Request_No :PurchaseRequestNo}])
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     console.log("Edit",data)
+     //console.log("Edit",data)
      if(data.length){
       this.DocDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(data[0].Purchase_Request_Date)
       //this.setProductListTable(data)
@@ -382,7 +383,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
         });
       }
       
-      console.log("ReqQtyList",this.ReqQtyList)
+      //console.log("ReqQtyList",this.ReqQtyList)
      
     })
    }
@@ -396,7 +397,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{ Purchase_Request_No :col.Purchase_Request_No}])
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-    console.log("view",data)
+    //console.log("view",data)
     this.viewPurchaseList = data
     setTimeout(() => {
       this.viewPurchasePopup = true
@@ -412,7 +413,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
     }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        // this.BrandList = data;
-       console.log("ProductCategoryList==",data)
+       //console.log("ProductCategoryList==",data)
        if(data.length){
          data.forEach((xy:any) => {
           xy['label'] = xy.Cat_Name

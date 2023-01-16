@@ -99,12 +99,13 @@
                                 <p-table [value]="Searchedlist" 
                                 #dt [paginator]="true" 
                                 [rows]="100" 
+                                *ngIf='Searchedlist.length'
                                 [rowHover]="true" 
                                 [autoLayout]="true" 
                                 sortMode="multiple" 
                                 [rowsPerPageOptions]="[10,25,50,100]" 
                                 [rowHover]="true" 
-                                [globalFilterFields]='["Doc_No","Doc_Date","Total_Product_Qty","Sales_Man"]'>
+                                [globalFilterFields]='DynamicSearchedlist'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
@@ -116,9 +117,7 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>Purchase Request No</th>
-                                            <th>Date</th>
-                                            <th>Total Product Qty</th>
+                                            <th *ngFor="let option of DynamicSearchedlist">{{option.replaceAll('_',' ')}}</th>
                                            
                                         </tr>
                                     </ng-template>
@@ -137,12 +136,12 @@
                                                                 <i class="fa fa-eye"></i> View
                                                             </a>
                                                         </li>
-                                                        <li >
+                                                        <li *ngIf='col.PO_Doc_No == ""' >
                                                             <a (click)="EditPur(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li>
-                                                        <li >
+                                                        <li *ngIf='col.PO_Doc_No == ""'>
                                                             <a (click)="Deletepur(col)">
                                                                 <i class="fa fa-trash" aria-hidden="true"></i> Delete
                                                             </a>
@@ -150,10 +149,10 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <td>{{col.Purchase_Request_No}}</td>
-                                            <td>{{col.Date }}</td>
-                                            <td>{{col.Total_Product_Qty}}</td>
-                                          </tr>
+                                                <ng-container *ngFor="let option of DynamicSearchedlist" data->
+                                                    <td>{{col[option] ? col[option] :"-" }}</td>
+                                                </ng-container>
+                                            </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
                                         Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
@@ -371,7 +370,7 @@
                             <td>{{col.Product_Description}}</td>
                             <td>{{col.Requisition_Qty }}</td>
                             <td>{{col.UOM}}</td>
-                            <td>{{col.Purchase_Req_Qty}}</td>
+                            <td>{{col.Purchase_Request_Qty}}</td>
                             </tr>
                     </ng-template>
                                     
@@ -379,6 +378,6 @@
   
         </div>
     <p-footer>
-       <button type="button" pButton icon="pi pi-times" (click)="viewPurchasePopup=false" label="Close" class="ui-button-secondary"></button>
+       <button type="button"  (click)="viewPurchasePopup=false" class="btn btn-info">Close</button>
     </p-footer>
 </p-dialog>

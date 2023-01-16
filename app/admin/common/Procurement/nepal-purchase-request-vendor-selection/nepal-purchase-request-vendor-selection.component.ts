@@ -19,34 +19,35 @@ import { data } from 'jquery';
   encapsulation: ViewEncapsulation.None
 })
 export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
-  items:any = []
-  tabIndexToView:number = 0
-  buttonname = "Save"
-  objvendorSelection:vendorSelection = new vendorSelection()
-  poRequestList:any = []
-  vendorSelectionFormSubmit:boolean = false
-  PoDate:any
-  Searchedlist:any = []
-  prList:any = []
-  Venderlist:any = []
-  VenderSelect: any = undefined
-  ToEmailSelect: any = undefined
-  CCEmailSelect :any = undefined
-  SaveSpinner:boolean = false
-  seachSpinner:boolean = false
-  BrowseStartDate:any = {}
-  BrowseEndDate:any = {}
-  SearchFormSubmit: boolean = false
-  toEmailList: any = []
-  CCEmailList: any = []
-  EmailCheck: boolean = false
-  NewEmailFormSubmitted: boolean = false
-  CreateEmailModal: boolean = false
-  ViewCompanyModal :boolean =false
-  CompantEmailName: any = undefined
-  CompanyEmailList: any = []
-  EmailId :any = undefined
-  
+  items: any = [];
+  tabIndexToView: number = 0;
+  buttonname = "Save";
+  objvendorSelection: vendorSelection = new vendorSelection();
+  poRequestList: any = [];
+  vendorSelectionFormSubmit: boolean = false;
+  PoDate: any;
+  Searchedlist: any = [];
+  prList: any = [];
+  Venderlist: any = [];
+  VenderSelect: any = undefined;
+  ToEmailSelect: any = undefined;
+  CCEmailSelect: any = undefined;
+  SaveSpinner: boolean = false;
+  seachSpinner: boolean = false;
+  BrowseStartDate: any = {};
+  BrowseEndDate: any = {};
+  SearchFormSubmit: boolean = false;
+  toEmailList: any = [];
+  CCEmailList: any = [];
+  EmailCheck: boolean = false;
+  NewEmailFormSubmitted: boolean = false;
+  CreateEmailModal: boolean = false;
+  ViewCompanyModal: boolean = false;
+  CompantEmailName: any = undefined;
+  CompanyEmailList: any = [];
+  EmailId: any = undefined;
+  EditPoDate: any = undefined;
+  DisableBUT: boolean = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -64,7 +65,7 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
     this.items =  ["BROWSE", "CREATE"];
     this.Header.pushHeader({
      Header: "Purchase Request Vendor Selection",
-     Link: "Procurement -> Purchase Request Vendor Selection"
+     Link: "Procurement -> Transaction -> Purchase Request Vendor Selection"
    });
    this.BrowseStartDate =this.DateNepalConvertService.GetNepaliCurrentDateNew();
    this.BrowseEndDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
@@ -78,6 +79,7 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.clearData();
+    console.log(e)
   }
   clearData(){
   this.objvendorSelection = new vendorSelection()
@@ -88,19 +90,20 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
     this.ToEmailSelect = undefined;
     this.CCEmailSelect = undefined;
     this.EmailCheck = false;
-    this.VenderSelect =undefined
+    this.VenderSelect = undefined;
+    this.DisableBUT = false;
   }
   onReject(){
     this.compacctToast.clear("c");
-   }
-   getPRno(){
+  }
+  getPRno(){
     const obj = {
       "SP_String": "sp_Bl_Txn_Purchase_Request",
-      "Report_Name_String": "Get_Purchase_Request_Doc_No"
+      "Report_Name_String": "Get_Purchase_Request_Doc_No_Vendor_Selection"
     }
     this.GlobalAPI.getData(obj)
     .subscribe((data: any) => {
-      //console.log("data",data)
+      //console.log("Purchase_Request_No",data)
       if(data.length) {
         data.forEach(element => {
           element['label'] = element.Purchase_Request_No,
@@ -114,8 +117,8 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
       }
      // console.log("poRequestList",this.poRequestList)
     })
-   }
-   purchaseRequestChange(){
+  }
+  purchaseRequestChange(){
     if(this.objvendorSelection.Purchase_Request_No){
       this.getPr()
       const poRequestListFilter = this.poRequestList.filter((y:any)=> y.Purchase_Request_No_Actual == this.objvendorSelection.Purchase_Request_No)[0]
@@ -129,7 +132,7 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
     }
   
   }
-   getPr(){
+  getPr(){
    const obj = {
         "SP_String": "sp_Bl_Txn_Purchase_Request",
         "Report_Name_String": "Get_Data_From_Purchase_Request",
@@ -139,8 +142,8 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
       //console.log("prList",data)
       this.prList = data
       })
-     }
-  GetVender() {
+  }
+  GetVender(){
   this.$http
   const obj = {
     "SP_String": "sp_Bl_Txn_Requisition_From_Salesman",
@@ -224,7 +227,10 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         //console.log("search Data",data)
-        if(data.length){
+        if (data.length) {
+           data.forEach((ele:any) => {
+                ele['Edit_V_Date'] = ele.Date
+            });
          data.forEach((y:any) => {
           y.Date = this.DateNepalConvertService.convertEngToNepaliFormatDateObj(y.Date);
           });
@@ -235,15 +241,20 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
       })
     }
   }
-  EditVender(col:any){
-  if(col.Purchase_Request_No){
+  EditVender(col: any) {
+    this.EditPoDate = undefined;
+    this.DisableBUT = false;
+    if (col.Purchase_Request_No) {
+      if (col.PO_Order_No.length !== 0) {
+        this.DisableBUT = true;
+      }
     this.items = ["BROWSE", "UPDATE"];
     this.tabIndexToView = 1
     this.buttonname = "Update"
     this.objvendorSelection.Purchase_Request_No = col.Purchase_Request_No
     this.purchaseRequestChange()
     this.VenderSelect = col.Sub_Ledger_ID
-    
+    this.EditPoDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(col.Edit_V_Date);
   }
   }
   getEmailId(col) {

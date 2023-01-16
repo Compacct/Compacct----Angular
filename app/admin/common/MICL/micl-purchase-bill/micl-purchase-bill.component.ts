@@ -1039,7 +1039,7 @@ GetGRNNoProductdetails(){
     this.ObjPurChaseBill.Doc_No = this.editDocNo ? this.editDocNo : "A";
     this.ObjPurChaseBill.Doc_Date = this.DateService.dateConvert(new Date(this.DocDate));
     this.ObjPurChaseBill.Supp_Ref_Date = this.DateService.dateConvert(new Date(this.SupplierBillDate));
-    this.ObjPurChaseBill.CN_Date = this.ObjPurChaseBill.CN_Date ? this.DateService.dateConvert(new Date(this.CNDate)) : "01/Jan/1900";
+    this.ObjPurChaseBill.CN_Date = this.CNDate ? this.DateService.dateConvert(new Date(this.CNDate)) : "01/Jan/1900";
     // this.ObjPurChaseBill.CN_Date = this.DateService.dateConvert(new Date(this.CNDate));
     this.ObjPurChaseBill.Bill_Gross_Amt = Number(this.Gross_Amount);
     this.ObjPurChaseBill.Bill_Net_Amt = Number(this.Net_Amt);
