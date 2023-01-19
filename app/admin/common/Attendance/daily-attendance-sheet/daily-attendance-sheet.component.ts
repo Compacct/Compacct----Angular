@@ -26,6 +26,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
   buttonname = "Save";
   myDate = new Date();
   EmpDailyAttenList:any = [];
+  BackupEmpDailyAttenList:any = [];
   AttenTypelist:any = [];
   Daily_Atten_Date = new Date();
   AttendancePopup = false;
@@ -49,6 +50,10 @@ export class DailyAttendanceSheetComponent implements OnInit {
   Total_Absent: any;
   Leave_Without_Pay: any;
   Total_Left: any;
+  DistWorkLocation:any = [];
+  SelectedDistWorkLocation:any = [];
+  SearchFields:any = [];
+  databaseName:any
 
   constructor(
     private Header: CompacctHeader,
@@ -66,8 +71,18 @@ export class DailyAttendanceSheetComponent implements OnInit {
       Header: "Daily Attendance Sheet",
       Link: " HR -> Transaction -> Daily Attendance Sheet"
     });
+    this.getDatabase();
     this.getAttendanceType();
     // this.GetEmpData();
+  }
+  getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log(data)
+        });
   }
   getAttendanceType(){
     const obj = {
@@ -97,6 +112,8 @@ export class DailyAttendanceSheetComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.EmpDailyAttenList = data;
+      this.BackupEmpDailyAttenList = data;
+      this.GetDistinct();
       this.seachSpinner = false;
       this.checkbuttonname = data[0].Btn_Name;
       if (this.checkbuttonname === "Update") {
@@ -123,8 +140,39 @@ export class DailyAttendanceSheetComponent implements OnInit {
       this.TotalLeaveType();
      })
   }
+  // DISTINCT & FILTER
+  GetDistinct() {
+    let DWorkLocation:any = [];
+    this.DistWorkLocation =[];
+    this.SelectedDistWorkLocation =[];
+    this.SearchFields =[];
+    this.EmpDailyAttenList.forEach((item) => {
+   if (DWorkLocation.indexOf(item.Work_Location) === -1) {
+    DWorkLocation.push(item.Work_Location);
+   this.DistWorkLocation.push({ label: item.Work_Location, value: item.Work_Location });
+   }
+  });
+     this.BackupEmpDailyAttenList = [...this.EmpDailyAttenList];
+  }
+  FilterDist() {
+    let DWorkLocation:any = [];
+    this.SearchFields =[];
+  if (this.SelectedDistWorkLocation.length) {
+    this.SearchFields.push('Process_ID');
+    DWorkLocation = this.SelectedDistWorkLocation;
+  }
+  this.EmpDailyAttenList = [];
+  if (this.SearchFields.length) {
+    let LeadArr = this.BackupEmpDailyAttenList.filter(function (e) {
+      return (DWorkLocation.length ? DWorkLocation.includes(e['Work_Location']) : true)
+    });
+  this.EmpDailyAttenList = LeadArr.length ? LeadArr : [];
+  } else {
+  this.EmpDailyAttenList = [...this.BackupEmpDailyAttenList] ;
+  }
+  this.TotalLeaveType();
+  }
   TotalLeaveType(){
-    
     var present = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "P")
     this.Total_Present = present.length ? present.length : undefined;
     console.log("this.Total_Present===",this.Total_Present);
@@ -384,10 +432,10 @@ export class DailyAttendanceSheetComponent implements OnInit {
   // SAVE AND UPDATE
   dataforSave(){
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
-    if(this.EmpDailyAttenList.length) {
+    if(this.BackupEmpDailyAttenList.length) {
       // if(this.saveRemarks()){
       let tempArr:any =[]
-      this.EmpDailyAttenList.forEach(item => {
+      this.BackupEmpDailyAttenList.forEach(item => {
         // if (new Date(item.Off_Out_Time) <= new Date(item.Off_In_Time)) {
         // if(item.Wastage_Qty && Number(item.Wastage_Qty) != 0) {
         //  var Prorecqty = this.MaterialType_Flag === "Semi Finished" ? "Production_Qty" : "Receive_Qty"
@@ -425,7 +473,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
     }
   }
   SaveDailyAttendance(){
-      if(this.EmpDailyAttenList.length){
+      if(this.BackupEmpDailyAttenList.length){
       const obj = {
         "SP_String": "SP_HR_Attn_Sheet_Day_Wise",
         "Report_Name_String" : "Insert_HR_Attn_Sheet_Day_Wise",

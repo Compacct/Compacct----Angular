@@ -45,7 +45,7 @@
                                 </select>
                                     </div>
 
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-2">
                                         <button class="btn btn-primary pull-right1" data-toggle="modal" (click)="GetSearchedlist(SearchFactoryForm.form.valid)" id="load" [disabled]="seachSpinner">
                                       <p-progressSpinner
                                         *ngIf="seachSpinner"
@@ -59,6 +59,12 @@
                                       ></span
                                       >&nbsp;Search
                                     </button>
+                                    </div>
+                                    <div class="col-sm-2">
+                                    <button class="btn btn-success custombutton" data-toggle="modal" (click)="exportoexcelbrowse('RTF_Browse')" id="load" [disabled]="expotSpinner || !Searchedlist.length">
+                                      <p-progressSpinner *ngIf="expotSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!expotSpinner" class="glyphicon glyphicon-save"></span>&nbsp;Export to excel
+                                   </button>
                                     </div>
                                 </div>
 
@@ -89,6 +95,7 @@
                                             <th>To Stock Point</th>
                                             <th>Total Qty</th>
                                             <th>Accepted Qty</th>
+                                            <th>Total Amount</th>
                                             <th>Transaction Date & Time</th>
                                         </tr>
                                     </ng-template>
@@ -163,6 +170,7 @@
                                             <td>{{col.To_godown_name}}</td>
                                             <td>{{col.Toyal_Qty}}</td>
                                             <td>{{col.Accepted_Qty}}</td>
+                                            <td>{{col.Total_Amount}}</td>
                                             <td>{{col.Transaction_Date_Time}}</td>
                                         </tr>
                                     </ng-template>

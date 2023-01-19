@@ -11,6 +11,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { Console } from 'console';
 import { NgxUiLoaderService } from "ngx-ui-loader";
 declare var $:any;
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-k4c-factory-return',
@@ -20,34 +21,34 @@ declare var $:any;
   encapsulation: ViewEncapsulation.None
 })
 export class K4cFactoryReturnComponent implements OnInit {
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
   buttonname = "Save";
 
   myDate: Date;
-  selectProduct = [];
+  selectProduct:any = [];
   ObjProductaddForm : ProductaddForm  = new ProductaddForm();
   ObjSaveForm : SaveForm  = new SaveForm();
 
   public QueryStringObj : any;
-  Cost_Center = [];
-  Godown = [];
-  BatchNo = [];
+  Cost_Center:any = [];
+  Godown:any = [];
+  BatchNo:any = [];
   //Expire_BatchNo: any;
   ExProductFlag = false;
-  ReturnReasonid = [];
+  ReturnReasonid:any = [];
   GoDown_Id: void;
   RFactoryaddFormSubmitted = false;
-  productaddSubmit = [];
-  toGodownList = [];
-  dateList = [];
-  Searchedlist =[];
+  productaddSubmit:any = [];
+  toGodownList:any = [];
+  dateList:any = [];
+  Searchedlist:any =[];
   Browser = false;
 
   ObjBrowse : Browse = new Browse ();
-  editList = [];
+  editList:any = [];
   Doc_no = undefined;
   Doc_date = undefined;
   To_Cost_Cent_ID = undefined;
@@ -57,21 +58,21 @@ export class K4cFactoryReturnComponent implements OnInit {
   Return_reason = undefined;
   Batchno = undefined;
   EditPoppup = false;
-  updateData = [];
+  updateData:any = [];
   editpopupformSubmitted = false;
-  rowIndex = [];
+  rowIndex:any = [];
   ViewPoppup = false;
   Qtyflag = false;
   AQtyflag = false;
   AcceptChallanPoppup = false;
   flag = false;
   del_doc_no = undefined;
-  initDate = [];
+  initDate:any = [];
   checkSave = true;
   Fromgodownid: any;
   exProdFlag = false;
   ExpiredProductFLag = false;
-  mattypelist = [];
+  mattypelist:any = [];
   DisabledBatch = false;
   //sameProdTypeFlag = false;
   SearchFactoryFormSubmit = false;
@@ -83,8 +84,8 @@ export class K4cFactoryReturnComponent implements OnInit {
   MTdisabled = false;
 
   RTFchallanno : any;
-  FranchiseProductList = [];
-  FranchiseList = [];
+  FranchiseProductList:any = [];
+  FranchiseList:any = [];
   taxable: any;
   cgst: any;
   sgst: any;
@@ -98,13 +99,13 @@ export class K4cFactoryReturnComponent implements OnInit {
   subledgerid:any;
   franchisecostcenid:any;
 
-  Franchise = [];
+  Franchise:any = [];
   FranchiseBill:any;
   FranchiseCostCentId = undefined;
 
   checkboxdisable = false;
   TimeStatus : any;
-  FProList = [];
+  FProList:any = [];
   taxable2: any;
   cgst2: any;
   sgst2: any;
@@ -114,7 +115,7 @@ export class K4cFactoryReturnComponent implements OnInit {
   netamount2: any;
   rtfvoucherno: any;
 
-  Regeneratelist = [];
+  Regeneratelist:any = [];
   contactname = undefined;
   taxableRegenerate: any;
   cgstRegenerate: any;
@@ -136,7 +137,9 @@ export class K4cFactoryReturnComponent implements OnInit {
   Regenerategrossamount2: any;
   RegenerateRound_Off2: string;
   Regeneratenetamount2: number;
-  Refreshlist = [];
+  Refreshlist:any = [];
+
+  expotSpinner = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -910,6 +913,34 @@ const obj = {
  })
  }
  }
+ // Export Excel Browse
+exportoexcelbrowse(fileName){
+  this.expotSpinner = true;
+  const start = this.ObjBrowse.start_date
+  ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
+  : this.DateService.dateConvert(new Date());
+  const end = this.ObjBrowse.end_date
+    ? this.DateService.dateConvert(new Date(this.ObjBrowse.end_date))
+    : this.DateService.dateConvert(new Date());
+  const tempobj = {
+    From_Date : start,
+    To_Date : end,
+    Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+    Material_Type : this.ObjBrowse.Material_Type
+  }
+  const obj = {
+    "SP_String": "SP_Controller_Master",
+    "Report_Name_String": "Browse Outlet Factory Return For Excel",
+    "Json_Param_String": JSON.stringify([tempobj])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+    this.expotSpinner = false;
+    
+  })
+}
  PrintRTF(obj) {
   if (obj.Doc_No) {
     window.open("/Report/Crystal_Files/K4C/Return_To_Factory_Print.aspx?DocNo=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
