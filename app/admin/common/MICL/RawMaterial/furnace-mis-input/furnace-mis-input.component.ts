@@ -80,6 +80,8 @@ export class FurnaceMisInputComponent implements OnInit {
   CreateReasonFormSubmitted = false;
   Time_Duration: any;
   dateTime:any = new Date().toISOString().slice(0, 16)
+  editdatalist:any = [];
+  buttonname = "Save"
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -819,6 +821,8 @@ GetSlagProduction() {
         this.GlobalAPI.getData(obj).subscribe((res)=>{
               console.log("Get Data",res)
               console.log("Get Data Main",JSON.parse(res[0].main))
+              this.editdatalist = JSON.parse(res[0].main);
+              this.buttonname = this.editdatalist === null ? "Save" : "Update";
              let data = JSON.parse(res[0].main)
              this.ObjFurnaceMISinput.Critical_Issue = data ? data[0].Critical_Issue : undefined;
              this.ObjDailyPerformancet = data? data[0].Daily_Performance[0] : new DailyPerformance();
@@ -840,8 +844,8 @@ GetSlagProduction() {
               zx.Time_Duration = d + h + diffMins
              });
             }
-            console.log("data[0].Shut_Down ",data[0].Shut_Down )
-            console.log("AddShutdownList",this.AddShutdownList)
+            // console.log("data[0].Shut_Down ",data[0].Shut_Down )
+            // console.log("AddShutdownList",this.AddShutdownList)
             });
           }
           // else {

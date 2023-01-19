@@ -24,28 +24,28 @@ export class K4CDispatchToOutletComponent implements OnInit {
   Objdispatch: dispatch = new dispatch()
   Objadditem: additem = new additem ()
   ObjBrowseData : BrowseData = new BrowseData ()
-  costcenterList = [];
+  costcenterList:any = [];
   todayDate : any = new Date();
   myDate : Date;
   ChallanDate : any = Date ;
-  productDetails = [];
+  productDetails:any = [];
   buttonname = "Create";
   Spinner = false;
   SpinnerShow = false;
-  itemList =[];
-  items = [];
+  itemList:any =[];
+  items:any = [];
   tabIndexToView = 0;
-  menuList = [];
+  menuList:any = [];
   brandInput = false ;
-  NativeitemList = [];
-  FromGodownList = [];
+  NativeitemList:any = [];
+  FromGodownList:any = [];
   adlist: any = {};
-  EditList = [];
+  EditList:any = [];
   inList = false;
-  saveData = [];
+  saveData:any = [];
   outLetDis = false;
-  GetAllDataList = [];
-  VehicleList = [];
+  GetAllDataList:any = [];
+  VehicleList:any = [];
   AddtionalFormSubmit = false;
   matchflag = true;
   AdditioanFormSubmit = false;
@@ -53,14 +53,14 @@ export class K4CDispatchToOutletComponent implements OnInit {
   DispatchFormSubmit = false;
   disabled: boolean = true;
   seachSpinner = false;
-  outletList = [];
-  brandList = [];
-  brandListBro = [];
+  outletList:any = [];
+  brandList:any = [];
+  brandListBro:any = [];
   doc_no : any;
-  toGodownList = [];
-  BatchList = [];
+  toGodownList:any = [];
+  BatchList:any = [];
   reqNumber:any;
-  outletListBro = [];
+  outletListBro:any = [];
   data = "(Show All Products)";
   inputBoxDisabled = false;
   indentdateDisabled = true;
@@ -71,7 +71,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
   To_Godown_ID_Dis = false;
   From_Godown_ID_Dis = false;
   editPopUp = false;
-  editdataList = [];
+  editdataList:any = [];
   brand = undefined;
   toOutlet = undefined;
   OutletStokePoint = undefined;
@@ -83,19 +83,19 @@ export class K4CDispatchToOutletComponent implements OnInit {
   editDis = false;
   reqQTYdis = true;
   AccQtydis = false;
-  initDate = [];
+  initDate:any = [];
   doc_date: any;
-  filteredData = [];
+  filteredData:any = [];
   displaysavepopup = false;
-  IndentNoList = [];
-  BackupIndentList = [];
-  IndentFilter = [];
+  IndentNoList:any = [];
+  BackupIndentList:any = [];
+  IndentFilter:any = [];
   SelectedIndent: any;
-  TIndentList = [];
-  BackUpproductDetails = [];
-  Refreshlist = [];
-  RefreshData = [];
-  editIndentList = [];
+  TIndentList:any = [];
+  BackUpproductDetails:any = [];
+  Refreshlist:any = [];
+  RefreshData:any = [];
+  editIndentList:any = [];
   Auto_Accepted: any;
   totalqty: any;
   totalaccpqty: any;
@@ -104,9 +104,9 @@ export class K4CDispatchToOutletComponent implements OnInit {
 
   FranchiseBill:any;
   dispatchchallanno: any;
-  FranchiseProductList = [];
+  FranchiseProductList:any = [];
   currentDate : any = new Date();
-  FranchiseList = [];
+  FranchiseList:any = [];
   subledgerid:any;
   franchisecostcenid:any;
 
@@ -119,13 +119,13 @@ export class K4CDispatchToOutletComponent implements OnInit {
   Round_Off: any;
   editdocno: any;
 
-  viewproductDetails = [];
+  viewproductDetails:any = [];
   viewDocNO = undefined;
   viewFromStokePoint = undefined;
   viewdate = undefined;
   tabView = false;
 
-  Regeneratelist = [];
+  Regeneratelist:any = [];
   contactname = undefined;
   taxableRegenerate: any;
   cgstRegenerate: any;
@@ -142,7 +142,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
   franchisechallandate: any = Date;
 
   updateQtyPopUp = false;
-  updateproductDetails = [];
+  updateproductDetails:any = [];
   updateDocNO = undefined;
   updateFromStokePoint = undefined;
   updatedate = undefined;
@@ -466,7 +466,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
   }
   // FOR SAVE DISPATCH
   getReqNo(){
-    let Rarr =[]
+    let Rarr:any =[]
     if(this.SelectedIndent.length) {
       this.SelectedIndent.forEach(el => {
         if(el){
@@ -793,7 +793,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
  getdataforSaveFranchise(){
     //this.currentDate = this.DateService.dateConvert(new Date(this.currentDate));
     if(this.FranchiseProductList.length) {
-      let tempArr =[]
+      let tempArr:any =[]
       this.FranchiseProductList.forEach(item => {
         if (Number(item.Taxable) && Number(item.Taxable) != 0) {
      const TempObj = {
@@ -1251,7 +1251,7 @@ getIndentForEdit(masterProduct){
   })
 }
 GetIndentdist(){
-  let DIndentBy = [];
+  let DIndentBy:any = [];
   this.IndentFilter = [];
   this.SelectedIndent =[];
   //this.SelectedDistOrderBy1 = [];
@@ -1546,7 +1546,7 @@ GetSelectedBatchqty() {
   // }
    }
    GetIndent(){
-     let DIndent = [];
+     let DIndent:any = [];
      this.IndentFilter = [];
      this.SelectedIndent = [];
      this.BackupIndentList.forEach((item) => {
@@ -1596,7 +1596,7 @@ GetSelectedBatchqty() {
   // TABLE DATA
   dataforShowproduct(){
     if(this.SelectedIndent.length) {
-      let Arr =[]
+      let Arr:any =[]
       this.SelectedIndent.forEach(el => {
         if(el){
           const Dobj = {
@@ -1899,12 +1899,41 @@ exportoexcel(tempobj,fileName){
   })
 }
 // Export Excel Browse
-exportoexcelbrowse(arr,fileName){
+// exportoexcelbrowse(arr,fileName){
+//   this.expotSpinner = true;
+//     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(arr);
+//     const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+//     XLSX.writeFile(workbook, fileName+'.xlsx');
+//     this.expotSpinner = false;
+// }
+exportoexcelbrowse(fileName){
   this.expotSpinner = true;
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(arr);
+  const start = this.ObjBrowseData.From_Date
+        ? this.DateService.dateConvert(new Date(this.ObjBrowseData.From_Date))
+        : this.DateService.dateConvert(new Date());
+      const end = this.ObjBrowseData.To_Date
+        ? this.DateService.dateConvert(new Date(this.ObjBrowseData.To_Date))
+        : this.DateService.dateConvert(new Date());
+      const tempDate = {
+        From_Date :start,
+        To_Date :end,
+        Cost_Cen_ID :this.ObjBrowseData.Cost_Cen_ID ? this.ObjBrowseData.Cost_Cen_ID : 0,
+        //Cost_Cen_ID :30
+        Brand_ID : this.ObjBrowseData.Brand_ID ? this.ObjBrowseData.Brand_ID : 0
+      }
+
+     const obj = {
+      "SP_String": "SP_Production_Voucher",
+      "Report_Name_String": "Get Dispatch Details For Excel",
+      "Json_Param_String": JSON.stringify([tempDate])
+     }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
     const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
     XLSX.writeFile(workbook, fileName+'.xlsx');
     this.expotSpinner = false;
+    
+  })
 }
 
 // REGENERATE BILL FROM ADMIN

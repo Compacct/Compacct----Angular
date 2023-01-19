@@ -339,7 +339,10 @@
             <th>No. of Days</th>
             <th>From</th>
             <th>To</th>
-            </tr>
+            <th>Reason</th>
+            <th>Approved Status of Business_Manager</th>
+            <th>Approved Status of Reporting_Manager</th>
+        </tr>
    </thead>
    <tbody>
         <tr *ngFor="let col of leaveapplyempownlist">
@@ -347,6 +350,9 @@
             <td>{{col.No_Of_Days_Apply}}</td>
             <td>{{col.Apply_From_Date | date : 'dd/MMM/yyyy'}}</td>
             <td>{{col.Apply_To_Date | date : 'dd/MMM/yyyy'}}</td>
+            <td>{{col.Remarks ? col.Remarks : '-'}}</td>
+            <td>{{col.Approved_Status_Business_Manager}}</td>
+            <td>{{col.Approved_Status_Reporting_Manager}}</td>
         </tr>
    </tbody>
  </table>
@@ -364,6 +370,9 @@
                 <th>No. of Days</th>
                 <th>From</th>
                 <th>To</th>
+                <th>Reason</th>
+                <th>Approved Status of Business_Manager</th>
+                <th>Approved Status of Reporting_Manager</th>
             </tr>
        </thead>
        <tbody>
@@ -373,6 +382,9 @@
                 <td>{{col.No_Of_Days_Apply}}</td>
                 <td>{{col.Apply_From_Date | date : 'dd/MMM/yyyy'}}</td>
                 <td>{{col.Apply_To_Date | date : 'dd/MMM/yyyy'}}</td>
+                <td>{{col.Remarks ? col.Remarks : '-'}}</td>
+                <td>{{col.Approved_Status_Business_Manager}}</td>
+                <td>{{col.Approved_Status_Reporting_Manager}}</td>
             </tr>
        </tbody>
      </table>
