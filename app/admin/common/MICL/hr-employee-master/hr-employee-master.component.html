@@ -322,8 +322,8 @@
                                        </select>
                                     </div>
                                     <div class="col-sm-6">
-                                        <label class="control-label">Personal Area<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" placeholder="Personal Area" name="parea" #parea="ngModel" [(ngModel)]="objemployee.Personal_Area" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && parea.errors?.required}" required>
+                                        <label class="control-label">Personal Area<sup *ngIf="databaseName === 'MICL_Demo' || databaseName === 'MICL'" class="text-danger">*</sup></label>
+                                        <input class="form-control" placeholder="Personal Area" name="parea" #parea="ngModel" [(ngModel)]="objemployee.Personal_Area" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && parea.errors?.required}" [required]="databaseName === 'MICL_Demo' || databaseName === 'MICL' ? true : false">
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="control-label">State</label>
@@ -408,6 +408,8 @@
                                         <label class="control-label">Employment Status<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="Emp_Status" #Emp_Status="ngModel" [(ngModel)]="objemployee.Present_Status" (change)="leftdatechange()" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Emp_Status.errors?.required}" required>
                                  <option  [ngValue]="undefined">Select</option>
+                                 <option *ngIf="databaseName != 'MICL_Demo' && databaseName != 'MICL'"  value="PROFESSIONAL">
+                                         PROFESSIONAL</option>
                             <option  *ngFor="let option of Statuslist" value="{{option}}">
                               {{option}}
                             </option> 

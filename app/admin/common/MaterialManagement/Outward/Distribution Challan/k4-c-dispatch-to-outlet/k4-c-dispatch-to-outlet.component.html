@@ -59,7 +59,7 @@
                                    </button>
                                     </div>
                                     <div class="col-sm-2">
-                                        <button class="btn btn-success custombutton" data-toggle="modal" (click)="exportoexcelbrowse(GetAllDataList,'Dispatch_Challan_Browse')" id="load" [disabled]="expotSpinner || !GetAllDataList.length">
+                                        <button class="btn btn-success custombutton" data-toggle="modal" (click)="exportoexcelbrowse('Dispatch_Challan_Browse')" id="load" [disabled]="expotSpinner || !GetAllDataList.length">
                                       <p-progressSpinner *ngIf="expotSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                       <span *ngIf="!expotSpinner" class="glyphicon glyphicon-save"></span>&nbsp;Export to excel
                                    </button>

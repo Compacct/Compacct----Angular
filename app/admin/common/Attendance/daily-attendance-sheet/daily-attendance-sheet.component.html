@@ -40,7 +40,11 @@
                           <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                        </button>
                             </div>
-                            <div class="col-sm-6">
+                                <div class="col-sm-3" *ngIf="databaseName == 'GN_CCSAHA_Kolkata'">
+                                    <label class="control-label">Work Location <span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="DistWorkLocation" [(ngModel)]="SelectedDistWorkLocation" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Work_Location"></p-multiSelect>
+                                </div>
+                            <div class="databaseName == 'GN_CCSAHA_Kolkata' ? 'col-sm-3' : 'col-sm-6'">
                                 <span  class="fa fa-question-circle pull-right"  (click)="information()"></span>
                             </div>
                         </div>
@@ -61,20 +65,22 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th width='4%'>Employee Code</th>
-                                            <th width='22%'>Employee Name</th>
+                                            <th width='3%'>Employee Code</th>
+                                            <th width='20%'>Employee Name</th>
+                                            <th *ngIf="databaseName == 'GN_CCSAHA_Kolkata'" width='9%'>Work Location</th>
                                             <th width='4%'>Attendance Type</th>
-                                            <th width='35%'>In Time</th>
-                                            <th width='35%'>Out Time</th>
+                                            <th width='33%'>In Time</th>
+                                            <th width='33%'>Out Time</th>
                                             <th width='4%'>Working Minutes</th>
                                             <th width='4%'>OT Minutes</th>
-                                            <th width='5%'>Remarks</th>
+                                            <th width='4%'>Remarks</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr>
                                             <td>{{col.Emp_Code}}</td>
                                             <td>{{col.Emp_Name}}</td>
+                                            <td *ngIf="databaseName == 'GN_CCSAHA_Kolkata'">{{col.Work_Location}}</td>
                                             <td [class]="col.Atten_Type_ID" (click)="ShowAttendancePopup(col)">{{col.Atten_Type_ID}}</td>
                                             <td><ejs-datetimepicker [(ngModel)]='col.Off_In_Time' [value]="col.Off_In_Time" [min]='col.InTimeminDate' [format]="'dd/MMM/yyyy hh:mm a'" (ngModelChange)="CalculateTime(col)" style="width: 250px;"></ejs-datetimepicker ></td>
                                             <td><ejs-datetimepicker [(ngModel)]='col.Off_Out_Time' [value]="col.Off_Out_Time"  [min]='col.minDate' [format]="'dd/MMM/yyyy hh:mm a'" (ngModelChange)="CalculateTime(col)" style="width: 250px;"></ejs-datetimepicker ></td>

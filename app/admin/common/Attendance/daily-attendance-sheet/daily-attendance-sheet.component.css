@@ -85,3 +85,6 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav {
     color: #ffff;
     text-align: center;
   }
+  .pull-right {
+    margin-right: 20px;
+}
