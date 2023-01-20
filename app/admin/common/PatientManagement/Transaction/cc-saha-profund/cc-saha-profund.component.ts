@@ -191,8 +191,8 @@ filterAudiologist() {
     this.Searchedlist = this.backUPSearchedlist;
     console.log("else GetAllDataList", this.Searchedlist)
   }
-  }
-  search() {
+}
+search() {
     this.Searchedlist = [];
    let DOrderBySerch = [];
   this.Searchedlist = [];
@@ -208,7 +208,7 @@ filterAudiologist() {
     this.Searchedlist = this.backUPSearchedlist;
     console.log("else GetAllDataList", this.Searchedlist)
   }
-  }
+}
 }
 
 class Browse{
