@@ -29,7 +29,8 @@ export class CCSahaProfundComponent implements OnInit {
   SelectedcosCenter:any = [];
   backUPSearchedlist:any = [];
   AudiologistFilter:any = [];
-  SelectedAudiologist:any = [];
+  SelectedAudiologist: any = [];
+  SelectedAge: any = undefined;
   constructor(
     private Header : CompacctHeader,
     private router : Router,
@@ -187,6 +188,23 @@ filterAudiologist() {
     this.Searchedlist = LeadArr.length ? LeadArr : [];
     console.log("if GetAllDataList", this.Searchedlist)
   } else {
+    this.Searchedlist = this.backUPSearchedlist;
+    console.log("else GetAllDataList", this.Searchedlist)
+  }
+}
+search() {
+    this.Searchedlist = [];
+   let DOrderBySerch = [];
+  this.Searchedlist = [];
+    if (this.SelectedAge.length) {
+      let LeadArr = this.backUPSearchedlist.filter(el => Number(el.Age) <= Number(this.SelectedAge))
+      // return (this.SelectedAge.length ? this.SelectedAge.includes(e['Age']) : true)
+    
+      console.log("if LeadArr", LeadArr)
+      this.Searchedlist = LeadArr.length ? LeadArr : [];
+      console.log("if GetAllDataList", this.Searchedlist)
+    }
+    else {
     this.Searchedlist = this.backUPSearchedlist;
     console.log("else GetAllDataList", this.Searchedlist)
   }
