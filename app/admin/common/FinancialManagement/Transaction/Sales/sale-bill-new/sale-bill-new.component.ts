@@ -96,13 +96,6 @@ export class SaleBillNewComponent implements OnInit {
   Total_GST : any;
   Total_Tax : any;
 
-  ObjTDS = new TDS();
-  TDSFormSubmitted = false;
-  LedgerList:any = [];
-  SubLedgerList:any = [];
-  AddTdsDetails:any = [];
-
-  
   ObjBrowseSaleBillNew = new BrowseSaleBillNew();
   SerarchsaleBillNewList:any = [];
   bckUpSerarchPurBillList:any = []
@@ -121,19 +114,6 @@ export class SaleBillNewComponent implements OnInit {
   Taxable_Amount : any;
   DocNo = undefined;
 
-  Save = false;
-  Del = false;
-
-  ObjPendingPO = new PendingPO();
-  PendingPOFormSubmitted = false;
-  PendingPOList:any = [];
-  DynamicHeaderforPPO:any = [];
-
-  ObjPendingGRN = new PendingGRN();
-  PendingGRNFormSubmitted = false;
-  PendingGRNList:any = [];
-  DynamicHeaderforPGRN:any = [];
-  deleteError = false;
   hrYeatList:any = [];
   HR_Year_ID:any;
   initDate:any = [];
@@ -147,6 +127,9 @@ export class SaleBillNewComponent implements OnInit {
   editDocNo : any;
   databaseName : any;
   aodateenabled = false;
+  Productbutton : any;
+
+  cols:any =[];
 
 
   constructor(
@@ -162,7 +145,7 @@ export class SaleBillNewComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // console.log(this.$CompacctAPI.CompacctCookies.Fin_Year_Start)
+    console.log(this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
     $(document).prop('title', this.headerData ? this.headerData : $('title').text());
     this.items = ["BROWSE", "CREATE", "PENDING GRN"];
     this.menuList = [
@@ -179,9 +162,19 @@ export class SaleBillNewComponent implements OnInit {
     this.GetCostcenter();
     // this.GetProject();
     // this.ObjSaleBillNew.RCM = "N";
-    this.GetLedger();
     this.GetTerm();
     // this.GetSearchedlist();
+
+    this.cols = [
+      { field: 'Doc_No', header: 'Doc No' },
+      { field: 'Doc_Date', header: 'Doc Date' },
+      { field: 'Sub_Ledger_Name', header: 'Sub Ledger' },
+      { field: 'Cost_Cen_Name', header: 'Cost Center' },
+      { field: 'Member_Name', header: 'Member Name' },
+      { field: 'Bill_Net_Amt', header: 'Net Amount' },
+      { field: 'Sale_Bill_Upload', header: 'Image' },
+      { field: 'Fin_Year_Name', header: 'Fin Year' }
+    ];
   }
   getDatabase(){
     this.$http
@@ -198,6 +191,7 @@ export class SaleBillNewComponent implements OnInit {
      this.items = ["BROWSE", "CREATE", "PENDING GRN"];
      this.buttonname = "Create";
      this.Spinner = false;
+     this.seachSpinner = false;
      this.clearData();
      this.clearProject();
      this.productaddSubmit = [];
@@ -235,12 +229,9 @@ export class SaleBillNewComponent implements OnInit {
     //  this.ObjSaleBillNew.RCM = "N";
      this.AddProductDetails = [];
      this.clearlistamount();
-     this.AddTdsDetails = [];
-     this.ObjTDS = new TDS();
      this.AddTermList = [];
      this.ObjTerm = new Term();
     //  this.cleartotaltermamount();
-    this.deleteError = false;
   
    }
    GetCustomer(){
@@ -459,6 +450,7 @@ export class SaleBillNewComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=> {
       this.Productlist = data;
       this.ngxService.stop();
+      this.Productbutton = "(Show AO Product)"
      })
  
     }
@@ -478,6 +470,7 @@ export class SaleBillNewComponent implements OnInit {
    this.GlobalAPI.getData(obj).subscribe((data:any)=> {
      this.Productlist = data;
      this.ngxService.stop();
+     this.Productbutton = "(Show All Product)"
     //  this.GRNNoProlist.forEach(item=>{
     //    item.Product_ID = item.value;
     //    item.Product_Name = item.label;
@@ -492,6 +485,14 @@ export class SaleBillNewComponent implements OnInit {
     })
   }
 
+   }
+   ProductRefresh(){
+    if (this.Productbutton === "(Show AO Product)"){
+      this.GetProductdetails();
+    }
+    else {
+      this.GetAllProductdetails();
+    }
    }
    GetProductDetailsChange(){
      this.ObjProductInfo.HSN_No = undefined;
@@ -633,7 +634,6 @@ export class SaleBillNewComponent implements OnInit {
     }
     taxamt = Number(Number(this.ObjProductInfo.Amount) - Number(this.ObjProductInfo.Discount)).toFixed(2);
     this.ObjProductInfo.Taxable_Amount = Number(taxamt);
-    // this.ObjTDS.Taxable_Amount = Number(this.ObjProductInfo.Taxable_Amount);
     this.calculategstamt();
     this.CalculateCessAmt();
     this.calculatenetamt();
@@ -1124,66 +1124,6 @@ export class SaleBillNewComponent implements OnInit {
     this.Net_Amt = undefined;
     this.Total_Term_Amount = undefined;
   }
-  GetLedger(){
-    const obj = {
-      "SP_String": "SP_MICL_Purchase_Bill_New",
-      "Report_Name_String": "Get_Master_Accounting_Ledger_Dropdown",
-     // "Json_Param_String": JSON.stringify([TempObj])
-
-   }
-   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-       this.LedgerList = data;
-    // console.log("Ledger list======",this.LedgerList);
-   });
-  }
-  GetSubLedger(){
-    const obj = {
-      "SP_String": "SP_MICL_Purchase_Bill_New",
-      "Report_Name_String": "Get_Sub_Ledger_Dropdown",
-      "Json_Param_String": JSON.stringify([{Ledger_ID : this.ObjTDS.Ledger_ID}])
-
-   }
-   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-       this.SubLedgerList = data;
-    // console.log("SubLedger list======",this.SubLedgerList);
-   });
-  }
-  CalculateTDSAmt(){
-    this.ObjTDS.TDS_Amount = 0;
-    var tdsamt;
-    if (this.ObjTDS.TDS_Percentage) { 
-      tdsamt = Number((Number(this.ObjTDS.Taxable_Amount) * Number(this.ObjTDS.TDS_Percentage)) / 100).toFixed(2);
-      this.ObjTDS.TDS_Amount =Number(tdsamt);
-    }
-    else {
-      this.ObjTDS.TDS_Amount = 0;
-    }
-  }
-  AddTDS(valid){
-    this.TDSFormSubmitted = true;
-    if (valid) {
-      var ledgername = this.LedgerList.filter(el=>Number(el.value) === Number(this.ObjTDS.Ledger_ID))
-      var subledgername = this.SubLedgerList.filter(ele=>Number(ele.value) === Number(this.ObjTDS.Sub_Ledger_ID))
-      var tdsobj = {
-      Ledger_ID : this.ObjTDS.Ledger_ID,
-      Ledger_Name : ledgername[0].label,
-      Sub_Ledger_ID : this.ObjTDS.Sub_Ledger_ID,
-      Sub_Ledger_Name : subledgername[0].label,
-      Taxable_Amount : Number(this.ObjTDS.Taxable_Amount),
-      TDS_Percentage : this.ObjTDS.TDS_Percentage ? Number(this.ObjTDS.TDS_Percentage) : 0,
-      TDS_Amount : this.ObjTDS.TDS_Amount ? Number(this.ObjTDS.TDS_Amount) : 0
-      }
-      this.AddTdsDetails.push(tdsobj);
-     // console.log('this.AddTdsDetails===',this.AddTdsDetails)
-      this.ObjTDS = new TDS();
-      this.ObjTDS.Taxable_Amount = Number(this.Taxable_Amount);
-      this.TDSFormSubmitted = false;;
-
-    }
-  }
-  TDSdelete(index) {
-    this.AddTdsDetails.splice(index,1)
-    }
   clearProject(){
     // if(this.openProject === "Y"){
     //   this.ProjectInput.clearData()
@@ -1202,6 +1142,9 @@ export class SaleBillNewComponent implements OnInit {
     // this.ObjSaleBillNew.Rounded_Off = Number(this.Round_off);
     this.ObjSaleBillNew.User_ID = this.$CompacctAPI.CompacctCookies.User_ID;
     this.ObjSaleBillNew.Fin_Year_ID = this.$CompacctAPI.CompacctCookies.Fin_Year_ID;
+    this.ObjSaleBillNew.Previous_Doc_No = this.ObjSaleBillNew.Acceptance_Order_No;
+    this.ObjSaleBillNew.Order_No = this.ObjSaleBillNew.Acceptance_Order_No;
+    this.ObjSaleBillNew.Order_Date = this.DateService.dateConvert(new Date(this.Acceptance_Order_Date));
     if(this.AddProductDetails.length) {
       // let tempArr:any =[]
       // this.AddProductDetails.forEach(item => {
@@ -1320,8 +1263,6 @@ export class SaleBillNewComponent implements OnInit {
        this.Productlist = [];
       //  this.clearProject();
       //  this.GetSerarchSaleBillNew(true);
-      //  this.GetPendingPO(true);
-      //  this.GetPendingGRN(true);
        if(this.editDocNo) {
         this.editDocNo = undefined;
         this.tabIndexToView = 0;
@@ -1397,6 +1338,7 @@ export class SaleBillNewComponent implements OnInit {
     //   } 
   GetSerarchSaleBillNew(valid){
   this.SearchSaleBillNewFormSubmitted = true;
+  this.seachSpinner = true;
   const start = this.ObjBrowseSaleBillNew.start_date
   ? this.DateService.dateConvert(new Date(this.ObjBrowseSaleBillNew.start_date))
   : this.DateService.dateConvert(new Date());
@@ -1407,13 +1349,13 @@ export class SaleBillNewComponent implements OnInit {
    From_Date : start,
    To_Date : end,
   //  Company_ID : this.ObjBrowseSaleBillNew.Company_ID,
-   Cost_Cen_ID : this.ObjBrowseSaleBillNew.Cost_Cen_ID,
+   Cost_Cen_ID : this.ObjBrowseSaleBillNew.Cost_Cen_ID ? this.ObjBrowseSaleBillNew.Cost_Cen_ID : 0,
   //  proj : this.openProject
   }
   if (valid) {
   const obj = {
-    "SP_String": "SP_MICL_Purchase_Bill_New",
-    "Report_Name_String": "Purchase_Bill_Browse",
+    "SP_String": "SP_Sale_Bill_New",
+    "Report_Name_String": "browse_Sale_Bill",
     "Json_Param_String": JSON.stringify([tempobj])
     }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -1423,7 +1365,6 @@ export class SaleBillNewComponent implements OnInit {
     // if(this.getAllDataList.length){
     //   this.DynamicHeader = Object.keys(data[0]);
     // }
-    this.GetDistinctArr()
     this.seachSpinner = false;
     this.SearchSaleBillNewFormSubmitted = false;
    // console.log("Get All Data",this.SerarchsaleBillNewList);
@@ -1458,7 +1399,6 @@ export class SaleBillNewComponent implements OnInit {
       this.CNDate = new Date(data[0].CN_Date);
       this.GRNNoProlist = data[0].L_element;
       this.AddTermList = data[0].TERM_element ? data[0].TERM_element : [] ;
-      this.AddTdsDetails = data[0].TDS_element ? data[0].TDS_element : [] ;
       // console.log("addPurchaseList",this.addPurchaseList)
       if(this.GRNNoProlist.length || this.AddTermList.length){
         // this.ListofTotalAmount()
@@ -1491,14 +1431,11 @@ export class SaleBillNewComponent implements OnInit {
     })
     }
   }
-  Delete(col){
+  DeleteSaleBill(col){
    // console.log("Delete Col",col);
     this.DocNo = undefined;
-    this.Del = false;
-    this.Save = false;
+    this.ngxService.start();
     if(col.Doc_No){
-      this.Del = true;
-      this.Save = false;
      this.DocNo = col.Doc_No
      this.compacctToast.clear();
      this.compacctToast.add({
@@ -1509,17 +1446,17 @@ export class SaleBillNewComponent implements OnInit {
        detail: "Confirm to proceed"
      });
     }
-   }
+  }
    onConfirmDel(){
     if(this.DocNo){
      const obj = {
-       "SP_String": "SP_MICL_Purchase_Bill_New",
-       "Report_Name_String":"Purchase_Bill_Delete",
+       "SP_String": "SP_Sale_Bill_New",
+       "Report_Name_String":"Delete_Sale_Bill",
        "Json_Param_String": JSON.stringify([{Doc_No : this.DocNo , User_ID : this.$CompacctAPI.CompacctCookies.User_ID}]) 
        }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       // console.log("data ==",data[0].Column1);
-       if (data[0].Column1 === "Done"){
+       if (data[0].Column1){
          this.compacctToast.clear();
          this.compacctToast.add({
            key: "compacct-toast",
@@ -1527,24 +1464,32 @@ export class SaleBillNewComponent implements OnInit {
            summary: "Purchase Bill ",
            detail: "Succesfully Delete"
          });
+         this.ngxService.stop();
          this.DocNo = undefined;
          this.GetSerarchSaleBillNew(true);
          }
           
         else {
-          this.onReject();
-          this.deleteError = true;
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "c", 
-            sticky: true,
-            closable: false,
-            severity: "warn", // "info",
-            summary: data[0].Column1
-            // detail: data[0].Column1
-          });
+          // this.onReject();
+          // this.compacctToast.clear();
+          // this.compacctToast.add({
+          //   key: "c", 
+          //   sticky: true,
+          //   closable: false,
+          //   severity: "warn", // "info",
+          //   summary: data[0].Column1
+          //   // detail: data[0].Column1
+          // });
+          this.ngxService.stop();
           this.DocNo = undefined;
           this.GetSerarchSaleBillNew(true);
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
         }
         });
     }
@@ -1554,170 +1499,20 @@ export class SaleBillNewComponent implements OnInit {
     this.compacctToast.clear("s");
     this.Spinner = false;
     this.ngxService.stop();
-    this.deleteError = false;
-  }
-
-  // PENDING PURCHASE ORDER
-  getDateRangeppo(dateRangeObj) {
-    if (dateRangeObj.length) {
-      this.ObjPendingPO.start_date = dateRangeObj[0];
-      this.ObjPendingPO.end_date = dateRangeObj[1];
-    }
-  }
-  GetPendingPO(valid){
-      this.PendingPOFormSubmitted = true;
-      const start = this.ObjPendingPO.start_date
-      ? this.DateService.dateConvert(new Date(this.ObjPendingPO.start_date))
-      : this.DateService.dateConvert(new Date());
-      const end = this.ObjPendingPO.end_date
-      ? this.DateService.dateConvert(new Date(this.ObjPendingPO.end_date))
-      : this.DateService.dateConvert(new Date());
-      const tempobj = {
-       From_Date : start,
-       To_Date : end,
-       Company_ID : this.ObjPendingPO.Company_ID,
-      //  proj : this.openProject
-      }
-      if (valid) {
-      const obj = {
-        "SP_String": "SP_MICL_Purchase_Bill_New",
-        "Report_Name_String": "PENDING_PURCHASE_ORDER_BROWSE",
-        "Json_Param_String": JSON.stringify([tempobj])
-        }
-      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        this.PendingPOList = data;
-        // this.BackupSearchedlist = data;
-        // this.GetDistinct();
-        if(this.PendingPOList.length){
-          this.DynamicHeaderforPPO = Object.keys(data[0]);
-        }
-        else {
-          this.DynamicHeaderforPPO = [];
-        }
-        this.seachSpinner = false;
-        this.PendingPOFormSubmitted = false;
-       // console.log("PendingPOList",this.PendingPOList);
-      })
-      }
-  }
-  PrintPPO(DocNo) {
+   }
+   PrintSaleBill(DocNo) {
     if(DocNo) {
     const objtemp = {
-      "SP_String": "Sp_Purchase_Order",
-      "Report_Name_String": "Purchase_Order_Print"
+      "SP_String": "SP_Sale_Bill_New",
+      "Report_Name_String": "Sale_Bill_Print"
       }
     this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
       var printlink = data[0].Column1;
       window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
     })
     }
-  }
+   }
 
-  // PENDING GRN
-  getDateRangepgrn(dateRangeObj) {
-    if (dateRangeObj.length) {
-      this.ObjPendingGRN.start_date = dateRangeObj[0];
-      this.ObjPendingGRN.end_date = dateRangeObj[1];
-    }
-  }
-  GetPendingGRN(valid){
-      this.PendingGRNFormSubmitted = true;
-      const start = this.ObjPendingGRN.start_date
-      ? this.DateService.dateConvert(new Date(this.ObjPendingGRN.start_date))
-      : this.DateService.dateConvert(new Date());
-      const end = this.ObjPendingGRN.end_date
-      ? this.DateService.dateConvert(new Date(this.ObjPendingGRN.end_date))
-      : this.DateService.dateConvert(new Date());
-      const tempobj = {
-       From_date : start,
-       To_date : end,
-       Company_ID : this.ObjPendingGRN.Company_ID
-      //  Cost_Cen_ID : this.ObjPendingGRN.Cost_Cen_ID
-      }
-      if (valid) {
-      const obj = {
-        "SP_String": "SP_MICL_Purchase_Bill_New",
-        "Report_Name_String": "Browse_pending_GRN",
-        "Json_Param_String": JSON.stringify([tempobj])
-        }
-      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        this.PendingGRNList = data;
-        // this.BackupSearchedlist = data;
-        // this.GetDistinct();
-        if(this.PendingGRNList.length){
-          this.DynamicHeaderforPGRN = Object.keys(data[0]);
-        }
-        else {
-          this.DynamicHeaderforPGRN = [];
-        }
-        this.seachSpinner = false;
-        this.PendingGRNFormSubmitted = false;
-       // console.log("PendingGRNList",this.PendingGRNList);
-      })
-      }
-  }
-  PrintPGRN(DocNo) {
-    if(DocNo) {
-    const objtemp = {
-      "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
-      "Report_Name_String": "GRN_Print"
-      }
-    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
-      var GRNprintlink = data[0].Column1;
-      window.open(GRNprintlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
-    })
-    }
-  }
- // Distinct
-  GetDistinctArr() {
-    let DProject:any = [];
-    let DSubledger:any= [];
-    this.DistProject = []
-    this.DistSubledger = []
-    this.SelectedDistProject = [];
-    this.SelectedSubledger = [];
-    this.SerarchsaleBillNewList.forEach((item:any) => {
-       if (DProject.indexOf(item.Project_Description) === -1) {
-        DProject.push(item.Project_Description);
-          this.DistProject.push({label: item.Project_Description,value: item.Project_Description});
-      }
-      if (DSubledger.indexOf(item.Sub_Ledger_Name) === -1) {
-        DSubledger.push(item.Sub_Ledger_Name);
-          this.DistSubledger.push({label: item.Sub_Ledger_Name,value: item.Sub_Ledger_Name});
-      }
-    });
-    this.bckUpSerarchPurBillList = [...this.SerarchsaleBillNewList];
-
-  }
-
-
-
-  // FilterChangen
-  GlobalFilterChangenUpdate() {
-    let searchFields:any = [];
-    let ProjectFilter:any = [];
-    let subLedgerFilter:any = [];
-   
-  if (this.SelectedDistProject.length) {
-     searchFields.push('Project_Description');
-      ProjectFilter = this.SelectedDistProject;
-    }
-    if (this.SelectedSubledger.length) {
-      searchFields.push('Sub_Ledger_Name');
-      subLedgerFilter = this.SelectedSubledger;
-    }
-    this.SerarchsaleBillNewList = [];
-    if (searchFields.length) {
-      let LeadArr = this.bckUpSerarchPurBillList.filter(function (e) {
-        return ((ProjectFilter.length ? ProjectFilter.includes(e['Project_Description']) : true)
-          && (subLedgerFilter.length ? subLedgerFilter.includes(e['Sub_Ledger_Name']) : true)
-         );
-      });
-      this.SerarchsaleBillNewList = LeadArr.length ? LeadArr : [];
-    } else {
-      this.SerarchsaleBillNewList = this.bckUpSerarchPurBillList;
-    }
-  }
 }
 class SaleBillNew {
   Doc_No : any;
@@ -1776,6 +1571,9 @@ class SaleBillNew {
   AO_Product : any;
   AO_Qty : any;
   Acceptance_Order_No : any;
+  Previous_Doc_No : any;
+  Order_No : any;
+  Order_Date : any;
   Payment_Terms : any;
   Other_Reference : any;
   Remarks : any;
@@ -1896,25 +1694,3 @@ class Term {
   Exp_Term_Amount_Fr: any;
 }
 
-class TDS{
-  Ledger_ID : number;
-  Sub_Ledger_ID : number;
-  Taxable_Amount : number;
-  TDS_Percentage : number;
-  TDS_Amount : number;
-
-}
-
-class PendingPO{
-  Company_ID : any;
-  start_date : Date;
-  end_date : Date;
-  Cost_Cen_ID : any;
-}
-
-class PendingGRN{
-  Company_ID : any;
-  start_date : Date;
-  end_date : Date;
-  Cost_Cen_ID : any;
-}

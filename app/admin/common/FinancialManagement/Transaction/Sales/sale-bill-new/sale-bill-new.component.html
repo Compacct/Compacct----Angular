@@ -67,9 +67,9 @@
                                         </app-compacct-daterangepicker>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">CostCenter Name<sup class="text-danger">*</sup></label>
+                                        <label class="control-label">CostCenter Name</label>
                                         <select class="form-control" name="browsecostcenter" #browsecostcenter="ngModel" [(ngModel)]="ObjBrowseSaleBillNew.Cost_Cen_ID" [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'" 
-                                             [ngClass]="{'clearance': SearchSaleBillNewFormSubmitted && browsecostcenter?.errors?.required}" required>
+                                             [ngClass]="{'clearance': SearchSaleBillNewFormSubmitted && browsecostcenter?.errors?.required}" >
                                               <option  [ngValue]="undefined">Select</option>
                                               <option  *ngFor="let option of CostCenterList" value="{{option.Cost_Cen_ID}}">
                                                 {{option.Cost_Cen_Name}}
@@ -124,7 +124,7 @@
                                   <div class="clearfix"></div>
                                 <div class="table-id">
                                     <p-table [value]="SerarchsaleBillNewList"
-                                    [paginator]="true" [rows]="100" 
+                                    [paginator]="true" [rows]="100" [columns]="cols"
                                     [loading]="seachSpinner" [rowHover]="true" 
                                     [autoLayout]="true" sortMode="multiple" 
                                     [rowsPerPageOptions]="[100, 300, 500]"  
@@ -138,18 +138,21 @@
                                             </div>
         
                                         </ng-template>
-                                        <ng-template pTemplate="header">
+                                        <ng-template pTemplate="header" let-columns>
                                             <tr>
                                                 <th style="width:5em">Action</th>
-                                                <th nowrap="nowrap">Doc No</th> 
+                                                <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+                                                    {{col.header}}
+                                                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                                </th>
+                                                <!-- <th nowrap="nowrap">Doc No</th> 
                                                 <th nowrap="nowrap">Doc Date</th>
                                                 <th nowrap="nowrap">Sub Ledger</th>
                                                 <th nowrap="nowrap">Cost Center</th>
+                                                <th nowrap="nowrap">Member Name</th>
                                                 <th nowrap="nowrap">Net Amount</th>
-                                                <!-- <th nowrap="nowrap">Supplier Bill No</th>
-                                                <th nowrap="nowrap">Supplier Bill Date</th>
-                                                <th nowrap="nowrap">Document</th> -->
-                                                <th nowrap="nowrap">Fin Year</th>
+                                                <th nowrap="nowrap">Image</th>
+                                                <th nowrap="nowrap">Fin Year</th> -->
                                             </tr>
                                         </ng-template>
                                         <ng-template pTemplate="body" let-col>
@@ -162,18 +165,18 @@
                                                                         <span class="caret"></span>
                                                                     </button>
                                                         <ul class="dropdown-menu">
-                                                            <li>
+                                                            <li *ngIf="col.Fin_Year_ID == $CompacctAPI.CompacctCookies.Fin_Year_ID && $CompacctAPI.CompacctCookies.User_Type == 'A' && $CompacctAPI.CompacctCookies.Del_Right == 'Y' && !col.E_Invoice_PDF_Link">
                                                                     <a (click)="EditPurchaseBill(col)">
                                                                         <i class="fa fa-fw fa-pencil"></i> Edit
                                                                     </a>
                                                                 </li>
                                                                 <li>
-                                                                    <a (click)="Print(col.Doc_No)">
+                                                                    <a (click)="PrintSaleBill(col.Doc_No)">
                                                                         <i class="fa fa-fw fa-print"></i> Print
                                                                     </a>
                                                                 </li>
-                                                            <li>
-                                                                <a (click)="Delete(col)">
+                                                            <li *ngIf="col.Fin_Year_ID == $CompacctAPI.CompacctCookies.Fin_Year_ID && $CompacctAPI.CompacctCookies.User_Type == 'A' && $CompacctAPI.CompacctCookies.Del_Right == 'Y' && !col.E_Invoice_PDF_Link">
+                                                                <a (click)="DeleteSaleBill(col)">
                                                                     <i class="fa fa-fw fa-trash"></i> Delete
                                                                 </a>
                                                             </li>
@@ -181,16 +184,17 @@
                                                     </div>
                                                 </td>
                                                 <!-- <ng-container pTemplate="body" let-col> -->
-                                                    <td>{{col.Doc_No}}</td>
-                                                    <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
-                                                    <td nowrap="nowrap" >{{col.Project_Description}}</td>
-                                                    <td>{{col.Sub_Ledger_Name}}</td>
-                                                    <td>{{col.Cost_Cen_Name}}</td>
-                                                    <td>{{col.Bill_Net_Amt}}</td>
+                                                    <td width="8%">{{col.Doc_No}}</td>
+                                                    <td width="10%">{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
+                                                    <td width="16%">{{col.Sub_Ledger_Name}}</td>
+                                                    <td width="16%">{{col.Cost_Cen_Name}}</td>
+                                                    <td width="14%">{{col.Member_Name}}</td>
+                                                    <td width="12%">{{col.Bill_Net_Amt}}</td>
                                                     <!-- <td>{{col.Supp_Ref_No}}</td>
                                                     <td>{{col.Supp_Ref_Date | date : 'dd/MMM/yyyy'}}</td>
                                                     <td>{{col.Document ? col.Document : '-'}}</td> -->
-                                                    <td nowrap="nowrap" >{{col.Fin_Year_Name ? col.Fin_Year_Name : '-'}}</td>
+                                                    <td width="10%">{{col.Sale_Bill_Upload ? col.Sale_Bill_Upload : '-'}}</td>
+                                                    <td width="14%">{{col.Fin_Year_Name ? col.Fin_Year_Name : '-'}}</td>
                                                 <!-- </ng-container> -->
                                                 
                                             </tr>
@@ -509,7 +513,9 @@
                                             <!-- <div [ngClass]="ProductExpirydisabled ? 'col-sm-3' : 'col-sm-6'"> (onChange)="ProductChange()"-->
                                                 <div class="col-sm-4">
                                                 <label class="control-label"
-                                                  >Product Details&nbsp;<span class="text-danger">*</span></label>
+                                                  >Product Details&nbsp;<sup class="text-danger">*</sup> &nbsp;&nbsp;&nbsp;
+                                                  <span><a *ngIf="ObjSaleBillNew.Acceptance_Order_No" (click)="ProductRefresh()">{{Productbutton}}</a></span> 
+                                                </label>
                                                 <p-dropdown
                                                   [options]="Productlist"
                                                   name="product"
