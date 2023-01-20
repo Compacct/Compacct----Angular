@@ -75,3 +75,9 @@ legend {
     padding: 0px 10px 0px 10px;
     background-color: #ffffff;
 }
+
+.ui-table p-sorticon {
+    /* float: right; */
+    padding-top: 1px;
+    padding-left: 6px;
+}
