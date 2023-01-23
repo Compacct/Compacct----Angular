@@ -40,6 +40,7 @@ export class SaleBillNewComponent implements OnInit {
   ProductDetails:any = [];
 
   SaleBillNewFormSubmitted = false;
+  TCSTaxRequiredValidation = false;
   ObjSaleBillNew = new SaleBillNew();
   Own_Delivery = false;
   // ObjGRN : GRN = new GRN ();
@@ -130,6 +131,7 @@ export class SaleBillNewComponent implements OnInit {
   Productbutton : any;
 
   cols:any =[];
+  Edit_TCS_Amount : any;
 
 
   constructor(
@@ -201,11 +203,13 @@ export class SaleBillNewComponent implements OnInit {
     //  this.GetProductdetails();
     //  this.ObjProductInfo = new ProductInfo();
      this.editDocNo = undefined;
+     this.Edit_TCS_Amount = undefined;
    }
    clearData(){
      this.ObjSaleBillNew = new SaleBillNew();
      //this.ObjSaleBillNew.Choose_Address = "MAIN";
      this.SaleBillNewFormSubmitted = false;
+     this.TCSTaxRequiredValidation = false;
     //  this.validatation.required = false;
      this.maindisabled = false;
      this.ObjSaleBillNew.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
@@ -725,10 +729,40 @@ export class SaleBillNewComponent implements OnInit {
     // })
     
   }
+  GetSelectedBatchqty () {
+    const sameproductwithbatch = this.AddProductDetails.filter(item=> item.Batch_Number === this.ObjProductInfo.Batch_Number && item.Rate === this.ObjProductInfo.Rate );
+    if(sameproductwithbatch.length) {
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Batch Number With Same Rate Exists."
+          });
+      return false;
+    }
+    const baychqtyarr = this.BatchNoList.filter(item=> item.Batch_No === this.ObjProductInfo.Batch_Number);
+      if(baychqtyarr.length) {
+        if(this.ObjProductInfo.Qty <=  baychqtyarr[0].Batch_Qty) {
+          return true;
+        } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Quantity can't be more than in batch available quantity "
+          });
+          return false;
+        }
+      } else {
+        return true;
+      }
+  }
   AddProductInfo(valid) {
     //console.log(this.ObjaddbillForm.Product_ID)
     this.ProductInfoSubmitted = true;
-    if(valid) {
+    if(valid && this.GetSelectedBatchqty()) {
       const SubLedgerState = this.ObjSaleBillNew.Sub_Ledger_State
         ? this.ObjSaleBillNew.Sub_Ledger_State.toUpperCase()
         : undefined;
@@ -757,7 +791,7 @@ export class SaleBillNewComponent implements OnInit {
 
       // var cessamount = this.ObjProductInfo.CESS_Percentage ? Number(((this.ObjProductInfo.Taxable_Amount * this.ObjProductInfo.CESS_Percentage) / 100).toFixed(2)) : 0;
       this.ObjProductInfo.CESS_AMT = this.ObjProductInfo.CESS_AMT ? Number(this.ObjProductInfo.CESS_AMT) : 0;
-      var netamount = (Number(this.ObjProductInfo.CGST_Amount) + Number(this.ObjProductInfo.SGST_Amount) 
+      var netamount = (Number(this.ObjProductInfo.Taxable_Amount) + Number(this.ObjProductInfo.CGST_Amount) + Number(this.ObjProductInfo.SGST_Amount) 
                     + Number(this.ObjProductInfo.IGST_Amount)).toFixed(2);
 
       var costcenter = this.CostCenterList.filter(item=> Number(item.Cost_Cen_ID) === Number(this.ObjProductInfo.Cost_Cen_ID))
@@ -823,6 +857,7 @@ export class SaleBillNewComponent implements OnInit {
     // else {
      // console.log('this.AddProductDetails===',this.AddProductDetails)
       this.ObjProductInfo = new ProductInfo();
+      this.ObjProductInfo.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       // this.ObjProductInfo.Godown_Id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
       // this.GetProductdetails();
       this.ProductInfoSubmitted = false;
@@ -888,10 +923,26 @@ export class SaleBillNewComponent implements OnInit {
    this.ObjTerm.IGST_Rate = termobj.IGST_Tax_Per;
   }
   }
+  GetSelectedTerm () {
+    const sameterm = this.AddTermList.filter(item=> item.Term_ID === this.ObjTerm.Term_ID);
+    if(sameterm.length) {
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Term Name Exists."
+          });
+      return false;
+    } 
+    else {
+        return true;
+      }
+  }
   AddTerm(valid){
     //console.log(this.ObjaddbillForm.Product_ID)
     this.TermFormSubmitted = true;
-    if(valid) {
+    if(valid && this.GetSelectedTerm()) {
       const SubLedgerState = this.ObjSaleBillNew.Sub_Ledger_State
         ? this.ObjSaleBillNew.Sub_Ledger_State.toUpperCase()
         : undefined;
@@ -976,13 +1027,17 @@ export class SaleBillNewComponent implements OnInit {
     this.ObjSaleBillNew.TCSInputLedger = 0;
     if (this.ObjSaleBillNew.TCSTaxRequired === 'YES') {
         this.ngxService.start();
-        this.$http.get("/Common/Get_TCS_Persentage_Sale?TCS_Enabled=YES",{responseType: 'text'}).subscribe((data: any) => {
-          // this.databaseName = data;
+        // this.$http.get("/Common/Get_TCS_Persentage_Sale?TCS_Enabled=YES",{responseType: 'text'}).subscribe((data: any) => {
+          const obj = {
+            "SP_String": "SP_Sale_Bill_New",
+            "Report_Name_String": "Get_Tcs_Percentage_And Ledger",
+            }
+          this.GlobalAPI.getData(obj).subscribe((data:any)=>{
           console.log(data)
-          this.ObjSaleBillNew.TCSInputLedger = data[0].TCS_Output_Ledger_ID;
-          this.ObjSaleBillNew.TCS_Persentage = data[0].TCS_Persentage_Sale;
-          this.ObjSaleBillNew.TCS_Amount = (this.Net_Amt * this.ObjSaleBillNew.TCS_Persentage / 100).toFixed(2);
-          this.ObjSaleBillNew.Grand_Total = (Number(this.Net_Amt) + Number(this.ObjSaleBillNew.TCS_Amount)).toFixed(2);
+          this.ObjSaleBillNew.TCSInputLedger = data[0].TCS_Ledger_ID;
+          this.ObjSaleBillNew.TCS_Persentage = data[0].TCS_Persentage;
+          this.ObjSaleBillNew.TCS_Amount = this.Edit_TCS_Amount ? this.Edit_TCS_Amount : Number(Number(this.ObjSaleBillNew.Net_Amt * this.ObjSaleBillNew.TCS_Persentage) / 100).toFixed(2);
+          this.ObjSaleBillNew.Grand_Total = (Number(this.ObjSaleBillNew.Net_Amt) + Number(this.ObjSaleBillNew.TCS_Amount)).toFixed(2);
           // this.Round_off = (Number(Math.round(this.ObjSaleBillNew.Grand_Total)) - Number(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
           // this.Net_Amt = Number(Math.round(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
           this.calculateRoundedOff();
@@ -1210,8 +1265,9 @@ export class SaleBillNewComponent implements OnInit {
   SavePurchaseBill(valid){
     this.DocNo = undefined;
     this.SaleBillNewFormSubmitted = true;
+    this.TCSTaxRequiredValidation = true;
     // this.validatation.required = true
-    if(valid){
+    if(valid && this.ObjSaleBillNew.TCSTaxRequired){
       this.Spinner = true;
       this.ngxService.start();
      this.compacctToast.clear();
@@ -1227,14 +1283,16 @@ export class SaleBillNewComponent implements OnInit {
    }
   async onConfirmSave(){
     // this.SaleBillNewFormSubmitted = true;
+    // this.TCSTaxRequiredValidation = true;
     // this.validatation.required = true
     // if(valid){
       // this.Spinner = true;
       // this.ngxService.start();
       // this.DataForSavePurchaseBill();
+      var reportname = this.editDocNo ? "Update_Sale_Bill" : "Create_Sale_Bill";
       const obj = {
       "SP_String": "SP_Sale_Bill_New",
-      "Report_Name_String": "Create_Sale_Bill",
+      "Report_Name_String": reportname,
       "Json_Param_String": this.DataForSavePurchaseBill()
       }
       this.GlobalAPI.postData(obj).subscribe(async (data:any)=>{
@@ -1255,6 +1313,7 @@ export class SaleBillNewComponent implements OnInit {
        });
       //  if (tempID != "Total Dr Amt And Cr Amt Not matched") {
        this.SaleBillNewFormSubmitted = false;
+       this.TCSTaxRequiredValidation = false;
       //  this.clearlistamount();
       //  this.cleartotalamount();
        this.clearData();
@@ -1262,7 +1321,8 @@ export class SaleBillNewComponent implements OnInit {
        this.Acceptance_Order_Date = undefined;
        this.Productlist = [];
       //  this.clearProject();
-      //  this.GetSerarchSaleBillNew(true);
+      this.Edit_TCS_Amount = undefined;
+       this.GetSerarchSaleBillNew(true);
        if(this.editDocNo) {
         this.editDocNo = undefined;
         this.tabIndexToView = 0;
@@ -1371,36 +1431,51 @@ export class SaleBillNewComponent implements OnInit {
   })
   }
   }
-  EditPurchaseBill(col){
+  EditSaleBill(col){
     this.editDocNo = undefined;
     if(col.Doc_No){
      this.editDocNo = col.Doc_No
      this.tabIndexToView = 1;
     this.items = [ 'BROWSE', 'UPDATE','PENDING GRN'];
     this.buttonname = "Update";
+    this.AcceptanceOrderNoList = [];
     this.geteditData(col.Doc_No);
     }
   }
   geteditData(Dno){
     const obj = {
-      "SP_String": "SP_MICL_Purchase_Bill_New",
-      "Report_Name_String": "Purchase_Bill_Edit_Data",
+      "SP_String": "SP_Sale_Bill_New",
+      "Report_Name_String": "Get_Edit_Data_Sale_Bill",
       "Json_Param_String": JSON.stringify([{Doc_No : Dno}])
    }
     this.GlobalAPI.getData(obj).subscribe((res:any)=>{
-      let data = JSON.parse(res[0].Column1)
+      let data = JSON.parse(res[0].T_Elemnts)
       console.log("Edit data",data);
       this.ObjSaleBillNew = data[0],
       // this.GetGRNno();
       this.maindisabled = true;
       //this.ObjSaleBillNew.Choose_Address = "MAIN";
       // this.getreq();
+      this.GetChooseAddress();
+      this.ObjSaleBillNew.Choose_Address = "MAIN";
       this.DocDate = new Date(data[0].Doc_Date);
       this.CNDate = new Date(data[0].CN_Date);
-      this.GRNNoProlist = data[0].L_element;
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Order_No,
+          element['value'] = element.Order_No
+        });
+        this.AcceptanceOrderNoList = data;
+      }
+      this.ObjSaleBillNew.TCSTaxRequired = data[0].TCS_Amount ? "YES" : "NO";
+      this.Edit_TCS_Amount = data[0].TCS_Amount;
+      this.TcsAmtCalculation();
+      this.ObjSaleBillNew.Acceptance_Order_No = data[0].Order_No;
+      this.Acceptance_Order_Date = new Date(data[0].Order_Date);
+      this.AddProductDetails = data[0].L_element;
       this.AddTermList = data[0].TERM_element ? data[0].TERM_element : [] ;
       // console.log("addPurchaseList",this.addPurchaseList)
-      if(this.GRNNoProlist.length || this.AddTermList.length){
+      if(this.AddProductDetails.length || this.AddTermList.length){
         // this.ListofTotalAmount()
         this.CalculateTotalAmount();
         this.calculateDiscount();
@@ -1415,7 +1490,7 @@ export class SaleBillNewComponent implements OnInit {
         this.calculateTermCGSTAmount();
         this.calculateTermSGSTAmount();
         this.calculateTermIGST();
-        this.TcsAmtCalculation();
+        // this.TcsAmtCalculation();
       }
     })
   }
