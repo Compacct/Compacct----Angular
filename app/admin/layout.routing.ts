@@ -328,7 +328,8 @@ import { DoctorsAppoNewChildSpeechEvaluationComponent } from "./common/PatientMa
 import { DoctorsAppoNewAdultSpeechEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-adult-speech-evaluation/doctors-appo-new-adult-speech-evaluation.component";
 import { SaleBillNewComponent } from './common/FinancialManagement/Transaction/Sales/sale-bill-new/sale-bill-new.component';
 import { DoctorsAppointmentNewFineTuningComponent } from "./common/PatientManagement/doctors-appointment-new-fine-tuning/doctors-appointment-new-fine-tuning.component";
-import { DoctorsAppointmentNewFineTuningHearingComponent } from "./common/PatientManagement/doctors-appointment-new-fine-tuning-hearing/doctors-appointment-new-fine-tuning-hearing.component"
+import { DoctorsAppointmentNewFineTuningHearingComponent } from "./common/PatientManagement/doctors-appointment-new-fine-tuning-hearing/doctors-appointment-new-fine-tuning-hearing.component";
+import { GoogleReviewComponent } from './common/PatientManagement/google-review/google-review.component';
 
 
 const layoutRoutes: Routes = [{
@@ -2486,6 +2487,13 @@ path: 'MICL_Cost_Center_Master',
     component: DoctorsAppointmentNewFineTuningHearingComponent,
     data: {
       title: 'ADJUSTMENT AND FINE TUNING OF HEARING AIDS'
+}
+},
+{
+  path: 'Google_Review',
+    component:GoogleReviewComponent,
+    data: {
+      title: 'Google Review'
 }
 },
     
