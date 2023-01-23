@@ -166,18 +166,18 @@
                                                                     </button>
                                                         <ul class="dropdown-menu">
                                                             <li *ngIf="col.Fin_Year_ID == $CompacctAPI.CompacctCookies.Fin_Year_ID && $CompacctAPI.CompacctCookies.User_Type == 'A' && $CompacctAPI.CompacctCookies.Del_Right == 'Y' && !col.E_Invoice_PDF_Link">
-                                                                    <a (click)="EditPurchaseBill(col)">
+                                                                    <a (click)="EditSaleBill(col)">
                                                                         <i class="fa fa-fw fa-pencil"></i> Edit
-                                                                    </a>
-                                                                </li>
-                                                                <li>
-                                                                    <a (click)="PrintSaleBill(col.Doc_No)">
-                                                                        <i class="fa fa-fw fa-print"></i> Print
                                                                     </a>
                                                                 </li>
                                                             <li *ngIf="col.Fin_Year_ID == $CompacctAPI.CompacctCookies.Fin_Year_ID && $CompacctAPI.CompacctCookies.User_Type == 'A' && $CompacctAPI.CompacctCookies.Del_Right == 'Y' && !col.E_Invoice_PDF_Link">
                                                                 <a (click)="DeleteSaleBill(col)">
                                                                     <i class="fa fa-fw fa-trash"></i> Delete
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="PrintSaleBill(col.Doc_No)">
+                                                                    <i class="fa fa-fw fa-file-pdf-o"></i> PDF
                                                                 </a>
                                                             </li>
                                                         </ul>
@@ -188,8 +188,8 @@
                                                     <td width="10%">{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
                                                     <td width="16%">{{col.Sub_Ledger_Name}}</td>
                                                     <td width="16%">{{col.Cost_Cen_Name}}</td>
-                                                    <td width="14%">{{col.Member_Name}}</td>
-                                                    <td width="12%">{{col.Bill_Net_Amt}}</td>
+                                                    <td width="14%">{{col.Member_Name ? col.Member_Name : '-'}}</td>
+                                                    <td width="12%">{{col.Net_Amt}}</td>
                                                     <!-- <td>{{col.Supp_Ref_No}}</td>
                                                     <td>{{col.Supp_Ref_Date | date : 'dd/MMM/yyyy'}}</td>
                                                     <td>{{col.Document ? col.Document : '-'}}</td> -->
@@ -579,7 +579,7 @@
                                                 <select class="form-control" 
                                                 name="batchno" 
                                                 #batchno="ngModel" 
-                                                [(ngModel)]="ObjProductInfo.Batch_No"
+                                                [(ngModel)]="ObjProductInfo.Batch_Number"
                                                 [disabled]="Is_Service"
                                                 [ngClass]="{clearance:ProductInfoSubmitted && batchno?.errors?.required}" required>
                                                 <option  [ngValue]="undefined">Select</option>
@@ -791,7 +791,7 @@
                                         <tr *ngFor="let obj of AddProductDetails ; let ind = index;">
                                             <td>{{ ind + 1 }}</td>
                                             <td>{{obj.Product_Name}}</td>
-                                            <td>{{obj.HSN_NO ? obj.HSN_NO : '-'}}</td>
+                                            <td>{{obj.HSL_No ? obj.HSL_No : '-'}}</td>
                                             <td *ngIf="databaseName !='K4C' && databaseName != 'K4C_Demo'">{{obj.Product_Specification}}</td>
                                             <td *ngIf="databaseName =='K4C' || databaseName =='K4C_Demo'">Wt. In lb : {{obj.Weight_in_Pound}} <br> Accompanies : {{obj.Acompanish}}</td>
                                             <td>{{obj.Batch_Number ? obj.Batch_Number : '-'}}</td>
@@ -901,10 +901,10 @@
                   #tcstaxreq="ngModel" 
                   [(ngModel)]="ObjSaleBillNew.TCSTaxRequired"
                   (ngModelChange)="TcsAmtCalculation()"
-                  [ngClass]="{'clearance': SaleBillNewFormSubmitted && tcstaxreq?.errors?.required}" >
+                  [ngClass]="{'clearance': TCSTaxRequiredValidation && tcstaxreq?.errors?.required}" required>
                      <option  [ngValue]="undefined">Select</option>
-                     <option value ="Yes">Yes</option>
-                     <option value ="No">No</option>
+                     <option value ="YES">YES</option>
+                     <option value ="NO">NO</option>
                 </select>
               </div>
                         <br>
@@ -934,7 +934,7 @@
                                       <th>Gross Amount : </th>
                                       <td class="amt-td ng-binding">{{ObjSaleBillNew.Gross_Amt}}</td>
                                       <th>Net Amount : </th>
-                                      <td class="amt-td ng-binding">{{ObjSaleBillNew.Net_Amt}}</td>
+                                      <td class="amt-td ng-binding">{{ObjSaleBillNew.Grand_Total}}</td>
                                     </tr>
                                     <tr>
                                       <th>Taxable Amount :</th>
