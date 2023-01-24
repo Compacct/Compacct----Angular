@@ -204,6 +204,9 @@ export class SaleBillNewComponent implements OnInit {
     //  this.ObjProductInfo = new ProductInfo();
      this.editDocNo = undefined;
      this.Edit_TCS_Amount = undefined;
+     this.Productlist = [];
+     this.AcceptanceOrderNoList = [];
+     this.ObjSaleBillNew.Choose_Address = undefined;
    }
    clearData(){
      this.ObjSaleBillNew = new SaleBillNew();
@@ -293,7 +296,9 @@ export class SaleBillNewComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.ChooseAddressList = data;
          // console.log('ChooseAddressList',this.ChooseAddressList)
+         if (this.buttonname != "Update") {
          this.GetAcceptanceOrderNo();
+         }
         this.ngxService.stop();
     })
    }
@@ -1036,7 +1041,7 @@ export class SaleBillNewComponent implements OnInit {
           console.log(data)
           this.ObjSaleBillNew.TCSInputLedger = data[0].TCS_Ledger_ID;
           this.ObjSaleBillNew.TCS_Persentage = data[0].TCS_Persentage;
-          this.ObjSaleBillNew.TCS_Amount = this.Edit_TCS_Amount ? this.Edit_TCS_Amount : Number(Number(this.ObjSaleBillNew.Net_Amt * this.ObjSaleBillNew.TCS_Persentage) / 100).toFixed(2);
+          this.ObjSaleBillNew.TCS_Amount = Number(Number(this.ObjSaleBillNew.Net_Amt * this.ObjSaleBillNew.TCS_Persentage) / 100).toFixed(2);
           this.ObjSaleBillNew.Grand_Total = (Number(this.ObjSaleBillNew.Net_Amt) + Number(this.ObjSaleBillNew.TCS_Amount)).toFixed(2);
           // this.Round_off = (Number(Math.round(this.ObjSaleBillNew.Grand_Total)) - Number(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
           // this.Net_Amt = Number(Math.round(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
@@ -1193,7 +1198,7 @@ export class SaleBillNewComponent implements OnInit {
     this.ObjSaleBillNew.CN_Date = this.ObjSaleBillNew.CN_Date ? this.DateService.dateConvert(new Date(this.CNDate)) : "01/Jan/1900";
     // this.ObjSaleBillNew.CN_Date = this.DateService.dateConvert(new Date(this.CNDate));
     this.ObjSaleBillNew.Bill_Gross_Amt = Number(this.ObjSaleBillNew.Gross_Amt);
-    this.ObjSaleBillNew.Bill_Net_Amt = Number(this.ObjSaleBillNew.Net_Amt);
+    this.ObjSaleBillNew.Bill_Net_Amt = Number(this.ObjSaleBillNew.Grand_Total);
     // this.ObjSaleBillNew.Rounded_Off = Number(this.Round_off);
     this.ObjSaleBillNew.User_ID = this.$CompacctAPI.CompacctCookies.User_ID;
     this.ObjSaleBillNew.Fin_Year_ID = this.$CompacctAPI.CompacctCookies.Fin_Year_ID;
@@ -1319,6 +1324,7 @@ export class SaleBillNewComponent implements OnInit {
        this.clearData();
        this.AcceptanceOrderNoList = [];
        this.Acceptance_Order_Date = undefined;
+       this.ObjSaleBillNew.Choose_Address = undefined;
        this.Productlist = [];
       //  this.clearProject();
       this.Edit_TCS_Amount = undefined;
@@ -1467,11 +1473,12 @@ export class SaleBillNewComponent implements OnInit {
         });
         this.AcceptanceOrderNoList = data;
       }
+      this.ObjSaleBillNew.Acceptance_Order_No = data[0].Order_No;
+      this.Acceptance_Order_Date = new Date(data[0].Order_Date);
+      this.GetProductdetails();
       this.ObjSaleBillNew.TCSTaxRequired = data[0].TCS_Amount ? "YES" : "NO";
       this.Edit_TCS_Amount = data[0].TCS_Amount;
       this.TcsAmtCalculation();
-      this.ObjSaleBillNew.Acceptance_Order_No = data[0].Order_No;
-      this.Acceptance_Order_Date = new Date(data[0].Order_Date);
       this.AddProductDetails = data[0].L_element;
       this.AddTermList = data[0].TERM_element ? data[0].TERM_element : [] ;
       // console.log("addPurchaseList",this.addPurchaseList)
@@ -1483,14 +1490,14 @@ export class SaleBillNewComponent implements OnInit {
         this.calculateCGSTAmount();
         this.calculateSGSTAmount();
         this.calculateIGST();
-        this.calculateGrossAmount();
-        this.calculateNetAmount();
-        this.calculateRoundedOff();
         this.calculateTermAmount();
         this.calculateTermCGSTAmount();
         this.calculateTermSGSTAmount();
         this.calculateTermIGST();
-        // this.TcsAmtCalculation();
+        this.calculateGrossAmount();
+        this.calculateRoundedOff();
+        this.calculateNetAmount();
+        this.TcsAmtCalculation();
       }
     })
   }

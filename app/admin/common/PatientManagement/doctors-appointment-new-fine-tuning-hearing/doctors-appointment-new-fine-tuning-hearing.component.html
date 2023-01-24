@@ -2309,7 +2309,7 @@
                           class="form-control"
                           name="SoundDistortedSolution"
                           [(ngModel)]="ObjFineTuning.Sound_Distorted_Solution"
-                          (change)="changeSelectionSpeech()"
+                          (change)="changeSelectionSpeech('Sound_is_distorted_or_very_uncomfortable_in_noisy_environments',ObjFineTuning.Sound_Distorted_Solution,ObjFineTuning.Sound_Distorted_FinalOutcome)"
                         >
                           <option [ngValue]="undefined">Select</option>
                           <option
@@ -2327,7 +2327,7 @@
                           [(ngModel)]="
                             ObjFineTuning.Sound_Distorted_FinalOutcome
                           "
-                          (change)="changeSelectionSpeech()"
+                          (change)="changeSelectionSpeech('Sound_is_distorted_or_very_uncomfortable_in_noisy_environments',ObjFineTuning.Sound_Distorted_Solution,ObjFineTuning.Sound_Distorted_FinalOutcome)"
                         >
                           <option [ngValue]="undefined">Select</option>
                           <option
@@ -2979,7 +2979,7 @@
                           class="form-control"
                           name="TSGWhiteNoiseSolution"
                           [(ngModel)]="ObjFineTuning.TSGWhite_Noise_Solution"
-                          (change)="changeSelectionTinnitus()"
+                          (change)="changeSelectionTinnitus('ZEN_tone_TSG_white_noise_interferes_with_speech',ObjFineTuning.TSGWhite_Noise_Solution,ObjFineTuning.TSGWhite_Noise_FinalOutcome)"
                         >
                           <option [ngValue]="undefined">Select</option>
                           <option
@@ -2997,7 +2997,7 @@
                           [(ngModel)]="
                             ObjFineTuning.TSGWhite_Noise_FinalOutcome
                           "
-                          (change)="changeSelectionTinnitus()"
+                          (change)="changeSelectionTinnitus('ZEN_tone_TSG_white_noise_interferes_with_speech',ObjFineTuning.TSGWhite_Noise_Solution,ObjFineTuning.TSGWhite_Noise_FinalOutcome)"
                         >
                           <option [ngValue]="undefined">Select</option>
                           <option
