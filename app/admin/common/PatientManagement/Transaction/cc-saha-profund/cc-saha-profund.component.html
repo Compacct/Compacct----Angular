@@ -37,7 +37,7 @@
                                     <p-multiSelect [options]="AudiologistFilter" [(ngModel)]="SelectedAudiologist" [styleClass]="'compacct-multiselect'" name="filterAudio" (onChange)="filterAudiologist()"></p-multiSelect>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label">Age</label>
+                                    <label class="control-label">Age Upto</label>
                                     <input type="text" pInputText size="50" placeholder="Search"name="Age" #Age="ngModel"  [(ngModel)]="SelectedAge"
                                         class="form-control" (keyup)="search()">
                                        
