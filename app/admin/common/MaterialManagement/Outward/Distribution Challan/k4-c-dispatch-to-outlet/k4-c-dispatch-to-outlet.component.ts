@@ -2089,6 +2089,40 @@ RegenerateBill(){
      })
 }
 
+UpdateAcceptedQty(objdata){
+  if(objdata.Doc_No){
+    const tempobj = {
+      Doc_No : objdata.Doc_No
+    }
+    const obj = {
+      "SP_String": "SP_Production_Voucher",
+      "Report_Name_String": "Update Accepted Qty For ReAccept dispatch",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data[0].Column1){
+        this.compacctToast.clear();
+           this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Doc No. " + data[0].Column1,
+            detail: "Succesfully Update Qty"
+          });
+          this.searchData(true);
+        }
+        else {
+         this.compacctToast.clear();
+         this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "error",
+           summary: "Warn Message",
+           detail: "Error Occured "
+         });
+       }
+     })
+     }
+}
+
 }
 
 class additem {
