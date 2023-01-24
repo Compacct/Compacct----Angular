@@ -157,6 +157,11 @@
                                                                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update Qty
                                                             </a>
                                                         </li> -->
+                                                        <li *ngIf="col.Bill_No === 'NA' && col.Franchise === 'Y'">
+                                                            <a (click)="UpdateAcceptedQty(col)">
+                                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update Accepted Qty
+                                                            </a>
+                                                        </li>
                                                         <li *ngIf="col.E_Invoice_PDF_Link && col.Bill_No">
                                                             <a (click)="DownloadEINV(col.E_Invoice_PDF_Link)">
                                                                 <i class="fa fa-fw fa-download"></i> Download E-INV
