@@ -1972,8 +1972,8 @@ class WorkOrder {
   Total_GST:any
   Rounded_Off:any
   Total_Net_Amount:any
-
-  Production_Ref_NO : any
+  Production_Ref_NO: any
+  Analysis_Report :any
   
 }
 class addWorkOrder{

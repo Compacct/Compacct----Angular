@@ -155,7 +155,7 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Vendor<sup class="text-danger">*</sup></label> 
-                                    <span class="pull-right"><a style="font-size: 1.8rem;" *ngIf = "ObjWorkOrder.Sub_Ledger_ID" (click)="getDetalis('Vendor')"><i class="fa fa-fw  fa-info-circle"></i></a></span>
+                                    <span class="pull-right"><a style="font-size: 1.8rem;cursor: pointer;" *ngIf = "ObjWorkOrder.Sub_Ledger_ID" (click)="getDetalis('Vendor')"><i class="fa fa-fw  fa-info-circle"></i></a></span>
                                     <p-dropdown 
                                     [options]="SubLedgerList" 
                                     name="Sub_Ledger_ID" 
@@ -190,7 +190,7 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Deliver To<sup class="text-danger"></sup></label>
-                                   <span class="pull-right"><a style="font-size: 1.8rem;" *ngIf = "ObjWorkOrder.Cost_Cen_ID" (click)="getDetalis('Deliver')"><i class="fa fa-fw  fa-info-circle"></i></a></span>
+                                   <span class="pull-right"><a style="font-size: 1.8rem;cursor: pointer;" *ngIf = "ObjWorkOrder.Cost_Cen_ID" (click)="getDetalis('Deliver')"><i class="fa fa-fw  fa-info-circle"></i></a></span>
                                     <select class="form-control" 
                                         name="Cost_Cen_ID" 
                                         #Cost_Cen_ID="ngModel"
@@ -710,7 +710,7 @@
                                     border-bottom: 1px solid #c6c6c6;
                                     margin-top: 15px;
                                     ">
-                                    <i class="fa fa-fw fa-fax">
+                                    <i class="fa fa-tag">
                                     </i> &nbsp;<strong>PO Header :</strong>
                                   </h5>
                                     <div class="form-group" style="margin-left:3px;margin-right: 0px;">
@@ -718,19 +718,32 @@
                                         #PO_Header="ngModel"
                                         [(ngModel)]="ObjWorkOrder.PO_Header"
                                         [style]="{'height':'200px'}"
-                                        [readonly]="editorDis"
-                                       >
-                                          
+                                        [readonly]="editorDis">
                                         </p-editor>
                                     </div>
-                                    <!-- <h5 style="
+                                        <h5 style="
+                                        padding: 0.5em 1em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;
+                                        margin-top: 15px;
+                                        ">
+                                        <i class="fa fa-random">
+                                        </i> &nbsp;<strong>Terms & Conditions :</strong>
+                                    </h5>
+                                    <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                        <p-editor name="Certifivates" #Certifivates="ngModel" [(ngModel)]="ObjWorkOrder.Terms_Condition"
+                                            [style]="{'height':'200px'}">
+                                        </p-editor>
+                                    </div>
+                                     <h5 style="
                                     padding: 0.5em 1em;
                                     background: #c1c1c185;
                                     border-top: 5px solid #3c8dbc;
                                     border-bottom: 1px solid #c6c6c6;
                                     margin-top: 15px;
                                     ">
-                                    <i class="fa fa-fw fa-fax">
+                                    <i class="fa fa-inr">
                                     </i> &nbsp;<strong>Terms Of Price :</strong>
                                   </h5>
                                     <div class="form-group" style="margin-left:3px;margin-right: 0px;">
@@ -738,9 +751,7 @@
                                         #Terms_Of_Price="ngModel"
                                         [(ngModel)]="ObjWorkOrder.Terms_Of_Price"
                                         [style]="{'height':'200px'}"
-                                        [readonly]="editorDis"
-                                       >
-                                          
+                                        [readonly]="editorDis">
                                         </p-editor>
                                     </div>
                                 <h5 style="
@@ -750,7 +761,7 @@
                                 border-bottom: 1px solid #c6c6c6;
                                 margin-top: 15px;
                                 ">
-                                <i class="fa fa-fw fa-fax">
+                                <i class="fa fa-university">
                                 </i> &nbsp;<strong>Payment Terms :</strong>
                               </h5>
                                 <div class="form-group" style="margin-left:3px;margin-right: 0px;">
@@ -758,9 +769,7 @@
                                     #Payment_Terms="ngModel"
                                     [(ngModel)]="ObjWorkOrder.Payment_Terms"
                                     [style]="{'height':'200px'}"
-                                    [readonly]="editorDis"
-                                   >
-                                      
+                                    [readonly]="editorDis">
                                     </p-editor>
                                 </div>
                                 <h5 style="
@@ -770,17 +779,15 @@
                                 border-bottom: 1px solid #c6c6c6;
                                 margin-top: 15px;
                                 ">
-                                <i class="fa fa-fw fa-fax">
-                                </i> &nbsp;<strong>Delivery Terms :</strong>
+                                <i class="fa fa-bar-chart">
+                                </i> &nbsp;<strong>Analysis Report :</strong>
                                </h5>
                                 <div class="form-group" style="margin-left:3px;margin-right: 0px;">
-                                    <p-editor name= "Delivery_Terms"
-                                    #Delivery_Terms="ngModel"
-                                    [(ngModel)]="ObjWorkOrder.Delivery_Terms"
+                                    <p-editor name= "Analysis_Report"
+                                    #Analysis_Report="ngModel"
+                                    [(ngModel)]="ObjWorkOrder.Analysis_Report"
                                     [style]="{'height':'200px'}"
-                                    [readonly]="editorDis"
-                                    >
-                                      
+                                    [readonly]="editorDis">
                                     </p-editor>
                                 </div>
                                 <h5 style="
@@ -790,27 +797,7 @@
                                 border-bottom: 1px solid #c6c6c6;
                                 margin-top: 15px;
                                 ">
-                                <i class="fa fa-fw fa-fax">
-                                </i> &nbsp;<strong>Warranty / Guarantee :</strong>
-                               </h5>
-                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
-                                    <p-editor name= "Warranty"
-                                    #Warranty="ngModel"
-                                    [(ngModel)]="ObjWorkOrder.Warranty_Guarantee_Term"
-                                    [style]="{'height':'200px'}"
-                                    [readonly]="editorDis"
-                                    >
-                                      
-                                    </p-editor>
-                                </div>
-                                <h5 style="
-                                padding: 0.5em 1em;
-                                background: #c1c1c185;
-                                border-top: 5px solid #3c8dbc;
-                                border-bottom: 1px solid #c6c6c6;
-                                margin-top: 15px;
-                                ">
-                                <i class="fa fa-fw fa-fax">
+                                <i class="fa fa-bars">
                                 </i> &nbsp;<strong>Transist Insurance :</strong>
                                </h5>
                                 <div class="form-group" style="margin-left:3px;margin-right: 0px;">
@@ -818,139 +805,17 @@
                                     #Transist_Insurance="ngModel"
                                     [(ngModel)]="ObjWorkOrder.Transist_Insurance"
                                     [style]="{'height':'200px'}"
-                                    [readonly]="editorDis"
-                                    >
-                                      
+                                    [readonly]="editorDis">
                                     </p-editor>
                                 </div>
-                                <h5 style="
+                               <h5 style="
                                 padding: 0.5em 1em;
                                 background: #c1c1c185;
                                 border-top: 5px solid #3c8dbc;
                                 border-bottom: 1px solid #c6c6c6;
                                 margin-top: 15px;
                                 ">
-                                <i class="fa fa-fw fa-fax">
-                                </i> &nbsp;<strong>Certificates :</strong>
-                               </h5>
-                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
-                                    <p-editor name= "Certifivates"
-                                    #Certifivates="ngModel"
-                                    [(ngModel)]="ObjWorkOrder.Certificates_Terms"
-                                    [style]="{'height':'200px'}"
-                                    [readonly]="editorDis"
-                                   >
-                                      
-                                    </p-editor>
-                                </div>
-                                <h5 style="
-                                padding: 0.5em 1em;
-                                background: #c1c1c185;
-                                border-top: 5px solid #3c8dbc;
-                                border-bottom: 1px solid #c6c6c6;
-                                margin-top: 15px;
-                                ">
-                                <i class="fa fa-fw fa-fax">
-                                </i> &nbsp;<strong>Taxes And Duties :</strong>
-                               </h5>
-                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
-                                    <p-editor name= "Taxes_And_Duties"
-                                    #Taxes_And_Duties="ngModel"
-                                    [(ngModel)]="ObjWorkOrder.Taxes_And_Duties"
-                                    [style]="{'height':'200px'}"
-                                    [readonly]="editorDis"
-                                   >
-                                      
-                                    </p-editor>
-                                </div>
-                                <h5 style="
-                                padding: 0.5em 1em;
-                                background: #c1c1c185;
-                                border-top: 5px solid #3c8dbc;
-                                border-bottom: 1px solid #c6c6c6;
-                                margin-top: 15px;
-                                ">
-                                <i class="fa fa-fw fa-fax">
-                                </i> &nbsp;<strong>Packing And Forwarding :</strong>
-                               </h5>
-                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
-                                    <p-editor name= "Packing_And_Forward"
-                                    #Packing_And_Forward="ngModel"
-                                    [(ngModel)]="ObjWorkOrder.Packing_And_Forward"
-                                    [style]="{'height':'200px'}"
-                                    [readonly]="editorDis"
-                                   >
-                                      
-                                    </p-editor>
-                                </div>
-                                <h5 style="
-                                padding: 0.5em 1em;
-                                background: #c1c1c185;
-                                border-top: 5px solid #3c8dbc;
-                                border-bottom: 1px solid #c6c6c6;
-                                margin-top: 15px;
-                                ">
-                                <i class="fa fa-fw fa-fax">
-                                </i> &nbsp;<strong>Transpotation :</strong>
-                               </h5>
-                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
-                                    <p-editor name= "Transpotation"
-                                    #Transpotation="ngModel"
-                                    [(ngModel)]="ObjWorkOrder.Transpotation"
-                                    [style]="{'height':'200px'}"
-                                    [readonly]="editorDis"
-                                   >
-                                      
-                                    </p-editor>
-                                </div>
-                                <h5 style="
-                                padding: 0.5em 1em;
-                                background: #c1c1c185;
-                                border-top: 5px solid #3c8dbc;
-                                border-bottom: 1px solid #c6c6c6;
-                                margin-top: 15px;
-                                ">
-                                <i class="fa fa-fw fa-fax">
-                                </i> &nbsp;<strong>Installation & Commissioning:</strong>
-                               </h5>
-                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
-                                    <p-editor name= "Installation_Commissionning"
-                                    #Installation_Commissionning="ngModel"
-                                    [(ngModel)]="ObjWorkOrder.Installation_Commissioning"
-                                    [style]="{'height':'200px'}"
-                                    [readonly]="editorDis"
-                                    >
-                                      
-                                    </p-editor>
-                                </div>
-                                <h5 style="
-                                padding: 0.5em 1em;
-                                background: #c1c1c185;
-                                border-top: 5px solid #3c8dbc;
-                                border-bottom: 1px solid #c6c6c6;
-                                margin-top: 15px;
-                                ">
-                                <i class="fa fa-fw fa-fax">
-                                </i> &nbsp;<strong>Delivery Location :</strong>
-                               </h5>
-                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
-                                    <p-editor name= "Delivery_Location"
-                                    #Delivery_Location="ngModel"
-                                    [(ngModel)]="ObjWorkOrder.Delivery_Location"
-                                    [style]="{'height':'200px'}"
-                                    [readonly]="editorDis"
-                                   >
-                                      
-                                    </p-editor>
-                                </div> -->
-                                <h5 style="
-                                padding: 0.5em 1em;
-                                background: #c1c1c185;
-                                border-top: 5px solid #3c8dbc;
-                                border-bottom: 1px solid #c6c6c6;
-                                margin-top: 15px;
-                                ">
-                                <i class="fa fa-fw fa-fax">
+                                <i class="fa fa-comment">
                                 </i> &nbsp;<strong>Remarks :</strong>
                                </h5>
                                 <div class="form-group" style="margin-left:3px;margin-right: 0px;">
@@ -958,9 +823,7 @@
                                     #Remarks="ngModel"
                                     [(ngModel)]="ObjWorkOrder.Remarks"
                                     [style]="{'height':'200px'}"
-                                    [readonly]="editorDis"
-                                    >
-                                      
+                                    [readonly]="editorDis">
                                     </p-editor>
                                 </div>
                                 <div class="box-footer">
