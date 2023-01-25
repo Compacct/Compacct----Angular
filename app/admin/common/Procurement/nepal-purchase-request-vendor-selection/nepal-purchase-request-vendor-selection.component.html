@@ -169,7 +169,7 @@
                                           </div>
                                     </div>
                                 </div>
-                            </form>
+                            
                             <div class="table-responsive table-id">
                                 <p-table [value]="prList" 
                                 #dt1 [paginator]="true"
@@ -271,9 +271,27 @@
                                     </p-multiSelect>
                                 </div>                           
                             </div><br>
+                            <div class="container">
+                                <div class="col-sm-2" *ngIf="VenderSelect && objvendorSelection.Purchase_Request_No">
+                                    <label class="control-label">Send SMS ?</label>
+                                    <div class="checkBox">
+                                        <p-checkbox name="Email" [(ngModel)]="SMSCheck" (onChange)="ClickCheck()" binary="true"></p-checkbox>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3" *ngIf="SMSCheck === true && VenderSelect  ">
+                                    <label class="control-label">To Mobile No<sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="SMSList" [showClear]="true" name="SMS" #SMS="ngModel"
+                                        [(ngModel)]="SMSSelect" [emptyFilterMessage]="' No Mobile Number Found'" [filter]="true"
+                                        filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Mobile No'" [virtualScroll]="true"
+                                        itemSize="30" [styleClass]="'textAlign'"
+                                         [ngClass]="{'clearance': MobileForm && SMS?.errors?.required }"required>
+                                    </p-dropdown>
+                                </div>                          
+                            </div>
+                            </form>
                             <div class="box-footer">
                                 <button class="btn btn-primary pull-right" 
-                                                (click)="SavevendorSeletction()" 
+                                                (click)="SavevendorSeletction(vendorSelectionForm.form.valid)" 
                                                 id="Saveload"
                                                 *ngIf="VenderSelect && objvendorSelection.Purchase_Request_No"
                                                 [disabled]="SaveSpinner || DisableBUT ">
