@@ -31,6 +31,7 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
   Venderlist: any = [];
   VenderSelect: any = undefined;
   ToEmailSelect: any = undefined;
+  SMSSelect: any = undefined;
   CCEmailSelect: any = undefined;
   SaveSpinner: boolean = false;
   seachSpinner: boolean = false;
@@ -39,7 +40,9 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
   SearchFormSubmit: boolean = false;
   toEmailList: any = [];
   CCEmailList: any = [];
+  SMSList: any = [];
   EmailCheck: boolean = false;
+  SMSCheck: boolean = false;
   NewEmailFormSubmitted: boolean = false;
   CreateEmailModal: boolean = false;
   ViewCompanyModal: boolean = false;
@@ -48,6 +51,7 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
   EmailId: any = undefined;
   EditPoDate: any = undefined;
   DisableBUT: boolean = false;
+  MobileForm: boolean = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -88,6 +92,7 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
   this.prList = []
     this.SaveSpinner = false
     this.ToEmailSelect = undefined;
+    this.SMSSelect = undefined;
     this.CCEmailSelect = undefined;
     this.EmailCheck = false;
     this.VenderSelect = undefined;
@@ -164,8 +169,10 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
       }
     });
   }
-  SavevendorSeletction(){
-    if(this.VenderSelect && this.objvendorSelection.Purchase_Request_No){
+  SavevendorSeletction(valid:any) {
+    this.MobileForm = true
+    if (valid) {
+      if(this.VenderSelect && this.objvendorSelection.Purchase_Request_No){
       this.ngxService.start();
       this.SaveSpinner = true
       const obj = {
@@ -192,6 +199,7 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
         this.objvendorSelection = new vendorSelection()
         this.ngxService.stop();
         this.SaveSpinner = false
+        this.MobileForm = false
         this.PoDate = undefined
         this.items = ["BROWSE", "CREATE"];
         this.buttonname = "Save";
@@ -209,7 +217,9 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
           this.SaveSpinner = false
         }
       })
+    } 
     }
+   
   }
   GetSearchedList(valid:any){
     this.SearchFormSubmit = true
@@ -258,12 +268,14 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
   }
   }
   getEmailId(col) {
-    this.toEmailList = []
-    this.CCEmailList = []
-    this.EmailCheck = false
-    this.ToEmailSelect = undefined
-    this.CCEmailSelect = undefined
-    this.CompantEmailName = undefined
+    this.toEmailList = [];
+    this.CCEmailList = [];
+    this.EmailCheck = false;
+    this.SMSCheck = false;
+    this.ToEmailSelect = undefined;
+    this.CCEmailSelect = undefined;
+    this.CompantEmailName = undefined;
+    this.SMSSelect = undefined;
     if (col) {
     const obj = {
       "SP_String": "sp_Bl_Txn_Purchase_Request",
@@ -283,18 +295,20 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
        else {
         this.toEmailList = [];
          this.CCEmailList = []
-  
       }
      // console.log("toEmailList",this.toEmailList)
     })    
     }
-      
+    this.getSMS(col)  
   }
   ClickCheck() {
     if (this.EmailCheck === false) {
       this.ToEmailSelect  = undefined;
       this.CCEmailSelect = undefined;
       this.CompantEmailName = undefined;
+    }
+    if (this.SMSCheck === false) {
+      this.SMSSelect = undefined;
     }
   }
   getCompanyMail() {
@@ -354,7 +368,7 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
       }
     })
   }
-}
+  }
   ViewCompEmail() {
       setTimeout(() => {
         this.ViewCompanyModal = true;
@@ -393,7 +407,31 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
            })        
         }
 
+  }
+  getSMS(SMS) {
+    this.SMSList = []
+    if (SMS) {
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Request",
+        "Report_Name_String": "Get_Subledger_Contact_No",
+       "Json_Param_String": JSON.stringify([{Sub_Ledger_ID: SMS }])
     }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      console.log("getSMS",data)
+      if(data[0].Contact_Number !== '') {
+        data.forEach(element => {
+          element['label'] = element.Contact_Number,
+          element['value'] = element.Contact_Number
+        });
+        this.SMSList = data;
+      }
+       else {
+        this.SMSList = [];
+      }
+    })    
+    }
+      
+  }
 }
 class vendorSelection{
   Purchase_Request_No:any
