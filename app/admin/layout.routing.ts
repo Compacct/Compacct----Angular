@@ -1880,7 +1880,7 @@ path: 'Employee_Salary_Master_Harbauer',
   path: 'HR_Employee_Master',
   component:HREmployeeMasterComponent,
   data: {
-    title: 'HR Employee Master'
+    title: 'Employee Master'
 }
 },
 {

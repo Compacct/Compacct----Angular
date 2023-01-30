@@ -113,7 +113,7 @@ export class HREmployeeMasterComponent implements OnInit {
   ngOnInit() {
     this.Header.pushHeader({
       Header:  " Employee Master " ,
-      Link: " " 
+      Link: "HR-> Master-> Employee " 
     });
     this.objemployee.Present_Country = "India";
     this.objemployee.Perm_Country = "India";
