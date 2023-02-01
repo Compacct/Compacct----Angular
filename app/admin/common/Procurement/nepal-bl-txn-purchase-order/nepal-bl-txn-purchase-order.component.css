@@ -5,6 +5,13 @@
     width: auto !important;
     min-height: 170px !important;
 }
+element.style {
+    height: 301.5px;
+}
+.table-responsive {
+    min-height: .01%;
+    overflow-y: hidden;
+}
 div.table-responsive.table-id>p-table>div>div {
     width: auto !important;
 }
@@ -52,4 +59,5 @@ body .ui-dropdown.ui-dropdown-clearable .ui-dropdown-label {
 #H123:nth-of-type(even){
  background-color:#EBEDEF;
 }
+
 
