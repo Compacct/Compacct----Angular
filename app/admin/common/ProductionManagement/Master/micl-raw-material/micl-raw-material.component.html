@@ -123,7 +123,7 @@
                                             [placeholder]="'Select Material Type'" 
                                             [virtualScroll]="true" 
                                             itemSize="30"
-                                            [ngClass]="{'clearance': MasterRawMaterialFormSubmitted && Material_Type.errors?.required}"required>
+                                            [styleClass]="MasterRawMaterialFormSubmitted && Material_Type.errors?.required ? 'clearance' : ''" [required]="true">
                                             </p-dropdown>
                                     </div>
                                     <div class="col-sm-6">
@@ -154,6 +154,80 @@
                                             </textarea>
                                         </div> -->
                                         </div>
+                                        <form name="ParameterForm" #ParameterForm="ngForm" novalidate>
+                                    <div class="form-group"style="padding: 1em;">
+                                        <h5 style="
+                                            padding: 0.5em 1em;
+                                            background: #c1c1c185;
+                                            border-top: 5px solid #3c8dbc;
+                                            border-bottom: 1px solid #c6c6c6;
+                                            margin-top: 15px;
+                                            ">
+                                            <i class="fa fa-fw fa-fax">
+                                            </i> &nbsp;<strong>Parameter Details:</strong>
+                                        </h5> 
+                                        <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Parameter Name<sup class="text-danger">*</sup></label>
+                                                <p-dropdown 
+                                                [options]="ParameterNameList" 
+                                                name="ParameterName"
+                                                [(ngModel)]="Parameter_ID"
+                                                #ParameterName="ngModel" 
+                                                (onChange)="gettolerance()"
+                                                [showClear]="true" 
+                                                [emptyFilterMessage]="' No Item Found'" 
+                                                [filter]="true" filterBy="label,value.name" 
+                                                [resetFilterOnHide]="true" 
+                                                [placeholder]="'Select Parameter Name'" 
+                                                [virtualScroll]="true" 
+                                                itemSize="30"
+                                                [styleClass]="ParameterFormSubmitted && ParameterName.errors?.required ? 'clearance' : ''" [required]="true">
+                                            </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Tolerance Level </label>
+                                            <input class="form-control" type="text" placeholder="Tolerance Level"
+                                                name="ToleranceLevel"
+                                                #ToleranceLevel ="ngModel"
+                                                [(ngModel)]="Tolerance_Level"
+                                                CompacctDigitonly="true">
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <label></label>
+                                            <div class="label-t">%</div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <button type="button" class="btn btn-primary pull-right" style="margin-top: 28px;" (click)="AddParam(ParameterForm.form.valid)" id="load" [disabled]="SpinnerParam">
+                                                    <p-progressSpinner *ngIf="SpinnerParam" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                 <span *ngIf="!SpinnerParam" class="glyphicon glyphicon-plus"></span> Add 
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <!-- <div class="form-group"> -->
+                                        <div class="table-responsive no-padding">
+                                            <table class="table table-bordered">
+                                                <thead style="background-color:#3c8dbc;color:white;">
+                                                    <tr>
+                                                        <th nowrap class="text-center" style="vertical-align:middle">Parameter Name</th>
+                                                        <th nowrap class="text-center" style="vertical-align:middle">Tolerance Level</th>
+                                                        <th nowrap class="text-center" style="vertical-align:middle">Delete</th> 
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let obj of AddParamDetails ; let ind = index;">
+                                                        <!-- <td>{{ ind + 1 }}</td> -->
+                                                        <td nowrap class="text-center" style="vertical-align:middle">{{obj.Parameter_Name}}</td>
+                                                        <td nowrap class="text-center" style="vertical-align:middle">{{obj.Tolerance_Level}}</td>
+                                                        <td nowrap class="text-center" style="vertical-align:middle"><button (click)="Paramdelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <!-- </div> -->
+                                    </div>
+                                </form>
                                 <div class="form-group"style="padding: 1em;">
                                     <h5 style="
                                     padding: 0.5em 1em;
@@ -212,7 +286,7 @@
                                         [placeholder]="'Select UOM'" 
                                         [virtualScroll]="true" 
                                         itemSize="30"
-                                        [ngClass]="{'clearance': MasterRawMaterialFormSubmitted && MainUOM.errors?.required}"required>
+                                        [styleClass]="MasterRawMaterialFormSubmitted && MainUOM.errors?.required ? 'clearance' : ''" [required]="true">
                                         </p-dropdown>
                                     </div>
                                     <!-- <div class="col-sm-4">

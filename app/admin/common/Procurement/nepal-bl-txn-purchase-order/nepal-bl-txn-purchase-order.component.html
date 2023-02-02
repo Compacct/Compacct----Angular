@@ -597,7 +597,8 @@
                     <th>Document Name </th>
                     <th style="width: 110px;" >Target Date </th>
                     <th style="text-align: center;">Document</th>
-                    <th>Status</th>
+                    <th style="text-align: center;width: 62px;">Email</th>
+                    <th style="width: 206px;">Status</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-col let-i="rowIndex">
@@ -623,6 +624,17 @@
                         </div>
                       
                         </div>
+                    </td>
+                    <td>
+                        <button pButton type="button" title="Email Update" (click)="Emailpop(col.File_Path)" 
+                        *ngIf="col.Document_Status == 'COMPLETED WITHIN TARGET DATE' || col.Document_Status == 'COMPLETED BUT NOT IN TARGET DATE'"
+                        style="width: 85%; border-radius: 15px !important;
+                        height: 32px;
+                        padding: 5px;
+                        margin-left: 0.3em !important;
+                        background: #318891">
+                        <i class="fa fa-mail-forward"></i></button>
+                        <p style="text-align: center;" *ngIf="col.Document_Status == 'PENDING' || col.Document_Status == 'PENDING AND CROSSED TARGET DATE'">-</p>
                     </td>
                     <td >
                         <span [style.color]="getColor(col.Document_Status)" style="color: white;border-radius: 4px;" >{{col.Document_Status}}</span>
@@ -784,7 +796,7 @@
     </p-footer>
 </p-dialog>
 
-<!--todo Name poup-->
+<!--todo Name pop-->
 <p-dialog [header]="'TO DO NAME'" [appendTo]="'body'" [visible]="ViewTOdoNameModal"
     [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true"
     [style]="{ width: '60%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="false"
@@ -891,6 +903,31 @@
     <p-footer>
         <button type="button" (click)="ColorModel= false" class="btn btn-info">
             Close
+        </button>
+    </p-footer>
+</p-dialog>
+<!--Email send Pop-->
+<p-dialog [header]="'Email'" [appendTo]="'body'" [visible]="EmailSendModel" [closeOnEscape]="true" [closable]="false"
+    [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+    <form name="EmailEmail" #EmailEmail="ngForm" novalidate>
+        <div class="col-sm-12">
+            <label class="control-label">Email<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" 
+                name="EmailPop" #EmailPop="ngModel" 
+                [(ngModel)]="EmailUpdate"
+                placeholder="Email"
+                pattern="[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
+                [ngClass]="{clearance:(EmailFormSubmitted && EmailPop.errors?.required) ||(EmailPop.errors?.pattern && EmailPop.invalid)}"
+                required>
+        </div>
+    </form>
+    <p-footer>
+        <button type="button" (click)="EmailSendModel= false" class="btn btn-info">
+        <i class="fa fa-close"></i>
+        </button>
+        <button type="button" (click)="SaveEmail(EmailEmail.form.valid)" class="btn btn-primary">
+            <i class="fa fa-paper-plane" ></i>
         </button>
     </p-footer>
 </p-dialog>

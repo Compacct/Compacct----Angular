@@ -113,7 +113,7 @@ export class HREmployeeMasterComponent implements OnInit {
   ngOnInit() {
     this.Header.pushHeader({
       Header:  " Employee Master " ,
-      Link: " " 
+      Link: "HR-> Master-> Employee " 
     });
     this.objemployee.Present_Country = "India";
     this.objemployee.Perm_Country = "India";
@@ -127,7 +127,7 @@ export class HREmployeeMasterComponent implements OnInit {
     this.weakofflist = ["MONDAY", "TUESDAY", "WEDNESDAY", "THRUSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
     this.weakofflist2 = ["MONDAY", "TUESDAY", "WEDNESDAY", "THRUSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
     // this.Statuslist = ["WORKING-REJOIN", "WORKING-PROVISION", "WORKING-CASUAL", "WORKING-CONFIRMED", "WORKING-PARTTIME", "RETIRED", "LEFT", "SUSPENDED", "ABSCONDED", "PROBATION"];
-    this.Statuslist = ["TRANNIE", "PROBATION", "PERMANENT", "RESIGNED", "SUSPENDED", "ABSCONDED"];
+    this.Statuslist = ["TRAINEE", "PROBATION", "PERMANENT", "RESIGNED", "SUSPENDED", "ABSCONDED"];
     this.getDatabase();
     this.getDepartment();
     this.getWorkingCompany();
@@ -136,6 +136,7 @@ export class HREmployeeMasterComponent implements OnInit {
     this.getLocation();
     this.getEmployee();
     this.getBankName();
+    this.getStatus();
     this.getReportingList();
     this.getUser();
     this.leftdatechange();
@@ -488,6 +489,20 @@ getBankName(){
 
 }
 
+getStatus(){
+  const obj = {
+    "SP_String": "Sp_HR_Employee_Master",
+    "Report_Name_String": "Get_Emp_Status"
+    
+  }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.Statuslist = data;
+    //  console.log("Statuslist=", this.Statuslist);
+     
+   })
+
+}
+
 getReportingList(){
   const obj = {
     "SP_String": "Sp_HR_Employee_Master",
@@ -715,6 +730,7 @@ GetNewEmployee(){
   this.Joining_Dt = new Date();
   // this.Leave_Dt = new Date();
   this.objemployee.Present_Status = undefined;
+  this.objemployee.Personal_Area = (this.databaseName === 'MICL_Demo' || this.databaseName === 'MICL') ? "HALDIA" : undefined;
   this.leftdatechange();
   this.DOB = new Date();
   this.EmployeeFormSubmitted = false;
