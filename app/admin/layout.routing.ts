@@ -330,6 +330,10 @@ import { SaleBillNewComponent } from './common/FinancialManagement/Transaction/S
 import { DoctorsAppointmentNewFineTuningComponent } from "./common/PatientManagement/doctors-appointment-new-fine-tuning/doctors-appointment-new-fine-tuning.component";
 import { DoctorsAppointmentNewFineTuningHearingComponent } from "./common/PatientManagement/doctors-appointment-new-fine-tuning-hearing/doctors-appointment-new-fine-tuning-hearing.component";
 import { GoogleReviewComponent } from './common/PatientManagement/google-review/google-review.component';
+import { PurchaseBillGSTOneSPComponent } from "./common/FinancialManagement/Transaction/Purchase/purchase-bill-gst-one-sp/purchase-bill-gst-one-sp.component";
+import { PurchaseOrderHarbauerComponent } from "./common/MaterialManagement/Inward/purchase-order-harbauer/purchase-order-harbauer.component";
+import { ParameterMasterComponent } from "./common/MICL/parameter-master/parameter-master.component";
+
 
 
 const layoutRoutes: Routes = [{
@@ -2483,7 +2487,7 @@ path: 'MICL_Cost_Center_Master',
 }
 },
 {
-  path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
+path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
     component: DoctorsAppointmentNewFineTuningHearingComponent,
     data: {
       title: 'ADJUSTMENT AND FINE TUNING OF HEARING AIDS'
@@ -2494,8 +2498,29 @@ path: 'MICL_Cost_Center_Master',
     component:GoogleReviewComponent,
     data: {
       title: 'Google Review'
-}
-},
+    }
+  },
+  {
+   path: 'BL_Txn_Purchase_Bill_GST_One_SP',
+    component:PurchaseBillGSTOneSPComponent,
+    data: {
+      title: 'Purchase Bill GST'
+    }
+  },
+  {
+   path: 'Purchase_Order_Harbauer',
+    component:PurchaseOrderHarbauerComponent,
+    data: {
+      title: 'Purchase Order'
+    }
+  },
+  {
+    path: 'Parameter_Master',
+    component: ParameterMasterComponent,
+    data: {
+        title: 'Parameter Master'
+    } 
+  },
     
 
     /*{

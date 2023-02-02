@@ -408,10 +408,10 @@
                                         <label class="control-label">Employment Status<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="Emp_Status" #Emp_Status="ngModel" [(ngModel)]="objemployee.Present_Status" (change)="leftdatechange()" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Emp_Status.errors?.required}" required>
                                  <option  [ngValue]="undefined">Select</option>
-                                 <option *ngIf="databaseName != 'MICL_Demo' && databaseName != 'MICL'"  value="PROFESSIONAL">
-                                         PROFESSIONAL</option>
-                            <option  *ngFor="let option of Statuslist" value="{{option}}">
-                              {{option}}
+                                 <!-- <option *ngIf="databaseName != 'MICL_Demo' && databaseName != 'MICL'"  value="PROFESSIONAL"> 
+                                         PROFESSIONAL</option> -->
+                            <option  *ngFor="let option of Statuslist" value="{{option.Employee_Status}}">
+                              {{option.Employee_Status}}
                             </option> 
                            </select>
                                     </div>

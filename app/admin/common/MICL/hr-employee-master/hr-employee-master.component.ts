@@ -136,6 +136,7 @@ export class HREmployeeMasterComponent implements OnInit {
     this.getLocation();
     this.getEmployee();
     this.getBankName();
+    this.getStatus();
     this.getReportingList();
     this.getUser();
     this.leftdatechange();
@@ -488,6 +489,20 @@ getBankName(){
 
 }
 
+getStatus(){
+  const obj = {
+    "SP_String": "Sp_HR_Employee_Master",
+    "Report_Name_String": "Get_Emp_Status"
+    
+  }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.Statuslist = data;
+    //  console.log("Statuslist=", this.Statuslist);
+     
+   })
+
+}
+
 getReportingList(){
   const obj = {
     "SP_String": "Sp_HR_Employee_Master",
@@ -715,6 +730,7 @@ GetNewEmployee(){
   this.Joining_Dt = new Date();
   // this.Leave_Dt = new Date();
   this.objemployee.Present_Status = undefined;
+  this.objemployee.Personal_Area = (this.databaseName === 'MICL_Demo' || this.databaseName === 'MICL') ? "HALDIA" : undefined;
   this.leftdatechange();
   this.DOB = new Date();
   this.EmployeeFormSubmitted = false;
