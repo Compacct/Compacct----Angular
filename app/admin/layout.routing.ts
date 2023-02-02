@@ -332,6 +332,7 @@ import { DoctorsAppointmentNewFineTuningHearingComponent } from "./common/Patien
 import { GoogleReviewComponent } from './common/PatientManagement/google-review/google-review.component';
 import { PurchaseBillGSTOneSPComponent } from "./common/FinancialManagement/Transaction/Purchase/purchase-bill-gst-one-sp/purchase-bill-gst-one-sp.component";
 import { PurchaseOrderHarbauerComponent } from "./common/MaterialManagement/Inward/purchase-order-harbauer/purchase-order-harbauer.component";
+import { ParameterMasterComponent } from "./common/MICL/parameter-master/parameter-master.component";
 
 
 
@@ -2512,6 +2513,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
     data: {
       title: 'Purchase Order'
     }
+  },
+  {
+    path: 'Parameter_Master',
+    component: ParameterMasterComponent,
+    data: {
+        title: 'Parameter Master'
+    } 
   },
     
 

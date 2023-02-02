@@ -429,6 +429,7 @@ import { GoogleReviewComponent } from './common/PatientManagement/google-review/
 
 import { PurchaseBillGSTOneSPComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill-gst-one-sp/purchase-bill-gst-one-sp.component';
 import { PurchaseOrderHarbauerComponent } from './common/MaterialManagement/Inward/purchase-order-harbauer/purchase-order-harbauer.component';
+import { ParameterMasterComponent } from "./common/MICL/parameter-master/parameter-master.component";
 
 @NgModule({
   declarations: [
@@ -774,7 +775,8 @@ import { PurchaseOrderHarbauerComponent } from './common/MaterialManagement/Inwa
     DoctorsAppointmentNewFineTuningHearingComponent,
     GoogleReviewComponent,
     PurchaseBillGSTOneSPComponent,
-    PurchaseOrderHarbauerComponent
+    PurchaseOrderHarbauerComponent,
+    ParameterMasterComponent
 
   ],
   imports: [

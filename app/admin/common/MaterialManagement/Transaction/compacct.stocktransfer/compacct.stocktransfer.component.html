@@ -625,15 +625,16 @@
                                         <div class="form-group">
                                             <div class="col-sm-4" *ngIf="BatchShow">
                                                 <label class="control-label">Batch No<sup class="text-danger">*</sup></label>
-                                                <select class="form-control" name="batchno"
+                                                <!-- <select class="form-control" name="batchno"
                                                         #batchno="ngModel"
                                                         [(ngModel)]="ObjProductInfo.Batch_Number"
                                                         (change)="ChangeBatch()"
                                                         [required]="true"
                                                         [disabled]="Batchdisabled">
-                                                    <!-- <option  [ngValue]="undefined">Select</option> -->
+                                                    <option  [ngValue]="undefined">Select</option>
                                                     <option *ngFor="let option of BatchList" [ngValue]="option.Batch_No">{{option.Batch_No_Display}}</option>
-                                                </select>
+                                                </select> -->
+                                                <p-multiSelect [options]="BatchList" [(ngModel)]="ObjProductInfo.Batch_Number" [styleClass]="'compacct-multiselect'" name="batchno" (onChange)="ChangeBatch()"></p-multiSelect>
                                             </div>
                                             <div class="col-sm-4" *ngIf="SerialShow">
                                                 <label class="control-label">Serial No<sup class="text-danger">*</sup></label>

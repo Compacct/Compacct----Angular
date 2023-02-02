@@ -85,6 +85,14 @@ export class MiclRawMaterialComponent implements OnInit {
   DescriptionCheck: any;
   MasterConsumbleFormSubmitted = false;
 
+  ParameterNameList:any = [];
+  ParameterFormSubmitted = false;
+  AddParamDetails:any = [];
+  Parameter_ID: any;
+  Tolerance_Level: any;
+  SpinnerParam = false;
+  
+
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -105,6 +113,7 @@ ngOnInit() {
     //  this.GetProductType();
      //this.GetProductSubType();
      this.GetMaterialTyp();
+     this.GetParam();
      this.GetUOM();
      this.GetBrowseList();
 }
@@ -114,7 +123,9 @@ TabClick(e) {
     this.buttonname = "Create";
     this.destroyChild();
     this.clearData();
+    this.SpinnerParam = false;
     // this.productid = undefined;
+    this.AddParamDetails = [];
 }
 onReject(){}
 clearData() {
@@ -153,6 +164,56 @@ GetMaterialTyp(){
           }
        })
 }
+
+// ADD PARAMETER DETAILS
+GetParam(){
+  const obj = {
+    "SP_String": "SP_Production_Management_Master_Raw_Material",
+    "Report_Name_String": "Get_Parameters"
+
+ }
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     if(data.length){
+      data.forEach(element => {
+        element['value'] = element.Parameter_ID
+        element['label'] = element.Parameter_Name
+      });
+     this.ParameterNameList = data;
+     }
+     else {
+      this.ParameterNameList = [];
+     }
+  // console.log("SubLedger list======",this.SubLedgerList);
+ });
+}
+gettolerance(){
+  this.Tolerance_Level = undefined;
+  if(this.Parameter_ID){
+  const tolerance = this.ParameterNameList.filter(el=>Number(el.Parameter_ID) === Number(this.Parameter_ID));
+  this.Tolerance_Level = tolerance[0].Tolerance_Level;
+  }
+}
+AddParam(valid){
+  this.ParameterFormSubmitted = true;
+  this.SpinnerParam = true;
+    if (valid) {
+      var Paramname = this.ParameterNameList.filter(el=>Number(el.Parameter_ID) === Number(this.Parameter_ID))
+      var paramobj = {
+      Parameter_ID : this.Parameter_ID,
+      Parameter_Name : Paramname[0].Parameter_Name,
+      Tolerance_Level : this.Tolerance_Level
+      }
+      this.AddParamDetails.push(paramobj);
+     console.log('this.AddParamDetails===',this.AddParamDetails)
+      this.ParameterFormSubmitted = false;
+      this.SpinnerParam = false;
+
+    }
+}
+Paramdelete(index) {
+  this.AddParamDetails.splice(index,1)
+  }
+
 FinancialDetailsData(e) {
     this.ObjFinancial = undefined;
     if (e.Purchase_Ac_Ledger) {
@@ -255,7 +316,7 @@ SaveMasterEawMaterial(valid: any) {
       if (valid && this.checkrequ(this.objCheckFinamcial, this.objGst)) {
         var mattype = this.AllMaterialData.filter(el=> Number(el.Material_ID) === Number(this.ObjMasterRawMaterial.Material_ID))
        this.ObjMasterRawMaterial.Material_Type = mattype[0].Material_Type;  
-        let UpdateArr = []
+        let UpdateArr:any = []
         const Obj = {
           Product_ID: this.productid,
         }
@@ -264,7 +325,8 @@ SaveMasterEawMaterial(valid: any) {
         const obj = {
           "SP_String": "SP_Production_Management_Master_Raw_Material",
           "Report_Name_String": "Master_Raw_Material_Update",
-          "Json_Param_String": JSON.stringify(UpdateArr)
+          "Json_Param_String": JSON.stringify(UpdateArr),
+          "Json_1_String": JSON.stringify(this.AddParamDetails)
         }
         this.GlobalAPI.postData(obj).subscribe((data: any) => {
           var tempID = data[0].Column1;
@@ -281,6 +343,7 @@ SaveMasterEawMaterial(valid: any) {
             this.tabIndexToView = 0;
             this.items = ["BROWSE", "CREATE"];
             this.clearData();
+            this.AddParamDetails = [];
           }
           else {
             this.Spinner = false;
@@ -314,7 +377,8 @@ SaveMasterEawMaterial(valid: any) {
         const obj = {
           "SP_String": "SP_Production_Management_Master_Raw_Material",
           "Report_Name_String": "Master_Raw_Material_Create",
-          "Json_Param_String": JSON.stringify(this.ObjMasterRawMaterial)
+          "Json_Param_String": JSON.stringify(this.ObjMasterRawMaterial),
+          "Json_1_String": JSON.stringify(this.AddParamDetails)
         }
         this.GlobalAPI.postData(obj).subscribe((data: any) => {
           var tempID = data[0].Column1;
@@ -330,6 +394,7 @@ SaveMasterEawMaterial(valid: any) {
             this.tabIndexToView = 0;
             this.items = ["BROWSE", "CREATE"];
             this.clearData();
+            this.AddParamDetails = [];
           }
           else {
             this.Spinner = false;
@@ -374,6 +439,7 @@ Edit(editobj){
         this.buttonname = "Update";
         this.tabIndexToView = 1;
         this.GetEdit();
+        this.GetParamEdit();
       }
 }
 GetEdit(){
@@ -395,6 +461,28 @@ GetEdit(){
       this.ObjMasterRawMaterial.Material_ID = data[0].Material_ID;
       this.ObjMasterRawMaterial.Product_Code = data[0].Product_Code;
       this.ObjMasterRawMaterial.UOM = data[0].UOM;
+    //console.log("this.editList  ===",this.editList);
+    })
+}
+GetParamEdit(){
+  // this.parameditList = [];
+  const temobj = {
+    Product_ID  : this.productid,   
+  }
+  const obj = {
+    "SP_String": "SP_Production_Management_Master_Raw_Material",
+    "Report_Name_String": "Get_Master_Raw_Material_Parameter",
+    "Json_Param_String": JSON.stringify(temobj)
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    // this.parameditList = data;
+    data.forEach(element => {
+      this.AddParamDetails.push({
+        Parameter_ID : element.Parameter_ID,
+        Parameter_Name : element.Parameter_Name,
+        Tolerance_Level : element.Tolerance_Level
+      })
+    });
     //console.log("this.editList  ===",this.editList);
     })
 }
