@@ -427,6 +427,9 @@ import { DoctorsAppointmentNewFineTuningComponent } from "./common/PatientManage
 import { DoctorsAppointmentNewFineTuningHearingComponent } from "./common/PatientManagement/doctors-appointment-new-fine-tuning-hearing/doctors-appointment-new-fine-tuning-hearing.component";
 import { GoogleReviewComponent } from './common/PatientManagement/google-review/google-review.component';
 
+import { PurchaseBillGSTOneSPComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill-gst-one-sp/purchase-bill-gst-one-sp.component';
+import { PurchaseOrderHarbauerComponent } from './common/MaterialManagement/Inward/purchase-order-harbauer/purchase-order-harbauer.component';
+
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -769,7 +772,10 @@ import { GoogleReviewComponent } from './common/PatientManagement/google-review/
     SaleBillNewComponent,
     DoctorsAppointmentNewFineTuningComponent,
     DoctorsAppointmentNewFineTuningHearingComponent,
-    GoogleReviewComponent
+    GoogleReviewComponent,
+    PurchaseBillGSTOneSPComponent,
+    PurchaseOrderHarbauerComponent
+
   ],
   imports: [
     CommonModule,
