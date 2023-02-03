@@ -13,7 +13,7 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
   encapsulation: ViewEncapsulation.None
 })
 export class ParameterMasterComponent implements OnInit {
-  tabIndexToView: any= 0;
+  tabIndexToView: number= 0;
   buttonname: any= "Create";
   Spinner: any= false;
   items: any= [];
@@ -49,6 +49,7 @@ export class ParameterMasterComponent implements OnInit {
     this.tabIndexToView = e.index;
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Create";
+    this.ObjMaster = new ParameterMaster();
   }
 
   SaveParameter(valid:any){
@@ -88,6 +89,7 @@ export class ParameterMasterComponent implements OnInit {
             this.ObjMaster = new ParameterMaster();
             this.BrowseParameter();
             this.tabIndexToView = 0;
+            this.items = ["BROWSE", "CREATE"];
           }
           else {
             this.Spinner = false;
@@ -197,7 +199,7 @@ export class ParameterMasterComponent implements OnInit {
             this.compacctToast.add({
               key: "compacct-toast",
               severity: "success",
-              summary: "Parameter Deleted ",
+              summary: "Parameter ID " + this.Inactive_ID,
               detail: "Succesfully Deleted "
             });
             this.BrowseParameter();
@@ -223,7 +225,7 @@ export class ParameterMasterComponent implements OnInit {
         this.compacctToast.add({
           key: "compacct-toast",
           severity: "success",
-          summary: "Parameter Activated ",
+          summary: "Parameter ID " + this.Active_ID,
           detail: "Succesfully Activated "
         });
         this.BrowseParameter();

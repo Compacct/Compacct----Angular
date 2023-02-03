@@ -430,6 +430,7 @@ import { GoogleReviewComponent } from './common/PatientManagement/google-review/
 import { PurchaseBillGSTOneSPComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill-gst-one-sp/purchase-bill-gst-one-sp.component';
 import { PurchaseOrderHarbauerComponent } from './common/MaterialManagement/Inward/purchase-order-harbauer/purchase-order-harbauer.component';
 import { ParameterMasterComponent } from "./common/MICL/parameter-master/parameter-master.component";
+import { DoctorsAppoTherapPlanComponent } from './common/PatientManagement/doctors-appo-therap-plan/doctors-appo-therap-plan.component';
 
 @NgModule({
   declarations: [
@@ -776,7 +777,8 @@ import { ParameterMasterComponent } from "./common/MICL/parameter-master/paramet
     GoogleReviewComponent,
     PurchaseBillGSTOneSPComponent,
     PurchaseOrderHarbauerComponent,
-    ParameterMasterComponent
+    ParameterMasterComponent,
+    DoctorsAppoTherapPlanComponent
 
   ],
   imports: [
