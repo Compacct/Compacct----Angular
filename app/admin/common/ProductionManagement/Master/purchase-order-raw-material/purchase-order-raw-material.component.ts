@@ -10,6 +10,7 @@ import { CompacctGlobalApiService } from '../../../../shared/compacct.services/c
 import { CompacctProjectComponent } from '../../../../shared/compacct.components/compacct.forms/compacct-project/compacct-project.component';
 import { MapType } from '@angular/compiler/src/output/output_ast';
 import * as XLSX from 'xlsx';
+import { timeStamp } from 'console';
 @Component({
   selector: 'app-purchase-order-raw-material',
   templateUrl: './purchase-order-raw-material.component.html',
@@ -154,6 +155,10 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
   DistProductType:any = [];
   SelectedDistProductType:any = [];
   SearchFieldsMis:any = [];
+  ParamDetalisPopup = false;
+  ParameterList:any = [];
+  paramlist:any = [];
+  addparamlist:any = [];
   
   constructor(
     private $http: HttpClient ,
@@ -436,45 +441,6 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
     })
   }
   GetProductsDetalis(){
-    // if(this.ObjaddWorkOrder.Product_Type_ID){
-      // this.ObjaddWorkOrder.Req_No = undefined;
-      // this.productDataList = [];
-      /*this.productList = [];
-      this.ObjaddWorkOrder.Product_ID = undefined;
-      this.ObjaddWorkOrder.Product_Spec = undefined;
-      this.ObjaddWorkOrder.Unit = undefined
-      const obj = {
-        "SP_String": "Sp_BL_Txn_Purchase_Order_Raw_Material",
-        "Report_Name_String": "Get_Product",
-        "Json_Param_String": JSON.stringify([{Req_No : this.ObjaddWorkOrder.Req_No}])
-      }
-      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        // this.productDataList = data;
-      //  console.log("productDataList",this.productDataList);
-      if(data.length) {
-          data.forEach(element => {
-            element['label'] = element.Product_Description,
-            element['value'] = element.Product_ID
-          });
-          this.productDataList = data;
-        } else {
-            this.productDataList = [];
-        }
-      //  data.forEach((el:any) => {
-      //   this.productList.push({
-      //       label: el.Product_Description,
-      //       value: el.Product_ID
-      //     });
-      //    });
-      })*/
-    // }
-    // else {
-    //   this.productDataList = [];
-    //   this.productList = [];
-    //   let tempObj = {...this.ObjaddWorkOrder}
-    //   this.ObjaddWorkOrder = new addWorkOrder()
-    //   this.ObjaddWorkOrder.Product_Type_ID = tempObj.Product_Type_ID
-    // }
     this.ProductList = [];
     this.ObjaddWorkOrder.Product_Spec = undefined;
     if (this.Material_Type) {
@@ -496,6 +462,31 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
     }
   
   }
+  GetParamDetailsforProduct(){
+    this.ParameterList = [];
+    if (this.ObjaddWorkOrder.Product_ID) {
+    const obj = {
+      "SP_String": "Sp_BL_Txn_Purchase_Order_Raw_Material",
+      "Report_Name_String": "Get_Parameters",
+      "Json_Param_String": JSON.stringify([{Product_ID : this.ObjaddWorkOrder.Product_ID}])
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.ParameterList = data;
+     // console.log("ParameterList",this.ParameterList);
+     this.ParamDetalisPopup = this.ParameterList.length ? true : false;
+      })
+    }
+  
+  }
+  SaveParamDetalis(){
+    if(this.ParameterList.length){
+      this.paramlist = []
+      this.paramlist = this.ParameterList;
+      
+    }
+    this.ParamDetalisPopup = false;
+  }
+
   getProduct(id?,uom?,psc?){
     if(this.ObjaddWorkOrder.Req_No){
       this.productDataList = [];
@@ -590,7 +581,8 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
     // if(this.openProject === 'Y'){
     //   this.ObjaddWorkOrder.Rate = tempVal[0].Rate;
     // }
-    this.getProductDetalis()
+    this.getProductDetalis();
+    this.GetParamDetailsforProduct();
    }
    else {
     this.ObjaddWorkOrder.Unit = undefined;
@@ -913,6 +905,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
         Net_Amount:  Number(this.ObjaddWorkOrder.Total_Amount),
         GST_Percentage: Number( this.ObjaddWorkOrder.Gst),
         GST_Amount: Number(this.ObjaddWorkOrder.GST_AMT),
+        Product_Details: this.ParameterList.length ? this.paramlist : null
      }
      if(this.addPurchaseList.length && this.addPurchaseListInput){
       this.addPurchaseList.forEach((xz:any,i) => {
@@ -931,6 +924,10 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
      }
      else{
       this.addPurchaseList.push(saveData);
+      // const productid = this.addPurchaseList.filter(el=>Number(el.Product_ID) === Number(this.ObjaddWorkOrder.Product_ID))
+      // if (productid.length || productid.length == 0){
+      // this.addparamlist = this.paramlist;;
+      // }
       this.addClear()
      }
       // this.addPurchaseList.push(saveData);
@@ -938,7 +935,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
       // this.ObjaddWorkOrder = new addWorkOrder();
       // this.WorkAddFormSubmit = false;
       // this.productList = [];
-      // console.log("addPurchaseList",this.addPurchaseList);
+      console.log("addPurchaseList",this.addPurchaseList);
       // this.getAllTotal();
    }
  }

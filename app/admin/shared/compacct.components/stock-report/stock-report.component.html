@@ -192,7 +192,7 @@
                 <th>Product Type</th>
                 <th *ngIf="report_Type != 'Product_Type_Wise_Stock'">Product Sub Type</th>
                 <th *ngIf="report_Type != 'Product_Type_Wise_Stock'">Product Name</th>
-                <th *ngIf="report_Type === 'Cost_Center_Wise'">Rate</th>
+                <!-- <th *ngIf="report_Type === 'Cost_Center_Wise'">Rate</th> -->
                 <th>Opening</th>
                 <th>Recieve</th>
                 <th>Issue/Used</th>
@@ -211,7 +211,7 @@
                 <td>{{col.Product_Type }}</td>
                 <td *ngIf="report_Type != 'Product_Type_Wise_Stock'">{{col.Product_Sub_Type}}</td>
                 <td *ngIf="report_Type != 'Product_Type_Wise_Stock'">{{col.PRODUCT_DESCRIPTION}}</td>
-                <td style="text-align: center;" *ngIf="report_Type === 'Cost_Center_Wise'">{{col.Rate}}</td>
+                <!-- <td style="text-align: center;" *ngIf="report_Type === 'Cost_Center_Wise'">{{col.Rate}}</td> -->
                 <td style="text-align: center;">
                     <a *ngIf="col.OPENING_QTY" style="cursor: pointer;" (click)="qtyDetalis(col,'Get_Opening')" >
                         {{col.OPENING_QTY}}
