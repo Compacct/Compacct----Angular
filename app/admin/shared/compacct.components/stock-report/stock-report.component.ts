@@ -288,9 +288,27 @@ export class StockReportComponent implements OnInit {
             'Closing': ele.CLOSING_QTY
             })
         }
+        else if( this.report_Type == 'Cost_Center_Wise'){
+          excelData.push({
+            'Stock Point': ele.Stock_Point,
+            'Material Type': ele.Type_Of_Product,
+            'Product Type': ele.Product_Type,
+            'Product Sub Type': ele.Product_Sub_Type,
+            'Product Name': ele.PRODUCT_DESCRIPTION,
+            'Rate': ele.Rate,
+            'Opening': ele.OPENING_QTY,
+            'Recieve': ele.RECV_QTY,
+            'Issue/Used': ele.ISSUE_QTY,
+            'Closing': ele.CLOSING_QTY,
+            'Opening Amount': ele.OPENING_Amt,
+            'RECV Amount': ele.RECV_Amt,
+            'Issue Amount': ele.ISSUE_Amt,
+            'Closing Amount': ele.CLOSING_Amt
+            })
+        }
         else {
           excelData.push({
-           'Stock Point': ele.Stock_Point,
+            'Stock Point': ele.Stock_Point,
             'Material Type': ele.Type_Of_Product,
             'Product Type': ele.Product_Type,
             'Product Sub Type': ele.Product_Sub_Type,
