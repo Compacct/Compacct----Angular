@@ -295,7 +295,7 @@ export class StockReportComponent implements OnInit {
             'Product Type': ele.Product_Type,
             'Product Sub Type': ele.Product_Sub_Type,
             'Product Name': ele.PRODUCT_DESCRIPTION,
-            'Rate': ele.Rate,
+            // 'Rate': ele.Rate,
             'Opening': ele.OPENING_QTY,
             'Recieve': ele.RECV_QTY,
             'Issue/Used': ele.ISSUE_QTY,
