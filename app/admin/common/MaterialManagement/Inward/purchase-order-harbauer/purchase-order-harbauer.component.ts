@@ -1789,31 +1789,34 @@ getdataforview(col,row){
       }
 }
 gettermsdetails(){
-      const obj = {
-        "SP_String": "Sp_Purchase_Order_Harbauer_Only",
-        "Report_Name_String": "Get_Terms_Details",
-        "Json_Param_String": JSON.stringify([{Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID}])
-        }
-      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        // console.log("gettermsdetails call")
-        this.termsdetails = data;
-        this.objpurchase.PO_Header = data[0].PO_Header;
-        this.objpurchase.Terms_Of_Price = data[0].Terms_Of_Price;
-        this.objpurchase.Payment_Terms = data[0].Payment_Terms;
-        this.objpurchase.Delivery_Terms = data[0].Delivery_Terms;
-        this.objpurchase.Warranty_Guarantee_Term = data[0].Warranty_Guarantee_Term;
-        this.objpurchase.Transist_Insurance = data[0].Transist_Insurance;
-        this.objpurchase.Certificates_Terms = data[0].Certificates_Terms;
-        this.objpurchase.Taxes_And_Duties = data[0].Taxes_And_Duties;
-        this.objpurchase.Packing_And_Forward = data[0].Packing_And_Forward;
-        this.objpurchase.Transpotation = data[0].Transpotation;
-        this.objpurchase.Installation_Commissioning = data[0].Installation_Commissioning;
-        this.objpurchase.Delivery_Location = data[0].Delivery_Location;
-        this.objpurchase.Remarks = data[0].Remarks;
-        window.scroll(0,0);
-        this.objupdateterm = data[0];
+  if(this.openProject === 'Y'){
+    const obj = {
+      "SP_String": "Sp_Purchase_Order_Harbauer_Only",
+      "Report_Name_String": "Get_Terms_Details",
+      "Json_Param_String": JSON.stringify([{Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID}])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // console.log("gettermsdetails call")
+      this.termsdetails = data;
+      this.objpurchase.PO_Header = data[0].PO_Header;
+      this.objpurchase.Terms_Of_Price = data[0].Terms_Of_Price;
+      this.objpurchase.Payment_Terms = data[0].Payment_Terms;
+      this.objpurchase.Delivery_Terms = data[0].Delivery_Terms;
+      this.objpurchase.Warranty_Guarantee_Term = data[0].Warranty_Guarantee_Term;
+      this.objpurchase.Transist_Insurance = data[0].Transist_Insurance;
+      this.objpurchase.Certificates_Terms = data[0].Certificates_Terms;
+      this.objpurchase.Taxes_And_Duties = data[0].Taxes_And_Duties;
+      this.objpurchase.Packing_And_Forward = data[0].Packing_And_Forward;
+      this.objpurchase.Transpotation = data[0].Transpotation;
+      this.objpurchase.Installation_Commissioning = data[0].Installation_Commissioning;
+      this.objpurchase.Delivery_Location = data[0].Delivery_Location;
+      this.objpurchase.Remarks = data[0].Remarks;
+      window.scroll(0,0);
+      this.objupdateterm = data[0];
 
-      })
+    })
+  }
+    
 }
 gettermDateRange(dateRangeObj){
   if (dateRangeObj.length) {
