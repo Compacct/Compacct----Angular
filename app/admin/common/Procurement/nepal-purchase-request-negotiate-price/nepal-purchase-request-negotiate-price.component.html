@@ -141,7 +141,7 @@
                                 sortMode="multiple" 
                                 [rowsPerPageOptions]="[10,25,50,100]" 
                                 [rowHover]="true" 
-                                [globalFilterFields]='["Doc_No","Date","Payment_Method","Purchase_Type"]'>
+                                [globalFilterFields]='["Doc_No","Date","Payment_Method","Purchase_Type","Cat_Name"]'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
@@ -153,7 +153,8 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>Purchase Request No</th>
+                                            <th style="width:12em">Purchase Request No</th>
+                                            <th>Group</th>
                                             <th>Date</th>
                                             <th>Payment Method </th>
                                             <th>Purchase Type</th>
@@ -179,6 +180,7 @@
                                                 </div>
                                             </td>
                                             <td>{{col.Purchase_Request_No}}</td>
+                                            <td>{{col.Cat_Name}}</td>
                                             <td>{{col.Date }}</td>
                                             <td>{{col.Payment_Method}}</td>
                                             <td>{{col.Purchase_Type}}</td>
