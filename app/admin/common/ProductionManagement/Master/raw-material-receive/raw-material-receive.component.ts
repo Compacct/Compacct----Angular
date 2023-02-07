@@ -50,6 +50,11 @@ export class RawMaterialReceiveComponent implements OnInit {
   DistProductType:any = [];
   SelectedDistProductType:any = [];
   SearchFieldsMis:any = [];
+  ParameterList:any = [];
+  ParamDetalisPopup = false;
+  paramlist:any = [];
+  paramarr:any = [];
+  topperlist:any = [];
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -156,8 +161,34 @@ changeMaterialName(ProductID:any){
     const FilterAllMaterialName = this.AllMaterialName.find((el:any) => Number(el.Product_ID) == Number(ProductID) )
     console.log("FilterAllMaterialName",FilterAllMaterialName)
     this.ObjRawMatRev.UOM = FilterAllMaterialName ? FilterAllMaterialName.UOM : ""
+    this.GetParamDetailsforProduct();
  }
  this.ObjRawMatRev.Batch_Lot_No = undefined;
+}
+// PARAMETER DETAILS
+GetParamDetailsforProduct(){
+  this.ParameterList = [];
+  if (this.ObjRawMatRev.Product_ID) {
+  const obj = {
+    "SP_String": this.spString,
+    "Report_Name_String": "Get_Parameters",
+    "Json_Param_String": JSON.stringify([{Product_ID : this.ObjRawMatRev.Product_ID}])
+   }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.ParameterList = data;
+   console.log("ParameterList",this.ParameterList);
+   this.ParamDetalisPopup = this.ParameterList.length ? true : false;
+    })
+  }
+
+}
+SaveParamDetalis(){
+  if(this.ParameterList.length){
+    this.paramlist = []
+    this.paramlist = this.ParameterList;
+    
+  }
+  this.ParamDetalisPopup = false;
 }
 GetStockPoint(){
   const obj = {
@@ -185,29 +216,55 @@ AddRawMatRev(valid:any){
   const FilterReferenceDataList = this.ReferenceDataList.find((el:any)=> el.Production_Ref_NO == this.ObjRawMatRev.Production_Ref_NO)
   const FilterAllMaterialName = this.AllMaterialName.find((el:any) => Number(el.Product_ID) == Number(this.ObjRawMatRev.Product_ID) )
   const FilterStockPointList= this.StockPointList.find((el:any) => Number(el.godown_id) == Number(this.ObjRawMatRev.Godown_ID) )
-  this.AddRawMatRevList.push({
-    Doc_No: "A",
-    Doc_Date: this.DateService.dateConvert(this.DocDate),
-    Production_PO_No: FilterReferenceDataList ? FilterReferenceDataList.Doc_No : " ",
-    Production_Ref_NO: this.ObjRawMatRev.Production_Ref_NO,
-    Product_ID: Number(this.ObjRawMatRev.Product_ID),
-    Product_Name: FilterAllMaterialName ? FilterAllMaterialName.Product_Name : " ",
-    UOM:  this.ObjRawMatRev.UOM,
-    Receive_Qty: this.ObjRawMatRev.Receive_Qty,
-    Batch_Lot_No: this.ObjRawMatRev.Batch_Lot_No,
-    // Vehicle_No: this.ObjRawMatRev.Vehicle_No,
-    Note_Description: this.ObjRawMatRev.Note_Description,
-    Godown_ID: this.ObjRawMatRev.Godown_ID,
-    Godown_Name : FilterStockPointList ? FilterStockPointList.godown_name : " ",
-    Purpose: this.ObjRawMatRev.Purpose,
-    Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-    Created_By: this.$CompacctAPI.CompacctCookies.User_ID
-  })
+  this.paramarr = [];
+     this.paramlist.forEach(element => {
+      if((element.Min_Value || element.Min_Value > 0) && (element.Max_Value || element.Max_Value > 0)) {
+      const obj = {
+        Line_No : this.AddRawMatRevList.length + 1,
+        Product_ID : Number(this.ObjRawMatRev.Product_ID),
+        Parameter_ID : element.Parameter_ID,
+        Parameter_Name : element.Parameter_Name,
+        UOM : element.UOM,
+        Max_Value : element.Max_Value,
+        Min_Value : element.Min_Value,
+        Exact_Value : element.Exact_Value,
+        Tolerance_Level : element.Tolerance_Level
+      }
+      this.paramarr.push(obj)
+      }
+     });
+    const recobj = {
+      Product_ID: Number(this.ObjRawMatRev.Product_ID),
+      Product_Name: FilterAllMaterialName ? FilterAllMaterialName.Product_Name : " ",
+      UOM:  this.ObjRawMatRev.UOM,
+      Receive_Qty: this.ObjRawMatRev.Receive_Qty,
+      Batch_Lot_No: this.ObjRawMatRev.Batch_Lot_No,
+      // Vehicle_No: this.ObjRawMatRev.Vehicle_No,
+      Note_Description: this.ObjRawMatRev.Note_Description,
+      Godown_ID: this.ObjRawMatRev.Godown_ID,
+      Godown_Name : FilterStockPointList ? FilterStockPointList.godown_name : " ",
+      Purpose: this.ObjRawMatRev.Purpose,
+      Parameter_Details: this.buttonname === "Create" ? this.ParameterList.length ? this.paramarr : null : this.paramarr
+
+    }
+    const recotherobj = {
+      Doc_No: "A",
+      Doc_Date: this.DateService.dateConvert(this.DocDate),
+      Production_PO_No: FilterReferenceDataList ? FilterReferenceDataList.Doc_No : " ",
+      Production_Ref_NO: this.ObjRawMatRev.Production_Ref_NO,
+      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      Created_By: this.$CompacctAPI.CompacctCookies.User_ID,
+
+    }
+  this.AddRawMatRevList.push(recobj);
+  console.log('table data ===',this.AddRawMatRevList)
+  this.topperlist.push(recotherobj);
+  console.log('topper data ===',this.topperlist)
   let bckupTempObj:any = {...this.ObjRawMatRev}
   this.ObjRawMatRev.Remarks = bckupTempObj.Remarks
   // this.ObjRawMatRev = new RawMatRev()
   this.ObjRawMatRev.Batch_Lot_No = undefined;
-  this.ObjRawMatRev.Vehicle_No = undefined;
+  // this.ObjRawMatRev.Vehicle_No = undefined;
   this.ObjRawMatRev.Note_Description = undefined;
   // this.AllMaterialName = []
   // this.DocDate = new Date()
@@ -222,7 +279,7 @@ DeleteRawMatRevListROW(index:any){
 SaveRawMatRev(){
   if(this.AddRawMatRevList.length){
     this.Spinner = true
-    this.AddRawMatRevList.forEach(ele => {
+    this.topperlist.forEach(ele => {
       ele['Remarks'] = this.ObjRawMatRev.Remarks
     });
     this.compacctToast.clear();
@@ -245,10 +302,18 @@ onConfirm(){
 }
 ConfirmSave(){
   this.ngxService.start();
+  const FilterReferenceDataList = this.ReferenceDataList.find((el:any)=> el.Production_Ref_NO == this.ObjRawMatRev.Production_Ref_NO)
+    this.ObjRawMatRev.Doc_No = "A";
+    this.ObjRawMatRev.Doc_Date = this.DateService.dateConvert(this.DocDate);
+    this.ObjRawMatRev.Production_PO_No = FilterReferenceDataList ? FilterReferenceDataList.Doc_No : " ";
+    this.ObjRawMatRev.Production_Ref_NO = this.ObjRawMatRev.Production_Ref_NO;
+    this.ObjRawMatRev.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.ObjRawMatRev.Created_By = this.$CompacctAPI.CompacctCookies.User_ID;
+    this.ObjRawMatRev.L_element = this.AddRawMatRevList;
   const obj = {
     "SP_String": this.spString,
     "Report_Name_String": "Create_BL_Txn_Production_Raw_Material_Receive",
-    "Json_Param_String": JSON.stringify(this.AddRawMatRevList)      
+    "Json_Param_String": JSON.stringify([this.ObjRawMatRev])      
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     if (data[0].Column1) {
@@ -425,21 +490,27 @@ getDateRangeMIS(dateRangeObj) {
   }
 }
 class RawMatRev{
-  Doc_No:any
-  Doc_Date:any
-  Production_PO_No:any
-  Production_Ref_NO:any
-  Product_ID:any
-  Product_Name:any
-  UOM:any
-  Receive_Qty:any
-  Batch_Lot_No:any
-  Vehicle_No:any
+  Doc_No:any;
+  Doc_Date:any;
+  Cost_Cen_ID:any;
+  Production_PO_No:any;
+  Production_Ref_NO:any;
+  Product_ID:any;
+  Product_Name:any;
+  UOM:any;
+  Receive_Qty:any;
+  Batch_Lot_No:any;
   Note_Description:any;
-  Godown_ID:any
-  Purpose:any
-  Remarks:any
-  Created_By:any
+  Godown_ID:any;
+  Purpose:any;
+  Remarks:any;
+  Created_By:any;
+  SE_No_Date:any;
+  Inv_No_Date:any;
+  Mode_Of_transport:any;
+  LR_No_Date:any;
+  Vehicle_No:any;
+  L_element:any;
 }
 class Browse {
   From_Date : Date ;

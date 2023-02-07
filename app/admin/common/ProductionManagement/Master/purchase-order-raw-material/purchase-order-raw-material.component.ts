@@ -159,6 +159,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
   ParameterList:any = [];
   paramlist:any = [];
   addparamlist:any = [];
+  paramarr:any = [];
   
   constructor(
     private $http: HttpClient ,
@@ -472,7 +473,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.ParameterList = data;
-     // console.log("ParameterList",this.ParameterList);
+     console.log("ParameterList",this.ParameterList);
      this.ParamDetalisPopup = this.ParameterList.length ? true : false;
       })
     }
@@ -880,12 +881,44 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
   getTaxAble(){
  
   }
+  Getsameproduct () {
+    const sameproduct = this.addPurchaseList.filter(item=>item.Product_ID === this.ObjaddWorkOrder.Product_ID );
+    if(sameproduct.length) {
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Product already choosed, delete first and re-enter."
+          });
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
   AddPurchase(valid){
     this.WorkAddFormSubmit = true
     console.log("valid",valid);
-   if(valid){
+   if(valid && this.Getsameproduct()){
      const productFilter:any = this.productDataList.filter((el:any)=> Number(el.Product_ID) === Number(this.ObjaddWorkOrder.Product_ID))
      console.log("productFilter",productFilter[0])
+     this.paramarr = [];
+     this.paramlist.forEach(element => {
+      if((element.Min_Value || element.Min_Value > 0) && (element.Max_Value || element.Max_Value > 0)) {
+      const obj = {
+        Line_No : this.addPurchaseList.length + 1,
+        Product_ID : Number(this.ObjaddWorkOrder.Product_ID),
+        Parameter_ID : element.Parameter_ID,
+        Parameter_Name : element.Parameter_Name,
+        UOM : element.UOM,
+        Max_Value : element.Max_Value,
+        Min_Value : element.Min_Value,
+        Tolerance_Level : element.Tolerance_Level
+      }
+      this.paramarr.push(obj)
+      }
+     });
      let saveData = {
         Product_ID: Number(this.ObjaddWorkOrder.Product_ID),
         Req_No: this.ObjaddWorkOrder.Req_No ? this.ObjaddWorkOrder.Req_No : "NA",
@@ -905,7 +938,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
         Net_Amount:  Number(this.ObjaddWorkOrder.Total_Amount),
         GST_Percentage: Number( this.ObjaddWorkOrder.Gst),
         GST_Amount: Number(this.ObjaddWorkOrder.GST_AMT),
-        Product_Details: this.ParameterList.length ? this.paramlist : null
+        Parameter_Details: this.buttonname === "Create" ? this.ParameterList.length ? this.paramarr : null : this.paramarr
      }
      if(this.addPurchaseList.length && this.addPurchaseListInput){
       this.addPurchaseList.forEach((xz:any,i) => {
@@ -924,10 +957,6 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
      }
      else{
       this.addPurchaseList.push(saveData);
-      // const productid = this.addPurchaseList.filter(el=>Number(el.Product_ID) === Number(this.ObjaddWorkOrder.Product_ID))
-      // if (productid.length || productid.length == 0){
-      // this.addparamlist = this.paramlist;;
-      // }
       this.addClear()
      }
       // this.addPurchaseList.push(saveData);
@@ -984,6 +1013,9 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
     this.getProduct(this.addPurchaseList[inx].Product_ID,this.addPurchaseList[inx].UOM,this.addPurchaseList[inx].Product_Spec)
   }, 300);
    this.ObjaddWorkOrder.Product_ID = this.addPurchaseList[inx].Product_ID
+  //  this.GetParamDetailsforProduct();
+   this.ParameterList = this.addPurchaseList[inx].Parameter_Details ? this.addPurchaseList[inx].Parameter_Details : [];
+   this.ParamDetalisPopup = this.ParameterList.length ? true : false;
    this.ObjaddWorkOrder = {...this.addPurchaseList[inx]}
    this.ObjaddWorkOrder.Unit = this.addPurchaseList[inx].UOM
    this.ObjaddWorkOrder.Product_Spec = this.addPurchaseList[inx].Product_Spec
@@ -1955,6 +1987,7 @@ class WorkOrder {
   Taxes_And_Duties:any;
   Packing_And_Forward:any;
   Transpotation:any;
+  Paying_Office_Works_Term:any;
   Installation_Commissioning:any;
   Delivery_Location:any;
   User_ID:any;
@@ -1971,6 +2004,10 @@ class WorkOrder {
   Total_Net_Amount:any
   Production_Ref_NO: any
   Analysis_Report :any
+  Parameter_Details:any;
+  Late_Delivery:any;
+  Statutory_Obligation:any;
+  Jurisdiction:any;
   
 }
 class addWorkOrder{
