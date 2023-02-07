@@ -1131,7 +1131,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
       this.AmbientNoiseFinalOutcome = [];
 
       for (let i = 0; i < this.selectedLoudness.length; i++) {
-        if (this.selectedLoudness[i] == "Sounds_in_general_are_too_loud") {
+        if (this.selectedLoudness[i] == "Sounds in general are too loud") {
           this.SoundsInGeneralSolution = ["Decrease overall gain"];
           this.SoundsInGeneralFinalOutcome = [
             "Found Ok",
@@ -1141,7 +1141,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
        
        if (
-          this.selectedLoudness[i] == "Speech_is_too_loud_(speaker_is_too_loud)"
+          this.selectedLoudness[i] == "Speech is too loud (speaker is too loud)"
         ) {
           this.SpeechIsTooLoudSolution = [
             "Decrease overall gain for mid frequencies (-3dB)",
@@ -1156,7 +1156,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
        
         if (
           this.selectedLoudness[i] ==
-          "High_frequency_sounds_are_too_loud_(dishes,_rattling,_paper_rustling,_water_running)"
+          "High frequency sounds are too loud (dishes, rattling, paper rustling, water running)"
         ) {
           this.HighFrequencySoundsSolution = [
             "Decrease mid and high frequency gains for loud sounds",
@@ -1171,7 +1171,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
        
         if (
           this.selectedLoudness[i] ==
-          "Low_frequency_sounds_are_too_loud_(toilet_flushing,_road_noise,_fans,_etc.)"
+          "Low frequency sounds are too loud (toilet flushing, road noise, fans, etc.)"
         ) {
           this.LowFrequencySoundsSolution = [
             "Increase the level of noise reduction",
@@ -1187,7 +1187,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
        
         if (
           this.selectedLoudness[i] ==
-          "The_sounds_of_many_people_talking_are_too_loud"
+          "The sounds of many people talking are too loud"
         ) {
           this.SoundsOfManyPeopleSolution = [
             "Increase the degree of noise reduction",
@@ -1200,7 +1200,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
           ];
         }
        
-        if (this.selectedLoudness[i] == "Loud_sounds_seem_distorted") {
+        if (this.selectedLoudness[i] == "Loud sounds seem distorted") {
           this.LoudSoundsSeemDistortedSolution = [
             "Decrease MPO",
             "Increase MPO",
@@ -1213,7 +1213,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
           ];
         }
        
-        if (this.selectedLoudness[i] == "Sudden_noises_are_painfully_loud") {
+        if (this.selectedLoudness[i] == "Sudden noises are painfully loud") {
           this.SuddenNoisesArePainfullySolution = [
             "Reduce the maximum output level in the high frequencies",
           ];
@@ -1224,7 +1224,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
           ];
         }
        
-        if (this.selectedLoudness[i] == "All_sounds_are_too_soft") {
+        if (this.selectedLoudness[i] == "All sounds are too soft") {
           this.AllSoundsAreTooSoftSolution = [
             "Increase overall gain",
             "Increase low and mid frequency gain",
@@ -1237,7 +1237,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.selectedLoudness[i] ==
-          "Soft_sounds_are_not_audible_in_quite_surroundings"
+          "Soft sounds are not audible in quite surroundings"
         ) {
           this.SoftSoundsAreNotSolution = [
             "Increase gain for soft input level in all frequency region",
@@ -1250,7 +1250,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
           ];
         }
        
-        if (this.selectedLoudness[i] == "Soft_speech_is_not_audible") {
+        if (this.selectedLoudness[i] == "Soft speech is not audible") {
           this.SoftSpeechIsNotAudibleSolution = [
             "Increase gain for soft input level",
           ];
@@ -1261,7 +1261,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
           ];
         }
       
-        if (this.selectedLoudness[i] == "Speech_is_Too_Soft") {
+        if (this.selectedLoudness[i] == "Speech is Too Soft") {
           this.SpeechIsTooSoftSolution = [
             "Increase gain for speech in the mid-frequency region",
             "Increase overall gain",
@@ -1275,7 +1275,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
       
         if (
           this.selectedLoudness[i] ==
-          "High_frequency_sounds_are_too_soft_(birdsong,_doorbell,_telephone_ring)"
+          "High frequency sounds are too soft (birdsong, doorbell, telephone ring)"
         ) {
           this.HighFrequencySoundsAreTooSoftSolution = [
             "Increase level of sound shaper ",
@@ -1288,7 +1288,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         
         if (
-          this.selectedLoudness[i] == "Volume_control_needs_frequent_adjustment"
+          this.selectedLoudness[i] == "Volume control needs frequent adjustment"
         ) {
           this.VolumeControlNeedsSolution = [
             "Increase overall gain",
@@ -1301,7 +1301,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
           ];
         }
        
-        if (this.selectedLoudness[i] == "Wind_noise_is_too_loud") {
+        if (this.selectedLoudness[i] == "Wind noise is too loud") {
           this.WindNoiseSolution = [
             "Increase wind guard setting",
             "Turn Wind Guard feature on",
@@ -1310,7 +1310,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.selectedLoudness[i] ==
-          "Ambient_noise_is_too_noticeable_in_quite_surroundings"
+          "Ambient noise is too noticeable in quite surroundings"
         ) {
           this.AmbientNoiseSolution = [
             "Decrease gain for soft input levels in all frequency region",
@@ -1386,7 +1386,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
       this.HighFrequencySoundsAreDullFinalOutcome = [];
 
       for (let i = 0; i < this.SelectedSoundQuality.length; i++) {
-        if (this.SelectedSoundQuality[i] == "Speech_is_unclear_muffled") {
+        if (this.SelectedSoundQuality[i] == "Speech is unclear/muffled") {
           this.SpeechIsUnclearSolution = [
             "Increase gain for speech in the mid and high frequency regions",
             "Increase overall gain for speech in the mid and high frequency regions",
@@ -1398,7 +1398,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
             "Resolved",
           ];
         }
-        if (this.SelectedSoundQuality[i] == "Speech_is_boomy_or_has_an_echo") {
+        if (this.SelectedSoundQuality[i] == "Speech is boomy or has an echo") {
           this.SpeechIsBoomySolution = [
             "Decrease gain for speech in the mid and high frequency regions",
             "Decrease overall gain for speech in the mid and high frequency regions",
@@ -1411,7 +1411,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
             "Resolved",
           ];
         }
-        if (this.SelectedSoundQuality[i] == "Male_voices_sound_boomy") {
+        if (this.SelectedSoundQuality[i] == "Male voices sound boomy") {
           this.MaleVoicesBoomySolution = [
             "Decrease gain for low frequencies",
             "Decrease overall gain for low frequency sounds and increase overall gain for high frequency sound",
@@ -1423,7 +1423,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
           ];
         }
         if (
-          this.SelectedSoundQuality[i] == "Male_voices_sound_tinny_or_metallic"
+          this.SelectedSoundQuality[i] == "Male voices sound tinny or metallic"
         ) {
           this.MaleVoicesTinnySolution = ["Decrease gain for high frequencies"];
           this.MaleVoicesTinnyFinalOutcome = [
@@ -1432,7 +1432,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
             "Resolved",
           ];
         }
-        if (this.SelectedSoundQuality[i] == "Male_voices_sound_dull") {
+        if (this.SelectedSoundQuality[i] == "Male voices sound dull") {
           this.MaleVoicesDullSolution = [
             "Increase gain for mid & high frequency sounds",
             "Increase gain for high frequency sounds",
@@ -1445,7 +1445,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
             "Resolved",
           ];
         }
-        if (this.SelectedSoundQuality[i] == "Male_voices_sound_hollow") {
+        if (this.SelectedSoundQuality[i] == "Male voices sound hollow") {
           this.MaleVoicesHollowSolution = ["Decrease low frequency gain"];
           this.MaleVoicesHollowFinalOutcome = [
             "Found Ok",
@@ -1453,7 +1453,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
             "Resolved",
           ];
         }
-        if (this.SelectedSoundQuality[i] == "Male_voices_sound_sharp") {
+        if (this.SelectedSoundQuality[i] == "Male voices sound sharp") {
           this.MaleVoicesSharpSolution = [
             "Decrease gain for high frequency sounds",
             "Increase gain for low frequency sounds",
@@ -1464,7 +1464,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
             "Resolved",
           ];
         }
-        if (this.SelectedSoundQuality[i] == "Own_voices_sound_sharp") {
+        if (this.SelectedSoundQuality[i] == "Own voices sound sharp") {
           this.OwnVoicesSharpSolution = ["Decrease high frequency gain"];
           this.OwnVoicesSharpFinalOutcome = [
             "Found Ok",
@@ -1474,7 +1474,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.SelectedSoundQuality[i] ==
-          "Own_voice_sounds_as_if_speaking_in_a_barrel_or_has_an_echo"
+          "Own voice sounds as if speaking “in a barrel” or has an “echo”"
         ) {
           this.OwnVoicesBarrelSolution = [
             "Decrease gain in the low frequency region",
@@ -1489,7 +1489,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.SelectedSoundQuality[i] ==
-          "Own_voice_sounds_stuffed_up_or_closed"
+          "Own voice sounds “stuffed up” or “closed”"
         ) {
           this.OwnVoicesStuffingSolution = [
             "Increase gain for normal and loud input levels",
@@ -1501,7 +1501,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
             "Resolved",
           ];
         }
-        if (this.SelectedSoundQuality[i] == "Own_voice_is_not_acceptable") {
+        if (this.SelectedSoundQuality[i] == "Own voice is not acceptable") {
           this.OwnVoicesNotAccepctSolution = [
             "Increase vent size, and redo fitting measurements",
           ];
@@ -1513,7 +1513,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.SelectedSoundQuality[i] ==
-          "Female_voices_sound_tinny_or_metallic"
+          "Female voices sound tinny or metallic"
         ) {
           this.FemaleVoiceTinnySolution = [
             "Increase gain for low and mid frequencies",
@@ -1524,7 +1524,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
             "Resolved",
           ];
         }
-        if (this.SelectedSoundQuality[i] == "Female_voices_sound_dull") {
+        if (this.SelectedSoundQuality[i] == "Female voices sound dull") {
           this.FemaleVoiceDullSolution = [
             "Increase overall gain for mid and high frequencies",
           ];
@@ -1534,7 +1534,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
             "Resolved",
           ];
         }
-        if (this.SelectedSoundQuality[i] == "Female_voices_sound_hollow") {
+        if (this.SelectedSoundQuality[i] == "Female voices sound hollow") {
           this.FemaleVoiceHollowSolution = ["Decrease low frequency gain"];
           this.FemaleVoiceHollowFinalOutcome = [
             "Found Ok",
@@ -1542,7 +1542,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
             "Resolved",
           ];
         }
-        if (this.SelectedSoundQuality[i] == "Music_sound_boomy") {
+        if (this.SelectedSoundQuality[i] == "Music sound boomy") {
           this.MusicSoundBoomySolution = [
             "Decrease low frequency gain by 6 dB, increase high frequency gain",
             "Decrease low frequency gain, increase high frequency gain",
@@ -1553,7 +1553,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
             "Resolved",
           ];
         }
-        if (this.SelectedSoundQuality[i] == "Music_sound_tinny_or_metallic") {
+        if (this.SelectedSoundQuality[i] == "Music sound tinny or metallic") {
           this.MusicSoundTinnySolution = [
             "Decrease mid and high frequency gain",
             "Reduce the level of noise reduction",
@@ -1565,7 +1565,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
             "Resolved",
           ];
         }
-        if (this.SelectedSoundQuality[i] == "Music_sound_dull") {
+        if (this.SelectedSoundQuality[i] == "Music sound dull") {
           this.MusicSoundDullSolution = [
             "Reduce the level of noise reduction",
             "Disable Sound Shaper",
@@ -1576,7 +1576,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
             "Resolved",
           ];
         }
-        if (this.SelectedSoundQuality[i] == "Music_sound_hollow") {
+        if (this.SelectedSoundQuality[i] == "Music sound hollow") {
           this.MusicSoundHollowSolution = [
             "Increase low and mid frequency gain",
             "Ensure microphone setting is omni direction",
@@ -1587,7 +1587,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
             "Resolved",
           ];
         }
-        if (this.SelectedSoundQuality[i] == "Music_sound_sharp") {
+        if (this.SelectedSoundQuality[i] == "Music sound sharp") {
           this.MusicSoundSharpSolution = [
             "Increase low frequency gain and decrease mid and high frequency gain",
           ];
@@ -1597,7 +1597,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
             "Resolved",
           ];
         }
-        if (this.SelectedSoundQuality[i] == "High_frequency_sounds_are_dull") {
+        if (this.SelectedSoundQuality[i] == "High frequency sounds are dull") {
           this.HighFrequencySoundsAreDullSolution = [
             "Decrease level of sound shaper",
           ];
@@ -1659,7 +1659,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
       for (let i = 0; i < this.SelectedSpeechIntelligibility.length; i++) {
         if (
           this.SelectedSpeechIntelligibility[i] ==
-          "Speech_is_unclear_in_moderate_background_noise"
+          "Speech is unclear in moderate background noise"
         ) {
           this.SpeechIsModerateSolution = [
             "Increase gain for speech in the mid frequencies",
@@ -1673,7 +1673,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.SelectedSpeechIntelligibility[i] ==
-          "Understanding_speech_when_in_a_car,_train,_airplane,_etc._is_difficult"
+          "Understanding speech when in a car, train, airplane, etc. is difficult"
         ) {
           this.UnderstandingSpeechSolution = [
             "Increase noise reduction setting",
@@ -1687,7 +1687,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.SelectedSpeechIntelligibility[i] ==
-          "Distance_voices_sounds_seem_louder_than_voices_sounds_nearby"
+          "Distance voices/sounds seem louder than voices/sounds nearby"
         ) {
           this.DistanceVoiceSolution = [
             "Increase gain for normal input levels",
@@ -1702,7 +1702,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.SelectedSpeechIntelligibility[i] ==
-          "Understanding_a_speaker_who_is_far_away_is_difficult"
+          "Understanding a speaker who is far away is difficult"
         ) {
           this.UnderstandingsSpeakerSolution = [
             "Increase mid and high frequency gain",
@@ -1716,7 +1716,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.SelectedSpeechIntelligibility[i] ==
-          "Hear_distance_speech_better_than_close_speech"
+          "Hear distance speech better than close speech"
         ) {
           this.HearDistanceSpeechSolution = [
             "When possible, consider the use of the Micro, Mini, or Multi Mic",
@@ -1729,7 +1729,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.SelectedSpeechIntelligibility[i] ==
-          "Sound_localization_is_difficult"
+          "Sound localization is difficult"
         ) {
           this.SoundLocalizationSolution = [
             "Increase overall for soft sounds",
@@ -1759,7 +1759,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
         if (
           this.SelectedSpeechIntelligibility[i] ==
-          "Sound_is_turned_down_too_much_in_noisy_environments"
+          "Sound is turned down too much in noisy environments"
         ) {
           this.SoundTurnedDownSolution = [
             "Increase gain for loud input levels in all frequency regions",
@@ -1773,7 +1773,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.SelectedSpeechIntelligibility[i] ==
-          "Sound_is_distorted_or_very_uncomfortable_in_noisy_environments"
+          "Sound is distorted or very uncomfortable in noisy environments"
         ) {
           this.SoundDistortedSolution = [
             "Decrease gain for loud input levels in all frequency regions",
@@ -1820,7 +1820,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
       for (let i = 0; i < this.SelectedFeedback.length; i++) {
         if (
           this.SelectedFeedback[i] ==
-          "Hearing_aid_whistles_occasionally,_e.g._when_hugging_a_person,_putting_on_a_hat_or_while_chewing"
+          "Hearing aid whistles occasionally, e.g. when hugging a person, putting on a hat or while chewing"
         ) {
           this.HearingOccasionallySolution = [
             "Perform feedback test/Calibration",
@@ -1838,7 +1838,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.SelectedFeedback[i] ==
-          "Feedback_occurs_with_the_use_of_the_telephone_and_or_other_dynamic_situations"
+          "Feedback occurs with the use of the telephone and/or other dynamic situations"
         ) {
           this.FeedbackOccursSolution = [
             "Re calibrate DFS ultra/Feedback test",
@@ -1850,7 +1850,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
             "Resolved",
           ];
         }
-        if (this.SelectedFeedback[i] == "Hearing_aid_whistles_unprovoked") {
+        if (this.SelectedFeedback[i] == "Hearing aid whistles unprovoked") {
           this.HearingWhistlesSolution = [
             "Perform feedback test/Calibration",
             "Reduce the vent size, or make a new impression of the ear canal to change the shell of the hearing aid",
@@ -1918,7 +1918,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
       for (let i = 0; i < this.SelectedTinnitus.length; i++) {
         if (
           this.SelectedTinnitus[i] ==
-          "ZEN_tone_TSG_synchronization_white_noise_is_too_soft"
+          "ZEN tone/TSG synchronization white noise is too soft"
         ) {
           this.ZENToneSynchronizationSolution = [
             "Adjust volume slider",
@@ -1932,7 +1932,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.SelectedTinnitus[i] ==
-          "ZEN_tone_TSG_synchronization_white_noise_is_too_loud"
+          "ZEN tone/TSG synchronization white noise is too loud"
         ) {
           this.ZENToneSynchronizationKLoudSolution = [
             "Adjust volume slider",
@@ -1945,7 +1945,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
           ];
         }
         if (
-          this.SelectedTinnitus[i] == "Broadband_stimulation_is_not_effective"
+          this.SelectedTinnitus[i] == "Broadband stimulation is not effective"
         ) {
           this.BroadbandStimulationSolution = [
             "Shape the high/low cut frequency band accordingly",
@@ -1962,7 +1962,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.SelectedTinnitus[i] ==
-          "ZEN_tone_White_noise_is_not_effectively_interacting_with_the_tinnitus"
+          "ZEN tone/White noise is not effectively interacting with the tinnitus"
         ) {
           this.ZENToneWhiteNoiseSolution = [
             "Stream preferred sounds using wireless device or accessories",
@@ -1977,7 +1977,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
         if (
           this.SelectedTinnitus[i] ==
-          "ZEN_tone_Continuous_stimulation_is_bothersome"
+          "ZEN tone/Continuous stimulation is bothersome"
         ) {
           this.ZENToneContinuousStimulationSolution = [
             "Change the stimulus to nature sounds/different ZEN tones",
@@ -1989,7 +1989,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
             "Resolved",
           ];
         }
-        if (this.SelectedTinnitus[i] == "Amplitude_modulation_is_bothersome") {
+        if (this.SelectedTinnitus[i] == "Amplitude modulation is bothersome") {
           this.AmplitudeModulationSolution = [
             "De-active amplitude modulation",
             "Synch amplitude modulation",
@@ -2003,7 +2003,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
         if (
           this.SelectedTinnitus[i] ==
-          "Other_stimuli_besides_ZEN_tone_white_noise_are_helpful"
+          "Other stimuli besides ZEN tone/white noise are helpful"
         ) {
           this.StimuliBesidesSolution = [
             "Use the TSG+Mic /ZEN+Mic setting to allow other stimuli to be present",
@@ -2015,7 +2015,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
           ];
         }
 
-        if (this.SelectedTinnitus[i] == "Tinnitus_seems_worse") {
+        if (this.SelectedTinnitus[i] == "Tinnitus seems worse") {
           this.TinnitusSeemsWorseSolution = [
             "Lower the TSG volume/ ZEN tone",
             "Provide additional counselling",
@@ -2029,7 +2029,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.SelectedTinnitus[i] ==
-          "The_patient_is_requesting_an_automatic_volume_control_adjustment_for_TSG"
+          "The patient is requesting an automatic volume control adjustment for TSG"
         ) {
           this.PatientRequestingSolution = ["Activate environmental steering"];
           this.PatientRequestingFinalOutcome = [
@@ -2041,7 +2041,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
         if (
           this.SelectedTinnitus[i] ==
-          "ZEN_tone_TSG_white_noise_interferes_with_speech"
+          "ZEN tone/TSG white noise interferes with speech"
         ) {
           this.TSGWhiteNoiseSolution = [
             "Decrease the ZEN/TSG volume",
@@ -2084,7 +2084,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
       for (let i = 0; i < this.SelectedWirelessAccessories.length; i++) {
         if (
           this.SelectedWirelessAccessories[i] ==
-          "Micro_Mini_Multi_mic_is_too_noisy"
+          "Micro/Mini/Multi mic is too noisy"
         ) {
           this.MicroMiniMultiNoiseSolution = [
             "Have speaker place microphone closer to their mouth",
@@ -2099,7 +2099,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.SelectedWirelessAccessories[i] ==
-          "Phone_clip_is_not_functional_or_loud_enough"
+          "Phone clip is not functional or loud enough"
         ) {
           this.PhoneClipSolution = [
             "Ensure the phone clipped is charged",
@@ -2139,7 +2139,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
       for (let i = 0; i < this.SelectedSynchronizedFunctionality.length; i++) {
         if (
           this.SelectedSynchronizedFunctionality[i] ==
-          "The_patient_would_like_to_separate_functionality_for_each_ear"
+          "The patient would like to separate functionality for each ear"
         ) {
           this.functionalityEachEarSolution = [
             "Turn off the synchronization function for volume control",
@@ -2153,7 +2153,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
         if (
           this.SelectedSynchronizedFunctionality[i] ==
-          "Synched_push_bottom_volume_control_is_not_functioning"
+          "Synched push bottom/volume control is not functioning"
         ) {
           this.SynchedPushBottomSolution = [
             "Ensure that the instruments are not in-flight mode",
@@ -2198,7 +2198,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
       for (let i = 0; i < this.SelectedPhysicalFit.length; i++) {
         if (
-          this.SelectedPhysicalFit[i] == "The_earpiece_slips_out_of_the_ear"
+          this.SelectedPhysicalFit[i] == "The earpiece slips out of the ear"
         ) {
           this.SlipsOutEarSolution = ["Instruct patient in placing earpiece"];
           this.SlipsOutEarFinalOutcome = [
@@ -2209,7 +2209,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.SelectedPhysicalFit[i] ==
-          "The_ear_piece_causes_irritation_or_pain_in_the_ear"
+          "The ear piece causes irritation or pain in the ear"
         ) {
           this.PainInEarSolution = [
             "Instruct patient in placing earpiece",
@@ -2224,7 +2224,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
         if (
           this.SelectedPhysicalFit[i] ==
-          "Patient_has_difficulties_placing_the_hearing_aid_or_earpiece_in_the_ear"
+          "Patient has difficulties placing the hearing aid or earpiece in the ear"
         ) {
           this.EarpieceInEarSolution = [
             "Instruct patient in placing earpiece or hearing aid correctly",
@@ -2275,7 +2275,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
       for (let i = 0; i < this.SelectedHearingAid.length; i++) {
         if (
           this.SelectedHearingAid[i] ==
-          "Patienthas_difficulties_using_the_program_button"
+          "Patient has difficulties using the program button"
         ) {
           this.UsingProgramButtonSolution = [
             "Instruct client in hearing aid handling",
@@ -2289,7 +2289,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
         if (
           this.SelectedHearingAid[i] ==
-          "Patient_has_difficulties_using_the_preference_control"
+          "Patient has difficulties using the preference control"
         ) {
           this.PreferenceControlSolution = [
             "Instruct client in hearing aid handling",
@@ -2302,7 +2302,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.SelectedHearingAid[i] ==
-          "Patient_has_difficulties_turning_the_hearing_aid_on_off"
+          "Patient has difficulties turning the hearing aid on and off"
         ) {
           this.HearingOnOffSolution = [
             "Instruct client in hearing aid handling",
@@ -2315,7 +2315,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
         }
         if (
           this.SelectedHearingAid[i] ==
-          "Client_has_difficulties_changing_batteries"
+          "Client has difficulties changing batteries"
         ) {
           this.ChangingBatteriesSolution = [
             "Instruct Patient in changing the batteries",
@@ -2329,7 +2329,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
         if (
           this.SelectedHearingAid[i] ==
-          "Client_has_difficulties_changing_wax_protection_system"
+          "Client has difficulties changing wax protection system"
         ) {
           this.ProtectionSystemSolution = [
             "Instruct Patient in changing the wax guard",
@@ -2365,7 +2365,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
       this.NoSoundFinalOutcome = [];
 
       for (let i = 0; i < this.SelectedOthers.length; i++) {
-        if (this.SelectedOthers[i] == "No_sound_from_the_hearing_aid") {
+        if (this.SelectedOthers[i] == "No sound from the hearing aid") {
           this.NoSoundSolution = [
             "Inspect ear and remove cerumen if necessary",
             "Change the wax guard, if necessary",
@@ -2747,93 +2747,93 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
   undefined1(){
 
-    if((this.selectedLoudness[0] !=  "Sounds_in_general_are_too_loud") && 
-       (this.selectedLoudness[1] !=  "Sounds_in_general_are_too_loud") && 
-       (this.selectedLoudness[2] !=  "Sounds_in_general_are_too_loud")){
+    if((this.selectedLoudness[0] !=  "Sounds in general are too loud") && 
+       (this.selectedLoudness[1] !=  "Sounds in general are too loud") && 
+       (this.selectedLoudness[2] !=  "Sounds in general are too loud")){
     this.ObjFineTuning.Sounds_In_General_Solution = undefined;
     this.ObjFineTuning.Sounds_In_General_FinalOutCome = undefined; 
     }
-    if((this.selectedLoudness[0] != "Speech_is_too_loud_(speaker_is_too_loud)") && 
-       (this.selectedLoudness[1] != "Speech_is_too_loud_(speaker_is_too_loud)") && 
-       (this.selectedLoudness[2] != "Speech_is_too_loud_(speaker_is_too_loud)")){
+    if((this.selectedLoudness[0] != "Speech is too loud (speaker is too loud)") && 
+       (this.selectedLoudness[1] != "Speech is too loud (speaker is too loud)") && 
+       (this.selectedLoudness[2] != "Speech is too loud (speaker is too loud)")){
       this.ObjFineTuning.Speech_Is_TooLoud_Solution = undefined;
       this.ObjFineTuning.Speech_Is_TooLoud_FinalOutcome = undefined; 
     }
-    if((this.selectedLoudness[0] != "High_frequency_sounds_are_too_loud_(dishes,_rattling,_paper_rustling,_water_running)") && 
-       (this.selectedLoudness[1] != "High_frequency_sounds_are_too_loud_(dishes,_rattling,_paper_rustling,_water_running)") && 
-       (this.selectedLoudness[2] != "High_frequency_sounds_are_too_loud_(dishes,_rattling,_paper_rustling,_water_running)")){
+    if((this.selectedLoudness[0] != "High frequency sounds are too loud (dishes, rattling, paper rustling, water running)") && 
+       (this.selectedLoudness[1] != "High frequency sounds are too loud (dishes, rattling, paper rustling, water running)") && 
+       (this.selectedLoudness[2] != "High frequency sounds are too loud (dishes, rattling, paper rustling, water running)")){
       this.ObjFineTuning.HighFrequency_Sounds_Solution = undefined;
       this.ObjFineTuning.HighFrequency_Sounds_FinalOutcome = undefined; 
     }
-    if((this.selectedLoudness[0] != "Low_frequency_sounds_are_too_loud_(toilet_flushing,_road_noise,_fans,_etc.)") && 
-       (this.selectedLoudness[1] != "Low_frequency_sounds_are_too_loud_(toilet_flushing,_road_noise,_fans,_etc.)") && 
-       (this.selectedLoudness[2] != "Low_frequency_sounds_are_too_loud_(toilet_flushing,_road_noise,_fans,_etc.)")){
+    if((this.selectedLoudness[0] != "Low frequency sounds are too loud (toilet flushing, road noise, fans, etc.)") && 
+       (this.selectedLoudness[1] != "Low frequency sounds are too loud (toilet flushing, road noise, fans, etc.)") && 
+       (this.selectedLoudness[2] != "Low frequency sounds are too loud (toilet flushing, road noise, fans, etc.)")){
       this.ObjFineTuning.LowFrequency_Sounds_Solution = undefined;
       this.ObjFineTuning.LowFrequency_Sounds_FinalOutcome = undefined; 
     }
-    if((this.selectedLoudness[0] != "The_sounds_of_many_people_talking_are_too_loud") && 
-       (this.selectedLoudness[1] != "The_sounds_of_many_people_talking_are_too_loud") && 
-       (this.selectedLoudness[2] != "The_sounds_of_many_people_talking_are_too_loud")){
+    if((this.selectedLoudness[0] != "The sounds of many people talking are too loud") && 
+       (this.selectedLoudness[1] != "The sounds of many people talking are too loud") && 
+       (this.selectedLoudness[2] != "The sounds of many people talking are too loud")){
       this.ObjFineTuning.SoundsOfMany_People_Solution = undefined;
       this.ObjFineTuning.SoundsOfMany_People_FinalOutcome = undefined; 
     }
-    if((this.selectedLoudness[0] !=  "Loud_sounds_seem_distorted") && 
-       (this.selectedLoudness[1] !=  "Loud_sounds_seem_distorted") && 
-       (this.selectedLoudness[2] !=  "Loud_sounds_seem_distorted")){
+    if((this.selectedLoudness[0] !=  "Loud sounds seem distorted") && 
+       (this.selectedLoudness[1] !=  "Loud sounds seem distorted") && 
+       (this.selectedLoudness[2] !=  "Loud sounds seem distorted")){
     this.ObjFineTuning.LoudSoundsSeem_Distorted_Solution = undefined;
     this.ObjFineTuning.LoudSoundsSeem_Distorted_FinalOutcome = undefined; 
     }
-    if((this.selectedLoudness[0] != "Sudden_noises_are_painfully_loud") && 
-       (this.selectedLoudness[1] != "Sudden_noises_are_painfully_loud") && 
-       (this.selectedLoudness[2] != "Sudden_noises_are_painfully_loud")){
+    if((this.selectedLoudness[0] != "Sudden noises are painfully loud") && 
+       (this.selectedLoudness[1] != "Sudden noises are painfully loud") && 
+       (this.selectedLoudness[2] != "Sudden noises are painfully loud")){
       this.ObjFineTuning.SuddenNoisesAre_Painfully_Solution = undefined;
       this.ObjFineTuning.SuddenNoisesAre_Painfully_FinalOutcome = undefined; 
     }
-    if((this.selectedLoudness[0] != "All_sounds_are_too_soft") && 
-       (this.selectedLoudness[1] != "All_sounds_are_too_soft") && 
-       (this.selectedLoudness[2] != "All_sounds_are_too_soft")){
+    if((this.selectedLoudness[0] != "All sounds are too soft") && 
+       (this.selectedLoudness[1] != "All sounds are too soft") && 
+       (this.selectedLoudness[2] != "All sounds are too soft")){
       this.ObjFineTuning.AllSoundsAre_TooSoft_Solution = undefined;
       this.ObjFineTuning.AllSoundsAre_TooSoft_FinalOutcome = undefined; 
     }
-    if((this.selectedLoudness[0] != "Soft_sounds_are_not_audible_in_quite_surroundings") && 
-       (this.selectedLoudness[1] != "Soft_sounds_are_not_audible_in_quite_surroundings") && 
-       (this.selectedLoudness[2] != "Soft_sounds_are_not_audible_in_quite_surroundings")){
+    if((this.selectedLoudness[0] != "Soft sounds are not audible in quite surroundings") && 
+       (this.selectedLoudness[1] != "Soft sounds are not audible in quite surroundings") && 
+       (this.selectedLoudness[2] != "Soft sounds are not audible in quite surroundings")){
       this.ObjFineTuning.SoftSounds_AreNot_Solution = undefined;
       this.ObjFineTuning.SoftSounds_AreNot_FinalOutcome = undefined; 
     }
-    if((this.selectedLoudness[0] != "Soft_speech_is_not_audible") && 
-       (this.selectedLoudness[1] != "Soft_speech_is_not_audible") && 
-       (this.selectedLoudness[2] != "Soft_speech_is_not_audible")){
+    if((this.selectedLoudness[0] != "Soft speech is not audible") && 
+       (this.selectedLoudness[1] != "Soft speech is not audible") && 
+       (this.selectedLoudness[2] != "Soft speech is not audible")){
       this.ObjFineTuning.SoftSpeechIsNot_Audible_Solution = undefined;
       this.ObjFineTuning.SoftSpeechIsNot_Audible_FinalOutcome = undefined; 
     }
-    if((this.selectedLoudness[0] !=  "Speech_is_Too_Soft") && 
-       (this.selectedLoudness[1] !=  "Speech_is_Too_Soft") && 
-       (this.selectedLoudness[2] !=  "Speech_is_Too_Soft")){
+    if((this.selectedLoudness[0] !=  "Speech is Too Soft") && 
+       (this.selectedLoudness[1] !=  "Speech is Too Soft") && 
+       (this.selectedLoudness[2] !=  "Speech is Too Soft")){
       this.ObjFineTuning.SpeechIs_TooSoft_Solution = undefined;
       this.ObjFineTuning.SpeechIs_TooSoft_FinalOutcome = undefined; 
     }
-    if((this.selectedLoudness[0] != "High_frequency_sounds_are_too_soft_(birdsong,_doorbell,_telephone_ring)") && 
-       (this.selectedLoudness[1] != "High_frequency_sounds_are_too_soft_(birdsong,_doorbell,_telephone_ring)") && 
-       (this.selectedLoudness[2] != "High_frequency_sounds_are_too_soft_(birdsong,_doorbell,_telephone_ring)")){
+    if((this.selectedLoudness[0] != "High frequency sounds are too soft (birdsong, doorbell, telephone ring)") && 
+       (this.selectedLoudness[1] != "High frequency sounds are too soft (birdsong, doorbell, telephone ring)") && 
+       (this.selectedLoudness[2] != "High frequency sounds are too soft (birdsong, doorbell, telephone ring)")){
       this.ObjFineTuning.HighFrequencySounds_AreTooSoft_Solution = undefined;
       this.ObjFineTuning.HighFrequencySounds_AreTooSoft_FinalOutcome = undefined; 
     }
-    if((this.selectedLoudness[0] != "Volume_control_needs_frequent_adjustment") && 
-       (this.selectedLoudness[1] != "Volume_control_needs_frequent_adjustment") && 
-       (this.selectedLoudness[2] != "Volume_control_needs_frequent_adjustment")){
+    if((this.selectedLoudness[0] != "Volume control needs frequent adjustment") && 
+       (this.selectedLoudness[1] != "Volume control needs frequent adjustment") && 
+       (this.selectedLoudness[2] != "Volume control needs frequent adjustment")){
       this.ObjFineTuning.VolumeControl_Needs_Solution = undefined;
       this.ObjFineTuning.VolumeControl_Needs_FinalOutcome = undefined; 
     }
-    if((this.selectedLoudness[0] != "Wind_noise_is_too_loud") && 
-       (this.selectedLoudness[1] != "Wind_noise_is_too_loud") && 
-       (this.selectedLoudness[2] != "Wind_noise_is_too_loud")){
+    if((this.selectedLoudness[0] != "Wind noise is too loud") && 
+       (this.selectedLoudness[1] != "Wind noise is too loud") && 
+       (this.selectedLoudness[2] != "Wind noise is too loud")){
       this.ObjFineTuning.WindNoise_Solution = undefined;
       this.ObjFineTuning.WindNoise_FinalOutcome = undefined; 
     }
-    if((this.selectedLoudness[0] != "Ambient_noise_is_too_noticeable_in_quite_surroundings") && 
-       (this.selectedLoudness[1] != "Ambient_noise_is_too_noticeable_in_quite_surroundings") && 
-       (this.selectedLoudness[2] != "Ambient_noise_is_too_noticeable_in_quite_surroundings")){
+    if((this.selectedLoudness[0] != "Ambient noise is too noticeable in quite surroundings") && 
+       (this.selectedLoudness[1] != "Ambient noise is too noticeable in quite surroundings") && 
+       (this.selectedLoudness[2] != "Ambient noise is too noticeable in quite surroundings")){
       this.ObjFineTuning.Ambient_Noise_Solution = undefined;
       this.ObjFineTuning.Ambient_Noise_FinalOutcome = undefined; 
     }  
@@ -2842,141 +2842,141 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
   undefined2(){
 
-    if((this.SelectedSoundQuality[0] !=  "Speech_is_unclear_muffled") && 
-       (this.SelectedSoundQuality[1] !=  "Speech_is_unclear_muffled") && 
-       (this.SelectedSoundQuality[2] !=  "Speech_is_unclear_muffled")){
+    if((this.SelectedSoundQuality[0] !=  "Speech is unclear/muffled") && 
+       (this.SelectedSoundQuality[1] !=  "Speech is unclear/muffled") && 
+       (this.SelectedSoundQuality[2] !=  "Speech is unclear/muffled")){
     this.ObjFineTuning.SpeechIs_Unclear_Solution = undefined;
     this.ObjFineTuning.SpeechIs_Unclear_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "Speech_is_boomy_or_has_an_echo") && 
-       (this.SelectedSoundQuality[1] !=  "Speech_is_boomy_or_has_an_echo") && 
-       (this.SelectedSoundQuality[2] !=  "Speech_is_boomy_or_has_an_echo")){
+    if((this.SelectedSoundQuality[0] !=  "Speech is boomy or has an echo") && 
+       (this.SelectedSoundQuality[1] !=  "Speech is boomy or has an echo") && 
+       (this.SelectedSoundQuality[2] !=  "Speech is boomy or has an echo")){
     this.ObjFineTuning.SpeechIs_Boomy_Solution = undefined;
     this.ObjFineTuning.SpeechIs_Boomy_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "Male_voices_sound_boomy") && 
-       (this.SelectedSoundQuality[1] !=  "Male_voices_sound_boomy") && 
-       (this.SelectedSoundQuality[2] !=  "Male_voices_sound_boomy")){
+    if((this.SelectedSoundQuality[0] !=  "Male voices sound boomy") && 
+       (this.SelectedSoundQuality[1] !=  "Male voices sound boomy") && 
+       (this.SelectedSoundQuality[2] !=  "Male voices sound boomy")){
     this.ObjFineTuning.MaleVoices_Boomy_Solution = undefined;
     this.ObjFineTuning.MaleVoices_Boomy_FinalOutcome = undefined; 
     }
-    if((this.SelectedSoundQuality[0] !=  "Male_voices_sound_tinny_or_metallic") && 
-       (this.SelectedSoundQuality[1] !=  "Male_voices_sound_tinny_or_metallic") && 
-       (this.SelectedSoundQuality[2] !=  "Male_voices_sound_tinny_or_metallic")){
+    if((this.SelectedSoundQuality[0] !=  "Male voices sound tinny or metallic") && 
+       (this.SelectedSoundQuality[1] !=  "Male voices sound tinny or metallic") && 
+       (this.SelectedSoundQuality[2] !=  "Male voices sound tinny or metallic")){
     this.ObjFineTuning.MaleVoices_Tinny_Solution = undefined;
     this.ObjFineTuning.MaleVoices_Tinny_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "Male_voices_sound_dull") && 
-       (this.SelectedSoundQuality[1] !=  "Male_voices_sound_dull") && 
-       (this.SelectedSoundQuality[2] !=  "Male_voices_sound_dull")){
+    if((this.SelectedSoundQuality[0] !=  "Male voices sound dull") && 
+       (this.SelectedSoundQuality[1] !=  "Male voices sound dull") && 
+       (this.SelectedSoundQuality[2] !=  "Male voices sound dull")){
     this.ObjFineTuning.MaleVoices_Dull_Solution = undefined;
     this.ObjFineTuning.MaleVoices_Dull_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "Male_voices_sound_hollow") && 
-       (this.SelectedSoundQuality[1] !=  "Male_voices_sound_hollow") && 
-       (this.SelectedSoundQuality[2] !=  "Male_voices_sound_hollow")){
+    if((this.SelectedSoundQuality[0] !=  "Male voices sound hollow") && 
+       (this.SelectedSoundQuality[1] !=  "Male voices sound hollow") && 
+       (this.SelectedSoundQuality[2] !=  "Male voices sound hollow")){
     this.ObjFineTuning.MaleVoices_Hollow_Solution = undefined;
     this.ObjFineTuning.MaleVoices_Hollow_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "Male_voices_sound_sharp") && 
-       (this.SelectedSoundQuality[1] !=  "Male_voices_sound_sharp") && 
-       (this.SelectedSoundQuality[2] !=  "Male_voices_sound_sharp")){
+    if((this.SelectedSoundQuality[0] !=  "Male voices sound sharp") && 
+       (this.SelectedSoundQuality[1] !=  "Male voices sound sharp") && 
+       (this.SelectedSoundQuality[2] !=  "Male voices sound sharp")){
     this.ObjFineTuning.MaleVoices_Sharp_Solution = undefined;
     this.ObjFineTuning.MaleVoices_Sharp_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "Own_voices_sound_sharp") && 
-       (this.SelectedSoundQuality[1] !=  "Own_voices_sound_sharp") && 
-       (this.SelectedSoundQuality[2] !=  "Own_voices_sound_sharp")){
+    if((this.SelectedSoundQuality[0] !=  "Own voices sound sharp") && 
+       (this.SelectedSoundQuality[1] !=  "Own voices sound sharp") && 
+       (this.SelectedSoundQuality[2] !=  "Own voices sound sharp")){
     this.ObjFineTuning.OwnVoices_Sharp_Solution = undefined;
     this.ObjFineTuning.OwnVoices_Sharp_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "Own_voice_sounds_as_if_speaking_in_a_barrel_or_has_an_echo") && 
-       (this.SelectedSoundQuality[1] !=  "Own_voice_sounds_as_if_speaking_in_a_barrel_or_has_an_echo") && 
-       (this.SelectedSoundQuality[2] !=  "Own_voice_sounds_as_if_speaking_in_a_barrel_or_has_an_echo")){
+    if((this.SelectedSoundQuality[0] !=  "Own voice sounds as if speaking “in a barrel” or has an “echo”") && 
+       (this.SelectedSoundQuality[1] !=  "Own voice sounds as if speaking “in a barrel” or has an “echo”") && 
+       (this.SelectedSoundQuality[2] !=  "Own voice sounds as if speaking “in a barrel” or has an “echo”")){
     this.ObjFineTuning.OwnVoices_Barrel_Solution = undefined;
     this.ObjFineTuning.OwnVoices_Barrel_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "Own_voice_sounds_stuffed_up_or_closed") && 
-       (this.SelectedSoundQuality[1] !=  "Own_voice_sounds_stuffed_up_or_closed") && 
-       (this.SelectedSoundQuality[2] !=  "Own_voice_sounds_stuffed_up_or_closed")){
+    if((this.SelectedSoundQuality[0] !=  "Own voice sounds “stuffed up” or “closed”") && 
+       (this.SelectedSoundQuality[1] !=  "Own voice sounds “stuffed up” or “closed”") && 
+       (this.SelectedSoundQuality[2] !=  "Own voice sounds “stuffed up” or “closed”")){
     this.ObjFineTuning.OwnVoices_Stuffing_Solution = undefined;
     this.ObjFineTuning.OwnVoices_Stuffing_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "Own_voice_is_not_acceptable") && 
-       (this.SelectedSoundQuality[1] !=  "Own_voice_is_not_acceptable") && 
-       (this.SelectedSoundQuality[2] !=  "Own_voice_is_not_acceptable")){
+    if((this.SelectedSoundQuality[0] !=  "Own voice is not acceptable") && 
+       (this.SelectedSoundQuality[1] !=  "Own voice is not acceptable") && 
+       (this.SelectedSoundQuality[2] !=  "Own voice is not acceptable")){
     this.ObjFineTuning.OwnVoicesNot_Accepct_Solution = undefined;
     this.ObjFineTuning.OwnVoicesNot_Accepct_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "Female_voices_sound_tinny_or_metallic") && 
-       (this.SelectedSoundQuality[1] !=  "Female_voices_sound_tinny_or_metallic") && 
-       (this.SelectedSoundQuality[2] !=  "Female_voices_sound_tinny_or_metallic")){
+    if((this.SelectedSoundQuality[0] !=  "Female voices sound tinny or metallic") && 
+       (this.SelectedSoundQuality[1] !=  "Female voices sound tinny or metallic") && 
+       (this.SelectedSoundQuality[2] !=  "Female voices sound tinny or metallic")){
     this.ObjFineTuning.FemaleVoice_Tinny_Solution = undefined;
     this.ObjFineTuning.FemaleVoice_Tinny_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "Female_voices_sound_dull") && 
-       (this.SelectedSoundQuality[1] !=  "Female_voices_sound_dull") && 
-       (this.SelectedSoundQuality[2] !=  "Female_voices_sound_dull")){
+    if((this.SelectedSoundQuality[0] !=  "Female voices sound dull") && 
+       (this.SelectedSoundQuality[1] !=  "Female voices sound dull") && 
+       (this.SelectedSoundQuality[2] !=  "Female voices sound dull")){
     this.ObjFineTuning.FemaleVoice_Dull_Solution = undefined;
     this.ObjFineTuning.FemaleVoice_Dull_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "Female_voices_sound_hollow") && 
-       (this.SelectedSoundQuality[1] !=  "Female_voices_sound_hollow") && 
-       (this.SelectedSoundQuality[2] !=  "Female_voices_sound_hollow")){
+    if((this.SelectedSoundQuality[0] !=  "Female voices sound hollow") && 
+       (this.SelectedSoundQuality[1] !=  "Female voices sound hollow") && 
+       (this.SelectedSoundQuality[2] !=  "Female voices sound hollow")){
     this.ObjFineTuning.FemaleVoice_Hollow_Solution = undefined;
     this.ObjFineTuning.FemaleVoice_Hollow_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "Music_sound_boomy") && 
-       (this.SelectedSoundQuality[1] !=  "Music_sound_boomy") && 
-       (this.SelectedSoundQuality[2] !=  "Music_sound_boomy")){
+    if((this.SelectedSoundQuality[0] !=  "Music sound boomy") && 
+       (this.SelectedSoundQuality[1] !=  "Music sound boomy") && 
+       (this.SelectedSoundQuality[2] !=  "Music sound boomy")){
     this.ObjFineTuning.MusicSound_Boomy_Solution = undefined;
     this.ObjFineTuning.MusicSound_Boomy_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "Music_sound_tinny_or_metallic") && 
-       (this.SelectedSoundQuality[1] !=  "Music_sound_tinny_or_metallic") && 
-       (this.SelectedSoundQuality[2] !=  "Music_sound_tinny_or_metallic")){
+    if((this.SelectedSoundQuality[0] !=  "Music sound tinny or metallic") && 
+       (this.SelectedSoundQuality[1] !=  "Music sound tinny or metallic") && 
+       (this.SelectedSoundQuality[2] !=  "Music sound tinny or metallic")){
     this.ObjFineTuning.MusicSound_Tinny_Solution = undefined;
     this.ObjFineTuning.MusicSound_Tinny_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "Music_sound_dull") && 
-       (this.SelectedSoundQuality[1] !=  "Music_sound_dull") && 
-       (this.SelectedSoundQuality[2] !=  "Music_sound_dull")){
+    if((this.SelectedSoundQuality[0] !=  "Music sound dull") && 
+       (this.SelectedSoundQuality[1] !=  "Music sound dull") && 
+       (this.SelectedSoundQuality[2] !=  "Music sound dull")){
     this.ObjFineTuning.MusicSound_Dull_Solution = undefined;
     this.ObjFineTuning.MusicSound_Dull_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "Music_sound_hollow") && 
-       (this.SelectedSoundQuality[1] !=  "Music_sound_hollow") && 
-       (this.SelectedSoundQuality[2] !=  "Music_sound_hollow")){
+    if((this.SelectedSoundQuality[0] !=  "Music sound hollow") && 
+       (this.SelectedSoundQuality[1] !=  "Music sound hollow") && 
+       (this.SelectedSoundQuality[2] !=  "Music sound hollow")){
     this.ObjFineTuning.MusicSound_Hollow_Solution = undefined;
     this.ObjFineTuning.MusicSound_Hollow_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "Music_sound_sharp") && 
-       (this.SelectedSoundQuality[1] !=  "Music_sound_sharp") && 
-       (this.SelectedSoundQuality[2] !=  "Music_sound_sharp")){
+    if((this.SelectedSoundQuality[0] !=  "Music sound sharp") && 
+       (this.SelectedSoundQuality[1] !=  "Music sound sharp") && 
+       (this.SelectedSoundQuality[2] !=  "Music sound sharp")){
     this.ObjFineTuning.MusicSound_Sharp_Solution = undefined;
     this.ObjFineTuning.MusicSound_Sharp_FinalOutcome = undefined; 
     }
 
-    if((this.SelectedSoundQuality[0] !=  "High_frequency_sounds_are_dull") && 
-       (this.SelectedSoundQuality[1] !=  "High_frequency_sounds_are_dull") && 
-       (this.SelectedSoundQuality[2] !=  "High_frequency_sounds_are_dull")){
+    if((this.SelectedSoundQuality[0] !=  "High frequency sounds are dull") && 
+       (this.SelectedSoundQuality[1] !=  "High frequency sounds are dull") && 
+       (this.SelectedSoundQuality[2] !=  "High frequency sounds are dull")){
     this.ObjFineTuning.HighFrequencySoundsAre_Dull_Solution = undefined;
     this.ObjFineTuning.HighFrequencySoundsAre_Dull_FinalOutcome = undefined; 
     }
@@ -2985,57 +2985,57 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
   undefined3(){
 
-  if((this.SelectedSpeechIntelligibility[0] !=  "Speech_is_unclear_in_moderate_background_noise") && 
-     (this.SelectedSpeechIntelligibility[1] !=  "Speech_is_unclear_in_moderate_background_noise") && 
-     (this.SelectedSpeechIntelligibility[2] !=  "Speech_is_unclear_in_moderate_background_noise")){
+  if((this.SelectedSpeechIntelligibility[0] !=  "Speech is unclear in moderate background noise") && 
+     (this.SelectedSpeechIntelligibility[1] !=  "Speech is unclear in moderate background noise") && 
+     (this.SelectedSpeechIntelligibility[2] !=  "Speech is unclear in moderate background noise")){
     this.ObjFineTuning.SpeechIs_Moderate_Solution = undefined;
     this.ObjFineTuning.SpeechIs_Moderate_FinalOutcome = undefined; 
   }
-  if((this.SelectedSpeechIntelligibility[0] != "Understanding_speech_when_in_a_car,_train,_airplane,_etc._is_difficult") && 
-     (this.SelectedSpeechIntelligibility[1] != "Understanding_speech_when_in_a_car,_train,_airplane,_etc._is_difficult") && 
-     (this.SelectedSpeechIntelligibility[2] != "Understanding_speech_when_in_a_car,_train,_airplane,_etc._is_difficult")){
+  if((this.SelectedSpeechIntelligibility[0] != "Understanding speech when in a car, train, airplane, etc. is difficult") && 
+     (this.SelectedSpeechIntelligibility[1] != "Understanding speech when in a car, train, airplane, etc. is difficult") && 
+     (this.SelectedSpeechIntelligibility[2] != "Understanding speech when in a car, train, airplane, etc. is difficult")){
     this.ObjFineTuning.Understanding_Speech_Solution = undefined;
     this.ObjFineTuning.Understanding_Speech_FinalOutcome = undefined; 
   }
-  if((this.SelectedSpeechIntelligibility[0] != "Distance_voices_sounds_seem_louder_than_voices_sounds_nearby") && 
-     (this.SelectedSpeechIntelligibility[1] != "Distance_voices_sounds_seem_louder_than_voices_sounds_nearby") && 
-     (this.SelectedSpeechIntelligibility[2] != "Distance_voices_sounds_seem_louder_than_voices_sounds_nearby")){
+  if((this.SelectedSpeechIntelligibility[0] != "Distance voices/sounds seem louder than voices/sounds nearby") && 
+     (this.SelectedSpeechIntelligibility[1] != "Distance voices/sounds seem louder than voices/sounds nearby") && 
+     (this.SelectedSpeechIntelligibility[2] != "Distance voices/sounds seem louder than voices/sounds nearby")){
     this.ObjFineTuning.Distance_Voice_Solution = undefined;
     this.ObjFineTuning.Distance_Voice_FinalOutcome = undefined; 
   }
-  if((this.SelectedSpeechIntelligibility[0] != "Understanding_a_speaker_who_is_far_away_is_difficult") && 
-     (this.SelectedSpeechIntelligibility[1] != "Understanding_a_speaker_who_is_far_away_is_difficult") && 
-     (this.SelectedSpeechIntelligibility[2] != "Understanding_a_speaker_who_is_far_away_is_difficult")){
+  if((this.SelectedSpeechIntelligibility[0] != "Understanding a speaker who is far away is difficult") && 
+     (this.SelectedSpeechIntelligibility[1] != "Understanding a speaker who is far away is difficult") && 
+     (this.SelectedSpeechIntelligibility[2] != "Understanding a speaker who is far away is difficult")){
     this.ObjFineTuning.Understandings_Speaker_Solution = undefined;
     this.ObjFineTuning.Understandings_Speaker_FinalOutcome = undefined; 
   }
-  if((this.SelectedSpeechIntelligibility[0] != "Hear_distance_speech_better_than_close_speech") && 
-     (this.SelectedSpeechIntelligibility[1] != "Hear_distance_speech_better_than_close_speech") && 
-     (this.SelectedSpeechIntelligibility[2] != "Hear_distance_speech_better_than_close_speech")){
+  if((this.SelectedSpeechIntelligibility[0] != "Hear distance speech better than close speech") && 
+     (this.SelectedSpeechIntelligibility[1] != "Hear distance speech better than close speech") && 
+     (this.SelectedSpeechIntelligibility[2] != "Hear distance speech better than close speech")){
     this.ObjFineTuning.HearDistance_Speech_Solution = undefined;
     this.ObjFineTuning.HearDistance_Speech_FinalOutcome = undefined; 
   }
-  if((this.SelectedSpeechIntelligibility[0] !=  "Sound_localization_is_difficult") && 
-     (this.SelectedSpeechIntelligibility[1] !=  "Sound_localization_is_difficult") && 
-     (this.SelectedSpeechIntelligibility[2] !=  "Sound_localization_is_difficult")){
+  if((this.SelectedSpeechIntelligibility[0] !=  "Sound localization is difficult") && 
+     (this.SelectedSpeechIntelligibility[1] !=  "Sound localization is difficult") && 
+     (this.SelectedSpeechIntelligibility[2] !=  "Sound localization is difficult")){
     this.ObjFineTuning.Sound_Localization_Solution = undefined;
     this.ObjFineTuning.Sound_Localization_FinalOutcome = undefined; 
   }
-  if((this.SelectedSpeechIntelligibility[0] !=  "Poor_speech_perception_in_noise_(raised_speech_seems_muffled_or_dampened)") && 
-     (this.SelectedSpeechIntelligibility[1] !=  "Poor_speech_perception_in_noise_(raised_speech_seems_muffled_or_dampened)") && 
-     (this.SelectedSpeechIntelligibility[2] !=  "Poor_speech_perception_in_noise_(raised_speech_seems_muffled_or_dampened)")){
+  if((this.SelectedSpeechIntelligibility[0] !=  "Poor speech perception in noise (raised speech seems muffled or dampened)") && 
+     (this.SelectedSpeechIntelligibility[1] !=  "Poor speech perception in noise (raised speech seems muffled or dampened)") && 
+     (this.SelectedSpeechIntelligibility[2] !=  "Poor speech perception in noise (raised speech seems muffled or dampened)")){
     this.ObjFineTuning.PoorSpeech_Perception_Solution = undefined;
     this.ObjFineTuning.PoorSpeech_Perception_FinalOutcome = undefined; 
   }
-  if((this.SelectedSpeechIntelligibility[0] !=  "Sound_is_turned_down_too_much_in_noisy_environments") && 
-     (this.SelectedSpeechIntelligibility[1] !=  "Sound_is_turned_down_too_much_in_noisy_environments") && 
-     (this.SelectedSpeechIntelligibility[2] !=  "Sound_is_turned_down_too_much_in_noisy_environments")){
+  if((this.SelectedSpeechIntelligibility[0] !=  "Sound is turned down too much in noisy environments") && 
+     (this.SelectedSpeechIntelligibility[1] !=  "Sound is turned down too much in noisy environments") && 
+     (this.SelectedSpeechIntelligibility[2] !=  "Sound is turned down too much in noisy environments")){
     this.ObjFineTuning.SoundTurned_Down_Solution = undefined;
     this.ObjFineTuning.SoundTurned_Down_FinalOutcome = undefined; 
   }
-  if((this.SelectedSpeechIntelligibility[0] !=  "Sound_is_distorted_or_very_uncomfortable_in_noisy_environments") && 
-     (this.SelectedSpeechIntelligibility[1] !=  "Sound_is_distorted_or_very_uncomfortable_in_noisy_environments") && 
-     (this.SelectedSpeechIntelligibility[2] !=  "Sound_is_distorted_or_very_uncomfortable_in_noisy_environments")){
+  if((this.SelectedSpeechIntelligibility[0] !=  "Sound is distorted or very uncomfortable in noisy environments") && 
+     (this.SelectedSpeechIntelligibility[1] !=  "Sound is distorted or very uncomfortable in noisy environments") && 
+     (this.SelectedSpeechIntelligibility[2] !=  "Sound is distorted or very uncomfortable in noisy environments")){
     this.ObjFineTuning. Sound_Distorted_Solution = undefined;
     this.ObjFineTuning.Sound_Distorted_FinalOutcome = undefined; 
   }
@@ -3044,21 +3044,21 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
   undefined4(){
 
-    if((this.SelectedFeedback[0] !=  "Hearing_aid_whistles_occasionally,_e.g._when_hugging_a_person,_putting_on_a_hat_or_while_chewing") && 
-       (this.SelectedFeedback[1] !=  "Hearing_aid_whistles_occasionally,_e.g._when_hugging_a_person,_putting_on_a_hat_or_while_chewing") && 
-       (this.SelectedFeedback[2] !=  "Hearing_aid_whistles_occasionally,_e.g._when_hugging_a_person,_putting_on_a_hat_or_while_chewing")){
+    if((this.SelectedFeedback[0] !=  "Hearing aid whistles occasionally, e.g. when hugging a person, putting on a hat or while chewing") && 
+       (this.SelectedFeedback[1] !=  "Hearing aid whistles occasionally, e.g. when hugging a person, putting on a hat or while chewing") && 
+       (this.SelectedFeedback[2] !=  "Hearing aid whistles occasionally, e.g. when hugging a person, putting on a hat or while chewing")){
     this.ObjFineTuning.Hearing_Occasionally_Solution = undefined;
     this.ObjFineTuning.Hearing_Occasionally_FinalOutcome = undefined; 
     }
-    if((this.SelectedFeedback[0] != "Feedback_occurs_with_the_use_of_the_telephone_and_or_other_dynamic_situations") && 
-       (this.SelectedFeedback[1] != "Feedback_occurs_with_the_use_of_the_telephone_and_or_other_dynamic_situations") && 
-       (this.SelectedFeedback[2] != "Feedback_occurs_with_the_use_of_the_telephone_and_or_other_dynamic_situations")){
+    if((this.SelectedFeedback[0] != "Feedback occurs with the use of the telephone and/or other dynamic situations") && 
+       (this.SelectedFeedback[1] != "Feedback occurs with the use of the telephone and/or other dynamic situations") && 
+       (this.SelectedFeedback[2] != "Feedback occurs with the use of the telephone and/or other dynamic situations")){
       this.ObjFineTuning.Feedback_Occurs_Solution = undefined;
       this.ObjFineTuning.Feedback_Occurs_FinalOutcome = undefined; 
     }
-    if((this.SelectedFeedback[0] != "Hearing_aid_whistles_unprovoked") && 
-       (this.SelectedFeedback[1] != "Hearing_aid_whistles_unprovoked") && 
-       (this.SelectedFeedback[2] != "Hearing_aid_whistles_unprovoked")){
+    if((this.SelectedFeedback[0] != "Hearing aid whistles unprovoked") && 
+       (this.SelectedFeedback[1] != "Hearing aid whistles unprovoked") && 
+       (this.SelectedFeedback[2] != "Hearing aid whistles unprovoked")){
       this.ObjFineTuning.Hearing_Whistles_Solution = undefined;
       this.ObjFineTuning.Hearing_Whistles_FinalOutcome = undefined; 
     }
@@ -3067,78 +3067,78 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
   undefined5(){
 
-    if((this.SelectedTinnitus[0] !=  "ZEN_tone_TSG_synchronization_white_noise_is_too_soft") && 
-       (this.SelectedTinnitus[1] !=  "ZEN_tone_TSG_synchronization_white_noise_is_too_soft") && 
-       (this.SelectedTinnitus[2] !=  "ZEN_tone_TSG_synchronization_white_noise_is_too_soft")){
+    if((this.SelectedTinnitus[0] !=  "ZEN tone/TSG synchronization white noise is too soft") && 
+       (this.SelectedTinnitus[1] !=  "ZEN tone/TSG synchronization white noise is too soft") && 
+       (this.SelectedTinnitus[2] !=  "ZEN tone/TSG synchronization white noise is too soft")){
       this.ObjFineTuning.ZENTone_Synchronization_Solution = undefined;
       this.ObjFineTuning.ZENTone_Synchronization_FinalOutcome = undefined; 
     }
-    if((this.SelectedTinnitus[0] !=  "ZEN_tone_TSG_synchronization_white_noise_is_too_loud") && 
-       (this.SelectedTinnitus[1] !=  "ZEN_tone_TSG_synchronization_white_noise_is_too_loud") && 
-       (this.SelectedTinnitus[2] !=  "ZEN_tone_TSG_synchronization_white_noise_is_too_loud")){
+    if((this.SelectedTinnitus[0] !=  "ZEN tone/TSG synchronization white noise is too loud") && 
+       (this.SelectedTinnitus[1] !=  "ZEN tone/TSG synchronization white noise is too loud") && 
+       (this.SelectedTinnitus[2] !=  "ZEN tone/TSG synchronization white noise is too loud")){
       this.ObjFineTuning.ZENToneSynchronizationK_Loud_Solution = undefined;
       this.ObjFineTuning.ZENToneSynchronizationK_Loud_FinalOutcome = undefined; 
     }
-    if((this.SelectedTinnitus[0] !=  "Broadband_stimulation_is_not_effective") && 
-       (this.SelectedTinnitus[1] !=  "Broadband_stimulation_is_not_effective") && 
-       (this.SelectedTinnitus[2] !=  "Broadband_stimulation_is_not_effective")){
+    if((this.SelectedTinnitus[0] !=  "Broadband stimulation is not effective") && 
+       (this.SelectedTinnitus[1] !=  "Broadband stimulation is not effective") && 
+       (this.SelectedTinnitus[2] !=  "Broadband stimulation is not effective")){
       this.ObjFineTuning.Broadband_Stimulation_Solution = undefined;
       this.ObjFineTuning.Broadband_Stimulation_FinalOutcome = undefined; 
     }
-    if((this.SelectedTinnitus[0] !=  "ZEN_tone_White_noise_is_not_effectively_interacting_with_the_tinnitus") && 
-       (this.SelectedTinnitus[1] !=  "ZEN_tone_White_noise_is_not_effectively_interacting_with_the_tinnitus") && 
-       (this.SelectedTinnitus[2] !=  "ZEN_tone_White_noise_is_not_effectively_interacting_with_the_tinnitus")){
+    if((this.SelectedTinnitus[0] !=  "ZEN tone/White noise is not effectively interacting with the tinnitus") && 
+       (this.SelectedTinnitus[1] !=  "ZEN tone/White noise is not effectively interacting with the tinnitus") && 
+       (this.SelectedTinnitus[2] !=  "ZEN tone/White noise is not effectively interacting with the tinnitus")){
       this.ObjFineTuning.ZENToneWhite_Noise_Solution = undefined;
       this.ObjFineTuning.ZENToneWhite_Noise_FinalOutcome = undefined; 
     }
-    if((this.SelectedTinnitus[0] !=  "ZEN_tone_Continuous_stimulation_is_bothersome") && 
-       (this.SelectedTinnitus[1] !=  "ZEN_tone_Continuous_stimulation_is_bothersome") && 
-       (this.SelectedTinnitus[2] !=  "ZEN_tone_Continuous_stimulation_is_bothersome")){
+    if((this.SelectedTinnitus[0] !=  "ZEN tone/Continuous stimulation is bothersome") && 
+       (this.SelectedTinnitus[1] !=  "ZEN tone/Continuous stimulation is bothersome") && 
+       (this.SelectedTinnitus[2] !=  "ZEN tone/Continuous stimulation is bothersome")){
       this.ObjFineTuning.ZENToneContinuous_Stimulation_Solution = undefined;
       this.ObjFineTuning.ZENToneContinuous_Stimulation_FinalOutcome = undefined; 
     }
-    if((this.SelectedTinnitus[0] !=  "Other_stimuli_besides_ZEN_tone_white_noise_are_helpful") && 
-       (this.SelectedTinnitus[1] !=  "Other_stimuli_besides_ZEN_tone_white_noise_are_helpful") && 
-       (this.SelectedTinnitus[2] !=  "Other_stimuli_besides_ZEN_tone_white_noise_are_helpful")){
+    if((this.SelectedTinnitus[0] !=  "Amplitude modulation is bothersome") && 
+       (this.SelectedTinnitus[1] !=  "Amplitude modulation is bothersome") && 
+       (this.SelectedTinnitus[2] !=  "Amplitude modulation is bothersome")){
+      this.ObjFineTuning.TSGWhite_Noise_Solution = undefined;
+      this.ObjFineTuning.TSGWhite_Noise_FinalOutcome = undefined; 
+    }
+    if((this.SelectedTinnitus[0] !=  "Other stimuli besides ZEN tone/white noise are helpful") && 
+       (this.SelectedTinnitus[1] !=  "Other stimuli besides ZEN tone/white noise are helpful") && 
+       (this.SelectedTinnitus[2] !=  "Other stimuli besides ZEN tone/white noise are helpful")){
       this.ObjFineTuning.Amplitude_Modulation_Solution = undefined;
       this.ObjFineTuning.Amplitude_Modulation_FinalOutcome = undefined; 
     }
-    if((this.SelectedTinnitus[0] !=  "Tinnitus_seems_worse") && 
-       (this.SelectedTinnitus[1] !=  "Tinnitus_seems_worse") && 
-       (this.SelectedTinnitus[2] !=  "Tinnitus_seems_worse")){
+    if((this.SelectedTinnitus[0] !=  "Tinnitus seems worse") && 
+       (this.SelectedTinnitus[1] !=  "Tinnitus seems worse") && 
+       (this.SelectedTinnitus[2] !=  "Tinnitus seems worse")){
       this.ObjFineTuning.Stimuli_Besides_Solution = undefined;
       this.ObjFineTuning.Stimuli_Besides_FinalOutcome = undefined; 
     }
-    if((this.SelectedTinnitus[0] !=  "The_patient_is_requesting_an_automatic_volume_control_adjustment_for_TSG") && 
-       (this.SelectedTinnitus[1] !=  "The_patient_is_requesting_an_automatic_volume_control_adjustment_for_TSG") && 
-       (this.SelectedTinnitus[2] !=  "The_patient_is_requesting_an_automatic_volume_control_adjustment_for_TSG")){
+    if((this.SelectedTinnitus[0] !=  "The patient is requesting an automatic volume control adjustment for TSG") && 
+       (this.SelectedTinnitus[1] !=  "The patient is requesting an automatic volume control adjustment for TSG") && 
+       (this.SelectedTinnitus[2] !=  "The patient is requesting an automatic volume control adjustment for TSG")){
       this.ObjFineTuning.TinnitusSeems_Worse_Solution = undefined;
       this.ObjFineTuning.TinnitusSeems_Worse_FinalOutcome = undefined; 
     }
-    if((this.SelectedTinnitus[0] !=  "ZEN_tone_TSG_white_noise_interferes_with_speech") && 
-       (this.SelectedTinnitus[1] !=  "ZEN_tone_TSG_white_noise_interferes_with_speech") && 
-       (this.SelectedTinnitus[2] !=  "ZEN_tone_TSG_white_noise_interferes_with_speech")){
+    if((this.SelectedTinnitus[0] !=  "ZEN tone/TSG white noise interferes with speech") && 
+       (this.SelectedTinnitus[1] !=  "ZEN tone/TSG white noise interferes with speech") && 
+       (this.SelectedTinnitus[2] !=  "ZEN tone/TSG white noise interferes with speech")){
       this.ObjFineTuning.Patient_Requesting_Solution = undefined;
       this.ObjFineTuning.Patient_Requesting_FinalOutcome = undefined; 
-    }
-    if((this.SelectedTinnitus[0] !=  "Amplitude_modulation_is_bothersome") && 
-       (this.SelectedTinnitus[1] !=  "Amplitude_modulation_is_bothersome") && 
-       (this.SelectedTinnitus[2] !=  "Amplitude_modulation_is_bothersome")){
-      this.ObjFineTuning.TSGWhite_Noise_Solution = undefined;
-      this.ObjFineTuning.TSGWhite_Noise_FinalOutcome = undefined; 
     }
 
   }
 
   undefined6(){
 
-    if((this.SelectedWirelessAccessories[0] !=  "Micro_Mini_Multi_mic_is_too_noisy") && 
-       (this.SelectedWirelessAccessories[1] !=  "Micro_Mini_Multi_mic_is_too_noisy")){
+    if((this.SelectedWirelessAccessories[0] !=  "Micro/Mini/Multi mic is too noisy") && 
+       (this.SelectedWirelessAccessories[1] !=  "Micro/Mini/Multi mic is too noisy")){
     this.ObjFineTuning.MicroMiniMulti_Noise_Solution = undefined;
     this.ObjFineTuning.MicroMiniMulti_Noise_FinalOutcome = undefined; 
     }
-    if((this.SelectedWirelessAccessories[0] != "Phone_clip_is_not_functional_or_loud_enough") && 
-       (this.SelectedWirelessAccessories[1] != "Phone_clip_is_not_functional_or_loud_enough")){
+    if((this.SelectedWirelessAccessories[0] != "Phone clip is not functional or loud enough") && 
+       (this.SelectedWirelessAccessories[1] != "Phone clip is not functional or loud enough")){
       this.ObjFineTuning.PhoneClip_Solution = undefined;
       this.ObjFineTuning.PhoneClip_FinalOutcome = undefined; 
     }
@@ -3147,14 +3147,14 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
   undefined7(){
 
-      if  ((this.SelectedSynchronizedFunctionality[0] !=  "The_patient_would_like_to_separate_functionality_for_each_ear") && 
-          (this.SelectedSynchronizedFunctionality[1] !=  "The_patient_would_like_to_separate_functionality_for_each_ear") ){
+      if  ((this.SelectedSynchronizedFunctionality[0] !=  "The patient would like to separate functionality for each ear") && 
+          (this.SelectedSynchronizedFunctionality[1] !=  "The patient would like to separate functionality for each ear") ){
         this.ObjFineTuning.functionality_EachEar_Solution = undefined;
         this.ObjFineTuning.functionality_EachEar_FinalOutcome = undefined; 
       }
 
-      if  ((this.SelectedSynchronizedFunctionality[0] !=  "Synched_push_bottom_volume_control_is_not_functioning") && 
-          (this.SelectedSynchronizedFunctionality[1] !=  "Synched_push_bottom_volume_control_is_not_functioning") ){
+      if  ((this.SelectedSynchronizedFunctionality[0] !=  "Synched push bottom/volume control is not functioning") && 
+          (this.SelectedSynchronizedFunctionality[1] !=  "Synched push bottom/volume control is not functioning") ){
       this.ObjFineTuning.SynchedPush_Bottom_Solution = undefined;
       this.ObjFineTuning.SynchedPush_Bottom_FinalOutcome = undefined; 
       }
@@ -3163,23 +3163,23 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
   undefined8(){
 
-    if  ((this.SelectedPhysicalFit[0] !=  "The_earpiece_slips_out_of_the_ear") && 
-         (this.SelectedPhysicalFit[1] !=  "The_earpiece_slips_out_of_the_ear") && 
-         (this.SelectedPhysicalFit[2] !=  "The_earpiece_slips_out_of_the_ear")
+    if  ((this.SelectedPhysicalFit[0] !=  "The earpiece slips out of the ear") && 
+         (this.SelectedPhysicalFit[1] !=  "The earpiece slips out of the ear") && 
+         (this.SelectedPhysicalFit[2] !=  "The earpiece slips out of the ear")
           ){
       this.ObjFineTuning.Slips_OutEar_Solution = undefined;
       this.ObjFineTuning.Slips_OutEar_FinalOutcome = undefined; 
     }
-    if  ((this.SelectedPhysicalFit[0] !=  "The_ear_piece_causes_irritation_or_pain_in_the_ear") && 
-          (this.SelectedPhysicalFit[1] !=  "The_ear_piece_causes_irritation_or_pain_in_the_ear") && 
-          (this.SelectedPhysicalFit[2] !=  "The_ear_piece_causes_irritation_or_pain_in_the_ear")
+    if  ((this.SelectedPhysicalFit[0] !=  "The ear piece causes irritation or pain in the ear") && 
+          (this.SelectedPhysicalFit[1] !=  "The ear piece causes irritation or pain in the ear") && 
+          (this.SelectedPhysicalFit[2] !=  "The ear piece causes irritation or pain in the ear")
           ){
         this.ObjFineTuning.PainInEar_Solution = undefined;
         this.ObjFineTuning.PainInEar_FinalOutcome = undefined; 
     }
-    if  ((this.SelectedPhysicalFit[0] !=  "Patient_has_difficulties_placing_the_hearing_aid_or_earpiece_in_the_ear") && 
-          (this.SelectedPhysicalFit[1] !=  "Patient_has_difficulties_placing_the_hearing_aid_or_earpiece_in_the_ear") && 
-          (this.SelectedPhysicalFit[2] !=  "Patient_has_difficulties_placing_the_hearing_aid_or_earpiece_in_the_ear")
+    if  ((this.SelectedPhysicalFit[0] !=  "Patient has difficulties placing the hearing aid or earpiece in the ear") && 
+          (this.SelectedPhysicalFit[1] !=  "Patient has difficulties placing the hearing aid or earpiece in the ear") && 
+          (this.SelectedPhysicalFit[2] !=  "Patient has difficulties placing the hearing aid or earpiece in the ear")
           ){
         this.ObjFineTuning.EarpieceIn_Ear_Solution = undefined;
         this.ObjFineTuning.EarpieceIn_Ear_FinalOutcome = undefined; 
@@ -3189,33 +3189,33 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
   undefined9(){
 
-    if((this.SelectedHearingAid[0] !=  "Patienthas_difficulties_using_the_program_button") && 
-       (this.SelectedHearingAid[1] !=  "Patienthas_difficulties_using_the_program_button") && 
-       (this.SelectedHearingAid[2] !=  "Patienthas_difficulties_using_the_program_button")){
+    if((this.SelectedHearingAid[0] !=  "Patient has difficulties using the program button") && 
+       (this.SelectedHearingAid[1] !=  "Patient has difficulties using the program button") && 
+       (this.SelectedHearingAid[2] !=  "Patient has difficulties using the program button")){
     this.ObjFineTuning.UsingProgram_Button_Solution = undefined;
     this.ObjFineTuning.UsingProgram_Button_FinalOutcome = undefined; 
     }
-    if((this.SelectedHearingAid[0] != "Patient_has_difficulties_using_the_preference_control") && 
-       (this.SelectedHearingAid[1] != "Patient_has_difficulties_using_the_preference_control") && 
-       (this.SelectedHearingAid[2] != "Patient_has_difficulties_using_the_preference_control")){
+    if((this.SelectedHearingAid[0] != "Patient has difficulties using the preference control") && 
+       (this.SelectedHearingAid[1] != "Patient has difficulties using the preference control") && 
+       (this.SelectedHearingAid[2] != "Patient has difficulties using the preference control")){
       this.ObjFineTuning.Preference_Control_Solution = undefined;
       this.ObjFineTuning.Preference_Control_FinalOutcome = undefined; 
     }
-    if((this.SelectedHearingAid[0] != "Patient_has_difficulties_turning_the_hearing_aid_on_off") && 
-       (this.SelectedHearingAid[1] != "Patient_has_difficulties_turning_the_hearing_aid_on_off") && 
-       (this.SelectedHearingAid[2] != "Patient_has_difficulties_turning_the_hearing_aid_on_off")){
+    if((this.SelectedHearingAid[0] != "Patient has difficulties turning the hearing aid on and off") && 
+       (this.SelectedHearingAid[1] != "Patient has difficulties turning the hearing aid on and off") && 
+       (this.SelectedHearingAid[2] != "Patient has difficulties turning the hearing aid on and off")){
       this.ObjFineTuning.Hearing_OnOff_Solution = undefined;
       this.ObjFineTuning.Hearing_OnOff_FinalOutcome = undefined; 
     }
-    if((this.SelectedHearingAid[0] != "Client_has_difficulties_changing_batteries") && 
-       (this.SelectedHearingAid[1] != "Client_has_difficulties_changing_batteries") && 
-       (this.SelectedHearingAid[2] != "Client_has_difficulties_changing_batteries")){
+    if((this.SelectedHearingAid[0] != "Client has difficulties changing batteries") && 
+       (this.SelectedHearingAid[1] != "Client has difficulties changing batteries") && 
+       (this.SelectedHearingAid[2] != "Client has difficulties changing batteries")){
       this.ObjFineTuning.Changing_Batteries_Solution = undefined;
       this.ObjFineTuning.Changing_Batteries_FinalOutcome = undefined; 
     }
-    if((this.SelectedHearingAid[0] != "Client_has_difficulties_changing_wax_protection_system") && 
-       (this.SelectedHearingAid[1] != "Client_has_difficulties_changing_wax_protection_system") && 
-       (this.SelectedHearingAid[2] != "Client_has_difficulties_changing_wax_protection_system")){
+    if((this.SelectedHearingAid[0] != "Client has difficulties changing wax protection system") && 
+       (this.SelectedHearingAid[1] != "Client has difficulties changing wax protection system") && 
+       (this.SelectedHearingAid[2] != "Client has difficulties changing wax protection system")){
       this.ObjFineTuning.Protection_System_Solution = undefined;
       this.ObjFineTuning.Protection_System_FinalOutcome = undefined; 
     }
@@ -3224,7 +3224,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
 
   undefined10(){
 
-    if((this.SelectedOthers[0] != "No_sound_from_the_hearing_aid")){
+    if((this.SelectedOthers[0] != "No sound from the hearing aid")){
         this.ObjFineTuning.NoSound_Solution = undefined;
         this.ObjFineTuning.NoSound_FinalOutcome = undefined; 
       }
