@@ -146,6 +146,36 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">S.E No. & Date <sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="senondate" #senondate="ngModel" [(ngModel)]="ObjRawMatRev.SE_No_Date" placeholder="S.E No. & Date" [ngClass]="{'clearance':RawMatRevFormSubmitted && senondate?.errors?.required}" required>
+                                        <!-- <div class="label-t">{{SENo+" &"}} {{ObjGRN1.SE_No_Date | date : 'dd/MMM/yyyy'}} </div> -->
+                                        <!-- <div class="label-t">{{SENo}} {{getDateFormat(SE_No_Date)}} </div> -->
+                                        <!-- <textarea class="form-control" name="senondate" #senondate="ngModel" [(ngModel)]="ObjGRN.SE_No_Date" [ngClass]="{'clearance':GRNFormSubmitted && senondate?.errors?.required}" required></textarea> -->
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">INV No. & Date <sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="invnodate" #invnodate="ngModel" [(ngModel)]="ObjRawMatRev.Inv_No_Date" placeholder="INV No. & Date" [ngClass]="{'clearance':RawMatRevFormSubmitted && invnodate?.errors?.required}" required>
+                                        <!-- <div class="label-t">{{SENo+" &"}} {{ObjGRN1.SE_No_Date | date : 'dd/MMM/yyyy'}} </div> -->
+                                        <!-- <div class="label-t">{{INVNo}} {{getDateFormat(INV_No_Date)}} </div> -->
+                                        <!-- <textarea class="form-control" name="senondate" #senondate="ngModel" [(ngModel)]="ObjGRN.SE_No_Date" [ngClass]="{'clearance':GRNFormSubmitted && senondate?.errors?.required}" required></textarea> -->
+                                    </div>
+                                    
+                                   
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Mode of Transport </label>
+                                        <input class="form-control" name="mot" #mot="ngModel" [(ngModel)]="ObjRawMatRev.Mode_Of_transport" placeholder="Mode of Transport" [ngClass]="{'clearance':RawMatRevFormSubmitted && mot?.errors?.required}" >
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">L.R No. & Date </label>
+                                        <input class="form-control" name="lrnondate" #lrnondate="ngModel" [(ngModel)]="ObjRawMatRev.LR_No_Date" placeholder="L.R No. & Date" [ngClass]="{'clearance':RawMatRevFormSubmitted && lrnondate?.errors?.required}" >
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Vehicle No. </label>
+                                        <input class="form-control" name="vehicleno" #vehicleno="ngModel" [(ngModel)]="ObjRawMatRev.Vehicle_No" placeholder="Vehicle No." [ngClass]="{'clearance':RawMatRevFormSubmitted && vehicleno?.errors?.required}" >
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Material Name<sup class="text-danger">*</sup></label>
                                         <p-dropdown [options]="AllMaterialName" 
@@ -273,7 +303,20 @@
                                         <tbody>
                                             <tr *ngFor="let col of AddRawMatRevList; let i = index">
                                                 <td>{{i+1}}</td>
-                                                <td>{{col.Product_Name}}</td>
+                                                <td>{{col.Product_Name}}
+                                                    <table class="table table-bordered">
+                                                        <tbody>
+                                                        <tr *ngFor='let data of col.Parameter_Details'> <!-- *ngFor='let data of paramlist' -->
+                                                            <td nowrap>{{data.Parameter_Name}}</td>
+                                                            <!-- <td nowrap>{{data.Min_Value}}-{{data.Max_Value}}</td> -->
+                                                            <td nowrap>{{data.Exact_Value}}</td>
+                                                            <td nowrap>{{data.UOM ? data.UOM : '-'}}</td>
+                                                            <!-- <td nowrap>+/-{{data.Tolerance_Level}}</td> -->
+                                            
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
                                                 <td>{{col.UOM}}</td>
                                                 <td>{{col.Receive_Qty}}</td>
                                                 <td>{{col.Batch_Lot_No}}</td>
@@ -434,3 +477,77 @@
         </div>
     </div>
 </div>
+
+<!-- Parameter Details Popup -->
+<p-dialog
+[header]="'Parameter Details'"
+[appendTo]="'body'"
+[visible]="ParamDetalisPopup"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '58%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+    <p-table [value]="ParameterList" [globalFilterFields]='["Parameter_Name","Min_Value","Max_Value","UOM","Tolerance_Level","Exact_Value"]' [rowHover]="true" [autoLayout]="true" #dt4>
+        <ng-template pTemplate="caption">
+            <div class="row">
+                <div class="col-sm-3 pull-right" style="text-align: right">
+                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt4.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                </div>
+            </div> <br>
+
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="text-align:center" colspan="4">As Per PO</th>
+                <th style="text-align:center" colspan="2">As Per INV</th>
+            </tr>
+            <tr>
+                <th>Parameter Name</th>
+                <th>Min Value</th>
+                <th>Max Value</th>
+                <th>Tolerance Level</th>
+                <th>Value</th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+            <tr>
+                <td>{{col.Parameter_Name}}</td>
+                <td>{{col.Min_Value}}</td>
+                <td>{{col.Max_Value}}</td>
+                <!-- <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Min_Value' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td> -->
+                <!-- <td><input type="text" [name]="col.Product_ID1" [(ngModel)]='col.Max_Value' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td> -->
+                <td>{{col.Tolerance_Level}}</td>
+                <td><input type="text" [name]="col.Product_ID3" [(ngModel)]='col.Exact_Value' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                <td>{{col.UOM ? col.UOM : '-'}}</td>
+                <!-- <td><input type="text" [name]="col.Product_ID2" [(ngModel)]='col.Tolerance_Level' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td> -->
+
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="SaveParamDetalis()"
+    class="btn btn-success"
+    >
+    Done
+    </button>
+    <button
+    type="button"
+    (click)="ParamDetalisPopup = false"
+    class="btn btn-default"
+    >
+    CANCEL
+    </button>
+
+</p-footer>
+</p-dialog>

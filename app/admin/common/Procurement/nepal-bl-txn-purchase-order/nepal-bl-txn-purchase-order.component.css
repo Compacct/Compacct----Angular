@@ -59,5 +59,13 @@ body .ui-dropdown.ui-dropdown-clearable .ui-dropdown-label {
 #H123:nth-of-type(even){
  background-color:#EBEDEF;
 }
+.text-dangerrr{
+    color: rgb(56, 141, 197);
+    cursor: pointer;
+    font-size: 18px;
+}
+.text-dangerrr :hover{
+    color: red;
+}
 
 

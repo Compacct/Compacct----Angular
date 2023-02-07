@@ -270,6 +270,7 @@
                                                 <th>Unit</th>
                                                 <th style="width: 13em;">Rate</th>
                                                 <th>Total</th>
+                                                <th style="text-align: center;" *ngIf="ProductList.length >1">Delete</th>
                                             </tr>
                                         </thead>
                                         <tbody *ngIf="ProductList.length">
@@ -294,7 +295,12 @@
                                                     placeholder="Type Rate"
                                                     (ngModelChange)="getTotalClc(i)">
                                                 </td>
-                                                <td>{{Alldata.Line_Total}}</td>                                    
+                                                <td>{{Alldata.Line_Total}}</td>
+                                                <td style="text-align: center ;" *ngIf="ProductList.length >1">
+                                                    <a (click)="DeleteRow(index)" class="text-dangerrr">
+                                                       <i class="fa fa-fw fa-trash"> </i>
+                                                    </a>
+                                                </td>
                                             </tr>
                                             <tr >
                                                 <td colspan="1"></td>
@@ -637,7 +643,7 @@
                         <p style="text-align: center;" *ngIf="col.Document_Status == 'PENDING' || col.Document_Status == 'PENDING AND CROSSED TARGET DATE'">-</p>
                     </td>
                     <td >
-                        <span [style.color]="getColor(col.Document_Status)" style="color: white;border-radius: 4px;" >{{col.Document_Status}}</span>
+                        <span [style.background-color]="getColor(col.Document_Status)" style="color: white;border-radius: 4px;" >{{col.Document_Status}}</span>
                     </td>
                 </tr>
             </ng-template>

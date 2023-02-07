@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient,HttpHeaders } from '@angular/common/http';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
@@ -6,7 +6,7 @@ import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { DateNepalConvertService } from "../../../shared/compacct.global/dateNepal.service"
-import { UnsubscriptionError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { createClient } from 'http';
 import { FileUpload } from "primeng/primeng";
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -159,12 +159,12 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.ObjPurchase.Address_Caption = undefined;
     this.ObjPurchase.Remarks = undefined;
     this.ObjPurchase.Heading = undefined;
+    this.ObjPurchase.Purchase_Request_No = undefined;
     this.ApproverOneS = undefined;
     this.ApproverTwoS = undefined;
     this.ApproverTwo = undefined;
     this.ApproverOne = undefined;
     this.ProductList = [];
-    this.Searchedlist = [];
     this.UpdatePono = {};
     this.DocDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
   }
@@ -172,8 +172,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.TodoForm = false;
     this.PendingTodo = undefined;
     this.StatusDetails = undefined;
-    this.RemarksDetails = undefined;
-    
+    this.RemarksDetails = undefined;  
   }
   getGodown() {
     this.BillingTolist = [];
@@ -364,7 +363,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         if (data.length) {
-          console.log("Searchedlist", data)
+          //console.log("Searchedlist", data)
           this.Searchedlist = data
           data.forEach((y: any) => {
             y.Doc_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(y.Doc_Date);
@@ -500,7 +499,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   //   },600);
 
   // }
-  UpdatePOP(){}
+  UpdatePOP() { }
   // UpdatePOP() {
   //   this.POPform = true
   //   if (this.StatusForPop) {
@@ -533,7 +532,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   //   }
     
   // }
-  PoDCoVault(DocNo: any){
+  PoDCoVault(DocNo: any) {
     this.ProductPDFFile = {};
     this.ValidationNoUpload = undefined;
     if (DocNo) {
@@ -558,7 +557,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       }, 300);
     }
   }
-  getCaption(){
+  getCaption() {
     this.CaptionList = []
     this.ObjPurchase.Address_Caption = undefined;
     this.ObjPurchase.Subledger_Address = undefined
@@ -581,7 +580,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     }
    
   }
-  getCompany(){
+  getCompany() {
     this.CompanyList = []
     const obj = {
       "SP_String": "sp_Bl_Txn_Purchase_Request",
@@ -598,7 +597,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       }
     });
   }
-  Alladdress(){
+  Alladdress() {
     this.ObjPurchase.Billing_Address = undefined;
     this.ObjPurchase.Shipping_Address = undefined
     if (this.ObjPurchase.Godown1) {
@@ -610,7 +609,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       this.ObjPurchase.Shipping_Address = SAddressTyp[0].Shipping_Address
     }
   }
-  getEmailId(col){
+  getEmailId(col) {
     this.toEmailList = []
     this.CCEmailList = []
     this.EmailCheck = false
@@ -643,14 +642,14 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     }
       
   }
-  ClickCheck(){
+  ClickCheck() {
     if (this.EmailCheck === false) {
       this.ToEmailSelect = undefined;
       this.CCEmailSelect = undefined;
       this.CompantEmailName = undefined;
     }
   }
-  getCompanyMail(){
+  getCompanyMail() {
     this.CompanyEmailList = []
     const obj = {
       "SP_String": "sp_Bl_Txn_Purchase_Request",
@@ -672,7 +671,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
 
         
   }
-  deleteEmailId(valid: any){
+  deleteEmailId(valid: any) {
     this.EmailId = undefined
     if (valid.Email_ID) {
       this.EmailId = valid.Email_ID
@@ -686,7 +685,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       });
     }
   }
-  onConfirm1(){
+  onConfirm1() {
     if (this.EmailId) {
       const obj = {
         "SP_String": "sp_Bl_Txn_Purchase_Request",
@@ -708,17 +707,17 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       })
     }
   }
-  ViewCompEmail(){
+  ViewCompEmail() {
     setTimeout(() => {
       this.ViewCompanyModal = true;
     }, 200);
   }
-  CompCreatPopup(){
+  CompCreatPopup() {
     this.NewEmailFormSubmitted = false;
     this.CompantEmailName = undefined;
     this.CreateEmailModal = true
   }
-  CreateEmailType(valid){
+  CreateEmailType(valid) {
     this.NewEmailFormSubmitted = true;
     if (valid) {
       const tempSave = {
@@ -747,7 +746,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     }
 
   }
-  ActivityPlan(PoPlan){
+  ActivityPlan(PoPlan) {
     this.PoCode = undefined;
     if (PoPlan.Doc_No) {
       this.PoCode = PoPlan.Doc_No;
@@ -758,7 +757,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       // this.getDocList(this.PoCode)
     }
   }
-  getPlanList(Docid){
+  getPlanList(Docid) {
     this.ToDoList = [];
     this.Doclist = []
     this.ActivityDetailsObj = {}
@@ -768,7 +767,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{ Doc_No: Docid }])
     }
     this.GlobalAPI.getData(obj).subscribe((res: any) => {
-     // console.log("ToDoList==", JSON.parse(res[0].topper))
+      // console.log("ToDoList==", JSON.parse(res[0].topper))
       let data = JSON.parse(res[0].topper)
       this.ToDoList = data[0].hasOwnProperty("bottom_To_Do_List") ? data[0].bottom_To_Do_List : []
       this.Doclist = data[0].hasOwnProperty("bottom_Document") ? data[0].bottom_Document : []
@@ -786,7 +785,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     });
      
   }
-  caldateTodo(){
+  caldateTodo() {
     if (this.ToDoList.length) {
       this.ToDoList.forEach((ele: any) => {
         let engdate = this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)
@@ -799,7 +798,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       
     }
   }
-  caldateDoc(){
+  caldateDoc() {
     if (this.Doclist.length) {
       this.Doclist.forEach((ele: any) => {
         let engdate = this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)
@@ -811,7 +810,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       
     }
   }
-  getDocList(DocId){
+  getDocList(DocId) {
     this.Doclist = []
     const obj = {
       "SP_String": "sp_PO_Activity_Plan",
@@ -819,7 +818,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{ Doc_No: DocId }])
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-     // console.log("Doclist==", data)
+      // console.log("Doclist==", data)
       if (data.length) {
         this.Doclist = data;
         this.Doclist.forEach((ele: any) => {
@@ -831,20 +830,20 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     });
      
   }
-  dateChToDo(i: any){
+  dateChToDo(i: any) {
     // 
     this.caldateTodo()
   }
-  dateChDocument(i: any){
+  dateChDocument(i: any) {
     // this.Doclist[i].Task_End_Date = this.Doclist[i].Expected_Days ? this.DateNepalConvertService.convertNewEngToNepaliDateObj(new Date(new Date().setDate(new Date(this.DateNepalConvertService.convertNepaliDateToEngDate(this.ASDate)).getDate() + Number(this.Doclist[i].Expected_Days)))) : null;
     this.caldateDoc()
   }
-  changeDate(e: any){
+  changeDate(e: any) {
     this.ASDate = e
     this.caldateTodo()
     this.caldateDoc()
   }
-  saveActivityPlan(){
+  saveActivityPlan() {
     this.ActivityPlanModal = false
     this.ToDoList.forEach((ele: any) => {
       let endDate = ele.Task_End_Date ? this.DateNepalConvertService.convertNepaliDateToEngDate(ele.Task_End_Date) : null
@@ -894,7 +893,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       }
     })
   }
-  getColor(Document_Status){
+  getColor(Document_Status) {
     //console.log("Document_Status",Document_Status)
     switch (Document_Status) {
       case 'PENDING':
@@ -907,10 +906,10 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
         return 'orange';
     }
   }
-  handleFileSelect(event: any, DOC: any, Date: any){
+  handleFileSelect(event: any, DOC: any, Date: any) {
     //console.log("event", event)
-   // console.log("DOC", DOC)
-   // console.log("Date", Date)
+    // console.log("DOC", DOC)
+    // console.log("Date", Date)
     this.PDFFlag = false;
     this.ProductPDFFile = {};
     this.DocIdD = undefined;
@@ -923,10 +922,19 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       this.SaveUploadDoc()
     }
   }
-  SaveUploadDoc(){
+  FileUploadCommon(ParamObj) {
+    const file = ParamObj;
+    //console.log("file", file);
+    const formData: FormData = new FormData();
+    formData.append("frontfile", file);
+    const httpOptions = { headers: new HttpHeaders({ 'x-functions-key': '9WkvVXtG259qhyTIQ9iB81FGEOJ4IV2fRza7i9A3KxM7AzFu5LiQZQ==' }) };
+   
+    return this.$http.post(`https://sgnepalemailaz.azurewebsites.net/api/Common_File_Upload?`, formData, httpOptions).pipe(map((data: any) => data ? data : []));
+  }
+  SaveUploadDoc() {
     if (this.ProductPDFFile['size']) {
       this.ngxService.start();
-      this.GlobalAPI.CommonFileUpload(this.ProductPDFFile)
+      this.FileUploadCommon(this.ProductPDFFile)
         .subscribe((data: any) => {
           //console.log("eventdata", data)
           if (data.file_url) {
@@ -944,7 +952,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
         })
     }
   }
-  saveDocFinal(fileUrl){
+  saveDocFinal(fileUrl) {
     const tempSaveDataObj = {
       PO_Doc_No: this.ValidationNoUpload,
       Document_ID: this.DocIdD,
@@ -957,7 +965,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       "Json_Param_String": JSON.stringify(tempSaveDataObj)
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
-     // console.log("file save data", data);
+      // console.log("file save data", data);
       if (data[0].Column1) {
         this.PDFFlag = false;
         this.ProductPDFFile = {};
@@ -983,20 +991,20 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       }
     })
   }
-  DownloadFile(UrlAll){
+  DownloadFile(UrlAll) {
     //console.log("UrlAll", UrlAll)
     window.open(UrlAll)
   }
-  ToDoUpdate(PODoc: any){
+  ToDoUpdate(PODoc: any) {
     this.UpdatePopIdDoc = PODoc;
     this.getTodoPanding(this.UpdatePopIdDoc);
     this.getTodoView(this.UpdatePopIdDoc);
     setTimeout(() => {
       this.viewTodoModal = true;
       this.tabIndex = 0;
-    },700);
+    }, 700);
   }
-  getTodoPanding(Doc){
+  getTodoPanding(Doc) {
     this.PendingList = []
     const obj = {
       "SP_String": "sp_Bl_Txn_Purchase_Order_Activity",
@@ -1014,7 +1022,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       }
     });
   }
-  getTodoView(TODoc){
+  getTodoView(TODoc) {
     this.dataList = [];
     this.backUPdataList = [];
     const obj = {
@@ -1030,41 +1038,41 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
           y.Task_End_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(y.Task_End_Date);
           y.Completed_On = this.DateNepalConvertService.convertNewEngToNepaliDateObj(y.Completed_On)
         });
-       // console.log("dataList==", this.dataList)
+        // console.log("dataList==", this.dataList)
         this.GetDistinct()
       }
     });
   }
-  GetDistinct(){
-    let Status:any = [];
+  GetDistinct() {
+    let Status: any = [];
     this.DistPresentStatus = [];
     this.dataList.forEach((item) => {
-  if (Status.indexOf(item.Last_Status) === -1) {
-    Status.push(item.Last_Status);
-  this.DistPresentStatus.push({ label: item.Last_Status, value: item.Last_Status });
-  }
-  });
+      if (Status.indexOf(item.Last_Status) === -1) {
+        Status.push(item.Last_Status);
+        this.DistPresentStatus.push({ label: item.Last_Status, value: item.Last_Status });
+      }
+    });
     this.backUPdataList = [...this.dataList];
   }
-  FilterDist(){
+  FilterDist() {
     let PresentStatus: any = [];
-    let SearchFields:any =[];
-  if (this.SelectedDistPresentStatus.length) {
-    SearchFields.push('Last_Status');
-    PresentStatus = this.SelectedDistPresentStatus;
-  }
-  this.dataList = [];
-  if (SearchFields.length) {
-    let LeadArr = this.backUPdataList.filter(function (e) {
-      return (PresentStatus.length ? PresentStatus.includes(e['Last_Status']) : true) 
-    });
-  this.dataList = LeadArr.length ? LeadArr : [];
-  } else {
-  this.dataList = [...this.backUPdataList] ;
-  }
+    let SearchFields: any = [];
+    if (this.SelectedDistPresentStatus.length) {
+      SearchFields.push('Last_Status');
+      PresentStatus = this.SelectedDistPresentStatus;
+    }
+    this.dataList = [];
+    if (SearchFields.length) {
+      let LeadArr = this.backUPdataList.filter(function (e) {
+        return (PresentStatus.length ? PresentStatus.includes(e['Last_Status']) : true)
+      });
+      this.dataList = LeadArr.length ? LeadArr : [];
+    } else {
+      this.dataList = [...this.backUPdataList];
+    }
 
   }
-  DetailsPoUp(Valid: any){
+  DetailsPoUp(Valid: any) {
     this.StatusID = Valid.Status_ID;
     this.POid = Valid.PO_Doc_No;
     this.getTodoName(this.StatusID, this.POid)
@@ -1072,7 +1080,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       this.ViewTOdoNameModal = true
     }, 700);
   }
-  getTodoName(Typeof, ONtype){
+  getTodoName(Typeof, ONtype) {
     this.todoNameList = []
     const temData = {
       PO_Doc_No: ONtype,
@@ -1093,16 +1101,16 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       }
     });
   }
-  UpdateFormPop(valid: any){
+  UpdateFormPop(valid: any) {
     this.TodoForm = true;
     if (valid) {
       const FilterData = this.PendingList.filter(items => items.Status_ID === this.PendingTodo);
       const ArrData = {
-        PO_Doc_No:this.UpdatePopIdDoc,  
-        Status_ID	:this.PendingTodo,			
-        Last_Status	:this.StatusDetails,
-        Last_Remarks:this.RemarksDetails,	
-        Posted_By	:this.$CompacctAPI.CompacctCookies.User_ID,
+        PO_Doc_No: this.UpdatePopIdDoc,
+        Status_ID: this.PendingTodo,
+        Last_Status: this.StatusDetails,
+        Last_Remarks: this.RemarksDetails,
+        Posted_By: this.$CompacctAPI.CompacctCookies.User_ID,
         Task_End_Date: this.DateService.dateConvert(FilterData[0].Task_End_Date),
       }
       const obj = {
@@ -1116,8 +1124,8 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "success",
-            summary:"TO-DO List",
-            detail: "Succesfully Update" ,
+            summary: "TO-DO List",
+            detail: "Succesfully Update",
           });
           this.tabIndex = 0;
           this.items1 = ["TO-DO View", "TO-DO Update"];
@@ -1130,28 +1138,32 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       })
     }
   }
-  ColourInfo(){
+  ColourInfo() {
     this.ColorModel = true
   }
-  Emailpop(path: any){
+  Emailpop(path: any) {
     this.pathURl = undefined;
     this.EmailSendModel = true;
     this.EmailUpdate = undefined;
     this.EmailFormSubmitted = false;
     if (path) {
-      this.pathURl = path;  
+      this.pathURl = path;
     }
   }
-  SaveEmail(valid){
+  SaveEmail(valid) {
     this.EmailFormSubmitted = true
     if (valid) {
       const eMail = {
         Url: this.pathURl,
-        Email: this.EmailUpdate
+        Email: this.EmailUpdate,
+        Po_No: this.ValidationNoUpload
       }
       this.EmailSendModel = false;
-      console.log("eMail",eMail)
+     // console.log("eMail", eMail)
     }
+  }
+  DeleteRow(index) {
+    this.ProductList.splice(index, 1);
   }
 }
   // toEmailChange(){
