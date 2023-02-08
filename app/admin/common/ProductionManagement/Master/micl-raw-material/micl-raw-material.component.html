@@ -219,7 +219,7 @@
                                                     <tr *ngFor="let obj of AddParamDetails ; let ind = index;">
                                                         <!-- <td>{{ ind + 1 }}</td> -->
                                                         <td nowrap class="text-center" style="vertical-align:middle">{{obj.Parameter_Name}}</td>
-                                                        <td nowrap class="text-center" style="vertical-align:middle">{{obj.Tolerance_Level}}</td>
+                                                        <td nowrap class="text-center" style="vertical-align:middle">{{obj.Tolerance_Level}} %</td>
                                                         <td nowrap class="text-center" style="vertical-align:middle"><button (click)="Paramdelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                                     </tr>
                                                 </tbody>
