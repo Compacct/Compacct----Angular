@@ -334,6 +334,7 @@ import { PurchaseBillGSTOneSPComponent } from "./common/FinancialManagement/Tran
 import { PurchaseOrderHarbauerComponent } from "./common/MaterialManagement/Inward/purchase-order-harbauer/purchase-order-harbauer.component";
 import { ParameterMasterComponent } from "./common/MICL/parameter-master/parameter-master.component";
 import { DoctorsAppoTherapPlanComponent } from './common/PatientManagement/doctors-appo-therap-plan/doctors-appo-therap-plan.component';
+import { MICLRawMaterialQAComponent } from "./common/MICL/micl-raw-material-qa/micl-raw-material-qa.component";
 
 
 
@@ -2528,6 +2529,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       data: {
         title: 'Therapy Plan'
   }
+  },
+  {
+    path: 'MICL_RAW_MATERIAL_QA',
+    component: MICLRawMaterialQAComponent,
+    data: {
+        title: 'MICL RAW MATERIAL QA'
+    } 
   },
     
 

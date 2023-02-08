@@ -158,7 +158,7 @@ GetMaterialName(RefNO:any){
 }
 changeMaterialName(ProductID:any){
  if(ProductID){
-    const FilterAllMaterialName = this.AllMaterialName.find((el:any) => Number(el.Product_ID) == Number(ProductID) )
+    const FilterAllMaterialName = this.AllMaterialName.find((el:any) => Number(el.Product_ID) == Number(ProductID))
     console.log("FilterAllMaterialName",FilterAllMaterialName)
     this.ObjRawMatRev.UOM = FilterAllMaterialName ? FilterAllMaterialName.UOM : ""
     this.GetParamDetailsforProduct();
@@ -218,7 +218,7 @@ AddRawMatRev(valid:any){
   const FilterStockPointList= this.StockPointList.find((el:any) => Number(el.godown_id) == Number(this.ObjRawMatRev.Godown_ID) )
   this.paramarr = [];
      this.paramlist.forEach(element => {
-      if((element.Min_Value || element.Min_Value > 0) && (element.Max_Value || element.Max_Value > 0)) {
+      if((element.Exact_Value || element.Exact_Value > 0)) {
       const obj = {
         Line_No : this.AddRawMatRevList.length + 1,
         Product_ID : Number(this.ObjRawMatRev.Product_ID),
@@ -263,6 +263,9 @@ AddRawMatRev(valid:any){
   let bckupTempObj:any = {...this.ObjRawMatRev}
   this.ObjRawMatRev.Remarks = bckupTempObj.Remarks
   // this.ObjRawMatRev = new RawMatRev()
+  this.ObjRawMatRev.Product_ID = undefined;
+  this.ObjRawMatRev.Receive_Qty = undefined;
+  this.ObjRawMatRev.UOM = undefined;
   this.ObjRawMatRev.Batch_Lot_No = undefined;
   // this.ObjRawMatRev.Vehicle_No = undefined;
   this.ObjRawMatRev.Note_Description = undefined;
@@ -296,6 +299,7 @@ SaveRawMatRev(){
 onReject() {
   this.compacctToast.clear("c");
   this.compacctToast.clear("s");
+  this.Spinner = false;
 }
 onConfirm(){
 

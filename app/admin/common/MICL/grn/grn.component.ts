@@ -802,6 +802,7 @@ export class GrnComponent implements OnInit {
       this.PODate = new Date(data[0].RDB_Date);
       this.SENo = data[0].SE_No + "&";
       this.SE_No_Date = new Date(data[0].SE_Date);
+      this.ObjGRN1.SE_No_Date = this.SENo + this.DateService.dateConvert(this.SE_No_Date);
       this.INVNo = data[0].Inv_No + "&";
       this.INV_No_Date = new Date(data[0].Inv_Date);
       this.AddTermList = data[0].Term_element ? data[0].Term_element : [];
@@ -1089,6 +1090,8 @@ export class GrnComponent implements OnInit {
           });
           this.doc_no = undefined;
           this.GetSearchedlist(true);
+          this.GetPendingRDB(true);
+          this.GetPendRDBProWise(true);
         }
         
         else {

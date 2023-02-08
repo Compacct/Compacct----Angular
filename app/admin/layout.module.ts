@@ -431,6 +431,7 @@ import { PurchaseBillGSTOneSPComponent } from './common/FinancialManagement/Tran
 import { PurchaseOrderHarbauerComponent } from './common/MaterialManagement/Inward/purchase-order-harbauer/purchase-order-harbauer.component';
 import { ParameterMasterComponent } from "./common/MICL/parameter-master/parameter-master.component";
 import { DoctorsAppoTherapPlanComponent } from './common/PatientManagement/doctors-appo-therap-plan/doctors-appo-therap-plan.component';
+import { MICLRawMaterialQAComponent } from "./common/MICL/micl-raw-material-qa/micl-raw-material-qa.component";
 
 @NgModule({
   declarations: [
@@ -778,7 +779,8 @@ import { DoctorsAppoTherapPlanComponent } from './common/PatientManagement/docto
     PurchaseBillGSTOneSPComponent,
     PurchaseOrderHarbauerComponent,
     ParameterMasterComponent,
-    DoctorsAppoTherapPlanComponent
+    DoctorsAppoTherapPlanComponent,
+    MICLRawMaterialQAComponent
 
   ],
   imports: [
