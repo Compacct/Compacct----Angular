@@ -124,8 +124,10 @@ TabClick(e) {
     this.destroyChild();
     this.clearData();
     this.SpinnerParam = false;
-    // this.productid = undefined;
+    this.productid = undefined;
     this.AddParamDetails = [];
+    this.Parameter_ID = undefined;
+    this.Tolerance_Level = undefined;
 }
 onReject(){}
 clearData() {
@@ -207,6 +209,8 @@ AddParam(valid){
      console.log('this.AddParamDetails===',this.AddParamDetails)
       this.ParameterFormSubmitted = false;
       this.SpinnerParam = false;
+      this.Parameter_ID = undefined;
+      this.Tolerance_Level = undefined;
 
     }
 }
@@ -344,6 +348,8 @@ SaveMasterEawMaterial(valid: any) {
             this.items = ["BROWSE", "CREATE"];
             this.clearData();
             this.AddParamDetails = [];
+            this.Parameter_ID = undefined;
+            this.Tolerance_Level = undefined;
           }
           else {
             this.Spinner = false;
