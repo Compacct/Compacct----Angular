@@ -163,7 +163,7 @@
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="!col.RDB_No && (databaseName === 'MICL_Demo' || databaseName === 'MICL')">
+                                                        <li *ngIf="!col.RDB_No && (databaseName === 'MICL_Demo' || databaseName === 'MICL') && col.Cancel_PO == 'N'">
                                                             <a (click)="CancelPO(col)">
                                                                 <i class="fa fa-fw fa-times"></i> Cancel
                                                             </a>
@@ -573,7 +573,7 @@
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Taxable Amount</th>
                                         <th  nowrap="" colspan="2" style="vertical-align:middle">{{taxlabelChange()}}</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Net Amount</th>
-                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Edit</th>
+                                        <th *ngIf="buttonname === 'Update'" nowrap="" rowspan="2" style="vertical-align:middle">Edit</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Delete</th>
                                          </tr>
                                         <tr style="background-color:#3c8dbc;color:white;">
@@ -603,7 +603,7 @@
                                                 <td>{{col.GST_Percentage ? col.GST_Percentage : 0}}</td>
                                                 <td>{{col.GST_Amount ? col.GST_Amount : 0}}</td>
                                                 <td>{{col.Total_Amount ? col.Total_Amount : 0}}</td>
-                                                <td> <a class="btn btn-sm btn-warning" (click)="EditAddPurchase(i)"
+                                                <td *ngIf="buttonname === 'Update'"> <a class="btn btn-sm btn-warning" (click)="EditAddPurchase(i)"
                                                     ><div><i class="fa fa-fw fa-edit"> </i></div>
                                                   </a></td>
                                                <td> <a class="btn btn-sm btn-danger" (click)="DeleteAddPurchase(i)"
@@ -673,6 +673,23 @@
                                    </table>
                                 </div>
                            </form>
+                           <br>
+                            <div class="col-sm-4" *ngIf="addPurchaseList.length">
+                             <label class="control-label">TCS Tax Required <sup class="text-danger">*</sup> </label>
+                             <select class="form-control" 
+                             name="tcstaxreq" 
+                             #tcstaxreq="ngModel" 
+                             [(ngModel)]="objpurchase.TCS_Y_N"
+                             (ngModelChange)="TcsAmtCalculation()"
+                             [ngClass]="{'clearance': TCSTaxRequiredValidation && tcstaxreq?.errors?.required}" required>
+                                <option  [ngValue]="undefined">Select</option>
+                                <option value ="YES">YES</option>
+                                <option value ="NO">NO</option>
+                             </select>
+                            </div>
+                            <br>
+                            <div class="clearfix"></div>
+                            <br>
                                   <div class="table-responsive">
                                         <table class="table">
                                           <tbody>
@@ -681,8 +698,8 @@
                                             <td class="amt-td ng-binding">{{getTofix(grTotal) ? getTofix(grTotal) : 0}}</td>
                                             <th>Term Amount :</th>
                                             <td class="amt-td ng-binding">{{ GrTermAmount ? getTofix(GrTermAmount) : 0}}</td>
-                                            <th></th>
-                                            <td class="amt-td"></td>
+                                            <th>TCS Amount :</th>
+                                            <td class="amt-td ng-binding">{{objpurchase.TCS_Amount}}</td>
                                              </tr>
                                             <tr>
                                             <th>Discount Amount :</th>
@@ -690,7 +707,7 @@
                                             <th>Total GST :</th>
                                             <td class="amt-td ng-binding">{{getTofix(GSTTotal + GrGstTermAmt)}}</td>
                                             <th>Net Amount</th>
-                                            <td class="amt-td ng-binding">{{RoundOff(taxAblTotal + GrTermAmount + GSTTotal + GrGstTermAmt)}}</td>
+                                            <td class="amt-td ng-binding">{{RoundOff(taxAblTotal + GrTermAmount + GSTTotal + GrGstTermAmt + objpurchase.TCS_Amount)}}</td>
                                             </tr>
                                             <tr>
                                             <th>Taxable Amount :</th>

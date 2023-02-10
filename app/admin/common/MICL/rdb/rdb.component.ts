@@ -120,6 +120,7 @@ export class RdbComponent implements OnInit {
     this.items = ["BROWSE", "CREATE", "PENDING PURCHASE ORDER", "RDB REGISTER"];
     this.buttonname = "Create";
     this.clearData();
+    this.ProductList = [];
     this.DocNo = undefined;
     this.addPurchaseListInput = false
   }
@@ -911,6 +912,7 @@ addClear(){
               this.ObjRdb = new RDB();
               this.ObjRdb1 = new RDB1();
               this.RDBListAdd = [];
+              this.ProductList = [];
               this.Spinner = false;
               this.objRdb2 = new RDB2()
               this.RDBFormSubmit2 = false;

@@ -141,6 +141,7 @@ export class WorkOrderComponent implements OnInit {
   disBackUp:any = undefined;
 
   DynamicHeaderPen:any = [];
+  TCSTaxRequiredValidation = false;
 
   constructor(
     private $http: HttpClient ,
@@ -217,6 +218,7 @@ export class WorkOrderComponent implements OnInit {
     this.Spinner = false;
     this.WorkAddFormSubmit = false;
     this.purchaseFormSubmitted = false;
+    this.TCSTaxRequiredValidation = false;
     this.validatation.required = false;
     this.addPurchaseList = []; 
     this.rate = undefined;
@@ -928,6 +930,7 @@ export class WorkOrderComponent implements OnInit {
       this.addPurchaseListInputField = {}
       // console.log("addPurchaseList",this.addPurchaseList);
       this.getAllTotal();
+      this.TcsAmtCalculation();
  }
  GetSameProWithInd () {
   if(!this.addPurchaseListInput){
@@ -1007,7 +1010,8 @@ export class WorkOrderComponent implements OnInit {
       HSN_No : this.ObjTerm.HSN_No,
     };
     this.AddTermList.push(TERMobj);
-    this.getAllTotal()
+    this.getAllTotal();
+    this.TcsAmtCalculation();
     this.ObjTerm = new Term();
     this.TermFormSubmitted = false;
       
@@ -1037,10 +1041,12 @@ export class WorkOrderComponent implements OnInit {
   DeteteTerm(index) {
     this.AddTermList.splice(index,1)
     this.getAllTotal()
+    this.TcsAmtCalculation();
   }
  async savePurchase(valid){
-   this.purchaseFormSubmitted = true
-   this.validatation.required = true
+   this.purchaseFormSubmitted = true;
+   this.validatation.required = true;
+   this.TCSTaxRequiredValidation = true;
     this.falg = true
     // this.ngxService.start();
     this.Save = false;
@@ -1305,6 +1311,39 @@ async TermSave(doc:any){
  
 }
 
+TcsAmtCalculation(){
+  this.ObjWorkOrder.TCS_Ledger_ID = 0;
+  if (this.ObjWorkOrder.TCS_Y_N === 'YES') {
+      this.ngxService.start();
+      // this.$http.get("/Common/Get_TCS_Persentage_Sale?TCS_Enabled=YES",{responseType: 'text'}).subscribe((data: any) => {
+        const obj = {
+          "SP_String": "Sp_Purchase_Order",
+          "Report_Name_String": "Get_Tcs_Percentage_And Ledger",
+          }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        console.log(data)
+        this.ObjWorkOrder.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
+        this.ObjWorkOrder.TCS_Persentage = data[0].TCS_Persentage;
+        var netamount = (Number(this.taxAblTotal) + Number(this.GrTermAmount) + Number(this.GSTTotal) + Number(this.GrGstTermAmt)).toFixed(2);
+        var TCS_Amount = (Number(Number(netamount) * this.ObjWorkOrder.TCS_Persentage) / 100).toFixed(2);
+        this.ObjWorkOrder.TCS_Amount = Number(TCS_Amount);
+        // this.objaddPurchacse.Grand_Total = (Number(this.objaddPurchacse.Net_Amt) + Number(this.objaddPurchacse.TCS_Amount)).toFixed(2);
+        // this.Round_off = (Number(Math.round(this.ObjSaleBillNew.Grand_Total)) - Number(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+        // this.Net_Amt = Number(Math.round(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+        this.getRoundedOff();
+        // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+        this.ngxService.stop();
+      });   
+  }
+    else {
+      this.ObjWorkOrder.TCS_Persentage = 0;
+      this.ObjWorkOrder.TCS_Amount = 0;
+      // this.objaddPurchacse.Grand_Total = this.objaddPurchacse.Net_Amt;
+      this.getRoundedOff();
+      // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+  }
+}
+
 Finyear() {
   this.$http
     .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
@@ -1500,6 +1539,7 @@ PrintREQ(DocNo) {
   this.addPurchaseList.splice(index,1);
   this.projectDisable = this.addPurchaseList.length ? true :false
   this.getAllTotal();
+  this.TcsAmtCalculation();
 }
 GetGSTAmt(){
   if(this.ObjaddWorkOrder.taxable_AMT){
@@ -1554,8 +1594,8 @@ getTofix(key){
 //           Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2)))) 
 // }
 getRoundedOff(){
-  return this.getTofix( Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2))) - 
-         Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2))) 
+  return this.getTofix( Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt + this.ObjWorkOrder.TCS_Amount).toFixed(2))) - 
+         Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt + this.ObjWorkOrder.TCS_Amount).toFixed(2))) 
 } 
 getcompany(){
   const obj = {
@@ -1830,6 +1870,10 @@ class WorkOrder {
         Total_GST:any
         Rounded_Off:any
         Total_Net_Amount:any
+        TCS_Ledger_ID:any;
+        TCS_Y_N : any;
+        TCS_Persentage : any;
+        TCS_Amount : number = 0;
 }
 class addWorkOrder{
       Product_ID:any;

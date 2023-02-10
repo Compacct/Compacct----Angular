@@ -128,6 +128,7 @@ TabClick(e) {
     this.AddParamDetails = [];
     this.Parameter_ID = undefined;
     this.Tolerance_Level = undefined;
+    this.ParameterFormSubmitted = false;
 }
 onReject(){}
 clearData() {
@@ -213,10 +214,13 @@ AddParam(valid){
       this.Tolerance_Level = undefined;
 
     }
+    else {
+      this.SpinnerParam = false;
+    }
 }
 Paramdelete(index) {
   this.AddParamDetails.splice(index,1)
-  }
+}
 
 FinancialDetailsData(e) {
     this.ObjFinancial = undefined;

@@ -24,6 +24,31 @@
             <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
               <form name="TherapyPlanForm" #TherapyPlanForm="ngForm" novalidate>
                 <div class="row">
+                  <div class="col-sm-4">
+                    <label class="control-label">Patient<sup class="text-danger">*</sup></label>
+                      <p-dropdown 
+                      [options]="patientList" 
+                      name="Patient" 
+                      [(ngModel)]="GetFoot_Fall_Id"
+                      (onChange)="getDataOnFootFall()"
+                      [showClear]="true" 
+                      [emptyFilterMessage]="' No Item Found'" 
+                      [filter]="true" 
+                      filterBy="label,value" 
+                      [resetFilterOnHide]="true" 
+                      [placeholder]="'Select Patient '"
+                      [virtualScroll]="true" 
+                      itemSize="30" 
+                      >
+                      </p-dropdown>
+                  </div>
+                  <div class="col-sm-4">
+                    <button class="btn btn-primary" style="margin: 28px 0 0 40px;" type="button" *ngIf="!buttonDisabled" (click)="Print()">Print</button>
+                  </div>
+                  <div class="col-sm-4"></div>
+                </div>
+                <hr class="box boxboxDivide-primary" />
+                <div class="row">
                   <div class="col-sm-3">
                    <label for="" class="control-label">Name</label>
                    <div class="label-t">
@@ -57,10 +82,6 @@
                       </div>          
                    </div>
                    <div class="col-sm-3">
-                     <label for="" class="control-label">Therapy Plan Date</label>
-                     <ejs-datepicker  [(value)]="TherapyPlanDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
-                   </div>
-                   <div class="col-sm-3">
                     <label for="" class="control-label">Language</label>
                     <input 
                     type="text"
@@ -82,7 +103,7 @@
                     [filter]="true"
                     filterBy="label,value"
                     [resetFilterOnHide]="true"
-                    [placeholder]="'Select Centre'"
+                    [placeholder]="'Centre Name'"
                     [virtualScroll]="true"
                     itemSize="30"
                     disabled
@@ -98,18 +119,56 @@
                   </div>
                  </div>
                  <br>
-                 <div class="row">
-                    <div class="col-sm-12">
-                               <input 
-                                 type="text"
-                                 class="form-control"
-                                 name="FormEvaluationReport"
-                                 #FormEvaluationReport="ngModel"
-                                 [(ngModel)]="ObjTherapyPlan.FormEvaluationReportLink"
-                                 placeholder="From Evaluation Report Link"
-                               >
+
+
+
+                 <form name="pDiagnosis" #pDiagnosis="ngForm" novalidate>
+                  <div class="row">
+                                <div class="col-sm-2">
+                                 <label for="" class="control-label">Report Link<sup class="text-danger">*</sup></label>
+                                </div>
+                                 <div class="col-sm-10">
+                                 <input 
+                                   type="text"
+                                   class="form-control"
+                                   name="ReportLink"
+                                   #ReportLink="ngModel"
+                                   [(ngModel)]="ObjProvisionalDiagnosis.link"
+                                   placeholder="Report Link"
+                                   [ngClass]="{clearance: PDiagnosisFormSubmitted && ReportLink?.errors?.required}"
+                                   required
+                                 >         
+                      </div>
                   </div>
-                 </div>
+                  <br>
+                  <div class="form-group">
+                    <button  class="btn btn-primary pull-right" (click)="AddPD(pDiagnosis.form.valid)" id="load" style="margin-right: 15px;">
+                      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        Add
+                    </button>
+                </div>
+               </form>
+               <br>
+                <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col" style="width: 100px;">Sl. No.</th>
+                    <th scope="col">Link</th>
+                    <th scope="col" style="width: 20rem;">SLP</th>
+                    <th scope="col" style="width: 100px;">Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of pDiagnosisArray; index as i">
+                    <td scope="row">{{i+1}}</td>
+                    <td>{{item.link}}</td>
+                    <td>{{item.slp}}</td>
+                    <td>
+                      <button (click)="deletePDRow(i)" class="btn btn-danger btn-sm" *ngIf="((item.userID==userID) && (item.createDate==currentDate))"><i class="fa fa-trash"></i></button>
+                    </td>
+                  </tr>
+                 </tbody>
+               </table>
                 <hr class="box boxboxDivide-primary" />
                 <!-- TongTerom Goal -->
                 <div class="row">
@@ -172,6 +231,7 @@
                   <th scope="col">Plan to achieve (Duration)</th>
                   <th scope="col">Start Date</th>
                   <th scope="col">Achieved Date</th>
+                  <th scope="col">SLP</th>
                   <th scope="col">Delete</th>
                 </tr>
               </thead>
@@ -182,8 +242,9 @@
                   <td>{{item.Duration}}</td>
                   <td>{{item.Start_Date | date : "dd/MMM/yyyy"}}</td>
                   <td>{{item.Achieved_Date | date : "dd/MMM/yyyy"}}</td>
+                  <td>{{item.slp}}</td>
                   <td>
-                    <button (click)="deleteLTGRow(i)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                    <button (click)="deleteLTGRow(i)" class="btn btn-danger btn-sm" *ngIf="((item.userID==userID) && (item.createDate==currentDate))"><i class="fa fa-trash"></i></button>
                   </td>
                 </tr>
                </tbody>
@@ -250,6 +311,7 @@
                 <th scope="col">Plan to achieve (Duration)</th>
                 <th scope="col">Start Date</th>
                 <th scope="col">Achieved Date</th>
+                <th scope="col">SLP</th>
                 <th scope="col">Delete</th>
               </tr>
             </thead>
@@ -260,8 +322,9 @@
                 <td>{{item.Duration}}</td>
                 <td>{{item.Start_Date | date : "dd/MMM/yyyy"}}</td>
                 <td>{{item.Achieved_Date | date : "dd/MMM/yyyy"}}</td>
+                <td>{{item.slp}}</td>
                 <td>
-                  <button (click)="deleteSTGRow(i)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                  <button (click)="deleteSTGRow(i)" class="btn btn-danger btn-sm" *ngIf="((item.userID==userID) && (item.createDate==currentDate))"><i class="fa fa-trash"></i></button>
                 </td>
               </tr>
              </tbody>
@@ -342,10 +405,11 @@
             <thead>
               <tr>
                 <th scope="col">Sl. No.</th>
-                <th scope="col">Therapy Goal</th>
-                <th scope="col">Plan to achieve (Duration)</th>
-                <th scope="col">Start Date</th>
-                <th scope="col">Achieved Date</th>
+                <th scope="col">BaseLine</th>
+                <th scope="col">Target</th>
+                <th scope="col">Activities</th>
+                <th scope="col">Clinical Observation</th>
+                <th scope="col">SLP</th>
                 <th scope="col">Delete</th>
               </tr>
             </thead>
@@ -356,8 +420,9 @@
                 <td>{{item.Target}}</td>
                 <td>{{item.Activities}}</td>
                 <td>{{item.ClinicalObservation}}</td>
+                <td>{{item.slp}}</td>
                 <td>
-                  <button (click)="deleteMaterialRow(i)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                  <button (click)="deleteMaterialRow(i)" class="btn btn-danger btn-sm" *ngIf="((item.userID==userID) && (item.createDate==currentDate))"><i class="fa fa-trash"></i></button>
                 </td>
               </tr>
              </tbody>
@@ -371,10 +436,10 @@
              <br>
              <form name="ParentalCounseling" #ParentalCounseling="ngForm" novalidate>
               <div class="row">
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                   <label for="" class="control-label">Parental Counseling<sup class="text-danger">*</sup></label>
                   </div>
-                  <div class="col-sm-9">
+                  <div class="col-sm-10">
                   <input 
                     type="text"
                     class="form-control"
@@ -401,6 +466,7 @@
                 <tr>
                   <th scope="col" style="width: 100px;">Sl. No.</th>
                   <th scope="col">Parental Counseling</th>
+                  <th scope="col" style="width: 20rem;">SLP</th>
                   <th scope="col" style="width: 100px;">Delete</th>
                 </tr>
               </thead>
@@ -408,8 +474,9 @@
                 <tr *ngFor="let item of pCounselingArray; index as i">
                   <td scope="row">{{i+1}}</td>
                   <td>{{item.Counseling}}</td>
+                  <td>{{item.slp}}</td>
                   <td>
-                    <button (click)="deleteCounseling(i)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                    <button (click)="deleteCounseling(i)" class="btn btn-danger btn-sm" *ngIf="((item.userID==userID) && (item.createDate==currentDate))"><i class="fa fa-trash"></i></button>
                   </td>
                 </tr>
                </tbody>
@@ -479,7 +546,7 @@
                <br>
                <br>
                <div class="row">
-                <button *ngIf="buttonValid" class="btn btn-primary pull-right" (click)="saveDocAppo(TherapyPlanForm.form.valid)" [disabled]="Spinner">
+                <button type="button" class="btn btn-primary pull-right" (click)="saveDocAppo(TherapyPlanForm.form.valid)" [disabled]="buttonDisabled">
                   <p-progressSpinner *ngIf="Spinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
                   <span *ngIf="!Spinner" class="glyphicon glyphicon-save">Save</span>
                 </button>

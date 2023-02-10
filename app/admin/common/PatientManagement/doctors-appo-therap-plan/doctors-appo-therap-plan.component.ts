@@ -15,11 +15,13 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
 })
 export class DoctorsAppoTherapPlanComponent implements OnInit {
 
-  tabIndexToView = 0;
-  AppoID:number;
-  Editable:string;
   CentreList:any = [];
   TestName:string = 'Therapy_Plan';
+  currentDate:any;
+  userID:any;
+  patientList:any = [];
+  GetFoot_Fall_Id:string;
+  buttonDisabled:boolean = true;
 
   // Date Variables
   LtgStartDate = new Date();
@@ -28,24 +30,24 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
   StgAchivedDate = new Date();
 
   // Arrays
+  pDiagnosisArray:any = [];
   LongTermGoalArray:any = [];
   ShortTermGoalArray:any = [];
   MaterialUsedArray:any = [];
   pCounselingArray:any = [];
   // From submit Properties
+  PDiagnosisFormSubmitted:boolean = false;
   LTGFormSubmitted:boolean = false;
   STGFormSubmitted:boolean = false;
   MaterialUsedFormSubmitted:boolean = false;
   ParentalCounselingFormSubmitted:boolean = false;
   
-  // Therapy Plan form variables
-  TherapyPlanDate = new Date();
-  buttonValid:boolean = true;
   Spinner:boolean = false;
   // Recomendation Checkbox
   CheckBoxRecommendation:any = [];
 
   // class Objects
+  ObjProvisionalDiagnosis = new provisionalDiagnosis();
   ObjLongTermGoal = new LongTermGoal();
   ObjShortTermGoal = new ShortTermGoal();
   ObjMeterialUsed = new MeterialUsed();
@@ -58,18 +60,8 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
     private GlobalAPI: CompacctGlobalApiService,
     private commonApi : CompacctCommonApi,
     private DateService : DateTimeConvertService,
-    private ActivatedRoute: ActivatedRoute,
 
   ) {
-    this.ActivatedRoute.queryParams.subscribe((params: any) => {
-      this.AppoID = params.Appo_ID;
-      // console.log('Appo_ID', this.AppoID);
-      this.Editable = params.ed;
-      // console.log('Editable',this.Editable);
-
-      // console.log('params',params);
-      
-    });
 
    }
 
@@ -78,25 +70,64 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
       Header:"Therapy Plan",
       Link:"PatientManagement --> Therapy Plan"
     });
-
-    this.getDataAgainstAppoId();
+    this.currentDate = this.DateService.dateConvert(new Date()) ;
+    this.userID = this.commonApi.CompacctCookies.User_ID;
+    this.getPatientList();
     this.getCenterList();
-    if (this.Editable == "y") {
-      this.editData();
+  
+  }
+
+  Print(){
+    console.log('print works');
+    if (this.GetFoot_Fall_Id) {
+      window.open("Report/Crystal_Files/CRM/joh_form/THERAPY_PLAN.aspx?Foot_Fall_ID=" +this.GetFoot_Fall_Id, 
+      'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+      );
+  } 
+  }
+
+  getPatientList(){
+
+    const obj = {
+      SP_String: "SP_BL_Txn_Doctor_Appo_ALL",
+      Report_Name_String: "Get_Contact_Name_Mobile"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log(data);
+      if (data.length) {
+        data.forEach((element) => {
+          (element["label"] = element.Column1),
+          (element["value"] = element.Foot_Fall_ID);
+        });
+        this.patientList = data;
+      }
+        
+    });
+
+  }
+  getDataOnFootFall(){
+    console.log(this.GetFoot_Fall_Id);
+    if(this.GetFoot_Fall_Id){
+    this.getPatientAgainstFootFall();
+    this.editData();
+    }
+    else{
+      this.clear();
+      this.buttonDisabled = true;
     }
   }
 
-  getDataAgainstAppoId() {
+  getPatientAgainstFootFall() {
     const tempobj = {
-      Appo_ID: this.AppoID,
+      Foot_Fall_ID: this.GetFoot_Fall_Id,
     };
     const obj = {
       SP_String: "SP_BL_Txn_Doctor_Appo_ABR",
-      Report_Name_String: "Get_All_Data",
+      Report_Name_String: "Get_All_Data_with_Foot_Fall_ID",
       Json_Param_String: JSON.stringify([tempobj]),
     };
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      // console.log('data against appoid', data);
+      console.log('data against footfall', data);
       if (data.length) {
         this.ObjTherapyPlan.Name = data[0].Name;
         this.ObjTherapyPlan.Age = data[0].Age;
@@ -105,6 +136,7 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
         this.ObjTherapyPlan.Foot_Fall_ID = data[0].Foot_Fall_ID;
         this.ObjTherapyPlan.Cost_Cent_ID = data[0].Cost_Cen_ID;
         this.ObjTherapyPlan.Txn_Date = data[0].Appo_Dt;
+        this.buttonDisabled = false;
       }
     });
   }
@@ -127,6 +159,19 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
       }
     });
   }
+  AddPD(valid){
+    this.PDiagnosisFormSubmitted = true;
+    if(valid){
+      this.PDiagnosisFormSubmitted = false;
+      this.ObjProvisionalDiagnosis.slp = this.commonApi.CompacctCookies.User_Name;
+      this.ObjProvisionalDiagnosis.userID = this.commonApi.CompacctCookies.User_ID;
+      this.ObjProvisionalDiagnosis.createDate = this.DateService.dateConvert(new Date());
+      this.pDiagnosisArray.push(this.ObjProvisionalDiagnosis);
+      this.ObjProvisionalDiagnosis = new provisionalDiagnosis();
+      console.log(this.pDiagnosisArray);
+    }
+
+  }
 
   AddLTG(valid){
     this.LTGFormSubmitted = true;
@@ -134,6 +179,9 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
       this.LTGFormSubmitted = false;
       this.ObjLongTermGoal.Start_Date = this.DateService.dateConvert(this.LtgStartDate);
       this.ObjLongTermGoal.Achieved_Date = this.DateService.dateConvert(this.LtgAchivedDate);
+      this.ObjLongTermGoal.slp = this.commonApi.CompacctCookies.User_Name;
+      this.ObjLongTermGoal.userID = this.commonApi.CompacctCookies.User_ID;
+      this.ObjLongTermGoal.createDate = this.DateService.dateConvert(new Date());
       this.LongTermGoalArray.push(this.ObjLongTermGoal);
       this.ObjLongTermGoal = new LongTermGoal();
       this.LtgStartDate = new Date();
@@ -147,6 +195,9 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
       this.STGFormSubmitted = false;
       this.ObjShortTermGoal.Start_Date = this.DateService.dateConvert(this.StgStartDate);
       this.ObjShortTermGoal.Achieved_Date = this.DateService.dateConvert(this.StgAchivedDate);
+      this.ObjShortTermGoal.slp = this.commonApi.CompacctCookies.User_Name;
+      this.ObjShortTermGoal.userID = this.commonApi.CompacctCookies.User_ID;
+      this.ObjShortTermGoal.createDate = this.DateService.dateConvert(new Date());
       this.ShortTermGoalArray.push(this.ObjShortTermGoal);
       this.ObjShortTermGoal = new ShortTermGoal();
       this.StgStartDate = new Date();
@@ -157,6 +208,9 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
     this.MaterialUsedFormSubmitted = true;
     if(valid){
       this.MaterialUsedFormSubmitted = false;
+      this.ObjMeterialUsed.slp = this.commonApi.CompacctCookies.User_Name;
+      this.ObjMeterialUsed.userID = this.commonApi.CompacctCookies.User_ID;
+      this.ObjMeterialUsed.createDate = this.DateService.dateConvert(new Date());
       this.MaterialUsedArray.push(this.ObjMeterialUsed);
       this.ObjMeterialUsed = new MeterialUsed();
     }
@@ -166,11 +220,17 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
       this.ParentalCounselingFormSubmitted = true;
     if(valid){
       this.ParentalCounselingFormSubmitted = false;
+      this.ObjParentalCounseling.slp = this.commonApi.CompacctCookies.User_Name;
+      this.ObjParentalCounseling.userID = this.commonApi.CompacctCookies.User_ID;
+      this.ObjParentalCounseling.createDate = this.DateService.dateConvert(new Date());
       this.pCounselingArray.push(this.ObjParentalCounseling);
       // console.log(this.pCounselingArray);
       this.ObjParentalCounseling = new ParentalCounseling();
     }
 
+  }
+  deletePDRow(i){
+    this.pDiagnosisArray.splice(i,1);
   }
   deleteLTGRow(i){
     this.LongTermGoalArray.splice(i,1);
@@ -186,11 +246,10 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
   }
 
   saveDocAppo(valid){
-    this.ObjTherapyPlan.Appo_ID = this.AppoID;
     this.ObjTherapyPlan.Posted_By = this.commonApi.CompacctCookies.User_ID;
     this.ObjTherapyPlan.Posted_On = this.DateService.dateConvert(new Date());
-    this.ObjTherapyPlan.Therapy_Plan_Date = this.DateService.dateConvert(this.TherapyPlanDate);
     // arrays
+    this.ObjTherapyPlan.ProvisionalDiagnosis = this.pDiagnosisArray;
     this.ObjTherapyPlan.LongTermGoal = this.LongTermGoalArray;
     this.ObjTherapyPlan.ShortTermGoal = this.ShortTermGoalArray;
     this.ObjTherapyPlan.Meterial = this.MaterialUsedArray;
@@ -206,16 +265,16 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
     }
 
     const TempObj = this.ObjTherapyPlan
-    const tempSaveJ2 = {Appo_ID : this.AppoID}
+    const tempSaveJ2 = {foot_fall_id : this.GetFoot_Fall_Id}
     const tempSaveJ3 = {Test_Name : this.TestName}
 
     if(valid){
-      // console.log(this.ObjTherapyPlan);
+      console.log(this.ObjTherapyPlan);
 
       this.Spinner=true;
       const obj = {
         "SP_String": "SP_BL_Txn_Doctor_Appo_ALL",
-        "Report_Name_String": "Create_BL_Txn_Doctors_Appo_Test",
+        "Report_Name_String": "Create_BL_Txn_Doctors_Appo_Test_with_Foot_Fall_ID",
         "Json_Param_String": JSON.stringify(TempObj),
         "Json_1_String": JSON.stringify(tempSaveJ1),
         "Json_2_String": JSON.stringify(tempSaveJ2),
@@ -225,7 +284,6 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
       this.GlobalAPI.postData(obj).subscribe((data:any)=>{
         if (data[0].Column1){
         this.Spinner=false;
-        this.buttonValid = false;
         this.CompacctToast.clear();
         this.CompacctToast.add({
            key: "compacct-toast",
@@ -233,9 +291,6 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
            summary: "Appointment Save",
            detail: "Succesfully "
          });
-         if(this.Editable != 'y'){
-          this.clear();
-        }
           
         }
         else {
@@ -259,22 +314,21 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
   // console.log('edit works');
   this.CheckBoxRecommendation=[];
   const TempEditObj={
-    Appo_ID: this.AppoID,
+    foot_fall_id: this.GetFoot_Fall_Id,
     
   }
   const Editobj = {
     SP_String: "SP_BL_Txn_Doctor_Appo_ALL",
-    Report_Name_String: "Retrieve_BL_Txn_Doctor_Appo_ALL_Data",
+    Report_Name_String: "Retrieve_BL_Txn_Doctor_Appo_ALL_Data_with_Foot_Fall_ID",
     Json_Param_String: JSON.stringify(TempEditObj),
   }
 
   this.GlobalAPI.getData(Editobj).subscribe((data:any)=>{
-    // console.log(JSON.parse(data[1].Test_Details));
+    console.log(data);
     let EditDetails = JSON.parse(data[0].Test_Details);
-    // console.log(EditDetails);
-    this.TherapyPlanDate = EditDetails.Therapy_Plan_Date;
+    console.log(EditDetails);
     this.ObjTherapyPlan.Language = EditDetails.Language;
-    this.ObjTherapyPlan.FormEvaluationReportLink = EditDetails.FormEvaluationReportLink;
+    this.pDiagnosisArray = EditDetails.ProvisionalDiagnosis;
     this.LongTermGoalArray = EditDetails.LongTermGoal;
     this.ShortTermGoalArray = EditDetails.ShortTermGoal;
     this.MaterialUsedArray = EditDetails.Meterial;
@@ -311,13 +365,12 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
   clear(){
     // console.log('clear works');
     this.ObjTherapyPlan = new TherapyPlan();
-    this.getDataAgainstAppoId();
+    this.pDiagnosisArray = [];
     this.LongTermGoalArray = [];
     this.ShortTermGoalArray = [];
     this.MaterialUsedArray = [];
     this.pCounselingArray = [];
     this.CheckBoxRecommendation = [];
-    this.TherapyPlanDate = new Date();
 
   }
 
@@ -329,7 +382,7 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
 
   }
 
-  TabClick(e){
+  TabClick(){
     
   }
 
@@ -344,15 +397,15 @@ class TherapyPlan {
   // 6 Required Field
   Foot_Fall_ID:any;
   Txn_Date:any;
-  Appo_ID:any;
   Cost_Cent_ID:any;
   Posted_By:any;
   Posted_On:any;
   // user inputs
   Therapy_Plan_Date:any;
   Language:any;
-  FormEvaluationReportLink:any;
+
 // Arrays
+  ProvisionalDiagnosis:any;
   LongTermGoal:any;
   ShortTermGoal:any;
   Meterial:any;
@@ -360,24 +413,43 @@ class TherapyPlan {
   
 }
 
+class  provisionalDiagnosis {
+  link:any;
+  slp:any;
+  userID:any;
+  createDate:any;
+}
+
 class LongTermGoal {
   Therapy_Goal:any;
   Duration:any;
   Start_Date:any;
   Achieved_Date :any;
+  slp:any;
+  userID:any;
+  createDate:any;
 }
 class ShortTermGoal {
   Therapy_Goal:any;
   Duration:any;
   Start_Date:any;
   Achieved_Date :any;
+  slp:any;
+  userID:any;
+  createDate:any;
 }
 class MeterialUsed{
   BaseLine:any;
   Target:any;
   Activities:any;
+  slp:any;
+  userID:any;
+  createDate:any;
   ClinicalObservation:any;
 }
 class ParentalCounseling {
   Counseling:any;
+  slp:any;
+  userID:any;
+  createDate:any;
 }
