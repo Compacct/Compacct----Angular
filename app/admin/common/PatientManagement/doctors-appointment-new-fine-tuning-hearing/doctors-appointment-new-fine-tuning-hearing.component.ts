@@ -27,6 +27,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
   buttonValid: boolean = true;
   Spinner: boolean = false;
   EditDetails: any = [];
+  FineTuneFormSubmitted: boolean= false;
   Level_1_Status: any = undefined;
   Level_2_Status: any = undefined;
   Level_3_Status: any = undefined;
@@ -894,6 +895,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
     const tempSaveJ3 = {
       Test_Name: this.TestName,
     };
+    this.FineTuneFormSubmitted= true;
     if (valid) {
       // console.log('1st save',this.ObjFineTuning);
       this.Spinner = true;
@@ -942,6 +944,7 @@ export class DoctorsAppointmentNewFineTuningHearingComponent implements OnInit {
       var msg = this.Editable ? "update" : "create";
       if (data[0].Column1) {
         this.Spinner = false;
+        this.FineTuneFormSubmitted = false;
         this.buttonValid = false;
         this.compacctToast.clear();
         this.compacctToast.add({

@@ -405,7 +405,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
            this.AllMaterialData = [];
          }
       })
-}
+  }
   getreq(){
     // if(this.openProject == 'N'){
       if(this.objProjectRequi.Billing_To && this.objProjectRequi.Cost_Cen_ID){
@@ -534,7 +534,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
       this.ObjaddWorkOrder.Req_No = tempObj.Req_No
     }
  
-    }
+  }
     RequisitionChange(){
       // this.Requisiton_Type = undefined;
       // this.Material_Type = undefined;
@@ -1247,7 +1247,7 @@ this.ObjWorkOrder.Total_Net_Amount = Number(this.RoundOff(this.taxAblTotal + thi
  if(this.DocNo){
   msg = "Update"
   rept = "Purchase_Order_Raw_Material_Edit"
-   this.ObjWorkOrder.Doc_No = this.DocNo;
+  this.ObjWorkOrder.Doc_No = this.DocNo;
   this.ObjWorkOrder.L_element = this.addPurchaseList
   save = {...tempCost,...tempsub,...this.ObjWorkOrder}
  }

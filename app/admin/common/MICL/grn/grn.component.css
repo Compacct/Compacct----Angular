@@ -127,3 +127,7 @@ legend {
     padding: 0px 10px 0px 10px;
     background-color: #ffffff;
 }
+.amt-td {
+    background: #f1f1f1;
+    text-align: center;
+  }
