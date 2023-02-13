@@ -479,6 +479,53 @@
                                    </table>
                                 </div>
                                 </form>
+                                <br>
+                            <div class="col-sm-4" *ngIf="productaddSubmit.length">
+                             <label class="control-label">TCS Tax Required <sup class="text-danger">*</sup> </label>
+                             <select class="form-control" 
+                             name="tcstaxreq" 
+                             #tcstaxreq="ngModel" 
+                             [(ngModel)]="ObjGRN1.TCS_Y_N"
+                             (ngModelChange)="TcsAmtCalculation()"
+                             [ngClass]="{'clearance': TCSTaxRequiredValidation && tcstaxreq?.errors?.required}" required>
+                                <option  [ngValue]="undefined">Select</option>
+                                <option value ="YES">YES</option>
+                                <option value ="NO">NO</option>
+                             </select>
+                            </div>
+                            <br>
+                            <div class="clearfix"></div>
+                            <br>
+                                  <div class="table-responsive">
+                                        <table class="table">
+                                          <tbody>
+                                            <tr>
+                                            <th>Total Amount:</th>
+                                            <td class="amt-td ng-binding">{{getTofix(grTotal) ? getTofix(grTotal) : 0}}</td>
+                                            <th>Term Amount :</th>
+                                            <td class="amt-td ng-binding">{{ GrTermAmount ? getTofix(GrTermAmount) : 0}}</td>
+                                            <th>TCS Amount :</th>
+                                            <td class="amt-td ng-binding">{{ObjGRN1.TCS_Amount}}</td>
+                                             </tr>
+                                            <tr>
+                                            <th>Discount Amount :</th>
+                                            <td class="amt-td ng-binding">{{disTotal ? getTofix(disTotal) : 0}}</td>
+                                            <th>Total GST :</th>
+                                            <td class="amt-td ng-binding">{{getTofix(GSTTotal + GrGstTermAmt)}}</td>
+                                            <th>Net Amount</th>
+                                            <td class="amt-td ng-binding">{{RoundOff(taxAblTotal + GrTermAmount + GSTTotal + GrGstTermAmt + ObjGRN1.TCS_Amount)}}</td>
+                                            </tr>
+                                            <tr>
+                                            <th>Taxable Amount :</th>
+                                            <td class="amt-td ng-binding">{{ taxAblTotal ? getTofix(taxAblTotal) : 0}}</td>
+                                            <th>Rounded Off :</th>
+                                            <td class="amt-td ng-binding">{{getRoundedOff()}}</td>
+                                            <th></th>
+                                            <td class="amt-td"></td>
+                                            </tr>
+                                            </tbody>
+                                    </table>
+                                      </div>
                             <br>
                             <br>
 

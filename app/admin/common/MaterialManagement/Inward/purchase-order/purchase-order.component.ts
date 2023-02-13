@@ -945,7 +945,7 @@ async savePurchase(valid){
     // this.ngxService.start();
     this.Save = false;
     this.Del = false;
-   if(valid && this.checkreq()){
+   if(valid && this.checkreq() && this.objpurchase.TCS_Y_N){
     this.Save = true;
     this.Del = false;
     this.Spinner = true;

@@ -78,7 +78,7 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
   }
 
   Print(){
-    console.log('print works');
+    // console.log('print works');
     if (this.GetFoot_Fall_Id) {
       window.open("Report/Crystal_Files/CRM/joh_form/THERAPY_PLAN.aspx?Foot_Fall_ID=" +this.GetFoot_Fall_Id, 
       'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
@@ -93,7 +93,7 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
       Report_Name_String: "Get_Contact_Name_Mobile"
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log(data);
+      // console.log(data);
       if (data.length) {
         data.forEach((element) => {
           (element["label"] = element.Column1),
@@ -106,8 +106,9 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
 
   }
   getDataOnFootFall(){
-    console.log(this.GetFoot_Fall_Id);
+    // console.log(this.GetFoot_Fall_Id);
     if(this.GetFoot_Fall_Id){
+    this.clear();
     this.getPatientAgainstFootFall();
     this.editData();
     }
@@ -127,7 +128,7 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
       Json_Param_String: JSON.stringify([tempobj]),
     };
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      console.log('data against footfall', data);
+      // console.log('data against footfall', data);
       if (data.length) {
         this.ObjTherapyPlan.Name = data[0].Name;
         this.ObjTherapyPlan.Age = data[0].Age;
@@ -168,7 +169,7 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
       this.ObjProvisionalDiagnosis.createDate = this.DateService.dateConvert(new Date());
       this.pDiagnosisArray.push(this.ObjProvisionalDiagnosis);
       this.ObjProvisionalDiagnosis = new provisionalDiagnosis();
-      console.log(this.pDiagnosisArray);
+      // console.log(this.pDiagnosisArray);
     }
 
   }
@@ -269,7 +270,7 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
     const tempSaveJ3 = {Test_Name : this.TestName}
 
     if(valid){
-      console.log(this.ObjTherapyPlan);
+      // console.log(this.ObjTherapyPlan);
 
       this.Spinner=true;
       const obj = {
@@ -324,9 +325,9 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
   }
 
   this.GlobalAPI.getData(Editobj).subscribe((data:any)=>{
-    console.log(data);
+    // console.log(data);
     let EditDetails = JSON.parse(data[0].Test_Details);
-    console.log(EditDetails);
+    // console.log(EditDetails);
     this.ObjTherapyPlan.Language = EditDetails.Language;
     this.pDiagnosisArray = EditDetails.ProvisionalDiagnosis;
     this.LongTermGoalArray = EditDetails.LongTermGoal;

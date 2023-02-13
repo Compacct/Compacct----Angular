@@ -86,6 +86,19 @@ export class GrnComponent implements OnInit {
   termeditlist:any = [];
   addPurchaseListInput:boolean = false;
 
+  grTotal:any = 0
+  disTotal:any = 0
+  ExciTotal:any = 0
+  taxAblTotal:any = 0
+  GSTTotal:any = 0
+  NetTotal:any = 0;
+  disAmtBackUpAMT:number = 0
+  disAmtBackUpPer:number = 0
+  GrTermAmount:number = 0
+  GrGstTermAmt:number = 0
+  grNetTerm: number = 0
+  TCSTaxRequiredValidation = false;
+
 
   constructor(
     private Header: CompacctHeader,
@@ -124,6 +137,7 @@ export class GrnComponent implements OnInit {
     //  this.clearData();
      this.ObjGRN1 = new GRN1();
      this.GRNFormSubmitted = false;
+     this.TCSTaxRequiredValidation = false;
      this.productaddSubmit = [];
      this.ObjGRN2 = new GRN2;
      this.GRN2FormSubmitted = false;
@@ -150,6 +164,16 @@ export class GrnComponent implements OnInit {
      this.INV_No_Date = undefined;
      this.ObjTerm = new Term();
      this.AddTermList = [];
+     this.grTotal = 0;
+       this.taxAblTotal = 0;
+       this.disTotal = 0;
+       this.ExciTotal = 0;
+       this.ExciTotal = 0;
+       this.GSTTotal = 0;
+       this.NetTotal = 0;
+       this.GrTermAmount = 0
+       this.GrGstTermAmt = 0
+       this.grNetTerm = 0
      this.addPurchaseListInput = false;
      this.DocNo = undefined;
    }
@@ -158,6 +182,7 @@ export class GrnComponent implements OnInit {
    //  this.clearData();
     this.ObjGRN1 = new GRN1();
     this.GRNFormSubmitted = false;
+    this.TCSTaxRequiredValidation = false;
     this.productaddSubmit = [];
     this.ObjGRN2 = new GRN2;
     this.GRN2FormSubmitted = false;
@@ -178,6 +203,16 @@ export class GrnComponent implements OnInit {
     this.ObjGRN1.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.GetGodown();
     this.deleteError = false;
+    this.grTotal = 0;
+    this.taxAblTotal = 0;
+    this.disTotal = 0;
+    this.ExciTotal = 0;
+    this.ExciTotal = 0;
+    this.GSTTotal = 0;
+    this.NetTotal = 0;
+    this.GrTermAmount = 0
+    this.GrGstTermAmt = 0
+    this.grNetTerm = 0
     this.SENo = undefined;
     this.INVNo = undefined;
     this.SE_No_Date = undefined;
@@ -543,12 +578,15 @@ export class GrnComponent implements OnInit {
   addClear(){
         this.ObjGRN = new GRN();
         this.GRNFormSubmitted = false;
+        this.TCSTaxRequiredValidation = false;
         if(this.buttonname === "Update") {
         this.ProductDetailslist = [];
         }
         this.addPurchaseListInput = false
         // this.addPurchaseListInputField = {}
         // console.log("addPurchaseList",this.addPurchaseList);
+      this.getAllTotal();
+      this.TcsAmtCalculation();
   }
    delete(index) {
     this.productaddSubmit.splice(index,1)
@@ -559,6 +597,17 @@ export class GrnComponent implements OnInit {
      this.ObjGRN1.GRN_Date = this.DateService.dateConvert(new Date(this.GRNDate));
      this.ObjGRN1.RDB_Date = this.DateService.dateConvert(new Date(this.PODate));
      this.ObjGRN2.Created_By = this.$CompacctAPI.CompacctCookies.User_ID;
+     this.ObjGRN1.Product_Gross = this.getTofix(this.grTotal);
+     this.ObjGRN1.Product_Discount = this.getTofix(this.disTotal) ;
+     this.ObjGRN1.Product_Taxable = this.getTofix(this.taxAblTotal) ;
+     this.ObjGRN1.Product_GST = this.getTofix(this.GSTTotal);
+     this.ObjGRN1.Product_Net = this.getTofix(this.NetTotal);
+     this.ObjGRN1.Term_Taxable = this.getTofix(this.GrTermAmount);
+     this.ObjGRN1.Term_GST = this.getTofix(this.GrGstTermAmt);
+     this.ObjGRN1.Term_Net = this.getTofix(this.grNetTerm)
+     this.ObjGRN1.Total_GST = this.getTofix(Number(this.GSTTotal) + Number(this.GrGstTermAmt))
+     this.ObjGRN1.Rounded_Off = Number(this.getRoundedOff());
+     this.ObjGRN1.Total_Net_Amount = Number(this.RoundOff(this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt));
     if(this.productaddSubmit.length) {
       let tempArr:any =[]
       this.productaddSubmit.forEach(item => {
@@ -604,10 +653,11 @@ export class GrnComponent implements OnInit {
    SaveGRN(valid){
     this.Spinner = true;
     this.GRN2FormSubmitted = true;
+    this.TCSTaxRequiredValidation = true;
     this.ngxService.start();
     this.Save = false;
     this.Del = false;
-    if (valid && this.productaddSubmit.length) {
+    if (valid && this.productaddSubmit.length && this.ObjGRN1.TCS_Y_N) {
       this.Save = true;
       this.Del = false;
       this.Spinner = true;
@@ -711,6 +761,7 @@ export class GrnComponent implements OnInit {
        this.PrintPGRN(data[0].Column1);
        this.ObjGRN1 = new GRN1();
        this.GRNFormSubmitted = false;
+       this.TCSTaxRequiredValidation = false;
        this.productaddSubmit = [];
        this.ObjGRN2 = new GRN2;
        this.GRN2FormSubmitted = false;
@@ -736,6 +787,16 @@ export class GrnComponent implements OnInit {
        this.INV_No_Date = undefined;
        this.ObjTerm = new Term();
        this.AddTermList = [];
+       this.grTotal = 0;
+       this.taxAblTotal = 0;
+       this.disTotal = 0;
+       this.ExciTotal = 0;
+       this.ExciTotal = 0;
+       this.GSTTotal = 0;
+       this.NetTotal = 0;
+       this.GrTermAmount = 0
+       this.GrGstTermAmt = 0
+       this.grNetTerm = 0
        if (this.buttonname === "Update") {
         this.tabIndexToView = 0;
         this.items = ["BROWSE", "CREATE", "PENDING RDB", "PENDING RDB PRODUCT WISE", "GRN REGISTER"];
@@ -780,6 +841,7 @@ export class GrnComponent implements OnInit {
       this.getedit(col.GRN_No);
       setTimeout(() => {
         this.gettermedit(col.GRN_No);
+        this.gettcsedit(col.GRN_No);
       }, 200);
      }
    }
@@ -794,10 +856,13 @@ export class GrnComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.editlist = data;
       console.log("Edit data",data);
-      this.ObjGRN1 = data[0];
-      this.ObjGRN2 = data[0];
-      this.GetGodown(data[0].godown_id);
+      // this.ObjGRN1 = data[0];
+      // this.ObjGRN2 = data[0];
       this.GRNDate = new Date(data[0].GRN_Date);
+      this.ObjGRN1.Company_ID = data[0].Company_ID;
+      this.ObjGRN1.Sub_Ledger_ID = data[0].Sub_Ledger_ID;
+      this.ObjGRN1.Cost_Cen_ID = data[0].Cost_Cen_ID;
+      this.GetGodown(data[0].godown_id);
       this.ObjGRN1.RDB_No = data[0].RDB_No;
       this.PODate = new Date(data[0].RDB_Date);
       this.SENo = data[0].SE_No + "&";
@@ -805,8 +870,17 @@ export class GrnComponent implements OnInit {
       this.ObjGRN1.SE_No_Date = this.SENo + this.DateService.dateConvert(this.SE_No_Date);
       this.INVNo = data[0].Inv_No + "&";
       this.INV_No_Date = new Date(data[0].Inv_Date);
-      this.AddTermList = data[0].Term_element ? data[0].Term_element : [];
+      this.ObjGRN1.Mode_Of_transport = data[0].Mode_Of_transport;
+      this.ObjGRN1.LR_No_Date = data[0].LR_No_Date;
+      this.ObjGRN1.Vehicle_No = data[0].Vehicle_No;
+      this.ObjGRN1.TCS_Y_N = data[0].TCS_Y_N; 
+      this.TcsAmtCalculation();     // this.AddTermList = data[0].Term_element ? data[0].Term_element : [];
       // this.RDBListAdd = data[0].L_element;
+      this.ObjGRN2.Quantity_Remarks = data[0].Quantity_Remarks;
+      this.ObjGRN2.Quality_Rejection_Remarks = data[0].Quality_Rejection_Remarks;
+      this.ObjGRN2.Deduction_For_Rejection = data[0].Deduction_For_Rejection;
+      this.ObjGRN2.All_Over_Remarks = data[0].All_Over_Remarks;
+      this.ObjGRN2.Created_By = data[0].Created_By;
       data.forEach(element => {
         const  productObj = {
             Product_ID : element.Product_ID,
@@ -830,6 +904,9 @@ export class GrnComponent implements OnInit {
     
           this.productaddSubmit.push(productObj);
         });
+        if(this.productaddSubmit.length){
+          this.getAllTotal();
+        }
     })
    }
    gettermedit(Dno){
@@ -856,6 +933,25 @@ export class GrnComponent implements OnInit {
     
           this.AddTermList.push(termObj);
         });
+        if(this.AddTermList.length){
+          this.getAllTotal();
+        }
+    })
+   }
+   gettcsedit(Dno){
+    // this.termeditlist = [];
+    const obj = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
+      "Report_Name_String": "Get_GRN_Details_TCS",
+      "Json_Param_String": JSON.stringify([{Doc_No : Dno}])
+  
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // this.termeditlist = data;
+      console.log("tcseditlist data",data);
+      this.ObjGRN1.TCS_Y_N = data[0].TCS_Y_N; 
+      this.getAllTotal();
+      this.TcsAmtCalculation();
     })
    }
    GetDataforUpdate(){
@@ -952,7 +1048,8 @@ export class GrnComponent implements OnInit {
       HSN_No : this.ObjTerm.HSN_No,
     };
     this.AddTermList.push(TERMobj);
-    // this.getAllTotal()
+    this.getAllTotal();
+    this.TcsAmtCalculation();
     this.ObjTerm = new Term();
     this.TermFormSubmitted = false;
       
@@ -961,6 +1058,9 @@ export class GrnComponent implements OnInit {
   getTofix(key){
     return Number(Number(key).toFixed(2))
    }
+   RoundOff(key:any){
+    return Math.round(Number(Number(key).toFixed(2)))
+  }
    TeramChek(){
     if(this.AddTermList.length){
       const FilterAddTermList = this.AddTermList.find((el:any)=> Number(el.Term_ID) == Number(this.ObjTerm.Term_ID))
@@ -984,7 +1084,8 @@ export class GrnComponent implements OnInit {
    }
   DeteteTerm(index) {
     this.AddTermList.splice(index,1)
-    // this.getAllTotal()
+    this.getAllTotal();
+    this.TcsAmtCalculation();
   }
   async TermSave(doc:any){
     if(doc){
@@ -1007,6 +1108,73 @@ export class GrnComponent implements OnInit {
       const TermData = await  this.GlobalAPI.getData(obj).toPromise();
      // console.log("projectData",TermData);
       return TermData
+    }
+  }
+  getAllTotal(){
+    this.grTotal = 0;
+    this.taxAblTotal = 0;
+    this.disTotal = 0;
+    this.ExciTotal = 0;
+    this.ExciTotal = 0;
+    this.GSTTotal = 0;
+    this.NetTotal = 0;
+    this.GrTermAmount = 0
+    this.GrGstTermAmt = 0
+    this.grNetTerm = 0
+    if(this.productaddSubmit.length){
+      this.productaddSubmit.forEach(ele => {
+        this.grTotal += Number(ele.Challan) && Number(ele.Rate) ? Number(Number(ele.Challan) * Number(ele.Rate)) : 0
+        this.taxAblTotal += Number(ele.Taxable_Value) ? Number(ele.Taxable_Value) : 0
+        this.disTotal += Number(ele.Discount_Amount) ?  Number(ele.Discount_Amount) : 0
+        this.ExciTotal += Number(ele.Excise_Amount) ? Number(ele.Excise_Amount) : 0
+        this.GSTTotal += Number(ele.Tax) ? Number(ele.Tax) : 0
+        this.NetTotal += Number(ele.Total_Amount) ? Number(ele.Total_Amount)  :0
+      });
+    }
+    
+  if(this.AddTermList.length){
+   this.AddTermList.forEach((el:any) => {
+     this.GrTermAmount += Number(el.Term_Amount);
+     this.GrGstTermAmt += Number(el.GST_Amount);
+     this.grNetTerm += Number(Number(el.Term_Amount) + Number(el.GST_Amount))
+   });
+  }
+  
+  }
+  getRoundedOff(){
+    return this.getTofix( Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt + this.ObjGRN1.TCS_Amount).toFixed(2))) - Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt + this.ObjGRN1.TCS_Amount).toFixed(2))) 
+  }
+
+  TcsAmtCalculation(){
+    this.ObjGRN1.TCS_Ledger_ID = 0;
+    if (this.ObjGRN1.TCS_Y_N === 'YES') {
+        this.ngxService.start();
+        // this.$http.get("/Common/Get_TCS_Persentage_Sale?TCS_Enabled=YES",{responseType: 'text'}).subscribe((data: any) => {
+          const obj = {
+            "SP_String": "Sp_Purchase_Order",
+            "Report_Name_String": "Get_Tcs_Percentage_And Ledger",
+            }
+          this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          console.log(data)
+          this.ObjGRN1.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
+          this.ObjGRN1.TCS_Persentage = data[0].TCS_Persentage;
+          var netamount = (Number(this.taxAblTotal) + Number(this.GrTermAmount) + Number(this.GSTTotal) + Number(this.GrGstTermAmt)).toFixed(2);
+          var TCS_Amount = (Number(Number(netamount) * this.ObjGRN1.TCS_Persentage) / 100).toFixed(2);
+          this.ObjGRN1.TCS_Amount = Number(TCS_Amount);
+          // this.objaddPurchacse.Grand_Total = (Number(this.objaddPurchacse.Net_Amt) + Number(this.objaddPurchacse.TCS_Amount)).toFixed(2);
+          // this.Round_off = (Number(Math.round(this.ObjSaleBillNew.Grand_Total)) - Number(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+          // this.Net_Amt = Number(Math.round(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+          this.getRoundedOff();
+          // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+          this.ngxService.stop();
+        });   
+    }
+      else {
+        this.ObjGRN1.TCS_Persentage = 0;
+        this.ObjGRN1.TCS_Amount = 0;
+        // this.objaddPurchacse.Grand_Total = this.objaddPurchacse.Net_Amt;
+        this.getRoundedOff();
+        // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
     }
   }
 
@@ -1377,6 +1545,22 @@ class GRN1 {
   Mode_Of_transport : any;
   LR_No_Date : any;
   Vehicle_No : any;
+  TCS_Ledger_ID:any;
+  TCS_Y_N : any;
+  TCS_Persentage : any;
+  TCS_Amount : number = 0;
+
+  Product_Gross :any 
+  Product_Discount :any
+  Product_Taxable :any
+  Product_GST :any
+  Product_Net :any
+  Term_Taxable :any
+  Term_GST :any
+  Term_Net :any
+  Total_GST :any
+  Rounded_Off :any
+  Total_Net_Amount :any
 }
 
 class GRN {

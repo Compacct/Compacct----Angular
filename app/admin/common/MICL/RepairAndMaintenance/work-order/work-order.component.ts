@@ -1051,7 +1051,7 @@ export class WorkOrderComponent implements OnInit {
     // this.ngxService.start();
     this.Save = false;
     this.Del = false;
-   if(valid){
+   if(valid && this.ObjWorkOrder.TCS_Y_N){
     this.Save = true;
     this.Del = false;
     this.Spinner = true;
@@ -1470,6 +1470,7 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     console.log("addPurchaseList",this.addPurchaseList)
     if(this.addPurchaseList.length){
       this.getAllTotal()
+      this.TcsAmtCalculation()
     }
     setTimeout(() => {
       this.editorDis = false
