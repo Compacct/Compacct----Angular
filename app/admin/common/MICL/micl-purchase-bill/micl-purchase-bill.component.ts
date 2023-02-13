@@ -152,6 +152,7 @@ export class MiclPurchaseBillComponent implements OnInit {
   bckUpQty:any = undefined;
   bckUpQtyValid:boolean = false;
   editDocNo : any;
+  TCSTaxRequiredValidation = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -216,6 +217,7 @@ export class MiclPurchaseBillComponent implements OnInit {
      this.ObjPurChaseBill = new PurChaseBill();
      this.ObjPurChaseBill.Choose_Address = "MAIN";
      this.PurchaseBillFormSubmitted = false;
+     this.TCSTaxRequiredValidation = false;
      this.validatation.required = false;
      this.maindisabled = false;
      this.ObjPurChaseBill.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
@@ -517,6 +519,7 @@ GetGRNNoProductdetails(){
     this.calculategstamt();
     this.calculatenetamt();
     this.ListofTotalAmount();
+    this.TcsAmtCalculation();
   })
 }
 
@@ -575,10 +578,12 @@ GetGRNNoProductdetails(){
       disamt = Number((Number(col.Amount) * Number(col.Discount_Type_Amount)) / 100).toFixed(2);
       col.Discount =Number(disamt);
       this.ListofTotalAmount();
+      this.TcsAmtCalculation();
     }
     if(col.Discount_Type == "AMT") {
       col.Discount = Number(col.Discount_Type_Amount);
       this.ListofTotalAmount();
+      this.TcsAmtCalculation();
     }
     taxamt = Number(Number(col.Amount) - Number(col.Discount)).toFixed(2);
     col.Taxable_Amount = Number(taxamt);
@@ -587,6 +592,7 @@ GetGRNNoProductdetails(){
     this.CalculateCessAmt();
     this.calculatenetamt();
     this.ListofTotalAmount();
+    this.TcsAmtCalculation();
     }
     else {
       col.Discount = 0;
@@ -595,6 +601,7 @@ GetGRNNoProductdetails(){
       this.CalculateCessAmt();
       this.calculatenetamt();
       this.ListofTotalAmount();
+      this.TcsAmtCalculation();
     }
   }
   CalculateCessAmt(){
@@ -742,6 +749,7 @@ GetGRNNoProductdetails(){
       // this.GetProductdetails();
       this.ProductInfoSubmitted = false;
       this.ListofTotalAmount();
+      this.TcsAmtCalculation();
     }
     }
   }
@@ -749,6 +757,7 @@ GetGRNNoProductdetails(){
   // this.AddProductDetails.splice(index,1)
   this.GRNNoProlist.splice(index,1)
   this.ListofTotalAmount();
+  this.TcsAmtCalculation();
   }
   
   GetTerm() {
@@ -832,11 +841,13 @@ GetGRNNoProductdetails(){
       // this.GetProductdetails();
       this.TermFormSubmitted = false;
       this.ListofTotalAmount();
+      this.TcsAmtCalculation();
     }
   }
   DeteteTerm(index) {
     this.AddTermList.splice(index,1)
     this.ListofTotalAmount();
+    this.TcsAmtCalculation();
     }
   ListofTotalAmount(){
     this.Total_Amount = undefined;
@@ -932,6 +943,44 @@ GetGRNNoProductdetails(){
     this.Round_off = undefined;
     this.Net_Amt = undefined;
     this.Total_Term_Amount = undefined;
+  }
+  TcsAmtCalculation(){
+    this.ObjPurChaseBill.TCS_Ledger_ID = 0;
+    if (this.ObjPurChaseBill.TCS_Y_N === 'YES') {
+        this.ngxService.start();
+        // this.$http.get("/Common/Get_TCS_Persentage_Sale?TCS_Enabled=YES",{responseType: 'text'}).subscribe((data: any) => {
+          const obj = {
+            "SP_String": "SP_MICL_Purchase_Bill_New",
+            "Report_Name_String": "Get_Tcs_Percentage_And Ledger",
+            }
+          this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          console.log(data)
+          this.ObjPurChaseBill.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
+          this.ObjPurChaseBill.TCS_Persentage = data[0].TCS_Persentage;
+          // var netamount = (Number(this.taxAblTotal) + Number(this.GrTermAmount) + Number(this.GSTTotal) + Number(this.GrGstTermAmt)).toFixed(2);
+          var TCS_Amount = (Number(Number(this.Net_Amt) * this.ObjPurChaseBill.TCS_Persentage) / 100).toFixed(2);
+          this.ObjPurChaseBill.TCS_Amount = Number(TCS_Amount);
+          // this.objaddPurchacse.Grand_Total = (Number(this.objaddPurchacse.Net_Amt) + Number(this.objaddPurchacse.TCS_Amount)).toFixed(2);
+          // this.Round_off = (Number(Math.round(this.ObjSaleBillNew.Grand_Total)) - Number(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+          // this.Net_Amt = Number(Math.round(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+          var Net_Amt = Number(Number(this.Gross_Amount) + Number(this.ObjPurChaseBill.TCS_Amount));
+          this.Round_off = (Number(Math.round(Net_Amt)) - Number(Net_Amt)).toFixed(2);
+          this.Net_Amt = Number(Math.round(Net_Amt)).toFixed(2);
+          this.ObjTDS.Taxable_Amount = Number(this.Taxable_Amount);
+          // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+          this.ngxService.stop();
+        });   
+    }
+      else {
+        this.ObjPurChaseBill.TCS_Persentage = 0;
+        this.ObjPurChaseBill.TCS_Amount = 0;
+        // this.objaddPurchacse.Grand_Total = this.objaddPurchacse.Net_Amt;
+        var Net_Amt = Number(Number(this.Gross_Amount) + Number(this.ObjPurChaseBill.TCS_Amount));
+        this.Round_off = (Number(Math.round(Net_Amt)) - Number(Net_Amt)).toFixed(2);
+        this.Net_Amt = Number(Math.round(Net_Amt)).toFixed(2);
+        this.ObjTDS.Taxable_Amount = Number(this.Taxable_Amount);
+        // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+    }
   }
   GetLedger(){
     const obj = {
@@ -1089,8 +1138,9 @@ GetGRNNoProductdetails(){
     this.Save = false;
     this.Del = false;
     this.PurchaseBillFormSubmitted = true;
+    this.TCSTaxRequiredValidation = true;
     this.validatation.required = true
-    if(valid){
+    if(valid && this.ObjPurChaseBill.TCS_Y_N){
       this.Save = true;
       this.Del = false;
       this.Spinner = true;
@@ -1176,6 +1226,7 @@ GetGRNNoProductdetails(){
        });
       //  if (tempID != "Total Dr Amt And Cr Amt Not matched") {
        this.PurchaseBillFormSubmitted = false;
+       this.TCSTaxRequiredValidation = false;
       //  this.clearlistamount();
       //  this.cleartotalamount();
        this.clearData();
@@ -1324,6 +1375,7 @@ GetGRNNoProductdetails(){
       // console.log("addPurchaseList",this.addPurchaseList)
       if(this.GRNNoProlist.length || this.AddTermList.length){
         this.ListofTotalAmount()
+        this.TcsAmtCalculation()
       }
     })
   }
@@ -1627,6 +1679,11 @@ class PurChaseBill {
   Rounded_Off : number;
   User_ID : number;
   Fin_Year_ID : number;
+  
+  TCS_Ledger_ID:any;
+  TCS_Y_N : any;
+  TCS_Persentage : any;
+  TCS_Amount : number = 0;
 
   // HSN_No : any;
 
@@ -1700,6 +1757,7 @@ class ProductInfo {
   Product_Expiry : any;
   Expiry_Date: string;
   CESS_AMT: number;
+
 
 }
 class Term {

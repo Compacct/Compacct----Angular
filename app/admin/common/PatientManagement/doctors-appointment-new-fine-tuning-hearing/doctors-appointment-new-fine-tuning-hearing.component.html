@@ -96,12 +96,14 @@
                     <div class="label-t">{{ObjFineTuning.Txn_Date ? (ObjFineTuning.Txn_Date | date: "dd/MMM/yyyy") : '-'}}</div>
                   </div>
                   <div class="col-sm-3">
-                    <label class="control-label">User Type</label>
+                    <label class="control-label">User Type <sup class="text-danger">*</sup></label>
                     <select
                       name="Usertype"
                       class="form-control"
                       #Usertype="ngModel"
                       [(ngModel)]="ObjFineTuning.UserType"
+                      [ngClass]="{clearance: FineTuneFormSubmitted && Usertype?.errors?.required }" 
+                      required
                     >
                       <option [ngValue]="undefined">Select</option>
                       <option *ngFor="let option of User" value="{{ option }}">
@@ -110,12 +112,14 @@
                     </select>
                   </div>
                   <div class="col-sm-3">
-                    <label class="control-label">Ear</label>
+                    <label class="control-label">Ear <sup class="text-danger">*</sup></label>
                     <select
                       name="Ear"
                       class="form-control"
                       #Ear="ngModel"
                       [(ngModel)]="ObjFineTuning.Ear"
+                      [ngClass]="{clearance: FineTuneFormSubmitted && Ear?.errors?.required }" 
+                      required
                     >
                       <option [ngValue]="undefined">Select</option>
                       <option

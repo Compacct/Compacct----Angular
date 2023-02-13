@@ -96,6 +96,13 @@ export class MiclFinishMasterProductComponent implements OnInit {
   desmodellist:any = [];
   desmodellistDynamic:any = [];
 
+  ParameterNameList:any = [];
+  ParameterFormSubmitted = false;
+  AddParamDetails:any = [];
+  Parameter_ID: any;
+  Tolerance_Level: any;
+  SpinnerParam = false;
+
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -114,6 +121,7 @@ export class MiclFinishMasterProductComponent implements OnInit {
     ];
     this.getBrowseFinishProduct();
     this.getProductTyp();
+    this.GetParam();
     this.getAllUOM();
     this.mfgName();
     this.header.pushHeader({
@@ -126,6 +134,11 @@ export class MiclFinishMasterProductComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Create";
     this.clearData();
+    this.SpinnerParam = false;
+    this.AddParamDetails = [];
+    this.Parameter_ID = undefined;
+    this.Tolerance_Level = undefined;
+    this.ParameterFormSubmitted = false;
   }
   destroyChild() {
     if (this.GstAndCustDutyInput) {
@@ -477,6 +490,60 @@ onConfirmProSubtypedel(){
   
   }
 
+  // ADD PARAMETER DETAILS
+GetParam(){
+  const obj = {
+    "SP_String": "SP_Production_Management_Master_Raw_Material",
+    "Report_Name_String": "Get_Parameters"
+
+ }
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     if(data.length){
+      data.forEach(element => {
+        element['value'] = element.Parameter_ID
+        element['label'] = element.Parameter_Name
+      });
+     this.ParameterNameList = data;
+     }
+     else {
+      this.ParameterNameList = [];
+     }
+  // console.log("SubLedger list======",this.SubLedgerList);
+ });
+}
+gettolerance(){
+  this.Tolerance_Level = undefined;
+  if(this.Parameter_ID){
+  const tolerance = this.ParameterNameList.filter(el=>Number(el.Parameter_ID) === Number(this.Parameter_ID));
+  this.Tolerance_Level = tolerance[0].Tolerance_Level;
+  }
+}
+AddParam(valid){
+  this.ParameterFormSubmitted = true;
+  this.SpinnerParam = true;
+    if (valid) {
+      var Paramname = this.ParameterNameList.filter(el=>Number(el.Parameter_ID) === Number(this.Parameter_ID))
+      var paramobj = {
+      Parameter_ID : this.Parameter_ID,
+      Parameter_Name : Paramname[0].Parameter_Name,
+      Tolerance_Level : this.Tolerance_Level
+      }
+      this.AddParamDetails.push(paramobj);
+     console.log('this.AddParamDetails===',this.AddParamDetails)
+      this.ParameterFormSubmitted = false;
+      this.SpinnerParam = false;
+      this.Parameter_ID = undefined;
+      this.Tolerance_Level = undefined;
+
+    }
+    else{
+      this.SpinnerParam = false;
+    }
+}
+Paramdelete(index) {
+  this.AddParamDetails.splice(index,1)
+}
+
   //UOM
   getAllUOM(){
      this.UomDataList = [];
@@ -667,7 +734,8 @@ saveData(valid:any){
      const obj = {
          "SP_String": "SP_Production_Finish_Master_Product",
          "Report_Name_String": this.productCode ? 'Finish_Master_Product_Update' : 'Finish_Master_Product_Create',
-         "Json_Param_String": JSON.stringify([this.Objproduct]) 
+         "Json_Param_String": JSON.stringify([this.Objproduct]) ,
+         "Json_1_String": JSON.stringify(this.AddParamDetails)
         }
        this.GlobalAPI.getData(obj)
        .subscribe((data:any)=>{
@@ -688,6 +756,9 @@ saveData(valid:any){
           this.GstAndCustomFormSubmit = false;
           this.FinishProductFormSubmitted = false;
           this.Objproduct = new product();
+          this.AddParamDetails = [];
+          this.Parameter_ID = undefined;
+          this.Tolerance_Level = undefined;
         }
         else {
           this.Spinner = false;
@@ -768,6 +839,7 @@ saveData(valid:any){
       this.mfgName();
       this.productCode = product.Product_ID
       this.GetEditMasterProduct(product.Product_ID)
+      this.GetParamEdit(product.Product_ID);
      }  
   }
   GetEditMasterProduct(uid){
@@ -801,6 +873,28 @@ saveData(valid:any){
        
        });
    }
+   GetParamEdit(proid){
+    // this.parameditList = [];
+    const temobj = {
+      Product_ID  : proid,   
+    }
+    const obj = {
+      "SP_String": "SP_Production_Finish_Master_Product",
+      "Report_Name_String": "Get_Master_Raw_Material_Parameter",
+      "Json_Param_String": JSON.stringify(temobj)
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // this.parameditList = data;
+      data.forEach(element => {
+        this.AddParamDetails.push({
+          Parameter_ID : element.Parameter_ID,
+          Parameter_Name : element.Parameter_Name,
+          Tolerance_Level : element.Tolerance_Level
+        })
+      });
+      //console.log("this.editList  ===",this.editList);
+      })
+  }
    // Active And Inactive
    InactiveProduct(obj){
     this.masterProductId = undefined ;

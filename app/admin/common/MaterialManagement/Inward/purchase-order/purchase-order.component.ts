@@ -164,6 +164,9 @@ export class PurchaseOrderComponent implements OnInit {
   databaseName:any;
   cancelDocNo:any;
   allTotalObj:any = {}
+  
+  TCSTaxRequiredValidation = false;
+
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
     private Header: CompacctHeader ,
@@ -261,6 +264,7 @@ clearData(){
     this.Spinner = false;
     this.purChaseAddFormSubmit = false;
     this.purchaseFormSubmitted = false;
+    this.TCSTaxRequiredValidation = false;
     this.validatation.required = false;
     this.TermFormSubmitted = false
     this.addPurchaseList = []; 
@@ -814,6 +818,7 @@ addClear(){
       this.addPurchaseListInputField = {}
       // console.log("addPurchaseList",this.addPurchaseList);
       this.getAllTotal();
+      this.TcsAmtCalculation();
 }
 GetSameProWithInd () {
   if(!this.addPurchaseListInput){
@@ -899,7 +904,8 @@ AddTerm(valid){this.TermFormSubmitted = true;
     HSN_No : this.ObjTerm.HSN_No,
   };
   this.AddTermList.push(TERMobj);
-  this.getAllTotal()
+  this.getAllTotal();
+  this.TcsAmtCalculation();
   this.ObjTerm = new Term();
   this.TermFormSubmitted = false;
     
@@ -928,16 +934,18 @@ TeramChek(){
 }
 DeteteTerm(index) {
   this.AddTermList.splice(index,1)
-  this.getAllTotal()
+  this.getAllTotal();
+  this.TcsAmtCalculation();
 }
 async savePurchase(valid){
    this.purchaseFormSubmitted = true
    this.validatation.required = true
+    this.TCSTaxRequiredValidation = true;
     this.falg = true
     // this.ngxService.start();
     this.Save = false;
     this.Del = false;
-   if(valid && this.checkreq()){
+   if(valid && this.checkreq() && this.objpurchase.TCS_Y_N){
     this.Save = true;
     this.Del = false;
     this.Spinner = true;
@@ -1115,6 +1123,38 @@ async TermSave(doc:any){
    }
   
  
+}
+TcsAmtCalculation(){
+  this.objpurchase.TCS_Ledger_ID = 0;
+  if (this.objpurchase.TCS_Y_N === 'YES') {
+      this.ngxService.start();
+      // this.$http.get("/Common/Get_TCS_Persentage_Sale?TCS_Enabled=YES",{responseType: 'text'}).subscribe((data: any) => {
+        const obj = {
+          "SP_String": "Sp_Purchase_Order",
+          "Report_Name_String": "Get_Tcs_Percentage_And Ledger",
+          }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        console.log(data)
+        this.objpurchase.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
+        this.objpurchase.TCS_Persentage = data[0].TCS_Persentage;
+        var netamount = (Number(this.taxAblTotal) + Number(this.GrTermAmount) + Number(this.GSTTotal) + Number(this.GrGstTermAmt)).toFixed(2);
+        var TCS_Amount = (Number(Number(netamount) * this.objpurchase.TCS_Persentage) / 100).toFixed(2);
+        this.objpurchase.TCS_Amount = Number(TCS_Amount);
+        // this.objaddPurchacse.Grand_Total = (Number(this.objaddPurchacse.Net_Amt) + Number(this.objaddPurchacse.TCS_Amount)).toFixed(2);
+        // this.Round_off = (Number(Math.round(this.ObjSaleBillNew.Grand_Total)) - Number(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+        // this.Net_Amt = Number(Math.round(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+        this.getRoundedOff();
+        // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+        this.ngxService.stop();
+      });   
+  }
+    else {
+      this.objpurchase.TCS_Persentage = 0;
+      this.objpurchase.TCS_Amount = 0;
+      // this.objaddPurchacse.Grand_Total = this.objaddPurchacse.Net_Amt;
+      this.getRoundedOff();
+      // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+  }
 }
 //  checkreq(){
 //   let flg = false
@@ -1401,6 +1441,7 @@ DeleteAddPurchase(index) {
   this.addPurchaseList.splice(index,1);
   this.projectDisable = this.addPurchaseList.length ? true :false
   this.getAllTotal();
+  this.TcsAmtCalculation();
 }
 GetGSTAmt(){
   if(this.objaddPurchacse.taxable_AMT){
@@ -2062,7 +2103,7 @@ EditAddPurchase(inx:any){
 }
 
 getRoundedOff(){
-  return this.getTofix( Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2))) - Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2))) 
+  return this.getTofix( Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt + this.objpurchase.TCS_Amount).toFixed(2))) - Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt + this.objpurchase.TCS_Amount).toFixed(2))) 
 }
   
 FinalSave(col) {
@@ -2201,6 +2242,10 @@ class purchase {
         Total_GST:any
         Rounded_Off:any
         Total_Net_Amount:any
+        TCS_Ledger_ID:any;
+        TCS_Y_N : any;
+        TCS_Persentage : any;
+        TCS_Amount : number = 0;
 }
 class addPurchacse{
       Product_ID:any;
@@ -2227,7 +2272,7 @@ class addPurchacse{
       Gst:any;
       Taxable_Amount:any;
       Req_No:any;
-      Product_Type_ID:any
+      Product_Type_ID:any;
 }
 class project{
     DOC_NO:any

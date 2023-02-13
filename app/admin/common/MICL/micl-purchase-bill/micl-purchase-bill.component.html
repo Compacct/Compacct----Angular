@@ -696,6 +696,22 @@
                        </table>
                     </div>
                 </form>
+                <br>
+                <div class="col-sm-4" *ngIf="GRNNoProlist.length">
+                 <label class="control-label">TCS Tax Required <sup class="text-danger">*</sup> </label>
+                 <select class="form-control" 
+                 name="tcstaxreq" 
+                 #tcstaxreq="ngModel" 
+                 [(ngModel)]="ObjPurChaseBill.TCS_Y_N"
+                 (ngModelChange)="TcsAmtCalculation()"
+                 [ngClass]="{'clearance': TCSTaxRequiredValidation && tcstaxreq?.errors?.required}" required>
+                    <option  [ngValue]="undefined">Select</option>
+                    <option value ="YES">YES</option>
+                    <option value ="NO">NO</option>
+                 </select>
+                </div>
+                <br>
+                <div class="clearfix"></div>
                         <br>
 
                             <div class="col-xs-12">
@@ -731,6 +747,8 @@
 
                                       <th>Gross Amount : </th>
                                       <td class="amt-td ng-binding">{{Gross_Amount}}</td>
+                                      <th>TCS Amount :</th>
+                                      <td class="amt-td ng-binding">{{ObjPurChaseBill.TCS_Amount}}</td>
                                     </tr>
                                     <tr>
                                       <th>Taxable Amount :</th>
