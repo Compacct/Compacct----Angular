@@ -280,12 +280,11 @@
                                 </div>
                                 <div class="col-sm-3" *ngIf="SMSCheck === true && VenderSelect  ">
                                     <label class="control-label">To Mobile No<sup class="text-danger">*</sup></label>
-                                    <p-dropdown [options]="SMSList" [showClear]="true" name="SMS" #SMS="ngModel"
-                                        [(ngModel)]="SMSSelect" [emptyFilterMessage]="' No Mobile Number Found'" [filter]="true"
-                                        filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Mobile No'" [virtualScroll]="true"
-                                        itemSize="30" [styleClass]="'textAlign'"
+                                    <p-multiSelect [options]="SMSList" name="SMS" #SMS="ngModel" [(ngModel)]="SMSSelect"
+                                        [virtualScroll]="true" itemSize="30" [defaultLabel]="'Choose Mobile No'" [emptyFilterMessage]="' Mobile No Found'"
+                                        [styleClass]="'compacct-multiselect'"
                                          [ngClass]="{'clearance': MobileForm && SMS?.errors?.required }"required>
-                                    </p-dropdown>
+                                    </p-multiSelect>
                                 </div>                          
                             </div>
                             </form>
