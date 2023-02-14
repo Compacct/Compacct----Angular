@@ -449,7 +449,7 @@
                 </div>
                 <div class='col-sm-12'>
                     <label class="control-label">Customer Name <sup class="text-danger">*</sup></label>
-                    <input class="form-control" name="Customer_Name" id='CustomerName' #Customer_Name="ngModel" (keydown)="onKeydownMain2($event, 'customerNAme')" [(ngModel)]="Objcustomerdetail.Contact_Name" [disabled]="NoPhonedisable" [ngClass]="{'clearance':CustomerDetailsFormSubmitted && Customer_Name.errors?.required}"
+                    <input class="form-control" name="Customer_Name" id='CustomerName' #Customer_Name="ngModel" (keydown)="onKeydownMain2($event, 'customerNAme')" [(ngModel)]="Objcustomerdetail.Contact_Name" [disabled]="namedisabled" [ngClass]="{'clearance':CustomerDetailsFormSubmitted && Customer_Name.errors?.required}"
                         placeholder="Customer Name" required>
                 </div>
                 <div class='col-sm-12'>
@@ -553,7 +553,7 @@
                 </div>
                 <div class='col-sm-12'>
                     <label class="control-label">Customer Name <sup class="text-danger">*</sup></label>
-                    <input class="form-control" name="Customer_Name" id='CustomerName' #Customer_Name="ngModel" (keydown)="onKeydownMain2($event, 'customerNAme')" [(ngModel)]="Objcustomerdetail.Contact_Name" [disabled]="NoPhonedisable" [ngClass]="{'clearance':CustomerDetailsFormSubmitted && Customer_Name.errors?.required}"
+                    <input class="form-control" name="Customer_Name" id='CustomerName' #Customer_Name="ngModel" (keydown)="onKeydownMain2($event, 'customerNAme')" [(ngModel)]="Objcustomerdetail.Contact_Name" [disabled]="namedisabled" [ngClass]="{'clearance':CustomerDetailsFormSubmitted && Customer_Name.errors?.required}"
                         placeholder="Customer Name" required>
                 </div>
                 <div class='col-sm-12'>

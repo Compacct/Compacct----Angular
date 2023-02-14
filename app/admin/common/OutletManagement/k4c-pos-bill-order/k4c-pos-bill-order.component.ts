@@ -68,6 +68,7 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
 
   SubledgerList = [];
   subledgerdisable = false;
+  namedisabled = false;
 
 
   constructor( private Header: CompacctHeader,
@@ -244,6 +245,7 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
            if(ReturnObj.Foot_Fall_ID) {
             this.Objcustomerdetail.Foot_Fall_ID = ReturnObj.Foot_Fall_ID;
             this.Objcustomerdetail.Contact_Name = ReturnObj.Contact_Name;
+              this.namedisabled = this.Objcustomerdetail.Contact_Name.length > 5 ? true : false;
             this.Objcustomerdetail.Cost_Cen_ID = ReturnObj.Cost_Cen_ID;
             this.Objcustomerdetail.Address = ReturnObj.Address;
             console.log(ReturnObj)
@@ -282,6 +284,7 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
     this.Objcustomerdetail.Redirect_To = val;
     this.GSTvalidFlag = false;
     this.ClickedOnlineLedger = {};
+    this.namedisabled = false;
     this.CustomerDetailsFormSubmitted = false;
     if (this.EODstatus === "YES"){
       this.CustomerDetailsPopUpFlag = true;
@@ -386,6 +389,7 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
     this.ClickedOnlineLedger = {};
     this.CustomerDetailsFormSubmitted = false;
    // this.CustomerDetailsPopUpFlag = true;
+    this.namedisabled = false;
     this.CustomerDetailsAdvOrPopUpFlag = true;
     this.locationInput.nativeElement.value = '';
     this.NoPhonedisable = false;
