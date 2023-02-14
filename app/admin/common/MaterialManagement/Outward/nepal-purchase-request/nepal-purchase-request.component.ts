@@ -153,16 +153,16 @@ export class NepalPurchaseRequestComponent implements OnInit {
       this.$http.get('Nepal_BL_Txn_Purchase_Request/Get_All_Data_For_Purchase_Request?to_date='+this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate))+'&Cat_ID='+Number(this.objpurchaseRequest.Cat_ID)).pipe(map((data:any) => data ? JSON.parse(data) : []))
         .subscribe((data:any)=>{
           this.ngxService.start();
-        //console.log("productList",data)
+        console.log("productList",data)
         if(data.length){
-          if(editData ? editData.length : false){
-            data.forEach((ele:any) => {
-             const filterEdit = editData.find((z:any)=> Number(z.Product_ID) == Number(ele.Product_ID))
-             if(filterEdit){
-              ele.Purchase_Req_Qty = filterEdit.Purchase_Req_Qty
-             }
-            });
-          }
+          // if(editData ? editData.length : false){
+          //   data.forEach((ele:any) => {
+          //    const filterEdit = editData.find((z:any)=> Number(z.Product_ID) == Number(ele.Product_ID))
+          //    if(filterEdit){
+          //     ele.Purchase_Req_Qty = filterEdit.Purchase_Req_Qty
+          //    }
+          //   });
+          // }
           this.setProductListTable(data)
         }
        
@@ -356,14 +356,14 @@ export class NepalPurchaseRequestComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{ Purchase_Request_No :PurchaseRequestNo}])
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     //console.log("Edit",data)
+     console.log("Edit",data)
      if(data.length){
       this.DocDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(data[0].Purchase_Request_Date)
       //this.setProductListTable(data)
       this.objpurchaseRequest.Cat_ID = data[0].Cat_ID
-      this.GetproductList(data)
+      
      }
-    
+    this.GetproductList(data)
     })
   }
   DetailsReqQty(){
