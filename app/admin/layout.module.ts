@@ -432,6 +432,7 @@ import { PurchaseOrderHarbauerComponent } from './common/MaterialManagement/Inwa
 import { ParameterMasterComponent } from "./common/MICL/parameter-master/parameter-master.component";
 import { DoctorsAppoTherapPlanComponent } from './common/PatientManagement/doctors-appo-therap-plan/doctors-appo-therap-plan.component';
 import { MICLRawMaterialQAComponent } from "./common/MICL/micl-raw-material-qa/micl-raw-material-qa.component";
+import { BLTxnGrnNPComponent } from './common/Procurement/bl-txn-grn-np/bl-txn-grn-np.component';
 
 @NgModule({
   declarations: [
@@ -780,7 +781,8 @@ import { MICLRawMaterialQAComponent } from "./common/MICL/micl-raw-material-qa/m
     PurchaseOrderHarbauerComponent,
     ParameterMasterComponent,
     DoctorsAppoTherapPlanComponent,
-    MICLRawMaterialQAComponent
+    MICLRawMaterialQAComponent,
+    BLTxnGrnNPComponent
 
   ],
   imports: [
