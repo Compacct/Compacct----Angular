@@ -145,7 +145,8 @@ export class HrLeaveApplyComponent implements OnInit {
        const tempobj = {
          Start_Date : From_date,
          End_Date : To_date,
-         Atten_Type_ID : this.ObjBrowse.Leave_Type
+         Atten_Type_ID : this.ObjBrowse.Leave_Type ? this.ObjBrowse.Leave_Type : 0,
+         User_ID : this.$CompacctAPI.CompacctCookies.User_ID
          }
     if(valid){
     const obj = {
