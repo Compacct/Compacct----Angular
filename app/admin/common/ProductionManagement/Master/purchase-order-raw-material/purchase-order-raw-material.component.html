@@ -26,6 +26,37 @@
         </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" key="potext" (onClose)="onReject()" [modal]="true" [autoZIndex]="true"  baseZIndex="99999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+          <form name="potextForm" #potextForm="ngForm" novalidate>
+                <div class="form-group">
+                    <div class="col-sm-12" >
+                        <label class="control-label">Po text<sup class="text-danger"></sup></label>
+                        <input type="text"
+                        class="form-control"
+                        name="Potext"
+                        #Potext="ngModel"
+                        [(ngModel)]="objPoText.PO_Text"
+                        placeholder="Po text"
+                        [ngClass]="{'clearance': potextFormSubmit && Potext?.errors?.required }"
+                        required
+                        >
+                    </div>
+                    <div class="col-sm-12" style="text-align: right; margin: 5px; padding: 0px;" >
+                        <button type="button" pButton (click)="potextEdit(potextForm.form.valid)" label="OK" class="btn btn-default"></button>
+                    </div>
+                   
+                </div>
+            </form>
+        </div>
+   <div class="ui-g ui-fluid" >
+             <div class="ui-g-12">
+                
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -575,12 +606,8 @@
                                                     <table class="table table-bordered">
                                                         <tbody>
                                                         <tr *ngFor='let data of col.Parameter_Details'> <!-- *ngFor='let data of paramlist' -->
-                                                            <td nowrap>{{data.Parameter_Name}}</td>
-                                                            <td nowrap>{{data.Min_Value}}-{{data.Max_Value}}</td>
-                                                            <td nowrap>{{data.UOM ? data.UOM : '-'}}</td>
-                                                            <td nowrap>+/-{{data.Tolerance_Level}}</td>
-                                            
-                                                        </tr>
+                                                            <td nowrap>{{data.PO_Text}}</td>
+                                                         </tr>
                                                         </tbody>
                                                     </table>
                                                 </td>
@@ -1437,14 +1464,15 @@ style="text-align: center;"
 [closable]="false"
 [modal]="true"
 [responsive]="true"
-[style]="{ width: '58%', minWidth: '200px' }"
+[style]="{ width: '65%', minWidth: '200px' }"
 style="text-align: center;"
 [minY]="70"
 [maximizable]="true"
 [baseZIndex]="10000"
 >
 <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
-    <p-table [value]="ParameterList" [globalFilterFields]='["Parameter_Name","Min_Value","Max_Value","UOM","Tolerance_Level"]' [rowHover]="true" [autoLayout]="true" #dt4>
+    <p-table [value]="ParameterList" 
+    [globalFilterFields]='["Parameter_Name","Min_Value","Max_Value","UOM","Tolerance_Level","Max_Tolerance_Level","Min_Tolerance_Level","PO_Text"]' [rowHover]="true" [autoLayout]="true" #dt4>
         <ng-template pTemplate="caption">
             <div class="row">
                 <div class="col-sm-3 pull-right" style="text-align: right">
@@ -1455,22 +1483,28 @@ style="text-align: center;"
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
-                <th>Parameter Name</th>
-                <th>Min Value</th>
-                <th>Max Value</th>
-                <th></th>
-                <th>Tolerance Level</th>
+                <th rowspan="2">Parameter Name</th>
+                <th colspan="2" >Required Value</th>
+                <th rowspan="2" ></th>
+                <th colspan="2" >Tolerance Level</th>
+                <th rowspan="2" >P.O Text</th>
+            </tr>
+            <tr>
+                <th>Min</th>
+                <th>Max</th>
+                <th>Min</th>
+                <th>Max</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
             <tr>
                 <td>{{col.Parameter_Name}}</td>
-                <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Min_Value' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
-                <!-- <td>{{col.Confirm_Rate}}</td> -->
-                <td><input type="text" [name]="col.Product_ID1" [(ngModel)]='col.Max_Value' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                <td><input type="text" name="{{col.Parameter_ID +'Min_Value'}}" [(ngModel)]='col.Min_Value' (ngModelChange)="genPoText()" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                <td><input type="text" name="{{col.Parameter_ID + col.Product_ID+'Max_Value'}}" [(ngModel)]='col.Max_Value' (ngModelChange)="genPoText()" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                 <td>{{col.UOM ? col.UOM : '-'}}</td>
-                <td><input type="text" [name]="col.Product_ID2" [(ngModel)]='col.Tolerance_Level' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
-
+                <td><input type="text" name="{{col.Parameter_ID +'Max_Tolerance_Level'}}" [(ngModel)]='col.Max_Tolerance_Level' (ngModelChange)="genPoText()" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                <td><input  type="text" name="{{col.Parameter_ID +'Min_Tolerance_Level'}}" [(ngModel)]='col.Min_Tolerance_Level' (ngModelChange)="genPoText()" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                <td> <span data-toggle="tooltip" title="Edit PO Text" class="genPoText" (click)="editpotext(col)" >{{col.PO_Text}}</span> </td>
             </tr>
         </ng-template>
     </p-table>
@@ -1485,7 +1519,7 @@ style="text-align: center;"
     </button>
     <button
     type="button"
-    (click)="ParamDetalisPopup = false"
+    (click)="cancelpopUp()"
     class="btn btn-default"
     >
     CANCEL

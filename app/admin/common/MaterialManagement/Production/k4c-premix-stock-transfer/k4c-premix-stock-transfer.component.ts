@@ -200,7 +200,7 @@ GetFromCostCen(){
       //    });
         this.Fcostcenlist = data;
         // this.ObjpremixST.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-        this.ObjpremixST.From_Cost_Cen_ID = 2;
+        this.ObjpremixST.From_Cost_Cen_ID = 114;
       this.GetFromGodown();
       // }
      })
@@ -222,7 +222,7 @@ GetFromGodown(){
         //     el['value'] = el.godown_id;
         //    });
           this.FromGodownList = data;
-          this.ObjpremixST.From_godown_id = 126;
+          this.ObjpremixST.From_godown_id = 112;
           //console.log("From Godown List ===", this.FromGodownList);
         // }
       })
@@ -600,7 +600,7 @@ onConfirm(){
   }
 }
 clearData(){
-    this.ObjpremixST.From_Cost_Cen_ID = 2;
+    this.ObjpremixST.From_Cost_Cen_ID = 114;
 
     // if (this.CostCentId_Flag) {
       this.ObjpremixST.To_Cost_Cen_ID = 49;//String(this.CostCentId_Flag);
@@ -618,7 +618,7 @@ clearData(){
       //   this.GetBToGodown();
       // }
      
-      this.ObjpremixST.From_godown_id = 126;
+      this.ObjpremixST.From_godown_id = 112;
     // this.ObjpremixST.From_godown_id = this.FromGodownList.length === 1 ? this.FromGodownList[0].godown_id : undefined;
     //  if(this.FromGodownList.length === 1){
     //    this.FGdisableflag = true;

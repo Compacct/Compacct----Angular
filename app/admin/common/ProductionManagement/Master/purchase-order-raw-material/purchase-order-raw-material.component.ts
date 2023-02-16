@@ -11,6 +11,7 @@ import { CompacctProjectComponent } from '../../../../shared/compacct.components
 import { MapType } from '@angular/compiler/src/output/output_ast';
 import * as XLSX from 'xlsx';
 import { timeStamp } from 'console';
+declare var $: any;
 @Component({
   selector: 'app-purchase-order-raw-material',
   templateUrl: './purchase-order-raw-material.component.html',
@@ -160,7 +161,8 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
   paramlist:any = [];
   addparamlist:any = [];
   paramarr:any = [];
-  
+  objPoText:any = {}
+  potextFormSubmit:boolean = false
   constructor(
     private $http: HttpClient ,
     private Header: CompacctHeader ,
@@ -176,6 +178,9 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
     this.Header.pushHeader({
       Header: "Purchase Order Raw Material",
       Link: "Production Management -> Master -> Purchase Order Raw Material"
+    });
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();   
     });
     this.Finyear();
       this.ObjWorkOrder.Credit_Days = 0;
@@ -253,12 +258,15 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
     this.productDetalisViewList = [];
     this.addPurchaseListInputField = {}
     this.editorDis = true;
+    this.objPoText = {}
+    this.potextFormSubmit = false
     setTimeout(() => {
       this.editorDis = false
     }, 500);
    }
   onReject() {
     this.compacctToast.clear("c");
+    this.compacctToast.clear("potext");
     this.Spinner = false;
     this.ngxService.stop();
     this.deleteError = false;
@@ -472,13 +480,87 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{Product_ID : this.ObjaddWorkOrder.Product_ID}])
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      this.ParameterList = data;
+      this.ParameterList = [...data];
      console.log("ParameterList",this.ParameterList);
      this.ParamDetalisPopup = this.ParameterList.length ? true : false;
+     this.ParameterList.forEach((xy:any) => {
+      xy['Max_Tolerance_Level'] = xy.Tolerance_Level
+      xy['Min_Tolerance_Level'] = xy.Tolerance_Level 
+     });
+     this.genPoText()
       })
     }
   
   }
+  genPoText(){
+    const RequiredValue = (op:any)=>{
+      if((op.Min_Value && op.Max_Value && op.Min_Value != "0" && op.Max_Value != "0")){
+        if(Number(op.Min_Value) == Number(op.Max_Value)){
+          return `${op.Min_Value?op.Min_Value:""} ${op.UOM}`
+        }
+        else {
+          return `${op.Min_Value?op.Min_Value:''} to ${op.Max_Value?op.Max_Value:''} ${op.UOM}`
+        }
+       
+      }
+      if(op.Min_Value && op.Min_Value != "0"){
+        return `${op.Min_Value} ${op.UOM}`
+      }
+      if(op.Max_Value && op.Max_Value != "0"){
+        return `${op.Max_Value} ${op.UOM}`
+      }
+      return ''
+    }
+    const ToleranceLevel = (op:any)=>{
+      if(op.Max_Tolerance_Level || op.Min_Tolerance_Level){
+        if(op.Max_Tolerance_Level == op.Min_Tolerance_Level){
+          return ` ${op.Max_Tolerance_Level && op.Max_Tolerance_Level != '0'? '(+/-'+op.Max_Tolerance_Level+')' : ""} `
+         }
+         else {
+           return `(${op.Min_Tolerance_Level && op.Min_Tolerance_Level != '0'? '+'+op.Min_Tolerance_Level+'% ' : ''} ${op.Max_Tolerance_Level && op.Max_Tolerance_Level != '0' ? '-'+op.Max_Tolerance_Level+'% ': ''})`
+         }
+        
+      }
+      else {
+          return ""
+      }
+       
+      }
+    this.ParameterList.forEach((xy:any) => {
+     xy['PO_Text'] = `${xy.Parameter_Name} - ${RequiredValue(xy)} ${ToleranceLevel(xy)}`
+    });
+  }
+  editpotext(obj:any){
+   if(Object.keys(obj).length != 0){
+    this.objPoText = {...obj}
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "potext",
+      sticky: true,
+      severity: "info",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+    });
+   }
+  }
+  cancelpopUp(){
+   this.ParamDetalisPopup = false
+   this.compacctToast.clear("potext");
+  }
+  potextEdit(valid:any){
+    this.potextFormSubmit = true
+    if(valid){
+      this.ParameterList.forEach((yx:any) => {
+        if(Number(yx.Parameter_ID) == Number(this.objPoText.Parameter_ID)){
+          yx.PO_Text = this.objPoText.PO_Text
+        }
+     });
+     this.potextFormSubmit = false
+     this.compacctToast.clear("potext");
+    }
+  
+  }
+
   SaveParamDetalis(){
     if(this.ParameterList.length){
       this.paramlist = []
@@ -914,7 +996,10 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
         UOM : element.UOM,
         Max_Value : element.Max_Value,
         Min_Value : element.Min_Value,
-        Tolerance_Level : element.Tolerance_Level
+        Tolerance_Level : element.Tolerance_Level,
+        Max_Tolerance_Level : element.Max_Tolerance_Level,
+        Min_Tolerance_Level : element.Min_Tolerance_Level,
+        PO_Text: element.PO_Text
       }
       this.paramarr.push(obj)
       }
@@ -1015,6 +1100,9 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
    this.ObjaddWorkOrder.Product_ID = this.addPurchaseList[inx].Product_ID
   //  this.GetParamDetailsforProduct();
    this.ParameterList = this.addPurchaseList[inx].Parameter_Details ? this.addPurchaseList[inx].Parameter_Details : [];
+   if(this.ParameterList.length){
+    this.genPoText()
+   }
    this.ParamDetalisPopup = this.ParameterList.length ? true : false;
    this.ObjaddWorkOrder = {...this.addPurchaseList[inx]}
    this.ObjaddWorkOrder.Unit = this.addPurchaseList[inx].UOM

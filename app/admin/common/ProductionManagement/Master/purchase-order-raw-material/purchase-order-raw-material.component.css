@@ -54,3 +54,9 @@ background-color: #ffffff;
 .Othercolor {
     color: black;
 } */
+.genPoText:hover{
+    color: #3785c9;
+    cursor: pointer;
+    border-bottom: 1px dotted #000;
+    text-decoration: none;
+}
