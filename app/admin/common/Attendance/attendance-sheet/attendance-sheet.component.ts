@@ -838,5 +838,12 @@ export class AttendanceSheetComponent implements OnInit {
     }
     })
   }
+  Printattendance() {
+    var firstDate = this.Month_Name+'-'+'01'
+    if(firstDate) {
+      window.open("/Report/Crystal_Files/MICL/HR_Attendance_Sheet.aspx?From_Date=" + this.DateService.dateConvert(new Date(firstDate)) +"&To_Date=" + this.DateService.dateConvert(new Date(firstDate)), 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    
+    }
+  }
   
 }

@@ -15,6 +15,7 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
 })
 export class DoctorsAppoTherapPlanComponent implements OnInit {
 
+  tabIndexToView = 0;
   CentreList:any = [];
   TestName:string = 'Therapy_Plan';
   currentDate:any;
@@ -383,7 +384,7 @@ export class DoctorsAppoTherapPlanComponent implements OnInit {
 
   }
 
-  TabClick(){
+  TabClick(e){
     
   }
 
