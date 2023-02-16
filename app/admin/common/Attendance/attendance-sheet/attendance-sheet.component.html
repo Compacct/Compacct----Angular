@@ -175,8 +175,11 @@
                         <div class="col-sm-3" *ngIf="AllAttendanceData.length">
                             <button  class="btn btn-warning"  (click)="ChekMonthlyProcAS()">Process Monthly Attendance Sheet</button>
                         </div>
-                        <div class="col-sm-3" *ngIf="AllAttendanceData.length">
+                        <div class="col-sm-2" *ngIf="AllAttendanceData.length">
                             <button  class="btn btn-success"  (click)="exportoexcelattnsht('Attendance_Sheet')">Export To Excel</button>
+                        </div>
+                        <div class="col-sm-1" *ngIf="AllAttendanceData.length">
+                            <button  class="btn btn-primary"  (click)="Printattendance()"><span class="fa fa-fw fa-print"></span>Print</button>
                         </div>
                         <div>
                             <span  class="fa fa-question-circle pull-right"  (click)="information()"></span>
