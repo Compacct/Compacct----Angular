@@ -173,18 +173,18 @@ export class K4cFactoryReturnComponent implements OnInit {
     this.getGodown();
     //this.getselectproduct();
     this.getReturnReason("M");
-    // this.route.queryParamMap.subscribe((val:any) => {
-    //   if(val.params) {
-    //     this.QueryStringObj = val.params;
-    //     if(this.QueryStringObj.Browse_Flag) {
-    //       this.Browser = true;
-    //       this.tabIndexToView = 0;
-    //     }
-    //     if(this.QueryStringObj.Create_Flag) {
-    //       this.tabIndexToView = 1;
-    //     }
-    //   }
-    // } );
+    this.route.queryParamMap.subscribe((val:any) => {
+      if(val.params) {
+        this.QueryStringObj = val.params;
+        // if(this.QueryStringObj.Browse_Flag) {
+        //   this.Browser = true;
+        //   this.tabIndexToView = 0;
+        // }
+        // if(this.QueryStringObj.Create_Flag) {
+        //   this.tabIndexToView = 1;
+        // }
+      }
+    } );
     //this.DateService.dateConvert(new Date(this.myDate));
     this.GetFranchiseBill();
     this.GetFranchiseList();
@@ -223,11 +223,12 @@ export class K4cFactoryReturnComponent implements OnInit {
   getToCostCenter(){
     const obj = {
       "SP_String": "SP_Controller_Master",
-      "Report_Name_String": "Get - Factory Outlet",
+      // "Report_Name_String": "Get - Factory Outlet",
+      "Report_Name_String": "Get - Factory Outlet NEEW"
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.Cost_Center = data;
-       this.ObjSaveForm.Cost_Cent_ID = data[0].Cost_Cen_ID;
+       this.ObjSaveForm.Cost_Cent_ID = this.QueryStringObj.Store_Flag ? data[1].Cost_Cen_ID : data[0].Cost_Cen_ID;
        this.getToGodown();
        //console.log('Cost Center =',this.Cost_Center)
 
@@ -245,7 +246,12 @@ export class K4cFactoryReturnComponent implements OnInit {
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.toGodownList = data;
-       this.ObjSaveForm.Godown_ID = this.toGodownList.length ? this.toGodownList[0].godown_id : undefined;
+       if (this.QueryStringObj.Store_Flag) {
+        this.ObjSaveForm.Godown_ID = this.toGodownList.length ? 47 : undefined;
+       }
+       else {
+        this.ObjSaveForm.Godown_ID = this.toGodownList.length ? 57 : undefined;
+       }
        //console.log('To Godown =',this.toGodownList)
      })
   }
@@ -272,6 +278,14 @@ export class K4cFactoryReturnComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.mattypelist = data;
+      if (this.QueryStringObj.Store_Flag) {
+        this.ObjSaveForm.Material_Type = this.mattypelist.length ? "Store Item" : undefined;
+        this.ObjBrowse.Material_Type = this.mattypelist.length ? "Store Item" : undefined;
+       }
+       else {
+        this.ObjSaveForm.Material_Type = this.mattypelist.length ? "Finished" : undefined;
+        this.ObjBrowse.Material_Type = this.mattypelist.length ? "Finished" : undefined;
+       }
       //console.log("Material Type List ===",this.mattypelist);
     })
   }
@@ -912,6 +926,9 @@ const obj = {
    this.SearchFactoryFormSubmit = false;
  })
  }
+ else {
+  this.seachSpinner = false;
+ }
  }
  // Export Excel Browse
 exportoexcelbrowse(fileName){
@@ -1329,7 +1346,8 @@ onReject(){
 }
 
  clearData(){
-   this.ObjSaveForm.Material_Type = undefined;
+  //  this.ObjSaveForm.Material_Type = undefined;
+  this.getMaterialType();
   this.ObjProductaddForm = new ProductaddForm();
   //this.ObjSaveForm = new SaveForm();
   this.BatchNo = [];
@@ -2120,11 +2138,11 @@ UpdateQty(objdata){
 }
 class SaveForm{
   Cost_Cent_ID : string;
-  Godown_ID : string;
+  Godown_ID : any;
   Doc_Date : string;
   Return_Reason_ID : any;
   Return_Reason : string;
-  Material_Type : string;
+  Material_Type : any;
 }
 
 class ProductaddForm{
@@ -2144,5 +2162,5 @@ class Browse {
   start_date : Date ;
   end_date : Date;
   Doc_No : string;
-  Material_Type : string;
+  Material_Type : any;
 }

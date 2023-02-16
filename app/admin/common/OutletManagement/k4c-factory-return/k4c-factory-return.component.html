@@ -37,7 +37,7 @@
                                     </div>
                                     <div class="col-sm-2">
                                         <label class="control-label">Material Type <sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="mattype" #mattype="ngModel" [(ngModel)]="ObjBrowse.Material_Type" [ngClass]="{'clearance':SearchFactoryFormSubmit && mattype?.errors?.required}" required>
+                                        <select class="form-control" name="mattype" #mattype="ngModel" [(ngModel)]="ObjBrowse.Material_Type" [attr.disabled]="true" [ngClass]="{'clearance':SearchFactoryFormSubmit && mattype?.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
                                      <option *ngFor = "let option of mattypelist" [value] ="option.Material_Type">
                                         {{option.Material_Type}}
@@ -456,7 +456,7 @@
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="control-label">To Stock Point <sup class="text-danger">*</sup></label>
-                                            <select class="form-control" name="ToGodown" #ToGodown="ngModel" [(ngModel)]="ObjSaveForm.Godown_ID" [ngClass]="{'clearance': RFactoryaddFormSubmitted && ToGodown?.errors?.required}" required>
+                                            <select class="form-control" name="ToGodown" #ToGodown="ngModel" [(ngModel)]="ObjSaveForm.Godown_ID" [disabled]="true" [ngClass]="{'clearance': RFactoryaddFormSubmitted && ToGodown?.errors?.required}" required>
                                   <option  [ngValue]="undefined">Select</option>
                                     <option *ngFor = "let option of toGodownList" value="{{option.godown_id}}">
                                       {{option.godown_name}}
@@ -465,8 +465,8 @@
                                         </div>
 
                                         <div class="col-sm-3">
-                                            <label class="control-label">Material Type <sup class="text-danger">*</sup></label>
-                                            <select class="form-control" name="materialtype" #materialtype="ngModel" [(ngModel)]="ObjSaveForm.Material_Type" (ngModelChange)="getselectproduct()" [ngClass]="{'clearance':RFactoryaddFormSubmitted && materialtype?.errors?.required}" [disabled]="MTdisabled"
+                                             <label class="control-label">Material Type <sup class="text-danger">*</sup></label>  <!-- [disabled]="MTdisabled" -->
+                                            <select class="form-control" name="materialtype" #materialtype="ngModel" [(ngModel)]="ObjSaveForm.Material_Type" (ngModelChange)="getselectproduct()" [ngClass]="{'clearance':RFactoryaddFormSubmitted && materialtype?.errors?.required}" [disabled]="true"
                                                 required>
                                         <option  [ngValue]="undefined">Select</option>
                                  <option *ngFor = "let option of mattypelist" [value] ="option.Material_Type">

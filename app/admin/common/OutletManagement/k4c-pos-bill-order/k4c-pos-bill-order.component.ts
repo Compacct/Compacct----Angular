@@ -686,6 +686,23 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
           detail: "Cannot found EOD In Previous Date "
         })
     }
+    if(val === 'factorystore' && this.EODstatus === "YES") {
+      const obj = {
+        Redirect_To : './K4C_Factory_Return',
+        //Browse_Flag : false
+        //Create_Flag : true
+        Store_Flag : true
+      }
+      this.DynamicRedirectTo(obj);
+    } else {
+      this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message ",
+          detail: "Cannot found EOD In Previous Date "
+        })
+    }
     if(val === 'requisition') {
       const obj = {
         Redirect_To : './K4C_Outlet_Requisition',

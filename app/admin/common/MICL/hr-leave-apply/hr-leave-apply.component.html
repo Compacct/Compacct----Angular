@@ -42,13 +42,13 @@
                                          </app-compacct-daterangepicker>
                                       </div>
                                         <div class="col-sm-3">
-                                            <label class="control-label">Leave Type<sup class="text-danger">*</sup></label>
+                                            <label class="control-label">Leave Type</label>
                                             <select class="form-control" 
                                             name="browseleavetype" 
                                             #browseleavetype="ngModel" 
                                             [(ngModel)]="ObjBrowse.Leave_Type"
                                             [ngClass]="{'clearance': HrLeaveApSearchFormSubmitted && browseleavetype?.errors?.required}"
-                                            required>
+                                            >
                                             <option  [ngValue]="undefined">Select</option>
                                             <option *ngFor="let type of leaveList" value="{{type.Atten_Type_ID}}">{{type.Leave_Type}}</option>
                                           </select>
@@ -158,8 +158,8 @@
                                                 <td>{{(col.Approved_Status_Business_Manager && col.Approved_Status_Reporting_Manager) ? (col.Issued_From_Date  | date : 'dd/MMM/yyyy') : "-"}}</td>
                                                 <td>{{(col.Approved_Status_Business_Manager && col.Approved_Status_Reporting_Manager) ? (col.Issued_To_Date  | date : 'dd/MMM/yyyy') : "-"}}</td>
                                                 <td *ngIf="col.Approved_Status_Business_Manager == 'Y' && col.Approved_Status_Reporting_Manager == 'Y'" style="color:green;">{{"APPROVED"}}</td>
-                                                <td *ngIf="col.Approved_Status_Business_Manager == 'N' || col.Approved_Status_Reporting_Manager == 'N'" style="color:red;">{{"NOT APPROVED"}}</td>
-                                                <td *ngIf="(!col.Approved_Status_Business_Manager && !col.Approved_Status_Reporting_Manager) || (col.Approved_Status_Business_Manager == 'Y' && !col.Approved_Status_Reporting_Manager) || (!col.Approved_Status_Business_Manager && col.Approved_Status_Reporting_Manager == 'Y')">{{"-"}}</td>
+                                                <td *ngIf="(col.Approved_Status_Business_Manager == 'N' || col.Approved_Status_Reporting_Manager == 'N')" style="color:red;">{{"NOT APPROVED"}}</td>
+                                                <td *ngIf="(!col.Approved_Status_Business_Manager && !col.Approved_Status_Reporting_Manager) || (col.Approved_Status_Business_Manager && !col.Approved_Status_Reporting_Manager) || (!col.Approved_Status_Business_Manager && col.Approved_Status_Reporting_Manager)">{{"APPROVAL PENDING"}}</td>
                                             </tr>
                                         </ng-template>
                                             <!-- <ng-template pTemplate="paginatorright" let-state> </ng-template> -->

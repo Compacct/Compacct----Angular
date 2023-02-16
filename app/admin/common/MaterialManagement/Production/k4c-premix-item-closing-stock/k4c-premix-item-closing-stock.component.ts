@@ -144,7 +144,7 @@ export class K4cPremixItemClosingStockComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.CostCenList = data;
-     this.ObjProClosingStock.Cost_Cen_ID = 2;
+     this.ObjProClosingStock.Cost_Cen_ID = 114;
     //  this.ObjBrowse.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;//String(this.CostCentId_Flag);
       this.GetGodown();
      })
@@ -163,7 +163,7 @@ export class K4cPremixItemClosingStockComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.GodownList = data;
-        this.ObjProClosingStock.godown_id = 126;
+        this.ObjProClosingStock.godown_id = 112;
       //   this.ObjProClosingStock.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
       //  if(this.GodownList.length === 1){
       //    this.Gdisableflag = true;
@@ -183,7 +183,7 @@ export class K4cPremixItemClosingStockComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.Bcostcenlist = data;
-      this.ObjBrowse.Cost_Cen_ID = 2;
+      this.ObjBrowse.Cost_Cen_ID = 114;
       console.log("B Cost Cen List ===",this.Bcostcenlist);
       this.GetBGodown();
     })
@@ -202,7 +202,7 @@ export class K4cPremixItemClosingStockComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.BGodownList = data;
       // this.ObjBrowse.godown_id = this.BGodownList.length === 1 ? this.BGodownList[0].godown_id : undefined;
-      this.ObjBrowse.godown_id = 126
+      this.ObjBrowse.godown_id = 112
       // if(this.GodownList.length === 1){
       //   //this.ObjRawMateriali.To_godown_id = this.ToGodownList[0].godown_id;
       //   this.ObjBrowse.godown_id = this.GodownList[0].godown_id;
@@ -686,11 +686,11 @@ const obj = {
 
   clearData(){
     this.QtyfilterFLag = false;
-    this.ObjProClosingStock.Cost_Cen_ID = 2;
-    this.ObjProClosingStock.godown_id = 126;
+    this.ObjProClosingStock.Cost_Cen_ID = 114;
+    this.ObjProClosingStock.godown_id = 112;
     // this.GetGodown();
-    this.ObjBrowse.Cost_Cen_ID = 2;
-    this.ObjBrowse.godown_id = 126;
+    this.ObjBrowse.Cost_Cen_ID = 114;
+    this.ObjBrowse.godown_id = 112;
     // this.GetBGodown();
     // this.ObjProClosingStock.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     // FOR CREATE TAB
