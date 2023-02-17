@@ -40,6 +40,11 @@ export class DoctorAppointmentComponent implements OnInit {
   CosCenID='';
   row:any=0;
   HomeVisit:boolean=false;
+  GetAppoID:any;
+  TherapySpinner:boolean = false;
+  therapyAttendance:boolean=false;
+  therapyFormSubmit:boolean = false;
+  objTherapAttendance = new TherapAttendance();
   ActionList:any = []
   UpdateAppointmentModel:boolean = false
   updateConsultancyInputObj:any = {}
@@ -77,13 +82,12 @@ export class DoctorAppointmentComponent implements OnInit {
       if (this.ConsultancyName) {
         this.GetCentre();
         this.GetAllDetails();
-        this.GetCentre()
       }
     })
   }
 
   GetAllDetails() {
-    console.log("this.SelectedcosCenter", this.SelectedcosCenter);
+    // console.log("this.SelectedcosCenter", this.SelectedcosCenter);
     if (this.ConsultancyName) {
       this.allDetalisHeader = []
       this.ActionList = []
@@ -93,7 +97,7 @@ export class DoctorAppointmentComponent implements OnInit {
         Cost_Cen_ID: this.SelectedcosCenter ? this.SelectedcosCenter : 0,
         Appo_Dt: this.DateService.dateConvert(new Date(this.appo_Date))
       }
-      console.log("TEMP",Temp);
+      // console.log("TEMP",Temp);
       const obj = {
         "SP_String": "sp_DoctorsAppointmentNew",
         "Report_Name_String": "Get_Appointment_All",
@@ -107,7 +111,7 @@ export class DoctorAppointmentComponent implements OnInit {
           this.GetDist3();
           this.ClickCheck();
         }
-        console.log("allDetalis", this.allDetalis);
+        // console.log("allDetalis", this.allDetalis);
       })
     }
   }
@@ -147,6 +151,11 @@ export class DoctorAppointmentComponent implements OnInit {
     break;
     case 'PrintReport' :
       window.open(col.Print_Aspx+ col.Appo_ID, 'Print Appointment', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      break;
+      case 'DisplayModel':
+        this.therapyAttendance = true;
+        this.GetAppoID = col.Appo_ID;
+        this.getTherpyAttendance();
     default:
       break;
    }
@@ -206,7 +215,7 @@ export class DoctorAppointmentComponent implements OnInit {
           element['value'] = element.Cost_Cen_ID
         });
         this.cosCenterList= data;
-        console.log("Get Center",this.cosCenterList);
+        // console.log("Get Center",this.cosCenterList);
 
       }
     });
@@ -214,14 +223,14 @@ export class DoctorAppointmentComponent implements OnInit {
   }
 
   ClickCheck(){
-    console.log('check box value',this.HomeVisit);
+    // console.log('check box value',this.HomeVisit);
     this.allDetalis=[];
     // }
     if(this.HomeVisit===true){
     const FilterbackupAlldetalis = this.backupAlldetalis.filter((el:any)=> el.Home_Visit ==  this.HomeVisit)
-    console.log("FilterbackupAlldetalis=>>>>",FilterbackupAlldetalis);
+    // console.log("FilterbackupAlldetalis=>>>>",FilterbackupAlldetalis);
     this.allDetalis=FilterbackupAlldetalis;
-    console.log("backupAlldetalis=>>>>",this.backupAlldetalis);
+    // console.log("backupAlldetalis=>>>>",this.backupAlldetalis);
       
     }
     else{
@@ -231,7 +240,7 @@ export class DoctorAppointmentComponent implements OnInit {
   }
 
   filterStatus() {
-    console.log("SelectedcosCenter", this.Selectedstatus);
+    // console.log("SelectedcosCenter", this.Selectedstatus);
     let DOrderBy = [];
     if (this.Selectedstatus.length) {
       DOrderBy = this.Selectedstatus;
@@ -242,10 +251,10 @@ export class DoctorAppointmentComponent implements OnInit {
         return (DOrderBy.length ? DOrderBy.includes(e['Status']) : true)
       });
       this.allDetalis = LeadArr.length ? LeadArr : [];
-      console.log("if GetAllDataList", this.allDetalis)
+      // console.log("if GetAllDataList", this.allDetalis)
     } else {
       this.allDetalis = this.backupAlldetalis;
-      console.log("else GetAllDataList", this.allDetalis)
+      // console.log("else GetAllDataList", this.allDetalis)
     }
   }
  GetDist3() {
@@ -256,7 +265,7 @@ export class DoctorAppointmentComponent implements OnInit {
         if (DOrderBy.indexOf(item.Status) === -1) {
           DOrderBy.push(item.Status);
           this.ststusFilter.push({ label: item.Status, value: item.Status });
-          console.log("this.ststusFilter", this.ststusFilter);
+          // console.log("this.ststusFilter", this.ststusFilter);
         }
       });
     }
@@ -271,14 +280,92 @@ export class DoctorAppointmentComponent implements OnInit {
     })
     } 
   updateConsultancysave(e:any){
-    console.log("e",e)
+    // console.log("e",e)
     this.ObjupdateConsultancy = e
   
   }
+  SaveTherapyAttendance(valid){
+    // console.log('save works');
+    this.therapyFormSubmit = true;
+    if(valid){
+      this.TherapySpinner = true;
+      this.objTherapAttendance.Appo_ID = this.GetAppoID;
+      this.objTherapAttendance.SLP = this.commonApi.CompacctCookies.User_Name;
+      this.therapyFormSubmit = false;
+      // console.log(this.objTherapAttendance);
+
+      const obj = {
+        "SP_String": "SP_BL_Txn_ATTENDANCE_CARD",
+        "Report_Name_String": "Update_Data_for_Attendance_card",
+        "Json_Param_String": JSON.stringify(this.objTherapAttendance)
+       }
+      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+        // console.log(" save Data ",data)
+        if(data[0].Column1 == "Done"){
+          this.TherapySpinner = false;
+         this.compacctToast.clear();
+         this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "success",
+           summary: "Therapy Attendance",
+           detail: "Succesfully Save"
+     });
+       this.objTherapAttendance = new TherapAttendance();
+       this.therapyAttendance = false;
+         
+        }
+       else{
+        this.TherapySpinner = false;
+        this.compacctToast.clear();
+         this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message ",
+          detail:"Error occured "
+     });
+        
+       }
+
+      });
+     }
+
+    
+
+  }
+
+  getTherpyAttendance(){
+    // console.log('edit works', this.objTherapAttendance);
+    const tempobj = {
+      Appo_ID : this.GetAppoID
+    }
+    const obj = {
+      "SP_String": "SP_BL_Txn_ATTENDANCE_CARD",
+      "Report_Name_String": "Retrieve_Data_for_Attendance_card",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      // console.log('edit data',data);
+      this.objTherapAttendance.Activities = data[0].Activities;
+      this.objTherapAttendance.Clinical_Observation = data[0].Clinical_Observation;
+      this.objTherapAttendance.Provisional_Diagnosis = data[0].Provisional_Diagnosis;
+      this.objTherapAttendance.Therapy_Goal = data[0].Therapy_Goal;
+      // console.log('object',this.objTherapAttendance);
+    });
+    
+  }
+
+  closeTherapyAttendance(){
+    this.therapyAttendance = false
+    this.therapyFormSubmit = false;
+    this.objTherapAttendance = new TherapAttendance();
+  }
+
+  
+
   onConfirm() { }
   onReject() { }
   SaveUpdateConsultancy(valid:any){
-    console.log("valid",valid)
+    // console.log("valid",valid)
     this.Spinner = true
     const tempObj = {
       Appo_ID  : this.updateConsultancyInputObj.Appo_ID , 
@@ -292,7 +379,7 @@ export class DoctorAppointmentComponent implements OnInit {
        "Json_Param_String": JSON.stringify(tempObj)
       }
      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
-       console.log(" Update Data ",data)
+      //  console.log(" Update Data ",data)
        if(data[0].Column1 == "Done"){
         this.UpdateAppointmentModel = false
         this.GetAllDetails()
@@ -311,4 +398,12 @@ export class DoctorAppointmentComponent implements OnInit {
     }
    }
 
-
+class TherapAttendance {
+  Therapy_Goal:any;
+  Clinical_Observation:any;
+  Activities:any;
+  Provisional_Diagnosis:any;
+  SLP:any;
+  Appo_ID:any;
+  // Foot_Fall_ID:any;
+}

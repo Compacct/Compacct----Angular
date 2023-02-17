@@ -142,6 +142,7 @@ export class WorkOrderComponent implements OnInit {
 
   DynamicHeaderPen:any = [];
   TCSTaxRequiredValidation = false;
+  TCSdataList:any = [];
 
   constructor(
     private $http: HttpClient ,
@@ -1163,7 +1164,14 @@ export class WorkOrderComponent implements OnInit {
   // }
    }
    else {
-
+    this.Spinner = false;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Error Occured "
+   });
    }
  }
  onConfirmSave(){
@@ -1311,19 +1319,35 @@ async TermSave(doc:any){
  
 }
 
-TcsAmtCalculation(){
+GetTCSdat(){
   this.ObjWorkOrder.TCS_Ledger_ID = 0;
   if (this.ObjWorkOrder.TCS_Y_N === 'YES') {
-      this.ngxService.start();
-      // this.$http.get("/Common/Get_TCS_Persentage_Sale?TCS_Enabled=YES",{responseType: 'text'}).subscribe((data: any) => {
-        const obj = {
-          "SP_String": "Sp_Purchase_Order",
-          "Report_Name_String": "Get_Tcs_Percentage_And Ledger",
-          }
-        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        console.log(data)
-        this.ObjWorkOrder.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
-        this.ObjWorkOrder.TCS_Persentage = data[0].TCS_Persentage;
+  this.ngxService.start();
+  const obj = {
+    "SP_String": "Sp_Purchase_Order",
+    "Report_Name_String": "Get_Tcs_Percentage_And Ledger",
+    }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  console.log(data)
+  this.TCSdataList = data;
+  this.ngxService.stop();
+}); 
+  }  
+  else {
+    this.ObjWorkOrder.TCS_Persentage = 0;
+    this.ObjWorkOrder.TCS_Amount = 0;
+    this.ObjWorkOrder.TCS_Per = undefined;
+    // this.objaddPurchacse.Grand_Total = this.objaddPurchacse.Net_Amt;
+    this.getRoundedOff();
+    // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+}
+}
+TcsAmtCalculation(){
+  this.ObjWorkOrder.TCS_Ledger_ID = 0;
+  if (this.ObjWorkOrder.TCS_Per) {
+    var tcspercentage = this.TCSdataList.filter(el=> Number(el.TCS_Persentage) === Number(this.ObjWorkOrder.TCS_Per))
+        this.ObjWorkOrder.TCS_Ledger_ID = tcspercentage[0].TCS_Ledger_ID;
+        this.ObjWorkOrder.TCS_Persentage = tcspercentage[0].TCS_Persentage;
         var netamount = (Number(this.taxAblTotal) + Number(this.GrTermAmount) + Number(this.GSTTotal) + Number(this.GrGstTermAmt)).toFixed(2);
         var TCS_Amount = (Number(Number(netamount) * this.ObjWorkOrder.TCS_Persentage) / 100).toFixed(2);
         this.ObjWorkOrder.TCS_Amount = Number(TCS_Amount);
@@ -1333,7 +1357,6 @@ TcsAmtCalculation(){
         this.getRoundedOff();
         // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
         this.ngxService.stop();
-      });   
   }
     else {
       this.ObjWorkOrder.TCS_Persentage = 0;
@@ -1461,6 +1484,8 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     let data = JSON.parse(res[0].Column1)
     console.log("Edit data",data);
     this.ObjWorkOrder = data[0],
+    this.GetTCSdat();
+    this.ObjWorkOrder.TCS_Per = data[0].TCS_Persentage;
     this.DocDate = new Date(data[0].Doc_Date);
     this.GetRequlist();
     this.RefDate = new Date(data[0].Supp_Ref_Date)
@@ -1541,6 +1566,8 @@ PrintREQ(DocNo) {
   this.projectDisable = this.addPurchaseList.length ? true :false
   this.getAllTotal();
   this.TcsAmtCalculation();
+  this.ObjWorkOrder.TCS_Y_N = this.addPurchaseList.length == 0 ? undefined : this.ObjWorkOrder.TCS_Y_N;
+  this.ObjWorkOrder.TCS_Per = this.addPurchaseList.length == 0 ? undefined : this.ObjWorkOrder.TCS_Per;
 }
 GetGSTAmt(){
   if(this.ObjaddWorkOrder.taxable_AMT){
@@ -1875,6 +1902,7 @@ class WorkOrder {
         TCS_Y_N : any;
         TCS_Persentage : any;
         TCS_Amount : number = 0;
+        TCS_Per : any;
 }
 class addWorkOrder{
       Product_ID:any;

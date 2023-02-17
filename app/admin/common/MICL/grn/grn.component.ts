@@ -98,6 +98,7 @@ export class GrnComponent implements OnInit {
   GrGstTermAmt:number = 0
   grNetTerm: number = 0
   TCSTaxRequiredValidation = false;
+  TCSdataList:any = [];
 
 
   constructor(
@@ -589,7 +590,11 @@ export class GrnComponent implements OnInit {
       this.TcsAmtCalculation();
   }
    delete(index) {
-    this.productaddSubmit.splice(index,1)
+    this.productaddSubmit.splice(index,1);
+    this.getAllTotal();
+    this.TcsAmtCalculation();
+    this.ObjGRN1.TCS_Y_N = this.productaddSubmit.length == 0 ? undefined : this.ObjGRN1.TCS_Y_N;
+    this.ObjGRN1.TCS_Per = this.productaddSubmit.length == 0 ? undefined : this.ObjGRN1.TCS_Per;
 
   }
   DataForSaveProduct(){
@@ -874,6 +879,8 @@ export class GrnComponent implements OnInit {
       this.ObjGRN1.LR_No_Date = data[0].LR_No_Date;
       this.ObjGRN1.Vehicle_No = data[0].Vehicle_No;
       this.ObjGRN1.TCS_Y_N = data[0].TCS_Y_N; 
+      this.GetTCSdat();
+      this.ObjGRN1.TCS_Per = data[0].TCS_Persentage;
       this.TcsAmtCalculation();     // this.AddTermList = data[0].Term_element ? data[0].Term_element : [];
       // this.RDBListAdd = data[0].L_element;
       this.ObjGRN2.Quantity_Remarks = data[0].Quantity_Remarks;
@@ -1145,19 +1152,35 @@ export class GrnComponent implements OnInit {
     return this.getTofix( Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt + this.ObjGRN1.TCS_Amount).toFixed(2))) - Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt + this.ObjGRN1.TCS_Amount).toFixed(2))) 
   }
 
-  TcsAmtCalculation(){
+  GetTCSdat(){
     this.ObjGRN1.TCS_Ledger_ID = 0;
     if (this.ObjGRN1.TCS_Y_N === 'YES') {
-        this.ngxService.start();
-        // this.$http.get("/Common/Get_TCS_Persentage_Sale?TCS_Enabled=YES",{responseType: 'text'}).subscribe((data: any) => {
-          const obj = {
-            "SP_String": "Sp_Purchase_Order",
-            "Report_Name_String": "Get_Tcs_Percentage_And Ledger",
-            }
-          this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-          console.log(data)
-          this.ObjGRN1.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
-          this.ObjGRN1.TCS_Persentage = data[0].TCS_Persentage;
+    this.ngxService.start();
+    const obj = {
+      "SP_String": "Sp_Purchase_Order",
+      "Report_Name_String": "Get_Tcs_Percentage_And Ledger",
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log(data)
+    this.TCSdataList = data;
+    this.ngxService.stop();
+  }); 
+    }  
+    else {
+      this.ObjGRN1.TCS_Persentage = 0;
+      this.ObjGRN1.TCS_Amount = 0;
+      this.ObjGRN1.TCS_Per = undefined;
+      // this.objaddPurchacse.Grand_Total = this.objaddPurchacse.Net_Amt;
+      this.getRoundedOff();
+      // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+  }
+  }
+  TcsAmtCalculation(){
+    this.ObjGRN1.TCS_Ledger_ID = 0;
+    if (this.ObjGRN1.TCS_Per) {
+      var tcspercentage = this.TCSdataList.filter(el=> Number(el.TCS_Persentage) === Number(this.ObjGRN1.TCS_Per))
+          this.ObjGRN1.TCS_Ledger_ID = tcspercentage[0].TCS_Ledger_ID;
+          this.ObjGRN1.TCS_Persentage = tcspercentage[0].TCS_Persentage;
           var netamount = (Number(this.taxAblTotal) + Number(this.GrTermAmount) + Number(this.GSTTotal) + Number(this.GrGstTermAmt)).toFixed(2);
           var TCS_Amount = (Number(Number(netamount) * this.ObjGRN1.TCS_Persentage) / 100).toFixed(2);
           this.ObjGRN1.TCS_Amount = Number(TCS_Amount);
@@ -1167,7 +1190,6 @@ export class GrnComponent implements OnInit {
           this.getRoundedOff();
           // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
           this.ngxService.stop();
-        });   
     }
       else {
         this.ObjGRN1.TCS_Persentage = 0;
@@ -1549,6 +1571,7 @@ class GRN1 {
   TCS_Y_N : any;
   TCS_Persentage : any;
   TCS_Amount : number = 0;
+  TCS_Per : any;
 
   Product_Gross :any 
   Product_Discount :any
