@@ -697,19 +697,35 @@
                     </div>
                 </form>
                 <br>
-                <div class="col-sm-4" *ngIf="GRNNoProlist.length">
+            <div class="form-group" *ngIf="GRNNoProlist.length">
+                <div class="col-sm-3">
                  <label class="control-label">TCS Tax Required <sup class="text-danger">*</sup> </label>
                  <select class="form-control" 
                  name="tcstaxreq" 
                  #tcstaxreq="ngModel" 
                  [(ngModel)]="ObjPurChaseBill.TCS_Y_N"
-                 (ngModelChange)="TcsAmtCalculation()"
+                 (ngModelChange)="GetTCSdat()"
                  [ngClass]="{'clearance': TCSTaxRequiredValidation && tcstaxreq?.errors?.required}" required>
                     <option  [ngValue]="undefined">Select</option>
                     <option value ="YES">YES</option>
                     <option value ="NO">NO</option>
                  </select>
                 </div>
+                <div class="col-sm-3" *ngIf="ObjPurChaseBill.TCS_Y_N == 'YES'">
+                    <label class="control-label">TCS % <sup class="text-danger">*</sup> </label>
+                    <select class="form-control" 
+                    name="tcsper" 
+                    #tcsper="ngModel" 
+                    [(ngModel)]="ObjPurChaseBill.TCS_Per"
+                    (ngModelChange)="TcsAmtCalculation()"
+                    [ngClass]="{'clearance': TCSTaxRequiredValidation && tcsper?.errors?.required}" required>
+                       <option  [ngValue]="undefined">Select</option>
+                       <option *ngFor = "let option of TCSdataList" [value] ="option.TCS_Persentage">
+                        {{option.TCS_Persentage}}
+                      </option>
+                    </select>
+                </div>
+            </div>
                 <br>
                 <div class="clearfix"></div>
                         <br>

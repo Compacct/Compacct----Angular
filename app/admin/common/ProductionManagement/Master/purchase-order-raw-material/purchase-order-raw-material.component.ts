@@ -658,7 +658,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
     let tempVal:any = this.productDataList.filter((el:any)=> Number(el.Product_ID) === Number(this.ObjaddWorkOrder.Product_ID));
     // let mattype:any = this.AllMaterialData.filter((ele:any)=> Number(ele.Material_ID) === Number(this.ObjaddWorkOrder.Material_ID))
     var matname:any =  this.Material_Type ? " ( "+ this.Material_Type +" ) " : "";
-    this.ObjaddWorkOrder.Product_Spec = tempVal[0].Product_Description + matname;
+    this.ObjaddWorkOrder.Product_Spec = tempVal[0].Product_Description;
     this.ObjaddWorkOrder.Qty = tempVal[0].Qty
     this.ObjaddWorkOrder.Rate = tempVal[0].Rate;
     // if(this.openProject === 'Y'){
