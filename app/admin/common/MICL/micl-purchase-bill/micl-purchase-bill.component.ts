@@ -153,6 +153,7 @@ export class MiclPurchaseBillComponent implements OnInit {
   bckUpQtyValid:boolean = false;
   editDocNo : any;
   TCSTaxRequiredValidation = false;
+  TCSdataList:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -318,6 +319,10 @@ export class MiclPurchaseBillComponent implements OnInit {
     // this.GetProductdetails();
     // this.ProductDetails = [];
     this.ObjProductInfo.Product_Specification = undefined;
+    this.GRNNoProlist = [];
+    this.clearlistamount();
+    this.ObjPurChaseBill.TCS_Y_N = this.GRNNoProlist.length == 0 ? undefined : this.ObjPurChaseBill.TCS_Y_N;
+    this.ObjPurChaseBill.TCS_Per = this.GRNNoProlist.length == 0 ? undefined : this.ObjPurChaseBill.TCS_Per;
    }
    }
    GetChooseAddress(){
@@ -478,6 +483,10 @@ export class MiclPurchaseBillComponent implements OnInit {
     // this.podatedisabled = true;
     this.PODate = undefined;
     this.ObjProductInfo.Pur_Order_No = undefined;
+    this.GRNNoProlist = [];
+    this.clearlistamount();
+    this.ObjPurChaseBill.TCS_Y_N = this.GRNNoProlist.length == 0 ? undefined : this.ObjPurChaseBill.TCS_Y_N;
+    this.ObjPurChaseBill.TCS_Per = this.GRNNoProlist.length == 0 ? undefined : this.ObjPurChaseBill.TCS_Per;
     if(this.ObjProductInfo.GRN_No) {
       const ctrl = this;
       const GRNDateObj = $.grep(ctrl.GRNList,function(item: any) {return item.value == ctrl.ObjProductInfo.GRN_No})[0];
@@ -758,6 +767,8 @@ GetGRNNoProductdetails(){
   this.GRNNoProlist.splice(index,1)
   this.ListofTotalAmount();
   this.TcsAmtCalculation();
+  this.ObjPurChaseBill.TCS_Y_N = this.GRNNoProlist.length == 0 ? undefined : this.ObjPurChaseBill.TCS_Y_N;
+  this.ObjPurChaseBill.TCS_Per = this.GRNNoProlist.length == 0 ? undefined : this.ObjPurChaseBill.TCS_Per;
   }
   
   GetTerm() {
@@ -944,19 +955,35 @@ GetGRNNoProductdetails(){
     this.Net_Amt = undefined;
     this.Total_Term_Amount = undefined;
   }
-  TcsAmtCalculation(){
+  GetTCSdat(){
     this.ObjPurChaseBill.TCS_Ledger_ID = 0;
     if (this.ObjPurChaseBill.TCS_Y_N === 'YES') {
-        this.ngxService.start();
-        // this.$http.get("/Common/Get_TCS_Persentage_Sale?TCS_Enabled=YES",{responseType: 'text'}).subscribe((data: any) => {
-          const obj = {
-            "SP_String": "SP_MICL_Purchase_Bill_New",
-            "Report_Name_String": "Get_Tcs_Percentage_And Ledger",
-            }
-          this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-          console.log(data)
-          this.ObjPurChaseBill.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
-          this.ObjPurChaseBill.TCS_Persentage = data[0].TCS_Persentage;
+    this.ngxService.start();
+    const obj = {
+      "SP_String": "SP_MICL_Purchase_Bill_New",
+      "Report_Name_String": "Get_Tcs_Percentage_And Ledger",
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log(data)
+    this.TCSdataList = data;
+    this.ngxService.stop();
+  }); 
+    }  
+    else {
+      this.ObjPurChaseBill.TCS_Persentage = 0;
+        this.ObjPurChaseBill.TCS_Amount = 0;
+        var Net_Amt = Number(Number(this.Gross_Amount) + Number(this.ObjPurChaseBill.TCS_Amount));
+        this.Round_off = (Number(Math.round(Net_Amt)) - Number(Net_Amt)).toFixed(2);
+        this.Net_Amt = Number(Math.round(Net_Amt)).toFixed(2);
+        this.ObjTDS.Taxable_Amount = Number(this.Taxable_Amount);
+  }
+  }
+  TcsAmtCalculation(){
+    this.ObjPurChaseBill.TCS_Ledger_ID = 0;
+    if (this.ObjPurChaseBill.TCS_Per) {
+      var tcspercentage = this.TCSdataList.filter(el=> Number(el.TCS_Persentage) === Number(this.ObjPurChaseBill.TCS_Per))
+          this.ObjPurChaseBill.TCS_Ledger_ID = tcspercentage[0].TCS_Ledger_ID;
+          this.ObjPurChaseBill.TCS_Persentage = tcspercentage[0].TCS_Persentage;
           // var netamount = (Number(this.taxAblTotal) + Number(this.GrTermAmount) + Number(this.GSTTotal) + Number(this.GrGstTermAmt)).toFixed(2);
           var TCS_Amount = (Number(Number(this.Net_Amt) * this.ObjPurChaseBill.TCS_Persentage) / 100).toFixed(2);
           this.ObjPurChaseBill.TCS_Amount = Number(TCS_Amount);
@@ -968,8 +995,7 @@ GetGRNNoProductdetails(){
           this.Net_Amt = Number(Math.round(Net_Amt)).toFixed(2);
           this.ObjTDS.Taxable_Amount = Number(this.Taxable_Amount);
           // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
-          this.ngxService.stop();
-        });   
+          this.ngxService.stop(); 
     }
       else {
         this.ObjPurChaseBill.TCS_Persentage = 0;
@@ -1362,6 +1388,8 @@ GetGRNNoProductdetails(){
       let data = JSON.parse(res[0].Column1)
       console.log("Edit data",data);
       this.ObjPurChaseBill = data[0],
+      this.GetTCSdat();
+      this.ObjPurChaseBill.TCS_Per = data[0].TCS_Persentage;
       this.GetGRNno();
       this.maindisabled = true;
       this.ObjPurChaseBill.Choose_Address = "MAIN";
@@ -1684,6 +1712,7 @@ class PurChaseBill {
   TCS_Y_N : any;
   TCS_Persentage : any;
   TCS_Amount : number = 0;
+  TCS_Per : any;
 
   // HSN_No : any;
 
