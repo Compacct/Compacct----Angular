@@ -335,7 +335,7 @@ import { PurchaseOrderHarbauerComponent } from "./common/MaterialManagement/Inwa
 import { ParameterMasterComponent } from "./common/MICL/parameter-master/parameter-master.component";
 import { DoctorsAppoTherapPlanComponent } from './common/PatientManagement/doctors-appo-therap-plan/doctors-appo-therap-plan.component';
 import { MICLRawMaterialQAComponent } from "./common/MICL/micl-raw-material-qa/micl-raw-material-qa.component";
-
+import { BLTxnGrnNPComponent } from "./common/Procurement/bl-txn-grn-np/bl-txn-grn-np.component";
 
 
 const layoutRoutes: Routes = [{
@@ -2535,6 +2535,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
     component: MICLRawMaterialQAComponent,
     data: {
         title: 'MICL RAW MATERIAL QA'
+    } 
+  },
+  {
+    path: 'BL_Txn_GRN_Np',
+    component: BLTxnGrnNPComponent,
+    data: {
+        title: 'BL Txn GRN NP'
     } 
   },
     

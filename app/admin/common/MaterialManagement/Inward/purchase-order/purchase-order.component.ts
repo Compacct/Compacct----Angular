@@ -166,6 +166,7 @@ export class PurchaseOrderComponent implements OnInit {
   allTotalObj:any = {}
   
   TCSTaxRequiredValidation = false;
+  TCSdataList:any = [];
 
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
@@ -961,7 +962,14 @@ async savePurchase(valid){
   
    }
    else {
-
+    this.Spinner = false;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Error Occured "
+    });
    }
 }
 onConfirmSave(){
@@ -1124,19 +1132,46 @@ async TermSave(doc:any){
   
  
 }
-TcsAmtCalculation(){
+GetTCSdat(){
   this.objpurchase.TCS_Ledger_ID = 0;
   if (this.objpurchase.TCS_Y_N === 'YES') {
-      this.ngxService.start();
-      // this.$http.get("/Common/Get_TCS_Persentage_Sale?TCS_Enabled=YES",{responseType: 'text'}).subscribe((data: any) => {
-        const obj = {
-          "SP_String": "Sp_Purchase_Order",
-          "Report_Name_String": "Get_Tcs_Percentage_And Ledger",
-          }
-        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        console.log(data)
-        this.objpurchase.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
-        this.objpurchase.TCS_Persentage = data[0].TCS_Persentage;
+  this.ngxService.start();
+  const obj = {
+    "SP_String": "Sp_Purchase_Order",
+    "Report_Name_String": "Get_Tcs_Percentage_And Ledger",
+    }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  console.log(data)
+  this.TCSdataList = data;
+  // this.objpurchase.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
+  // this.objpurchase.TCS_Persentage = data[0].TCS_Persentage;
+  // var netamount = (Number(this.taxAblTotal) + Number(this.GrTermAmount) + Number(this.GSTTotal) + Number(this.GrGstTermAmt)).toFixed(2);
+  // var TCS_Amount = (Number(Number(netamount) * this.objpurchase.TCS_Persentage) / 100).toFixed(2);
+  // this.objpurchase.TCS_Amount = Number(TCS_Amount);
+  // // this.objaddPurchacse.Grand_Total = (Number(this.objaddPurchacse.Net_Amt) + Number(this.objaddPurchacse.TCS_Amount)).toFixed(2);
+  // // this.Round_off = (Number(Math.round(this.ObjSaleBillNew.Grand_Total)) - Number(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+  // // this.Net_Amt = Number(Math.round(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+  // this.getRoundedOff();
+  // // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+  this.ngxService.stop();
+}); 
+  }  
+  else {
+    this.objpurchase.TCS_Persentage = 0;
+    this.objpurchase.TCS_Amount = 0;
+    this.objpurchase.TCS_Per = undefined;
+    // this.objaddPurchacse.Grand_Total = this.objaddPurchacse.Net_Amt;
+    this.getRoundedOff();
+    // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+}
+}
+TcsAmtCalculation(){
+  this.objpurchase.TCS_Ledger_ID = 0;
+  if (this.objpurchase.TCS_Per) {
+      // this.ngxService.start();
+      var tcspercentage = this.TCSdataList.filter(el=> Number(el.TCS_Persentage) === Number(this.objpurchase.TCS_Per))
+        this.objpurchase.TCS_Ledger_ID = tcspercentage[0].TCS_Ledger_ID;
+        this.objpurchase.TCS_Persentage = tcspercentage[0].TCS_Persentage;
         var netamount = (Number(this.taxAblTotal) + Number(this.GrTermAmount) + Number(this.GSTTotal) + Number(this.GrGstTermAmt)).toFixed(2);
         var TCS_Amount = (Number(Number(netamount) * this.objpurchase.TCS_Persentage) / 100).toFixed(2);
         this.objpurchase.TCS_Amount = Number(TCS_Amount);
@@ -1145,8 +1180,7 @@ TcsAmtCalculation(){
         // this.Net_Amt = Number(Math.round(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
         this.getRoundedOff();
         // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
-        this.ngxService.stop();
-      });   
+        this.ngxService.stop();  
   }
     else {
       this.objpurchase.TCS_Persentage = 0;
@@ -1315,6 +1349,8 @@ geteditmaster(Dno){
     let data = JSON.parse(res[0].Column1)
     console.log("Edit data",data);
     this.objpurchase = data[0],
+    this.GetTCSdat();
+    this.objpurchase.TCS_Per = data[0].TCS_Persentage;
     this.getreq();
     this.DocDate = new Date(data[0].Doc_Date);
     this.RefDate = new Date(data[0].Supp_Ref_Date)
@@ -1442,6 +1478,8 @@ DeleteAddPurchase(index) {
   this.projectDisable = this.addPurchaseList.length ? true :false
   this.getAllTotal();
   this.TcsAmtCalculation();
+  this.objpurchase.TCS_Y_N = this.addPurchaseList.length == 0 ? undefined : this.objpurchase.TCS_Y_N;
+  this.objpurchase.TCS_Per = this.addPurchaseList.length == 0 ? undefined : this.objpurchase.TCS_Per;
 }
 GetGSTAmt(){
   if(this.objaddPurchacse.taxable_AMT){
@@ -2246,6 +2284,7 @@ class purchase {
         TCS_Y_N : any;
         TCS_Persentage : any;
         TCS_Amount : number = 0;
+        TCS_Per : any;
 }
 class addPurchacse{
       Product_ID:any;
