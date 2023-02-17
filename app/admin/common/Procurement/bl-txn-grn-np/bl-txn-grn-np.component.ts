@@ -21,7 +21,12 @@ export class BLTxnGrnNPComponent implements OnInit {
   GRNcreatFormSubmitted: boolean = false;
   GRN_Date: any = {} ;
   SEDate: any = {};
-  INVDate: any = {} ;
+  INVDate: any = {};
+  companyList: any = [];
+  Supplierlist: any = [];
+  CostCenterlist: any = [];
+  Godownlist: any = [];
+  Spinner: boolean = false;
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -60,7 +65,11 @@ export class BLTxnGrnNPComponent implements OnInit {
       
     }
   }
+  onReject() { }
+  GetRDBNo() { }
+  delete(){}
 }
+
 class GRN{
   Company_ID: any;
   Sub_Ledger_ID: any;
