@@ -285,15 +285,15 @@
                                         <tr>
                                             <th nowrap rowspan="2">Sl.No.</th>
                                             <th nowrap rowspan="2">Product Details</th>
-                                            <th nowrap rowspan="2">HSN Code</th>
+                                            <!-- <th nowrap rowspan="2">HSN Code</th> -->
                                             <th nowrap rowspan="2">Unit</th>
                                             <th nowrap rowspan="2">PO Qty</th>
                                             <th nowrap rowspan="2">Pending Po Qty</th>
                                             <th nowrap colspan="2" style="text-align:center ;">Quantity</th>
                                             <th nowrap rowspan="2">Rate</th>
-                                            <th nowrap rowspan="2">Discount Amt</th>
-                                            <th nowrap rowspan="2">Taxable Value</th>
-                                            <th nowrap rowspan="2">Total Amount</th>                                       
+                                            <!-- <th nowrap rowspan="2">Discount Amt</th> -->
+                                             <!-- <th nowrap rowspan="2">Taxable Value</th> -->
+                                            <th nowrap rowspan="2">Total Amount</th>      
                                             <th nowrap rowspan="2">Delete</th>
                                         </tr>
                                         <tr>
@@ -306,7 +306,7 @@
 
                                             <td>1</td>
                                             <td>Test</td>
-                                            <td>Test1</td>
+                                            <!-- <td>Test1</td> -->
                                             <td>Test2</td>
                                             <td>Test4</td>
                                             <td>Test5</td>
@@ -320,11 +320,11 @@
                                                 CompacctDigitonly="true"
                                                 [ngClass]="{'clearance': GRNcreatFormSubmitted && Challan?.errors?.required}" required>
                                             <td>Test6</td>
-                                            <td>Test7</td>
-                                            <td>Test8</td>
+                                            <!-- <td>Test7</td> -->
+                                            <!-- <td>Test8</td> -->
                                             <td>Test9</td>
                                             <td > <a class="btn btn-sm btn-danger"
-                                                    (click)="delete(ind)">
+                                                    (click)="delete()">
                                                     <div><i class="fa fa-fw fa-trash"> </i></div></a>
                                             </td>
                                         </tr>
