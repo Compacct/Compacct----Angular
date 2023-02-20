@@ -1599,7 +1599,7 @@ data: {
       path: 'HR_Leave_Opening_Issue_Balance',
       component: HrLeaveOpeningComponent,
       data: {
-        title: 'Leave Application'
+        title: 'HR Leave Opening Issue Balance'
       }
     },
     {
