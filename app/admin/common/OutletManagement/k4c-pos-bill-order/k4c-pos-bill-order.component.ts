@@ -69,6 +69,8 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
   SubledgerList = [];
   subledgerdisable = false;
   namedisabled = false;
+  keypressmsg : any;
+  ordernovalidation = false;
 
 
   constructor( private Header: CompacctHeader,
@@ -404,9 +406,12 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
   }
   ShowOnlineDelOrderNo (obj) {
     this.ClickedOnlineLedger = {};
+    this.keypressmsg = undefined;
     if(obj.Txn_ID){
       this.ClickedOnlineLedger = obj;
+      this.ClickedOnlineLedger['Order_No'] = undefined;
       this.ClickedOnlineLedger['Order_Date'] = new Date();
+      if (obj.Ledger_Name === "SWIGGY") {
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "OrderNo",
@@ -415,24 +420,79 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
         summary: "Are you sure?",
         detail: "Confirm to proceed"
         });
+      } 
+      else  {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "OrderNoZ",
+          sticky: true,
+          severity: "info",
+          summary: "Are you sure?",
+          detail: "Confirm to proceed"
+        });
+      }
       setTimeout(function(){
         const elem  = document.getElementById('OrderNoCheck');
         elem.focus();
       },500)
     }
   }
+  onKeypressEvent(event: any){
+    this.keypressmsg = undefined;
+    if (event){
+      this.keypressmsg = "*Copy paste from document.";
+      return false;
+    }
+    // console.log(event.target.value);
+  }
   onConfirm() {
+    if (this.ClickedOnlineLedger['Ledger_Name'] === "SWIGGY") {
     if(this.ClickedOnlineLedger['Order_No'] && this.ClickedOnlineLedger['Order_Date']) {
+      if (this.ClickedOnlineLedger['Order_No'].length === 12) {
       this.ClickedOnlineLedger['Order_Date'] = this.DateService.dateConvert(new Date(this.ClickedOnlineLedger['Order_Date']));
       this.compacctToast.clear('OrderNo');
+      this.compacctToast.clear('OrderNoZ');
       this.ClickedOnlineLedger['Redirect_To'] = './K4C_Outlet_Sale_Bill';
       this.DynamicRedirectTo(this.ClickedOnlineLedger);
       this.ClickedOnlineLedger = {};
+    }
+    else {
+          // this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message ",
+            detail: "Order no. should be 12 digit. "
+          })
+    }
+    }
+    }
+    if (this.ClickedOnlineLedger['Ledger_Name'] === "ZOMATO")  {
+      if(this.ClickedOnlineLedger['Order_No'] && this.ClickedOnlineLedger['Order_Date']) {
+        if (this.ClickedOnlineLedger['Order_No'].length === 10) {
+        this.ClickedOnlineLedger['Order_Date'] = this.DateService.dateConvert(new Date(this.ClickedOnlineLedger['Order_Date']));
+        this.compacctToast.clear('OrderNo');
+        this.compacctToast.clear('OrderNoZ');
+        this.ClickedOnlineLedger['Redirect_To'] = './K4C_Outlet_Sale_Bill';
+        this.DynamicRedirectTo(this.ClickedOnlineLedger);
+        this.ClickedOnlineLedger = {};
+        }
+        else {
+          // this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message ",
+            detail: "Order no. should be 10 digit. "
+          })
+        }
+      }
     }
   }
   onReject() {
     this.ClickedOnlineLedger = {};
     this.compacctToast.clear('OrderNo');
+    this.compacctToast.clear('OrderNoZ');
   }
 
   NoPhone(){

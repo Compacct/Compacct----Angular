@@ -169,10 +169,11 @@ changeMaterialName(ProductID:any){
 GetParamDetailsforProduct(){
   this.ParameterList = [];
   if (this.ObjRawMatRev.Product_ID) {
+    const FilterReferenceDataList = this.ReferenceDataList.find((el:any)=> el.Production_Ref_NO == this.ObjRawMatRev.Production_Ref_NO)
   const obj = {
     "SP_String": this.spString,
     "Report_Name_String": "Get_Parameters",
-    "Json_Param_String": JSON.stringify([{Product_ID : this.ObjRawMatRev.Product_ID}])
+    "Json_Param_String": JSON.stringify([{Product_ID : this.ObjRawMatRev.Product_ID , Doc_No : FilterReferenceDataList ? FilterReferenceDataList.Doc_No : ""}])
    }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     this.ParameterList = data;

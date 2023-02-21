@@ -203,19 +203,21 @@
                             [columns]="cols" >
                             <ng-template pTemplate="colgroup" let-columns>
                                 <colgroup>
-                                     <col *ngFor="let col of DynamicHeader |  slice:1" [class]="col === 'Emp_Name' || col === 'Designation' ? 'tablelarge' : 'tablesmall'">
+                                     <col *ngFor="let col of DynamicHeader" [class]="col === 'Emp_Name' || col === 'Designation' ? 'tablelarge' : 'tablesmall'">
                                 </colgroup>
                             </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th nowrap="nowrap" style="background-color:rgb(90 96 109) !important ; color:white"
-                                              *ngFor="let option of DynamicHeader | slice:1">{{option.replaceAll('_',' ')}}</th> <!-- (click)="ChangeAllRow(option)" -->
+                                            <th style="background-color:rgb(90 96 109) !important ; color:white"
+                                              *ngFor="let option of DynamicHeader">{{option.replaceAll('_',' ')}}</th> <!-- (click)="ChangeAllRow(option)" -->
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr >
-                                                <td  *ngFor="let option of DynamicHeader | slice:1; let i = index" 
-                                                 (contextmenu)="onrightclick(option,col)" [class]="getcellText(col[option],option)">{{getcellText(col[option],option)}} </td> <!-- (click)="tableCellData(option,col)" -->
+                                                <!-- <td  *ngFor="let option of DynamicHeader | slice:1; let i = index" 
+                                                 (contextmenu)="onrightclick(option,col)" [class]="getcellText(col[option],option)">{{getcellText(col[option],option)}} </td> --><!--(click)="tableCellData(option,col)" -->
+                                                 <td  *ngFor="let option of DynamicHeader; let i = index" 
+                                                 (contextmenu)="onrightclick(option,col)" [class]="col[option]">{{col[option]}} </td>
                                             
                                         </tr>
                                     </ng-template>

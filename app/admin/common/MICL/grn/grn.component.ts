@@ -878,10 +878,10 @@ export class GrnComponent implements OnInit {
       this.ObjGRN1.Mode_Of_transport = data[0].Mode_Of_transport;
       this.ObjGRN1.LR_No_Date = data[0].LR_No_Date;
       this.ObjGRN1.Vehicle_No = data[0].Vehicle_No;
-      this.ObjGRN1.TCS_Y_N = data[0].TCS_Y_N; 
-      this.GetTCSdat();
-      this.ObjGRN1.TCS_Per = data[0].TCS_Persentage;
-      this.TcsAmtCalculation();     // this.AddTermList = data[0].Term_element ? data[0].Term_element : [];
+      // this.ObjGRN1.TCS_Y_N = data[0].TCS_Y_N; 
+      // this.GetTCSdat();
+      // this.ObjGRN1.TCS_Per = data[0].TCS_Persentage;
+      // this.TcsAmtCalculation();     // this.AddTermList = data[0].Term_element ? data[0].Term_element : [];
       // this.RDBListAdd = data[0].L_element;
       this.ObjGRN2.Quantity_Remarks = data[0].Quantity_Remarks;
       this.ObjGRN2.Quality_Rejection_Remarks = data[0].Quality_Rejection_Remarks;
@@ -957,8 +957,14 @@ export class GrnComponent implements OnInit {
       // this.termeditlist = data;
       console.log("tcseditlist data",data);
       this.ObjGRN1.TCS_Y_N = data[0].TCS_Y_N; 
+      this.GetTCSdat();
+      this.ObjGRN1.TCS_Per = data[0].TCS_Persentage;
+      this.ObjGRN1.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
+      this.ObjGRN1.TCS_Persentage = data[0].TCS_Persentage;
       this.getAllTotal();
-      this.TcsAmtCalculation();
+      setTimeout(() => {
+        this.TcsAmtCalculation();
+      }, 200);
     })
    }
    GetDataforUpdate(){
