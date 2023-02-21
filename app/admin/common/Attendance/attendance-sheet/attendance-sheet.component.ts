@@ -385,6 +385,7 @@ export class AttendanceSheetComponent implements OnInit {
     console.log('Month_Name',this.Month_Name)
    // this.Month_Name = new Date();
     // this.getmonthdaydate();
+    this.callapi();
     this.getAttendanceData();
   }
   getAttendanceType(){
@@ -402,8 +403,27 @@ export class AttendanceSheetComponent implements OnInit {
        })
     })
   }
+  callapi(){
+    this.AllAttendanceData = [];
+    var firstDate = this.Month_Name+'-'+'01'
+    console.log('firstDate',firstDate)
+    const AtObj = {
+      Date : this.DateService.dateConvert(new Date(firstDate)),
+    }
+    const obj = {
+      "SP_String": "SP_Process_Monthly_Attendance_Sheet",
+      "Report_Name_String": "Get_Attn_Data_For_Month_API_Test",
+      "Json_Param_String": JSON.stringify([AtObj])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("Data From Api",data);
+     
+  })
+  }
   getAttendanceData(){
     this.AllAttendanceData = [];
+    this.callapi();
     var firstDate = this.Month_Name+'-'+'01'
     console.log('firstDate',firstDate)
     const AtObj = {
@@ -412,14 +432,16 @@ export class AttendanceSheetComponent implements OnInit {
     const obj = {
       "SP_String": "HR_Txn_Attn_Sheet",
       // "Report_Name_String": "Get_Attn_Data",
-      "Report_Name_String": "Get_Attn_Data_NEW",
+      // "Report_Name_String": "Get_Attn_Data_NEW",
+      "Report_Name_String": "Get_Attn_Data_All_Details",
       "Json_Param_String": JSON.stringify([AtObj])
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("Data From Api",data);
-      if (data[0].Column1) {
-        this.showdata = data[0].Column1;
+      // if (data[0].Column1 || !data.length) {
+      if (!data.length) {
+        this.showdata = "Attn. Data not found";
       }
       else {
       this.AllAttendanceData = data;
