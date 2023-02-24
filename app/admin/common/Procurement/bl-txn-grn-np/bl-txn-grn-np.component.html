@@ -45,108 +45,106 @@
             <div class="form-horizontal">
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]"
-                            leftIcon="glyphicon glyphicon-list-alt">
-                            <!-- <form name="GRNSearchForm" #GRNSearchForm="ngForm" novalidate>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="GRNFormsBrowse" #GRNFormsBrowse="ngForm" novalidate>
                                 <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Company<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="browsecompany" #browsecompany="ngModel"
-                                            [(ngModel)]="ObjBrowse.Company_ID"
-                                            [ngClass]="{'clearance': RDBSearchFormSubmitted && browsecompany?.errors?.required}"
-                                            required>
-                                            <option [ngValue]="undefined">Select</option>
-                                            <option *ngFor="let option of companyList" [value]="option.Company_ID">
-                                                {{option.Company_Name}}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Date</label>
-                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"
-                                            [HardCodeDateOpt]="initDate">
-                                        </app-compacct-daterangepicker>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="col-sm-3">
-                                            <button class="btn btn-primary custombutton" data-toggle="modal"
-                                                (click)="GetSearchedlist(GRNSearchForm.form.valid)" id="load"
-                                                [disabled]="seachSpinner">
-                                                <p-progressSpinner *ngIf="seachSpinner"
-                                                    [style]="{width: '15px', height: '15px'}" strokeWidth="8"
-                                                    animationDuration=".5s"></p-progressSpinner>
-                                                <span *ngIf="!seachSpinner"
-                                                    class="glyphicon glyphicon-search"></span>&nbsp;Search
-                                            </button>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">From Date<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input CompacctNepaliDatepicker id="BSdate" name="BSdate" #BSdate="ngModel" Class="form-control"
+                                                (ngModelChange)="BrowseStartDate= $event" [(ngModel)]="BrowseStartDate"
+                                                [ngClass]="{'clearance': GRNcreatFormSearch && BSdate?.errors?.required}" required>
                                         </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">To Date<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input CompacctNepaliDatepicker id="Btdate" name="Btdate" #Btdate="ngModel" Class="form-control"
+                                                (ngModelChange)="BrowseEndDate= $event" [(ngModel)]="BrowseEndDate"
+                                                [ngClass]="{'clearance': GRNcreatFormSearch && Btdate?.errors?.required}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="companyListBrowse" name="Browsecompany" [(ngModel)]="COmpany_NameBrowse" [showClear]="true"
+                                            [emptyFilterMessage]="' No Company Found'" [filter]="true" filterBy="label,value.name"
+                                            [resetFilterOnHide]="true" [placeholder]="'Select Company'" [virtualScroll]="true" itemSize="30"
+                                            #Browsecompany="ngModel" [styleClass]="GRNcreatFormSearch && Browsecompany.errors?.required? 'clearance' : ''"
+                                            [required]="true">
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton" type="button"
+                                            (click)="BrowseSearch(GRNFormsBrowse.form.valid)" id="load">
+                                            Search
+                                        </button>
                                     </div>
                                 </div>
-
                             </form>
-                            <div class="table-id">
-                                <p-table [value]="Searchedlist" [paginator]="Searchedlist.length ? true : false"
-                                    [paginator]="true" [rows]="100" *ngIf='Searchedlist.length' [loading]="seachSpinner"
-                                    [rowHover]="true" [autoLayout]="true" [responsive]="true" sortMode="multiple"
-                                    [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true"
-                                    [globalFilterFields]="DynamicHeader">
+                            <div class="table-responsive no-padding">
+                                <p-table #dt [value]="Searchedlist"
+                                    [globalFilterFields]="['GRN_No','GRN_Date','Godown','Sub_Ledger_Name','PO_Doc_No','Location']" [paginator]="" [rows]="100"
+                                    [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,300,500]"
+                                    [rowHover]="true">
                                     <ng-template pTemplate="caption">
                                         <div class="row">
-                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <div class="col-sm-3 pull-right" style="text-align: right;">
                                                 <input type="text" pInputText size="50" placeholder="Search"
-                                                    (input)="dt1.filterGlobal($event.target.value, 'contains')"
-                                                    class="searchInput form-control">
+                                                    (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                             </div>
                                         </div>
-
+                        
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th *ngFor="let option of DynamicHeader">{{option.replaceAll('_',' ')}}</th>
-
+                                            <th>GRN No</th>
+                                            <th>GRN Date</th>
+                                            <th>Godown</th>
+                                            <th>Sub Ledger Name</th>
+                                            <th>PO Doc No</th>
+                                            <th>Location</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
-                                        <tr>
+                                        <tr [class]='col.Is_Visiable == "N" ? "text-red-active" : ""'>
                                             <td>
                                                 <div class="dropdown">
-                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle"
-                                                        type="button" data-toggle="dropdown" style="height:27px">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button"
+                                                        data-toggle="dropdown" style="height:27px">
                                                         <i class="fa fa-fw fa-bars"></i>
                                                         <span class="caret"></span>
                                                     </button>
                                                     <ul class="dropdown-menu">
                                                         <li>
-                                                            <a (click)="Edit(col)">
-                                                                <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
-                                                                Edit
+                                                            <a (click)="EditBrowse(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li>
                                                         <li>
-                                                            <a (click)="PrintPGRN(col.GRN_No)">
-                                                                <i class="fa fa-fw fa-print"></i> Print
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a (click)="Delete(col)">
-                                                                <i class="fa fa-trash" aria-hidden="true"></i>
-                                                                Delete
+                                                            <a (click)="DeleteBrowse(col)">
+                                                                <i class="fa fa-trash" aria-hidden="true"></i> Delete
                                                             </a>
                                                         </li>
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <ng-container *ngFor="let option of DynamicHeader" data->
-                                                <td>{{col[option] ? (col[option]):"-"}}</td>
-                                            </ng-container>
-
+                                            <td>{{col.GRN_No ? col.GRN_No : '-'}}</td>
+                                            <td>{{col.GRN_Date ? col.GRN_Date : '-'}}</td>
+                                            <td>{{col.Godown ? col.Godown : '-'}}</td>
+                                            <td>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
+                                            <td>{{col.PO_Doc_No ? col.PO_Doc_No : '-'}}</td>
+                                            <td>{{col.Location ? col.Location : '-'}}</td>
                                         </tr>
                                     </ng-template>
-                                    
                                 </p-table>
-
-                            </div> -->
-
+                            </div>
                         </p-tabPanel>
 
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]"
@@ -156,55 +154,57 @@
                                     <div class="panel-body">
                                         <form name="GRNForm" #GRNForm="ngForm" novalidate>
                                             <div class="form-group">
-                                                <div class="col-sm-2">
+                                                <div class="col-sm-3">
                                                     <label class="control-label">GRN Date <sup class="text-danger">*</sup></label>
                                                 <div class="input-group date">
                                                     <div class="input-group-addon">
                                                         <i class="fa fa-calendar"></i>
                                                     </div>
                                                     <input CompacctNepaliDatepicker id="GRN_Date" name="GRN_Date"  Class="form-control"
-                                                        (ngModelChange)="GRN_Date= $event" [(ngModel)]="GRN_Date"
+                                                        (ngModelChange)="GRN_Date= $event" [(ngModel)]="GRN_Date" *ngIf="buttonname === 'Create'"
                                                         [ngClass]="{'clearance': GRNcreatFormSubmitted && GRN_Date?.errors?.required}" required>
+                                                    <div class="label-t" *ngIf="buttonname === 'Update'">{{GRN_Date ? GRN_Date : '-'}}</div>
                                                 </div>
-                                                </div>
-                                                <div class="col-sm-5">
-                                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>                     
-                                                    <p-dropdown [options]="companyList" name="Creatcompany"  [(ngModel)]="ObjGRN.Company_ID" [showClear]="true"
-                                                        [emptyFilterMessage]="' No Company Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
-                                                        [placeholder]="'Select Company'" [virtualScroll]="true" itemSize="30" #Creatcompany="ngModel"
-                                                        [styleClass]="GRNcreatFormSubmitted && Creatcompany.errors?.required? 'clearance' : ''" [required]="true">
-                                                    </p-dropdown>
                                                 </div>
                                                 <div class="col-sm-5">
                                                     <label class="control-label">Supplier<sup class="text-danger">*</sup></label>
-                                                    <p-dropdown [options]="Supplierlist" name="Supplier"
-                                                        [(ngModel)]="ObjGRN.Sub_Ledger_ID" [showClear]="true"
-                                                        [emptyFilterMessage]="' No Supplier Found'" [filter]="true"
-                                                        filterBy="label,value.name" [resetFilterOnHide]="true"
-                                                        [placeholder]="'Select Supplier'" [virtualScroll]="true"
-                                                        itemSize="30" #Supplier="ngModel"
-                                                        [styleClass]="GRNcreatFormSubmitted && Supplier.errors?.required? 'clearance' : ''"
-                                                        [required]="true">
+                                                    <p-dropdown [options]="Supplierlist" name="Supplier" *ngIf="buttonname === 'Create'&& readonly === false"
+                                                        [(ngModel)]="ObjGRN.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Supplier Found'"
+                                                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Supplier'"
+                                                        [virtualScroll]="true" itemSize="30" #Supplier="ngModel" (onChange)="GetPO()"
+                                                        [styleClass]="GRNcreatFormSubmitted && Supplier.errors?.required? 'clearance' : ''" [required]="true">
                                                     </p-dropdown>
+                                                    <div class="label-t" *ngIf="buttonname === 'Update'|| readonly === true">{{ObjGRN.Sub_Ledger_Name ? ObjGRN.Sub_Ledger_Name : '-'}}</div>
                                                 </div>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">PO Number<sup class="text-danger">*</sup></label>                     
+                                                <p-dropdown [options]="POList" name="PO_Number" [(ngModel)]="ObjGRN.PO_Number" [showClear]="true"
+                                                    *ngIf="buttonname === 'Create'&& readonly === false" [emptyFilterMessage]="' No PO Number Found'" [filter]="true"
+                                                    filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select PO Number'" [virtualScroll]="true"
+                                                    itemSize="30" #PO_Number="ngModel"
+                                                    [styleClass]="GRNcreatFormSubmitted && PO_Number.errors?.required? 'clearance' : ''" [required]="true"
+                                                    (onChange)="GetGridList()">
+                                                </p-dropdown>
+                                                <div class="label-t" *ngIf="buttonname === 'Update'|| readonly === true">{{ObjGRN.PO_Number ? ObjGRN.PO_Number : '-'}}</div>
+                                                </div>
+                                                
                                             </div>
                                             <div class="form-group">
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Cost center<sup class="text-danger">*</sup></label>
-                                                    <p-dropdown [options]="CostCenterlist" name="CostCenter" [(ngModel)]="ObjGRN.Cost_Cen_ID" [showClear]="true"
+                                                    <!-- <p-dropdown [options]="CostCenterlist" name="CostCenter" [(ngModel)]="ObjGRN.Cost_Cen_ID" [showClear]="true"
                                                         [emptyFilterMessage]="' No Cost center Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                                         [placeholder]="'Select Cost center'" [virtualScroll]="true" itemSize="30" #CostCenter="ngModel"
-                                                        [styleClass]="GRNcreatFormSubmitted && CostCenter.errors?.required? 'clearance' : ''" [required]="true"
-                                                        (onChange)="GetRDBNo()">
-                                                    </p-dropdown>
+                                                        [styleClass]="GRNcreatFormSubmitted && CostCenter.errors?.required? 'clearance' : ''" [required]="true">
+                                                    </p-dropdown> -->
+                                                    <div class="label-t">{{ObjGRN.Cost_Cen_Name ? ObjGRN.Cost_Cen_Name : '-'}}</div>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
-                                                    <p-dropdown [options]="Godownlist" name="godown" [(ngModel)]="ObjGRN.godown_id" [showClear]="true"
+                                                    <p-dropdown [options]="Godownlist" name="godown" [(ngModel)]="ObjGRN.Godown_ID" [showClear]="true"
                                                         [emptyFilterMessage]="' No Stock Point Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                                         [placeholder]="'Select Stock Point'" [virtualScroll]="true" itemSize="30" #godown="ngModel"
-                                                        [styleClass]="GRNcreatFormSubmitted && godown.errors?.required? 'clearance' : ''" [required]="true"
-                                                        (onChange)="GetRDBNo()">
+                                                        [styleClass]="GRNcreatFormSubmitted && godown.errors?.required? 'clearance' : ''" [required]="true">
                                                     </p-dropdown>
                                                 </div>
                                                 <div class="col-sm-3">
@@ -259,26 +259,21 @@
                                                     <input class="form-control" name="vehicleno" #vehicleno="ngModel"
                                                         [(ngModel)]="ObjGRN.Vehicle_No" placeholder="Vehicle No.">
                                                 </div>
-                                                <div class="col-sm-3">
-                                                    <label class="control-label">PO Number<sup class="text-danger">*</sup></label>
-                                                    <p-dropdown [options]="Godownlist" name="PO_Number" [(ngModel)]="ObjGRN.PO_Number" [showClear]="true"
-                                                        [emptyFilterMessage]="' No PO Number Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
-                                                        [placeholder]="'Select PO Number'" [virtualScroll]="true" itemSize="30" #PO_Number="ngModel"
-                                                        [styleClass]="GRNcreatFormSubmitted && PO_Number.errors?.required? 'clearance' : ''" [required]="true"
-                                                        (onChange)="GetRDBNo()">
-                                                    </p-dropdown>
+                                                <div class="col-sm-5">
+                                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                                     <div class="label-t">{{ObjGRN.Company_Name ? ObjGRN.Company_Name : '-'}}</div>
+                                                    
                                                 </div>
                                                 <div class="col-sm-2">
                                                     <label class="control-label">PO Date</label>
-                                                <div class="label-t">ObjTopCreat.RDB_No</div>
+                                                <div class="label-t">{{PO_Date ? PO_Date : '-'}}</div>
                                                 </div>
                                             </div>                                         
                                         </form>
                                     </div>
                                 </div>
                             </div>
-                            <br>
-                            <br>
+                            
                             <div class="table-responsive no-padding">
                                 <table class="table table-bordered">
                                     <thead style="background-color:#4fa1d1;color:white;">
@@ -289,7 +284,7 @@
                                             <th nowrap rowspan="2">Unit</th>
                                             <th nowrap rowspan="2">PO Qty</th>
                                             <th nowrap rowspan="2">Pending Po Qty</th>
-                                            <th nowrap colspan="2" style="text-align:center ;">Quantity</th>
+                                            <th nowrap colspan="2" style="text-align:center; width: 24%;">Quantity</th>
                                             <th nowrap rowspan="2">Rate</th>
                                             <!-- <th nowrap rowspan="2">Discount Amt</th> -->
                                              <!-- <th nowrap rowspan="2">Taxable Value</th> -->
@@ -302,43 +297,42 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-
-                                            <td>1</td>
-                                            <td>Test</td>
+                                        <tr *ngFor="let Alldata of BottomList; let i = index">
+                                            <td>{{i + 1}}</td>
+                                            <td>{{Alldata.Product_Description ? Alldata.Product_Description :"-"}}</td>
                                             <!-- <td>Test1</td> -->
-                                            <td>Test2</td>
-                                            <td>Test4</td>
-                                            <td>Test5</td>
+                                            <td>{{Alldata.UOM ? Alldata.UOM :"-"}}</td>
+                                            <td>{{Alldata.PO_Qty ? Alldata.PO_Qty :"-"}}</td>
+                                            <td>{{Alldata.Pending_PO_Qty ? Alldata.Pending_PO_Qty :"-"}}</td>
                                             <td>
-                                                <input class="form-control" name="Received" #Received="ngModel" [(ngModel)]="ObjGRN.Received"
-                                                CompacctDigitonly="true"
-                                                [ngClass]="{'clearance': GRNcreatFormSubmitted && Received?.errors?.required}" required>
+                                                <input class="form-control" [name]="'Challan'+i" #Challan="ngModel" [(ngModel)]="Alldata.Challan_Qty"
+                                                CompacctDigitonly="true" (ngModelChange)="getTotal(i)"
+                                                [ngClass]="{'clearance': GRNcreatFormSubmitted && Challan?.errors?.required}" required>
                                             </td>
                                             <td>
-                                                <input class="form-control" name="Challan" #Challan="ngModel" [(ngModel)]="ObjGRN.Challan"
-                                                CompacctDigitonly="true"
-                                                [ngClass]="{'clearance': GRNcreatFormSubmitted && Challan?.errors?.required}" required>
-                                            <td>Test6</td>
+                                                <input class="form-control" name="'Received'+i" #Received="ngModel" [(ngModel)]="Alldata.Received_Qty"
+                                                CompacctDigitonly="true" (ngModelChange)="getvalid(i)"
+                                                [ngClass]="{'clearance': GRNcreatFormSubmitted && Received?.errors?.required}" required>
+                                            <td>{{Alldata.Rate ? Alldata.Rate :"-"}}</td>
                                             <!-- <td>Test7</td> -->
                                             <!-- <td>Test8</td> -->
-                                            <td>Test9</td>
+                                            <td>{{Alldata.Total_Amount ? Alldata.Total_Amount :"-"}}</td>
                                             <td > <a class="btn btn-sm btn-danger"
-                                                    (click)="delete()">
+                                                    (click)="delete(index)">
                                                     <div><i class="fa fa-fw fa-trash"> </i></div></a>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>                         
-<div class="form-group">
-    <div class="col-sm-6">
-        <label class="control-label"> Remarks</label>
-        <textarea class="form-control" name="Remarks" #Remarks="ngModel"
-            [(ngModel)]="ObjGRN.Remarks" placeholder="Remarks " >
-        </textarea>
-    </div>
-</div>
+                                    <div class="form-group">
+                                        <div class="col-sm-6">
+                                            <label class="control-label"> Remarks</label>
+                                            <textarea class="form-control" name="Remarks" #Remarks="ngModel"
+                                                [(ngModel)]="ObjGRN.Remarks" placeholder="Remarks " >
+                                            </textarea>
+                                        </div>
+                                    </div> 
                             <div class="box-footer">
                                 <button class="btn btn-primary pull-right" (click)="SaveGRN(GRNForm.form.valid)"
                                     id="load" [disabled]="Spinner">
@@ -348,100 +342,104 @@
                                 </button>
                             </div>
                         </p-tabPanel>
+
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="fa fa-hourglass">
-                            <!-- <form name="PandingSearchForm" #PandingSearchForm="ngForm" novalidate>
+                            <form name="GRNFormsPending" #GRNFormsPending="ngForm" novalidate>
                                 <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Company<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="pandingcompany" #pandingcompany="ngModel"
-                                            [(ngModel)]="ObjPanding.Company_ID"
-                                            [ngClass]="{'clearance': RDBPandingSearchFormSubmitted && pandingcompany?.errors?.required}"
-                                            required>
-                                            <option [ngValue]="undefined">Select</option>
-                                            <option *ngFor="let opt of companyList" [value]="opt.Company_ID">
-                                                {{opt.Company_Name}}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Date</label>
-                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"
-                                            [HardCodeDateOpt]="initDate2">
-                                        </app-compacct-daterangepicker>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="col-sm-3">
-                                            <button class="btn btn-primary custombutton" data-toggle="modal"
-                                                (click)="GetSearchedpandinglist(PandingSearchForm.form.valid)" id="load"
-                                                [disabled]="seachSpinner">
-                                                <p-progressSpinner *ngIf="seachSpinner"
-                                                    [style]="{width: '15px', height: '15px'}" strokeWidth="8"
-                                                    animationDuration=".5s"></p-progressSpinner>
-                                                <span *ngIf="!seachSpinner"
-                                                    class="glyphicon glyphicon-search"></span>&nbsp;Search
-                                            </button>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">From Date<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input CompacctNepaliDatepicker id="pSdate" name="pSdate" #pSdate="ngModel" Class="form-control"
+                                                (ngModelChange)="PendingStartDate= $event" [(ngModel)]="PendingStartDate"
+                                                [ngClass]="{'clearance': PendingGRNFormSearch && pSdate?.errors?.required}" required>
                                         </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">To Date<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input CompacctNepaliDatepicker id="pdate" name="pdate" #pdate="ngModel" Class="form-control"
+                                                (ngModelChange)="PendingEndDate= $event" [(ngModel)]="PendingEndDate"
+                                                [ngClass]="{'clearance': PendingGRNFormSearch && pdate?.errors?.required}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="companyListPending" name="Pendingcompany" [(ngModel)]="COmpany_NamePending"
+                                            [showClear]="true" [emptyFilterMessage]="' No Company Found'" [filter]="true"
+                                            filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Company'"
+                                            [virtualScroll]="true" itemSize="30" #Pendingcompany="ngModel"
+                                            [styleClass]="PendingGRNFormSearch && Pendingcompany.errors?.required? 'clearance' : ''" [required]="true">
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton" type="button" (click)="PendingGRNSearch(GRNFormsPending.form.valid)"
+                                            id="load">
+                                            Search
+                                        </button>
                                     </div>
                                 </div>
-
                             </form>
-                            <div class="table-id">
-                                <p-table [value]="SearchedlistPanding"
-                                    [paginator]="SearchedlistPanding.length ? true : false" [paginator]="true"
-                                    [rows]="100" [loading]="seachSpinner" *ngIf='SearchedlistPanding.length'
-                                    [rowHover]="true" [autoLayout]="true" [responsive]="true" sortMode="multiple"
-                                    [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true"
-                                    [globalFilterFields]='DynamicHeader2'>
+                            <div class="table-responsive no-padding">
+                                <p-table #dt [value]="PendingSearchedlist"
+                                    [globalFilterFields]="['PO_Doc_No','PO_Date','Product_Description','PO_Qty','UOM','Pending_Qty']" [paginator]="true"
+                                    [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,300,500]"
+                                    [rowHover]="true">
                                     <ng-template pTemplate="caption">
                                         <div class="row">
-                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <div class="col-sm-3 pull-right" style="text-align: right;">
                                                 <input type="text" pInputText size="50" placeholder="Search"
-                                                    (input)="dt1.filterGlobal($event.target.value, 'contains')"
-                                                    class="searchInput form-control">
+                                                    (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                             </div>
                                         </div>
-
+                            
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th *ngFor="let option of DynamicHeader2">{{option.replaceAll('_',' ')}}
-                                            </th>
-
-
+                                            <th>PO Doc No</th>
+                                            <th>PO Date</th>
+                                            <th>Product Description</th>
+                                            <th>UOM</th>
+                                            <th style="width: 85px;">PO Qty</th>
+                                            <th>Pending Qty</th>
+                                            <th>Accepted Qty</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
-                                        <tr>
+                                        <tr [class]='col.Is_Visiable == "N" ? "text-red-active" : ""'>
                                             <td>
                                                 <div class="dropdown">
-                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle"
-                                                        type="button" data-toggle="dropdown" style="height:27px">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button"
+                                                        data-toggle="dropdown" style="height:27px">
                                                         <i class="fa fa-fw fa-bars"></i>
                                                         <span class="caret"></span>
                                                     </button>
                                                     <ul class="dropdown-menu">
                                                         <li>
-                                                            <a (click)="createGRN(col)">
-                                                                <i class="fa fa-fw fa-pencil"></i> Create GRN
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a (click)="Printrdb(col.RDB_No)">
-                                                                <i class="fa fa-fw fa-print"
-                                                                    aria-hidden="true"></i>Print
+                                                            <a (click)="PendingGRNcreate(col)">
+                                                                <i class="fa fa-hand-pointer-o"></i> Create GRN
                                                             </a>
                                                         </li>
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <ng-container *ngFor="let option of DynamicHeader2" data->
-                                                <td>{{col[option] ? (col[option]):"-"}}</td>
-                                            </ng-container>
+                                            <td>{{col.PO_Doc_No ? col.PO_Doc_No : '-'}}</td>
+                                            <td>{{col.PO_Date ? col.PO_Date : '-'}}</td>
+                                            <td>{{col.Product_Description ? col.Product_Description : '-'}}</td>
+                                            <td>{{col.UOM ? col.UOM : '-'}}</td>
+                                            <td>{{col.PO_Qty ? col.PO_Qty : '-'}}</td>
+                                            <td>{{col.Pending_Qty ? col.Pending_Qty : '-'}}</td>
+                                            <td>{{col.Accepted_Qty }}</td>
                                         </tr>
-                                    </ng-template>                     
+                                    </ng-template>
                                 </p-table>
-                            </div> -->
+                            </div>
                         </p-tabPanel>
                     </p-tabView>
                 </div>
