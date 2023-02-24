@@ -61,6 +61,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   SuccessCrNotelist:any = [];
   successcrnoteSpinner = false;
   exportSpinner = false;
+  databaseName:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -82,6 +83,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       Header: "E-Invoice Confirmation",
       Link: " E-Invoice Confirmation "
     });
+    this.getDatabase();
     // this.getMaterialType();
   //   setInterval(() => {
   //     this.GetFailedInvoicelist();
@@ -95,6 +97,15 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
     this.buttonname = "Save";
     // this.productaddSubmit =[];
     // this.clearData();
+  }
+  getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log(data)
+        });
   }
   onReject(){}
   onConfirm(){}
@@ -182,7 +193,17 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
     if(updateData.length){
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
-     this.$http.post(`https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==`,updateData)
+     let reportnamepeninv = "";
+      if (this.databaseName === "K4C") {
+        reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==";
+      }
+      else if (this.databaseName === "BSHPL") {
+        reportnamepeninv = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Invoice_Queue?code=yf2xGtV6etP5Hj_u-RcbC1iEH6ryfONUXbsUrFGJhRESAzFulwDVDA==";
+      }
+      else {
+        reportnamepeninv = "";
+      }
+     this.$http.post(reportnamepeninv,updateData)
      .subscribe((data:any)=>{
       console.log("data",data)
 
@@ -262,7 +283,17 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   }
   ViewInvoice(obj) {
     if (obj) {
-      window.open("/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" + obj, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+      let printlink = "";
+      if (this.databaseName === "K4C") {
+        printlink = "/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" ;
+      }
+      else if (this.databaseName === "BSHPL") {
+        printlink = "/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_Print.aspx?Doc_No=" ;
+      }
+      else {
+        printlink = "";
+      }
+      window.open(printlink + obj, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
   
       );
     }
@@ -352,7 +383,17 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
     if(updateData.length){
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
-     this.$http.post(`https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==`,updateData)
+     let reportnamefailedinv = "";
+      if (this.databaseName === "K4C") {
+        reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==";
+      }
+      else if (this.databaseName === "BSHPL") {
+        reportnamefailedinv = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Invoice_Queue?code=yf2xGtV6etP5Hj_u-RcbC1iEH6ryfONUXbsUrFGJhRESAzFulwDVDA==";
+      }
+      else {
+        reportnamefailedinv = "";
+      }
+     this.$http.post(reportnamefailedinv,updateData)
      .subscribe((data:any)=>{
       console.log("data",data)
 
@@ -539,7 +580,17 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
     if(updateData.length) {
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
-      this.$http.post(`https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==`,updateData)
+     let reportnamepencrnote = "";
+      if (this.databaseName === "K4C") {
+        reportnamepencrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==";
+      }
+      else if (this.databaseName === "BSHPL") {
+        reportnamepencrnote = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=Mvkyst7OU0DTxMSZAgg7HNhW2FuwUgMypd1cu36SfC1JAzFucc6OIw==";
+      }
+      else {
+        reportnamepencrnote = "";
+      }
+      this.$http.post(reportnamepencrnote,updateData)
      .subscribe((data:any)=>{
       console.log("data",data)
         if(data[0].status === "success"){
@@ -708,7 +759,17 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
     if(updateData.length) {
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
-      this.$http.post(`https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==`,updateData)
+     let reportnamefailedcrnote = "";
+      if (this.databaseName === "K4C") {
+        reportnamefailedcrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==";
+      }
+      else if (this.databaseName === "BSHPL") {
+        reportnamefailedcrnote = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=Mvkyst7OU0DTxMSZAgg7HNhW2FuwUgMypd1cu36SfC1JAzFucc6OIw==";
+      }
+      else {
+        reportnamefailedcrnote = "";
+      }
+      this.$http.post(reportnamefailedcrnote,updateData)
      .subscribe((data:any)=>{
       console.log("data",data)
         if(data[0].status === "success"){

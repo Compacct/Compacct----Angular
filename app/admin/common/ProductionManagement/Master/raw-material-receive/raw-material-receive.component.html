@@ -505,16 +505,25 @@ style="text-align: center;"
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
-                <th style="text-align:center" colspan="4">As Per PO</th>
+                <th style="text-align:center" colspan="5">As Per PO</th>
                 <th style="text-align:center" colspan="2">As Per INV</th>
             </tr>
             <tr>
-                <th>Parameter Name</th>
+                <th rowspan="2">Parameter Name</th>
+                <th colspan="2" style="text-align: center;">Required Value</th>
+                <th colspan="2" style="text-align: center;">Tolerance Level</th>
+                <th rowspan="2"style="text-align: center;">value</th>
+                <th rowspan="2" style="text-align: center;"></th>
+            </tr> 
+            <tr>
+                <!-- <th>Parameter Name</th> -->
                 <th>Min Value</th>
                 <th>Max Value</th>
-                <th>Tolerance Level</th>
+                <th>Min Value</th>
+                <th>Max Value</th>
+                <!-- <th>Tolerance Level</th> 
                 <th>Value</th>
-                <th></th>
+                <th></th> -->
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
@@ -524,7 +533,9 @@ style="text-align: center;"
                 <td>{{col.Max_Value}}</td>
                 <!-- <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Min_Value' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td> -->
                 <!-- <td><input type="text" [name]="col.Product_ID1" [(ngModel)]='col.Max_Value' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td> -->
-                <td>{{col.Tolerance_Level}} %</td>
+                <!-- <td>{{col.Tolerance_Level}} %</td> -->
+                <td>{{col.Min_Tolerance_Level}} %</td>
+                <td>{{col.Max_Tolerance_Level}} %</td>
                 <td><input type="text" [name]="col.Product_ID3" [(ngModel)]='col.Exact_Value' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                 <td>{{col.UOM ? col.UOM : '-'}}</td>
                 <!-- <td><input type="text" [name]="col.Product_ID2" [(ngModel)]='col.Tolerance_Level' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td> -->

@@ -180,12 +180,27 @@
 
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th colspan="5" style="text-align: center;">As Per PO</th>
+                                            <th colspan="6" style="text-align: center;">As Per PO</th>
                                             <th colspan="2" style="text-align: center;">As Per Bill</th>
                                             <th colspan="2" style="text-align: center;">As Per QA</th>
                                         </tr>
                                         <tr>
-                                            <th>Parameter Name</th>
+                                            <th rowspan="2">Parameter Name</th>
+                                            <th colspan="3" style="text-align: center;">Required Value</th>
+                                            <th colspan="2" style="text-align: center;">Tolerance Level</th>
+                                            <th rowspan="2" style="text-align: center;">Value</th>
+                                            <th rowspan="2"></th>
+                                            <th rowspan="2"style="text-align: center;">value</th>
+                                            <th rowspan="2" style="text-align: center;"></th>
+                                        </tr>
+                                        <tr>
+                                            <th>Min</th>
+                                            <th>Max</th>
+                                            <th></th>
+                                            <th>Min</th>
+                                            <th>Max</th>
+                                            
+                                            <!-- <th>Parameter Name</th>
                                             <th>Min</th>
                                             <th>Max</th>
                                             <th></th>
@@ -193,7 +208,7 @@
                                             <th>Value</th>
                                             <th></th>
                                             <th>value</th>
-                                            <th></th>
+                                            <th></th> -->
                                         </tr>
                                     </ng-template>
 
@@ -203,7 +218,9 @@
                                             <td>{{col.Min_Value}}</td>
                                             <td>{{col.Max_Value}}</td>
                                             <td>{{col.UOM}}</td>
-                                            <td>{{col.Tolerance_Level}}%</td>
+                                            <!-- <td>{{col.Tolerance_Level}}%</td> -->
+                                            <td>{{col.Min_Tolerance_Level}}%</td>
+                                            <td>{{col.Max_Tolerance_Level}}%</td>
                                             <td><div class="label-t">{{col.Rec_Value}}</div></td>
                                             <td>{{col.UOM}}</td>
                                             <td>

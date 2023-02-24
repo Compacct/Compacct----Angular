@@ -1023,7 +1023,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
         Net_Amount:  Number(this.ObjaddWorkOrder.Total_Amount),
         GST_Percentage: Number( this.ObjaddWorkOrder.Gst),
         GST_Amount: Number(this.ObjaddWorkOrder.GST_AMT),
-        Parameter_Details: this.buttonname === "Create" ? this.ParameterList.length ? this.paramarr : null : this.paramarr
+        Parameter_Details: this.ParameterList.length ? this.paramarr : null 
      }
      if(this.addPurchaseList.length && this.addPurchaseListInput){
       this.addPurchaseList.forEach((xz:any,i) => {

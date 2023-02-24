@@ -104,7 +104,10 @@ export class MICLRawMaterialQAComponent implements OnInit {
   getDetails(DocNO){
     // console.log("getDetails",this.RecvDocList);
     // console.log("DOcNO",DocNO);
-
+    this.SelectProductList = [];
+    this.ObjRaw.SelectProduct = undefined;
+    this.allDetalis = [];
+    this.allDetalisHeader = [];
     if(DocNO && this.RecvDocList){
       for(let item of this.RecvDocList){
         if(item.Doc_No == DocNO){
@@ -131,6 +134,9 @@ export class MICLRawMaterialQAComponent implements OnInit {
 
   getProductDetails(DocNO){
     this.SelectProductList=[];
+    this.ObjRaw.SelectProduct = undefined;
+    this.allDetalis = [];
+    this.allDetalisHeader = [];
     const obj = {
       "SP_String": "SP_BL_Txn_Raw_Material_QA",
       "Report_Name_String":"Get_Product_Details",
@@ -197,7 +203,9 @@ export class MICLRawMaterialQAComponent implements OnInit {
         Max_Value: element.Max_Value,
         Min_Value: element.Min_Value,
         Rec_Value: element.Rec_Value,
-        Tolerance_Level: element.Tolerance_Level,
+        // Tolerance_Level: element.Tolerance_Level,
+        Min_Tolerance_Level: element.Min_Tolerance_Level,
+        Max_Tolerance_Level: element.Max_Tolerance_Level,
         QA_Value: Number(element.QA_Value)
       }
       this.newAllDetails.push(TempObj);

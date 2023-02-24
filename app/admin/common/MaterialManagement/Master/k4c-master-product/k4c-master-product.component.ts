@@ -149,7 +149,7 @@ export class K4cMasterProductComponent implements OnInit {
           if (data[0].Column1 === "done"){
           
           
-            if(this.ParamFlaghtml === "Raw Material" || this.ParamFlaghtml === "Store Item - N/Saleable"){
+            if(this.ParamFlaghtml === "Raw Material"){
               this.getRowData();
             }
             else {
@@ -184,7 +184,7 @@ export class K4cMasterProductComponent implements OnInit {
           // console.log("del Data===", data[0].Column1)
           if (data[0].Column1 === "done"){
           
-            if(this.ParamFlaghtml === "Raw Material" ||  this.ParamFlaghtml === "Store Item - N/Saleable"){
+            if(this.ParamFlaghtml === "Raw Material"){
               this.getRowData();
             }
             else {
@@ -428,7 +428,7 @@ export class K4cMasterProductComponent implements OnInit {
               });
                 }
                 this.Spinner = false;
-                this.getRowData();
+                this.getBandlist();
             })
           }
           else if (this.Param_Flag === 'Finished'){
@@ -470,7 +470,8 @@ export class K4cMasterProductComponent implements OnInit {
                 });
                 }
                 this.Spinner = false;
-                this.getRowData();
+                // this.getRowData();
+                this.getBandlist();
             })
           }
           else if (this.Param_Flag === "Store Item - Saleable"){
@@ -565,7 +566,8 @@ export class K4cMasterProductComponent implements OnInit {
     })
   }
   getRowData(){
-    const TempReportName = this.Param_Flag === 'Store Item - N/Saleable' ? "Browse - Store Item Product Master" : "Browse - Raw Material Product Master";
+    // const TempReportName = this.Param_Flag === 'Store Item - N/Saleable' ? "Browse - Store Item Product Master" : "Browse - Raw Material Product Master";
+    const TempReportName = "Browse - Raw Material Product Master";
     console.log("Browse API",TempReportName);
     const obj = {
       "SP_String": "SP_Controller_Master",
@@ -961,6 +963,8 @@ class masterProduct {
   Shelf_Life_Hours: any;
   Critical_Level:any;
   Saleable_Product : false;
+  Premix_Item : any;
+  Daily_Weekly : any;
 }
 class brand{
   Brand_ID : number ;
