@@ -2541,7 +2541,7 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
     path: 'BL_Txn_GRN_Np',
     component: BLTxnGrnNPComponent,
     data: {
-        title: 'BL Txn GRN NP'
+        title: 'GRN'
     } 
   },
     
