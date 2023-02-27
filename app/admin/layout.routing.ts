@@ -336,6 +336,7 @@ import { ParameterMasterComponent } from "./common/MICL/parameter-master/paramet
 import { DoctorsAppoTherapPlanComponent } from './common/PatientManagement/doctors-appo-therap-plan/doctors-appo-therap-plan.component';
 import { MICLRawMaterialQAComponent } from "./common/MICL/micl-raw-material-qa/micl-raw-material-qa.component";
 import { BLTxnGrnNPComponent } from "./common/Procurement/bl-txn-grn-np/bl-txn-grn-np.component";
+import { HrLateArrivalEarlyDepartureComponent } from './common/MICL/hr-late-arrival-early-departure/hr-late-arrival-early-departure.component';
 
 
 const layoutRoutes: Routes = [{
@@ -2542,6 +2543,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
     component: BLTxnGrnNPComponent,
     data: {
         title: 'GRN'
+    } 
+  },
+  {
+    path: 'HR_Late_Arrival_Early_Departure',
+    component: HrLateArrivalEarlyDepartureComponent,
+    data: {
+        title: 'HR Late Arrival Early Departure'
     } 
   },
     
