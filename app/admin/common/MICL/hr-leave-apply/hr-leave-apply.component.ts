@@ -71,6 +71,18 @@ export class HrLeaveApplyComponent implements OnInit {
   SelectedDistEmpName:any = [];
   SearchFields:any = [];
 
+  ObjHrleaveSummary : HrleaveSummary = new HrleaveSummary();
+  HrLeaveSummarySearchFormSubmitted = false;
+  seachSpinnerForLS = false;
+  LeaveSummarydataList:any = [];
+  DynamicHeaderforLS:any = [];
+
+  ObjHrleaveLedger : HrleaveLedger = new HrleaveLedger();
+  HrLeaveLedgerSearchFormSubmitted = false;
+  seachSpinnerForLL = false;
+  LeaveLedgerdataList:any = [];
+  DynamicHeaderforLL:any = [];
+
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -81,7 +93,7 @@ export class HrLeaveApplyComponent implements OnInit {
     public $CompacctAPI: CompacctCommonApi,
   ) { }
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["LEAVE SUMMARY", "LEAVE LEDGER", "BROWSE", "CREATE"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
@@ -104,10 +116,12 @@ export class HrLeaveApplyComponent implements OnInit {
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["LEAVE SUMMARY", "LEAVE LEDGER", "BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.clearData();
     this.Editdisable = false;
+    this.HrLeaveSummarySearchFormSubmitted = false;
+    this.HrLeaveLedgerSearchFormSubmitted = false;
     // this.hrYearList();
   }
   clearData(){
@@ -127,6 +141,73 @@ export class HrLeaveApplyComponent implements OnInit {
     this.minFromDate = new Date();
     this.ToDatevalue = new Date();
     }
+  GetLeaveSummaryData(valid){
+      this.HrLeaveSummarySearchFormSubmitted = true;
+      this.seachSpinnerForLS = true;
+         const tempobj = {
+            HR_Year_ID : this.ObjHrleaveSummary.HR_Year_ID,
+            Emp_ID : this.ObjHrleaveSummary.Emp_ID
+           }
+      if(valid){
+      const obj = {
+        "SP_String":"SP_Leave_Application",
+        "Report_Name_String":"Leave_Summary",
+        "Json_Param_String": JSON.stringify([tempobj])
+      }
+       this.GlobalAPI.getData(obj)
+       .subscribe((data:any)=>{
+        this.LeaveSummarydataList = data;
+        // this.BackupSearchedlist = data;
+        // this.GetDistinct();
+        if(this.LeaveSummarydataList.length){
+          this.DynamicHeaderforLS = Object.keys(data[0]);
+        }
+        else {
+          this.DynamicHeaderforLS = [];
+        }
+        this.seachSpinnerForLS = false;
+        this.HrLeaveSummarySearchFormSubmitted = false;
+        console.log("LeaveSummarydataList",this.LeaveSummarydataList);
+        }); 
+      }
+      else {
+        this.seachSpinnerForLS = false;
+      }
+  }
+  GetLeaveLedgerData(valid){
+      this.HrLeaveLedgerSearchFormSubmitted = true;
+      this.seachSpinnerForLL = true;
+         const tempobj = {
+            HR_Year_ID : this.ObjHrleaveLedger.HR_Year_ID,
+            Emp_ID : this.ObjHrleaveLedger.Emp_ID,
+            Atten_Type_ID : this.ObjHrleaveLedger.Leave_Type
+           }
+      if(valid){
+      const obj = {
+        "SP_String":"SP_Leave_Application",
+        "Report_Name_String":"Leave_Ledger",
+        "Json_Param_String": JSON.stringify([tempobj])
+      }
+       this.GlobalAPI.getData(obj)
+       .subscribe((data:any)=>{
+        this.LeaveLedgerdataList = data;
+        // this.BackupSearchedlist = data;
+        // this.GetDistinct();
+        if(this.LeaveLedgerdataList.length){
+          this.DynamicHeaderforLL = Object.keys(data[0]);
+        }
+        else {
+          this.DynamicHeaderforLL = [];
+        }
+        this.seachSpinnerForLL = false;
+        this.HrLeaveLedgerSearchFormSubmitted = false;
+        console.log("LeaveLedgerdataList",this.LeaveLedgerdataList);
+        }); 
+      }
+      else {
+        this.seachSpinnerForLL = false;
+      }
+  }
   getDateRange(dateRangeObj) {
       if (dateRangeObj.length) {
         this.ObjBrowse.From_date = dateRangeObj[0];
@@ -277,7 +358,7 @@ this.AllData = [...this.BackupAllData] ;
             this.HrleaveId = undefined;
             this.txnId = undefined;
             this.Editdisable = false;
-            this.tabIndexToView = 0;
+            this.tabIndexToView = 2;
             this.leaveHrFormSubmitted = false;
             this.ObjHrleave =new Hrleave();
             this.FromDatevalue = new Date()
@@ -455,6 +536,16 @@ onConfirm() {
 onReject() {
   this.compacctToast.clear("c");
 }
+}
+
+class HrleaveSummary {
+  Emp_ID:any;
+  HR_Year_ID:any;				
+}
+class HrleaveLedger {
+  Emp_ID:any;
+  HR_Year_ID:any;
+  Leave_Type:any;
 }
 class Hrleave {
   Emp_ID:any;

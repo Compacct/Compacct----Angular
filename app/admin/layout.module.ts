@@ -433,6 +433,7 @@ import { ParameterMasterComponent } from "./common/MICL/parameter-master/paramet
 import { DoctorsAppoTherapPlanComponent } from './common/PatientManagement/doctors-appo-therap-plan/doctors-appo-therap-plan.component';
 import { MICLRawMaterialQAComponent } from "./common/MICL/micl-raw-material-qa/micl-raw-material-qa.component";
 import { BLTxnGrnNPComponent } from './common/Procurement/bl-txn-grn-np/bl-txn-grn-np.component';
+import { HrLateArrivalEarlyDepartureComponent } from './common/MICL/hr-late-arrival-early-departure/hr-late-arrival-early-departure.component';
 
 @NgModule({
   declarations: [
@@ -782,7 +783,8 @@ import { BLTxnGrnNPComponent } from './common/Procurement/bl-txn-grn-np/bl-txn-g
     ParameterMasterComponent,
     DoctorsAppoTherapPlanComponent,
     MICLRawMaterialQAComponent,
-    BLTxnGrnNPComponent
+    BLTxnGrnNPComponent,
+    HrLateArrivalEarlyDepartureComponent
 
   ],
   imports: [

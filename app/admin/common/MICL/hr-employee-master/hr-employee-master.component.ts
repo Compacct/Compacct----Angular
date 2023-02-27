@@ -10,6 +10,7 @@ import { CompacctCommonApi } from "../../../shared/compacct.services/common.api.
 import { CompacctHeader } from "../../../shared/compacct.services/common.header.service";
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-hr-employee-master',
@@ -108,6 +109,7 @@ export class HREmployeeMasterComponent implements OnInit {
     private compacctToast : MessageService,
     private DateService : DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -548,6 +550,7 @@ async saveemployeemaster(valid){
   if(valid){
     this.EmployeeFormSubmitted = false;
     this.Spinner = true;
+    this.ngxService.start();
     if(this.ProductView['size'] ){
       this.GlobalAPI.CommonFileUpload(this.ProductView).subscribe((data:any)=>{
         this.objemployee.Person_Photo = data.file_url
@@ -607,6 +610,7 @@ saveEmp(){
               summary: "Employee Master Update Succesfully",
               detail: "Succesfully Updated"
             });
+            this.ngxService.stop();
             this.Spinner = false;
             this.clearData();
             this.getEmployee();
@@ -614,6 +618,7 @@ saveEmp(){
          
         }
         else{
+          this.ngxService.stop();
           this.Spinner = false;
           this.compacctToast.clear();
           this.compacctToast.add({
@@ -650,6 +655,7 @@ saveEmp(){
               summary: "EMP_ID" + msg,
               detail: "Succesfully Created"
             });
+            this.ngxService.stop();
             this.Spinner = false;
             this.clearData();
             this.getEmployee();
@@ -658,6 +664,7 @@ saveEmp(){
             
         }
         else{
+          this.ngxService.stop();
           this.Spinner = false;
           this.compacctToast.clear();
           this.compacctToast.add({
@@ -673,6 +680,7 @@ saveEmp(){
   
    
      else{
+      this.ngxService.stop();
       this.Spinner = false;
           this.compacctToast.clear();
           this.compacctToast.add({
@@ -685,6 +693,7 @@ saveEmp(){
       
     }
     else{
+      this.ngxService.stop();
       this.Spinner = false;
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -876,6 +885,7 @@ ViewDesignationType(){
              summary: "Are you sure?",
              detail: "Confirm to proceed"
            })
+           this.ngxService.stop();
            this.Spinner = false;
 
       }
@@ -969,6 +979,7 @@ ViewDesignationType(){
           summary: "Designation Create Succesfully ",
           detail: "Succesfully Created"
         });
+        this.ngxService.stop();
         this.Spinner = false;
         
         this.ViewProTypeModal2 = false;
@@ -984,6 +995,7 @@ ViewDesignationType(){
         summary: "Error",
         detail: "Something Wrong"
       });
+      this.ngxService.stop();
       this.Spinner = false;
       this.ViewProTypeModal2 = false
       }
@@ -1034,6 +1046,7 @@ ViewDesignationType(){
              summary: "Are you sure?",
              detail: "Confirm to proceed"
            })
+           this.ngxService.stop();
            this.Spinner = false;
 
   }
@@ -1127,6 +1140,7 @@ ViewDesignationType(){
           summary: "Department Create Succesfully ",
           detail: "Succesfully Created"
         });
+        this.ngxService.stop();
         this.Spinner = false;
         
         this.ViewProTypeModal4 = false;
@@ -1142,6 +1156,7 @@ ViewDesignationType(){
         summary: "Error",
         detail: "Something Wrong"
       });
+      this.ngxService.stop();
       this.Spinner = false;
       this.ViewProTypeModal4 = false
       }

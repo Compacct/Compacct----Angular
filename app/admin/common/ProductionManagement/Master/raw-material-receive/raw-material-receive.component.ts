@@ -210,10 +210,26 @@ GetStockPoint(){
     }
   })
 }
+Getsameproduct () {
+  const sameproduct = this.AddRawMatRevList.filter(item=>item.Product_ID === this.ObjRawMatRev.Product_ID );
+  if(sameproduct.length) {
+    this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Product already choosed, delete first and re-enter."
+        });
+    return false;
+  }
+  else {
+    return true;
+  }
+}
 AddRawMatRev(valid:any){
   console.log("valid",valid)
   this.RawMatRevFormSubmitted = true 
- if(valid){
+ if(valid && this.Getsameproduct()){
   const FilterReferenceDataList = this.ReferenceDataList.find((el:any)=> el.Production_Ref_NO == this.ObjRawMatRev.Production_Ref_NO)
   const FilterAllMaterialName = this.AllMaterialName.find((el:any) => Number(el.Product_ID) == Number(this.ObjRawMatRev.Product_ID) )
   const FilterStockPointList= this.StockPointList.find((el:any) => Number(el.godown_id) == Number(this.ObjRawMatRev.Godown_ID) )
@@ -229,7 +245,9 @@ AddRawMatRev(valid:any){
         Max_Value : element.Max_Value,
         Min_Value : element.Min_Value,
         Exact_Value : element.Exact_Value,
-        Tolerance_Level : element.Tolerance_Level
+        // Tolerance_Level : element.Tolerance_Level
+        Min_Tolerance_Level : element.Min_Tolerance_Level,
+        Max_Tolerance_Level : element.Max_Tolerance_Level
       }
       this.paramarr.push(obj)
       }

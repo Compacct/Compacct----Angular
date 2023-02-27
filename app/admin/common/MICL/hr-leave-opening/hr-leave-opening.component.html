@@ -147,10 +147,10 @@
                             <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                             <form name="leaveForm" #leaveForm="ngForm" novalidate >
                         <div class="form-group">
-                            <div class="col-sm-4">
+                            <div class="col-sm-2">
                                 <label class="control-label">HR Year
                                     <sup class="text-danger">*</sup></label>
-                                    <select class="form-control" name="HR_Year_ID"
+                                    <select *ngIf="buttonname === 'Create'" class="form-control" name="HR_Year_ID"
                                         #HR_Year_ID ="ngModel"
                                         [(ngModel)]="Objleave.HR_Year_ID"
                                         [ngClass]="{'clearance': leaveFormSubmitted && HR_Year_ID?.errors?.required}" 
@@ -160,8 +160,13 @@
                                         <option [ngValue]="undefined">Select</option>
                                         <option *ngFor="let year of hrYeatList"  value ={{year.HR_Year_ID}} >{{year.HR_Year_Name}}</option>
                                     </select>
+                                        <div *ngIf="buttonname != 'Create'" class="label-t">{{hryear ? hryear : "-"}}</div>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
+                                <label class="control-label">Transaction Date <sup class="text-danger">*</sup></label>
+                                <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Transaction_Date'></ejs-datepicker>
+                            </div>
+                            <div class="col-sm-3">
                                 <label class="control-label">Validity<sup class="text-danger">*</sup></label>
                                 <div class="input-group date">
                                     <div class="input-group-addon">
@@ -176,6 +181,7 @@
                                     <select class="form-control" name="Emp_Name"
                                     #Emp_Name ="ngModel"
                                     [(ngModel)]="Objleave.Emp_ID" 
+                                    (change)="getbalancedata()"
                                     [disabled]="Editdisable">
                                     <option [ngValue]="undefined">All</option>
                                     <option  *ngFor="let Emp of empDataList"  value ={{Emp.Emp_ID}}>{{Emp.Emp_Name}}</option>
@@ -184,12 +190,13 @@
                                    
                             </div>
                            <div class="form-group">
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <label class="control-label">Leave Type
                                         <sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="LEAVETYPE"
                                         #LEAVETYPE ="ngModel"
                                         [(ngModel)]="Objleave.LEAVE_TYPE"
+                                        (change)="getbalancedata()"
                                         [ngClass]="{'clearance': leaveFormSubmitted && LEAVETYPE?.errors?.required}" 
                                         [disabled]="Editdisable"
                                         required>
@@ -198,7 +205,19 @@
                                         
                                     </select>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-2">
+                                    <label class="control-label">Opening <sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{Opening ? Opening : "-"}}</div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Availed <sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{Availed ? Availed : "-"}}</div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Balance <sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{Balance ? Balance : "-"}}</div>
+                                </div>
+                                <div class="col-sm-3">
                                     <label class="control-label">Number Of Days
                                         <sup class="text-danger">*</sup></label>
                                   <input  class="form-control" placeholder="Number Of Days" CompacctDigitonly="true"
@@ -208,6 +227,8 @@
                                    [ngClass]="{'clearance': leaveFormSubmitted && leave_days?.errors?.required}"
                                    required>
                                 </div>
+                            </div>
+                                <div class="form-group">
                                 <div class="col-sm-4">
                                     <label class="control-label">Remarks</label>
                                     <textarea class="form-control"name="Remarks"

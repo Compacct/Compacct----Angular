@@ -344,6 +344,23 @@
                                         <input class="form-control" name="Shelf_Life_Hours" #Shelf_Life_Hours="ngModel" [(ngModel)]="ObjmasterProduct.Shelf_Life_Hours" placeholder="Shelf Life (In Hours)" CompacctDigitonly="true" [ngClass]="{'clearance': masterProductFormSubmitted && Shelf_Life_Hours?.errors?.required}"
                                             required>
                                     </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Premix</label>
+                                        <select class="form-control" name="premix" #premix="ngModel" [(ngModel)]="ObjmasterProduct.Premix_Item" [ngClass]="{'clearance': masterProductFormSubmitted && premix?.errors?.required}">
+                                              <option  [ngValue]="undefined">Select</option>
+                                              <option  value="Y">Yes</option>
+                                              <option  value="N">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Daily/Weekly</label>
+                                        <select class="form-control" name="dailyweekly" #dailyweekly="ngModel" [(ngModel)]="ObjmasterProduct.Daily_Weekly" [ngClass]="{'clearance': masterProductFormSubmitted && dailyweekly?.errors?.required}">
+                                              <option  [ngValue]="undefined">Select</option>
+                                              <option  value="Daily">Daily</option>
+                                              <option  value="Weekly">Weekly</option>
+                                              <option  value="NA">NA</option>
+                                        </select>
+                                    </div>
                                     <div class="col-sm-4">
 
                                         <label class="control-label">Remarks
