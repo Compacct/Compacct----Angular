@@ -59,7 +59,7 @@
                                         </div>
                                         <div class="col-sm-4">
                                         <label class="control-label">Late Arrival<sup class="text-danger">*</sup></label>
-                                        <ejs-datetimepicker name="LA_Date_Time"
+                                        <ejs-datetimepicker name="LA_Date_Time" #LA_Date_Time="ngModel" [(ngModel)]='ObjHrLateArrival.Date_Time'
                                         [ngClass]="{'clearance': HrLateArrivalSearchFormSubmitted && LA_Date_Time?.errors?.required}"
                                         [(value)]="Late_Arrival_Date_Time" [format]="'dd/MMM/yyyy hh:mm a'" style="width: 250px;" required></ejs-datetimepicker>
                                         </div>

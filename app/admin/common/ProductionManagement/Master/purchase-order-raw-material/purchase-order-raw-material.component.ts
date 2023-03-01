@@ -163,6 +163,8 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
   paramarr:any = [];
   objPoText:any = {}
   potextFormSubmit:boolean = false
+  TCSdataList:any = [];
+  TCSTaxRequiredValidation = false;
   constructor(
     private $http: HttpClient ,
     private Header: CompacctHeader ,
@@ -215,6 +217,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
     this.Spinner = false;
     this.WorkAddFormSubmit = false;
     this.purchaseFormSubmitted = false;
+    this.TCSTaxRequiredValidation = false;
     this.validatation.required = false;
     this.addPurchaseList = []; 
     this.rate = undefined;
@@ -492,7 +495,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
     }
   
   }
-  genPoText(){
+  genPoText(ParameterID?:any){
     const RequiredValue = (op:any)=>{
       if((op.Min_Value && op.Max_Value && op.Min_Value != "0" && op.Max_Value != "0")){
         if(Number(op.Min_Value) == Number(op.Max_Value)){
@@ -526,9 +529,19 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
       }
        
       }
-    this.ParameterList.forEach((xy:any) => {
-     xy['PO_Text'] = `${xy.Parameter_Name} - ${RequiredValue(xy)} ${ToleranceLevel(xy)}`
-    });
+      if(ParameterID){
+        this.ParameterList.forEach((xy:any) => {
+          if(ParameterID == xy.Parameter_ID){
+            xy['PO_Text'] = `${xy.Parameter_Name} - ${RequiredValue(xy)} ${ToleranceLevel(xy)}`
+          }
+         });
+      }
+      else{
+        this.ParameterList.forEach((xy:any) => {
+         xy['PO_Text'] = `${xy.Parameter_Name} - ${RequiredValue(xy)} ${ToleranceLevel(xy)}`
+        });
+      }
+    
   }
   editpotext(obj:any){
    if(Object.keys(obj).length != 0){
@@ -552,7 +565,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
     if(valid){
       this.ParameterList.forEach((yx:any) => {
         if(Number(yx.Parameter_ID) == Number(this.objPoText.Parameter_ID)){
-          yx.PO_Text = this.objPoText.PO_Text
+          yx['PO_Text'] = this.objPoText.PO_Text
         }
      });
      this.potextFormSubmit = false
@@ -1067,6 +1080,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
       this.addPurchaseListInputField = {}
       // console.log("addPurchaseList",this.addPurchaseList);
       this.getAllTotal();
+      this.TcsAmtCalculation();
  }
  GetSameProWithInd () {
   // if(!this.addPurchaseListInput){
@@ -1119,7 +1133,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
 }
   GettermAmt(){
     const obj = {
-      "SP_String": "Sp_Work_Order",
+      "SP_String": "Sp_BL_Txn_Purchase_Order_Raw_Material",
       "Report_Name_String": "Get_Term",
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -1153,6 +1167,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
     };
     this.AddTermList.push(TERMobj);
     this.getAllTotal()
+    this.TcsAmtCalculation();
     this.ObjTerm = new Term();
     this.TermFormSubmitted = false;
       
@@ -1182,10 +1197,12 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
   DeteteTerm(index) {
     this.AddTermList.splice(index,1)
     this.getAllTotal()
+    this.TcsAmtCalculation();
   }
  async savePurchase(valid){
    this.purchaseFormSubmitted = true
    this.validatation.required = true
+   this.TCSTaxRequiredValidation = true;
     this.falg = true
     // this.ngxService.start();
     this.Save = false;
@@ -1437,7 +1454,7 @@ async TermSave(doc:any){
     //  }
       
      const obj = {
-       "SP_String": "Sp_Work_Order",
+       "SP_String": "Sp_BL_Txn_Purchase_Order_Raw_Material",
        "Report_Name_String": "Insert_Term_Details",
        "Json_Param_String": JSON.stringify(this.AddTermList)
      }
@@ -1448,6 +1465,64 @@ async TermSave(doc:any){
   }
   
  
+}
+GetTCSdat(){
+  this.ObjWorkOrder.TCS_Ledger_ID = 0;
+  if (this.ObjWorkOrder.TCS_Y_N === 'YES') {
+  this.ngxService.start();
+  const obj = {
+    "SP_String": "Sp_BL_Txn_Purchase_Order_Raw_Material",
+    "Report_Name_String": "Get_Tcs_Percentage_And Ledger",
+    }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  console.log(data)
+  this.TCSdataList = data;
+  // this.objpurchase.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
+  // this.objpurchase.TCS_Persentage = data[0].TCS_Persentage;
+  // var netamount = (Number(this.taxAblTotal) + Number(this.GrTermAmount) + Number(this.GSTTotal) + Number(this.GrGstTermAmt)).toFixed(2);
+  // var TCS_Amount = (Number(Number(netamount) * this.objpurchase.TCS_Persentage) / 100).toFixed(2);
+  // this.objpurchase.TCS_Amount = Number(TCS_Amount);
+  // // this.objaddPurchacse.Grand_Total = (Number(this.objaddPurchacse.Net_Amt) + Number(this.objaddPurchacse.TCS_Amount)).toFixed(2);
+  // // this.Round_off = (Number(Math.round(this.ObjSaleBillNew.Grand_Total)) - Number(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+  // // this.Net_Amt = Number(Math.round(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+  // this.getRoundedOff();
+  // // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+  this.ngxService.stop();
+}); 
+  }  
+  else {
+    this.ObjWorkOrder.TCS_Persentage = 0;
+    this.ObjWorkOrder.TCS_Amount = 0;
+    this.ObjWorkOrder.TCS_Per = undefined;
+    // this.objaddPurchacse.Grand_Total = this.objaddPurchacse.Net_Amt;
+    this.getRoundedOff();
+    // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+}
+}
+TcsAmtCalculation(){
+  this.ObjWorkOrder.TCS_Ledger_ID = 0;
+  if (this.ObjWorkOrder.TCS_Per) {
+      // this.ngxService.start();
+      var tcspercentage = this.TCSdataList.filter(el=> Number(el.TCS_Persentage) === Number(this.ObjWorkOrder.TCS_Per))
+        this.ObjWorkOrder.TCS_Ledger_ID = tcspercentage[0].TCS_Ledger_ID;
+        this.ObjWorkOrder.TCS_Persentage = tcspercentage[0].TCS_Persentage;
+        var netamount = (Number(this.taxAblTotal) + Number(this.GrTermAmount) + Number(this.GSTTotal) + Number(this.GrGstTermAmt)).toFixed(2);
+        var TCS_Amount = (Number(Number(netamount) * this.ObjWorkOrder.TCS_Persentage) / 100).toFixed(2);
+        this.ObjWorkOrder.TCS_Amount = Number(TCS_Amount);
+        // this.objaddPurchacse.Grand_Total = (Number(this.objaddPurchacse.Net_Amt) + Number(this.objaddPurchacse.TCS_Amount)).toFixed(2);
+        // this.Round_off = (Number(Math.round(this.ObjSaleBillNew.Grand_Total)) - Number(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+        // this.Net_Amt = Number(Math.round(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+        this.getRoundedOff();
+        // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+        this.ngxService.stop();  
+  }
+    else {
+      this.ObjWorkOrder.TCS_Persentage = 0;
+      this.ObjWorkOrder.TCS_Amount = 0;
+      // this.objaddPurchacse.Grand_Total = this.objaddPurchacse.Net_Amt;
+      this.getRoundedOff();
+      // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+  }
 }
 
 Finyear() {
@@ -1567,6 +1642,8 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     let data = JSON.parse(res[0].Column1)
     console.log("Edit data",data);
     this.ObjWorkOrder = data[0],
+    this.GetTCSdat();
+    this.ObjWorkOrder.TCS_Per = data[0].TCS_Persentage;
     this.DocDate = new Date(data[0].Doc_Date);
     this.GetRequlist();
     this.RefDate = new Date(data[0].Supp_Ref_Date)
@@ -1647,6 +1724,7 @@ PrintREQ(DocNo) {
   this.addPurchaseList.splice(index,1);
   this.projectDisable = this.addPurchaseList.length ? true :false
   this.getAllTotal();
+  this.TcsAmtCalculation();
 }
 GetGSTAmt(){
   if(this.ObjaddWorkOrder.taxable_AMT){
@@ -1701,8 +1779,8 @@ getTofix(key){
 //           Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2)))) 
 // } 
 getRoundedOff(){
-  return this.getTofix( Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2))) -
-          Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2))) 
+  return this.getTofix( Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt + this.ObjWorkOrder.TCS_Amount).toFixed(2))) -
+          Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt + this.ObjWorkOrder.TCS_Amount).toFixed(2))) 
 }
 getcompany(){
   const obj = {
@@ -2096,6 +2174,12 @@ class WorkOrder {
   Late_Delivery:any;
   Statutory_Obligation:any;
   Jurisdiction:any;
+  
+  TCS_Ledger_ID:any;
+  TCS_Y_N : any;
+  TCS_Persentage : any;
+  TCS_Amount : number = 0;
+  TCS_Per : any;
   
 }
 class addWorkOrder{

@@ -640,7 +640,7 @@
                                 </div>
                                 <br>
                                 <hr class="box boxboxDivide-primary" />
-                                <!-- <form #TermForm="ngForm" novalidate>
+                                <form #TermForm="ngForm" novalidate>
                                     <div class="form-group">
                                         <div class="col-sm-3">
                                              <label class="control-label">Term Name<sup class="text-danger">*</sup></label>
@@ -697,25 +697,61 @@
                                     </tbody>
                                    </table>
                                 </div>
-                           </form> -->
+                           </form>
+                           <br>
+                           <div class="form-group" *ngIf="addPurchaseList.length">
+                            <div class="col-sm-3">
+                             <label class="control-label">TCS Tax Required <sup class="text-danger">*</sup> </label>
+                             <select class="form-control" 
+                             name="tcstaxreq" 
+                             #tcstaxreq="ngModel" 
+                             [(ngModel)]="ObjWorkOrder.TCS_Y_N"
+                             (ngModelChange)="GetTCSdat()"
+                             [ngClass]="{'clearance': TCSTaxRequiredValidation && tcstaxreq?.errors?.required}" required>
+                                <option  [ngValue]="undefined">Select</option>
+                                <option value ="YES">YES</option>
+                                <option value ="NO">NO</option>
+                             </select>
+                            </div>
+                            <div class="col-sm-3" *ngIf="ObjWorkOrder.TCS_Y_N == 'YES'">
+                                <label class="control-label">TCS % <sup class="text-danger">*</sup> </label>
+                                <select class="form-control" 
+                                name="tcsper" 
+                                #tcsper="ngModel" 
+                                [(ngModel)]="ObjWorkOrder.TCS_Per"
+                                (ngModelChange)="TcsAmtCalculation()"
+                                [ngClass]="{'clearance': TCSTaxRequiredValidation && tcsper?.errors?.required}" required>
+                                   <option  [ngValue]="undefined">Select</option>
+                                   <option *ngFor = "let option of TCSdataList" [value] ="option.TCS_Persentage">
+                                    {{option.TCS_Persentage}}
+                                  </option>
+                                </select>
+                            </div>
+                            </div>
+                            <br>
+                            <div class="clearfix"></div>
+                            <br>
                                  <div class="table-responsive">
                                       <table class="table">
-                                        <tbody><tr>
+                                        <tbody>
+                                        <tr>
                                           <th>Total Amount:</th>
                                           <td class="amt-td ">{{getTofix(grTotal) ? getTofix(grTotal) : 0}}</td>
-                                          <!-- <th>Term Amount:</th>
-                                          <td class="amt-td ">{{ GrTermAmount ? getTofix(GrTermAmount) : 0}}</td> -->
+                                          <th>Term Amount:</th>
+                                          <td class="amt-td ">{{ GrTermAmount ? getTofix(GrTermAmount) : 0}}</td>
+                                          <th>TCS Amount :</th>
+                                          <td class="amt-td ng-binding">{{ObjWorkOrder.TCS_Amount}}</td>
+                                        </tr>
+                                        <tr>
+                                          <th>Discount Amount :</th>
+                                          <td class="amt-td">{{getTofix(disTotal) ? getTofix(disTotal) : 0}}</td>
                                           <th>{{taxlabelChange()}} Amount :</th>
                                           <!-- <td class="amt-td">{{getTofix(GSTTotal) ? getTofix(GSTTotal) : 0}}</td> -->
                                           <td class="amt-td ng-binding">{{getTofix(GSTTotal + GrGstTermAmt)}}</td>
                                           <!-- <td class="amt-td"></td> -->
                                           <th>Net Amount : </th>
                                           <!-- <td class="amt-td">{{getTofix(NetTotal) ? getTofix(NetTotal) : 0}}</td> -->
-                                          <td class="amt-td ng-binding">{{RoundOff(taxAblTotal + GrTermAmount + GSTTotal + GrGstTermAmt)}}</td>
-                                           </tr>
-                                        <tr>
-                                          <th>Discount Amount :</th>
-                                          <td class="amt-td">{{getTofix(disTotal) ? getTofix(disTotal) : 0}}</td>
+                                          <td class="amt-td ng-binding">{{RoundOff(taxAblTotal + GrTermAmount + GSTTotal + GrGstTermAmt  + ObjWorkOrder.TCS_Amount)}}</td>
                                           <!-- <th>Excise Amount:</th>
                                           <td class="amt-td">{{getTofix(ExciTotal) ? getTofix(ExciTotal) : 0}}</td> -->
                                           <!-- <th>{{taxlabelChange()}} Amount :</th> -->
@@ -724,18 +760,12 @@
                                           <!-- <th>Net Amount : </th> -->
                                           <!-- <td class="amt-td">{{getTofix(NetTotal) ? getTofix(NetTotal) : 0}}</td> -->
                                           <!-- <td class="amt-td ng-binding">{{RoundOff(taxAblTotal + GrTermAmount + GSTTotal + GrGstTermAmt)}}</td> -->
-                                          <th>Rounded Off :</th>
-                                          <td class="amt-td ng-binding">{{getRoundedOff()}}</td>
-                                          <th></th>
-                                          <td class="amt-td"></td>
                                         </tr>
                                         <tr>
                                           <th>Taxable Amount :</th>
                                           <td class="amt-td ">{{getTofix(taxAblTotal) ? getTofix(taxAblTotal) : 0}}</td>
-                                          <!-- <th>Rounded Off :</th>
-                                          <td class="amt-td ng-binding">{{getRoundedOff()}}</td> -->
-                                          <th></th>
-                                          <td class="amt-td"></td>
+                                          <th>Rounded Off :</th>
+                                          <td class="amt-td ng-binding">{{getRoundedOff()}}</td>
                                           <th></th>
                                           <td class="amt-td"></td>
                                         </tr>
@@ -1499,11 +1529,11 @@ style="text-align: center;"
         <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
             <tr>
                 <td>{{col.Parameter_Name}}</td>
-                <td><input type="text" name="{{col.Parameter_ID +'Min_Value'}}" [(ngModel)]='col.Min_Value' (ngModelChange)="genPoText()" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
-                <td><input type="text" name="{{col.Parameter_ID + col.Product_ID+'Max_Value'}}" [(ngModel)]='col.Max_Value' (ngModelChange)="genPoText()" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                <td><input type="text" name="{{col.Parameter_ID +'Min_Value'}}" [(ngModel)]='col.Min_Value' (ngModelChange)="genPoText(col.Parameter_ID)" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                <td><input type="text" name="{{col.Parameter_ID + col.Product_ID+'Max_Value'}}" [(ngModel)]='col.Max_Value' (ngModelChange)="genPoText(col.Parameter_ID)" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                 <td>{{col.UOM ? col.UOM : '-'}}</td>
-                <td><input type="text" name="{{col.Parameter_ID +'Max_Tolerance_Level'}}" [(ngModel)]='col.Max_Tolerance_Level' (ngModelChange)="genPoText()" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
-                <td><input  type="text" name="{{col.Parameter_ID +'Min_Tolerance_Level'}}" [(ngModel)]='col.Min_Tolerance_Level' (ngModelChange)="genPoText()" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                <td><input type="text" name="{{col.Parameter_ID +'Max_Tolerance_Level'}}" [(ngModel)]='col.Max_Tolerance_Level' (ngModelChange)="genPoText(col.Parameter_ID)" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                <td><input  type="text" name="{{col.Parameter_ID +'Min_Tolerance_Level'}}" [(ngModel)]='col.Min_Tolerance_Level' (ngModelChange)="genPoText(col.Parameter_ID)" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                 <td> <span data-toggle="tooltip" title="Edit PO Text" class="genPoText" (click)="editpotext(col)" >{{col.PO_Text}}</span> </td>
             </tr>
         </ng-template>
