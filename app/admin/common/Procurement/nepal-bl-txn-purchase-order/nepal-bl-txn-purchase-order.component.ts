@@ -61,12 +61,12 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   CompanyEmailList: any = [];
   EmailId: any = undefined;
   NewEmailFormSubmitted: boolean = false;
-  CompantEmailName: any = undefined;
+  CompantEmailName: any = [];
   toEmailList: any = [];
   CCEmailList: any = [];
   EmailCheck: any = false;
   ToEmailSelect: any = undefined;
-  CCEmailSelect: any = undefined;
+  CCEmailSelect: any = [];
   ApproverOneS: any = undefined;
   ApproverTwoS: any = undefined;
   ApproverTwo: any = undefined;
@@ -105,6 +105,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   EmailSendModel: boolean = false;
   EmailFormSubmitted: boolean = false;
   pathURl: any = undefined;
+  saveSpinner:boolean = false
   @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
   constructor(
     private $http: HttpClient,
@@ -115,6 +116,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
     private ngxService: NgxUiLoaderService,
+    
   ) { }
 
   ngOnInit() {
@@ -167,6 +169,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.ProductList = [];
     this.UpdatePono = {};
     this.DocDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
+    this.saveSpinner = false
   }
   clearData1() {
     this.TodoForm = false;
@@ -289,36 +292,47 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   SavePo(vaild) {
     this.PurchaseOrderForm = true;
     let ArrData: any = [];
-    this.ProductList.forEach(element => {
-      const TempObj = {
-        Doc_No: this.PoCode ? this.PoCode : "A",
-        Purchase_Request_No: this.ObjPurchase.Purchase_Request_No ? this.ObjPurchase.Purchase_Request_No : this.UpdatePono.Purchase_Request_No,
-        Doc_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate)),
-        Cost_Center_ID: 2,
-        Sub_Ledger_ID: this.ObjPurchase.Sub_Ledger_ID,
-        Address_Caption: this.ObjPurchase.Address_Caption,
-        Sub_Ledger_Address: this.ObjPurchase.Shipping_Address,
-        Shipping_To: this.ObjPurchase.Godown2,
-        Billing_To: this.ObjPurchase.Godown1,
-        Company_Name: this.ObjPurchase.Company_Name,
-        Remarks: this.ObjPurchase.Remarks,
-        Heading: this.ObjPurchase.Heading,
-        Current_Status: this.CurentSID ? this.CurentSID : "",
-        Approver_One_Status: this.ApproverOneS ? this.ApproverOneS : "",
-        Approver_Two_Status: this.ApproverTwoS ? this.ApproverTwoS : "",
-        Approver_One: this.ApproverOne ? this.ApproverOne : "",
-        Approver_Two: this.ApproverTwo ? this.ApproverTwo : "",
-        Product_ID: element.Product_ID,
-        Qty: element.Purchase_Request_Qty,
-        Rate: element.Rate,
-        UOM: element.UOM,
-        Line_Total: element.Line_Total,
-        Grant_Total: this.getTotal(),
-        Posted_By: this.$CompacctAPI.CompacctCookies.User_ID,
-      }
-      ArrData.push(TempObj)
-    })
+   
     if (vaild) {
+       if(this.CompantEmailName.length == 0 && this.CCEmailSelect.length == 0){
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          detail: "Have to selete Atleast one CC Email/Company CC Email",
+        });
+        return
+       }
+      this.saveSpinner = true
+      this.ProductList.forEach(element => {
+        const TempObj = {
+          Doc_No: this.PoCode ? this.PoCode : "A",
+          Purchase_Request_No: this.ObjPurchase.Purchase_Request_No ? this.ObjPurchase.Purchase_Request_No : this.UpdatePono.Purchase_Request_No,
+          Doc_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate)),
+          Cost_Center_ID: 2,
+          Sub_Ledger_ID: this.ObjPurchase.Sub_Ledger_ID,
+          Address_Caption: this.ObjPurchase.Address_Caption,
+          Sub_Ledger_Address: this.ObjPurchase.Shipping_Address,
+          Shipping_To: this.ObjPurchase.Godown2,
+          Billing_To: this.ObjPurchase.Godown1,
+          Company_Name: this.ObjPurchase.Company_Name,
+          Remarks: this.ObjPurchase.Remarks,
+          Heading: this.ObjPurchase.Heading,
+          Current_Status: this.CurentSID ? this.CurentSID : "",
+          Approver_One_Status: this.ApproverOneS ? this.ApproverOneS : "",
+          Approver_Two_Status: this.ApproverTwoS ? this.ApproverTwoS : "",
+          Approver_One: this.ApproverOne ? this.ApproverOne : "",
+          Approver_Two: this.ApproverTwo ? this.ApproverTwo : "",
+          Product_ID: element.Product_ID,
+          Qty: element.Purchase_Request_Qty,
+          Rate: element.Rate,
+          UOM: element.UOM,
+          Line_Total: element.Line_Total,
+          Grant_Total: this.getTotal(),
+          Posted_By: this.$CompacctAPI.CompacctCookies.User_ID,
+        }
+        ArrData.push(TempObj)
+      })
       const obj = {
         "SP_String": "sp_Bl_Txn_Purchase_Order_Nepal",
         "Report_Name_String": "Create_Purchase_Order",
@@ -326,28 +340,131 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
         if (data[0].Column1) {
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "success",
-            summary: this.PoCode ? this.PoCode : "Purchase Order",
-            detail: "Succesfully" + this.buttonname,
-          });
-          this.tabIndexToView = 0;
-          this.ObjPurchase = new Purchase();
-          this.PurchaseOrderForm = false;
-          this.items = ["BROWSE", "CREATE"];
-          this.Searchedlist = [];
           if (data[0].Column1) {
-            window.open("/Report/Crystal_Files/Nepal/Purchase_Order_Nepal.aspx?Doc_No=" + data[0].Column1,
-              'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
-            );
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: this.PoCode ? this.PoCode : "Purchase Order",
+              detail: "Succesfully " + this.buttonname,
+            });
+            this.getFileDetalis(data[0].Column1)
+           
           }
         }
       })
 
     }
   }
+  getFileDetalis(doc:any){
+    this.buttonname = 'getting files Detalis....'
+    this.$http.get('http://iwpl.southeastasia.cloudapp.azure.com:1100/SG_Nepal_PO_PDF?DOC_No='+doc).subscribe(((data:any)=>{
+       if(data.file_name){
+        this.PurchaseOrderPDFLink(doc,data)
+       }
+    }),
+    (error:any)=>{
+      console.log(error)
+      this.saveSpinner = false
+      window.open("/Report/Crystal_Files/Nepal/Purchase_Order_Nepal.aspx?Doc_No=" + doc,
+      'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+    );
+    }
+    )
+  }
+  PurchaseOrderPDFLink(doc:any,fileData:any){
+    this.buttonname = 'Sending Email....'
+    const tempObj = {
+      Doc_No : doc,
+      file_name : fileData.file_name,     
+      file_url : fileData.file_url,     
+      containername :fileData.containername,  
+      storagename : fileData.storagename,
+    }
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Order_Nepal",
+      "Report_Name_String": "Update_Purchase_Order_PDF_Link",
+      "Json_Param_String": JSON.stringify(tempObj)
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+      console.log("after 2nd API",data)
+      if(data[0].Column1 === 'Done'){
+        this.sendEmail(doc,fileData)
+      }
+      
+    })
+  } 
+ sendEmail(doc:any,fileData:any){
+    if(this.EmailCheck && this.ToEmailSelect){
+      const findVendorList = this.VendorList.find((el:any)=> Number(el.Sub_Ledger_ID)  == Number(this.ObjPurchase.Sub_Ledger_ID))
+      let ccdetailsList:any = []
+      if(this.CCEmailSelect.length){
+        this.CCEmailSelect.forEach((ele:any) => {
+          ccdetailsList.push({
+            cc_email : ele
+          })
+        });
+       }
+       if(this.CompantEmailName.length){
+        this.CompantEmailName.forEach((ele:any) => {
+          ccdetailsList.push({
+            cc_email : ele
+          })
+        });
+      }
+      const sendObj = {
+        Vendor_Name: findVendorList.Sub_Ledger_Name,
+        Doc_No: doc,
+        Doc_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate)),
+        file_name: fileData.file_name,
+        blob_name: fileData.containername,
+        po_pdf_url: fileData.file_url,
+        to_email: this.ToEmailSelect,
+        cc_details: ccdetailsList
+    }
+    this.$http.post(`https://sgnepalemailaz.azurewebsites.net/api/Send_PO_Email?code=7XLxczCq_9fq2mFIrCC0-Dp3hsK0SB1_tGcerYvvfbrzAzFui0Jccw==`,JSON.stringify(sendObj) )
+    .subscribe(((data:any)=>{
+      if(data.status){
+        window.open("/Report/Crystal_Files/Nepal/Purchase_Order_Nepal.aspx?Doc_No=" + doc,
+        'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+      );
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: this.PoCode ? this.PoCode : "Purchase Order",
+          detail: data.message,
+        });
+        this.tabIndexToView = 0;
+        this.ObjPurchase = new Purchase();
+        this.PurchaseOrderForm = false;
+        this.items = ["BROWSE", "CREATE"];
+        this.Searchedlist = [];
+        this.saveSpinner = false
+        this.buttonname = 'Save'
+      
+      }
+   
+    }),
+    (error:any)=>{
+      console.log(error)
+      this.saveSpinner = false
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: this.PoCode ? this.PoCode : "Purchase Order",
+        detail: error,
+      });
+      window.open("/Report/Crystal_Files/Nepal/Purchase_Order_Nepal.aspx?Doc_No=" + doc,
+      'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+    );
+    }
+    );
+    console.log("sendObj",sendObj)
+    }
+ }
+
   BrowseSearch(valid) {
     this.SearchFormSubmit = true
     if (valid) {
@@ -614,8 +731,8 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.CCEmailList = []
     this.EmailCheck = false
     this.ToEmailSelect = undefined
-    this.CCEmailSelect = undefined
-    this.CompantEmailName = undefined
+    this.CCEmailSelect = []
+    this.CompantEmailName = []
     if (col) {
       const obj = {
         "SP_String": "sp_Bl_Txn_Purchase_Request",
@@ -629,8 +746,8 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
             element['label'] = element.email,
               element['value'] = element.email
           });
-          this.toEmailList = data;
-          this.CCEmailList = data
+          this.toEmailList = [...data];
+          this.CCEmailList = [...data]
         }
         else {
           this.toEmailList = [];
@@ -645,8 +762,8 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   ClickCheck() {
     if (this.EmailCheck === false) {
       this.ToEmailSelect = undefined;
-      this.CCEmailSelect = undefined;
-      this.CompantEmailName = undefined;
+      this.CCEmailSelect = [];
+      this.CompantEmailName = [];
     }
   }
   getCompanyMail() {
@@ -714,7 +831,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   }
   CompCreatPopup() {
     this.NewEmailFormSubmitted = false;
-    this.CompantEmailName = undefined;
+    this.CompantEmailName = [];
     this.CreateEmailModal = true
   }
   CreateEmailType(valid) {
@@ -1165,17 +1282,16 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   DeleteRow(index) {
     this.ProductList.splice(index, 1);
   }
+  toEmailChange(){
+   const bckp = [...this.toEmailList]
+    const toEmailListFilter = bckp.find((el: any) => el.email === this.ToEmailSelect)
+    if (toEmailListFilter) {
+      this.CCEmailList.splice(0, 1);
+      this.CCEmailList = this.CCEmailList.length ? this.CCEmailList : []
+    }
+  }
 }
-  // toEmailChange(){
-  //   console.log("toEmailList", this.toEmailList)
-  //   console.log("CCEmailList",this.CCEmailList)
-  //   const bckp = this.toEmailList
-  //   const toEmailListFilter = bckp.find((el: any) => el.email === this.ToEmailSelect)
-  //   if (toEmailListFilter) {
-  //     this.CCEmailList.splice(0, 1);
-  //     this.CCEmailList = this.CCEmailList.length ? this.CCEmailList : []
-  //   }
-  // }
+  
 class Purchase{
 Doc_No :any;	            
 Purchase_Request_No	:any;	

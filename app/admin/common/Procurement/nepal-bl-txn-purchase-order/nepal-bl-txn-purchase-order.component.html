@@ -385,9 +385,15 @@
                             </div>
                             
                             <div class="box-footer">
-                                <button class="btn btn-primary pull-right" type="button" (click)="SavePo(POForms.form.valid)" id="load">
+                                <!-- <button class="btn btn-primary pull-right" type="button" (click)="SavePo(POForms.form.valid)" id="load">
                                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                </button> -->
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right" (click)="SavePo(POForms.form.valid)" id="loadSave" [disabled]="saveSpinner">
+                                        <p-progressSpinner *ngIf="saveSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!saveSpinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                 </button>
+                                </div>
                             </div>
                         </p-tabPanel>
 
