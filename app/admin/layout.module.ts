@@ -433,6 +433,7 @@ import { ParameterMasterComponent } from "./common/MICL/parameter-master/paramet
 import { DoctorsAppoTherapPlanComponent } from './common/PatientManagement/doctors-appo-therap-plan/doctors-appo-therap-plan.component';
 import { MICLRawMaterialQAComponent } from "./common/MICL/micl-raw-material-qa/micl-raw-material-qa.component";
 import { BLTxnGrnNPComponent } from './common/Procurement/bl-txn-grn-np/bl-txn-grn-np.component';
+import { HrLateArrivalEarlyDepartureComponent } from './common/MICL/hr-late-arrival-early-departure/hr-late-arrival-early-departure.component';
 import { K4cSwiggyZomatoFileUploadComponent } from './common/OutletManagement/k4c-swiggy-zomato-file-upload/k4c-swiggy-zomato-file-upload.component';
 
 @NgModule({
@@ -784,6 +785,7 @@ import { K4cSwiggyZomatoFileUploadComponent } from './common/OutletManagement/k4
     DoctorsAppoTherapPlanComponent,
     MICLRawMaterialQAComponent,
     BLTxnGrnNPComponent,
+    HrLateArrivalEarlyDepartureComponent,
     K4cSwiggyZomatoFileUploadComponent
 
   ],

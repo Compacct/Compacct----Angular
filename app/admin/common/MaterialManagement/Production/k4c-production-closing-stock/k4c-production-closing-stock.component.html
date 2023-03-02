@@ -99,6 +99,7 @@
                                             <th>Cost Center</th>
                                             <th>Stock Point</th>
                                             <th>Wastage Qty</th>
+                                            <th>Daily/Weekly</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -134,6 +135,7 @@
                                             <td>{{col.Cost_Cen_Name}}</td>
                                             <td>{{col.Godown_Name}}</td>
                                             <td>{{col.Wastage_Qty}}</td>
+                                            <td>{{col.Daily_Weekly}}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -188,6 +190,17 @@
                                           </option>
                                     </select>
                                                 </div>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Daily/Weekly<sup class="text-danger">*</sup></label>
+                                                    <select class="form-control" name="dailyweekly" #dailyweekly="ngModel" [(ngModel)]="ObjProClosingStock.Daily_Weekly" [ngClass]="{'clearance': ProClosingStockFormSubmitted && dailyweekly?.errors?.required}"  
+                                                    [disabled]="EditList.length"><!--[disabled]="Gdisableflag" [attr.disabled]="ProductList.length? true : null"-->
+                                                          <option  [ngValue]="undefined">Select</option>
+                                                          <option  value="Daily">Daily</option>
+                                                          <option  value="Weekly">Weekly</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <div class="col-sm-2">
                                                     <button class="btn btn-primary custombutton1" (click)="checkbeforegetproduct(ProClosingStockForm.form.valid)" id="load" [disabled]="ProductList.length" [disabled]="ShowSpinner">
                                                         <p-progressSpinner *ngIf="ShowSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>

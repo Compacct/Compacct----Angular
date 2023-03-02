@@ -50,6 +50,11 @@ export class HrLeaveOpeningComponent  implements OnInit {
   DistEmpName:any = [];
   SelectedDistEmpName:any = [];
   SearchFields:any = [];
+  Transaction_Date = new Date();
+  Opening : any;
+  Availed : any;
+  Balance : any;
+  hryear : any;
 
   constructor(
     public $http: HttpClient,
@@ -84,6 +89,7 @@ TabClick(e) {
   this.buttonname = "Create";
   this.clearData();
   this.Editdisable = false;
+  this.hryear = undefined;
 }
 clearData(){
   this.leaveFormSubmitted = false;
@@ -96,6 +102,9 @@ getDateRange(dateRangeObj:any) {
   if (dateRangeObj.length) {
    this.Objleave.From_Date = dateRangeObj[0];
    this.Objleave.To_Date = dateRangeObj[1];
+   if (this.buttonname === "Create") {
+    this.getbalancedata();
+  }
   }
 }
 GetAllData(valid){
@@ -176,7 +185,9 @@ hrYearList(){
     this.Objleave.HR_Year_ID = data[0].HR_Year_ID;
     this.ObjBrowse.HR_Year_ID = data[0].HR_Year_ID;
     console.log("Hr Year==",this.hrYeatList);
-    this.leaveChange();
+    if (this.buttonname === "Create") {
+      this.leaveChange();
+    }
     });
 }
 // Finyear() {
@@ -210,6 +221,34 @@ leaveTypList(){
     this.leaveList = data;
     console.log("leave list==",this.leaveList);
     });
+}
+getbalancedata(){
+  this.Opening = undefined;
+  this.Availed = undefined;
+  this.Balance = undefined;
+  this.Objleave.From_Date = this.Objleave.From_Date ? this.DateService.dateConvert(new Date(this.Objleave.From_Date)): this.DateService.dateConvert(new Date());
+  this.Objleave.To_Date = this.Objleave.To_Date ? this.DateService.dateConvert(new Date(this.Objleave.To_Date)): this.DateService.dateConvert(new Date());
+  //  console.log(this.Objleave.From_Date , this.Objleave.To_Date)
+    if(this.Objleave.HR_Year_ID && this.Objleave.From_Date && this.Objleave.To_Date && this.Objleave.Emp_ID && this.Objleave.LEAVE_TYPE){
+      const TempSendData = {
+        HR_Year_ID : Number(this.Objleave.HR_Year_ID),
+        From_Date : this.Objleave.From_Date,
+        To_Date : this.Objleave.To_Date,
+        Emp_ID : Number(this.Objleave.Emp_ID),
+        Atten_Type_ID : this.Objleave.LEAVE_TYPE,
+      }
+      const obj = {
+        "SP_String": "SP_HR_Leave_Opening_Issue_Balance",
+        "Report_Name_String": 'Show_Balance',
+        "Json_Param_String": JSON.stringify([TempSendData])
+       }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        //  console.log("Show Blan",data)
+         this.Opening = data[0].Opening;
+         this.Availed = data[0].Availed;
+         this.Balance = data[0].Balance;
+       })
+    }
 }
 saveData(valid:any){
   if(valid){
@@ -252,6 +291,7 @@ onConfirm2(){
    this.Objleave.Tran_Type = "Opening"
    this.Objleave.Emp_ID = this.Objleave.Emp_ID ? this.Objleave.Emp_ID : 0
    this.Objleave.LEAVE_TYPE = Number(this.Objleave.LEAVE_TYPE)
+   this.Objleave.Transaction_Date = this.Objleave.Transaction_Date ? this.DateService.dateConvert(new Date(this.Transaction_Date)) : this.DateService.dateConvert(new Date());
     // }
     let msg = this.buttonname ;
       const obj = {
@@ -279,6 +319,7 @@ onConfirm2(){
           this.tabIndexToView = 0;
           this.leaveFormSubmitted = false;
           this.Objleave = new leave();
+          this.hryear = undefined;
         });
     
       
@@ -290,6 +331,7 @@ EditLeave(leave:any){
     this.leaveId = undefined;
     this.txnId = undefined;
     this.Editdisable = false;
+    this.hryear = undefined;
     if (leave.Emp_ID) {
       this.Editdisable = true;
       this.leaveId = undefined;
@@ -315,7 +357,10 @@ GetEditMasterleave(Uid){
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      console.log("EditMasterdata===",data);
     this.Objleave = data[0];
+    this.hryear = data[0].HR_Year_Name;
     this.initDate = [new Date(data[0].From_Date) , new Date(data[0].To_Date)]
+    this.getbalancedata();
+    this.Transaction_Date = new Date(data[0].Transaction_Date);
    })
 }
 DeleteLeave(masterLeave): void{
@@ -395,7 +440,7 @@ leaveChange(){
    var maxdate = arr[0].HR_Year_End;
    this.initDate =  [new Date(mindate) , new Date(maxdate)]
    console.log('arr===',arr)
-   
+   this.getbalancedata();
   }  
 // }
 // else {
@@ -418,6 +463,7 @@ class leave{
   To_Date:any
   Emp_ID:any
   Emp_Name:any
+  Transaction_Date:any;
 }
 class Browse {
   HR_Year_ID : any;

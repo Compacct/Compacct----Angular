@@ -115,6 +115,7 @@ export class K4cProductionClosingStockComponent implements OnInit {
      this.TIndentList = [];
      this.SelectedIndent = [];
      this.datepickerdisable = true;
+     this.EditList = [];
    }
    onReject() {
     this.compacctToast.clear("c");
@@ -230,7 +231,8 @@ export class K4cProductionClosingStockComponent implements OnInit {
       Cost_Cen_ID : this.ObjProClosingStock.Cost_Cen_ID ? this.ObjProClosingStock.Cost_Cen_ID : 0,
       Godown_ID : this.ObjProClosingStock.godown_id ? this.ObjProClosingStock.godown_id : 0,
       Material_Type : this.MaterialType_Flag ? this.MaterialType_Flag : 'NA',
-      Brand_ID : this.ObjProClosingStock.Brand_ID ? this.ObjProClosingStock.Brand_ID : 0
+      Brand_ID : this.ObjProClosingStock.Brand_ID ? this.ObjProClosingStock.Brand_ID : 0,
+      Daily_Weekly : this.ObjProClosingStock.Daily_Weekly
      }
    const obj = {
     "SP_String": "SP_Production_Closing_Stock",
@@ -513,6 +515,7 @@ ConsumptionCal(indx,obj){
             Cost_Cen_ID :this.ObjProClosingStock.Cost_Cen_ID,
             Godown_ID	: this.ObjProClosingStock.godown_id,
             Material_Type : this.MaterialType_Flag ? this.MaterialType_Flag : 'NA',
+            Daily_Weekly : this.ObjProClosingStock.Daily_Weekly,
             Product_ID	: item.Product_ID,
             Product_Description	: item.Product_Description,
             Product_Type_ID	: item.Product_Type_ID,
@@ -654,7 +657,8 @@ const obj = {
             Doc_Date : this.ObjProClosingStock.Doc_Date,
             Cost_Cen_ID : this.ObjProClosingStock.Cost_Cen_ID ? this.ObjProClosingStock.Cost_Cen_ID : 0,
             Godown_ID : this.ObjProClosingStock.godown_id ? this.ObjProClosingStock.godown_id : 0,
-            Material_Type : this.MaterialType_Flag ? this.MaterialType_Flag : 'NA'
+            Material_Type : this.MaterialType_Flag ? this.MaterialType_Flag : 'NA',
+            Daily_Weekly : this.ObjProClosingStock.Daily_Weekly,
 
           }
     const obj = {
@@ -768,6 +772,8 @@ const obj = {
     this.ObjProClosingStock.Doc_No = undefined;
     this.todayDate = new Date();
     this.ProClosingStockSearchFormSubmitted = false;
+    this.ObjProClosingStock.Daily_Weekly = undefined;
+    this.EditList = [];
 
   }
   
@@ -810,6 +816,7 @@ GetdataforEdit(){
       this.ObjProClosingStock.Brand_ID = data[0].Brand_ID ? data[0].Brand_ID : undefined;
        this.ObjProClosingStock.Cost_Cen_ID = data[0].Cost_Cen_ID;
        this.ObjProClosingStock.godown_id = data[0].godown_id;
+       this.ObjProClosingStock.Daily_Weekly = data[0].Daily_Weekly;
          data.forEach(element => {
            const  productObj = {
             Brand : element.Brand,
@@ -981,6 +988,7 @@ class ProClosingStock {
   Cost_Cen_ID : any;
   Indent_List : any;
   Remarks : any;
+  Daily_Weekly : any;
  }
  class Browse {
   start_date : Date ;
