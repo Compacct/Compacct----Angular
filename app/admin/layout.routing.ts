@@ -336,6 +336,7 @@ import { ParameterMasterComponent } from "./common/MICL/parameter-master/paramet
 import { DoctorsAppoTherapPlanComponent } from './common/PatientManagement/doctors-appo-therap-plan/doctors-appo-therap-plan.component';
 import { MICLRawMaterialQAComponent } from "./common/MICL/micl-raw-material-qa/micl-raw-material-qa.component";
 import { BLTxnGrnNPComponent } from "./common/Procurement/bl-txn-grn-np/bl-txn-grn-np.component";
+import { K4cSwiggyZomatoFileUploadComponent } from "./common/OutletManagement/k4c-swiggy-zomato-file-upload/k4c-swiggy-zomato-file-upload.component";
 
 
 const layoutRoutes: Routes = [{
@@ -2544,7 +2545,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         title: 'BL Txn GRN NP'
     } 
   },
-    
+      {
+    path: 'swiggy_zomato_file_upload',
+    component: K4cSwiggyZomatoFileUploadComponent,
+    data: {
+        title: 'CSV UPLOAD'
+    } 
+  },
 
     /*{
 
