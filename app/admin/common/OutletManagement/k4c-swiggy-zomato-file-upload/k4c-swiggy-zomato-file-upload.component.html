@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView">
+                        <form name="csvUploadForm" #csvUploadForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4" >
+                                    <label class="control-label">Choose<sup class="text-danger"></sup></label>
+                                    <select class="form-control"
+                                            name="Choose"
+                                            #Choose="ngModel"
+                                            [(ngModel)]="seleteChoose"
+                                            (change)="changeChoode()"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                     <option *ngFor = "let option of ChooseList" [value] ="option.value">
+                                        {{option.value}}
+                                      </option>
+                                </select>
+                                </div>
+                                <div class="col-sm-4" *ngIf="seleteChoose" >
+                                    <label class="control-label">Choose<sup class="text-danger"></sup></label>
+                                    <p-fileUpload #fileInput mode="advanced" [multiple]="false" [fileLimit]="1" name="aFile566" accept=".csv" [chooseLabel]="'Browse'" customUpload="true" [showUploadButton]="false" (onSelect)="handleFileSelect($event)"></p-fileUpload>
+                                </div>
+                                <div class="col-sm-4" ></div>
+                            </div>
+                        </form>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

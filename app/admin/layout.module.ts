@@ -434,6 +434,7 @@ import { DoctorsAppoTherapPlanComponent } from './common/PatientManagement/docto
 import { MICLRawMaterialQAComponent } from "./common/MICL/micl-raw-material-qa/micl-raw-material-qa.component";
 import { BLTxnGrnNPComponent } from './common/Procurement/bl-txn-grn-np/bl-txn-grn-np.component';
 import { HrLateArrivalEarlyDepartureComponent } from './common/MICL/hr-late-arrival-early-departure/hr-late-arrival-early-departure.component';
+import { K4cSwiggyZomatoFileUploadComponent } from './common/OutletManagement/k4c-swiggy-zomato-file-upload/k4c-swiggy-zomato-file-upload.component';
 
 @NgModule({
   declarations: [
@@ -784,7 +785,8 @@ import { HrLateArrivalEarlyDepartureComponent } from './common/MICL/hr-late-arri
     DoctorsAppoTherapPlanComponent,
     MICLRawMaterialQAComponent,
     BLTxnGrnNPComponent,
-    HrLateArrivalEarlyDepartureComponent
+    HrLateArrivalEarlyDepartureComponent,
+    K4cSwiggyZomatoFileUploadComponent
 
   ],
   imports: [
