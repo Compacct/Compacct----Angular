@@ -435,6 +435,7 @@ import { MICLRawMaterialQAComponent } from "./common/MICL/micl-raw-material-qa/m
 import { BLTxnGrnNPComponent } from './common/Procurement/bl-txn-grn-np/bl-txn-grn-np.component';
 import { HrLateArrivalEarlyDepartureComponent } from './common/MICL/hr-late-arrival-early-departure/hr-late-arrival-early-departure.component';
 import { K4cSwiggyZomatoFileUploadComponent } from './common/OutletManagement/k4c-swiggy-zomato-file-upload/k4c-swiggy-zomato-file-upload.component';
+import { HrLoanApplicationComponent } from './common/MICL/hr-loan-application/hr-loan-application.component';
 
 @NgModule({
   declarations: [
@@ -786,7 +787,8 @@ import { K4cSwiggyZomatoFileUploadComponent } from './common/OutletManagement/k4
     MICLRawMaterialQAComponent,
     BLTxnGrnNPComponent,
     HrLateArrivalEarlyDepartureComponent,
-    K4cSwiggyZomatoFileUploadComponent
+    K4cSwiggyZomatoFileUploadComponent,
+    HrLoanApplicationComponent
 
   ],
   imports: [
