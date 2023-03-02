@@ -210,8 +210,7 @@ export class BLTxnGrnNPComponent implements OnInit {
          this.BottomList.forEach(ele => {
         ele.Total_Amount = Number(ele.Challan_Qty) * Number(ele.Rate)
          });
-        
-       // console.log("BottomList==", this.BottomList)  
+               // console.log("BottomList==", this.BottomList)  
       }
       this.GetPODate();  
     });  
@@ -498,6 +497,9 @@ export class BLTxnGrnNPComponent implements OnInit {
           this.ObjGRN.PO_Number = finalData[0].PO_Doc_No;
           this.PO_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(finalData[0].PO_Doc_Date),
           this.BottomList = finalData[0].Product_Details,
+          this.BottomList.forEach((ele:any) => {
+            ele.Total_Amount = Number(ele.Challan_Qty) * Number(ele.Rate)
+         });
           this.GRNEdit = undefined
       }
     }) 
