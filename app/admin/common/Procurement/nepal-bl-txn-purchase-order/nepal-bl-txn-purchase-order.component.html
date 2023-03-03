@@ -115,6 +115,11 @@
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li>
+                                                        <li>
+                                                            <a (click)="sendEmailFormBrowse(col)">
+                                                                <i class="fa fa-envelope"></i> Send Email
+                                                            </a>
+                                                        </li>
                                                         <li *ngIf="col.Approver_One_Status == 'Approved' || col.Approver_Two_Status == 'Approved'">
                                                             <a (click)="ActivityPlan(col)">
                                                                 <i class='fa fa-tasks'></i> PO Activity Plan
@@ -918,7 +923,7 @@
         </button>
     </p-footer>
 </p-dialog>
-<!--Email send Pop-->
+<!--Create Email Id  -->
 <p-dialog [header]="'Email'" [appendTo]="'body'" [visible]="EmailSendModel" [closeOnEscape]="true" [closable]="false"
     [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;"
     [minY]="70" [maximizable]="false" [baseZIndex]="10000">
@@ -941,5 +946,70 @@
         <button type="button" (click)="SaveEmail(EmailEmail.form.valid)" class="btn btn-primary">
             <i class="fa fa-paper-plane" ></i>
         </button>
+    </p-footer>
+</p-dialog>
+
+<!--Send Email Form Browse  -->
+<p-dialog [header]="'Send Email'" [appendTo]="'body'" [visible]="sendEmailBrowseModel" [closeOnEscape]="true" [closable]="false"
+    [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+    <div class="col-sm-12">
+            <label class="control-label">To Email<sup class="text-danger">*</sup></label>
+            <p-dropdown [options]="toEmailList" 
+            [showClear]="true" 
+            name="ToEmailBrowse" 
+            #ToEmailBrowse="ngModel"
+            [(ngModel)]="ToEmailSelect" 
+            [emptyFilterMessage]="' No Email Found'" 
+            [filter]="true"
+            filterBy="label,value.name" 
+            [resetFilterOnHide]="true" 
+            [placeholder]="'Select Email'" 
+            [virtualScroll]="true"
+            (onChange)="toEmailChange()"
+            itemSize="30" 
+            [styleClass]="'textAlign'">
+            </p-dropdown>
+        </div>
+        <div class="col-sm-12" *ngIf="ToEmailSelect">
+            <label class="control-label">CC Email</label>
+            <p-multiSelect 
+            [options]="CCEmailList" 
+            name="CCEmailBrowse" 
+            #CCEmailBrowse="ngModel" 
+            [(ngModel)]="CCEmailSelect"
+            [virtualScroll]="true" 
+            itemSize="30" 
+            [defaultLabel]="'Choose CC Email'"
+            [emptyFilterMessage]="' No CC Email Found'" 
+            [styleClass]="'compacct-multiselect'">
+            </p-multiSelect>
+        </div>
+        <div class="col-sm-12" *ngIf="ToEmailSelect">
+            <label class="control-label">Company CC Email</label>
+             <p-multiSelect 
+             [options]="CompanyEmailList" 
+             name="SCCEmailBrowse" 
+             #SCCEmailBrowse="ngModel" 
+             [(ngModel)]="CompantEmailName"
+            [virtualScroll]="true" 
+            itemSize="30" 
+            [defaultLabel]="'Choose Company CC Email'"
+            [emptyFilterMessage]="' No Company CC Email Found'" 
+            [styleClass]="'compacct-multiselect'">
+            </p-multiSelect>
+        </div>
+    
+    <p-footer>
+        <button type="button" (click)="sendEmailBrowseModel= false" class="btn btn-info">
+        <i class="fa fa-close"></i>
+        </button>
+        <!-- <button type="button" (click)="SendmailBrowse(EmailEmail.form.valid)" class="btn btn-primary">
+            <i class="fa fa-paper-plane" ></i>
+        </button> -->
+        <button class="btn btn-primary pull-right" (click)="SendmailBrowse()" id="loadSaveB" [disabled]="saveSpinnerBrowse">
+            <p-progressSpinner *ngIf="saveSpinnerBrowse" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!saveSpinnerBrowse" class="fa fa-paper-plane"></span>{{btnBrowseSendEmail}}
+    </button>
     </p-footer>
 </p-dialog>

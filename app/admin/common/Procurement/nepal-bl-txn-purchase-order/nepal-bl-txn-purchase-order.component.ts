@@ -106,6 +106,10 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   EmailFormSubmitted: boolean = false;
   pathURl: any = undefined;
   saveSpinner:boolean = false
+  sendEmailBrowseModel:boolean = false
+  objsendEmailFormBrowse:any = {}
+  btnBrowseSendEmail:string = ''
+  saveSpinnerBrowse:boolean = false
   @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
   constructor(
     private $http: HttpClient,
@@ -142,6 +146,10 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.clearData();
+     this.ToEmailSelect = undefined
+    this.CCEmailSelect = []
+    this.CompantEmailName = []
+    this.EmailCheck = false
   }
   TabClick1(r) {
     this.tabIndex = r.index;
@@ -358,6 +366,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   }
   getFileDetalis(doc:any){
     this.buttonname = 'getting files Detalis....'
+    this.btnBrowseSendEmail = 'getting files Detalis....'
     this.$http.get('http://iwpl.southeastasia.cloudapp.azure.com:1100/SG_Nepal_PO_PDF?DOC_No='+doc).subscribe(((data:any)=>{
        if(data.file_name){
         this.PurchaseOrderPDFLink(doc,data)
@@ -374,6 +383,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   }
   PurchaseOrderPDFLink(doc:any,fileData:any){
     this.buttonname = 'Sending Email....'
+    this.btnBrowseSendEmail = 'Sending Email....'
     const tempObj = {
       Doc_No : doc,
       file_name : fileData.file_name,     
@@ -389,14 +399,15 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
       console.log("after 2nd API",data)
       if(data[0].Column1 === 'Done'){
-        this.sendEmail(doc,fileData)
+        const findVendorList = this.VendorList.find((el:any)=> Number(el.Sub_Ledger_ID)  == Number(this.ObjPurchase.Sub_Ledger_ID))
+        this.sendEmail(doc,fileData,findVendorList.Sub_Ledger_Name)
       }
       
     })
   } 
- sendEmail(doc:any,fileData:any){
+ sendEmail(doc:any,fileData:any,SubLedgerName:any){
     if(this.EmailCheck && this.ToEmailSelect){
-      const findVendorList = this.VendorList.find((el:any)=> Number(el.Sub_Ledger_ID)  == Number(this.ObjPurchase.Sub_Ledger_ID))
+      this.btnBrowseSendEmail = 'Sending Email....'
       let ccdetailsList:any = []
       if(this.CCEmailSelect.length){
         this.CCEmailSelect.forEach((ele:any) => {
@@ -413,7 +424,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
         });
       }
       const sendObj = {
-        Vendor_Name: findVendorList.Sub_Ledger_Name,
+        Vendor_Name: SubLedgerName,
         Doc_No: doc,
         Doc_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate)),
         file_name: fileData.file_name,
@@ -442,7 +453,9 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
         this.Searchedlist = [];
         this.saveSpinner = false
         this.buttonname = 'Save'
-      
+        this.saveSpinnerBrowse = false
+        this.btnBrowseSendEmail = 'Send Email'
+        this.sendEmailBrowseModel = false
       }
    
     }),
@@ -464,7 +477,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     console.log("sendObj",sendObj)
     }
  }
-
+ 
   BrowseSearch(valid) {
     this.SearchFormSubmit = true
     if (valid) {
@@ -726,7 +739,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       this.ObjPurchase.Shipping_Address = SAddressTyp[0].Shipping_Address
     }
   }
-  getEmailId(col) {
+  getEmailId(col:any) {
     this.toEmailList = []
     this.CCEmailList = []
     this.EmailCheck = false
@@ -1284,11 +1297,46 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   }
   toEmailChange(){
    const bckp = [...this.toEmailList]
-    const toEmailListFilter = bckp.find((el: any) => el.email === this.ToEmailSelect)
-    if (toEmailListFilter) {
-      this.CCEmailList.splice(0, 1);
-      this.CCEmailList = this.CCEmailList.length ? this.CCEmailList : []
+   this.CCEmailList =[...this.toEmailList]
+   this.CCEmailList.forEach((el:any,i:any) => {
+        if(el.email === this.ToEmailSelect){
+          this.CCEmailList.splice(i, 1);
+         }
+    });
+    
+  }
+  sendEmailFormBrowse(col:any){
+    console.log("col",col)
+    if(col.Doc_No){
+      this.btnBrowseSendEmail = 'Send Email'
+       this.sendEmailBrowseModel = true
+       this.getEmailId(col.Sub_Ledger_ID)
+       this.ToEmailSelect = undefined
+       this.CCEmailSelect = []
+       this.CompantEmailName = []
+       this.objsendEmailFormBrowse = col
+       this.saveSpinnerBrowse = false
+
     }
+  }
+  SendmailBrowse(){
+    if(this.objsendEmailFormBrowse.file_url){
+      this.saveSpinnerBrowse = true
+     const EmailObj = {
+        file_name:this.objsendEmailFormBrowse.file_name,
+        containername: this.objsendEmailFormBrowse.containername,
+        file_url:this.objsendEmailFormBrowse.file_url,
+        storagename:this.objsendEmailFormBrowse.storagename
+      }
+      this.EmailCheck = true
+      this.sendEmail(this.objsendEmailFormBrowse.Doc_No,EmailObj,this.objsendEmailFormBrowse.Sub_Ledger_Name)
+    }
+   else {
+    this.saveSpinnerBrowse = true
+    this.EmailCheck = true
+    this.ObjPurchase.Sub_Ledger_ID = this.objsendEmailFormBrowse.Sub_Ledger_ID
+    this.getFileDetalis(this.objsendEmailFormBrowse.Doc_No)
+   }
   }
 }
   
@@ -1313,4 +1361,7 @@ Subledger_Address: any;
 Company_Name: any;
 Shipping_Address: any;
 Billing_Address:any
+}
+class browseEmail{
+
 }
