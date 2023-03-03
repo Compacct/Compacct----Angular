@@ -379,7 +379,8 @@ saveRemarks(){
 }
 ConsumptionCal(indx,obj){
   this.ProductList[indx]['Consumption_Qty'] = 0;
-  if(this.ProductList[indx]['Wastage_Qty']){
+  this.ProductList[indx]['Wastage_Qty'] = 0;
+  if(this.ProductList[indx]['Receive_Qty'] || this.ProductList[indx]['Closing_Qty'] || this.ProductList[indx]['Wastage_Qty']){
     var openrec = (this.ProductList[indx]['Opening_Qty'] + Number((this.ProductList[indx]['Receive_Qty']))).toFixed(2);
     var subclosing = (Number(openrec) - this.ProductList[indx]['Closing_Qty']).toFixed(2);
     this.ProductList[indx]['Consumption_Qty'] = (Number(subclosing) - this.ProductList[indx]['Wastage_Qty']).toFixed(2);
