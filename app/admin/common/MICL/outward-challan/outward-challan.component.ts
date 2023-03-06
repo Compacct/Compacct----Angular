@@ -137,7 +137,7 @@ export class OutwardChallanComponent implements OnInit {
     ];
     this.Header.pushHeader({
       Header: "Sale challan",
-      Link: " Financial Management -> Sales ->  Sale Challan"
+      Link: "Sale Challan"
     });
     this.getDisable();
     this.Finyear();

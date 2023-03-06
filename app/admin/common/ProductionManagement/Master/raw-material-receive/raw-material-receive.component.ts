@@ -55,6 +55,24 @@ export class RawMaterialReceiveComponent implements OnInit {
   paramlist:any = [];
   paramarr:any = [];
   topperlist:any = [];
+  TCSdataList:any = [];
+  ObjTerm:Term = new Term();
+  TermList:any = [];
+  TermFormSubmitted = false;
+  AddTermList:any = [];
+
+  grTotal:any = 0;
+  taxAblTotal:any = 0;
+  disTotal:any = 0;
+  ExciTotal:any = 0;
+  GSTTotal:any = 0;
+  NetTotal:any = 0;
+  GrTermAmount:any = 0
+  GrGstTermAmt:any = 0
+  grNetTerm:any = 0
+
+  TCSTaxRequiredValidation = false;
+
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -75,6 +93,7 @@ export class RawMaterialReceiveComponent implements OnInit {
   this.Finyear();
   this.getReference();
   this.GetStockPoint();
+  this.GettermAmt();
   }
 TabClick(e) {
     this.tabIndexToView = e.index;
@@ -87,11 +106,32 @@ clearData(){
  this.AllMaterialName = [];
  this.ObjRawMatRev = new RawMatRev();
  this.RawMatRevFormSubmitted = false;
+ this.TCSTaxRequiredValidation = false;
  this.DocDate = new Date();
  this.maxDate = new Date();
  this.Spinner = false;
  this.AddRawMatRevList = [];
  this.seachSpinner = false;
+ this.grTotal = 0;
+ this.taxAblTotal = 0;
+ this.disTotal = 0;
+ this.ExciTotal = 0;
+ this.ExciTotal = 0;
+ this.GSTTotal = 0;
+ this.NetTotal = 0;
+ this.GrTermAmount = 0
+ this.GrGstTermAmt = 0
+ this.grNetTerm = 0
+ this.getAllTotal()
+ this.ObjTerm = new Term();
+ this.AddTermList = [];
+}
+taxlabelChange(){
+  let country = this.$CompacctAPI.CompacctCookies.Country;
+  var labelFlg = "Tax"
+  if(country === "India"){
+   labelFlg = "GST"
+  }
 }
 Finyear() {
   this.http
@@ -252,13 +292,25 @@ AddRawMatRev(valid:any){
       this.paramarr.push(obj)
       }
      });
+     var amount = Number(this.ObjRawMatRev.Receive_Qty * FilterAllMaterialName.Rate).toFixed(2);
+     var apiqty = Number(FilterAllMaterialName.Qty);
+     var discount = Number((FilterAllMaterialName.Discount_Amount * this.ObjRawMatRev.Receive_Qty) / Number(apiqty)).toFixed(2);
+     var taxableamt = (Number(amount) - Number(discount)).toFixed(2);
+     var gstamount = ((Number(taxableamt) * Number(FilterAllMaterialName.GST_Percentage)) / 100).toFixed(2);
+     var netamount = (Number(taxableamt) + Number(gstamount)).toFixed(2);
     const recobj = {
       Product_ID: Number(this.ObjRawMatRev.Product_ID),
       Product_Name: FilterAllMaterialName ? FilterAllMaterialName.Product_Name : " ",
       UOM:  this.ObjRawMatRev.UOM,
       Receive_Qty: this.ObjRawMatRev.Receive_Qty,
       Batch_Lot_No: this.ObjRawMatRev.Batch_Lot_No,
-      // Vehicle_No: this.ObjRawMatRev.Vehicle_No,
+      Rate: FilterAllMaterialName ? FilterAllMaterialName.Rate : " ",
+      Gross_Amt: Number(amount),
+      Discount_Amount: Number(discount),
+      Taxable_Value: Number(taxableamt),
+      Tax_Percentage: FilterAllMaterialName ? FilterAllMaterialName.GST_Percentage : " ",
+      Total_Tax_Amount: Number(gstamount),
+      Total_Amount: Number(netamount),
       Note_Description: this.ObjRawMatRev.Note_Description,
       Godown_ID: this.ObjRawMatRev.Godown_ID,
       Godown_Name : FilterStockPointList ? FilterStockPointList.godown_name : " ",
@@ -277,6 +329,8 @@ AddRawMatRev(valid:any){
     }
   this.AddRawMatRevList.push(recobj);
   console.log('table data ===',this.AddRawMatRevList)
+  this.getAllTotal()
+  this.TcsAmtCalculation();
   this.topperlist.push(recotherobj);
   console.log('topper data ===',this.topperlist)
   let bckupTempObj:any = {...this.ObjRawMatRev}
@@ -297,8 +351,185 @@ AddRawMatRev(valid:any){
 }
 DeleteRawMatRevListROW(index:any){
   this.AddRawMatRevList.splice(index,1);
+  this.getAllTotal()
+  this.TcsAmtCalculation();
  }
-SaveRawMatRev(){
+ // TERM
+ GettermAmt(){
+  const obj = {
+    "SP_String": "SP_BL_Txn_Production_Raw_Material_Receive",
+    "Report_Name_String": "Get_Term",
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.TermList = data
+  })
+}
+TermChange(){
+  this.ObjTerm.HSN_No = undefined;
+  if(this.ObjTerm.Term_ID) {
+  const ctrl = this;
+  const termobj = $.grep(ctrl.TermList,function(item: any) {return item.Term_ID == ctrl.ObjTerm.Term_ID})[0];
+  // console.log(termobj);
+  this.ObjTerm.Term_ID = termobj.Term_ID
+  this.ObjTerm.Term_Name = termobj.Term_Name;
+  this.ObjTerm.HSN_No = termobj.HSN_No;
+  this.ObjTerm.GST_Per = termobj.GST_Tax_Per;
+  this.ObjTerm.Sale_Pur = termobj.Sale_Pur;
+  }
+}
+AddTerm(valid){
+  this.TermFormSubmitted = true;
+  if(valid && this.TeramChek()) {
+    var TERMobj = {
+    Sale_Pur : this.ObjTerm.Sale_Pur,
+    Term_ID : this.ObjTerm.Term_ID,
+    Term_Name : this.ObjTerm.Term_Name,
+    Term_Amount : Number(this.ObjTerm.Term_Amount),
+    GST_Per : this.ObjTerm.GST_Per,
+    GST_Amount:  Number(Number(Number(this.ObjTerm.Term_Amount) * Number(this.ObjTerm.GST_Per) / 100).toFixed(2)),
+    HSN_No : this.ObjTerm.HSN_No,
+  };
+  this.AddTermList.push(TERMobj);
+  this.getAllTotal()
+  this.TcsAmtCalculation();
+  this.ObjTerm = new Term();
+  this.TermFormSubmitted = false;
+    
+  }
+}
+ TeramChek(){
+  if(this.AddTermList.length){
+    const FilterAddTermList = this.AddTermList.find((el:any)=> Number(el.Term_ID) == Number(this.ObjTerm.Term_ID))
+    if(FilterAddTermList){
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Same Term Name Can't be Added."
+      });
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+  else{
+    return true;
+  }
+ }
+DeteteTerm(index) {
+  this.AddTermList.splice(index,1)
+  this.getAllTotal()
+  this.TcsAmtCalculation();
+}
+//TCS
+GetTCSdat(){
+  this.ObjRawMatRev.TCS_Ledger_ID = 0;
+  if (this.ObjRawMatRev.TCS_Y_N === 'YES') {
+  this.ngxService.start();
+  const obj = {
+    "SP_String": "Sp_BL_Txn_Purchase_Order_Raw_Material",
+    "Report_Name_String": "Get_Tcs_Percentage_And Ledger",
+    }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  console.log(data)
+  this.TCSdataList = data;
+  // this.objpurchase.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
+  // this.objpurchase.TCS_Persentage = data[0].TCS_Persentage;
+  // var netamount = (Number(this.taxAblTotal) + Number(this.GrTermAmount) + Number(this.GSTTotal) + Number(this.GrGstTermAmt)).toFixed(2);
+  // var TCS_Amount = (Number(Number(netamount) * this.objpurchase.TCS_Persentage) / 100).toFixed(2);
+  // this.objpurchase.TCS_Amount = Number(TCS_Amount);
+  // // this.objaddPurchacse.Grand_Total = (Number(this.objaddPurchacse.Net_Amt) + Number(this.objaddPurchacse.TCS_Amount)).toFixed(2);
+  // // this.Round_off = (Number(Math.round(this.ObjSaleBillNew.Grand_Total)) - Number(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+  // // this.Net_Amt = Number(Math.round(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+  // this.getRoundedOff();
+  // // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+  this.ngxService.stop();
+}); 
+  }  
+  else {
+    this.ObjRawMatRev.TCS_Persentage = 0;
+    this.ObjRawMatRev.TCS_Amount = 0;
+    this.ObjRawMatRev.TCS_Per = undefined;
+    // this.objaddPurchacse.Grand_Total = this.objaddPurchacse.Net_Amt;
+    this.getRoundedOff();
+    // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+}
+}
+TcsAmtCalculation(){
+  this.ObjRawMatRev.TCS_Ledger_ID = 0;
+  if (this.ObjRawMatRev.TCS_Per) {
+      // this.ngxService.start();
+      var tcspercentage = this.TCSdataList.filter(el=> Number(el.TCS_Persentage) === Number(this.ObjRawMatRev.TCS_Per))
+        this.ObjRawMatRev.TCS_Ledger_ID = tcspercentage[0].TCS_Ledger_ID;
+        this.ObjRawMatRev.TCS_Persentage = tcspercentage[0].TCS_Persentage;
+        var netamount = (Number(this.taxAblTotal) + Number(this.GrTermAmount) + Number(this.GSTTotal) + Number(this.GrGstTermAmt)).toFixed(2);
+        var TCS_Amount = (Number(Number(netamount) * this.ObjRawMatRev.TCS_Persentage) / 100).toFixed(2);
+        this.ObjRawMatRev.TCS_Amount = Number(TCS_Amount);
+        // this.objaddPurchacse.Grand_Total = (Number(this.objaddPurchacse.Net_Amt) + Number(this.objaddPurchacse.TCS_Amount)).toFixed(2);
+        // this.Round_off = (Number(Math.round(this.ObjSaleBillNew.Grand_Total)) - Number(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+        // this.Net_Amt = Number(Math.round(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+        this.getRoundedOff();
+        // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+        this.ngxService.stop();  
+  }
+    else {
+      this.ObjRawMatRev.TCS_Persentage = 0;
+      this.ObjRawMatRev.TCS_Amount = 0;
+      // this.objaddPurchacse.Grand_Total = this.objaddPurchacse.Net_Amt;
+      this.getRoundedOff();
+      // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+  }
+}
+//TOTAL AMOUNT
+getAllTotal(){
+  this.grTotal = 0;
+  this.taxAblTotal = 0;
+  this.disTotal = 0;
+  this.ExciTotal = 0;
+  this.GSTTotal = 0;
+  this.NetTotal = 0;
+  this.GrTermAmount = 0
+  this.GrGstTermAmt = 0
+  this.grNetTerm = 0
+  if(this.AddRawMatRevList.length){
+    this.AddRawMatRevList.forEach(ele => {
+      this.grTotal += Number(ele.Gross_Amt) ? Number(ele.Gross_Amt) : 0
+      this.taxAblTotal += Number(ele.Taxable_Value) ? Number(ele.Taxable_Value) : 0
+      this.disTotal += Number(ele.Discount_Amount) ?  Number(ele.Discount_Amount) : 0
+      this.ExciTotal += Number(ele.Excise_Amount) ? Number(ele.Excise_Amount) : 0
+      this.GSTTotal += Number(ele.Total_Tax_Amount) ? Number(ele.Total_Tax_Amount) : 0
+      this.NetTotal += Number(ele.Total_Amount) ? Number(ele.Total_Amount)  :0
+    });
+  }
+  if(this.AddTermList.length){
+    this.AddTermList.forEach((el:any) => {
+      this.GrTermAmount += Number(el.Term_Amount);
+      this.GrGstTermAmt += Number(el.GST_Amount);
+      this.grNetTerm += Number(Number(el.Term_Amount) + Number(el.GST_Amount))
+    });
+   }
+
+
+}
+getTofix(key){
+  return Number(Number(key).toFixed(2))
+ }
+ RoundOff(key:any){
+   return Math.round(Number(Number(key).toFixed(2)))
+ }
+//  getRoundedOff(){
+//   return this.getTofix(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2)) -
+//           Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2)))) 
+// } 
+getRoundedOff(){
+  return this.getTofix( Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt + this.ObjRawMatRev.TCS_Amount).toFixed(2))) -
+          Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt + this.ObjRawMatRev.TCS_Amount).toFixed(2))) 
+}
+async SaveRawMatRev(valid){
+  this.TCSTaxRequiredValidation = true;
+  if (valid) {
   if(this.AddRawMatRevList.length){
     this.Spinner = true
     this.topperlist.forEach(ele => {
@@ -313,6 +544,10 @@ SaveRawMatRev(){
       summary: "Are you sure?",
       detail: "Confirm to proceed"
     });
+  }
+  }
+  else {
+    
   }
 }
 onReject() {
@@ -332,14 +567,28 @@ ConfirmSave(){
     this.ObjRawMatRev.Production_Ref_NO = this.ObjRawMatRev.Production_Ref_NO;
     this.ObjRawMatRev.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.ObjRawMatRev.Created_By = this.$CompacctAPI.CompacctCookies.User_ID;
+    this.ObjRawMatRev.Product_Gross = this.getTofix(this.grTotal);
+    this.ObjRawMatRev.Product_Discount = this.getTofix(this.disTotal) ;
+    this.ObjRawMatRev.Product_Taxable = this.getTofix(this.taxAblTotal) ;
+    this.ObjRawMatRev.Product_GST = this.getTofix(this.GSTTotal);
+    this.ObjRawMatRev.Product_Net = this.getTofix(this.NetTotal);
+    this.ObjRawMatRev.Term_Taxable = this.getTofix(this.GrTermAmount);
+    this.ObjRawMatRev.Term_GST = this.getTofix(this.GrGstTermAmt);
+    this.ObjRawMatRev.Term_Net = this.getTofix(this.grNetTerm)
+    this.ObjRawMatRev.Total_GST = this.getTofix(Number(this.GSTTotal) + Number(this.GrGstTermAmt))
+    this.ObjRawMatRev.Rounded_Off = Number(this.getRoundedOff());
+    this.ObjRawMatRev.Total_Net_Amount = Number(this.RoundOff(this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt));
     this.ObjRawMatRev.L_element = this.AddRawMatRevList;
+
   const obj = {
     "SP_String": this.spString,
     "Report_Name_String": "Create_BL_Txn_Production_Raw_Material_Receive",
     "Json_Param_String": JSON.stringify([this.ObjRawMatRev])      
   }
-  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
     if (data[0].Column1) {
+      const constSaveData = await this.TermSave(data[0].Column1);
+      if(constSaveData){
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "compacct-toast",
@@ -352,7 +601,44 @@ ConfirmSave(){
       this.clearData();
       this.onReject()
       this.getAllData(true)
+      this.grTotal = 0;
+      this.taxAblTotal = 0;
+      this.disTotal = 0;
+      this.ExciTotal = 0;
+      this.ExciTotal = 0;
+      this.GSTTotal = 0;
+      this.NetTotal = 0;
+      this.GrTermAmount = 0
+      this.GrGstTermAmt = 0
+      this.grNetTerm = 0
       this.ngxService.stop();
+      this.TCSTaxRequiredValidation = false;
+    }
+      else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Doc No.  " + data[0].Column1,
+          detail: "Succesfully Create"
+      });
+      this.Spinner = false;
+      this.items = ["BROWSE", "CREATE", "MIS"];
+      this.clearData();
+      this.onReject()
+      this.getAllData(true)
+      this.taxAblTotal = 0;
+      this.disTotal = 0;
+      this.ExciTotal = 0;
+      this.ExciTotal = 0;
+      this.GSTTotal = 0;
+      this.NetTotal = 0;
+      this.GrTermAmount = 0
+      this.GrGstTermAmt = 0
+      this.grNetTerm = 0
+      this.ngxService.stop();
+      this.TCSTaxRequiredValidation = false;
+      }
     }
     else {
       this.ngxService.stop();
@@ -367,6 +653,35 @@ ConfirmSave(){
     }
   })
 }
+async TermSave(doc:any){
+  if(doc){
+     if(this.AddTermList.length){
+      this.AddTermList.forEach((ele:any) => {
+        ele['DOC_No'] = doc
+      });
+    //  }
+    //  else{
+    //   this.AddTermList.push({
+    //     "DOC_No": doc,
+    //     "Term_ID":0
+    //   })
+    //  }
+      
+     const obj = {
+       "SP_String": "SP_BL_Txn_Production_Raw_Material_Receive",
+       "Report_Name_String": "Insert_Term_Details",
+       "Json_Param_String": JSON.stringify(this.AddTermList)
+     }
+     const TermData = await  this.GlobalAPI.getData(obj).toPromise();
+    
+     return TermData
+   }
+  }
+  
+ 
+}
+
+//Browse
 getDateRange(dateRangeObj) {
   if (dateRangeObj.length) {
     this.ObjBrowse.From_Date = dateRangeObj[0];
@@ -512,6 +827,10 @@ getDateRangeMIS(dateRangeObj) {
   }
   }
 }
+class Browse {
+  From_Date : Date ;
+  To_Date : Date;
+}
 class RawMatRev{
   Doc_No:any;
   Doc_Date:any;
@@ -534,11 +853,35 @@ class RawMatRev{
   LR_No_Date:any;
   Vehicle_No:any;
   L_element:any;
+
+  TCS_Ledger_ID:any;
+  TCS_Y_N : any;
+  TCS_Persentage : any;
+  TCS_Amount : number = 0;
+  TCS_Per : any;
+
+  Product_Gross : any; 
+  Product_Discount : any;
+  Product_Taxable : any;
+  Product_GST : any;
+  Product_Net : any;
+  Term_Taxable : any;
+  Term_GST : any;
+  Term_Net : any;
+  Total_GST : any;
+  Rounded_Off : any;
+  Total_Net_Amount : any;
 }
-class Browse {
-  From_Date : Date ;
-  To_Date : Date;
-}
+class Term {
+  DOC_No:any
+  Sale_Pur:any
+  Term_ID:any
+  Term_Name:any
+  Term_Amount:any
+  GST_Per:any
+  GST_Amount:any
+  HSN_No:any
+  }
 class MIS {
   // Company_ID : any;
   // Report_Name : any;

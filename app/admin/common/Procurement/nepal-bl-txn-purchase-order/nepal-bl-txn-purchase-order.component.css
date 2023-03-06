@@ -67,5 +67,7 @@ body .ui-dropdown.ui-dropdown-clearable .ui-dropdown-label {
 .text-dangerrr :hover{
     color: red;
 }
-
+.ui-dialog .ui-dialog-content{
+    height: 45vh;
+}
 

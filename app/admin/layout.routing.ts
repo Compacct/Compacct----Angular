@@ -337,6 +337,8 @@ import { DoctorsAppoTherapPlanComponent } from './common/PatientManagement/docto
 import { MICLRawMaterialQAComponent } from "./common/MICL/micl-raw-material-qa/micl-raw-material-qa.component";
 import { BLTxnGrnNPComponent } from "./common/Procurement/bl-txn-grn-np/bl-txn-grn-np.component";
 import { HrLateArrivalEarlyDepartureComponent } from './common/MICL/hr-late-arrival-early-departure/hr-late-arrival-early-departure.component';
+import { K4cSwiggyZomatoFileUploadComponent } from "./common/OutletManagement/k4c-swiggy-zomato-file-upload/k4c-swiggy-zomato-file-upload.component";
+import { HrLoanApplicationComponent } from './common/MICL/hr-loan-application/hr-loan-application.component';
 
 
 const layoutRoutes: Routes = [{
@@ -2552,7 +2554,20 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         title: 'HR Late Arrival Early Departure'
     } 
   },
-    
+  {
+    path: 'swiggy_zomato_file_upload',
+    component: K4cSwiggyZomatoFileUploadComponent,
+    data: {
+        title: 'CSV UPLOAD'
+    } 
+  },
+  {
+    path: 'HR_Loan_Application',
+    component: HrLoanApplicationComponent,
+    data: {
+        title: 'Loan Application'
+    } 
+  },
 
     /*{
 

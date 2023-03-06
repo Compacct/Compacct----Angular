@@ -82,11 +82,11 @@
                                     sortMode="multiple" 
                                     [rowsPerPageOptions]="[100,200,300]" 
                                     [globalFilterFields]='DynamicHeaderforLS'
-                                        [rowHover]="true" #dt2>
+                                        [rowHover]="true" #dt1>
                                         <ng-template pTemplate="caption">
                                             <div class="row">
                                                 <div class="col-sm-3 pull-right" style="text-align: right">
-                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                                 </div>
                                             </div>
         
