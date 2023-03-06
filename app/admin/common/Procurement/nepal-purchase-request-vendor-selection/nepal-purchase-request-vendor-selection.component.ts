@@ -84,6 +84,7 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
     this.buttonname = "Save";
     this.clearData();
     console.log(e)
+    this.EmailCheck = true
   }
   clearData(){
   this.objvendorSelection = new vendorSelection()
@@ -94,7 +95,7 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
     this.ToEmailSelect = undefined;
     this.SMSSelect = undefined;
     this.CCEmailSelect = undefined;
-    this.EmailCheck = false;
+    this.EmailCheck = true;
     this.VenderSelect = undefined;
     this.DisableBUT = false;
   }
@@ -290,7 +291,8 @@ export class NepalPurchaseRequestVendorSelectionComponent implements OnInit {
           element['value'] = element.email
         });
         this.toEmailList = data;
-         this.CCEmailList = data
+        this.CCEmailList = data
+        this.ToEmailSelect = '801kumarakshay@gmail.com'
       }
        else {
         this.toEmailList = [];

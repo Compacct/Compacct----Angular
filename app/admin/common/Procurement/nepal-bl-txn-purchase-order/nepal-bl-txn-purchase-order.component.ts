@@ -110,6 +110,10 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   objsendEmailFormBrowse:any = {}
   btnBrowseSendEmail:string = ''
   saveSpinnerBrowse:boolean = false
+  SMSCheck:boolean = false
+  SMSList:any = []
+  SubLedgerID:any = undefined
+  SMSSelect:any
   @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
   constructor(
     private $http: HttpClient,
@@ -252,6 +256,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
           });
           this.POnoList = data
           // console.log("POnoList==",this.POnoList)
+          this.getSMS(this.ObjPurchase.Sub_Ledger_ID)
         }
       });
     }
@@ -1337,6 +1342,30 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.ObjPurchase.Sub_Ledger_ID = this.objsendEmailFormBrowse.Sub_Ledger_ID
     this.getFileDetalis(this.objsendEmailFormBrowse.Doc_No)
    }
+  }
+  getSMS(SMS) {
+    this.SMSList = []
+    if (SMS) {
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Request",
+        "Report_Name_String": "Get_Subledger_Contact_No",
+       "Json_Param_String": JSON.stringify([{Sub_Ledger_ID: SMS }])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      console.log("getSMS",data)
+      if(data[0].Contact_Number !== '') {
+        data.forEach(element => {
+          element['label'] = element.Contact_Number,
+          element['value'] = element.Contact_Number
+        });
+        this.SMSList = data;
+      }
+       else {
+        this.SMSList = [];
+      }
+    })    
+    }
+      
   }
 }
   

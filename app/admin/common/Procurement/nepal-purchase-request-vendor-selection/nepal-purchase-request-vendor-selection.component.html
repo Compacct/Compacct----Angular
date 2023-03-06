@@ -225,7 +225,14 @@
                                 <div class="col-sm-2" *ngIf="VenderSelect && objvendorSelection.Purchase_Request_No" >
                                     <label class="control-label">Send To Email ?</label>
                                     <div class="checkBox">
-                                        <p-checkbox name="Email" [(ngModel)]="EmailCheck" (onChange)="ClickCheck()" binary="true"></p-checkbox>
+                                        <p-checkbox name="Email" 
+                                        [(ngModel)]="EmailCheck" 
+                                        (onChange)="ClickCheck()" 
+                                        binary="true"
+                                        [disabled]="true"
+                                        >
+                                    
+                                    </p-checkbox>
                                     </div>
                                 </div>
                                 <div class="col-sm-3"  *ngIf="EmailCheck === true && VenderSelect  ">
@@ -269,13 +276,18 @@
                                         [virtualScroll]="true" itemSize="30" [defaultLabel]="'Choose Company CC Email'"
                                         [emptyFilterMessage]="' No Company CC Email Found'" [styleClass]="'compacct-multiselect'">
                                     </p-multiSelect>
-                                </div>                           
-                            </div><br>
-                            <div class="container">
+                                </div>
+                                <div class="col-sm-10" *ngIf="!EmailCheck && VenderSelect && objvendorSelection.Purchase_Request_No" 
+                                style="color: red;
+                                font-weight: 700;
+                                margin-top: 20px;"> * Sending Email has been disabled according to instruction from Sarawagi Group  </div>                        
+                            </div>
+                            <br>
+                            <div class="container"   >
                                 <div class="col-sm-2" *ngIf="VenderSelect && objvendorSelection.Purchase_Request_No">
                                     <label class="control-label">Send SMS ?</label>
                                     <div class="checkBox">
-                                        <p-checkbox name="Email" [(ngModel)]="SMSCheck" (onChange)="ClickCheck()" binary="true"></p-checkbox>
+                                        <p-checkbox name="Email" [(ngModel)]="SMSCheck" (onChange)="ClickCheck()" binary="true" [disabled]="true" ></p-checkbox>
                                     </div>
                                 </div>
                                 <div class="col-sm-3" *ngIf="SMSCheck === true && VenderSelect  ">
@@ -285,7 +297,12 @@
                                         [styleClass]="'compacct-multiselect'"
                                          [ngClass]="{'clearance': MobileForm && SMS?.errors?.required }"required>
                                     </p-multiSelect>
-                                </div>                          
+                                </div>  
+                                <div class="col-sm-10" 
+                                *ngIf="!SMSCheck && VenderSelect && objvendorSelection.Purchase_Request_No"  
+                                style="color: red;
+                                font-weight: 700;
+                                margin-top: 20px;" > *Sending SMS has been disabled according to instruction from Sarawagi Group   </div>                            
                             </div>
                             </form>
                             <div class="box-footer">
