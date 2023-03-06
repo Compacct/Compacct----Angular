@@ -81,23 +81,33 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <!-- <th style="width:5em">Action</th> -->
+                                            <th style="width:5em">Action</th>
                                             <th nowrap="nowrap" *ngFor="let option of BrowseListHeader">{{option.replaceAll('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr>
     
-                                            <!-- <td>
+                                            <td>
                                                 <div class="dropdown">
                                                     <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                                     <i class="fa fa-fw fa-bars"></i>
                                                                     <span class="caret"></span>
                                                                 </button>
                                                     <ul class="dropdown-menu">
-                                                     </ul>
+                                                        <li>
+                                                            <a (click)="Print(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="Delete(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
                                                 </div>
-                                            </td> -->
+                                            </td>
                                             <ng-container *ngFor="let option of BrowseListHeader">
                                                 <td *ngIf="option != 'Work_Details'" >{{col[option]}}</td>
                                             </ng-container>

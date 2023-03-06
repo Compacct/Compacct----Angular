@@ -681,10 +681,10 @@ export class StockReportComponent implements OnInit {
         this.allTotalObj.Total_IssueUsed = 0
         this.allTotalObj.Total_Closing = 0
       arrList.forEach(ele => {
-        this.allTotalObj.Total_Opening = Number(ele.OPENING_QTY) + Number(this.allTotalObj.Total_Opening)
-        this.allTotalObj.Total_Recieve = Number(ele.RECV_QTY) + Number(this.allTotalObj.Total_Recieve)
-        this.allTotalObj.Total_IssueUsed = Number(ele.ISSUE_QTY) + Number(this.allTotalObj.Total_IssueUsed)
-        this.allTotalObj.Total_Closing = Number(ele.CLOSING_QTY) + Number(this.allTotalObj.Total_Closing)
+        this.allTotalObj.Total_Opening = Number(Number(ele.OPENING_QTY) + Number(this.allTotalObj.Total_Opening)).toFixed(2)
+        this.allTotalObj.Total_Recieve = Number(Number(ele.RECV_QTY) + Number(this.allTotalObj.Total_Recieve)).toFixed(2)
+        this.allTotalObj.Total_IssueUsed = Number(Number(ele.ISSUE_QTY) + Number(this.allTotalObj.Total_IssueUsed)).toFixed(2)
+        this.allTotalObj.Total_Closing = Number(Number(ele.CLOSING_QTY) + Number(this.allTotalObj.Total_Closing)).toFixed(2)
       });
     }
     console.log(this.allTotalObj)

@@ -72,6 +72,7 @@ export class RawMaterialReceiveComponent implements OnInit {
   grNetTerm:any = 0
 
   TCSTaxRequiredValidation = false;
+  doc_no : any;
 
   constructor(
     private http: HttpClient,
@@ -555,9 +556,6 @@ onReject() {
   this.compacctToast.clear("s");
   this.Spinner = false;
 }
-onConfirm(){
-
-}
 ConfirmSave(){
   this.ngxService.start();
   const FilterReferenceDataList = this.ReferenceDataList.find((el:any)=> el.Production_Ref_NO == this.ObjRawMatRev.Production_Ref_NO)
@@ -715,6 +713,68 @@ getAllData(valid:any){
       this.seachSpinner = false
     })
   }
+}
+Print(docno){
+  if(docno) {
+  const objtemp = {
+    "SP_String": this.spString,
+    "Report_Name_String": "Raw_Material_Receive_Document_Print"
+    }
+  this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+    var printlink = data[0].Column1;
+  if(printlink) {
+  window.open(printlink+"?Doc_No=" + docno, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+  }
+  })
+  }
+}
+Delete(docno){
+  this.doc_no = undefined;
+  if (docno) {
+    this.doc_no = docno;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "c",
+      sticky: true,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+    });
+  
+  }
+}
+
+onConfirm(){
+  const objj = {
+    "SP_String": this.spString,
+    "Report_Name_String": "Delete_Raw_Material_Receive_Document",
+    "Json_Param_String": JSON.stringify([{Doc_No : this.doc_no}])
+   }
+   this.GlobalAPI.getData(objj).subscribe((data:any)=>{
+     //var msg = data[0].Column1;
+     if (data[0].Column1 === 'Done'){
+       //this.onReject();
+       this.compacctToast.clear();
+       this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "success",
+         summary: "Doc No.: " + this.doc_no.toString(),
+         detail: "Succefully Deleted"
+       });
+       this.doc_no = undefined;
+       this.getAllData(true);
+     }
+     
+     else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Something Wrong "
+      });
+     }
+   })
 }
 
 //MIS

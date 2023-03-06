@@ -1259,7 +1259,7 @@ GetGRNNoProductdetails(){
        this.clearProject();
        this.GetSerarchPurBill(true);
        this.GetPendingPO(true);
-       this.GetPendingGRN(true);
+      //  this.GetPendingGRN(true);
        if(this.editDocNo) {
         this.editDocNo = undefined;
         this.tabIndexToView = 0;
@@ -1558,7 +1558,8 @@ GetGRNNoProductdetails(){
       const tempobj = {
        From_date : start,
        To_date : end,
-       Company_ID : this.ObjPendingGRN.Company_ID
+       Company_ID : this.ObjPendingGRN.Company_ID,
+       GRN_Type : this.ObjPendingGRN.GRN_Type
       //  Cost_Cen_ID : this.ObjPendingGRN.Cost_Cen_ID
       }
       if (valid) {
@@ -1585,9 +1586,19 @@ GetGRNNoProductdetails(){
   }
   PrintPGRN(DocNo) {
     if(DocNo) {
+      let spname = "";
+      let reportname = "";
+      if(this.ObjPendingGRN.GRN_Type === "Store") {
+        spname = "SP_BL_Txn_Purchase_Challan_GRN";
+        reportname = "GRN_Print";
+      }
+      else {
+        spname = "SP_BL_Txn_Production_Raw_Material_Receive";
+        reportname = "Raw_Material_Receive_Document_Print";
+      }
     const objtemp = {
-      "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
-      "Report_Name_String": "GRN_Print"
+      "SP_String": spname,
+      "Report_Name_String": reportname
       }
     this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
       var GRNprintlink = data[0].Column1;
@@ -1832,5 +1843,6 @@ class PendingGRN{
   start_date : Date;
   end_date : Date;
   Cost_Cen_ID : any;
+  GRN_Type : any;
 }
 
