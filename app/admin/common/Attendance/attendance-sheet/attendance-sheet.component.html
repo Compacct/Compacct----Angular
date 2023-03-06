@@ -147,7 +147,7 @@
               <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
           </div>
           <div class="ui-g-6" *ngIf="!generate && download">
-              <button type="button" pButton (click)="exportoexcel('Attendance_Sheet')" label="Yes" class="ui-button-success"></button>
+              <button type="button" pButton (click)="exportmonthlypro('Attendance_Sheet')" label="Yes" class="ui-button-success"></button>
           </div>
           <div class="ui-g-6">
               <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
@@ -166,11 +166,23 @@
                         <div class="col-sm-3">
                             <input class="form-control" type="month" name="month" [(ngModel)]="Month_Name" (change)="getAttendanceData()">
                         </div>
-                        <div class="col-sm-2">
-                            <button  class="btn btn-primary pull-right1" (click)="getAttendanceDatafornewmonth()" >Generate Attendance</button>
+                        <!-- <div class="col-sm-2">
+                            <button  class="btn btn-primary" (click)="getAttendanceDatafornewmonth()" >Generate Attendance</button>
                         </div>
-                        <div class="col-sm-2">
-                            <button  class="btn btn-warning pull-right2"  (click)="ChekMonthlyProcAS()">Process Monthly Attendance Sheet</button>
+                        <div class="col-sm-3">
+                            <button  class="btn btn-primary" (click)="getAttendanceDataforExistingmonth()" >Add Employee in Attendance Sheet</button>
+                        </div> -->
+                        <div class="col-sm-3" *ngIf="AllAttendanceData.length">
+                            <button  class="btn btn-warning"  (click)="ChekMonthlyProcAS()">Process Monthly Attendance Sheet</button>
+                        </div>
+                        <div class="col-sm-2" *ngIf="AllAttendanceData.length">
+                            <button  class="btn btn-success"  (click)="exportoexcelattnsht('Attendance_Sheet')">Export To Excel</button>
+                        </div>
+                        <div class="col-sm-1" *ngIf="AllAttendanceData.length">
+                            <button  class="btn btn-primary"  (click)="Printattendance()"><span class="fa fa-fw fa-print"></span>Print</button>
+                        </div>
+                        <div>
+                            <span  class="fa fa-question-circle pull-right"  (click)="information()"></span>
                         </div>
                     </div>
                     <br>
@@ -191,19 +203,21 @@
                             [columns]="cols" >
                             <ng-template pTemplate="colgroup" let-columns>
                                 <colgroup>
-                                     <col *ngFor="let col of DynamicHeader |  slice:1" [class]="col === 'Emp_Name' ? 'tablelarge' : 'tablesmall'">
+                                     <col *ngFor="let col of DynamicHeader" [class]="col === 'Emp_Name' || col === 'Designation' ? 'tablelarge' : 'tablesmall'">
                                 </colgroup>
                             </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th nowrap="nowrap" style="background-color:rgb(90 96 109) !important ; color:white"
-                                            (click)="ChangeAllRow(option)" *ngFor="let option of DynamicHeader | slice:1">{{option.replaceAll('_',' ')}}</th> 
+                                            <th style="background-color:rgb(90 96 109) !important ; color:white"
+                                              *ngFor="let option of DynamicHeader">{{option.replaceAll('_',' ')}}</th> <!-- (click)="ChangeAllRow(option)" -->
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr >
-                                                <td nowrap="nowrap" *ngFor="let option of DynamicHeader | slice:1; let i = index" 
-                                                (click)="tableCellData(option,col)" (contextmenu)="onrightclick(option,col)" [class]="getcellText(col[option],option)">{{getcellText(col[option],option)}} </td>
+                                                <!-- <td  *ngFor="let option of DynamicHeader | slice:1; let i = index" 
+                                                 (contextmenu)="onrightclick(option,col)" [class]="getcellText(col[option],option)">{{getcellText(col[option],option)}} </td> --><!--(click)="tableCellData(option,col)" -->
+                                                 <td  *ngFor="let option of DynamicHeader; let i = index" 
+                                                 (contextmenu)="onrightclick(option,col)" [class]="col[option]">{{col[option]}} </td>
                                             
                                         </tr>
                                     </ng-template>
@@ -225,10 +239,10 @@
     </div>
 </div>
 <div class="box-footer">
-    <button class="btn btn-primary pull-right" (click)="saveAttendance()" id="load" [disabled]="Spinner">
+    <!-- <button class="btn btn-primary pull-right" (click)="saveAttendance()" id="load" [disabled]="Spinner">
         <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
         <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
-        </button>
+        </button> -->
 </div>
 </div>
 </div>
@@ -295,4 +309,35 @@
          </button>
         </div>
     </p-footer>
+</p-dialog>
+
+<!-- INFORMATION -->
+<p-dialog header="" appendTo="body" [(visible)]="DetailsModal" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="80" 
+[maximizable]="true" [baseZIndex]="10000">
+<p><b>Type of Attendence:</b></p>
+<br>
+<p>Present</p>
+<p>Present in Weekly Off</p> 
+<p>Present in Public Holiday</p>
+<p>Holiday</p>
+<p>Public Holiday</p>
+<p>Weekly Off</p>
+<p>Sick Leave</p> 
+<p>Casual Leave</p>
+<p>Prevlage Leave</p>
+<p>Compensatory Off</p>
+<p>Absent</p>
+<p>Leave Without Pay</p>
+<p>Left</p>
+<br>
+<p>Present = Present + Present in Weekly Off + Present in Public Holiday</p>
+<br>
+<p>Holiday = Holiday+ Public Holiday + Weekly Off</p>
+<br>
+<p>Leave =Sick Leave + Casual Leave + Prevlage Leave + Compensatory Off</p>
+<br>
+<p>Without Pay = Leave Without Pay + Left</p>
+<br>
+<p>Paid Days = Present + Holiday + Leave</p>
+
 </p-dialog>

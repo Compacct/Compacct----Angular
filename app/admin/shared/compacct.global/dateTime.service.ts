@@ -41,6 +41,24 @@ export class DateTimeConvertService {
       strTime
     );
   };
+  dateTimeConverterForSearch = function(dateTimeParam) {
+    let hours = dateTimeParam.getHours();
+    let minutes = dateTimeParam.getMinutes();
+    const AMPM = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    const strTime = hours + ":" + minutes + " " + AMPM;
+    return (
+      dateTimeParam.getDate() +
+      "/" +
+      this.monthNames[dateTimeParam.getMonth()] +
+      "/" +
+      dateTimeParam.getFullYear() +
+      " " +
+      strTime
+    );
+  }
   getTime24Hours = function (param) {
     if (param) {
         let date = new Date(param);

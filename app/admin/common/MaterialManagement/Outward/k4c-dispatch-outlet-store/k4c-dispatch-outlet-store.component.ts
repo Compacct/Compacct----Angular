@@ -22,28 +22,28 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
   Objdispatch: dispatch = new dispatch()
   Objadditem: additem = new additem ()
   ObjBrowseData : BrowseData = new BrowseData ()
-  costcenterList = [];
+  costcenterList:any = [];
   todayDate : any = new Date();
   myDate : Date;
   ChallanDate : any = Date ;
-  productDetails = [];
+  productDetails:any = [];
   buttonname = "Create";
   Spinner = false;
   SpinnerShow = false;
-  itemList =[];
-  items = [];
+  itemList:any =[];
+  items:any = [];
   tabIndexToView = 0;
-  menuList = [];
+  menuList:any = [];
   brandInput = false ;
-  NativeitemList = [];
-  FromGodownList = [];
+  NativeitemList:any = [];
+  FromGodownList:any = [];
   adlist: any = {};
-  EditList = [];
+  EditList:any = [];
   inList = false;
-  saveData = [];
+  saveData:any = [];
   outLetDis = false;
-  GetAllDataList = [];
-  VehicleList = [];
+  GetAllDataList:any = [];
+  VehicleList:any = [];
   AddtionalFormSubmit = false;
   matchflag = true;
   AdditioanFormSubmit = false;
@@ -51,14 +51,14 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
   DispatchFormSubmit = false;
   disabled: boolean = true;
   seachSpinner = false;
-  outletList = [];
-  brandList = [];
-  brandListBro = [];
+  outletList:any = [];
+  brandList:any = [];
+  brandListBro:any = [];
   doc_no : any;
-  toGodownList = [];
-  BatchList = [];
+  toGodownList:any = [];
+  BatchList:any = [];
   reqNumber:any;
-  outletListBro = [];
+  outletListBro:any = [];
   data = "(Show All Products)";
   inputBoxDisabled = false;
   indentdateDisabled = true;
@@ -69,7 +69,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
   To_Godown_ID_Dis = false;
   From_Godown_ID_Dis = false;
   editPopUp = false;
-  editdataList = [];
+  editdataList:any = [];
   brand = undefined;
   toOutlet = undefined;
   OutletStokePoint = undefined;
@@ -81,18 +81,18 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
   editDis = false;
   reqQTYdis = true;
   AccQtydis = false;
-  initDate = [];
+  initDate:any = [];
   doc_date: any;
-  filteredData = [];
+  filteredData:any = [];
   displaysavepopup = false;
-  productTypeList = [];
-  IndentNoList = [];
-  BackupIndentList = [];
-  IndentFilter = [];
+  productTypeList:any = [];
+  IndentNoList:any = [];
+  BackupIndentList:any = [];
+  IndentFilter:any = [];
   SelectedIndent: any;
-  TIndentList = [];
-  BackUpproductDetails = [];
-  initDate2 = [];
+  TIndentList:any = [];
+  BackUpproductDetails:any = [];
+  initDate2:any = [];
   Auto_Accepted: any;
   totalqty: any;
   totalaccpqty: any;
@@ -101,9 +101,9 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
 
   FranchiseBill:any;
   dispatchchallanno: any;
-  FranchiseProductList = [];
+  FranchiseProductList:any = [];
   currentDate : any = new Date();
-  FranchiseList = [];
+  FranchiseList:any = [];
   subledgerid:any;
   franchisecostcenid:any;
 
@@ -117,13 +117,13 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
   editdocno: any;
   totalacpt:any;
 
-  viewproductDetails = [];
+  viewproductDetails:any = [];
   viewDocNO = undefined;
   viewFromStokePoint = undefined;
   viewdate = undefined;
   tabView = false;
 
-  Regeneratelist = [];
+  Regeneratelist:any = [];
   contactname = undefined;
   taxableRegenerate: any;
   cgstRegenerate: any;
@@ -140,7 +140,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
   franchisechallandate: any = Date;
 
   franchalndate = undefined;
-  Refreshlist = [];
+  Refreshlist:any = [];
   
   constructor(
     private $http: HttpClient,
@@ -440,7 +440,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
     return TotalAmt ? TotalAmt.toFixed(2) : '-';
   }
   getReqNo(){
-    let Rarr =[]
+    let Rarr:any =[]
     if(this.SelectedIndent.length) {
       this.SelectedIndent.forEach(el => {
         if(el){
@@ -487,7 +487,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
             F_Godown_ID: this.Objdispatch.From_Godown_ID,
             To_Cost_Cen_ID: this.Objdispatch.Cost_Cen_ID,
             To_Godown_ID: this.Objdispatch.To_Godown_ID,
-            Product_ID: el.product_id,
+            Product_ID: el.product_id ? el.product_id : el.Product_ID,
             Rate: 0,
             UOM: el.UOM,
             Batch_No: el.Batch_No,
@@ -763,7 +763,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
  getdataforSaveFranchise(){
     //this.currentDate = this.DateService.dateConvert(new Date(this.currentDate));
     if(this.FranchiseProductList.length) {
-      let tempArr =[]
+      let tempArr:any =[]
       this.FranchiseProductList.forEach(item => {
        // if(item.Issue_Qty && Number(item.Issue_Qty) != 0) {
      const TempObj = {
@@ -1145,6 +1145,7 @@ getConfirmDateRangecreate(dateRangeObj) {
 }
 searchData(valid){
   this.RequistionSearchFormSubmit = true;
+  this.seachSpinner = true;
   if(valid){
     console.log("this.ObjBrowseData.Cost_Cen_ID",this.ObjBrowseData.Cost_Cen_ID);
     const start = this.ObjBrowseData.From_Date
@@ -1168,6 +1169,7 @@ searchData(valid){
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.GetAllDataList = data;
+      this.seachSpinner = false;
       console.log("this.GetAllDataList",this.GetAllDataList);
 
      // this.Objdispatch.From_Godown_ID = this.FromGodownList.length === 1 ? this.FromGodownList[0].From_Godown_ID : undefined;
@@ -1595,6 +1597,11 @@ Print(Doc_No){
     window.open("/Report/Crystal_Files/K4C/K4C_Dispatch_Challan_print.aspx?DocNo=" + Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
 
     );
+  }
+}
+DownloadEINV(obj) {
+  if (obj) {
+    window.open(obj, '_self');
   }
 }
 // editmaster(masterProduct){

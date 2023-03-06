@@ -1,0 +1,406 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" baseZIndex="99999" key="a" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="ApprovalonConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+            
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" baseZIndex="99999" key="d" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="DisApprovalonConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-hourglass">
+                            <form name="pendingForm" #pendingForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-5" >
+                                        <label class="control-label">Project<sup class="text-danger">*</sup></label>
+                                        <p-dropdown 
+                                        [options]="projectList" 
+                                        name="Project_ID"
+                                       #Project_ID="ngModel" 
+                                       [(ngModel)]="objdesignApproval.Project_ID"
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Project Found'" 
+                                        (onChange)="getSite()"
+                                        [filter]="true" filterBy="label,value.name" 
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select Project'" 
+                                        [virtualScroll]="true" 
+                                        itemSize="30"
+                                        [ngClass]="{'clearance': pendingFormSubmit && Project_ID.errors?.required}" 
+                                        [required]="true">
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-5" >
+                                        <label class="control-label">Site<sup class="text-danger">*</sup></label>
+                                        <p-dropdown 
+                                        [options]="SiteList" 
+                                        name="Site_ID"
+                                        #Site_ID="ngModel" 
+                                        [(ngModel)]="objdesignApproval.Site_ID"
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Site Found'" 
+                                        [filter]="true" 
+                                        filterBy="label,value.name" 
+                                        (onChange)="getPendingValue()"
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select Site'" 
+                                        [virtualScroll]="true" 
+                                        itemSize="30"
+                                        [ngClass]="{'clearance': pendingFormSubmit && Site_ID.errors?.required}"  [required]="true">
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-2" >
+                                        <button class="btn btn-primary custombutton" 
+                                                type="button" 
+                                                (click)="UploadPopUp(pendingForm.form.valid)" >
+                                         <span  class="	glyphicon glyphicon-cloud-upload"></span>Upload
+                                    </button>
+                                    </div>
+                                    </div>
+                            </form>
+                            <div class="no-padding">
+                                <p-table [value]="pendingList"
+                                [paginator]="true "
+                                 [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeaderpendingList'
+                                    [rowHover]="true" #dt>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap="nowrap" >Document Name</th>
+                                            <th nowrap="nowrap" >Document Link</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu" *ngIf="col.Action_Visible == 'Y'" >
+                                                       <li >
+                                                            <a (click)="ApproveProject(col)">
+                                                                <i class="fa fa-check-circle"></i> Approved
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="DisApproveProject(col)">
+                                                                <i class="fa fa-times-circle"></i> Disapproved
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td>{{col.Document_Name}}</td>
+                                            <td class="text-center" >
+                                                <a (click)="showImg(col.Document_Link)">
+                                                    <div style="font-size:2rem">
+                                                        <i style="color: #b14020;cursor: pointer;" class="fa fa-file-text-o"> 
+
+                                                        </i>
+                                                    </div>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-ok-sign">
+                            <form name="pendingApproveForm" #pendingApproveForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-5" >
+                                        <label class="control-label">Project<sup class="text-danger">*</sup></label>
+                                        <p-dropdown 
+                                        [options]="projectList" 
+                                        name="Project_ID_Approval"
+                                        [(ngModel)]="projectID"
+                                        #Project_ID_Approval="ngModel" 
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Project Found'" 
+                                        (onChange)="getSiteApproval()"
+                                        [filter]="true" filterBy="label,value.name" 
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select Project'" 
+                                        [virtualScroll]="true" 
+                                        itemSize="30"
+                                        >
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-5" >
+                                        <label class="control-label">Site<sup class="text-danger">*</sup></label>
+                                        <p-dropdown 
+                                        [options]="SiteListApproval" 
+                                        name="Site_ID_Approval"
+                                        [(ngModel)]="SiteID"
+                                        #Site_ID_Approval="ngModel" 
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Site Found'" 
+                                        [filter]="true" 
+                                        filterBy="label,value.name" 
+                                        (onChange)="getApproval()"
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select Site'" 
+                                        [virtualScroll]="true" 
+                                        itemSize="30"
+                                       >
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-2" >
+                                     
+                                    </div>
+                                    </div>
+                            </form>
+                            <div class="no-padding">
+                                <p-table [value]="approvalList"
+                                [paginator]="true "
+                                 [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeader'
+                                    [rowHover]="true" #dt1>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            
+                                            <th nowrap="nowrap" >Document Name</th>
+                                            <th nowrap="nowrap" >Document Link</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td>{{col.Document_Name}}</td>
+                                            <td class="text-center" >
+                                                <a (click)="showImg(col.Document_Link)">
+                                                    <div style="font-size:2rem">
+                                                        <i style="color: #b14020;cursor: pointer;" class="fa fa-file-text-o"> 
+
+                                                        </i>
+                                                    </div>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-remove-sign">
+                            <form name="pendingApproveForm" #pendingApproveForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-5" >
+                                        <label class="control-label">Project<sup class="text-danger">*</sup></label>
+                                        <p-dropdown 
+                                        [options]="projectList" 
+                                        name="Project_ID_DisApproval"
+                                        [(ngModel)]="ObjdesignDisApproval.Project_ID"
+                                        #Project_ID_DisApproval="ngModel" 
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Project Found'" 
+                                        (onChange)="getSiteDisApproval()"
+                                        [filter]="true" filterBy="label,value.name" 
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select Project'" 
+                                        [virtualScroll]="true" 
+                                        itemSize="30"
+                                        >
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-5" >
+                                        <label class="control-label">Site<sup class="text-danger">*</sup></label>
+                                        <p-dropdown 
+                                        [options]="SiteListDisApproval" 
+                                        name="Site_ID_DisApproval"
+                                        [(ngModel)]="ObjdesignDisApproval.Site_ID"
+                                        #Site_ID_DisApproval="ngModel" 
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Site Found'" 
+                                        [filter]="true" 
+                                        filterBy="label,value.name" 
+                                        (onChange)="getDisApproval()"
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select Site'" 
+                                        [virtualScroll]="true" 
+                                        itemSize="30"
+                                       >
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-2" >
+                                     
+                                    </div>
+                                    </div>
+                            </form>
+                            <div class="no-padding">
+                                <p-table [value]="DisapprovalList"
+                                [paginator]="true "
+                                 [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeader'
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            
+                                            <th nowrap="nowrap" >Document Name</th>
+                                            <th nowrap="nowrap" >Document Link</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td>{{col.Document_Name}}</td>
+                                            <td class="text-center" >
+                                                <a (click)="showImg(col.Document_Link)">
+                                                    <div style="font-size:2rem">
+                                                        <i style="color: #b14020;cursor: pointer;" class="fa fa-file-text-o"> 
+
+                                                        </i>
+                                                    </div>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-dialog [header]="'Upload'" 
+        [appendTo]="'body'" 
+        [visible]="uploadDialog" 
+        [closeOnEscape]="true" 
+        [modal]="true" 
+        [responsive]="true" 
+        [style]="{ width: '40%', minWidth: '200px' }" 
+        style="text-align: center;" 
+        [minY]="70"
+        [maximizable]="true"
+        [baseZIndex]="10000">
+        <form name="uploadForm" #uploadForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12" >
+                    <label class="control-label">Document Name<sup class="text-danger">*</sup></label>
+                    <input class="form-control"
+                    name="docType"
+                    #docType="ngModel"
+                    [(ngModel)]="docName"
+                    placeholder="Document Name"
+                    [ngClass]="{'clearance': uploadFormSubmit && docType.errors?.required}"
+                    required>
+                </div>
+                </div>
+                <div class="form-group">
+                <div class="col-sm-12" >
+                    <label class="control-label">Upload Document<sup class="text-danger">*</sup></label>
+                    <p-fileUpload #fileInput 
+                                name="aFile566" 
+                                accept=".pdf, .png, .jpg, .jpeg, .xls, .xlsx" 
+                                [customUpload]="true" 
+                                [chooseLabel]="'Browse'" 
+                                [showUploadButton]="false" 
+                                (onSelect)="handleFileSelect($event)">
+                            </p-fileUpload>
+                </div>
+             </div>
+        </form>
+    <p-footer>
+        <button
+        class="btn btn-primary pull-right custombutton"
+        (click)="UploadDoc(uploadForm.form.valid)"
+        id="load2"
+        [disabled]="SpinnerUpload"
+        >
+        <p-progressSpinner
+        *ngIf="SpinnerUpload"
+        [style]="{ width: '15px', height: '15px' }"
+        strokeWidth="8"
+        animationDuration=".5s"
+        ></p-progressSpinner>
+        <span
+        *ngIf="!SpinnerUpload"
+        class="glyphicon glyphicon-cloud-upload"
+        ></span
+        >&nbsp;UPLOAD
+        </button>
+        <button type="button" (click)="uploadDialog = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog> 

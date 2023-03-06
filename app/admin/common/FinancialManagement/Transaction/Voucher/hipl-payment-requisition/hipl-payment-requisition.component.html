@@ -115,6 +115,15 @@
                                         <label class="control-label">Present Status</label>
                                         <input class="form-control" name="Present_Status" #Present_Status="ngModel" [(ngModel)]="objPayment.Present_Status" placeholder="Present Status">
                                     </div>
+                                    <div class="col-sm-4" *ngIf="Purchaseckeck">
+                                        <label class="control-label">Select Responsible Employee<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Employee" #Employee="ngModel" [(ngModel)]="objPayment.Responsible_Emp_ID" [ngClass]="{'clearance': PaymentFormSubmit && Employee.errors?.required}" required>
+                                        <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of EmployeeList" [ngValue]="option.Responsible_Emp_ID">
+                                        {{option.Responsible_Emp}}
+                                        </option>
+                                    </select>
+                                    </div>
 
                                 </div>
                                 <!-- <div class="col-sm-4">
@@ -222,10 +231,11 @@
                                             <th nowrap>Site </th>
                                             <th nowrap>Budget Group Name</th>
                                             <th nowrap>Status</th>
-                                            <th nowrap>Finance Approve Status</th>
-                                            <th nowrap> Management Approve Status</th>
+                                            <th nowrap>Finance Approval</th>
+                                            <th nowrap> Managing Director Approval</th>
                                             <th nowrap>Created By </th>
                                             <th nowrap>Payment Voucher No</th>
+                                            <th nowrap>Responsible Employee</th>
 
                                         </tr>
                                     </ng-template>
@@ -264,6 +274,7 @@
                                             <td nowrap>{{col.Approver_Two_Status ? col.Approver_Two_Status : '-'}}</td>
                                             <td nowrap>{{col.Created_By_Name ? col.Created_By_Name : '-' }}</td>
                                             <td nowrap>{{col.Payment_Voucher_No ? col.Payment_Voucher_No : '-' }}</td>
+                                            <td nowrap>{{col.Responsible_Emp ? col.Responsible_Emp : '-' }}</td>
 
                                         </tr>
                                     </ng-template>
@@ -311,10 +322,12 @@
                                             <th nowrap>Site </th>
                                             <th nowrap>Budget Group Name</th>
                                             <th nowrap>Status</th>
-                                            <th nowrap>Finance Approve Status</th>
-                                            <th nowrap> Management Approve Status</th>
+                                            <th nowrap>Finance Approval</th>
+                                            <th nowrap> Managing Director Approval</th>
                                             <th nowrap>Created By </th>
                                             <th nowrap>Payment Voucher No</th>
+                                            <th nowrap>Responsible Employee</th>
+
 
                                         </tr>
                                     </ng-template>
@@ -359,6 +372,7 @@
                                             <td nowrap>{{col.Approver_Two_Status ? col.Approver_Two_Status : '-'}}</td>
                                             <td nowrap>{{col.Created_By_Name ? col.Created_By_Name : '-' }}</td>
                                             <td nowrap>{{col.Payment_Voucher_No ? col.Payment_Voucher_No : '-' }}</td>
+                                            <td nowrap>{{col.Responsible_Emp ? col.Responsible_Emp : '-' }}</td>
 
                                         </tr>
                                     </ng-template>
@@ -406,11 +420,12 @@
                                             <th nowrap>Site </th>
                                             <th nowrap>Budget Group Name</th>
                                             <th nowrap>Status</th>
-                                            <th nowrap>Finance Approve Status</th>
-                                            <th nowrap> Management Approve Statust</th>
+                                            <th nowrap>Finance Approval</th>
+                                            <th nowrap> Managing Director Approval</th>
                                             <th nowrap>Created By </th>
                                             <th nowrap>Payment Voucher No</th>
                                             <th nowrap>Disapprove Reason</th>
+                                            <th nowrap>Responsible Employee</th>
 
                                         </tr>
                                     </ng-template>
@@ -455,6 +470,7 @@
                                             <td nowrap>{{col.Created_By_Name ? col.Created_By_Name : '-' }}</td>
                                             <td nowrap>{{col.Payment_Voucher_No ? col.Payment_Voucher_No : '-' }}</td>
                                             <td nowrap>{{col.Disapprove_Reason ? col.Disapprove_Reason : '-' }}</td>
+                                            <td nowrap>{{col.Responsible_Emp ? col.Responsible_Emp : '-' }}</td>
 
                                         </tr>
                                     </ng-template>
@@ -485,6 +501,11 @@
             </div>
             <div class="col-sm-4">
                 <label class="control-label">Po No</label>
+                <div class="pull-right">
+                    <button (click)="PrintPo()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-print">
+                       </i> Print
+                    </button>
+                </div>
                 <div class="label-t">{{ViewListObj?.PO_NO ? ViewListObj?.PO_NO : '-' }}</div>
             </div>
 
@@ -562,6 +583,12 @@
             <div class="col-sm-4">
                 <label class="control-label">Budget Group Name</label>
                 <div class="label-t">{{ViewListObj?.Budget_Group_Name ? ViewListObj?.Budget_Group_Name : '-'}}</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Responsible Employee</label>
+                <div class="label-t">{{ViewListObj?.Responsible_Emp ? ViewListObj?.Responsible_Emp : '-'}}</div>
             </div>
         </div>
     </form>
@@ -665,6 +692,12 @@
                 <div class="label-t">{{ApproveListobj?.Budget_Group_Name ? ApproveListobj?.Budget_Group_Name : '-'}}</div>
             </div>
         </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Responsible Employee</label>
+                <div class="label-t">{{ApproveListobj?.Responsible_Emp ? ApproveListobj?.Responsible_Emp : '-'}}</div>
+            </div>
+        </div>
 
         <button class="btn btn-success pull-right" (click)="GetApprove()" id="load11" style="margin-top:65px;" [disabled]="Spinner">
                                     <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
@@ -766,7 +799,7 @@
         <div class="form-group">
             <div class="col-sm-4">
                 <label class="control-label">Required Amount</label>
-                <input class="form-control" name="Required_Amount" #Required_Amount="ngModel" [(ngModel)]="RequiredAmount" placeholder="Required Amount" (ngModelChange)="ReqCheck()" [ngClass]="{'clearance': RequiredAmountSubmitted}">
+                <input class="form-control" name="Required_Amount" #Required_Amount="ngModel" [(ngModel)]="RequiredAmount" placeholder="Required Amount" CompacctDigitonly="true" (ngModelChange)="ReqCheck()" [ngClass]="{'clearance': RequiredAmountSubmitted}">
             </div>
         </div>
     </div>

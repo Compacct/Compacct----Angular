@@ -92,6 +92,7 @@ export class AttendanceSheetComponent implements OnInit {
   generate = false;
   download = false;
   AllattendancestatusFormSubmitted = false;
+  DetailsModal = false;
   constructor(
     private route : ActivatedRoute,
     private Header: CompacctHeader,
@@ -384,6 +385,7 @@ export class AttendanceSheetComponent implements OnInit {
     console.log('Month_Name',this.Month_Name)
    // this.Month_Name = new Date();
     // this.getmonthdaydate();
+    this.callapi();
     this.getAttendanceData();
   }
   getAttendanceType(){
@@ -401,8 +403,27 @@ export class AttendanceSheetComponent implements OnInit {
        })
     })
   }
+  callapi(){
+    this.AllAttendanceData = [];
+    var firstDate = this.Month_Name+'-'+'01'
+    console.log('firstDate',firstDate)
+    const AtObj = {
+      Date : this.DateService.dateConvert(new Date(firstDate)),
+    }
+    const obj = {
+      "SP_String": "SP_Process_Monthly_Attendance_Sheet",
+      "Report_Name_String": "Get_Attn_Data_For_Month_API_Test",
+      "Json_Param_String": JSON.stringify([AtObj])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("Data From Api",data);
+     
+  })
+  }
   getAttendanceData(){
     this.AllAttendanceData = [];
+    this.callapi();
     var firstDate = this.Month_Name+'-'+'01'
     console.log('firstDate',firstDate)
     const AtObj = {
@@ -411,14 +432,16 @@ export class AttendanceSheetComponent implements OnInit {
     const obj = {
       "SP_String": "HR_Txn_Attn_Sheet",
       // "Report_Name_String": "Get_Attn_Data",
-      "Report_Name_String": "Get_Attn_Data_NEW",
+      // "Report_Name_String": "Get_Attn_Data_NEW",
+      "Report_Name_String": "Get_Attn_Data_All_Details",
       "Json_Param_String": JSON.stringify([AtObj])
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("Data From Api",data);
-      if (data[0].Column1) {
-        this.showdata = data[0].Column1;
+      // if (data[0].Column1 || !data.length) {
+      if (!data.length) {
+        this.showdata = "Attn. Data not found";
       }
       else {
       this.AllAttendanceData = data;
@@ -438,6 +461,31 @@ export class AttendanceSheetComponent implements OnInit {
       console.log('this.AllAttendanceData',this.AllAttendanceData)
       }
   })
+  }
+  exportoexcelattnsht(fileName): void {
+    var firstDate = this.Month_Name+'-'+'01'
+    const obj = {
+      "SP_String": "HR_Txn_Attn_Sheet",
+      "Report_Name_String": "Get_Attn_Data_NEW_For_Export",
+      "Json_Param_String": JSON.stringify([{Date : this.DateService.dateConvert(new Date(firstDate))}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if (data[0].Success === "False") {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+      else {
+        const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+        const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+        XLSX.writeFile(workbook, fileName+'.xlsx');
+      }
+    })
   }
   getAttendanceDatafornewmonth(){
     if (this.Month_Name) {
@@ -491,19 +539,56 @@ export class AttendanceSheetComponent implements OnInit {
   onReject(){
     this.compacctToast.clear("c");
    }
+   getAttendanceDataforExistingmonth(){
+    this.AllAttendanceData = [];
+    var firstDate = this.Month_Name+'-'+'01'
+    console.log('firstDate',firstDate)
+    const AtObj = {
+      Date : this.DateService.dateConvert(new Date(firstDate)),
+    }
+    const obj = {
+      "SP_String": "HR_Txn_Attn_Sheet",
+      // "Report_Name_String": "Get_Attn_Data",
+      "Report_Name_String": "Set_Attn_Data_for_Existing_month",
+      "Json_Param_String": JSON.stringify([AtObj])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("Data From Api",data);
+      this.AllAttendanceData = data;
+      if(this.AllAttendanceData.length){
+        this.DynamicHeader = Object.keys(data[0]);
+         this.DynamicHeader.forEach((el:any)=>{
+          this.cols.push({
+           header: el 
+          })
+        })
+        // this.onReject();
+        this.getAttendanceData();
+      }
+      else {
+        this.DynamicHeader = [];
+        // this.onReject();
+        this.getAttendanceData();
+      }
+      console.log('this.AllAttendanceData',this.AllAttendanceData)
+  })
+  }
   getcellText(value,col){
     let flag = "";
     // if (value === null) {
     //   value = 2;
     // }
-   if(col != 'Emp_ID' || col != "Emp_Name"){
+   if(col != "Emp_ID" || col != "Emp_Code" || col != "Emp_Name" || col != "Designation" || col != "Present" ||
+      col != "Holiday" || col != "Leave" || col != "Absent" || col != "Without_Pay" || col != "Paid_Days"){
      let attArrFilter:any = this.AttenTypelist.filter((el:any)=> Number(el.Atten_Type_ID) == Number(value))
       if(attArrFilter.length){
      flag = attArrFilter[0].Sht_Desc
      } 
     
    }
-   if(col === 'Emp_ID' || col === "Emp_Name"){
+   if(col === 'Emp_ID' || col === "Emp_Code" || col === "Emp_Name" || col === "Designation" || col === "Present" || 
+    col === "Holiday" || col === "Leave" || col === "Absent" || col === "Without_Pay" || col === "Paid_Days"){
     flag = value
    }
    this.attendance_value = flag;
@@ -516,7 +601,7 @@ export class AttendanceSheetComponent implements OnInit {
       this.empid = row.Emp_ID;
       console.log("Row",row[this.col])
       event.preventDefault();
-      if (this.col != "Emp_Name") {
+      if (this.col != "Emp_Code" && this.col != "Emp_Name" && row[this.col] != 13) {
         this.AllAttendanceData.forEach((el:any)=>{
           if(Number(el.Emp_ID )== Number(this.empid)){
            el[this.col] = 1;
@@ -539,7 +624,7 @@ export class AttendanceSheetComponent implements OnInit {
         let Doc_date = this.Month_Name+"-"+date;
         this.Doc_date = this.DateService.dateConvert(new Date(Doc_date))
 
-        if (col === 'Emp_ID' || col === "Emp_Name") {
+        if (col === 'Emp_ID' || col === "Emp_Code" || col === "Emp_Name" || row[this.col] === 13) {
           this.display = false;
         } else {
           this.attendancestatusFormSubmitted = false;
@@ -571,7 +656,7 @@ export class AttendanceSheetComponent implements OnInit {
         let Doc_date = this.Month_Name+"-"+date;
         this.Doc_date_AllEmp = this.DateService.dateConvert(new Date(Doc_date))
 
-        if (col === "Emp_Name") {
+        if (col === "Emp_Code" || col === "Emp_Name") {
           this.displayALLEmployee = false;
         } else {
           this.AllattendancestatusFormSubmitted = false;
@@ -585,7 +670,8 @@ export class AttendanceSheetComponent implements OnInit {
     if (valid){
       this.AllAttendanceData.forEach((el:any)=>{
         // if(Number(el.Emp_ID )== Number(this.empid)){
-         el[this.col] = Number(this.Attendance_Status_ALlEmployee)
+          // el[this.col] = Number(this.Attendance_Status_ALlEmployee);
+         el[this.col] =  el[this.col] != 13 ? Number(this.Attendance_Status_ALlEmployee) : el[this.col]
         // }
       })
       // this.AllattendancestatusFormSubmitted = false;
@@ -704,7 +790,7 @@ export class AttendanceSheetComponent implements OnInit {
    }
     })
   }
-  exportoexcel(fileName){
+  exportmonthlypro(fileName){
     var firstDate = this.Month_Name+'-'+'01'
     console.log('firstDate',firstDate)
     const obj = {
@@ -718,6 +804,7 @@ export class AttendanceSheetComponent implements OnInit {
       const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
       XLSX.writeFile(workbook, fileName+'.xlsx');
       this.onReject();
+      this.exportoexcel();
       }
       else {
         this.compacctToast.clear();
@@ -730,6 +817,55 @@ export class AttendanceSheetComponent implements OnInit {
       }
       
     })
+  }
+  exportoexcel(){
+    var firstDate = this.Month_Name+'-'+'01'
+    console.log('firstDate',firstDate)
+    const obj = {
+      "SP_String": "SP_Process_Monthly_Attendance_Sheet",
+      "Report_Name_String": "New Process Monthly Attendance Sheet",
+      "Json_Param_String": JSON.stringify([{StartDate : this.DateService.dateConvert(new Date(firstDate))}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if (data.length) {
+      // if (data[0].Success != 'False' || data[0].Remarks != 'Done'){
+      // const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      // const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      // XLSX.writeFile(workbook, fileName+'.xlsx');
+        this.onReject();
+      }
+      else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+      
+    })
+  }
+  information() {
+    // if(DocNo) {
+    const objtemp = {
+      "SP_String": "HR_Txn_Attn_Sheet",
+      "Report_Name_String": "Attendance_Details_HTML"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      // this.DetailsModal = true;
+    if(printlink) {
+    window.open(printlink, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    }
+    })
+  }
+  Printattendance() {
+    var firstDate = this.Month_Name+'-'+'01'
+    if(firstDate) {
+      window.open("/Report/Crystal_Files/MICL/HR_Attendance_Sheet.aspx?From_Date=" + this.DateService.dateConvert(new Date(firstDate)) +"&To_Date=" + this.DateService.dateConvert(new Date(firstDate)), 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    
+    }
   }
   
 }

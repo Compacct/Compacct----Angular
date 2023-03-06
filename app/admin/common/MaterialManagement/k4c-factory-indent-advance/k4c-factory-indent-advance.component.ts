@@ -36,6 +36,7 @@ export class K4cFactoryIndentAdvanceComponent implements OnInit {
   viewNo = undefined;
   ObjBrowseData: BrowseData = new BrowseData();
   Search_By = "Delivery Date";
+  getAllDataListforexcel:any = [];
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -108,8 +109,33 @@ export class K4cFactoryIndentAdvanceComponent implements OnInit {
       console.log("getAllDataList", this.getAllDataList);
       this.GetOrderOutlet();
       this.GetDateRange();
+      this.GetAllDataforexcel();
       })
     }
+  }
+  GetAllDataforexcel() {
+    this.getAllDataListforexcel = [];
+      const start = this.ObjBrowseData.req_date_B
+        ? this.DateService.dateConvert(new Date(this.ObjBrowseData.req_date_B))
+        : this.DateService.dateConvert(new Date());
+      const end = this.ObjBrowseData.req_date2
+        ? this.DateService.dateConvert(new Date(this.ObjBrowseData.req_date2))
+        : this.DateService.dateConvert(new Date());
+      const tempDate = {
+        From_Date: start,
+        To_Date: end,
+        Brand_ID: this.ObjBrowseData.Brand_ID ? this.ObjBrowseData.Brand_ID : 0,
+        Search_By : this.Search_By
+      }
+      const objj = {
+        "SP_String": "SP_Add_ON",
+        "Report_Name_String": "Get Custom Order details For Export",
+        "Json_Param_String": JSON.stringify([tempDate])
+      }
+      this.GlobalAPI.getData(objj).subscribe((data: any) => {
+        this.getAllDataListforexcel = data;
+      console.log("getAllDataListforexcel", this.getAllDataListforexcel);
+      })
   }
   GetOrderOutlet() {
     let DOrderBy = [];

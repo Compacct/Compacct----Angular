@@ -101,7 +101,7 @@ export class HearingSpeechAppointmentComponent implements OnInit {
   }
   clearData() { 
      this.End_Date = new Date();
-     this.MaterialDataList = [];
+     this.MaterialDataList =  [];
    }
 
    checkDate  (appodate) {
@@ -112,10 +112,9 @@ OtherTestEntry (obj) {
     if (obj.Appo_ID) {
       const para = new HttpParams().set("Appo_ID",obj.Appo_ID);
       this.$http.get('/Hearing_DoctorsAppointment/Get_Other_Entry_Aspx_Link',{ params: para }).subscribe( (response:any) => {
-            console.log(response)
-            const data = JSON.parse(response.data)[0];
-            if (data.Other_Entry_Aspx_Link) {
-                window.open(data.Other_Entry_Aspx_Link + "?apid=" + obj.Appo_ID, 'mywindow', ' scrollbars=auto, width=950,height=500');
+          const data = JSON.parse(response);
+            if (data[0].Other_Entry_Aspx_Link) {
+                window.open(data[0].Other_Entry_Aspx_Link + "?apid=" + obj.Appo_ID, 'mywindow', ' scrollbars=auto, width=950,height=500');
             }
             this.ngxService.stop();
         });
@@ -126,11 +125,11 @@ OtherTestEntryPrint (obj) {
     if (obj.Appo_ID) {
       const para = new HttpParams().set("Appo_ID",obj.Appo_ID);
       this.$http.get('/Hearing_DoctorsAppointment/Get_Other_Print_Aspx_Link', { params: para }).subscribe((response:any) => {
-            console.log(response)
-            const data = JSON.parse(response.data)[0];
-            if (data.Other_Print_Aspx_Link) {
-                window.open(data.Other_Print_Aspx_Link + "?apid=" + obj.Appo_ID, 'mywindow', ' scrollbars=auto, width=950,height=500');
-            }
+        const data = JSON.parse(response);
+        console.log("data",data)
+        if (data[0].Other_Print_Aspx_Link) {
+            window.open(data[0].Other_Print_Aspx_Link + "?apid=" + obj.Appo_ID, 'mywindow', ' scrollbars=auto, width=950,height=500');
+        }
             this.ngxService.stop();
         });
     }

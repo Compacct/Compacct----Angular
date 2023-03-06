@@ -9,6 +9,7 @@ import { CompacctHeader } from "../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service";
 import { NgxUiLoaderService } from "ngx-ui-loader";
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-rdb',
   templateUrl: './rdb.component.html',
@@ -74,6 +75,17 @@ export class RdbComponent implements OnInit {
   ObjRDBRegister = new RDBRegister();
   DocNo: any;
   editlist:any = [];
+  BackupPendingPOList:any = [];
+  SelectedDistProductType:any = [];
+  DistProductType:any = [];
+
+  objDeptUser: DeptUser = new DeptUser();
+  DeptUserModel = false;
+  DeptUserFormSubmitted = false;
+  DeptUserSpinner = false;
+  DepartmentList:any = [];
+  UsertList:any = [];
+  addPurchaseListInput:boolean = false
 
    constructor(
     private $http: HttpClient,
@@ -108,6 +120,9 @@ export class RdbComponent implements OnInit {
     this.items = ["BROWSE", "CREATE", "PENDING PURCHASE ORDER", "RDB REGISTER"];
     this.buttonname = "Create";
     this.clearData();
+    this.ProductList = [];
+    this.DocNo = undefined;
+    this.addPurchaseListInput = false
   }
   clearData(){
     this.dateDis = true;
@@ -128,10 +143,12 @@ export class RdbComponent implements OnInit {
     this.seachSpinner = false;
     this.ObjRdb.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
     this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
-    this.ObjRdb.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    this.ObjRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;
+    this.ObjRdb.Cost_Cen_ID  = this.companyList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
+    this.getStockPoint(this.ObjRdb.Cost_Cen_ID);
+    // this.ObjRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;
     this.deleteError = false;
     this.RegisterSpinner = false;
+    this.PoOrderList = [];
   }
   Finyear() {
     this.$http
@@ -252,7 +269,8 @@ export class RdbComponent implements OnInit {
   getProductDetails(PO_Doc_No){
     if(PO_Doc_No){
       this.ProductList = [];
-    const PoFilter = this.PoOrderList.filter(el=> el.Doc_No.toString() === this.ObjRdb.PO_Doc_No.toString())
+    // const PoFilter = this.PoOrderList.filter(el=> el.Doc_No.toString() === this.ObjRdb.PO_Doc_No.toString())
+    const PoFilter = this.PoOrderList.filter(el=> el.Doc_No === this.ObjRdb.PO_Doc_No)
      this.dateDis = false;
     this.PO_Doc_Date = PoFilter.length ? new Date(PoFilter[0].Doc_Date) : new Date();
       const obj = {
@@ -264,15 +282,26 @@ export class RdbComponent implements OnInit {
        .subscribe((data : any)=>
        {
          
-         this.Allproduct = data;
-         console.log('Productdetails=',this.Allproduct);
-         this.Allproduct.forEach((el : any)=>
-         {
-           this.ProductList.push({
-             label : el.Product_Name,
-             value : el.Product_ID
-           });
-         });
+        //  this.Allproduct = data;
+        //  console.log('Productdetails=',this.Allproduct);
+        //  this.Allproduct.forEach((el : any)=>
+        //  {
+        //    this.ProductList.push({
+        //      label : el.Product_Name,
+        //      value : el.Product_ID
+        //    });
+           
+        //  });
+        if(data.length) {
+          data.forEach((el:any)=>{
+            el['label'] = el.Product_Name,
+            el['value'] = el.Product_ID
+          })
+          this.ProductList = data;
+        }
+        else {
+          this.ProductList = [];
+        }
        });
     }
     else {
@@ -303,7 +332,7 @@ export class RdbComponent implements OnInit {
        this.getStockPoint(this.ObjRdb.Cost_Cen_ID);
      });
   }
-  getStockPoint(Cost_Cen_ID){
+  getStockPoint(Cost_Cen_ID,editcostgodown?){
     this.AllStockList=[];
     this.StockList = [];
     if(Cost_Cen_ID){
@@ -315,16 +344,31 @@ export class RdbComponent implements OnInit {
        this.GlobalAPI.getData(obj)
        .subscribe((data : any)=>
        {
-         this.AllStockList = data;
-         console.log('AllStockList=',this.AllStockList);
-         this.AllStockList.forEach((el : any)=>
-         {
-            this.StockList.push({
-              label : el.godown_name,
-              value : el.godown_id
-            });
-         });
-         this.ObjRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;
+        //  this.AllStockList = data;
+        //  console.log('AllStockList=',this.AllStockList);
+        //  this.AllStockList.forEach((el : any)=>
+        //  {
+        //     this.StockList.push({
+        //       label : el.godown_name,
+        //       value : el.godown_id
+        //     });
+        //  });
+        if(data.length) {
+        data.forEach((el:any)=>{
+          el['label'] = el.godown_name,
+          el['value'] = el.godown_id
+        })
+        this.StockList = data;
+      }
+      else {
+        this.StockList = [];
+      }
+         if(editcostgodown){
+          this.ObjRdb.godown_id = editcostgodown;
+        }
+        else{
+          this.ObjRdb.godown_id = this.StockList.length === 1 ? this.StockList[0].godown_id : undefined;
+        }
        });
     }
     else{
@@ -479,15 +523,28 @@ export class RdbComponent implements OnInit {
   Add(valid){
     this.RDBFormSubmit = true;
     if(valid){
+      if (new Date(this.RDB_Date).toISOString() >= new Date(this.PO_Doc_Date).toISOString()) {
       if (Number(this.ObjRdb1.Challan_Qty)  <= Number(this.ObjRdb1.PO_QTY)) {
       if (Number(this.ObjRdb1.Received_Qty) <= Number(this.ObjRdb1.Challan_Qty)){
-        const productFilter = this.Allproduct.filter(el=> Number(el.Product_ID) === Number(this.ObjRdb1.Product_ID))[0];
+        const productFilter = this.ProductList.filter(el=> Number(el.Product_ID) === Number(this.ObjRdb1.Product_ID))[0];
         const subLedgerFilter = this.AllSupplierList.filter(el=> Number(el.Sub_Ledger_ID) === Number(this.ObjRdb.Sub_Ledger_ID))[0]
         console.log("productFilter",productFilter);
-        if(Object.keys(productFilter).length){
-        var amount = Number(Number(this.ObjRdb1.Received_Qty) * Number(productFilter.Rate)).toFixed(2);
-        var taxsgstcgst =  (Number(Number(amount) * Number(productFilter.GST_Percentage)) / 100).toFixed(2);
-        var totalamount = (Number(amount) + Number(taxsgstcgst)).toFixed(2);
+        // if(Object.keys(productFilter).length){
+          // var FreightPFPerc = productFilter.Excise_Tax_Percentage ? productFilter.Excise_Tax_Percentage : 0;
+          var PO_QTY = this.ObjRdb1.PO_QTY ? Number(this.ObjRdb1.PO_QTY) : 0;
+          var FreightPFPerc = 0;
+        var apidiscountamt = Number(productFilter.Discount_Amount);
+        // var qtydis = apidiscountamt || PO_QTY ? Number(apidiscountamt / PO_QTY).toFixed(2) : 0;
+        var qtydis = PO_QTY === 0 ? Number(apidiscountamt).toFixed(2) : Number(apidiscountamt / PO_QTY).toFixed(2);
+        // var discountamt = Number(Number(qtydis) * this.ObjRdb1.Received_Qty).toFixed(2);
+        // var amount = Number(Number(this.ObjRdb1.Received_Qty) * Number(productFilter.Rate)).toFixed(2);
+        var discountamt = Number(Number(qtydis) * this.ObjRdb1.Challan_Qty).toFixed(2);
+        var amount = Number(Number(this.ObjRdb1.Challan_Qty) * Number(productFilter.Rate)).toFixed(2);
+        var FreightPFCharges = (Number(amount) * (Number(FreightPFPerc) / 100)).toFixed(2);
+        var amtwithfreightcharges = (Number(amount) + Number(FreightPFCharges)).toFixed(2);
+        var taxable = Number(amtwithfreightcharges) - Number(discountamt); //Number(this.totalRate) + Number(this.objaddPurchacse.Excise_Tax)
+        var taxsgstcgst =  (Number(Number(taxable) * Number(productFilter.GST_Percentage)) / 100).toFixed(2);
+        var totalamount = (Number(taxable) + Number(taxsgstcgst)).toFixed(2);
         var productObj = {
                     // RDB_Date : this.RDB_Date ? this.DateService.dateConvert(this.RDB_Date) : new Date(),
                     // Sub_Ledger_ID	: Number(this.ObjRdb.Sub_Ledger_ID),
@@ -502,25 +559,57 @@ export class RdbComponent implements OnInit {
                     // Vehicle_No : this.ObjRdb.Vehicle_No,
                     Product_ID : Number(this.ObjRdb1.Product_ID),
                     Product_Name : productFilter.Product_Name,
-                    HSN_Code : productFilter.HSN_Code,
+                    HSN_Code : this.ObjRdb1.HSN_Code,
                     UOM : productFilter.UOM,
+                    PO_QTY : this.ObjRdb1.PO_QTY,
+                    Pending_PO_QTY : this.ObjRdb1.Pending_PO_QTY,
                     Challan_Qty : Number(this.ObjRdb1.Challan_Qty),
                     Received_Qty : Number(this.ObjRdb1.Received_Qty),
                     Rate : productFilter.Rate,
-                    Taxable_Value :  Number(amount).toFixed(2),
+                    Freight_PF_Perc : Number(FreightPFPerc).toFixed(2),
+                    Freight_PF_Charges : Number(FreightPFCharges).toFixed(2),
+                    Discount_Amount : Number(discountamt).toFixed(2),
+                    Taxable_Value :  Number(taxable).toFixed(2),
                     Tax_Percentage : productFilter.GST_Percentage,
                     Total_Tax_Amount : Number(taxsgstcgst).toFixed(2),
                     Total_Amount : Number(totalamount).toFixed(2)
         };
-            this.RDBListAdd.push(productObj);
-            console.log("Product Submit",this.RDBListAdd);
-            this.RDBFormSubmit = false;
-            this.ObjRdb1 = new RDB1();
-            // this.PO_Doc_Date = new Date();
-            // this.RDB_Date = new Date();
-            // this.SE_Date = new Date();
-            this.dateDis = true;
-        }
+            
+            if(this.RDBListAdd.length && this.addPurchaseListInput){
+              this.RDBListAdd.forEach((xz:any,i) => {
+                // console.log(i)
+                if(xz.Product_ID == this.ObjRdb1.Product_ID){
+                  const productFilter = this.ProductList.filter(el=> Number(el.Product_ID) === Number(this.ObjRdb1.Product_ID))[0];
+                  // this.addPurchaseList[i] = {...this.objaddPurchacse}
+                  this.RDBListAdd[i].Product_ID =  Number(this.ObjRdb1.Product_ID)
+                  this.RDBListAdd[i].Product_Name = productFilter.Product_Name
+                  this.RDBListAdd[i].UOM = this.ObjRdb1.UOM
+                  this.RDBListAdd[i].HSN_Code = this.ObjRdb1.HSN_Code
+                  this.RDBListAdd[i].Rate = Number(productFilter.Rate),
+                  this.RDBListAdd[i].Challan_Qty  = Number(this.ObjRdb1.Challan_Qty)
+                  this.RDBListAdd[i].Received_Qty = Number(this.ObjRdb1.Received_Qty)
+                  this.RDBListAdd[i].Discount_Amount = Number(discountamt).toFixed(2)
+                  this.RDBListAdd[i].Taxable_Value = Number(taxable).toFixed(2)
+                  this.RDBListAdd[i].Tax_Percentage = Number(productFilter.GST_Percentage)
+                  this.RDBListAdd[i].Total_Tax_Amount = Number(taxsgstcgst).toFixed(2)
+                  this.RDBListAdd[i].Total_Amount = Number(totalamount).toFixed(2)
+                }
+               });
+               console.log("Product Update",this.RDBListAdd);
+               this.addClear()
+             }
+             else{
+              this.RDBListAdd.push(productObj);
+              console.log("Product Submit",this.RDBListAdd);
+              this.RDBFormSubmit = false;
+              this.ObjRdb1 = new RDB1();
+              // this.PO_Doc_Date = new Date();
+              // this.RDB_Date = new Date();
+              // this.SE_Date = new Date();
+              this.dateDis = false;
+              this.addClear()
+             }
+        // }
         }
         else {
           this.compacctToast.clear();
@@ -541,8 +630,56 @@ export class RdbComponent implements OnInit {
           detail: "Challan Qty is more than PO Qty "
         });
       }
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "PO Date can't be greater than RDB Date "
+      });
+    }
   }
   }
+  // Edit Add RDB 
+  EditAdd(inx:any){
+  // console.log(this.addPurchaseList[inx])
+  // this.objaddPurchacse.Req_No = this.addPurchaseList[inx].Req_No
+  // this.addPurchaseListInputField = this.addPurchaseList[inx]
+  // setTimeout(() => {
+    // this.getProductDetails(this.ObjRdb.PO_Doc_No)
+  // }, 300);
+           this.ProductList.push({
+             label : this.RDBListAdd[inx].Product_Name,
+             value : this.RDBListAdd[inx].Product_ID,
+             Product_Name : this.RDBListAdd[inx].Product_Name,
+             Product_ID : this.RDBListAdd[inx].Product_ID,
+             Rate : this.RDBListAdd[inx].Rate,
+             Discount_Amount : Number(this.RDBListAdd[inx].PO_Discount_Amount),
+             GST_Percentage : this.RDBListAdd[inx].Tax_Percentage
+           });
+   this.ObjRdb1.Product_ID = this.RDBListAdd[inx].Product_ID
+  //  this.objaddPurchacse = {...this.addPurchaseList[inx]}
+   this.ObjRdb1.UOM = this.RDBListAdd[inx].UOM
+   this.ObjRdb1.HSN_Code = this.RDBListAdd[inx].HSN_Code;
+   this.addPurchaseListInput = true
+   this.ObjRdb1.PO_QTY =  this.RDBListAdd[inx].PO_QTY
+   this.ObjRdb1.Pending_PO_QTY = this.RDBListAdd[inx].Pending_PO_QTY
+   this.ObjRdb1.Challan_Qty =  this.RDBListAdd[inx].Challan_Qty
+   this.ObjRdb1.Received_Qty = this.RDBListAdd[inx].Received_Qty
+
+}
+addClear(){
+      this.ObjRdb1 = new RDB1();
+      this.RDBFormSubmit = false;
+      if(this.buttonname === "Update") {
+      this.ProductList = [];
+      }
+      this.addPurchaseListInput = false
+      // this.addPurchaseListInputField = {}
+      // console.log("addPurchaseList",this.addPurchaseList);
+}
   delete(index) {
     this.RDBListAdd.splice(index,1)
 
@@ -552,14 +689,20 @@ export class RdbComponent implements OnInit {
     if(this.RDBListAdd.length) {
       let tempArr:any =[]
       this.RDBListAdd.forEach(item => {
-        const obj = {
+         tempArr.push({
+            RDB_No : this.DocNo ? this.DocNo : 'A',
             Product_ID : item.Product_ID,
             //Product_Description : item.Product_Description,
             HSN_Code : item.HSN_Code,
             UOM : item.UOM,
+            PO_QTY : item.PO_QTY,
+            Pending_PO_QTY : item.Pending_PO_QTY,
             Challan_Qty : Number(item.Challan_Qty),
             Received_Qty : Number(item.Received_Qty),
             Rate : Number(item.Rate),
+            Freight_PF_Perc : Number(item.Freight_PF_Perc),
+            Freight_PF_Charges : Number(item.Freight_PF_Charges),
+            Discount_Amount : Number(item.Discount_Amount).toFixed(2),
             Taxable_Value : Number(item.Taxable_Value).toFixed(2),
             Tax_Percentage : item.Tax_Percentage,
             Total_Tax_Amount : Number(item.Total_Tax_Amount).toFixed(2),
@@ -582,9 +725,11 @@ export class RdbComponent implements OnInit {
             LR_No_Date : this.ObjRdb.LR_No_Date,
             Vehicle_No : this.ObjRdb.Vehicle_No,
             Created_By : this.commonApi.CompacctCookies.User_ID,
-            Status : "PENDING"
-        }
-
+            Status : "PENDING",
+            Ins_Dept_ID : this.objDeptUser.Ins_Dept_ID,
+            Ins_USER_ID : this.objDeptUser.Ins_USER_ID,
+        })
+      // console.log("obj",obj)
         // const TempObj = {
         // UOM : "PCS",
         //   Doc_No : this.PPdoc_no ? this.PPdoc_no : "A",
@@ -595,16 +740,73 @@ export class RdbComponent implements OnInit {
         //   Autho_One_Staus : "NO"
 
         // }
-        tempArr.push(obj);
+        //tempArr.push({...obj,...this.objDeptUser});
+        console.log("objDeptUser",this.objDeptUser)
       });
       console.log(tempArr)
       return JSON.stringify(tempArr);
 
     }
    }
-   SaveRDB(valid){
+   ShowDeptUserPopUp(valid){
+    this.GetDepartment();
+    this.GetUser();
+    this.DeptUserModel = false;
     this.Spinner = true;
     this.RDBFormSubmit2 = true;
+    this.DeptUserFormSubmitted = false;
+    if (this.buttonname === "Create"){
+    this.objDeptUser = new DeptUser();
+    }
+    if (valid && this.RDBListAdd.length) {
+      this.DeptUserModel = true;
+    }
+    else{
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Something Wrong"
+      });
+    }
+   }
+   Cancle(){
+    this.DeptUserModel = false;
+    this.DeptUserSpinner = false;
+    this.DeptUserFormSubmitted = false;
+    if (this.buttonname === "Create") {
+      this.objDeptUser = new DeptUser();
+    }
+    this.Spinner = false;
+   }
+   GetDepartment(){
+    const obj = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+      "Report_Name_String": "Get_Department",
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.DepartmentList = data
+    //  console.log("DepartmentList",this.DepartmentList)
+    })
+   }
+   GetUser(){
+    const obj = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+      "Report_Name_String": "Get_User",
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.UsertList = data
+    //  console.log("UsertList",this.UsertList)
+    })
+   }
+   SaveRDB(valid){
+    // this.Spinner = true;
+    // this.RDBFormSubmit2 = true;
+    this.DeptUserSpinner = true;
+    this.DeptUserFormSubmitted = true;
     this.ngxService.start();
     this.Save = false;
     this.Del = false;
@@ -675,6 +877,7 @@ export class RdbComponent implements OnInit {
     }
     else{
       this.Spinner = false;
+      this.DeptUserSpinner = false; 
       this.ngxService.stop();
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -687,7 +890,7 @@ export class RdbComponent implements OnInit {
 
    }
    onConfirmSave(){
-    const obj = {
+   const obj = {
       "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
       "Report_Name_String":"Create_BL_Txn_Purchase_Challan_RDB",
      "Json_Param_String": this.DataForSaveProduct()
@@ -698,17 +901,18 @@ export class RdbComponent implements OnInit {
       var tempID = data[0].Column1;
       if(data[0].Column1){
         this.compacctToast.clear();
-        //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+        const mgs = this.buttonname === 'Create' ? "Created" : "updated";
         this.compacctToast.add({
          key: "compacct-toast",
          severity: "success",
          summary: "Return_ID  " + tempID,
-         detail: "Succesfully Saved" //+ mgs
+         detail: "Succesfully " + mgs
        });
               this.Printrdb(data[0].Column1);
               this.ObjRdb = new RDB();
               this.ObjRdb1 = new RDB1();
               this.RDBListAdd = [];
+              this.ProductList = [];
               this.Spinner = false;
               this.objRdb2 = new RDB2()
               this.RDBFormSubmit2 = false;
@@ -723,12 +927,23 @@ export class RdbComponent implements OnInit {
               this.ObjRdb.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
               this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
               this.ObjRdb.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-              this.ObjRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;  
-              this.deleteError = false        
+              this.ObjRdb.godown_id = this.StockList.length === 1 ? this.StockList[0].godown_id : undefined;  
+              this.deleteError = false;
+              this.DeptUserSpinner = false;   
+              this.DeptUserFormSubmitted = false;
+              this.objDeptUser = new DeptUser();
+              this.DeptUserModel = false;
+              this.DocNo = undefined;
+              if(this.buttonname === "Update") {
+                this.tabIndexToView = 0;
+                this.items = ["BROWSE", "CREATE", "PENDING PURCHASE ORDER", "RDB REGISTER"];
+                this.buttonname = "Create";
+              }
       } 
       else{
         this.Spinner = false;
         this.ngxService.stop();
+        this.DeptUserSpinner = false; 
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -739,53 +954,69 @@ export class RdbComponent implements OnInit {
       }
     })
    }
-  //  Edit(col){
-    // this.clearData();
-    // this.DocNo = undefined;
-    // if(col.Doc_No){
-    //   this.DocNo = col.Doc_No;
-    //   this.tabIndexToView = 1;
-    //   this.items = ["BROWSE", "UPDATE", "PENDING PURCHASE ORDER", "RDB REGISTER"];
-    //   this.buttonname = "Update";
-    //   this.getedit(col.Doc_No);
-    //  }
-  //  }
-  //  getedit(Dno){
-  //   this.editlist = [];
-  //   const obj = {
-  //     "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
-  //     "Report_Name_String": "Purchase_Order_Get",
-  //     "Json_Param_String": JSON.stringify([{Doc_No : Dno}])
+   Edit(col){
+    this.clearData();
+    this.DocNo = undefined;
+    if(col.RDB_No){
+      this.DocNo = col.RDB_No;
+      this.tabIndexToView = 1;
+      this.items = ["BROWSE", "UPDATE", "PENDING PURCHASE ORDER", "RDB REGISTER"];
+      this.buttonname = "Update";
+      this.getedit(col.RDB_No);
+     }
+   }
+   getedit(Dno){
+    this.editlist = [];
+    const obj = {
+      "SP_String": "SP_BL_Txn_Purchase_Challan_RDB_Entry",
+      "Report_Name_String": "Get_Data_For_RDB_Edit",
+      "Json_Param_String": JSON.stringify([{RDB_No : Dno}])
   
-  //   }
-  //   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-  //     this.editlist = data;
-  //     console.log("Edit data",data);
-  //     this.ObjRdb = data[0],
-  //     this.RDB_Date = new Date(data[0].RDB_Date);
-  //     this.SE_Date = new Date(data[0].SE_Date);
-  //     this.INV_Date = new Date(data[0].INV_Date);
-  //     this.PO_Doc_Date = new Date(data[0].PO_Doc_Date);
-  //     // this.RDBListAdd = data[0].L_element;
-  //     data.forEach(element => {
-  //       const  productObj = {
-  //           Product_ID : element.Product_ID,
-  //           Product_Name : element.Product_Description,
-  //           HSN_Code : element.HSN_Code,
-  //           UOM : element.UOM,
-  //           Challan_Qty : Number(element.RateChallan_Qty),
-  //           Received_Qty : element.Received_Qty,
-  //           Rate :  Number(element.Rate),
-  //           Taxable_Value : Number(element.Taxable_Value).toFixed(2),
-  //           Tax_Percentage : Number(element.Tax_Percentage),
-  //           Total_Tax_Amount : Number(element.Total_Tax_Amount).toFixed(2),
-  //           Total_Amount : Number(element.Total_Amount).toFixed(2)
-  //         };
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.editlist = data;
+      console.log("Edit data",data);
+      this.ObjRdb = data[0];
+      this.objRdb2 = data[0];
+      this.objDeptUser = data[0];
+      this.getStockPoint(data[0].Cost_Cen_ID,data[0].godown_id);
+      this.RDB_Date = new Date(data[0].RDB_Date);
+      this.SE_Date = new Date(data[0].SE_Date);
+      this.INV_Date = new Date(data[0].Inv_Date);
+      // this.RDBListAdd = data[0].L_element;
+      if(this.editlist.length) {
+        this.editlist.forEach(element => {
+          element['label'] = element.PO_Doc_No,
+          element['value'] = element.PO_Doc_No
+        });
+       this.PoOrderList = data;
+      }
+      this.ObjRdb.PO_Doc_No = data[0].PO_Doc_No;
+      this.PO_Doc_Date = new Date(data[0].PO_Doc_Date);
+      this.dateDis = false;
+      data.forEach(element => {
+        const  productObj = {
+            Product_ID : element.Product_ID,
+            Product_Name : element.Product_Description,
+            HSN_Code : element.HSN_Code,
+            UOM : element.UOM,
+            PO_QTY : element.PO_QTY,
+            Pending_PO_QTY : element.Pending_PO_QTY,
+            Challan_Qty : Number(element.Challan_Qty),
+            Received_Qty : element.Received_Qty,
+            Rate :  Number(element.Rate),
+            Discount_Amount : Number(element.Discount_Amount).toFixed(2),
+            PO_Discount_Amount : Number(element.PO_Discount_Amount).toFixed(2),
+            Taxable_Value : Number(element.Taxable_Value).toFixed(2),
+            Tax_Percentage : Number(element.Tax_Percentage).toFixed(2),
+            Total_Tax_Amount : Number(element.Total_Tax_Amount).toFixed(2),
+            Total_Amount : Number(element.Total_Amount).toFixed(2)
+          };
     
-  //         this.RDBListAdd.push(productObj);
-  //       });
-  //   })
-  //  }
+          this.RDBListAdd.push(productObj);
+        });
+    })
+   }
   Deleterdb(obj){
     this.RDBNo = undefined;
     this.Del = false;
@@ -856,6 +1087,7 @@ export class RdbComponent implements OnInit {
     this.Spinner = false;
     this.ngxService.stop();
     this.deleteError = false;
+    this.DeptUserSpinner = false;
   }
   Printrdb(DocNo) {
     if(DocNo) {
@@ -880,13 +1112,14 @@ export class RdbComponent implements OnInit {
     this.ObjRdb1.UOM = undefined;
     this.ObjRdb1.HSN_Code = undefined;
     this.ObjRdb1.PO_QTY = undefined;
-    const productFilter = this.Allproduct.filter(el=> Number(el.Product_ID) === Number(productID))[0];
+    const productFilter = this.ProductList.filter(el=> Number(el.Product_ID) === Number(productID))[0];
     console.log(productFilter);
     this.ObjRdb1.UOM = productFilter.UOM ? productFilter.UOM : " ";
     this.ObjRdb1.HSN_Code = productFilter.HSN_NO ? productFilter.HSN_NO : " ";
-    this.ObjRdb1.PO_QTY = productFilter.Qty ? productFilter.Qty : " ";
-    this.ObjRdb1.Challan_Qty = productFilter.Qty;
-    this.ObjRdb1.Received_Qty = productFilter.Qty;
+    this.ObjRdb1.PO_QTY = productFilter.PO_Qty ? productFilter.PO_Qty : " ";
+    this.ObjRdb1.Pending_PO_QTY = productFilter.Pending_PO_QTY ? productFilter.Pending_PO_QTY : " ";
+    // this.ObjRdb1.Challan_Qty = productFilter.PO_Qty;
+    // this.ObjRdb1.Received_Qty = productFilter.PO_Qty;
    }
    else {
      this.ObjRdb1.UOM = undefined;
@@ -927,8 +1160,8 @@ export class RdbComponent implements OnInit {
         }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.PendingPOList = data;
-        // this.BackupSearchedlist = data;
-        // this.GetDistinct();
+        this.BackupPendingPOList = data;
+        this.GetDistinctPenPo();
         if(this.PendingPOList.length){
           this.DynamicHeaderforPPO = Object.keys(data[0]);
         }
@@ -940,6 +1173,40 @@ export class RdbComponent implements OnInit {
         console.log("PendingPOList",this.PendingPOList);
       })
       }
+  }
+  exportexcel(Arr,fileName): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+  }
+  FilterDistPenPo() {
+    let producttype:any = [];
+    let SearchFieldsPenPo:any =[];
+  if (this.SelectedDistProductType.length) {
+    SearchFieldsPenPo.push('Product_Type');
+    producttype = this.SelectedDistProductType;
+  }
+  this.PendingPOList = [];
+  if (SearchFieldsPenPo.length) {
+    let LeadArr = this.BackupPendingPOList.filter(function (e) {
+      return (producttype.length ? producttype.includes(e['Product_Type']) : true)
+    });
+  this.PendingPOList = LeadArr.length ? LeadArr : [];
+  } else {
+  this.PendingPOList = [...this.BackupPendingPOList] ;
+  }
+  }
+  GetDistinctPenPo() {
+    let producttype:any = [];
+    this.DistProductType =[];
+    this.SelectedDistProductType =[];
+    this.PendingPOList.forEach((item) => {
+  if (producttype.indexOf(item.Product_Type) === -1) {
+    producttype.push(item.Product_Type);
+    this.DistProductType.push({ label: item.Product_Type, value: item.Product_Type });
+    }
+  });
+     this.BackupPendingPOList = [...this.PendingPOList];
   }
   PrintPPO(DocNo) {
     if(DocNo) {
@@ -956,9 +1223,10 @@ export class RdbComponent implements OnInit {
   CreateRDB(row){
     this.clearData();
     // this.ReqDate = new Date();
-    if(row.Doc_No) {
+    let Docno = row.Doc_No ? row.Doc_No : row.PO_No;
+    if(Docno) {
       this.tabIndexToView = 1;
-      this.dataforcreaterdb(row.Doc_No);
+      this.dataforcreaterdb(Docno);
     }
         
   }
@@ -978,7 +1246,7 @@ export class RdbComponent implements OnInit {
       this.PO_Doc_Date = new Date(data[0].Doc_Date);
       this.ObjRdb.Cost_Cen_ID = data[0].Cost_Cen_ID;
       this.getStockPoint(data[0].Cost_Cen_ID);
-      this.ObjRdb.godown_id = this.AllStockList.length === 1 ? this.AllStockList[0].godown_id : undefined;
+      this.ObjRdb.godown_id = this.StockList.length === 1 ? this.StockList[0].godown_id : undefined;
     })
   // this.Objdispatch.F_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
   // this.GetFromGodown();
@@ -1046,6 +1314,7 @@ export class RdbComponent implements OnInit {
     UOM : any;
     HSN_Code : any;
     PO_QTY:any;
+    Pending_PO_QTY:any;
     Challan_Qty : any;
     Received_Qty : any;
   }
@@ -1067,5 +1336,9 @@ export class RdbComponent implements OnInit {
   class RDBRegister {
     start_date : Date;
     end_date : Date;
+  }
+  class DeptUser {
+    Ins_Dept_ID : any;
+    Ins_USER_ID : any;
   }
 

@@ -263,7 +263,9 @@
                                     </tbody>
                                 </table>
                                 <p-footer>
-                                    <button type="button" pButton icon="pi pi-check" (click)="saveREquistion()" label="Yes"></button>
+                                    <button type="button" pButton icon="pi pi-check" (click)="saveREquistion()" [disabled]="indentsaveSpinner" label="Yes">
+                                        <p-progressSpinner *ngIf="indentsaveSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    </button>
                                     <button type="button" pButton icon="pi pi-close" (click)="display=false" label="No" class="ui-button-secondary"></button>
                                 </p-footer>
                             </p-dialog>

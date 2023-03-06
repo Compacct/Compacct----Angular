@@ -16,13 +16,20 @@ import { CompacctGooglePlacesDirective } from "./compacct.directives/compacct.pl
 import { CompacctHearingThresholdChartComponent } from "./compacct.components/compacct.hearing.threshold-chart/compacct.hearing.threshold-chart.component";
 import { CompacctFinyearwisedateDirective } from './compacct.directives/compacct.finyearwisedate.directive';
 import { CompacctNepaliDatepickerDirective } from './compacct.directives/compacct-nepali-datepicker.directive';
+import { CompacctOnlyAlphabetsDirective } from './compacct.directives/compacct-only-alphabets.directive';
+import { CompacctCharactersWthUnderscoreDirective } from './compacct.directives/compacct-characters-wth-underscore.directive';
+import { UpdateConsultancyComponent } from './compacct.components/compacct.forms/update-consultancy/update-consultancy.component'
 
 
 
 
 @NgModule({
   imports: [],
-  declarations: [CompacctDigitonlyDirective, CompacctGooglePlacesDirective,CompacctFinyearwisedateDirective, CompacctNepaliDatepickerDirective],
-  exports: [CompacctDigitonlyDirective,CompacctNepaliDatepickerDirective, CompacctGooglePlacesDirective,CompacctFinyearwisedateDirective]
+  declarations: [CompacctDigitonlyDirective,
+                CompacctGooglePlacesDirective,
+                CompacctFinyearwisedateDirective,
+                CompacctNepaliDatepickerDirective, 
+                CompacctOnlyAlphabetsDirective, CompacctCharactersWthUnderscoreDirective],
+  exports: [CompacctDigitonlyDirective,CompacctNepaliDatepickerDirective, CompacctGooglePlacesDirective,CompacctFinyearwisedateDirective,CompacctOnlyAlphabetsDirective,CompacctCharactersWthUnderscoreDirective]
 })
 export class SharedModule {}

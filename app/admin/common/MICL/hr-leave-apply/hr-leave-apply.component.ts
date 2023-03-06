@@ -71,6 +71,18 @@ export class HrLeaveApplyComponent implements OnInit {
   SelectedDistEmpName:any = [];
   SearchFields:any = [];
 
+  ObjHrleaveSummary : HrleaveSummary = new HrleaveSummary();
+  HrLeaveSummarySearchFormSubmitted = false;
+  seachSpinnerForLS = false;
+  LeaveSummarydataList:any = [];
+  DynamicHeaderforLS:any = [];
+
+  ObjHrleaveLedger : HrleaveLedger = new HrleaveLedger();
+  HrLeaveLedgerSearchFormSubmitted = false;
+  seachSpinnerForLL = false;
+  LeaveLedgerdataList:any = [];
+  DynamicHeaderforLL:any = [];
+
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -81,15 +93,15 @@ export class HrLeaveApplyComponent implements OnInit {
     public $CompacctAPI: CompacctCommonApi,
   ) { }
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["LEAVE SUMMARY", "LEAVE LEDGER", "BROWSE", "CREATE"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
     ];
    
     this.header.pushHeader({
-      Header: "HR Leave Apply",
-      Link: " MICL -> HR-leave-apply"
+      Header: "Leave Application",
+      Link: " MICL -> Leave Application"
     })
   // this.minDateTo_Time = this.From_Time
     this.FromDatevalue = new Date(this.currentdate);
@@ -104,10 +116,12 @@ export class HrLeaveApplyComponent implements OnInit {
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["LEAVE SUMMARY", "LEAVE LEDGER", "BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.clearData();
     this.Editdisable = false;
+    this.HrLeaveSummarySearchFormSubmitted = false;
+    this.HrLeaveLedgerSearchFormSubmitted = false;
     // this.hrYearList();
   }
   clearData(){
@@ -118,11 +132,82 @@ export class HrLeaveApplyComponent implements OnInit {
     // this.To_Time = new Date(this.To_Time.setDate(this.From_Time.getDate() + 1 ))
     this.minToDate = this.FromDatevalue
     this.showBaln = undefined;
+    this.applydays = undefined;
     this.showErrorMsg = false
     this.GetNumberOfdays();
     this.ObjHrleave.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined;
     this.employeeData();
+    this.FromDatevalue = new Date();
+    this.minFromDate = new Date();
+    this.ToDatevalue = new Date();
     }
+  GetLeaveSummaryData(valid){
+      this.HrLeaveSummarySearchFormSubmitted = true;
+      this.seachSpinnerForLS = true;
+         const tempobj = {
+            HR_Year_ID : this.ObjHrleaveSummary.HR_Year_ID,
+            Emp_ID : this.ObjHrleaveSummary.Emp_ID
+           }
+      if(valid){
+      const obj = {
+        "SP_String":"SP_Leave_Application",
+        "Report_Name_String":"Leave_Summary",
+        "Json_Param_String": JSON.stringify([tempobj])
+      }
+       this.GlobalAPI.getData(obj)
+       .subscribe((data:any)=>{
+        this.LeaveSummarydataList = data;
+        // this.BackupSearchedlist = data;
+        // this.GetDistinct();
+        if(this.LeaveSummarydataList.length){
+          this.DynamicHeaderforLS = Object.keys(data[0]);
+        }
+        else {
+          this.DynamicHeaderforLS = [];
+        }
+        this.seachSpinnerForLS = false;
+        this.HrLeaveSummarySearchFormSubmitted = false;
+        console.log("LeaveSummarydataList",this.LeaveSummarydataList);
+        }); 
+      }
+      else {
+        this.seachSpinnerForLS = false;
+      }
+  }
+  GetLeaveLedgerData(valid){
+      this.HrLeaveLedgerSearchFormSubmitted = true;
+      this.seachSpinnerForLL = true;
+         const tempobj = {
+            HR_Year_ID : this.ObjHrleaveLedger.HR_Year_ID,
+            Emp_ID : this.ObjHrleaveLedger.Emp_ID,
+            Atten_Type_ID : this.ObjHrleaveLedger.Leave_Type
+           }
+      if(valid){
+      const obj = {
+        "SP_String":"SP_Leave_Application",
+        "Report_Name_String":"Leave_Ledger",
+        "Json_Param_String": JSON.stringify([tempobj])
+      }
+       this.GlobalAPI.getData(obj)
+       .subscribe((data:any)=>{
+        this.LeaveLedgerdataList = data;
+        // this.BackupSearchedlist = data;
+        // this.GetDistinct();
+        if(this.LeaveLedgerdataList.length){
+          this.DynamicHeaderforLL = Object.keys(data[0]);
+        }
+        else {
+          this.DynamicHeaderforLL = [];
+        }
+        this.seachSpinnerForLL = false;
+        this.HrLeaveLedgerSearchFormSubmitted = false;
+        console.log("LeaveLedgerdataList",this.LeaveLedgerdataList);
+        }); 
+      }
+      else {
+        this.seachSpinnerForLL = false;
+      }
+  }
   getDateRange(dateRangeObj) {
       if (dateRangeObj.length) {
         this.ObjBrowse.From_date = dateRangeObj[0];
@@ -141,7 +226,8 @@ export class HrLeaveApplyComponent implements OnInit {
        const tempobj = {
          Start_Date : From_date,
          End_Date : To_date,
-         Atten_Type_ID : this.ObjBrowse.Leave_Type
+         Atten_Type_ID : this.ObjBrowse.Leave_Type ? this.ObjBrowse.Leave_Type : 0,
+         User_ID : this.$CompacctAPI.CompacctCookies.User_ID
          }
     if(valid){
     const obj = {
@@ -239,7 +325,7 @@ this.AllData = [...this.BackupAllData] ;
     if(valid){
       console.log("HrleaveId==",this.HrleaveId);
       this.Spinner = true
-      if(this.$CompacctAPI.CompacctCookies.User_Type === "A") {
+      // if(this.$CompacctAPI.CompacctCookies.User_Type === "A") {
      this.ObjHrleave.Apply_From_Date = this.DateService.dateConvert(new Date(this.FromDatevalue));
      this.ObjHrleave.Apply_To_Date = this.DateService.dateConvert(new Date(this.ToDatevalue));
      this.ObjHrleave.Issued_From_Date = this.ObjHrleave.Apply_From_Date;
@@ -249,7 +335,7 @@ this.AllData = [...this.BackupAllData] ;
      this.ObjHrleave.HR_Remarks = this.ObjHrleave.Remarks
      //this.ObjHrleave.Leave_Month = "NA"
     // this.ObjHrleave.Leave_Year = "NA"
-      }
+      // }
       
         const obj = {
           "SP_String": "SP_Leave_Application",
@@ -272,7 +358,7 @@ this.AllData = [...this.BackupAllData] ;
             this.HrleaveId = undefined;
             this.txnId = undefined;
             this.Editdisable = false;
-            this.tabIndexToView = 0;
+            this.tabIndexToView = 2;
             this.leaveHrFormSubmitted = false;
             this.ObjHrleave =new Hrleave();
             this.FromDatevalue = new Date()
@@ -308,14 +394,19 @@ this.AllData = [...this.BackupAllData] ;
        this.ObjHrleave.No_Of_Days_Apply = diffDays + 1;
       //  this.ToDatevalue = new Date(this.ToDatevalue.setDate((this.FromDatevalue.getDate() + this.mndays) - 1 ))
        console.log("No_Of_Days_Apply",this.ObjHrleave.No_Of_Days_Apply);
+       this.getShowBaln();
     }
   }
   getShowBaln(){
-    if(this.ObjHrleave.Leave_Type && this.ObjHrleave.HR_Year_ID && this.ObjHrleave.Emp_ID){
+     this.ObjHrleave.Apply_From_Date = this.DateService.dateConvert(new Date(this.FromDatevalue));
+     this.ObjHrleave.Apply_To_Date = this.DateService.dateConvert(new Date(this.ToDatevalue));
+    if(this.ObjHrleave.Leave_Type && this.ObjHrleave.HR_Year_ID && this.ObjHrleave.Emp_ID && this.ObjHrleave.Apply_From_Date && this.ObjHrleave.Apply_To_Date){
       const TempSendData = {
         Emp_ID : Number(this.ObjHrleave.Emp_ID),
         HR_Year_ID : Number(this.ObjHrleave.HR_Year_ID),
-        LEAVE_TYPE : this.ObjHrleave.Leave_Type
+        LEAVE_TYPE : this.ObjHrleave.Leave_Type,
+        Issued_From_Date : this.ObjHrleave.Apply_From_Date,
+        Issued_To_Date : this.ObjHrleave.Apply_To_Date
       }
       const obj = {
         "SP_String": "SP_Leave_Application",
@@ -327,7 +418,7 @@ this.AllData = [...this.BackupAllData] ;
          console.log("Show Blan",data)
          this.showBaln = data[0].Balance;
        // this.checkLeave();
-       this.getminday();
+      //  this.getminday();
        })
     }
   
@@ -335,7 +426,7 @@ this.AllData = [...this.BackupAllData] ;
   getminday(){
     this.mndays = undefined;
     this.applydays = undefined;
-    this.minFromDate  = new Date();
+    // this.minFromDate  = new Date();
   if(this.ObjHrleave.Leave_Type) {
     const ctrl = this;
     const mindayobj = $.grep(ctrl.leaveList,function(item:any) {return Number(item.Atten_Type_ID) == Number(ctrl.ObjHrleave.Leave_Type)})[0];
@@ -346,14 +437,23 @@ this.AllData = [...this.BackupAllData] ;
     //this.FromDatevalue = new Date(new Date().getDate() + Number(mindayobj.Min_day))
     this.mndays = mindayobj.Min_day;
     this.applydays = mindayobj.Apply_day;
-
-    this.FromDatevalue =  new Date(this.minFromDate.setDate(new Date().getDate() + Number(mindayobj.Apply_day)));
+    if(this.mndays != 0) {
+    this.minFromDate  = new Date(new Date().setDate(new Date().getDate() + Number(mindayobj.Apply_day)));
+    this.FromDatevalue =  new Date(new Date().setDate(new Date().getDate() + Number(mindayobj.Apply_day)));
     this.minToDate  = new Date(this.FromDatevalue);
     this.ToDatevalue = new Date(this.minToDate.setDate(new Date(this.FromDatevalue).getDate() + (Number(mindayobj.Min_day) - 1)))
-    
+    }
+    else if (this.mndays == 0) {
+      this.minFromDate  = new Date(new Date().setDate(new Date().getDate() - Number(1000)));
+      this.FromDatevalue =  new Date();
+      this.minToDate  = new Date(new Date().setDate(new Date().getDate() - Number(1000)));
+      this.maxToDate = new Date(new Date().setDate(new Date().getDate() + Number(1000)));
+      this.ToDatevalue = new Date();
+    }
     // this.To_Time = new Date(this.To_Time.setDate(this.From_Time.getDate() + 1 ))
     // 
     //this.getapplydayschange();
+    this.getShowBaln();
   }
 }
  getMaxMindate(){
@@ -436,6 +536,16 @@ onConfirm() {
 onReject() {
   this.compacctToast.clear("c");
 }
+}
+
+class HrleaveSummary {
+  Emp_ID:any;
+  HR_Year_ID:any;				
+}
+class HrleaveLedger {
+  Emp_ID:any;
+  HR_Year_ID:any;
+  Leave_Type:any;
 }
 class Hrleave {
   Emp_ID:any;

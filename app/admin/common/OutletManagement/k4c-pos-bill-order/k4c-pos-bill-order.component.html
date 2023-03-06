@@ -9,7 +9,39 @@
                 <div class="form-group">
                     <div class='col-sm-12'>
                         <label class="control-label">Order No</label>
-                        <input class="form-control" name="oRDER_nO" #oRDER_nO="ngModel" id='OrderNoCheck' (keydown)="onKeydownMain3($event, 'OrderNoCheck')" [(ngModel)]="ClickedOnlineLedger['Order_No']" placeholder="Order No">
+                        <input class="form-control" name="oRDER_nO" #oRDER_nO="ngModel" id='OrderNoCheck' oninput="event.target.value = event.target.value.replace(/[^0-9]/g, '');" maxlength="12" (keypress)="onKeypressEvent($event)" ngModelChange="pastefunction()" (keydown)="onKeydownMain3($event, 'OrderNoCheck')" [(ngModel)]="ClickedOnlineLedger['Order_No']" placeholder="Order No">
+                    </div>
+                    <div class='col-sm-12' *ngIf="keypressmsg && !ClickedOnlineLedger['Order_No']">
+                    <p style="color:red">{{keypressmsg}}</p>
+                    </div>
+                    <div class='col-sm-12'>
+                        <label class="control-label">Order Date</label>
+                        <ejs-datepicker [format]="'dd/MMM/yyyy'" id='Customer_DOB' name="Customer_DOB" #Customer_DOB="ngModel" [(ngModel)]="ClickedOnlineLedger['Order_Date']" placeholder="dd/MMM/yyyy">
+                        </ejs-datepicker>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="row text-center" style="margin-top: 2em;">
+            <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="OrderNoZ" styleClass="custom-orderno-toast" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div class="row" style="text-align: center">
+            <i class="pi pi-id-card" style="font-size: 3em"></i>
+            <!-- <h3>{{ message.summary }}</h3>
+      <p>{{ message.detail }}</p> -->
+            <form>
+                <div class="form-group">
+                    <div class='col-sm-12'>
+                        <label class="control-label">Order No</label>
+                        <input class="form-control" name="oRDER_nO" #oRDER_nO="ngModel" id='OrderNoCheck' oninput="event.target.value = event.target.value.replace(/[^0-9]/g, '');" maxlength="10" (keypress)="onKeypressEvent($event)" (keydown)="onKeydownMain3($event, 'OrderNoCheck')" [(ngModel)]="ClickedOnlineLedger['Order_No']" placeholder="Order No">
+                    </div>
+                    <div class='col-sm-12' *ngIf="keypressmsg && !ClickedOnlineLedger['Order_No']">
+                        <p style="color:red">{{keypressmsg}}</p>
                     </div>
                     <div class='col-sm-12'>
                         <label class="control-label">Order Date</label>
@@ -164,7 +196,17 @@
                 <div class="info-box bg-fuchsia-active" (click)='RedirectTo("factory")'>
                     <span class="info-box-icon"><i class="fa fa-truck"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text" style="font-size: 1.2em;">Factory Return</span>
+                        <span class="info-box-text" style="font-size: 1.2em;">Factory Return Finished</span>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class=" col-sm-6">
+                <div class="info-box RTFstore" (click)='RedirectTo("factorystore")'>
+                    <span class="info-box-icon"><i class="fa fa-truck" style="color: white;"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text" style="font-size: 1.2em; color: white;">Factory Return Store</span>
 
                     </div>
                 </div>
@@ -281,7 +323,7 @@
                                         <th>Total Amount</th>
                                         <th>Adv</th>
                                         <th>Due</th>
-                                        <th>Action</th>
+                                        <!-- <th>Action</th> -->
 
 
                                     </tr>
@@ -299,11 +341,11 @@
                                         <td><b>{{col.Total_Amount}}</b></td>
                                         <td class="text-success">{{col.Advance}}</td>
                                         <td class="text-danger">{{col.Net_Due}}</td>
-                                        <td>
+                                        <!-- <td>
                                             <button type="button" (click)="BillWithoutStock(col)" class="btn btn-primary">
                                              <i class="fa fa-file-text-o"></i>&nbsp;  Bill Without Stock
                                             </button>
-                                        </td>
+                                        </td> -->
 
                                     </tr>
                                 </ng-template>
@@ -449,7 +491,7 @@
                 </div>
                 <div class='col-sm-12'>
                     <label class="control-label">Customer Name <sup class="text-danger">*</sup></label>
-                    <input class="form-control" name="Customer_Name" id='CustomerName' #Customer_Name="ngModel" (keydown)="onKeydownMain2($event, 'customerNAme')" [(ngModel)]="Objcustomerdetail.Contact_Name" [disabled]="NoPhonedisable" [ngClass]="{'clearance':CustomerDetailsFormSubmitted && Customer_Name.errors?.required}"
+                    <input class="form-control" name="Customer_Name" id='CustomerName' #Customer_Name="ngModel" (keydown)="onKeydownMain2($event, 'customerNAme')" [(ngModel)]="Objcustomerdetail.Contact_Name" [disabled]="namedisabled" [ngClass]="{'clearance':CustomerDetailsFormSubmitted && Customer_Name.errors?.required}"
                         placeholder="Customer Name" required>
                 </div>
                 <div class='col-sm-12'>
@@ -553,7 +595,7 @@
                 </div>
                 <div class='col-sm-12'>
                     <label class="control-label">Customer Name <sup class="text-danger">*</sup></label>
-                    <input class="form-control" name="Customer_Name" id='CustomerName' #Customer_Name="ngModel" (keydown)="onKeydownMain2($event, 'customerNAme')" [(ngModel)]="Objcustomerdetail.Contact_Name" [disabled]="NoPhonedisable" [ngClass]="{'clearance':CustomerDetailsFormSubmitted && Customer_Name.errors?.required}"
+                    <input class="form-control" name="Customer_Name" id='CustomerName' #Customer_Name="ngModel" (keydown)="onKeydownMain2($event, 'customerNAme')" [(ngModel)]="Objcustomerdetail.Contact_Name" [disabled]="namedisabled" [ngClass]="{'clearance':CustomerDetailsFormSubmitted && Customer_Name.errors?.required}"
                         placeholder="Customer Name" required>
                 </div>
                 <div class='col-sm-12'>

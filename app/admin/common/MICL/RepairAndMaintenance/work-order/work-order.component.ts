@@ -123,6 +123,26 @@ export class WorkOrderComponent implements OnInit {
   TermSpinner = false;
   hrYeatList:any = [];
   HR_Year_ID: any;
+  
+  addPurchaseListInput:boolean = false
+  addPurchaseListInputField:any = {}
+  editorDis:boolean = false;
+  ObjTerm:Term = new Term();
+  TermList:any = [];
+  TermFormSubmitted:boolean = false;
+  AddTermList:any = [];
+  
+  GrTermAmount:number = 0
+  GrGstTermAmt:number = 0
+  grNetTerm:number = 0
+  SearchedlistPanding:any = [];
+  PandingFormSubmitted = false;
+  seachPendSpinner = false;
+  disBackUp:any = undefined;
+
+  DynamicHeaderPen:any = [];
+  TCSTaxRequiredValidation = false;
+  TCSdataList:any = [];
 
   constructor(
     private $http: HttpClient ,
@@ -148,7 +168,7 @@ export class WorkOrderComponent implements OnInit {
 
   ngOnInit() {
     $(document).prop('title', this.headerText ? this.headerText : $('title').text());
-    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS'];
+    this.items = [ 'BROWSE', 'CREATE', 'PENDING MAINTENANCE INDENT'];
     this.menuList = [
       {label: 'Edit', icon: 'pi pi-fw pi-user-edit'},
       {label: 'Delete', icon: 'fa fa-fw fa-trash'}
@@ -163,8 +183,10 @@ export class WorkOrderComponent implements OnInit {
       this.GetCostCenter();
       this.GetCurrency();
       this.GetOrderType();
-      this.GetProductsDetalis();
+      // this.GetProductsDetalis();
      // this.getProduct();
+      this.GetRequlist();
+      this.GettermAmt();
       this.getAllData(true);
       this.getcompany();
       this.getCostcenter();
@@ -177,17 +199,18 @@ export class WorkOrderComponent implements OnInit {
   } 
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = [ 'BROWSE', 'CREATE'];
+    this.items = [ 'BROWSE', 'CREATE', 'PENDING MAINTENANCE INDENT'];
     this.buttonname = "Create";
     this.clearData();
     this.GetCostCenter();
+    this.addPurchaseListInput = false
       // setTimeout(function(){
       //   const elem:any  = document.getElementById('creditdays');
       //   elem.focus();
       // },500)
   }
   clearData(){
-    this.gettermsdetails();
+    // this.gettermsdetails();
     this.viewHeader = "";
     this.DetalisObj = {};
     this.ObjWorkOrder = new WorkOrder();
@@ -196,6 +219,7 @@ export class WorkOrderComponent implements OnInit {
     this.Spinner = false;
     this.WorkAddFormSubmit = false;
     this.purchaseFormSubmitted = false;
+    this.TCSTaxRequiredValidation = false;
     this.validatation.required = false;
     this.addPurchaseList = []; 
     this.rate = undefined;
@@ -220,15 +244,26 @@ export class WorkOrderComponent implements OnInit {
     this.objpendingPurIndPro.Cost_Cen_ID = this.costcenterListPeding.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
     this.ObjWorkOrder.Billing_To  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.ObjWorkOrder.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.GetRequlist();
     this.ObjWorkOrder.Credit_Days = 0;
     this.ObjWorkOrder.Currency_ID = 1;
-    this.ObjWorkOrder.Type_ID = 1;
+    this.ObjWorkOrder.Type_ID = this.OrderTypeList.length ? this.OrderTypeList[0].Type_ID : undefined;
     this.seachPendingReqSpinner = false;
+    this.AddTermList = []
+    this.GrTermAmount = 0
+    this.GrGstTermAmt = 0
+    this.grNetTerm = 0
+    this.getAllTotal()
     // this.initDate = [new Date(),new Date()];
     this.productList = [];
     this.RequistionPendingFormSubmit =false;
     this.productDetalisView = false;
     this.productDetalisViewList = [];
+    this.addPurchaseListInputField = {}
+    this.editorDis = true
+    setTimeout(() => {
+      this.editorDis = false
+    }, 500);
    }
   onReject() {
     this.compacctToast.clear("c");
@@ -300,6 +335,7 @@ export class WorkOrderComponent implements OnInit {
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.costCenterList = data;
       this.ObjWorkOrder.Cost_Cen_ID  = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.objpendingreq.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       if(this.ObjWorkOrder.Cost_Cen_ID){
         this.getCostCenterDetalis();
       }
@@ -311,6 +347,7 @@ export class WorkOrderComponent implements OnInit {
   getCostCenterDetalis(){
     if(this.ObjWorkOrder.Cost_Cen_ID){
       this.DetalisObj = {};
+      // this.getreq();
        const tempVal = this.costCenterList.filter(el=> Number(el.Cost_Cen_ID) === Number(this.ObjWorkOrder.Cost_Cen_ID))
        this.DetalisObj = tempVal[0]
       console.log("DetalisObj",this.DetalisObj);
@@ -350,12 +387,47 @@ export class WorkOrderComponent implements OnInit {
   GetOrderType(){
     const obj = {
       "SP_String": "sp_Comm_Controller",
-      "Report_Name_String": "Get_Order_Type_Dropdown",
+      "Report_Name_String": "Get_Work_Order_Type_Dropdown",
       }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.OrderTypeList = data;
-        this.ObjWorkOrder.Type_ID = 1;
+        this.ObjWorkOrder.Type_ID = data[0].Type_ID;
       console.log("OrderTypeList",this.OrderTypeList);
+    })
+  }
+  getreq(){
+    // if(this.openProject == 'N'){
+      if(this.objProjectRequi.Billing_To && this.objProjectRequi.Cost_Cen_ID){
+        this.GetRequlist();
+      }
+      else {
+        this.Requlist = []
+        this.objProjectRequi.Req_No = undefined
+      }
+    // }
+   
+  }
+  GetRequlist(){
+    const obj = {
+      "SP_String": "Sp_Work_Order",
+      "Report_Name_String": "Get_Requisition_No",
+      "Json_Param_String": JSON.stringify([{To_Cost_Cen_ID : this.ObjWorkOrder.Billing_To,F_Cost_Cen_ID:this.ObjWorkOrder.Cost_Cen_ID}])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // console.log("data",data)
+      // this.Requlist = data
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Req_No,
+          element['value'] = element.Req_No
+        });
+       this.Requlist = data;
+     // console.log("Requlist======",this.Requlist);
+      }
+       else {
+        this.Requlist = [];
+  
+      }
     })
   }
   GetProductsDetalis(){
@@ -369,7 +441,7 @@ export class WorkOrderComponent implements OnInit {
       const obj = {
         "SP_String": "Sp_Work_Order",
         "Report_Name_String": "Get_Product",
-        // "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify([{...this.objProjectRequi,...{Product_Type_ID : Number(this.ObjaddWorkOrder.Product_Type_ID)}}]) : JSON.stringify([{Product_Type_ID : Number(this.ObjaddWorkOrder.Product_Type_ID)}])
+        "Json_Param_String": JSON.stringify([{Req_No : this.ObjaddWorkOrder.Req_No}])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         // this.productDataList = data;
@@ -400,7 +472,90 @@ export class WorkOrderComponent implements OnInit {
     // }
   
   }
+  getProduct(id?,uom?,psc?){
+    if(this.ObjaddWorkOrder.Req_No){
+      this.productDataList = [];
+      this.productList = [];
+      this.ObjaddWorkOrder.Product_ID = undefined;
+      this.ObjaddWorkOrder.Product_Spec = undefined;
+      this.ObjaddWorkOrder.Unit = undefined
+      // let tempData:any = {}
+      // tempData = this.ObjaddWorkOrder.Req_No ? {Req_No : this.ObjaddWorkOrder.Req_No} : {Product_Type_ID : this.ObjaddWorkOrder.Product_Type_ID}
+      const obj = {
+        "SP_String": "Sp_Purchase_Order",
+        "Report_Name_String": "Get_Product_Against_Requisition_No",
+        "Json_Param_String": JSON.stringify([{Req_No : this.ObjaddWorkOrder.Req_No}])
+       }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        //console.log(data);
+        // this.productDataList = data;
+       
+        // console.log("productDataList",this.productDataList);
+        if(data.length) {
+          data.forEach(element => {
+            element['label'] = element.Product_Description,
+            element['value'] = element.Product_ID
+          });
+          this.productDataList = data;
+        } else {
+            this.productDataList = [];
+        }
+           if(id){
+            this.ObjaddWorkOrder.Product_ID = id ? id : 0
+
+           }
+          
+           this.ObjaddWorkOrder.Product_Spec = psc ? psc : undefined
+           this.ObjaddWorkOrder.Unit = uom ? uom : undefined;
+         
+        })
+    }
+    else {
+      this.productDataList = [];
+      this.productList = [];
+      let tempObj = {...this.ObjaddWorkOrder}
+      this.ObjaddWorkOrder = new addWorkOrder()
+      this.ObjaddWorkOrder.Req_No = tempObj.Req_No
+    }
+ 
+    }
+    RequisitionChange(){
+      // this.Requisiton_Type = undefined;
+      // this.Material_Type = undefined;
+      const tempAddObj = {...this.ObjaddWorkOrder}
+      this.ObjaddWorkOrder = new addWorkOrder()
+      this.ExpectedDeliverydate = new Date();
+      this.grTotal = 0;
+      this.taxAblTotal = 0;
+      this.disTotal = 0;
+      this.ExciTotal = 0;
+      this.GSTTotal  = 0;
+      this.NetTotal  = 0;
+      this.disBackUp = undefined
+      this.ObjaddWorkOrder.Req_No = tempAddObj.Req_No
+      if (this.ObjaddWorkOrder.Req_No) {
+        // const ctrl = this;
+        // const ReqNoObj = $.grep(ctrl.Requlist,function(item: any) {return item.Req_No == ctrl.objaddPurchacse.Req_No})[0];
+        // console.log(ReqNoObj);
+        // this.Requisiton_Type = ReqNoObj.Requisiton_Type;
+        // this.Material_Type = ReqNoObj.Material_Type;
+        this.getProduct();
+      }
+    }
   GetProductSpecification(){
+    const tempAddObj = {...this.ObjaddWorkOrder}
+  this.ObjaddWorkOrder = new addWorkOrder()
+  this.ExpectedDeliverydate = new Date();
+  this.grTotal = 0;
+  this.taxAblTotal = 0;
+  this.disTotal = 0;
+  this.ExciTotal = 0;
+  this.GSTTotal  = 0;
+  this.NetTotal  = 0;
+  this.disBackUp = undefined
+  this.ObjaddWorkOrder.Req_No = tempAddObj.Req_No
+  this.ObjaddWorkOrder.Product_Type_ID = tempAddObj.Product_Type_ID
+  this.ObjaddWorkOrder.Product_ID = tempAddObj.Product_ID
    if(this.ObjaddWorkOrder.Product_ID){
     let tempVal:any = this.productDataList.filter((el:any)=> Number(el.Product_ID) === Number(this.ObjaddWorkOrder.Product_ID));
     this.ObjaddWorkOrder.Product_Spec = tempVal[0].Product_Description;
@@ -432,7 +587,9 @@ export class WorkOrderComponent implements OnInit {
   getProductDetalis(){
      if(this.ObjaddWorkOrder.Product_ID){
         let tempVal = this.productDataList.filter(el=> Number(el.Product_ID) === Number(this.ObjaddWorkOrder.Product_ID))
+        if (!this.addPurchaseListInput) {
          this.ObjaddWorkOrder.Unit = tempVal[0].UOM
+        }
          console.log("tempVal",tempVal);
          this.GetTaxDetalis(this.ObjaddWorkOrder.Product_ID);
          if(this.ObjaddWorkOrder.Rate){
@@ -539,6 +696,7 @@ export class WorkOrderComponent implements OnInit {
         this.totalRate = this.ObjaddWorkOrder.taxable_AMT;
         if(this.ObjaddWorkOrder.taxable_AMT){
           this.GetGSTAmt();
+          this.getDis();
         }
        
       }
@@ -547,6 +705,7 @@ export class WorkOrderComponent implements OnInit {
         this.ObjaddWorkOrder.Gross_Amt = undefined;
         this.ObjaddWorkOrder.taxable_AMT = undefined;
         this.GetGSTAmt();
+        this.getDis();
       }
     }
    
@@ -593,50 +752,105 @@ export class WorkOrderComponent implements OnInit {
      
     }
   }
+  // getDis(){
+  //   if(this.ObjaddWorkOrder.Discount_Type === 'AMT'){
+  //       this.ObjaddWorkOrder.Discount_AMT = undefined;
+  //       //const tempTotal = this.totalAmtBackUp ? this.totalAmtBackUp : this.totalbackUp ? this.totalbackUp : this.totalRate
+  //       let taxacl:number =  this.ObjaddWorkOrder.taxable_AMT
+  //       this.ObjaddWorkOrder.taxable_AMT = undefined
+  //       this.ObjaddWorkOrder.Discount_AMT = this.ObjaddWorkOrder.Discount;
+  //       //  if(this.disAmtBackUpAMT > this.objaddPurchacse.Discount_AMT){
+  //       //   taxacl = Number(this.disAmtBackUpAMT) + Number(taxacl)
+  //       //  }
+  //       //  this.disAmtBackUpAMT = 0
+  //       //  this.disAmtBackUpAMT = this.objaddPurchacse.Discount_AMT ? Number(this.objaddPurchacse.Discount_AMT) : 0;
+  //       if(this.ObjaddWorkOrder.Discount_AMT){
+  //         this.ObjaddWorkOrder.taxable_AMT  = (Number(taxacl) - Number(this.ObjaddWorkOrder.Discount_AMT)).toFixed(2);
+  //         this.GetGSTAmt();
+  //       }
+  //       else {
+  //         this.ObjaddWorkOrder.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
+  //         this.GetGSTAmt();
+  //       }
+         
+  //       }
+  //     else if(this.ObjaddWorkOrder.Discount_Type === '%'){
+  //       this.ObjaddWorkOrder.Discount_AMT = undefined;
+  //       let taxacl:number =  this.ObjaddWorkOrder.taxable_AMT
+  //       this.ObjaddWorkOrder.taxable_AMT = undefined
+  //       let tempExiAmt = this.ObjaddWorkOrder.Excise_Tax ? Number(this.ObjaddWorkOrder.Excise_Tax) : 0 
+  //       let tempGrsAmt = this.ObjaddWorkOrder.Gross_Amt ? Number(this.ObjaddWorkOrder.Gross_Amt) : 0 
+  //       let totalAmt = (Number(tempExiAmt) + Number(tempGrsAmt))
+        
+  //      this.ObjaddWorkOrder.Discount_AMT = (Number(totalAmt) * Number(this.ObjaddWorkOrder.Discount)/100).toFixed(2);
+       
+  //      if(this.ObjaddWorkOrder.Discount_AMT){
+  //       this.ObjaddWorkOrder.taxable_AMT  = (Number(totalAmt) - Number(this.ObjaddWorkOrder.Discount_AMT)).toFixed(2);
+  //       this.GetGSTAmt();
+  //     }
+  //     else {
+  //       this.ObjaddWorkOrder.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
+  //       this.GetGSTAmt();
+  //     }
+  //       // this.objaddPurchacse.taxable_AMT = (Number(this.objaddPurchacse.taxable_AMT) - Number(this.objaddPurchacse.Discount_AMT)).toFixed(2);
+  //       // this.getTaxAble()
+  //     }
+  //    else {
+  //     this.ObjaddWorkOrder.Discount_AMT = undefined;
+  //     this.ObjaddWorkOrder.Total_Amount = undefined;
+  //     this.ObjaddWorkOrder.GST_AMT = undefined
+  //     this.ObjaddWorkOrder.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
+  //     this.GetGSTAmt();
+  //   }
+  // }
   getDis(){
     if(this.ObjaddWorkOrder.Discount_Type === 'AMT'){
-        this.ObjaddWorkOrder.Discount_AMT = undefined;
-        //const tempTotal = this.totalAmtBackUp ? this.totalAmtBackUp : this.totalbackUp ? this.totalbackUp : this.totalRate
-        let taxacl:number =  this.ObjaddWorkOrder.taxable_AMT
-        this.ObjaddWorkOrder.taxable_AMT = undefined
-        this.ObjaddWorkOrder.Discount_AMT = this.ObjaddWorkOrder.Discount;
-        //  if(this.disAmtBackUpAMT > this.objaddPurchacse.Discount_AMT){
-        //   taxacl = Number(this.disAmtBackUpAMT) + Number(taxacl)
-        //  }
-        //  this.disAmtBackUpAMT = 0
-        //  this.disAmtBackUpAMT = this.objaddPurchacse.Discount_AMT ? Number(this.objaddPurchacse.Discount_AMT) : 0;
-        if(this.ObjaddWorkOrder.Discount_AMT){
-          this.ObjaddWorkOrder.taxable_AMT  = (Number(taxacl) - Number(this.ObjaddWorkOrder.Discount_AMT)).toFixed(2);
+        if(this.ObjaddWorkOrder.Discount){
+          this.ObjaddWorkOrder.Discount_AMT = undefined;
+          const tempTotal = this.totalAmtBackUp ? this.totalAmtBackUp : this.totalbackUp ? this.totalbackUp : this.totalRate
+          this.ObjaddWorkOrder.taxable_AMT = undefined
+          this.ObjaddWorkOrder.Discount_AMT = this.ObjaddWorkOrder.Discount;
+          
+          if(this.ObjaddWorkOrder.Discount_AMT){
+            this.ObjaddWorkOrder.taxable_AMT  = (Number(tempTotal) - Number(this.ObjaddWorkOrder.Discount_AMT)).toFixed(2);
+            this.GetGSTAmt();
+          }
+          else {
+            this.ObjaddWorkOrder.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
+            this.GetGSTAmt();
+          }
+        }
+        else{
+          this.ObjaddWorkOrder.Discount_AMT = undefined
+        }
+        }
+      else if(this.ObjaddWorkOrder.Discount_Type === '%'){
+        if(this.ObjaddWorkOrder.Discount){
+          this.ObjaddWorkOrder.Discount_AMT = undefined;
+          let taxacl:number =  this.ObjaddWorkOrder.taxable_AMT
+          this.ObjaddWorkOrder.taxable_AMT = undefined
+          let tempExiAmt = this.ObjaddWorkOrder.Excise_Tax ? Number(this.ObjaddWorkOrder.Excise_Tax) : 0 
+          let tempGrsAmt = this.ObjaddWorkOrder.Gross_Amt ? Number(this.ObjaddWorkOrder.Gross_Amt) : 0 
+          let totalAmt = (Number(tempExiAmt) + Number(tempGrsAmt))
+          
+         this.ObjaddWorkOrder.Discount_AMT = (Number(totalAmt) * Number(this.ObjaddWorkOrder.Discount)/100).toFixed(2);
+         
+         if(this.ObjaddWorkOrder.Discount_AMT){
+          this.ObjaddWorkOrder.taxable_AMT  = (Number(totalAmt) - Number(this.ObjaddWorkOrder.Discount_AMT)).toFixed(2);
           this.GetGSTAmt();
         }
         else {
           this.ObjaddWorkOrder.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
           this.GetGSTAmt();
         }
-         
-        }
-      else if(this.ObjaddWorkOrder.Discount_Type === '%'){
-        this.ObjaddWorkOrder.Discount_AMT = undefined;
-        let taxacl:number =  this.ObjaddWorkOrder.taxable_AMT
-        this.ObjaddWorkOrder.taxable_AMT = undefined
-        let tempExiAmt = this.ObjaddWorkOrder.Excise_Tax ? Number(this.ObjaddWorkOrder.Excise_Tax) : 0 
-        let tempGrsAmt = this.ObjaddWorkOrder.Gross_Amt ? Number(this.ObjaddWorkOrder.Gross_Amt) : 0 
-        let totalAmt = (Number(tempExiAmt) + Number(tempGrsAmt))
         
-       this.ObjaddWorkOrder.Discount_AMT = (Number(totalAmt) * Number(this.ObjaddWorkOrder.Discount)/100).toFixed(2);
-       
-       if(this.ObjaddWorkOrder.Discount_AMT){
-        this.ObjaddWorkOrder.taxable_AMT  = (Number(totalAmt) - Number(this.ObjaddWorkOrder.Discount_AMT)).toFixed(2);
-        this.GetGSTAmt();
-      }
-      else {
-        this.ObjaddWorkOrder.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
-        this.GetGSTAmt();
-      }
-        // this.objaddPurchacse.taxable_AMT = (Number(this.objaddPurchacse.taxable_AMT) - Number(this.objaddPurchacse.Discount_AMT)).toFixed(2);
-        // this.getTaxAble()
+        }
+        else{
+          this.ObjaddWorkOrder.Discount_AMT = undefined
+        }
       }
      else {
+      this.ObjaddWorkOrder.Discount = undefined;
       this.ObjaddWorkOrder.Discount_AMT = undefined;
       this.ObjaddWorkOrder.Total_Amount = undefined;
       this.ObjaddWorkOrder.GST_AMT = undefined
@@ -650,13 +864,13 @@ export class WorkOrderComponent implements OnInit {
   AddPurchase(valid){
     this.WorkAddFormSubmit = true
     console.log("valid",valid);
-   if(valid){
+   if(valid && this.GetSameProWithInd()){
      const productFilter:any = this.productDataList.filter((el:any)=> Number(el.Product_ID) === Number(this.ObjaddWorkOrder.Product_ID))
      console.log("productFilter",productFilter[0])
      let saveData = {
         Product_ID: Number(this.ObjaddWorkOrder.Product_ID),
-        // Req_No: this.ObjaddWorkOrder.Req_No ? this.ObjaddWorkOrder.Req_No : "NA",
-        Product_Name:  productFilter[0].Product_Description,
+        Req_No: this.ObjaddWorkOrder.Req_No ? this.ObjaddWorkOrder.Req_No : "NA",
+        Product_Name:  this.addPurchaseListInput ? this.addPurchaseListInputField.Product_Name: productFilter[0].Product_Description, //productFilter[0].Product_Description,
         Product_Spec: this.ObjaddWorkOrder.Product_Spec,
         Exp_Delivery: this.DateService.dateConvert(new Date(this.ExpectedDeliverydate)),
         Qty: Number(this.ObjaddWorkOrder.Qty),
@@ -673,39 +887,172 @@ export class WorkOrderComponent implements OnInit {
         GST_Percentage: Number( this.ObjaddWorkOrder.Gst),
         GST_Amount: Number(this.ObjaddWorkOrder.GST_AMT),
      }
+     if(this.addPurchaseList.length && this.addPurchaseListInput){
+      this.addPurchaseList.forEach((xz:any,i) => {
+        // console.log(i)
+        if( xz.Product_ID == this.ObjaddWorkOrder.Product_ID){
+          this.addPurchaseList[i] = {...this.ObjaddWorkOrder}
+          this.addPurchaseList[i].Discount_Amount =  Number(this.ObjaddWorkOrder.Discount_AMT)
+          this.addPurchaseList[i].Taxable_Amount = Number(this.ObjaddWorkOrder.taxable_AMT)
+          this.addPurchaseList[i].GST_Percentage = Number(this.ObjaddWorkOrder.Gst)
+          this.addPurchaseList[i].GST_Amount =Number (this.ObjaddWorkOrder.GST_AMT)
+          this.addPurchaseList[i].Net_Amount  = Number(this.ObjaddWorkOrder.Total_Amount)
+          this.addPurchaseList[i].Product_Name = this.addPurchaseListInputField.Product_Name
+        }
+       });
+       this.addClear()
+       this.ObjaddWorkOrder.Req_No = this.addPurchaseList[0].Req_No;
+     }
+     else{
       this.addPurchaseList.push(saveData);
-      this.projectDisable = true
-      this.ObjaddWorkOrder = new addWorkOrder();
-      this.WorkAddFormSubmit = false;
-      this.productList = [];
-      console.log("addPurchaseList",this.addPurchaseList);
-      this.getAllTotal();
+      this.addClear()
+      this.ObjaddWorkOrder.Req_No = this.addPurchaseList[0].Req_No;
+     }
+      // this.addPurchaseList.push(saveData);
+      // this.projectDisable = true
+      // this.ObjaddWorkOrder = new addWorkOrder();
+      // this.WorkAddFormSubmit = false;
+      // this.productList = [];
+      // console.log("addPurchaseList",this.addPurchaseList);
+      // this.getAllTotal();
    }
  }
+ addClear(){
+  this.projectDisable = true
+      this.ObjaddWorkOrder = new addWorkOrder();
+      // this.Requisiton_Type = undefined;
+      // this.Material_Type = undefined;
+      this.totalAmtBackUp = undefined;
+      this.totalbackUp = undefined; 
+      this.totalRate = undefined;
+      this.WorkAddFormSubmit = false;
+      this.productList = [];
+      this.addPurchaseListInput = false
+      this.addPurchaseListInputField = {}
+      // console.log("addPurchaseList",this.addPurchaseList);
+      this.getAllTotal();
+      this.TcsAmtCalculation();
+ }
  GetSameProWithInd () {
-  // const sameproductwithindent = this.addPurchaseList.filter(item=> item.Req_No === this.ObjaddWorkOrder.Req_No && item.Product_ID === this.ObjaddWorkOrder.Product_ID );
-  // if(sameproductwithindent.length) {
-  //   this.compacctToast.clear();
-  //       this.compacctToast.add({
-  //         key: "compacct-toast",
-  //         severity: "error",
-  //         summary: "Warn Message",
-  //         detail: "Same Product with Same Indent no. Can't be Added."
-  //       });
-  //   return false;
-  //   } 
-  //   else {
-  //     return true;
-  //   }
+  if(!this.addPurchaseListInput){
+  const sameproductwithindent = this.addPurchaseList.filter(item=> item.Req_No === this.ObjaddWorkOrder.Req_No && item.Product_ID === this.ObjaddWorkOrder.Product_ID );
+  if(sameproductwithindent.length) {
+    this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Same Product with Same Indent no. Can't be Added."
+        });
+    return false;
+    } 
+    else {
+      return true;
+    }
+  }
+     else{
+      return true
+     }
+  }
+  // Edit Add Purchase 
+ EditAddPurchase(inx:any){
+  // console.log(this.addPurchaseList[inx])
+  // this.ObjaddWorkOrder.Req_No = this.addPurchaseList[inx].Req_No
+  this.addPurchaseListInputField = this.addPurchaseList[inx]
+  setTimeout(() => {
+    this.getProduct(this.addPurchaseList[inx].Product_ID,this.addPurchaseList[inx].UOM,this.addPurchaseList[inx].Product_Spec)
+  }, 300);
+   this.ObjaddWorkOrder.Product_ID = this.addPurchaseList[inx].Product_ID
+   this.ObjaddWorkOrder = {...this.addPurchaseList[inx]}
+   this.ObjaddWorkOrder.Unit = this.addPurchaseList[inx].UOM
+   this.ObjaddWorkOrder.Product_Spec = this.addPurchaseList[inx].Product_Spec
+   this.addPurchaseListInput = true
+  //  this.Requisiton_Type =  this.addPurchaseList[inx].Requisiton_Type
+  //  this.Material_Type = this.addPurchaseList[inx].Material_Type
+   this.ObjaddWorkOrder.Discount_AMT =  this.addPurchaseList[inx].Discount_Amount ? this.addPurchaseList[inx].Discount_Amount : undefined
+   this.ObjaddWorkOrder.taxable_AMT = this.addPurchaseList[inx].Taxable_Amount
+   this.ObjaddWorkOrder.Gst = this.addPurchaseList[inx].GST_Percentage
+   this.ObjaddWorkOrder.GST_AMT = this.addPurchaseList[inx].GST_Amount
+   this.ObjaddWorkOrder.Total_Amount  = this.addPurchaseList[inx].Net_Amount
+  
+}
+  GettermAmt(){
+    const obj = {
+      "SP_String": "Sp_Work_Order",
+      "Report_Name_String": "Get_Term",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.TermList = data
+    })
+  }
+  TermChange(){
+    this.ObjTerm.HSN_No = undefined;
+    if(this.ObjTerm.Term_ID) {
+    const ctrl = this;
+    const termobj = $.grep(ctrl.TermList,function(item: any) {return item.Term_ID == ctrl.ObjTerm.Term_ID})[0];
+    // console.log(termobj);
+    this.ObjTerm.Term_ID = termobj.Term_ID
+    this.ObjTerm.Term_Name = termobj.Term_Name;
+    this.ObjTerm.HSN_No = termobj.HSN_No;
+    this.ObjTerm.GST_Per = termobj.GST_Tax_Per;
+    this.ObjTerm.Sale_Pur = termobj.Sale_Pur;
+    }
+  }
+  AddTerm(valid){
+    this.TermFormSubmitted = true;
+    if(valid && this.TeramChek()) {
+      var TERMobj = {
+      Sale_Pur : this.ObjTerm.Sale_Pur,
+      Term_ID : this.ObjTerm.Term_ID,
+      Term_Name : this.ObjTerm.Term_Name,
+      Term_Amount : Number(this.ObjTerm.Term_Amount),
+      GST_Per : this.ObjTerm.GST_Per,
+      GST_Amount:  Number(Number(Number(this.ObjTerm.Term_Amount) * Number(this.ObjTerm.GST_Per) / 100).toFixed(2)),
+      HSN_No : this.ObjTerm.HSN_No,
+    };
+    this.AddTermList.push(TERMobj);
+    this.getAllTotal();
+    this.TcsAmtCalculation();
+    this.ObjTerm = new Term();
+    this.TermFormSubmitted = false;
+      
+    }
+  }
+   TeramChek(){
+    if(this.AddTermList.length){
+      const FilterAddTermList = this.AddTermList.find((el:any)=> Number(el.Term_ID) == Number(this.ObjTerm.Term_ID))
+      if(FilterAddTermList){
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Same Term Name Can't be Added."
+        });
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+    else{
+      return true;
+    }
+   }
+  DeteteTerm(index) {
+    this.AddTermList.splice(index,1)
+    this.getAllTotal()
+    this.TcsAmtCalculation();
   }
  async savePurchase(valid){
-   this.purchaseFormSubmitted = true
-   this.validatation.required = true
+   this.purchaseFormSubmitted = true;
+   this.validatation.required = true;
+   this.TCSTaxRequiredValidation = true;
     this.falg = true
     // this.ngxService.start();
     this.Save = false;
     this.Del = false;
-   if(valid){
+   if(valid && this.ObjWorkOrder.TCS_Y_N){
     this.Save = true;
     this.Del = false;
     this.Spinner = true;
@@ -817,7 +1164,14 @@ export class WorkOrderComponent implements OnInit {
   // }
    }
    else {
-
+    this.Spinner = false;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Error Occured "
+   });
    }
  }
  onConfirmSave(){
@@ -833,7 +1187,18 @@ this.ObjWorkOrder.Currency_Symbol = tempCurr[0].Currency_Symbol;
 this.ObjWorkOrder.Project_ID = Number(this.ObjWorkOrder.Project_ID) ? Number(this.ObjWorkOrder.Project_ID) : null
 this.ObjWorkOrder.Currency_ID = this.ObjWorkOrder.Currency_ID ? Number(this.ObjWorkOrder.Currency_ID) : null
 this.ObjWorkOrder.Company_ID = this.ObjWorkOrder.Company_ID ? Number(this.ObjWorkOrder.Company_ID) : undefined
-this.ObjWorkOrder.User_ID  = this.$CompacctAPI.CompacctCookies.User_ID
+this.ObjWorkOrder.User_ID  = this.$CompacctAPI.CompacctCookies.User_ID;
+this.ObjWorkOrder.Product_Gross = this.getTofix(this.grTotal);
+this.ObjWorkOrder.Product_Discount = this.getTofix(this.disTotal) ;
+this.ObjWorkOrder.Product_Taxable = this.getTofix(this.taxAblTotal) ;
+this.ObjWorkOrder.Product_GST = this.getTofix(this.GSTTotal);
+this.ObjWorkOrder.Product_Net = this.getTofix(this.NetTotal);
+this.ObjWorkOrder.Term_Taxable = this.getTofix(this.GrTermAmount);
+this.ObjWorkOrder.Term_GST = this.getTofix(this.GrGstTermAmt);
+this.ObjWorkOrder.Term_Net = this.getTofix(this.grNetTerm)
+this.ObjWorkOrder.Total_GST = this.getTofix(Number(this.GSTTotal) + Number(this.GrGstTermAmt))
+this.ObjWorkOrder.Rounded_Off = Number(this.getRoundedOff());
+this.ObjWorkOrder.Total_Net_Amount = Number(this.RoundOff(this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt));
  let save = []
  if(this.addPurchaseList.length){
  if(this.DocNo){
@@ -857,21 +1222,49 @@ this.ObjWorkOrder.User_ID  = this.$CompacctAPI.CompacctCookies.User_ID
 }
 this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
   // this.validatation.required = false;
+  var won = data[0].Column1;
   if(data[0].Column1){
+    const constSaveData = await this.TermSave(data[0].Column1);
+    if(constSaveData){
     this.ngxService.stop();
       this.Spinner = false;
-      this.showTost(msg,"Work order")
+      this.showTost(msg,won)
       this.getAllData(true);
   if(this.DocNo){
     this.ngxService.stop();
     this.tabIndexToView = 0;
-    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS'];
+    this.items = [ 'BROWSE', 'CREATE', 'PENDING MAINTENANCE INDENT'];
     this.buttonname = "Create";
   }
   this.ngxService.stop();
   this.clearData();
   this.getAllData(true);
   // this.Print(data[0].Column1)
+  }
+  else {
+    this.ngxService.stop();
+      this.Spinner = false;
+      this.showTost(msg,won)
+      this.getAllData(true);
+  if(this.DocNo){
+    this.ngxService.stop();
+    this.tabIndexToView = 0;
+    this.items = [ 'BROWSE', 'CREATE', 'PENDING MAINTENANCE INDENT'];
+    this.buttonname = "Create";
+  }
+  this.ngxService.stop();
+  this.clearData();
+  this.getAllData(true);
+    // this.ngxService.stop();
+    // this.Spinner = false;
+    // this.compacctToast.clear();
+    // this.compacctToast.add({
+    //   key: "compacct-toast",
+    //   severity: "error",
+    //   summary: "Warn Message",
+    //   detail: "Error Occured "
+    // });
+  }
   }
   else {
     this.ngxService.stop();
@@ -897,6 +1290,81 @@ this.compacctToast.add({
   detail: "Error Occured "
 });
 }
+}
+async TermSave(doc:any){
+  if(doc){
+     if(this.AddTermList.length){
+      this.AddTermList.forEach((ele:any) => {
+        ele['DOC_No'] = doc
+      });
+    //  }
+    //  else{
+    //   this.AddTermList.push({
+    //     "DOC_No": doc,
+    //     "Term_ID":0
+    //   })
+    //  }
+      
+     const obj = {
+       "SP_String": "Sp_Work_Order",
+       "Report_Name_String": "Insert_Term_Details",
+       "Json_Param_String": JSON.stringify(this.AddTermList)
+     }
+     const TermData = await  this.GlobalAPI.getData(obj).toPromise();
+    
+     return TermData
+   }
+  }
+  
+ 
+}
+
+GetTCSdat(){
+  this.ObjWorkOrder.TCS_Ledger_ID = 0;
+  if (this.ObjWorkOrder.TCS_Y_N === 'YES') {
+  this.ngxService.start();
+  const obj = {
+    "SP_String": "Sp_Purchase_Order",
+    "Report_Name_String": "Get_Tcs_Percentage_And Ledger",
+    }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  console.log(data)
+  this.TCSdataList = data;
+  this.ngxService.stop();
+}); 
+  }  
+  else {
+    this.ObjWorkOrder.TCS_Persentage = 0;
+    this.ObjWorkOrder.TCS_Amount = 0;
+    this.ObjWorkOrder.TCS_Per = undefined;
+    // this.objaddPurchacse.Grand_Total = this.objaddPurchacse.Net_Amt;
+    this.getRoundedOff();
+    // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+}
+}
+TcsAmtCalculation(){
+  this.ObjWorkOrder.TCS_Ledger_ID = 0;
+  if (this.ObjWorkOrder.TCS_Per) {
+    var tcspercentage = this.TCSdataList.filter(el=> Number(el.TCS_Persentage) === Number(this.ObjWorkOrder.TCS_Per))
+        this.ObjWorkOrder.TCS_Ledger_ID = tcspercentage[0].TCS_Ledger_ID;
+        this.ObjWorkOrder.TCS_Persentage = tcspercentage[0].TCS_Persentage;
+        var netamount = (Number(this.taxAblTotal) + Number(this.GrTermAmount) + Number(this.GSTTotal) + Number(this.GrGstTermAmt)).toFixed(2);
+        var TCS_Amount = (Number(Number(netamount) * this.ObjWorkOrder.TCS_Persentage) / 100).toFixed(2);
+        this.ObjWorkOrder.TCS_Amount = Number(TCS_Amount);
+        // this.objaddPurchacse.Grand_Total = (Number(this.objaddPurchacse.Net_Amt) + Number(this.objaddPurchacse.TCS_Amount)).toFixed(2);
+        // this.Round_off = (Number(Math.round(this.ObjSaleBillNew.Grand_Total)) - Number(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+        // this.Net_Amt = Number(Math.round(this.ObjSaleBillNew.Grand_Total)).toFixed(2);
+        this.getRoundedOff();
+        // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+        this.ngxService.stop();
+  }
+    else {
+      this.ObjWorkOrder.TCS_Persentage = 0;
+      this.ObjWorkOrder.TCS_Amount = 0;
+      // this.objaddPurchacse.Grand_Total = this.objaddPurchacse.Net_Amt;
+      this.getRoundedOff();
+      // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+  }
 }
 
 Finyear() {
@@ -952,8 +1420,8 @@ if (valid) {
  }
  // DISTINCT & FILTER
  GetDistinct() {
-  let DSubledgerName = [];
-  let DCostCentreName = [];
+  let DSubledgerName:any = [];
+  let DCostCentreName:any = [];
   this.DistSubledgerName =[];
   this.SelectedDistSubledgerName =[];
   this.DistCostCentreName =[];
@@ -972,8 +1440,8 @@ if (DCostCentreName.indexOf(item.Cost_Cen_Name) === -1) {
    this.BackupSearchedlist = [...this.getAllDataList];
 }
 FilterDist() {
-  let DSubledgerName = [];
-  let DCostCentreName = [];
+  let DSubledgerName:any = [];
+  let DCostCentreName:any = [];
   this.SearchFields =[];
 if (this.SelectedDistSubledgerName.length) {
   this.SearchFields.push('Sub_Ledger_Name');
@@ -999,7 +1467,7 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     this.DocNo = undefined;
     this.DocNo = col.Doc_No;
     this.tabIndexToView = 1;
-    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS'];
+    this.items = [ 'BROWSE', 'UPDATE', 'PENDING MAINTENANCE INDENT'];
     this.buttonname = "Update";
     this.geteditmaster(col.Doc_No);
    }
@@ -1016,13 +1484,22 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
     let data = JSON.parse(res[0].Column1)
     console.log("Edit data",data);
     this.ObjWorkOrder = data[0],
+    this.GetTCSdat();
+    this.ObjWorkOrder.TCS_Per = data[0].TCS_Persentage;
     this.DocDate = new Date(data[0].Doc_Date);
+    this.GetRequlist();
     this.RefDate = new Date(data[0].Supp_Ref_Date)
     this.addPurchaseList = data[0].L_element;
+    this.AddTermList = data[0].Term_element ? data[0].Term_element : [] ;
+    this.editorDis = true
     console.log("addPurchaseList",this.addPurchaseList)
     if(this.addPurchaseList.length){
       this.getAllTotal()
+      this.TcsAmtCalculation()
     }
+    setTimeout(() => {
+      this.editorDis = false
+    }, 700);
   })
  }
  getEditProject(DocNo){
@@ -1045,7 +1522,7 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
   if(DocNo) {
   const objtemp = {
     "SP_String": "Sp_Purchase_Order",
-    "Report_Name_String": "Purchase_Order_Print"
+    "Report_Name_String": "Work_Order_Print"
     }
   this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
     var printlink = data[0].Column1;
@@ -1088,11 +1565,14 @@ PrintREQ(DocNo) {
   this.addPurchaseList.splice(index,1);
   this.projectDisable = this.addPurchaseList.length ? true :false
   this.getAllTotal();
+  this.TcsAmtCalculation();
+  this.ObjWorkOrder.TCS_Y_N = this.addPurchaseList.length == 0 ? undefined : this.ObjWorkOrder.TCS_Y_N;
+  this.ObjWorkOrder.TCS_Per = this.addPurchaseList.length == 0 ? undefined : this.ObjWorkOrder.TCS_Per;
 }
 GetGSTAmt(){
   if(this.ObjaddWorkOrder.taxable_AMT){
     this.ObjaddWorkOrder.GST_AMT = (Number(this.ObjaddWorkOrder.taxable_AMT) * (Number(this.ObjaddWorkOrder.Gst)/100)).toFixed(2);
-    this.ObjaddWorkOrder.Total_Amount = Number(this.ObjaddWorkOrder.GST_AMT) + Number(this.ObjaddWorkOrder.taxable_AMT)
+    this.ObjaddWorkOrder.Total_Amount = (Number(this.ObjaddWorkOrder.GST_AMT) + Number(this.ObjaddWorkOrder.taxable_AMT)).toFixed(2);
   }
   else {
     this.ObjaddWorkOrder.Total_Amount = undefined;
@@ -1108,6 +1588,9 @@ getAllTotal(){
   this.ExciTotal = 0;
   this.GSTTotal = 0;
   this.NetTotal = 0;
+  this.GrTermAmount = 0
+  this.GrGstTermAmt = 0
+  this.grNetTerm = 0
   if(this.addPurchaseList.length){
     this.addPurchaseList.forEach(ele => {
       this.grTotal += Number(ele.Gross_Amt) ? Number(ele.Gross_Amt) : 0
@@ -1118,12 +1601,30 @@ getAllTotal(){
       this.NetTotal += Number(ele.Net_Amount) ? Number(ele.Net_Amount)  :0
     });
   }
+  if(this.AddTermList.length){
+    this.AddTermList.forEach((el:any) => {
+      this.GrTermAmount += Number(el.Term_Amount);
+      this.GrGstTermAmt += Number(el.GST_Amount);
+      this.grNetTerm += Number(Number(el.Term_Amount) + Number(el.GST_Amount))
+    });
+   }
 
 
 }
 getTofix(key){
- return key.toFixed(2)
-}
+  return Number(Number(key).toFixed(2))
+ }
+ RoundOff(key:any){
+   return Math.round(Number(Number(key).toFixed(2)))
+ }
+//  getRoundedOff(){
+//   return this.getTofix(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2)) -
+//           Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt).toFixed(2)))) 
+// }
+getRoundedOff(){
+  return this.getTofix( Math.round(Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt + this.ObjWorkOrder.TCS_Amount).toFixed(2))) - 
+         Number((this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt + this.ObjWorkOrder.TCS_Amount).toFixed(2))) 
+} 
 getcompany(){
   const obj = {
     "SP_String": "sp_Comm_Controller",
@@ -1136,12 +1637,12 @@ getcompany(){
    this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
   })
 }
-showTost(msg,summary){
+showTost(msg,won){
   this.compacctToast.clear();
   this.compacctToast.add({
     key: "compacct-toast",
     severity: "success",
-    summary: summary,
+    summary: "Work Order No " +won,//summary,
     detail: "Succesfully "+msg
   });
 }
@@ -1270,6 +1771,58 @@ gettermsdetails(){
   //    }
   //  })
    }
+   // PenDing Maintanance Indent
+   getDateRangePen(dateRangeObj:any){
+    if(dateRangeObj.length) {
+     this.objpendingreq.From_Date = dateRangeObj[0];
+     this.objpendingreq.To_Date = dateRangeObj[1];
+    }
+    }
+   GetPandingSearch(valid){
+    this.SearchedlistPanding = [];
+    this.PandingFormSubmitted = true;
+    this.seachPendSpinner = true;
+    const start = this.objpendingreq.From_Date
+    ? this.DateService.dateConvert(new Date(this.objpendingreq.From_Date))
+    : this.DateService.dateConvert(new Date());
+    const end = this.objpendingreq.To_Date
+    ? this.DateService.dateConvert(new Date(this.objpendingreq.To_Date))
+    : this.DateService.dateConvert(new Date());
+    if (valid){
+    const tempobj = {
+      To_Cost_Cen_ID : this.objpendingreq.Cost_Cen_ID,
+      From_Date : start,
+      To_Date : end,
+    }
+    //console.log("tempobj==",tempobj)
+    const obj = {
+    "SP_String": "Sp_Returnable_Gate_Pass",
+    "Report_Name_String": "Browse_Pending_Maintenance_Indent_For_Work_Order",
+    "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data.length){
+        this.SearchedlistPanding = data;
+        this.DynamicHeaderPen = Object.keys(data[0]);
+      }
+      this.PandingFormSubmitted = false;
+      this.seachPendSpinner = false;
+     console.log('SearchedlistPanding===',this.SearchedlistPanding)
+    })
+    }
+  }
+  PrintPenInd(DocNo) {
+    if(DocNo) {
+    const objtemp = {
+      "SP_String": "SP_Txn_Requisition",
+      "Report_Name_String": "Requisition_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
+  }
 
 }
 class WorkOrder {
@@ -1331,9 +1884,25 @@ class WorkOrder {
         Taxes_And_Duties:any;
         Packing_And_Forward:any;
         Transpotation:any;
-        Installation_Commissioning:any
-        Delivery_Location:any
-        User_ID:any
+        Installation_Commissioning:any;
+        Delivery_Location:any;
+        User_ID:any;
+        Product_Gross:any
+        Product_Discount:any
+        Product_Taxable:any
+        Product_GST:any
+        Product_Net:any
+        Term_Taxable:any
+        Term_GST:any
+        Term_Net:any
+        Total_GST:any
+        Rounded_Off:any
+        Total_Net_Amount:any
+        TCS_Ledger_ID:any;
+        TCS_Y_N : any;
+        TCS_Persentage : any;
+        TCS_Amount : number = 0;
+        TCS_Per : any;
 }
 class addWorkOrder{
       Product_ID:any;
@@ -1403,4 +1972,14 @@ class updateterm {
   Installation_Commissioning:any
   Delivery_Location:any
   Remarks:any
+}
+class Term {
+  DOC_No:any
+  Sale_Pur:any
+  Term_ID:any
+  Term_Name:any
+  Term_Amount:any
+  GST_Per:any
+  GST_Amount:any
+  HSN_No:any
 }

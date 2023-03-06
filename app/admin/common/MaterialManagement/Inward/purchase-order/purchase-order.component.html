@@ -26,12 +26,49 @@
         </div>
     </ng-template>
 </p-toast>
+
+<p-toast position="center" key="c1" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid" >
+            <div class="ui-g-6" >
+                <button type="button" pButton (click)="onFinalSave()" label="Yes" class="ui-button-success"></button>
+            </div>           
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="x" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid" >
+            <div class="ui-g-6" >
+                <button type="button" pButton (click)="onCancel()" label="Yes" class="ui-button-success"></button>
+            </div>           
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
             <div class="form-horizontal">
                 <div class="box-body">
-                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)" >
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                             <form name="SearchForm" #SearchForm="ngForm" novalidate>
                             <div class="form-group">
@@ -93,11 +130,11 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeader">{{option.replace('_',' ')}}</th> 
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeader  |  slice:3">{{option.replaceAll('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
-                                        <tr>
+                                        <tr [class]='col.Cancel_PO != "N" &&  (databaseName === "MICL_Demo" || databaseName ==="MICL") ? "text-red-active" : ""'>
     
                                             <td>
                                                 <div class="dropdown">
@@ -106,28 +143,40 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                     <ul class="dropdown-menu">
-                                                        <li>
+                                                        <li *ngIf="col.Approve_Status =='Pending' && (databaseName == 'Harbauer_Demo' || databaseName == 'Harbauer')">
+                                                            <a (click)="FinalSave(col)">
+                                                            <i class="fa fa-save"></i> Final Save
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Approve_Status =='Pending'">
                                                                 <a (click)="Edit(col)">
                                                                     <i class="fa fa-fw fa-pencil"></i> Edit
                                                                 </a>
-                                                            </li>
+                                                        </li>
                                                         <li>
                                                             <a (click)="Print(col.Doc_No)">
                                                                 <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
                                                         </li>
-                                                        <li>
+                                                         <li *ngIf="col.Approve_Status =='Pending' && (databaseName == 'Harbauer_Demo' || databaseName == 'Harbauer')"><!-- companyname == 'HARBAUER India [P] Ltd' -->
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="!col.RDB_No && (databaseName === 'MICL_Demo' || databaseName === 'MICL') && col.Cancel_PO == 'N'">
+                                                            <a (click)="CancelPO(col)">
+                                                                <i class="fa fa-fw fa-times"></i> Cancel
                                                             </a>
                                                         </li>
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <ng-container *ngFor="let option of DynamicHeader">
-                                                <td>{{col[option]}}</td>
+                                            <ng-container *ngFor="let option of DynamicHeader  |  slice:3">
+                                                <td *ngIf="option != 'Work_Details'" >{{col[option]}}</td>
+                                                <td *ngIf="option == 'Work_Details'">
+                                                    <div (click)="selectWork($event,col,op)" [ngClass]="stringShort(col[option],'css')">{{stringShort(col[option],'ff')}}</div>
+                                                </td>
                                             </ng-container>
-                                            
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -138,105 +187,7 @@
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                             <form name="purChaseForm" #purChaseForm="ngForm" novalidate>
-                                <!-- <div class="form-group">
-                                <div class="col-sm-6">
-                                    <div class="form-group"> 
-                                        <div class="col-sm-3">
-                                            <label class="control-label">Company<sup class="text-danger">*</sup></label>
-                                          </div>
-                                        <div class="col-sm-9">
-                                            <select class="form-control" 
-                                            name="company" 
-                                            #company="ngModel" 
-                                            [(ngModel)]="objpurchase.company"
-                                            [ngClass]="{'clearance': purchaseFormSubmitted && company?.errors?.required }"
-                                            required>
-                                            <option  [ngValue]="undefined">Select</option>
-                                               <option *ngFor = "let option of companyList" [value] ="option.Company_Id">
-                                                  {{option.Company_Name}}
-                                                </option>
-                                          </select>
-                                        </div>
-                                    </div>
-                                          <div class="form-group">
-                                                <div class="col-sm-3">
-                                                    <label class="control-label">Vendor<sup class="text-danger">*</sup></label>
-                                                   </div>
-                                                   <div class="col-sm-9">
-                                                       <label class="pull-right"><span  class="glyphicon glyphicon-zoom-in"></span></label>
-                                                    <p-dropdown 
-                                                    [options]="SubLedgerList" 
-                                                    name="Sub_Ledger_ID" 
-                                                    [(ngModel)]="objpurchase.Sub_Ledger_ID"
-                                                    [showClear]="true" 
-                                                    [emptyFilterMessage]="' No Subledger Found'" 
-                                                    [filter]="true" 
-                                                    filterBy="label,value.name" 
-                                                    [resetFilterOnHide]="true"
-                                                    [placeholder]="'Subedger'" 
-                                                    [virtualScroll]="true" 
-                                                    itemSize="30" 
-                                                    #Sub_Ledger_ID="ngModel"
-                                                    (onChange)="getSubLedgerDetalis()"
-                                                    [styleClass]="purchaseFormSubmitted && Sub_Ledger_ID.errors?.required ? 'clearance': ''" [required] = "true">
-                                                </p-dropdown>
-                                                   </div> 
-                                                </div>
-                                                <button class="btn btn-primary pull-right" style="margin-top: 2px;"
-                                                (click)="getDetalis('Vendor')"
-                                                [disabled]="!objpurchase.Sub_Ledger_ID"
-                                                >
-                                              <span class="	glyphicon glyphicon-zoom-in"></span>
-                                       </button>
-                                      
-                                </div>
-                                <div class="col-sm-6">
-                                      <div class="form-group"> 
-                                                <div class="col-sm-3">
-                                                    <label class="control-label">Billing To<sup class="text-danger">*</sup></label>
-                                                  </div>
-                                                <div class="col-sm-9">
-                                                    <select class="form-control" 
-                                                    name="Billing_To" 
-                                                    #Billing_To="ngModel" 
-                                                    [(ngModel)]="objpurchase.Billing_To"
-                                                    [ngClass]="{'clearance': purchaseFormSubmitted && Billing_To?.errors?.required }"
-                                                    required>
-                                                    <option  [ngValue]="undefined">Select</option>
-                                                       <option *ngFor = "let option of costCenterList" [value] ="option.Cost_Cen_ID">
-                                                          {{option.Cost_Cen_Name}}
-                                                        </option>
-                                                  </select>
-                                                </div>
-                                            </div>
-                                            <div class="form-group" style="margin-top: 17px;"> 
-                                                <div class="col-sm-3">
-                                                    <label class="control-label">Deliver To<sup class="text-danger">*</sup></label>
-                                                  </div>
-                                                <div class="col-sm-9">
-                                                    <select class="form-control" 
-                                                    name="Cost_Cen_ID" 
-                                                    #Cost_Cen_ID="ngModel"
-                                                     [(ngModel)]="objpurchase.Cost_Cen_ID"
-                                                     (change)="getCostCenterDetalis()">
-                                                    <option  [ngValue]="undefined">Select</option>
-                                                       <option *ngFor = "let option of costCenterList" [value] ="option.Cost_Cen_ID">
-                                                          {{option.Cost_Cen_Name}}
-                                                        </option>
-                                                  </select>
-                                                </div>
-                                            </div>
-                                            <button class="btn btn-primary pull-right" style="margin-top: 2px;"
-                                            id="load"
-                                            (click)="getDetalis('Deliver')"
-                                            [disabled]="!objpurchase.Cost_Cen_ID"
-                                            >
-                                          <span class="	glyphicon glyphicon-zoom-in"></span>
-                                         </button>
-                                        
-                                </div>
-                                </div> -->
-                                <div class="form-group">
+                                 <div class="form-group">
                                 <div class="col-sm-3">
                                     <label class="control-label">Company<sup class="text-danger">*</sup></label>
                                     <select class="form-control" 
@@ -375,10 +326,13 @@
                                     <div class="form-group">
                                         <div class="col-sm-3">
                                             <label class="control-label">Pending Purchase Indent/Requisition<sup class="text-danger"></sup></label>
-                                            <p-dropdown [options]="Requlist" name="Requisition" #Requisition="ngModel" [(ngModel)]="objaddPurchacse.Req_No"  [showClear]="true" [emptyFilterMessage]="' No Req No Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Requisition No'" [virtualScroll]="true"
+                                            
+                                            <p-dropdown *ngIf="!addPurchaseListInput" [options]="Requlist" name="Requisition" #Requisition="ngModel" [(ngModel)]="objaddPurchacse.Req_No"  [showClear]="true" [emptyFilterMessage]="' No Req No Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Requisition No'" [virtualScroll]="true"
                                                         itemSize="30" #Supplier="ngModel" [styleClass]="purChaseAddFormSubmit && Requisition.errors?.required ? 'clearance' : ''"
-                                                        [disabled]="objaddPurchacse.Product_Type_ID" [required]="true" (onChange)="getProduct()">
+                                                        [disabled]="objaddPurchacse.Product_Type_ID" [required]="true" (onChange)="RequisitionChange()">
                                                     </p-dropdown>
+                                            <div *ngIf="addPurchaseListInput" class="label-t">{{objaddPurchacse.Req_No}}</div>
+
                                             <!-- <select class="form-control" 
                                             name="Requisition" 
                                             #Requisition="ngModel" 
@@ -416,6 +370,7 @@
                                             <label class="control-label">Product Details<sup class="text-danger">*</sup></label>
                                             <span class="pull-right"><a style="font-size: 1.8rem;" *ngIf = "objaddPurchacse.Product_ID" (click)="getProductPOPUPDetalis()"><i class="fa fa-fw  fa-info-circle"></i></a></span>
                                             <p-dropdown 
+                                            *ngIf="!addPurchaseListInput"
                                             [options]="productList" 
                                             name="Product_ID" 
                                             [(ngModel)]="objaddPurchacse.Product_ID"
@@ -431,6 +386,7 @@
                                             (onChange)="GetProductSpecification()"
                                             [styleClass]="purChaseAddFormSubmit && Product_ID.errors?.required ? 'clearance': ''" [required] = "true">
                                         </p-dropdown>
+                                        <div *ngIf="addPurchaseListInput" class="label-t">{{addPurchaseListInputField.Product_Name}}</div>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="control-label">Product Specification</label>
@@ -481,10 +437,10 @@
                                             [(ngModel)]="objaddPurchacse.Rate"
                                             placeholder="Rate"
                                             CompacctDigitonly="true"
-                                            (ngModelChange)="getGrsAmt()"
+                                            (ngModelChange)="getProductDetalis()"
                                             [ngClass]="{'clearance': purChaseAddFormSubmit && Rate?.errors?.required }"
                                             required
-                                            [disabled] = 'disable'>
+                                            [disabled] = 'disable'><!--[disabled] = 'disable' -->
                                         </div>
                                         <div class="col-sm-2">
                                             <label class="control-label">Grs Amt<sup class="text-danger"></sup></label>
@@ -499,36 +455,13 @@
                                         </div>
                                      </div>
                                     <div class="form-group">
-                                        <div class="col-sm-2">
-                                            <label class="control-label">Excise Tax (%)<sup class="text-danger"></sup></label>
-                                            <input type="text"
-                                            class="form-control"
-                                            name="Excise_Tax_Percentage"
-                                            #Excise_Tax_Percentage="ngModel"
-                                            [(ngModel)]="objaddPurchacse.Excise_Tax_Percentage"
-                                            (ngModelChange)="getExciseAmt()"
-                                            placeholder="Excise Tax (%)"
-                                            CompacctDigitonly="true"
-                                            >
-                                        </div>
                                         <div class="col-sm-3">
-                                            <label class="control-label">Excise Amt<sup class="text-danger"></sup></label>
-                                            <input type="text"
-                                            class="form-control"
-                                            name="Excise_Tax"
-                                            #Excise_Tax="ngModel"
-                                            [(ngModel)]="objaddPurchacse.Excise_Tax"
-                                            placeholder="Excise Amt"
-                                            CompacctDigitonly="true"
-                                            disabled>
-                                        </div>
-                                        <div class="col-sm-2">
                                             <label class="control-label">Discount Type<sup class="text-danger"></sup></label>
                                             <select class="form-control" 
                                             name="Discount_Type" 
                                             #Discount_Type="ngModel" 
                                             [(ngModel)]="objaddPurchacse.Discount_Type"
-                                            (change)="DisClear()"
+                                            (change)="getProductDetalis()"
                                             >
                                             <option  [ngValue]="undefined">Select</option>
                                                <option *ngFor = "let option of DiscountTypeList" [value] ="option.Dtype">
@@ -543,13 +476,13 @@
                                                 name="Discount"
                                                 #Discount="ngModel"
                                                 [(ngModel)]="objaddPurchacse.Discount"
-                                                (ngModelChange)="getDis()"
+                                                (ngModelChange)="getProductDetalis()"
                                                 placeholder="Discount"
                                                 CompacctDigitonly="true"
                                                 [disabled] = "!objaddPurchacse.Discount_Type"
                                                 >
                                         </div>
-                                        <div class="col-sm-2">
+                                        <div class="col-sm-3">
                                             <label class="control-label">Discount Amount<sup class="text-danger"></sup></label>
                                             <input type="text"
                                             class="form-control"
@@ -561,20 +494,20 @@
                                             CompacctDigitonly="true"
                                              disabled>
                                         </div>
+                                        <div class="col-sm-3" >
+                                        <label class="control-label">Taxable Amount<sup class="text-danger"></sup></label>
+                                        <input type="text"
+                                        class="form-control"
+                                        name="taxable_AMT"
+                                        #taxable_AMT="ngModel"
+                                        [(ngModel)]="objaddPurchacse.taxable_AMT"
+                                        placeholder="Taxable AMT"
+                                        disabled
+                                        >
+                                        </div>
                                     </div>
                                  <div class="form-group">
-                                    <div class="col-sm-2">
-                                    <label class="control-label">Taxable Amount<sup class="text-danger"></sup></label>
-                                        <input type="text"
-                                    class="form-control"
-                                    name="taxable_AMT"
-                                    #taxable_AMT="ngModel"
-                                    [(ngModel)]="objaddPurchacse.taxable_AMT"
-                                    placeholder="Taxable AMT"
-                                    disabled
-                                    >
-                                    </div>
-                                    <div class="col-sm-3">
+                                   <div class="col-sm-3">
                                         <label class="control-label">{{taxlabelChange()}}(%)<sup class="text-danger"></sup></label>
                                         <input type="text"
                                         class="form-control"
@@ -617,6 +550,7 @@
                                          <span  class="	glyphicon glyphicon-plus"></span>&nbsp;Add
                                          </button>
                                      </div>
+                                     <div class="col-sm-2"></div>
                                     </div>
                                     <!-- <div class="box-footer">
                                       
@@ -635,16 +569,14 @@
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Unit</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Rate</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Gross Amt</th>
-                                        <th nowrap="" colspan="2" style="vertical-align:middle">Excise Tax</th>
-                                        <th nowrap="" colspan="3" style="vertical-align:middle">Discount </th>
+                                         <th nowrap="" colspan="3" style="vertical-align:middle">Discount </th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Taxable Amount</th>
                                         <th  nowrap="" colspan="2" style="vertical-align:middle">{{taxlabelChange()}}</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Net Amount</th>
+                                        <th *ngIf="buttonname === 'Update'" nowrap="" rowspan="2" style="vertical-align:middle">Edit</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Delete</th>
                                          </tr>
                                         <tr style="background-color:#3c8dbc;color:white;">
-                                            <th nowrap="" style="vertical-align:middle">Tax</th>
-                                            <th nowrap="" style="vertical-align:middle">Amt.</th>
                                             <th nowrap="" style="vertical-align:middle">Disc Type</th>
                                             <th nowrap="" style="vertical-align:middle">Disc %</th>
                                             <th nowrap="" style="vertical-align:middle">Disc Amt</th>
@@ -664,43 +596,146 @@
                                                 <td>{{col.UOM}}</td>
                                                 <td>{{col.Rate ? col.Rate : 0}}</td>
                                                 <td>{{col.Gross_Amt ? col.Gross_Amt :0}}</td>
-                                                <td>{{col.Excise_Tax_Percentage ? col.Excise_Tax_Percentage : 0}}</td>
-                                                <td>{{col.Excise_Amount ? col.Excise_Amount : 0}}</td>
                                                 <td>{{col.Discount_Type ? col.Discount_Type : 0}}</td>
                                                 <td>{{col.Discount ? col.Discount : 0}}</td>
                                                 <td>{{col.Discount_Amount ? col.Discount_Amount : 0}}</td>
                                                 <td>{{col.Taxable_Amount ? col.Taxable_Amount : 0}}</td>
                                                 <td>{{col.GST_Percentage ? col.GST_Percentage : 0}}</td>
                                                 <td>{{col.GST_Amount ? col.GST_Amount : 0}}</td>
-                                                <td>{{col.Net_Amount ? col.Net_Amount : 0}}</td>
-                                               <td> <a (click)="DeleteAddPurchase(i)"
+                                                <td>{{col.Total_Amount ? col.Total_Amount : 0}}</td>
+                                                <td *ngIf="buttonname === 'Update'"> <a class="btn btn-sm btn-warning" (click)="EditAddPurchase(i)"
+                                                    ><div><i class="fa fa-fw fa-edit"> </i></div>
+                                                  </a></td>
+                                               <td> <a class="btn btn-sm btn-danger" (click)="DeleteAddPurchase(i)"
                                                 ><div><i class="fa fa-fw fa-trash"> </i></div>
                                               </a></td>
                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
-                                 <div class="table-responsive">
-                                      <table class="table">
-                                        <tbody><tr>
-                                          <th>Gross Amount:</th>
-                                          <td class="amt-td ">{{getTofix(grTotal) ? getTofix(grTotal) : 0}}</td>
-                                          <th>Taxable Amount :</th>
-                                          <td class="amt-td ">{{getTofix(taxAblTotal) ? getTofix(taxAblTotal) : 0}}</td>
-                                          <th>Discount Amount :</th>
-                                          <td class="amt-td">{{getTofix(disTotal) ? getTofix(disTotal) : 0}}</td>
-                                           </tr>
-                                        <tr>
-                                          <th>Excise Amount:</th>
-                                          <td class="amt-td">{{getTofix(ExciTotal) ? getTofix(ExciTotal) : 0}}</td>
-                                          <th>{{taxlabelChange()}} Amount :</th>
-                                          <td class="amt-td">{{getTofix(GSTTotal) ? getTofix(GSTTotal) : 0}}</td>
-                                          <th>Net Amount : </th>
-                                          <td class="amt-td">{{getTofix(NetTotal) ? getTofix(NetTotal) : 0}}</td>
-                                            </tr>
-                                       </tbody>
-                                    </table>
+                                <br>
+                                <hr class="box boxboxDivide-primary" />
+                                <form #TermForm="ngForm" novalidate>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                             <label class="control-label">Term Name<sup class="text-danger">*</sup></label>
+                                             <select class="form-control" name="termname" #termname="ngModel" [(ngModel)]="ObjTerm.Term_ID"
+                                                [ngClass]="{clearance: TermFormSubmitted && termname?.errors?.required}"
+                                                (change)="TermChange()" required >
+                                             <option [ngValue]="undefined">Select</option>
+                                             <option *ngFor="let option of TermList" [ngValue]="option.Term_ID">{{ option.Term_Name }}</option>
+                                            </select>
+                                         </div>
+                                        <div class="col-sm-2">
+                                          <label>HSN No<sup class="text-danger"></sup></label>
+                                            <input class="form-control" name="HSNNo" [(ngModel)]="ObjTerm.HSN_No" required="true" disabled="true" placeholder="HSN No" />
+                                        </div>
+                                        <div class="col-sm-2">
+                                          <label>Term Amount<sup class="text-danger">*</sup></label>
+                                            <input class="form-control" name="termamount" #termamount="ngModel" [(ngModel)]="ObjTerm.Term_Amount"
+                                              [ngClass]="{clearance: TermFormSubmitted && termamount?.errors?.required}"
+                                              required="true" CompacctDigitonly="true" placeholder="Term Amount" />
+                                        </div>
+                                       <button type="submit" class="btn btn-primary custombutton" (click)="AddTerm(TermForm.form.valid)">
+                                        <span class="glyphicon glyphicon-plus"></span>Add
+                                       </button>
                                     </div>
+                                <br>
+                                <div class="table-responsive no-padding">
+                                    <table class="table table-bordered">
+                                     <thead style="background-color:#3c8dbc;color:white;">
+                                        <tr style="background-color:#3c8dbc;color:white;">
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Sl. No.</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Term Name</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">HSN No</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Term Amount</th>
+                                          <th colspan="2" scope="colgroup" class="text-center">GST</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Net Amount</th>
+                                          <th rowspan="2" class="text-center" style="vertical-align:middle">Delete</th>
+                                        </tr>
+                                        <tr style="background-color:#3c8dbc;color:white">
+                                           <th scope="col" class="text-center">Rate</th>
+                                           <th scope="col" class="text-center">Amt.</th>
+                                         </tr>
+                                     </thead>
+                                    <tbody>
+                                        <tr *ngFor=" let TermTableList of AddTermList; let ind = index; let odd = odd;" [class.even]="odd">
+                                          <td>{{ ind + 1  }}</td>
+                                          <td>{{ TermTableList.Term_Name }}</td>
+                                          <td>{{ TermTableList.HSN_No }}</td>
+                                          <td>{{ TermTableList.Term_Amount }}</td>
+                                          <td>{{ TermTableList.GST_Per }}</td>
+                                          <td>{{ getTofix(TermTableList.GST_Amount )}}</td>
+                                          <td>{{ getTofix(TermTableList.Term_Amount + TermTableList.GST_Amount)}}</td>
+                                          <td><button (click)="DeteteTerm(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                   </table>
+                                </div>
+                           </form>
+                           <br>
+                           <div class="form-group" *ngIf="addPurchaseList.length">
+                            <div class="col-sm-3">
+                             <label class="control-label">TCS Tax Required <sup class="text-danger">*</sup> </label>
+                             <select class="form-control" 
+                             name="tcstaxreq" 
+                             #tcstaxreq="ngModel" 
+                             [(ngModel)]="objpurchase.TCS_Y_N"
+                             (ngModelChange)="GetTCSdat()"
+                             [ngClass]="{'clearance': TCSTaxRequiredValidation && tcstaxreq?.errors?.required}" required>
+                                <option  [ngValue]="undefined">Select</option>
+                                <option value ="YES">YES</option>
+                                <option value ="NO">NO</option>
+                             </select>
+                            </div>
+                            <div class="col-sm-3" *ngIf="objpurchase.TCS_Y_N == 'YES'">
+                                <label class="control-label">TCS % <sup class="text-danger">*</sup> </label>
+                                <select class="form-control" 
+                                name="tcsper" 
+                                #tcsper="ngModel" 
+                                [(ngModel)]="objpurchase.TCS_Per"
+                                (ngModelChange)="TcsAmtCalculation()"
+                                [ngClass]="{'clearance': TCSTaxRequiredValidation && tcsper?.errors?.required}" required>
+                                   <option  [ngValue]="undefined">Select</option>
+                                   <option *ngFor = "let option of TCSdataList" [value] ="option.TCS_Persentage">
+                                    {{option.TCS_Persentage}}
+                                  </option>
+                                </select>
+                            </div>
+                            </div>
+                            <br>
+                            <div class="clearfix"></div>
+                            <br>
+                                  <div class="table-responsive">
+                                        <table class="table">
+                                          <tbody>
+                                            <tr>
+                                            <th>Total Amount:</th>
+                                            <td class="amt-td ng-binding">{{getTofix(grTotal) ? getTofix(grTotal) : 0}}</td>
+                                            <th>Term Amount :</th>
+                                            <td class="amt-td ng-binding">{{ GrTermAmount ? getTofix(GrTermAmount) : 0}}</td>
+                                            <th>TCS Amount :</th>
+                                            <td class="amt-td ng-binding">{{objpurchase.TCS_Amount}}</td>
+                                             </tr>
+                                            <tr>
+                                            <th>Discount Amount :</th>
+                                            <td class="amt-td ng-binding">{{disTotal ? getTofix(disTotal) : 0}}</td>
+                                            <th>Total GST :</th>
+                                            <td class="amt-td ng-binding">{{getTofix(GSTTotal + GrGstTermAmt)}}</td>
+                                            <th>Net Amount</th>
+                                            <td class="amt-td ng-binding">{{RoundOff(taxAblTotal + GrTermAmount + GSTTotal + GrGstTermAmt + objpurchase.TCS_Amount)}}</td>
+                                            </tr>
+                                            <tr>
+                                            <th>Taxable Amount :</th>
+                                            <td class="amt-td ng-binding">{{ taxAblTotal ? getTofix(taxAblTotal) : 0}}</td>
+                                            <th>Rounded Off :</th>
+                                            <td class="amt-td ng-binding">{{getRoundedOff()}}</td>
+                                            <th></th>
+                                            <td class="amt-td"></td>
+                                            </tr>
+                                            </tbody>
+                                    </table>
+                                      </div>
                                     <h5 style="
                                     padding: 0.5em 1em;
                                     background: #c1c1c185;
@@ -716,6 +751,7 @@
                                         #PO_Header="ngModel"
                                         [(ngModel)]="objpurchase.PO_Header"
                                         [style]="{'height':'200px'}"
+                                        [readonly]="editorDis"
                                        >
                                           
                                         </p-editor>
@@ -735,6 +771,7 @@
                                         #Terms_Of_Price="ngModel"
                                         [(ngModel)]="objpurchase.Terms_Of_Price"
                                         [style]="{'height':'200px'}"
+                                        [readonly]="editorDis"
                                        >
                                           
                                         </p-editor>
@@ -754,6 +791,7 @@
                                     #Payment_Terms="ngModel"
                                     [(ngModel)]="objpurchase.Payment_Terms"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                    >
                                       
                                     </p-editor>
@@ -773,6 +811,7 @@
                                     #Delivery_Terms="ngModel"
                                     [(ngModel)]="objpurchase.Delivery_Terms"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                     >
                                       
                                     </p-editor>
@@ -792,6 +831,7 @@
                                     #Warranty="ngModel"
                                     [(ngModel)]="objpurchase.Warranty_Guarantee_Term"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                     >
                                       
                                     </p-editor>
@@ -811,6 +851,7 @@
                                     #Transist_Insurance="ngModel"
                                     [(ngModel)]="objpurchase.Transist_Insurance"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                     >
                                       
                                     </p-editor>
@@ -830,11 +871,12 @@
                                     #Certifivates="ngModel"
                                     [(ngModel)]="objpurchase.Certificates_Terms"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                    >
                                       
                                     </p-editor>
                                 </div>
-                                <h5 style="
+                                <h5 *ngIf="openProject === 'Y'" style="
                                 padding: 0.5em 1em;
                                 background: #c1c1c185;
                                 border-top: 5px solid #3c8dbc;
@@ -844,11 +886,12 @@
                                 <i class="fa fa-fw fa-fax">
                                 </i> &nbsp;<strong>Taxes And Duties :</strong>
                                </h5>
-                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                <div *ngIf="openProject === 'Y'" class="form-group" style="margin-left:3px;margin-right: 0px;">
                                     <p-editor name= "Taxes_And_Duties"
                                     #Taxes_And_Duties="ngModel"
                                     [(ngModel)]="objpurchase.Taxes_And_Duties"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                    >
                                       
                                     </p-editor>
@@ -868,6 +911,7 @@
                                     #Packing_And_Forward="ngModel"
                                     [(ngModel)]="objpurchase.Packing_And_Forward"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                    >
                                       
                                     </p-editor>
@@ -887,11 +931,12 @@
                                     #Transpotation="ngModel"
                                     [(ngModel)]="objpurchase.Transpotation"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                    >
                                       
                                     </p-editor>
                                 </div>
-                                <h5 style="
+                                <h5 *ngIf="openProject === 'Y'" style="
                                 padding: 0.5em 1em;
                                 background: #c1c1c185;
                                 border-top: 5px solid #3c8dbc;
@@ -901,11 +946,12 @@
                                 <i class="fa fa-fw fa-fax">
                                 </i> &nbsp;<strong>Installation & Commissioning:</strong>
                                </h5>
-                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                <div *ngIf="openProject === 'Y'" class="form-group" style="margin-left:3px;margin-right: 0px;">
                                     <p-editor name= "Installation_Commissionning"
                                     #Installation_Commissionning="ngModel"
                                     [(ngModel)]="objpurchase.Installation_Commissioning"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                     >
                                       
                                     </p-editor>
@@ -925,6 +971,7 @@
                                     #Delivery_Location="ngModel"
                                     [(ngModel)]="objpurchase.Delivery_Location"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                    >
                                       
                                     </p-editor>
@@ -944,6 +991,7 @@
                                     #Remarks="ngModel"
                                     [(ngModel)]="objpurchase.Remarks"
                                     [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
                                     >
                                       
                                     </p-editor>
@@ -1011,7 +1059,7 @@
                                         <ng-template pTemplate="header">
                                             <tr>
                                                 <th style="width:5em">Action</th>
-                                                <th *ngFor="let option of pendingREQDataDynamicHeader">{{option.replaceAll('_',' ')}}</th>
+                                                <th *ngFor="let option of pendingREQDataDynamicHeader |  slice:1">{{option.replaceAll('_',' ')}}</th>
                                                </tr>
                                         </ng-template>
                                         <ng-template pTemplate="body" let-col>
@@ -1033,7 +1081,7 @@
                                                         </ul>
                                                     </div>
                                                 </td>
-                                                <ng-container *ngFor="let option of pendingREQDataDynamicHeader">
+                                                <ng-container *ngFor="let option of pendingREQDataDynamicHeader |  slice:1">
                                                     <td>{{col[option]}}</td>
                                                 </ng-container>
                                             </tr>
@@ -1100,7 +1148,7 @@
                                         <ng-template pTemplate="header">
                                             <tr>
                                                 <th style="width:5em">Action</th>
-                                                <th *ngFor="let option of pendingPurIndProDataDynamicHeader |  slice:1">{{option.replaceAll('_',' ')}}</th>
+                                                <th *ngFor="let option of pendingPurIndProDataDynamicHeader |  slice:2">{{option.replaceAll('_',' ')}}</th>
                                                </tr>
                                         </ng-template>
                                         <ng-template pTemplate="body" let-col>
@@ -1122,7 +1170,7 @@
                                                         </ul>
                                                     </div>
                                                 </td>
-                                                <ng-container *ngFor="let option of pendingPurIndProDataDynamicHeader |  slice:1">
+                                                <ng-container *ngFor="let option of pendingPurIndProDataDynamicHeader |  slice:2">
                                                     <td [class]="option === 'PO_Qty' ? 'QtyColor' : 'Othercolor'" (click)="getdataforview(option,col)">{{col[option]}}</td>
                                                 </ng-container>
                                             </tr>
@@ -1135,30 +1183,8 @@
                                     </p-table>
                                 </div> 
                         </p-tabPanel>
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[4]" leftIcon="fa fa-pencil-square-o">
-                            <!-- <form name="UpdateTermsForm" #UpdateTermsForm="ngForm" novalidate>
-                                <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Period</label>
-                                         <app-compacct-daterangepicker (DaterangeObj)="gettermDateRange($event)" [HardCodeDateOpt]="initDate">
-                                        </app-compacct-daterangepicker>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Purchase Indent/Requisition For &nbsp;</label>
-                                        <select class="form-control" 
-                                        name="Cost_Cen_ID_Pending" 
-                                        #Cost_Cen_ID_Pending='ngModel' 
-                                        [(ngModel)]="objupdateterm.Cost_Cen_ID"
-                                        [ngClass]="{'clearance': UpdateTermsFormSubmit && Cost_Cen_ID_Pending?.errors?.required}" 
-                                        required
-                                        [disabled]="userType != 'A'"
-                                       >
-                                            <option  [ngValue]="undefined">Select</option>
-                                            <option *ngFor="let option of costcenterListPeding" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
-                                      </select>
-                                    </div>
-                                    </div>
-                                    </form> -->
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[4]" leftIcon="glyphicon glyphicon-edit">
+                           
                                     <h5 style="
                                     padding: 0.5em 1em;
                                     background: #c1c1c185;
@@ -1292,7 +1318,7 @@
                                       
                                     </p-editor>
                                 </div>
-                                <h5 style="
+                                <h5 *ngIf="openProject === 'Y'" style="
                                 padding: 0.5em 1em;
                                 background: #c1c1c185;
                                 border-top: 5px solid #3c8dbc;
@@ -1302,7 +1328,7 @@
                                 <i class="fa fa-fw fa-fax">
                                 </i> &nbsp;<strong>Taxes And Duties :</strong>
                                </h5>
-                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                <div *ngIf="openProject === 'Y'" class="form-group" style="margin-left:3px;margin-right: 0px;">
                                     <p-editor name= "Taxes_And_Duties"
                                     #Taxes_And_Duties="ngModel"
                                     [(ngModel)]="objupdateterm.Taxes_And_Duties"
@@ -1349,7 +1375,7 @@
                                       
                                     </p-editor>
                                 </div>
-                                <h5 style="
+                                <h5 *ngIf="openProject === 'Y'" style="
                                 padding: 0.5em 1em;
                                 background: #c1c1c185;
                                 border-top: 5px solid #3c8dbc;
@@ -1359,7 +1385,7 @@
                                 <i class="fa fa-fw fa-fax">
                                 </i> &nbsp;<strong>Installation & Commissioning:</strong>
                                </h5>
-                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                <div *ngIf="openProject === 'Y'" class="form-group" style="margin-left:3px;margin-right: 0px;">
                                     <p-editor name= "InstallCommissionning"
                                     #InstallCommissionning="ngModel"
                                     [(ngModel)]="objupdateterm.Installation_Commissioning"
@@ -1417,12 +1443,171 @@
                                 </div>
                             </div>
                         </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[5]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="MISreportForm" #MISreportForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Report Name &nbsp;<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" 
+                                        name="reportname" 
+                                        #reportname='ngModel' 
+                                        [(ngModel)]="ObjMIS.Report_Name"
+                                        [ngClass]="{'clearance': MISreportFormSubmit && reportname?.errors?.required}" 
+                                        required
+                                       >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of ReportNameList" [value]="option.Report_Name">{{option.Report_Name}}</option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Period</label>
+                                         <app-compacct-daterangepicker (DaterangeObj)="getDateRangeMIS($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetMISreport(MISreportForm.form.valid)" id="load4" [disabled]="MISSpinner">
+                                          <p-progressSpinner *ngIf="MISSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                          <span *ngIf="!MISSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                       </button>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <button class="btn btn-success pull-right" style="margin-top: 26px;" (click)="exportoexcel(BackupMisReport,'MIS_Report')" [disabled]="!misReportList.length">
+                                                 <span  class="glyphicon glyphicon-save"></span> Download Report
+                                              </button>
+                                    </div>
+                                </div>
+                                </form>
+                                <div class="form-group" *ngIf="BackupMisReport.length" style="padding:15px">
+
+                                    <fieldset class="col-md-12">
+                                        <!-- <legend>Filter</legend> -->
+
+                                        <div class="form-group" >
+                                            <div class="col-sm-3" *ngIf="ObjMIS.Report_Name != 'Pending Purchase Indent - Details'">
+                                                <label class="control-label">Vendor Name <span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistVendorName" [(ngModel)]="SelectedDistVendorName" itemSize="30" (onChange)='FilterDistReport()' #vender [styleClass]="'compacct-multiselect'" name="Vendor_Name"></p-multiSelect>
+                                            </div>
+                                            <div class="col-sm-3" *ngIf="ObjMIS.Report_Name != 'Pending PO - Not Delivered - Summary'">
+                                                <label class="control-label">Material Type <span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistMaterialType" [(ngModel)]="SelectedDistMaterialType" itemSize="30" (onChange)='FilterDistReport()' [styleClass]="'compacct-multiselect'" name="Material_Type"></p-multiSelect>
+                                            </div>
+                                            <div class="col-sm-3" *ngIf="ObjMIS.Report_Name != 'Pending PO - Not Delivered - Summary'">
+                                                <label class="control-label">Product Type <span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistProductType"  [(ngModel)]="SelectedDistProductType" itemSize="30" (onChange)='FilterDistReport()'[styleClass]="'compacct-multiselect'" name="Product_Type"></p-multiSelect>
+                                        </div>
+                                        </div>
+
+                                    </fieldset>
+                                </div>
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="misReportList" 
+                                    *ngIf='misReportList.length' #dt8
+                                     [paginator]="misReportList.length ? true : false"
+                                     [rows]="100"
+                                     [rowHover]="true" 
+                                     [autoLayout]="true" 
+                                     sortMode="multiple" 
+                                     [rowsPerPageOptions]="[100,200,300]" 
+                                     [rowHover]="true"
+                                     [columns]="cols"
+                                     [globalFilterFields]='DynamicHeaderMISreport'>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt8.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+        
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <!-- <th style="width:5em">Action</th> -->
+                                                <th nowrap="nowrap" *ngFor="let option of DynamicHeaderMISreport">{{option.replaceAll('_',' ')}}</th>
+                                               </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                            <tr>
+                                                <!-- <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button"
+                                                            data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                           <li>
+                                                                <a (click)="PrintREQ(col.Indent_No)">
+                                                                    <i class="fa fa-print" aria-hidden="true"></i>
+                                                                    Print
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td> -->
+                                                <ng-container *ngFor="let option of DynamicHeaderMISreport">
+                                                    <td [class]="ObjMIS.Report_Name != 'Pending PO - Not Delivered - Summary' ? 'Othercolor' : option === 'PO_No' ? 'QtyColor' : 'Othercolor'" (click)="getPONoforview(option,col)">{{col[option]}}</td>
+                                                </ng-container>
+                                            </tr>
+                                            <tr *ngIf='ObjMIS.Report_Name === "PO Wise Summary"'>
+                                            <ng-container *ngIf='rowIndex === (misReportList.length - 1)'>
+                                                <td colspan="5" class="text-right">Total</td>
+                                                <td>{{getTotalValue('Gross_Amount')}}</td>
+                                                <td>{{getTotalValue('Discount_Amount')}}</td>
+                                                <td>{{getTotalValue('Product_Taxable')}}</td>
+                                                <td>{{getTotalValue('Term_Amount')}}</td>
+                                                <td>{{getTotalValue('Total_Taxable')}}</td>
+                                                <td>{{getTotalValue('Total_GST')}}</td>
+                                                <td>{{getTotalValue('Rounded_Off')}}</td>
+                                                <td>{{getTotalValue('Net_Amount')}}</td>
+                                            </ng-container>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" *ngIf="misReportList.length" let-state>
+                                            Showing {{ state.first + 1 }} of
+                                            {{ state.first + 1 + state.rows }} of
+                                            {{ state.totalRecords }}
+                                        </ng-template>
+                                    </p-table>
+                                </div> 
+                                <!-- <div class="table-responsive no-padding" *ngIf="ObjMIS.Report_Name === 'PO Wise Summary'">
+                                    <table class="table bidopen table-bordered" *ngIf="misReportList.length">
+                                        <thead>
+                                          <tr>
+                                                <th style=" width: 20% ;" ></th>
+                                                <th style=" width: 10% ;" >Total Gross Amount </th>
+                                                <th style=" width: 10% ;" >Discount Amount </th>
+                                                <th style=" width: 10% ;" >Product Taxable</th>
+                                                <th style=" width: 10% ;" >Term Amount</th>
+                                                <th style=" width: 10% ;" >Total Taxable </th>
+                                                <th style=" width: 10% ;" >Total GST </th>
+                                                <th style=" width: 10% ;" >Rounded Off</th>
+                                                <th style=" width: 10% ;" >Net Amount</th>
+                                          </tr>
+                                          <tr>
+                                            <th style=" width: 20% ;" ></th>
+                                            <th style=" width: 10% ;" >{{allTotalObj.Gross_Amount ? allTotalObj.Gross_Amount : 0}}</th>
+                                            <th style=" width: 10% ;" >{{allTotalObj.Discount_Amount ? allTotalObj.Discount_Amount : 0}}</th>
+                                            <th style=" width: 10% ;" >{{allTotalObj.Product_Taxable ? allTotalObj.Product_Taxable : 0}}</th>
+                                            <th style=" width: 10% ;" >{{allTotalObj.Term_Amount ? allTotalObj.Term_Amount : 0}}</th>
+                                            <th style=" width: 10% ;" >{{allTotalObj.Total_Taxable ? allTotalObj.Total_Taxable : 0}}</th>
+                                            <th style=" width: 10% ;" >{{allTotalObj.Total_GST ? allTotalObj.Total_GST : 0}}</th>
+                                            <th style=" width: 10% ;" >{{allTotalObj.Rounded_Off ? allTotalObj.Rounded_Off : 0}}</th>
+                                            <th style=" width: 10% ;" >{{allTotalObj.Net_Amount ? allTotalObj.Net_Amount : 0}}</th>
+                                      </tr>
+                                  
+                                        </thead>
+                                        
+                                      </table>
+                                </div> -->
+                        </p-tabPanel>
                     </p-tabView>
                 </div>
             </div>
          </div>
     </div>
 </div>
+
 <p-dialog
 [header]="viewHeader"
 [appendTo]="'body'"
@@ -1595,6 +1780,7 @@ style="text-align: center;"
 
 </p-footer>
 </p-dialog>
+
 <p-dialog
 [header]="'Product Detalis'"
 [appendTo]="'body'"
@@ -1679,7 +1865,7 @@ style="text-align: center;"
 >
 <div class="form-horizontal">
     <div class="no-padding">
-        <p-table [value]="pendingPurIndProViewList" #dt2 
+        <p-table [value]="pendingPurIndProViewList" #dt7
         [paginator]="true" 
         [rows]="100" 
         [rowHover]="true" 
@@ -1703,7 +1889,7 @@ style="text-align: center;"
                        size="50"
                        style="margin-top:25px;"
                        placeholder="Search" 
-                       (input)="dt1.filterGlobal($event.target.value, 'contains')" 
+                       (input)="dt7.filterGlobal($event.target.value, 'contains')" 
                        class="searchInput form-control">
                     </div>
                   
@@ -1742,3 +1928,87 @@ style="text-align: center;"
 
 </p-footer>
 </p-dialog>
+<!-- PO No view -->
+<p-dialog
+[header]="'Pending PO Material'"
+[appendTo]="'body'"
+[visible]="ViewListForPO"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '58%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="form-horizontal">
+    <div class="no-padding">
+        <p-table [value]="POViewList" #dt6
+        [paginator]="true" 
+        [rows]="100" 
+        [rowHover]="true" 
+        [autoLayout]="true" 
+        sortMode="multiple" 
+        [rowsPerPageOptions]="[100,200,300]" 
+        [rowHover]="true" 
+        [globalFilterFields]='DynamicPOview'>
+        <ng-template pTemplate="caption">
+            <div class="row">
+                <div class="col-sm-6 pull-right" style="text-align: right">
+                    <div class="col-sm-6">  
+                     <!-- <button *ngIf="popUpList.length" class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcelpopup(popUpList)" id="load1" [disabled]="EXCELpopSpinner">
+                       <p-progressSpinner *ngIf="EXCELpopSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                       <span *ngIf="!EXCELpopSpinner" class="fa fa-file-excel-o"></span>&nbsp;EXPORT TO EXCEL
+                   </button> -->
+                   </div>
+                    <div class="col-sm-6">
+                       <input type="text" 
+                       pInputText 
+                       size="50"
+                       style="margin-top:25px;"
+                       placeholder="Search" 
+                       (input)="dt6.filterGlobal($event.target.value, 'contains')" 
+                       class="searchInput form-control">
+                    </div>
+                  
+               </div>
+            </div>
+
+        </ng-template>
+            <ng-template pTemplate="header">
+                <tr >
+                    <th *ngFor="let option of DynamicPOview" nowrap="nowrap">{{option.replaceAll('_',' ')}}</th>
+                 </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col>
+                <tr>
+                    <ng-container *ngFor="let option of DynamicPOview">
+                        <td >{{col[option]}}</td>
+                    </ng-container>
+                </tr>
+                
+            </ng-template>
+            <ng-template pTemplate="paginatorright" let-state>
+                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+            </ng-template>
+        </p-table>
+    </div>
+    
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="ViewListForPO = false"
+    class="btn btn-default"
+    ><span class="glyphicon glyphicon-remove"></span>
+    CLOSE
+    </button>
+
+</p-footer>
+</p-dialog>
+
+<p-overlayPanel [dismissable]="true" [showCloseIcon]="true" [appendTo]="'body'" [baseZIndex]="9999999" #op>
+    <p style="width: 160px;">{{ObjCol.Work_Details}}</p>
+</p-overlayPanel>

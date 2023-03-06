@@ -1,0 +1,65 @@
+#ui-tabpanel-0 > div > p-table > div > div.ui-table-wrapper.ng-star-inserted {
+    width: auto !important;
+  }
+  .ui-table-auto-layout > .ui-table-wrapper {
+    width: auto !important;
+    min-height: 170px !important;
+}
+.addtable .ui-table .ui-table-thead > tr > th{
+  padding: 0.25em 0.5em !important;
+}
+  .custombutton {
+    margin-top: 25px;
+  }
+  hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+  }
+  .Outlet{
+    display: inline-block !important;
+  }
+  div.label-t {
+    padding: 6px 12px;
+    background: rgb(206 216 216 / 51%);
+  }
+  .text-red-active > td {
+    color:red;
+  }
+  .box.boxboxDivide-primary{
+    border-top-color: #f3efec;
+    height: 10px;
+    border: 0;
+    box-shadow: 0 10px 10px -10px #8c8b8b inset
+}
+.text-red-active>td {
+  color: red;
+}
+
+body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+  border-bottom: 1px solid #c1c1c1 !important;
+  margin-bottom: 0px;
+}
+
+.createPatient {
+  padding: 0 5px !important;
+  border-radius: 3px !important;
+  margin-top: 5px !important;
+}
+.ui-table-frozen-view>.ui-table-scrollable-body>table>.ui-table-tbody>tr>td {
+  height: 52px !important;
+  width: 335px !important;
+}
+
+body .scrolltable .ui-table .ui-table-tbody > tr > td {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  height: 52px !important;
+}
+
+body  .scrolltable .ui-table .ui-table-tbody > tr>td:hover {
+  overflow: auto !important;
+  text-overflow: initial !important;
+}

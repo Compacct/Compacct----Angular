@@ -66,6 +66,11 @@
                                                 <div class="col-sm-3 pull-right" style="text-align: right">
                                                         <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                                     </div>
+                                                <div class="col-sm-3 pull-right" >
+                                                  <button class="btn btn-success" data-toggle="modal" (click)="exportoexcel('leads')">
+                                                    <span  class="glyphicon glyphicon-save-file"></span>&nbsp;Export To Excel
+                                                     </button>
+                                                </div>
                                            </div>
 
                                         </ng-template>

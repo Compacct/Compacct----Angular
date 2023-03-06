@@ -97,12 +97,19 @@
                                 </div>
                             </div>
                             <div class="table-responsive no-padding productTable">
-                                <p-table #dt [columns]="column" [value]="BrowseList" [globalFilterFields]="['Location_Name','Mfg_Company','Machine','Serial_No','Service_Type','Service_Start_Date','Service_End_Date','Payment_Status','Payment_Date']" [paginator]="BrowseList.length ? true:false" [rows]="10"
+                                <p-table #dt [columns]="column" [value]="BrowseList" [globalFilterFields]="['Support_Ticket_No','Support_Ticket_Date_Nepali','Call_Type','Sub_Ledger_Name','Service_Type','Location_Name','Mfg_Company','Machine','Serial_No','Member_Name','Support_Ticket_Status','Contract_Status','Remarks']" [paginator]="BrowseList.length ? true:false" [rows]="10"
                                     [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,300,500]" [rowHover]="true">
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right;">
                                                 <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                            <div class="col-sm-3 pull-right">
+                                               
+                                                <button *ngIf="BrowseList.length" class="btn btn-success" (click)="exportoexcel(BrowseList)" id="loadexportoexcel" [disabled]="SpinnerExportoExcel">
+                                                    <p-progressSpinner *ngIf="SpinnerExportoExcel" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                <span *ngIf="!SpinnerExportoExcel" class="glyphicon glyphicon-save-file"></span>Export to Excel
+                                            </button>
                                             </div>
                                         </div>
 
@@ -160,8 +167,8 @@
                                             <td>{{col.Machine}}</td>
                                             <td>{{col.Serial_No}}</td>
                                             <td>{{col.Member_Name}}</td>
+                                            <td>{{col.Support_Ticket_Status}}</td>
                                             <td>{{col.Contract_Status}}</td>
-                                            <!-- <td>{{col.Support_Ticket_Status}}</td> -->
                                             <td>{{col.Remarks}}</td>
                                         </tr>
                                     </ng-template>

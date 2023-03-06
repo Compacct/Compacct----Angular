@@ -237,7 +237,108 @@ import { DebitNoteWoStockComponent } from './common/FinancialManagement/Transact
 import { FinancialReminderComponent } from "./common/FinancialManagement/Transaction/Voucher/financial-reminder/financial-reminder.component";
 import { InflowPlaningComponent } from "./common/Harbauer/inflow-planing/inflow-planing.component";
 import { WorkOrderComponent } from './common/MICL/RepairAndMaintenance/work-order/work-order.component';
+import { ReturnableGatePassComponent } from "./common/MICL/RepairAndMaintenance/returnable-gate-pass/returnable-gate-pass.component";
 import { RepairAndMaintenanceRdbComponent } from './common/MICL/RepairAndMaintenance/repair-and-maintenance-rdb/repair-and-maintenance-rdb.component';
+import { K4cProductionClosingStockComponent } from './common/MaterialManagement/Production/k4c-production-closing-stock/k4c-production-closing-stock.component';
+import { EmployeeSalaryMasterMiclComponent } from './common/MICL/employee-salary-master-micl/employee-salary-master-micl.component';
+import { HrEmployeeSalaryMasterHarbComponent } from './common/Harbauer/hr-employee-salary-master-harb/hr-employee-salary-master-harb.component';
+import { RepairAndMantainceGRNComponent } from "./common/MICL/RepairAndMaintenance/repair-and-mantaince-grn/repair-and-mantaince-grn.component";
+import { HREmployeeMasterComponent } from "./common/MICL/hr-employee-master/hr-employee-master.component";
+import { HarbProjectBillComponent } from './common/Harbauer/harb-project-bill/harb-project-bill.component';
+import { NepalSubledgerAliasCategoryComponent } from "./common/FinancialManagement/Master/nepal-subledger-alias-category/nepal-subledger-alias-category.component";
+import { PatientCouponComponent } from "./common/PatientManagement/Transaction/patient-coupon/patient-coupon.component";
+import { HearingCaseHistoryComponent } from "./common/PatientManagement/hearing-case-history/hearing-case-history.component";
+import { GoodReceiveDetailsComponent } from './common/MICL/good-receive-details/good-receive-details.component';
+import { MasterHolidayComponent } from "./common/MICL/master-holiday/master-holiday.component";
+import { MICLDispatchChallanChargeableComponent } from "./common/MICL/micl-dispatch-challan-chargeable/micl-dispatch-challan-chargeable.component";
+import { DailyAttendanceSheetComponent } from './common/Attendance/daily-attendance-sheet/daily-attendance-sheet.component';
+import { MasterConsultancyV3Component } from "./common/PatientManagement/Master/master-consultancy-v3/master-consultancy-v3.component";
+import { MICLJournalVoucherComponent } from "./common/MICL/micl-journal-voucher/micl-journal-voucher.component";
+import { POAuthorizationComponent } from "./common/MICL/po-authorization/po-authorization.component";
+import { BranchRequisitionComponent } from "./common/Patna/branch-requisition/branch-requisition.component";
+import { RequisitionAuthorizationComponent } from "./common/MICL/requisition-authorization/requisition-authorization.component";
+import { BOMAuthorizationComponent } from "./common/Harbauer/bom-authorization/bom-authorization.component";
+import { ProjectPlanApproveComponent } from "./common/Harbauer/project-plan-approve/project-plan-approve.component";
+import { POAuthorizationHarbauerComponent } from "./common/Harbauer/po-authorization-harbauer/po-authorization-harbauer.component";
+import { HarbProjectDesignApprovalComponent } from "./common/Harbauer/harb-project-design-approval/harb-project-design-approval.component";
+import { NepalRequisitionFromSalesmanComponent } from "./common/MaterialManagement/Outward/nepal-requisition-from-salesman/nepal-requisition-from-salesman.component";
+import { NepalPurchaseRequestComponent } from "./common/MaterialManagement/Outward/nepal-purchase-request/nepal-purchase-request.component";
+import { MeterialInspectionOfRDBComponent } from './common/MICL/meterial-inspection-of-rdb/meterial-inspection-of-rdb.component';
+import { BLTxnWorkOrderSaleBillComponent } from "./common/Harbauer/bl-txn-work-order-sale-bill/bl-txn-work-order-sale-bill.component";
+import { HREventUploadComponent } from './common/Attendance/hr-event-upload/hr-event-upload.component';
+import { MasterSubContractorComponent } from './common/MICL/SubContractor/master-sub-contractor/master-sub-contractor.component';
+import { SubContractorEmployeeMasterComponent } from './common/MICL/SubContractor/sub-contractor-employee-master/sub-contractor-employee-master.component';
+import { SubContractorAttendanceComponent } from './common/MICL/SubContractor/sub-contractor-attendance/sub-contractor-attendance.component';
+import { NonReturnableGatePassComponent } from "./common/MICL/non-returnable-gate-pass/non-returnable-gate-pass.component";
+import { MiclRawMaterialComponent } from './common/ProductionManagement/Master/micl-raw-material/micl-raw-material.component';
+import { NepalPurchaseRequestVendorSelectionComponent } from "./common/Procurement/nepal-purchase-request-vendor-selection/nepal-purchase-request-vendor-selection.component";
+import { NepalPurchaseRequestNegotiatePriceComponent } from "./common/Procurement/nepal-purchase-request-negotiate-price/nepal-purchase-request-negotiate-price.component";
+import { MICLMasterConsumbleComponent } from "./common/ProductionManagement/Master/micl-master-consumble/micl-master-consumble.component";
+import { MICLCostCenterMasterComponent } from "./common/MICL/micl-cost-center-master/micl-cost-center-master.component";
+import { JOHEarMoldComponent } from "./common/PatientManagement/joh-ear-mold/joh-ear-mold.component";
+import { SubledgerReportForFranchiseComponent } from "./common/FinancialManagement/Master/subledger-report-for-franchise/subledger-report-for-franchise.component";
+import { K4CStockDetailsComponent } from "./common/FinancialManagement/Master/k4-c-stock-details/k4-c-stock-details.component";
+import { RawMaterialReceiveComponent } from "./common/ProductionManagement/Master/raw-material-receive/raw-material-receive.component";
+import { PurchaseOrderRawMaterialComponent } from "./common/ProductionManagement/Master/purchase-order-raw-material/purchase-order-raw-material.component";
+import { RawMaterialRequisitionComponent } from './common/MICL/RawMaterial/raw-material-requisition/raw-material-requisition.component';
+import { MiclRawMaterialIssueComponent } from './common/MICL/RawMaterial/micl-raw-material-issue/micl-raw-material-issue.component';
+import { NepalBLTxnPurchaseOrderComponent } from "./common/Procurement/nepal-bl-txn-purchase-order/nepal-bl-txn-purchase-order.component";
+import { JOHRealisticExpectationFormComponent } from "./common/PatientManagement/joh-realistic-expectation-form/joh-realistic-expectation-form.component";
+import { FurnaceMisInputComponent } from './common/MICL/RawMaterial/furnace-mis-input/furnace-mis-input.component';
+import { MiclRawMaterialIssueNewComponent } from './common/MICL/RawMaterial/micl-raw-material-issue-new/micl-raw-material-issue-new.component';
+import { RequisitionForIssueChargeableComponent } from './common/MICL/requisition-for-issue-chargeable/requisition-for-issue-chargeable.component';
+import { JohValidationProcessComponent } from "./common/PatientManagement/joh-validation-process/joh-validation-process.component";
+import { ReturnMaterialComponent } from './common/MICL/return-material/return-material.component';
+import { K4cPremixInventoryComponent } from './common/MaterialManagement/Production/k4c-premix-inventory/k4c-premix-inventory.component';
+import { K4cPremixStockTransferComponent } from './common/MaterialManagement/Production/k4c-premix-stock-transfer/k4c-premix-stock-transfer.component';
+import { NepalBLTxnPurchaseOrderApproveComponent } from "./common/Procurement/nepal-bl-txn-purchase-order-approve/nepal-bl-txn-purchase-order-approve.component";
+import { DoctorAppointmentComponent } from './common/PatientManagement/doctor-appointment/doctor-appointment.component';
+import { MiclPurchaseBillComponent } from './common/MICL/micl-purchase-bill/micl-purchase-bill.component';
+import { DoctorsAppointmentNewABRComponent } from './common/PatientManagement/doctors-appointment-new-abr/doctors-appointment-new-abr.component';
+import { K4CBillDateUpdateComponent } from "./common/OutletManagement/k4-c-bill-date-update/k4-c-bill-date-update.component";
+import { DoctorApptNewImpedanceAudiometryComponent } from "./common/PatientManagement/doctor-appt-new-impedance-audiometry/doctor-appt-new-impedance-audiometry.component";
+import { NepalPurchaseOrderStatusMasterComponent } from "./common/Procurement/nepal-purchase-order-status-master/nepal-purchase-order-status-master.component";
+import { DailyAttendanceForContractorComponent } from './common/Attendance/daily-attendance-for-contractor/daily-attendance-for-contractor.component';
+import { NepalPurchaseOrderDocumenMasterComponent } from "./common/Procurement/nepal-purchase-order-documen-master/nepal-purchase-order-documen-master.component";
+import { RawMaterialStockReportComponent } from './common/MaterialManagement/Report/raw-material-stock-report/raw-material-stock-report.component';
+import { BSHPLHfFollowUpComponent } from "./common/CRM/BSHPL-FOLLOWUP/bshpl-hf-follow-up/bshpl-hf-follow-up.component";
+import { DoctorsAppointmentNewOAEComponent } from "./common/PatientManagement/doctors-appointment-new-oae/doctors-appointment-new-oae.component";
+import { DoctorsAppointmentNewSpTestComponent } from "./common/PatientManagement/doctors-appointment-new-sp-test/doctors-appointment-new-sp-test.component";
+import { DoctorsAppointmentNewGlycerolTestComponent } from "./common/PatientManagement/doctors-appointment-new-glycerol-test/doctors-appointment-new-glycerol-test.component";
+import { AcceptReturnMaterialComponent } from './common/MICL/accept-return-material/accept-return-material.component';
+import { EInvoiceConfirmationFormComponent } from './common/OutletManagement/e-invoice-confirmation-form/e-invoice-confirmation-form.component';
+import { MiclFinishMasterProductComponent } from './common/ProductionManagement/Master/micl-finish-master-product/micl-finish-master-product.component';
+import { DoctorsAppointmentNewTinnitusReportComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-report/doctors-appointment-new-tinnitus-report.component";
+import { DoctorsAppointmentNewTinnitusTherapyTrackerComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-therapy-tracker/doctors-appointment-new-tinnitus-therapy-tracker.component";
+import { MiclWastageMasterProductComponent } from './common/ProductionManagement/Master/micl-wastage-master-product/micl-wastage-master-product.component';
+import { DoctorsAppointmentNewTinnitusEvaluationComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-evaluation/doctors-appointment-new-tinnitus-evaluation.component";
+import { DoctorsAppointmentNewTinnitusHandicapComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-handicap/doctors-appointment-new-tinnitus-handicap.component";
+import { TinnitusTherapyTrackerDashboardComponent } from "./common/PatientManagement/tinnitus-therapy-tracker-dashboard/tinnitus-therapy-tracker-dashboard.component";
+import { TinnitusEvauationReportDashboardComponent } from "./common/PatientManagement/tinnitus-evauation-report-dashboard/tinnitus-evauation-report-dashboard.component";
+import { PrintTinnitusTherapyTrackerDashboardComponent } from "./common/PatientManagement/print-tinnitus-therapy-tracker-dashboard/print-tinnitus-therapy-tracker-dashboard.component";
+import { PrintTinnitusEvauationReportDashboardComponent } from "./common/PatientManagement/print-tinnitus-evauation-report-dashboard/print-tinnitus-evauation-report-dashboard.component";
+import { OutwardChallanComponent } from './common/MICL/outward-challan/outward-challan.component';
+import { NepalVendorInteractionComponent } from "./common/Procurement/nepal-vendor-interaction/nepal-vendor-interaction.component";
+import { K4cPremixItemClosingStockComponent } from './common/MaterialManagement/Production/k4c-premix-item-closing-stock/k4c-premix-item-closing-stock.component';
+import { SaleBillComponent } from "./common/MICL/sale-bill/sale-bill.component";
+import { DoctorsAppoNewFluencyEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-fluency-evaluation/doctors-appo-new-fluency-evaluation.component";
+import { PrintSpeechEvauationReportDashboardComponent } from "./common/PatientManagement/print-speech-evauation-report-dashboard/print-speech-evauation-report-dashboard.component";
+import { SpeechEvauationReportDashboardComponent } from "./common/PatientManagement/speech-evauation-report-dashboard/speech-evauation-report-dashboard.component";
+import { DoctorsAppoNewChildSpeechEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-child-speech-evaluation/doctors-appo-new-child-speech-evaluation.component";
+import { DoctorsAppoNewAdultSpeechEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-adult-speech-evaluation/doctors-appo-new-adult-speech-evaluation.component";
+import { SaleBillNewComponent } from './common/FinancialManagement/Transaction/Sales/sale-bill-new/sale-bill-new.component';
+import { DoctorsAppointmentNewFineTuningComponent } from "./common/PatientManagement/doctors-appointment-new-fine-tuning/doctors-appointment-new-fine-tuning.component";
+import { DoctorsAppointmentNewFineTuningHearingComponent } from "./common/PatientManagement/doctors-appointment-new-fine-tuning-hearing/doctors-appointment-new-fine-tuning-hearing.component";
+import { GoogleReviewComponent } from './common/PatientManagement/google-review/google-review.component';
+import { PurchaseBillGSTOneSPComponent } from "./common/FinancialManagement/Transaction/Purchase/purchase-bill-gst-one-sp/purchase-bill-gst-one-sp.component";
+import { PurchaseOrderHarbauerComponent } from "./common/MaterialManagement/Inward/purchase-order-harbauer/purchase-order-harbauer.component";
+import { ParameterMasterComponent } from "./common/MICL/parameter-master/parameter-master.component";
+import { DoctorsAppoTherapPlanComponent } from './common/PatientManagement/doctors-appo-therap-plan/doctors-appo-therap-plan.component';
+import { MICLRawMaterialQAComponent } from "./common/MICL/micl-raw-material-qa/micl-raw-material-qa.component";
+import { BLTxnGrnNPComponent } from "./common/Procurement/bl-txn-grn-np/bl-txn-grn-np.component";
+import { HrLateArrivalEarlyDepartureComponent } from './common/MICL/hr-late-arrival-early-departure/hr-late-arrival-early-departure.component';
+import { K4cSwiggyZomatoFileUploadComponent } from "./common/OutletManagement/k4c-swiggy-zomato-file-upload/k4c-swiggy-zomato-file-upload.component";
+import { HrLoanApplicationComponent } from './common/MICL/hr-loan-application/hr-loan-application.component';
 
 
 const layoutRoutes: Routes = [{
@@ -1501,7 +1602,7 @@ data: {
       path: 'HR_Leave_Opening_Issue_Balance',
       component: HrLeaveOpeningComponent,
       data: {
-        title: 'Leave Application'
+        title: 'HR Leave Opening Issue Balance'
       }
     },
     {
@@ -1673,84 +1774,800 @@ data: {
 }
 },
 {
-  path: 'Contra_Voucher',
-  component: ContractVoucherV2Component,
+path: 'Contra_Voucher',
+component: ContractVoucherV2Component,
+data: {
+title: 'Contra Voucher'
+}
+},
+{
+path: 'Issue_Challan',
+  component: IssueChallanComponent,
+data: {
+  title: 'Issue Challan'
+}
+},
+{
+  path: 'HR_Txn_Special_Allowance_Deduction',
+  component: HRTxnSpecialAllowanceDeductionComponent,
   data: {
-    title: 'Contra Voucher'
+    title: 'HR Txn Special Allowance Deduction'
+}
+},
+{
+  path: 'Process_Salary',
+  component: ProcessSalaryComponent,
+  data: {
+    title: 'Process Salary'
+}
+},
+{
+  path: 'Leave_Approval',
+  component: LeaveApprovalComponent,
+  data: {
+    title: 'Leave Approval'
+}
+},
+{
+  path: 'Consumption',
+  component: ConsumptionComponent,
+  data: {
+    title: 'Consumption'
+}
+},
+{
+  path: 'Debit_Note_WO_Stock',
+  component: DebitNoteWoStockComponent,
+  data: {
+    title: 'Debit Note Without Stock'
+}
+},
+{
+  path: 'Financial_Reminder',
+  component: FinancialReminderComponent,
+  data: {
+    title: 'Financial Reminder'
+}
+},
+{
+path: 'Inflow_Planing',
+component: InflowPlaningComponent,
+data: {
+title: 'Inflow Planing'
+}
+},
+{
+path: 'Work_Order',
+component: WorkOrderComponent,
+data: {
+title: 'Work Order'
+}
+},
+{
+path: 'Returnable_Gate_Pass',
+component: ReturnableGatePassComponent,
+data: {
+title: 'Returnable Gate Pass '
+}
+},
+{
+path: 'Repair_And_Maintenance_RDB',
+component: RepairAndMaintenanceRdbComponent,
+data: {
+title: 'Repair And Maintenance RDB'
+}
+},
+{
+path: 'Production_Closing_Stock',
+component: K4cProductionClosingStockComponent,
+data: {
+title: 'Production Closing Stock'
+}
+},
+{
+path: 'Employee_Salary_Master_MICL',
+component: EmployeeSalaryMasterMiclComponent,
+data: {
+  title: 'Employee Salary Master'
+}
+},
+{
+path: 'Employee_Salary_Master_Harbauer',
+  component: HrEmployeeSalaryMasterHarbComponent,
+  data: {
+    title: 'Employee Salary_Master'
+}
+},
+{
+  path: 'Repair_And_Maintenance_GRN',
+    component: RepairAndMantainceGRNComponent,
+    data: {
+      title: 'Repair and Maintenance GRN '
+}
+},
+{
+  path: 'HR_Employee_Master',
+  component:HREmployeeMasterComponent,
+  data: {
+    title: 'Employee Master'
+}
+},
+{
+  path: 'Project_Bill',
+  component:HarbProjectBillComponent,
+  data: {
+    title: 'Sale Bill Project'
+}
+},
+{
+  path: 'Nepal_Subledger_Alias_Category',
+  component:NepalSubledgerAliasCategoryComponent,
+  data: {
+    title: 'Subledger Slias Category'
+}
+},
+{
+  path: 'Patient_Coupon',
+  component:PatientCouponComponent,
+  data: {
+    title: 'Patient Coupon'
+}
+},
+{
+  path: 'Hearing_Case_History',
+    component: HearingCaseHistoryComponent,
+    data: {
+      title: 'Hearing Case History'
+}
+},
+{
+  path: 'Good_Receive_Details',
+    component: GoodReceiveDetailsComponent,
+    data: {
+      title: 'Good Receive Details'
+}
+},
+{
+  path: 'Master_Holiday',
+  component:MasterHolidayComponent,
+  data: {
+    title: 'Master Holiday'
+}
+},
+{
+  path: 'MICL_Dispatch_Challan_Chargeable',
+    component: MICLDispatchChallanChargeableComponent,
+    data: {
+      title: 'MICL Dispatch Challan Chargeable '
+}
+},
+{
+  path: 'Daily_Attendance_Sheet',
+    component: DailyAttendanceSheetComponent,
+    data: {
+      title: 'Daily Attendance Sheet '
+}
+},
+{
+  path: 'BL_CRM_Master_Consultancy_V3',
+    component: MasterConsultancyV3Component,
+    data: {
+      title: 'BL CRM Master Consultancy '
+}
+},
+{
+  path: 'MICL_Journal_Voucher',
+  component:MICLJournalVoucherComponent,
+  data: {
+    title: 'MICL Journal Voucher'
+}
+},
+{
+  path: 'PO_Authorization',
+    component: POAuthorizationComponent,
+    data: {
+      title: 'PO Authorization '
+}
+},
+{
+  path: 'BL_Txn_Branch_Requisition',
+    component: BranchRequisitionComponent,
+    data: {
+      title: 'Branch_Requisition'
+}
+},
+{
+  path: 'Requisition_Authorization',
+  component: RequisitionAuthorizationComponent,
+  data: {
+    title: 'Requisition Authorization'
+}
+},
+{
+  path: 'BOM_Authorization',
+    component: BOMAuthorizationComponent,
+    data: {
+      title: 'BOM Authorization '
+}
+},
+{
+  path: 'Project_Plan_Approve',
+  component: ProjectPlanApproveComponent,
+  data: {
+    title: 'Project Plan Approve'
+}
+}, 
+{
+  path: 'PO_Authorization_Harbauer',
+  component: POAuthorizationHarbauerComponent,
+  data: {
+    title: 'PO Authorization Harbauer'
+}
+},
+{
+  path: 'Harbauer_Project_Design_Approval',
+  component: HarbProjectDesignApprovalComponent,
+  data: {
+    title: 'Project Design Approval'
+}
+},
+{
+  path: 'Nepal_Bl_Txn_Requisition_From_Salesman',
+    component: NepalRequisitionFromSalesmanComponent,
+    data: {
+      title: 'Requisition From Salesman'
+}
+},
+{
+  path: 'Nepal_BL_Txn_Purchase_Request',
+    component: NepalPurchaseRequestComponent,
+    data: {
+      title: 'Purchase Request'
+}
+},
+{
+  path: "Project_Dashboard",
+  loadChildren: () =>
+    import(
+      "./common/Harbauer/project-dashboard/project-dashboard.module"
+    ).then(m => m.ProjectDashboardModule),
+  data: {
+    title: "Project Dashboard"
+  }
+},
+{
+  path: 'Meterial_Inspection_Of_RDB',
+    component: MeterialInspectionOfRDBComponent,
+    data: {
+      title: 'Meterial Inspection Of RDB'
+}
+},
+{
+  path: 'BL_Txn_Work_Order_Sale_Bill',
+  component: BLTxnWorkOrderSaleBillComponent,
+  data: {
+    title: 'BL Txn Work Order Sale Bill'
+}
+},
+{
+  path: 'HR_Event_Upload',
+  component: HREventUploadComponent,
+  data: {
+    title: 'HR Event Upload'
+}
+},
+{
+  path: 'Master_Sub_Contractor',
+    component: MasterSubContractorComponent,
+    data: {
+      title: 'Master Sub Contractor'
+}
+},
+{
+  path: 'Sub_Contractor_Employee_Master',
+  component: SubContractorEmployeeMasterComponent,
+  data: {
+    title: 'Sub Contractor Employee Master'
+}
+},
+{
+  path: 'Sub_Contractor_Attendance',
+  component: SubContractorAttendanceComponent,
+  data: {
+    title: 'Sub Contractor Attendance'
+}
+},
+{
+  path: 'Non_Returnable_Gate_Pass',
+  component: NonReturnableGatePassComponent,
+  data: {
+    title: 'Non Returnable Gate Pass'
+}
+},
+{
+  path: 'Master_Raw_Material',
+  component: MiclRawMaterialComponent,
+  data: {
+    title: 'Master Raw Material'
+}
+},
+{
+   path: 'Nepal_BL_Txn_Purchase_Request_Vendor_Selection',
+   component: NepalPurchaseRequestVendorSelectionComponent,
+   data: {
+     title: 'Vendor Selection'
+}
+},
+{
+  path: 'Nepal_BL_Txn_Purchase_Request_Negotiate_Price',
+  component: NepalPurchaseRequestNegotiatePriceComponent,
+  data: {
+    title: 'Purchase Request Negotiate Price'
+}
+},
+{        
+path: 'Master_Consumable',
+  component: MICLMasterConsumbleComponent,
+  data: {
+    title: 'Master Consumable'
+}
+},
+{        
+path: 'MICL_Cost_Center_Master',
+  component: MICLCostCenterMasterComponent,
+  data: {
+    title: 'MICL Cost Center Master'
+}
+},
+{
+  path: 'JOH_Ear_Mold',
+  component: JOHEarMoldComponent,
+  data: {
+    title: 'JOH Ear Mold'
+}
+},
+{
+  path: 'Subledger_Report_For_Franchise',
+  component: SubledgerReportForFranchiseComponent,
+  data: {
+    title: 'Subledger Report For Franchise'
+}
+},
+{
+  path: 'K4C_Stock_Details',
+  component: K4CStockDetailsComponent,
+  data: {
+    title: 'K4C Stock Details'
+}
+    },
+{
+  path: 'Raw_Material_Receive',
+  component: RawMaterialReceiveComponent,
+  data: {
+    title: 'Raw Material Receive'
+}
+    },
+
+{
+  path: 'Purchase_Order_Raw_Material',
+    component: PurchaseOrderRawMaterialComponent,
+    data: {
+      title: 'Purchase Order Raw Material'
+}
+},
+{
+  path: 'Raw_Material_Requisition',
+    component: RawMaterialRequisitionComponent,
+    data: {
+      title: 'Raw Material Requisition'
+}
+},
+{
+  path: 'MICL_Raw_Material_Issue',
+    component: MiclRawMaterialIssueComponent,
+    data: {
+      title: 'Raw Material Issue'
+}
+    },
+{
+  path: 'Nepal_BL_Txn_Purchase_Order',
+  component: NepalBLTxnPurchaseOrderComponent,
+  data: {
+    title: 'Purchase Order'
+}
+},
+{
+  path: 'JOH_Realistic_Expectation_Form',
+    component: JOHRealisticExpectationFormComponent,
+    data: {
+      title: 'JOH Realistic Expectation Form '
+}
+},
+{
+  path: 'Furnace_MIS_Input',
+    component: FurnaceMisInputComponent,
+    data: {
+      title: 'Furnace MIS Input'
+}
+},
+{
+  path: 'MICL_Raw_Material_Issue_New',
+    component: MiclRawMaterialIssueNewComponent,
+    data: {
+      title: 'Raw Material Issue'
+}
+},
+{
+  path: 'Requisition_For_Issue_Chargeable',
+    component: RequisitionForIssueChargeableComponent,
+    data: {
+      title: 'Issue Chargeable Requisition'
+}
+},
+{
+  path: 'JOH_Validation_Process',
+    component: JohValidationProcessComponent,
+    data: {
+      title: 'JOH Validation Process'
+}
+},
+{
+  path: 'Return_Material',
+    component: ReturnMaterialComponent,
+    data: {
+      title: 'Return Material'
+}
+},
+{
+  path: 'Premix_Inventory',
+    component: K4cPremixInventoryComponent,
+    data: {
+      title: 'Premix Production'
+}
+},
+{
+  path: 'Premix_Stock_Transfer',
+    component: K4cPremixStockTransferComponent,
+    data: {
+      title: 'Premix Stock Transfer'
+}
+    },
+{
+  path: 'Nepal_BL_Txn_Purchase_Order_Approve',
+    component: NepalBLTxnPurchaseOrderApproveComponent,
+    data: {
+      title: 'Nepal BL Txn Purchase Order Approve'
+}
+},
+{
+  path: 'DoctorsAppointmentNew',
+    component: DoctorAppointmentComponent,
+    data: {
+      title: 'Doctor Appointment'
+}
+},
+{
+  path: 'MICL_Purchase_Bill',
+    component: MiclPurchaseBillComponent,
+    data: {
+      title: 'Purchase Bill'
+}
+},
+{
+  path: 'DoctorsAppointmentNew_ABR',
+    component: DoctorsAppointmentNewABRComponent,
+    data: {
+      title: 'Doctor Appointment New ABR'
+}
+},
+{
+  path: 'K4C_Bill_Date_Update',
+    component: K4CBillDateUpdateComponent,
+    data: {
+      title: 'K4C Bill Date Update'
+}
+},
+{
+  path: 'DoctorsAppointmentNew_Impedance_Audiometry',
+    component: DoctorApptNewImpedanceAudiometryComponent,
+    data: {
+      title: 'Doctors Appointment New Impedance Audiometry'
+}
+},
+{
+  path: 'Nepal_BL_Txn_Purchase_Order_Status_Master',
+    component: NepalPurchaseOrderStatusMasterComponent,
+    data: {
+      title: 'PO To-Do Master'
+}
+},
+{
+  path: 'Daily_Attendance_For_Contractor',
+    component: DailyAttendanceForContractorComponent,
+    data: {
+      title: 'Daily Attendance For Contractor'
+}
+},
+{
+  path: 'Nepal_BL_Txn_Purchase_Order_Document_Master',
+    component: NepalPurchaseOrderDocumenMasterComponent,
+    data: {
+      title: 'PO Document Master'
+}
+},
+{
+  path: 'Raw_Material_Stock_Report',
+    component: RawMaterialStockReportComponent,
+    data: {
+      title: 'Raw Material Stock Report'
+}
+},
+{
+  path: 'BSHPL_HF_FollowUP',
+    component: BSHPLHfFollowUpComponent,
+    data: {
+      title: 'BSHPL HF FollowUP'
+}
+},
+{
+  path: 'Doctors_Appointment_New_OAE',
+    component: DoctorsAppointmentNewOAEComponent,
+    data: {
+      title: 'Doctors Appointment New OAE'
+}
+},
+{
+  path: 'Doctors_Appointment_New_Special_Tests',
+    component: DoctorsAppointmentNewSpTestComponent,
+    data: {
+      title: 'Doctors Appointment New Special Tests'
+}
+},
+{
+  path: 'Doctors_Appointment_New_Glycerol_Test',
+    component: DoctorsAppointmentNewGlycerolTestComponent,
+    data: {
+      title: 'Doctors Appointment New Glycerol Test'
+}
+},
+{
+  path: 'Accept_Return_Material',
+    component: AcceptReturnMaterialComponent,
+    data: {
+      title: 'Accept Return Material'
+}
+},
+{
+  path: 'E_Invoice_Confirmation_Form',
+    component: EInvoiceConfirmationFormComponent,
+    data: {
+      title: 'E Invoice Confirmation Form'
+}
+},
+{
+  path: 'Finish_Master_Product',
+    component: MiclFinishMasterProductComponent,
+    data: {
+      title: 'Finish Master Product'
+}
+},
+{
+  path: 'Doctors_Appointment_New_Tinnitus_Report',
+    component: DoctorsAppointmentNewTinnitusReportComponent,
+    data: {
+      title: 'Doctors Appointment New Tinnitus Report'
+}
+},
+{
+  path: 'Doctors_Appointment_New_Tinnitus_Therapy_Tracker',
+    component: DoctorsAppointmentNewTinnitusTherapyTrackerComponent,
+    data: {
+      title: 'Doctors Appointment New Therapy Tracker'
+}
+},
+{
+  path: 'Wastage_Master_Product',
+    component: MiclWastageMasterProductComponent,
+    data: {
+      title: 'Wastage Master Product'
+}
+},
+{
+  path: 'Doctors_Appointment_New_Tinnitus_Evaluation',
+    component: DoctorsAppointmentNewTinnitusEvaluationComponent,
+    data: {
+      title: 'Doctors Appointment New Tinnitus Evaluation'
+}
+},
+{
+  path: 'Doctors_Appointment_New_Tinnitus_Handicap',
+    component: DoctorsAppointmentNewTinnitusHandicapComponent,
+    data: {
+      title: 'Doctors Appointment New Tinnitus Handicap'
+}
+},
+{
+  path: 'Tinnitus_Therapy_Tracker_Dashboard',
+    component: TinnitusTherapyTrackerDashboardComponent,
+    data: {
+      title: 'Tinnitus Therapy Tracker Dashboard'
+}
+},
+{
+  path: 'Tinnitus_Evauation_Report_Dashboard',
+    component: TinnitusEvauationReportDashboardComponent,
+    data: {
+      title: 'Tinnitus Evaluation Report Dashboard'
+}
+},
+{
+  path: 'Print_Tinnitus_Therapy_Tracker_Dashboard',
+    component: PrintTinnitusTherapyTrackerDashboardComponent,
+    data: {
+      title: 'Print Tinnitus Therapy Tracker Dashboard'
+}
+},
+{
+  path: 'Print_Tinnitus_Evauation_Report_Dashboard',
+    component: PrintTinnitusEvauationReportDashboardComponent,
+    data: {
+      title: 'Print Tinnitus Evauation Report Dashboard'
+}
+},
+{
+  path: 'Outward_Challan',
+    component: OutwardChallanComponent,
+    data: {
+      title: 'Outward Challan'
+}
+},
+{
+  path: 'Nepal_BL_Txn_Vendor_Interaction',
+    component: NepalVendorInteractionComponent,
+    data: {
+      title: 'Vendor Interaction Managemnet'
+}
+},
+{
+  path: 'Premix_Item_Closing_Stock',
+    component: K4cPremixItemClosingStockComponent,
+    data: {
+      title: 'Premix Item Closing Stock'
+}
+},
+{
+  path: 'MICL_Sale_Bill',
+    component: SaleBillComponent,
+    data: {
+      title: 'Sale Bill'
+}
+},
+{
+  path: 'Doctors_Appo_New_Fluency_Evaluation',
+    component: DoctorsAppoNewFluencyEvaluationComponent,
+    data: {
+      title: 'FLUENCY EVALUATION REPORT'
+}
+},
+{
+  path: 'Print_Speech_Evauation_Report_Dashboard',
+    component: PrintSpeechEvauationReportDashboardComponent,
+    data: {
+      title: 'Print Speech Evauation Report Dashboard'
+}
+},
+{
+  path: 'Speech_Evauation_Report_Dashboard',
+    component: SpeechEvauationReportDashboardComponent,
+    data: {
+      title: 'Speech Evauation Report Dashboard'
+}
+},
+{
+  path: 'Doctors_Appo_New_Child_Speech_Evaluation',
+    component: DoctorsAppoNewChildSpeechEvaluationComponent,
+    data: {
+      title: 'CHILD SPEECH AND LANGUAGE EVALUATION REPORT'
+}
+},
+{
+  path: 'Doctors_Appo_New_Adult_Speech_Evaluation',
+    component:DoctorsAppoNewAdultSpeechEvaluationComponent,
+    data: {
+      title: 'ADULT SPEECH AND LANGUAGE EVALUATION REPORT'
+}
+},
+{
+  path: 'Sale_Bill_Nnew',
+    component:SaleBillNewComponent,
+    data: {
+      title: 'Sale_Bill_New'
+}
+},
+{
+  path: 'Doctors_Appointment_New_Fine_Tuning',
+    component:DoctorsAppointmentNewFineTuningComponent,
+    data: {
+      title: 'Doctors Appointment New Fine Tuning'
+}
+},
+{
+path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
+    component: DoctorsAppointmentNewFineTuningHearingComponent,
+    data: {
+      title: 'ADJUSTMENT AND FINE TUNING OF HEARING AIDS'
+}
+},
+{
+  path: 'Google_Review',
+    component:GoogleReviewComponent,
+    data: {
+      title: 'Google Review'
+    }
+  },
+  {
+   path: 'BL_Txn_Purchase_Bill_GST_One_SP',
+    component:PurchaseBillGSTOneSPComponent,
+    data: {
+      title: 'Purchase Bill GST'
+    }
+  },
+  {
+   path: 'Purchase_Order_Harbauer',
+    component:PurchaseOrderHarbauerComponent,
+    data: {
+      title: 'Purchase Order'
+    }
+  },
+  {
+    path: 'Parameter_Master',
+    component: ParameterMasterComponent,
+    data: {
+        title: 'Parameter Master'
+    } 
+  },
+  {
+    path: 'Doctors_Appo_Therapy_Plan',
+      component:DoctorsAppoTherapPlanComponent,
+      data: {
+        title: 'Therapy Plan'
   }
   },
   {
-    path: 'Issue_Challan',
-      component: IssueChallanComponent,
+    path: 'MICL_RAW_MATERIAL_QA',
+    component: MICLRawMaterialQAComponent,
     data: {
-      title: 'Issue Challan'
-    }
-    },
-    {
-      path: 'HR_Txn_Special_Allowance_Deduction',
-      component: HRTxnSpecialAllowanceDeductionComponent,
-      data: {
-        title: 'HR Txn Special Allowance Deduction'
-    }
-    },
-    {
-      path: 'Process_Salary',
-      component: ProcessSalaryComponent,
-      data: {
-        title: 'Process Salary'
-    }
-    },
-    {
-      path: 'Leave_Approval',
-      component: LeaveApprovalComponent,
-      data: {
-        title: 'Leave Approval'
-    }
-    },
-    {
-      path: 'Consumption',
-      component: ConsumptionComponent,
-      data: {
-        title: 'Consumption'
-    }
-    },
-    {
-      path: 'Debit_Note_WO_Stock',
-      component: DebitNoteWoStockComponent,
-      data: {
-        title: 'Debit Note Without Stock'
-    }
-    },
-    {
-      path: 'Financial_Reminder',
-      component: FinancialReminderComponent,
-      data: {
-        title: 'Financial Reminder'
-    }
-    },
-    {
-      path: 'Inflow_Planing',
-       component: InflowPlaningComponent,
-        data: {
-          title: 'Inflow Planing'
-      }
-      },
-      {
-        path: 'Work_Order',
-         component: WorkOrderComponent,
-          data: {
-            title: 'Work Order'
-        }
-        },
-        {
-          path: 'Repair_And_Maintenance_RDB',
-           component: RepairAndMaintenanceRdbComponent,
-            data: {
-              title: 'Repair And Maintenance RDB'
-          }
-          },
-      
-    
+        title: 'MICL RAW MATERIAL QA'
+    } 
+  },
+  {
+    path: 'BL_Txn_GRN_Np',
+    component: BLTxnGrnNPComponent,
+    data: {
+        title: 'GRN'
+    } 
+  },
+  {
+    path: 'HR_Late_Arrival_Early_Departure',
+    component: HrLateArrivalEarlyDepartureComponent,
+    data: {
+        title: 'HR Late Arrival Early Departure'
+    } 
+  },
+  {
+    path: 'swiggy_zomato_file_upload',
+    component: K4cSwiggyZomatoFileUploadComponent,
+    data: {
+        title: 'CSV UPLOAD'
+    } 
+  },
+  {
+    path: 'HR_Loan_Application',
+    component: HrLoanApplicationComponent,
+    data: {
+        title: 'Loan Application'
+    } 
+  },
 
     /*{
 

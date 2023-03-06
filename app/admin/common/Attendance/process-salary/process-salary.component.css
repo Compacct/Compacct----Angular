@@ -40,12 +40,15 @@ div.table-responsive.table-id>p-table>div>div {
     border-top: 1px solid rgba(0, 0, 0, 0.2);
   }
   
-  .pull-right1 {
+  /* .pull-right1 {
     margin-right: 900px;
+  } */
+  /* .pull-right1 {
+    margin-left: 15px;
+  } */
+  .pull-right2 {
+    margin-left: -70px;
   }
-  .pull-right {
-    margin-right: 118px;
-  }
-  .pull-righ2 {
-    margin-left: -104px;
+  .pull-right3 {
+    margin-left: -90px;
   }

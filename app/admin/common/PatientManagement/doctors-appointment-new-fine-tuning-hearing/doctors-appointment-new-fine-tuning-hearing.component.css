@@ -1,0 +1,35 @@
+.custom-header {
+  color: #ffffff !important;
+  background-color: #3c8dbc !important;
+  padding: 5px;
+  margin: inherit;
+}
+.table-header{
+  color: #ffffff !important;
+  background-color: #3c8dbc !important;
+}
+th{
+  text-align: center;
+}
+table, th, td {
+  border: 1px solid #ffffff !important;
+  padding: 5px;
+}
+td,th{
+  margin: auto;
+}
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+.inline{
+  display: inline;
+  
+}
+div.label-t {
+  padding: 6px 12px;
+  background: rgb(206 216 216 / 51%);
+  cursor: no-drop;
+}

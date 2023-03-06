@@ -461,7 +461,24 @@
                                     <div class="form-group">
                                         <div class="col-sm-2">
                                             <label class="control-label">Changes On Cake</label>
-                                            <textarea class="form-control" name="Changes_on_Cake" #Changes_on_Cake="ngModel" id='Changes_On_Cake' [(ngModel)]="ObjaddbillForm.Changes_on_Cake"></textarea>
+                                            <!-- <textarea class="form-control" name="Changes_on_Cake" #Changes_on_Cake="ngModel" id='Changes_On_Cake' [(ngModel)]="ObjaddbillForm.Changes_on_Cake"></textarea> -->
+                                            <!-- <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                                <p-editor name= "Changes_on_Cake"
+                                                #Changes_on_Cake="ngModel"
+                                                [(ngModel)]="ObjaddbillForm.Changes_on_Cake"
+                                                [style]="{'height':'200px'}">
+                                                </p-editor>
+                                            </div> -->
+                                            <p-editor 
+                                            name= "Changes_on_Cake" #Changes_on_Cake="ngModel" [(ngModel)]="ObjaddbillForm.Changes_on_Cake" [style]="{'height':'80px'}">
+                                                <p-header>
+                                                    <!-- <span class="ql-formats">
+                                                        <button class="ql-bold" aria-label="Bold"></button>
+                                                        <button class="ql-italic" aria-label="Italic"></button>
+                                                        <button class="ql-underline" aria-label="Underline"></button>
+                                                    </span> -->
+                                                </p-header>
+                                            </p-editor>
                                         </div>
                                         <div class="col-sm-2">
                                             <label class="control-label">Order Taken By</label>
@@ -535,10 +552,10 @@
                                         {{obj.Modifier}}
                                       </i>  -->
                                                         <i><tr *ngIf="obj.Modifier1">Message 1 -<td>{{obj.Modifier1}}</td></tr>
-                                      <tr *ngIf="obj.Modifier2">Message 2 -<td>{{obj.Modifier2}}</td></tr>
-                                      <tr *ngIf="obj.Modifier3">Message 3 -<td>{{obj.Modifier3}}</td></tr>
-                                      <tr *ngIf="obj.Modifier4">Message 4 -<td>{{obj.Modifier4}}</td></tr>
-                                      <tr *ngIf="obj.Modifier5">Message 5 -<td>{{obj.Modifier5}}</td></tr></i><br>
+                                                        <tr *ngIf="obj.Modifier2">Message 2 -<td>{{obj.Modifier2}}</td></tr>
+                                                        <tr *ngIf="obj.Modifier3">Message 3 -<td>{{obj.Modifier3}}</td></tr>
+                                                        <tr *ngIf="obj.Modifier4">Message 4 -<td>{{obj.Modifier4}}</td></tr>
+                                                        <tr *ngIf="obj.Modifier5">Message 5 -<td>{{obj.Modifier5}}</td></tr></i><br>
 
                                                         <tr *ngIf="obj.Flavour">Flavour -
                                                             <td class="text-muted">{{obj.Flavour}}</td>
@@ -559,7 +576,13 @@
                                                             <td class="text-muted">{{obj.Boxes}}</td>
                                                         </tr>
                                                         <tr *ngIf="obj.Changes_on_Cake">Changes On Cake -
-                                                            <td class="text-muted">{{obj.Changes_on_Cake}}</td>
+                                                            <!-- <td class="text-muted">{{obj.Changes_on_Cake}}</td> -->
+                                                            <!-- <td><textarea [name]="obj.Product_ID" [(ngModel)]="obj.Changes_on_Cake" class="form-control" style="width: 200px;"></textarea></td> -->
+                                                            <td><p-editor 
+                                                            [name]="obj.Changes_on_Cake" [(ngModel)]="obj.Changes_on_Cake" [style]="{'height':'80px'}" [readonly]="true">
+                                                            <p-header>
+                                                            </p-header>
+                                                            </p-editor></td>
                                                         </tr>
                                                         <tr *ngIf="obj.Order_Taken_By">Order Taken By -
                                                             <td class="text-muted">{{obj.Order_Taken_By}}</td>

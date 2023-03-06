@@ -72,7 +72,6 @@ export class NepalMasterSubledgerComponent implements OnInit {
   Is_CR_Note_Enabled = false;
   Is_DR_Enabled = false;
   Is_Adj_Enabled = false;
-
   SubLedgerID = undefined;
   constructor(private $http: HttpClient,
     private Header: CompacctHeader,
@@ -398,7 +397,7 @@ export class NepalMasterSubledgerComponent implements OnInit {
       this.ngxService.start();
       const obj = {
         "SP_String": "SP_Create_Subledger_New",
-        "Report_Name_String": "Get_Subledger_Location",
+        "Report_Name_String": "Get_Subledger_Location_For_Contacts",
         "Json_Param_String": JSON.stringify([{'Sub_Ledger_ID' : this.ObjSubledger.Sub_Ledger_ID}])
       }
       this.GlobalAPI.postData(obj).subscribe((data) => {
@@ -591,12 +590,12 @@ export class NepalMasterSubledgerComponent implements OnInit {
       return true;
     }
   }
-  SaveContactForm(valid) {
+  SaveContactForm(valid: any) {
     this.SubledgerContactPersonSubmitted = true;
     if(valid && this.ObjSubledger.Sub_Ledger_ID) {
       this.ObjContact.Sub_Ledger_ID = this.ObjSubledger.Sub_Ledger_ID;
       this.SaveContact(this.ObjContact);
-    }
+     }
   }
   // EDIT
   EditSubledger(id) {
@@ -657,6 +656,49 @@ export class NepalMasterSubledgerComponent implements OnInit {
     this.ObjContact = new Contact();
     this.ContactEditFlag = false;
   }
+  // DELETE CONTACT
+  DeleteContact(col){
+    if(col.Contact_ID && confirm('Are you Sure ?')) {
+      const obj = {
+        "SP_String": "SP_Create_Subledger_New",
+        "Report_Name_String": "Delete_Subledger_Contacts",
+        "Json_Param_String": JSON.stringify([{ 'Contact_ID' : col.Contact_ID}])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data) => {
+          if (data[0].Column1 === 'Done'  ) {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: 'Subledger ID : ' + this.ObjSubledger.Sub_Ledger_ID,
+              detail: "Contact Succesfully Deleted"
+            });
+            this.ClearData2();
+            this.GetContactList();
+        } else if(data[0].Column1 === 'Sorry, This Contact has been used already'){
+          this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "warn",
+              summary: 'Subledger ID : ' + this.ObjSubledger.Sub_Ledger_ID,
+              detail: data[0].Column1
+            });
+            this.ClearData2();
+            this.GetContactList();
+
+        } else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "error",
+              detail: "Error Occured"
+            });
+        }
+        });
+    }
+  }
+
   // EDIT LOCATION
   EditLocationList(i){
     this.ObjLocation = new Location();
@@ -841,10 +883,11 @@ class Location{
 }
 class Contact{
   Contact_ID:String;        
-  Location_ID:String;         
+  Location_ID:any;         
   Sub_Ledger_ID:String; 	      
   Contact_Person_Type:String;    	
   Contact_Number:String;                 
   Contact_Name:String;   
   Email_ID:String; 
+  Country_Code:any;
 }

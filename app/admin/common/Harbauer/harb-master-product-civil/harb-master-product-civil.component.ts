@@ -36,14 +36,14 @@ export class HarbMasterProductCivilComponent implements OnInit {
   ObjMasterProductCivil = new MasterProductCivil();
   ObjFinancialComponentData = new Financial();
 
-  ProductTypeList = [];
-  ProductSubTypeList = [];
-  ProductCategoryList = [];
-  MocList = [];
-  CapacitySizeList = [];
-  ProductFeatureList = [];
-  GradeList = [];
-  MakeList = [];
+  ProductTypeList:any = [];
+  ProductSubTypeList:any = [];
+  ProductCategoryList:any = [];
+  MocList:any = [];
+  CapacitySizeList:any = [];
+  ProductFeatureList:any = [];
+  GradeList:any = [];
+  MakeList:any = [];
   uploadedFiles: any[] = [];
 
   ProTypeModal = false;
@@ -83,15 +83,15 @@ export class HarbMasterProductCivilComponent implements OnInit {
   Profeatureid = undefined;
   gradeid = undefined;
 
-  BrowseList = [];
-  editList = [];
+  BrowseList:any = [];
+  editList :any= [];
   productid: any;
 
   PDFViewFlag = false;
   PDFFlag = false;
   ProductPDFFile:any = {};
   ProductPDFLink = undefined;
-  tempDocumentArr = [];
+  tempDocumentArr:any = [];
   Product_Mfg_Comp_ID:any;
 
   protyid = undefined;
@@ -113,16 +113,16 @@ export class HarbMasterProductCivilComponent implements OnInit {
   Is_View = false;
   Browseproid = undefined;
   isvisible = undefined;
-  UOMData=[]; 
-  UomDataList = [];
+  UOMData:any =[]; 
+  UomDataList:any= [];
   ViewUomModal = false;
   UOMTypeFormSubmitted = false;
   UOMTypeName = undefined;
   UOMTypeModal = false;
   mettypeid = undefined;
   Uomid = undefined;
-  AllUOMData = [];
-  AllUomDataList = [];
+  AllUOMData:any = [];
+  AllUomDataList:any = [];
   LAbelName = 'HSN Code';
   ObjproductDetails : any;
   ObjGstandCustonDuty : any;
@@ -130,7 +130,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
   objProductrequ:any = {};
   objCheckFinamcial:any = {};
   objGst:any = {};
-  Product_Mfg_Comp = [];
+  Product_Mfg_Comp:any = [];
   @ViewChild("Product", { static: false })
   ProductDetailsInput: CompacctProductDetailsComponent;
   @ViewChild("GstAndCustomDuty", { static: false })
@@ -144,6 +144,14 @@ export class HarbMasterProductCivilComponent implements OnInit {
 
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
 
+  MaterialData:any = [];
+  AllMaterialData:any = [];
+  MaterialTypeFormSubmitted = false;
+  MaterialTypeName: any;
+  MatTypeModal = false;
+  ViewMetTypeModal = false;
+  EXCELSpinner:boolean = false
+  DescriptionCheck: any;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -169,6 +177,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
     
     // this.GetProductType();
      //this.GetProductSubType();
+     this.getMaterialTyp();
      this.GetProductCategory();
      this.GetMOC();
      this.GetCapacity();
@@ -224,6 +233,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
       this.ObjMasterProductCivil.Product_Code = e.Product_Code;
       this.ObjMasterProductCivil.Product_Description = e.Product_Description;
       this.ObjMasterProductCivil.Rack_NO = e.Rack_NO;
+      this.CheckDescription();
     }
   }
   getGstAndCustDutyData(e) {
@@ -277,6 +287,114 @@ export class HarbMasterProductCivilComponent implements OnInit {
       this.objCheckFinamcial.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
     }
   }
+  //Material Type 
+getMaterialTyp(){
+  this.MaterialData=[]; 
+   this.AllMaterialData = [];
+      const obj = {
+       "SP_String": "SP_Master_Product_New",
+       "Report_Name_String":"Get_Product_Material_Type_Data",
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.MaterialData = data;
+      console.log("MaterialData==",this.MaterialData);
+       this.MaterialData.forEach(el => {
+         this.AllMaterialData.push({
+           label: el.Material_Type,
+           value: el.Material_ID,
+         });
+       });
+     })
+}
+MaterialChange() {
+  this.ObjMasterProductCivil.Material_Type =undefined;
+if(this.ObjMasterProductCivil.Material_ID) {
+  const ctrl = this;
+  const MaterialObj = $.grep(ctrl.MaterialData,function(item) {return item.Material_ID == ctrl.ObjMasterProductCivil.Material_ID})[0];
+  // console.log(MaterialObj);
+  this.ObjMasterProductCivil.Material_Type = MaterialObj.Material_Type;
+
+}
+}
+MatTypePopup (){
+  this.MaterialTypeFormSubmitted = false;
+  this.MaterialTypeName = undefined;
+  this.MatTypeModal = true;
+  this.Spinner = false;
+}
+CreateMaterialType(valid){
+  this.MaterialTypeFormSubmitted = true;
+  //console.log(valid)
+   if(valid){
+      this.Spinner = true;
+      const saveData = {
+        Material_Type : this.MaterialTypeName,
+      }
+       const obj = {
+         "SP_String": "SP_Master_Product_New",
+         "Report_Name_String" : "Add_Product_Material_Type ",
+         "Json_Param_String": JSON.stringify([saveData])
+       }
+       this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+         console.log(data);
+         var tempID = data[0].Column1;
+         if(data[0].Column1){
+          this.compacctToast.clear();
+          //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+          this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "success",
+           summary: "Material Type ID  " + tempID,
+           detail: "Succesfully Created" //+ mgs
+         });
+         this.MaterialTypeFormSubmitted = false;
+         this.MaterialTypeName = undefined;
+         this.MatTypeModal = false;
+         this.Spinner = false;
+         this.getMaterialTyp();
+     
+         } else{
+           this.Spinner = false;
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "error",
+             summary: "Warn Message",
+             detail: "Error Occured "
+           });
+         }
+       })
+     
+      }
+}
+ViewMaterialType (){
+  this.MaterialData = [];
+   this.getMaterialTyp();
+  setTimeout(() => {
+    this.ViewMetTypeModal = true;
+  }, 200);
+}
+deleteMaterialType(mettype){
+  //console.log("view delete")
+  this.mettypeid = undefined;
+  this.protypeid = undefined
+  this.protypesubid = undefined;
+  this.Uomid = undefined;
+  if(mettype.Material_ID){
+  this.is_Active = false;
+  this.Is_View = true;
+    this.mettypeid = mettype.Material_ID;
+   // this.cnfrm2_popup = true;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "c",
+      sticky: true,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+    });
+  }
+}
   // PRODUCT TYPE
   GetProductType(){
     const obj = {
@@ -1003,6 +1121,14 @@ export class HarbMasterProductCivilComponent implements OnInit {
     //   }
     //   FunctionRefresh = 'GetProductSubType';
     // }
+    if (this.mettypeid) {
+      SPString ="SP_Master_Product_New"
+      ReportName = "Delete_Product_Material_Type"
+      ObjTemp = {
+        Material_ID: this.mettypeid
+      }
+      FunctionRefresh = 'getMaterialTyp';
+    }
     if (this.mocid) {
       SPString = "SP_Harbauer_Master_Product_mechanical"
       ReportName = "Delete_Master_Product_Mech_MOC_Data"
@@ -1089,6 +1215,27 @@ export class HarbMasterProductCivilComponent implements OnInit {
       this.PDFFlag = true;
     }
   }
+  CheckDescription(){
+    const tempobj = {
+      Product_Type_ID : this.ObjMasterProductCivil.Product_Type_ID,
+      Product_Sub_Type_ID : this.ObjMasterProductCivil.Product_Sub_Type_ID,
+      Description_Like : this.ObjMasterProductCivil.Product_Description
+    }
+    const objtemp = {
+      Product_ID : this.ObjMasterProductCivil.Product_ID,
+      Description_Like : this.ObjMasterProductCivil.Product_Description
+    }
+        const obj = {
+         "SP_String": "SP_Harbauer_Master_Product_Civil",
+         "Report_Name_String":this.buttonname === "Update" ? 'Check_Product_Description_On_Update' : 'Check_Product_Description',
+         "Json_Param_String": this.buttonname === "Update" ? JSON.stringify([objtemp]) : JSON.stringify([tempobj])
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         this.DescriptionCheck = data[0].Column1;
+        console.log("DescriptionCheck==",this.DescriptionCheck);
+       })
+  
+   }
   
   SaveMasterProductCivil(valid){
     //if(this.Product_Mfg_Comp_ID.length) {
@@ -1096,6 +1243,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
         this.Spinner = true;
         this.MasterProductCivilFormSubmitted = true;
       if(valid && this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
+        if(this.DescriptionCheck === "OK") {
       let UpdateArr =[]
      const Obj = {
             Product_ID : this.productid,
@@ -1143,7 +1291,19 @@ export class HarbMasterProductCivilComponent implements OnInit {
            }
          })
      
-      } else {
+      }
+        else {
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Description already exists."
+        });
+      } 
+      }
+      else {
         this.Spinner = false;
         this.destroyChild();
           this.compacctToast.clear();
@@ -1160,7 +1320,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
         this.Spinner = true;
         this.MasterProductCivilFormSubmitted = true;
         if(valid && this.Product_Mfg_Comp.length && this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
-        
+          if(this.DescriptionCheck === "OK") {
           let tempArr =[]
           this.Product_Mfg_Comp.forEach(item => {
             const obj = {
@@ -1205,7 +1365,18 @@ export class HarbMasterProductCivilComponent implements OnInit {
               });
             }
           })
-          }
+        }
+        else {
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Description already exists."
+        });
+      } 
+        }
         else {
       
           this.Spinner = false;
@@ -1358,6 +1529,7 @@ export class HarbMasterProductCivilComponent implements OnInit {
        this.GstAndCustDutyInput.GetEdit(JSON.stringify(data))
        this.ObjMasterProductCivil.Product_Type_ID = data[0].Product_Type_ID;
       // this.GetProductSubType();
+       this.ObjMasterProductCivil.Material_ID = data[0].Material_ID;
        this.ObjMasterProductCivil.Product_Sub_Type_ID = data[0].Product_Sub_Type_ID;
        this.ObjMasterProductCivil.Cat_ID = data[0].Cat_ID;
        this.ObjMasterProductCivil.Product_Description = data[0].Product_Description;
@@ -1627,9 +1799,40 @@ export class HarbMasterProductCivilComponent implements OnInit {
           detail: "Confirm to proceed"
         });
       }
-    }  
+    } 
+
+    exportexcel(Arr): void {
+      this.EXCELSpinner =true
+       let excelData:any = []
+      Arr.forEach(ele => {
+          excelData.push({
+              'Product Code': ele.Product_ID,
+              'Make (Multiple)': ele.Mfg_Company,
+              'Product Description': ele.Product_Description,
+              'Material Type': ele.Material_Type,
+              'Product Type': ele.Product_Type,
+              'Product Sub Type': ele.Product_Sub_Type,
+              'GST Category': ele.Cat_Name,
+              'Material of Cons.': ele.MOC_Description,
+              'Capacity': ele.Capacity_Size_Desc,
+              'Product Feature': ele.Product_Feature_Desc,
+              'Grade': ele.Grade_Description,
+              'Remarks': ele.Remarks,
+              'HSN Code': ele.HSN_NO,
+              'GST Percentage': ele.GST_Percentage,
+              'UOM': ele.UOM
+              })
+       });
+  
+     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(excelData);
+      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      XLSX.writeFile(workbook, 'master_product_civil.xlsx');
+      this.EXCELSpinner = false
+    }
 }
 class MasterProductCivil{
+  Material_ID:number;
+  Material_Type:any;
    Product_Type_ID:number;
    Product_Sub_Type_ID:number;
    Cat_ID:number;

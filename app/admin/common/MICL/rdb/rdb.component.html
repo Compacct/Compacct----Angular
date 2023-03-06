@@ -1,5 +1,5 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
-<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true" baseZIndex="99999">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
             <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
@@ -66,15 +66,15 @@
 
                             </form>
                             <div class="no-padding">
-                                <p-table [value]="AllProductList"  
+                                <p-table [value]="AllProductList"  #dt
                                 [paginator]="AllProductList.length ? true:false" 
                                 [rows]="100" [rowHover]="true" 
                                 [autoLayout]="true" sortMode="multiple"
                                 [rowsPerPageOptions]="[100,200,300]" 
                                 [rowHover]="true"
                                 [responsive]="true"
-                                [globalFilterFields]="['RDB_No','RDB_Date','Sub_Ledger_Name','Cost_Cen_Name','godown_name','PO_Doc_No','PO_Doc_Date','Mode_Of_transport',
-                                      'LR_No_Date','Vehicle_No','Remarks']" #dt>
+                                [globalFilterFields]='["RDB_No","RDB_Date","Sub_Ledger_Name","Cost_Cen_Name","godown_name","PO_Doc_No","PO_Doc_Date","Mode_Of_transport",
+                                      "LR_No_Date","Vehicle_No","Remarks"]' >
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right;">
@@ -109,12 +109,12 @@
                                                                                 <span class="caret"></span>
                                                                             </button>
                                                     <ul class="dropdown-menu">
-                                                        <!-- <li>
+                                                        <li>
                                                             <a (click)="Edit(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
-                                                        </li> -->
-                                                        <li >
+                                                        </li>
+                                                        <li>
                                                             <a (click)="Printrdb(col.RDB_No)">
                                                                 <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
@@ -297,6 +297,15 @@
                                             placeholder="PO QTY"
                                             disabled>
                                         </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Pending PO QTY<sup class="text-danger">*</sup></label>
+                                            <input class="form-control" 
+                                            name="PendingPO_QTY" 
+                                            #PendingPO_QTY="ngModel" 
+                                            [(ngModel)]="ObjRdb1.Pending_PO_QTY" 
+                                            placeholder="Pending PO QTY"
+                                            disabled>
+                                        </div>
                                                 <div class="col-sm-2">
                                                     <label class="control-label">Challan Qty<sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="Challan_Qty" #Challan_Qty="ngModel" [(ngModel)]="ObjRdb1.Challan_Qty" placeholder="Challan Qty" CompacctDigitonly="true" [ngClass]="{'clearance': RDBFormSubmit && Challan_Qty.errors?.required}" required>
@@ -305,8 +314,8 @@
                                                     <label class="control-label">Received Qty<sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="Received_Qty" #Received_Qty="ngModel" [(ngModel)]="ObjRdb1.Received_Qty" placeholder="Received Qty" CompacctDigitonly="true" [ngClass]="{'clearance': RDBFormSubmit && Received_Qty.errors?.required}" required>
                                                 </div>
-                                                <div class="col-sm-2">
-                                                    <button class="btn btn-primary pull-left custombutton" (click)="Add(RDBForm.form.valid)">
+                                                <div class="col-sm-1">
+                                                    <button class="btn btn-primary pull-left custombutton1" (click)="Add(RDBForm.form.valid)">
                                                         <span class="glyphicon glyphicon-plus"> </span>Add
                                                         </button>
                                                 </div>
@@ -325,10 +334,14 @@
                                             <th rowspan="2">Unit</th>
                                             <th colspan="2" style="text-align:center;">Quantity</th>
                                             <th rowspan="2">Rate</th>
+                                            <!-- <th rowspan="2">Freight-P/F %</th>
+                                            <th rowspan="2">Freight-P/F Charges</th> -->
+                                            <th rowspan="2">Discount Amt</th>
                                             <th rowspan="2">Taxable Value (Rs.)</th>
                                             <th rowspan="2">Gst%</th>
                                             <th rowspan="2">Tax</th>
                                             <th rowspan="2">Total Amount (Rs.)</th>
+                                            <th rowspan="2" *ngIf="buttonname === 'Update'">Edit</th>
                                             <th rowspan="2">Delete</th>
                                         </tr>
                                         <tr>
@@ -346,11 +359,20 @@
                                             <td>{{obj.Challan_Qty}}</td>
                                             <td>{{obj.Received_Qty}}</td>
                                             <td>{{obj.Rate}}</td>
+                                            <!-- <td>{{obj.Freight_PF_Perc}}</td>
+                                            <td>{{obj.Freight_PF_Charges}}</td> -->
+                                            <td>{{obj.Discount_Amount}}</td>
                                             <td>{{getTofix(obj.Taxable_Value)}}</td>
                                             <td>{{obj.Tax_Percentage}}</td>
                                             <td>{{getTofix(obj.Total_Tax_Amount)}}</td>
                                             <td>{{getTofix(obj.Total_Amount)}}</td>
-                                            <td *ngIf="!obj?.deleteflag"><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                            <td *ngIf="buttonname === 'Update'"> <a class="btn btn-sm btn-warning" (click)="EditAdd(ind)"
+                                                ><div><i class="fa fa-fw fa-edit"> </i></div>
+                                              </a></td>
+                                              <td> <a class="btn btn-sm btn-danger" (click)="delete(ind)"
+                                                ><div><i class="fa fa-fw fa-trash"> </i></div>
+                                              </a></td>
+                                            <!-- <td><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td> -->
                                         </tr>
                                     </tbody>
                                 </table>
@@ -363,7 +385,7 @@
                                     </div>
                                  </div>
                                 <div class="box-footer">
-                                    <button class="btn btn-primary pull-right" (click)="SaveRDB(RDBForm2.form.valid)" id="load" [disabled]="Spinner">
+                                    <button class="btn btn-primary pull-right" (click)="ShowDeptUserPopUp(RDBForm2.form.valid)" id="load" [disabled]="Spinner">
                                     <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                     </button>
@@ -395,7 +417,7 @@
 
                                 </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPendingPO(PendingPOForm.form.valid)" id="load" [disabled]="seachSpinner">
                                       <p-progressSpinner
                                         *ngIf="seachSpinner"
@@ -410,8 +432,33 @@
                                       >&nbsp;Search
                                     </button>
                                 </div>
+                                <div class="col-sm-2">  
+                                    <button class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcel(PendingPOList, 'Pending_PO')" id="load1" [disabled]="PendingPOList.length ? false : true">
+                                    <span class="fa fa-fw  fa-download"></span>&nbsp;EXPORT TO EXCEL
+                                 </button>
+                                 <!-- <button *ngIf="ClosingReportList.length" class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcel2(ClosingReportList,'Closing_Stock_Report')" id="load1" [disabled]="EXCELClosingSpinner">
+                                    <p-progressSpinner *ngIf="EXCELClosingSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!EXCELClosingSpinner" class="fa fa-file-excel-o"></span>&nbsp;EXPORT TO EXCEL
+                                </button> -->
+                                </div>
                             </div>
                             </form> 
+                            <br>
+                            <div class="form-group" *ngIf="PendingPOList.length">
+    
+                                <fieldset class="col-md-12">
+                                    <legend>Filter</legend>
+                            
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Product Type <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistProductType" [(ngModel)]="SelectedDistProductType" itemSize="30" (onChange)='FilterDistPenPo()' [styleClass]="'compacct-multiselect'" name="Product_Type"></p-multiSelect>
+                                        </div>
+                                    </div>
+                            
+                                </fieldset>
+                            </div>
+                            <br>
                             <div class="no-padding">
                                 <p-table [value]="PendingPOList"
                                 [paginator]="PendingPOList.length ? true : false"
@@ -435,7 +482,7 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforPPO">{{option.replace('_',' ')}}</th> 
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforPPO | slice:1">{{option.replace('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -459,7 +506,7 @@
                                                             </a>
                                                         </li>
                                                         <li>
-                                                            <a (click)="PrintPPO(col.Doc_No)">
+                                                            <a (click)="PrintPPO(col.PO_No)">
                                                                 <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
                                                         </li>
@@ -471,7 +518,7 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <ng-container *ngFor="let option of DynamicHeaderforPPO">
+                                            <ng-container *ngFor="let option of DynamicHeaderforPPO | slice:1">
                                                 <td nowrap="nowrap">{{col[option]}}</td>
                                             </ng-container>
                                             
@@ -533,3 +580,60 @@
         </div>
     </div>
 </div>
+
+<p-dialog  [appendTo]="'body'" [visible]="DeptUserModel" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="DeptUserForm" #DeptUserForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Department<sup class="text-danger">*</sup></label>
+                    <select class="form-control" 
+                            name="department" 
+                            #department="ngModel" 
+                            [(ngModel)]="objDeptUser.Ins_Dept_ID"
+                            [ngClass]="{'clearance': DeptUserFormSubmitted && department.errors?.required}"
+                            required>
+                            <option  [ngValue]="undefined">Select</option>
+                                <option *ngFor = "let option of DepartmentList" [value] ="option.Dept_ID">
+                                  {{option.Dept_Name}}
+                                </option>
+                    </select>
+                </div>
+                <div class="col-sm-12">
+                    <label class="control-label">User<sup class="text-danger">*</sup></label>
+                    <select class="form-control" 
+                            name="user" 
+                            #user="ngModel" 
+                            [(ngModel)]="objDeptUser.Ins_USER_ID"
+                            [ngClass]="{'clearance': DeptUserFormSubmitted && user.errors?.required}"
+                            required>
+                            <option  [ngValue]="undefined">Select</option>
+                                <option *ngFor = "let option of UsertList" [value] ="option.User_ID">
+                                  {{option.Name}}
+                                </option>
+                    </select>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="Cancle()" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="SaveRDB(DeptUserForm.form.valid)" id="load2" [disabled]="DeptUserSpinner">
+<p-progressSpinner
+  *ngIf="DeptUserSpinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!DeptUserSpinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;{{buttonname}}
+</button>
+    </p-footer>
+</p-dialog>

@@ -26,25 +26,25 @@ export class MiclRequisitionComponent implements OnInit {
   buttonname = "Create";
   Spinner = false;
   SpinnerShow = false;
-  itemList =[];
+  itemList:any =[];
   items:any = [];
   tabIndexToView = 0;
   menuList:any = [];
   requi_Date = new Date();
   reqiFormSubmitted = false;
   objreqi:reqi = new reqi();
-  DepartmentList = [];
+  DepartmentList:any = [];
   objmaterial:material = new material()
   objproject : project = new project()
   AddMaterialsList:any = []
   requisitionmaterialFormSubmit = false;
-  allRequDataList = [];
+  allRequDataList:any = [];
   allRequDataListHeader:any = [];
-  costcenterList = [];
-  GodownList = [];
+  costcenterList:any = [];
+  GodownList:any = [];
   GodownBrowseList:any =[]
-  productListview = []
-  productList = []
+  productListview:any = []
+  productList:any = []
   ReqNo = undefined;
   can_popup = false;
   act_popup = false;
@@ -52,7 +52,7 @@ export class MiclRequisitionComponent implements OnInit {
   ObjBrowseData : BrowseData = new BrowseData ();
   RequistionSearchFormSubmit = false;
   seachSpinner = false;
-  productTypeList = [];
+  productTypeList:any = [];
   objProjectRequi:any = {};
   userType = "";
   docno : any;
@@ -73,9 +73,46 @@ export class MiclRequisitionComponent implements OnInit {
   ProjectInput: CompacctProjectComponent;
   Save = false;
   Del = false;
-  MaterialTypeList:any = [];
+  ProductCatList:any = [];
   hrYeatList:any = [];
   HR_Year_ID: any;
+  ReqTypeList:any = [];
+  MaterialTypeList:any = [];
+  ReqType : any;
+  Requisition_ID :any;
+  Material_Type_ID :any;
+
+  ObjReqStatusData : ReqStatusData = new ReqStatusData ();
+  reqstatusSpinner = false;
+  ReqStatusDataList:any = [];
+  DynamicReqStatusDataListHeader:any = [];
+  GodownReqStatusList:any = [];
+  currentstocklist:any = [];
+  Current_Stock:any;
+  backUpReqStatusDataList:any = [];
+  SelectedDistDepartment:any = [];
+  SelectedDistProductType:any = [];
+  DistDepartment:any = [];
+  DistProductType:any = [];
+  mrodisabled = false;
+  reqDocNo: any;
+  projectEditData:any = [];
+  companyname="";
+
+  seachSpinnerMis = false;
+  MIS_start_date: Date;
+  MIS_end_date: Date;
+  MISList:any = [];
+  DynamicHeaderforMISList:any = [];
+  allTotalObj:any = {}
+  BackupMISList:any = [];
+  BackupMISListFilter:any = []
+  SelectedDistDepartmentmis:any = [];
+  SelectedDistCostCen:any = [];
+  DistDepartmentmis:any = [];
+  DistCostCen:any = [];
+  DistStockPoint:any =[];
+  SelectedDistStockPoint:any = [];
 
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -87,19 +124,21 @@ export class MiclRequisitionComponent implements OnInit {
     private route: ActivatedRoute,
     private ngxService: NgxUiLoaderService) {
       this.route.queryParams.subscribe(params => {
-        console.log(params);
+        //console.log(params);
         this.openProject = params['proj'];
-        this.validatation.projectMand = params['mand']
+        this.validatation.projectMand = params['mand'];
         this.projectMand = params['mand'];
         this.toCostCenter = Number(params['CostCenID']);
-        this.headerText = params['Caption']
+        this.headerText = params['Caption'];
+        this.ReqType = params['ReqType'];
         
        })
      }
 
   ngOnInit() {
+    //console.log('Del_Right ==',this.$CompacctAPI.CompacctCookies.Del_Right)
     $(document).prop('title', this.headerText ? this.headerText : $('title').text());
-    this.items =  ["BROWSE", "CREATE", "STOCK"];
+    this.items =  ["BROWSE", "CREATE", "STOCK", "STATUS", "MIS"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
@@ -114,9 +153,12 @@ export class MiclRequisitionComponent implements OnInit {
     this.ServerDate();
     this.AllowedEntryDays();
     this.getCostcenter();
+    this.getRequisitionType();
     this.getMaterialType();
+    this.getProductCategory();
     this.GetProductsDetalis();
     this.userType = this.$CompacctAPI.CompacctCookies.User_Type
+    this.companyname = this.$CompacctAPI.CompacctCookies.Company_Name
     if(this.openProject !== "Y"){
       this.getProductType()
     }
@@ -125,9 +167,10 @@ export class MiclRequisitionComponent implements OnInit {
   TabClick(e) {
    
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE", "STOCK"];
+    this.items = ["BROWSE", "CREATE", "STOCK", "STATUS", "MIS"];
     this.buttonname = "Save";
     this.clearData();
+    this.Current_Stock = undefined;
   }
   clearData(){
     if(this.openProject === "Y"){
@@ -137,8 +180,8 @@ export class MiclRequisitionComponent implements OnInit {
     this.objmaterial = new material()
     this.objproject = new project()
     this.objreqi = new reqi();
-    this.objreqi.Cost_Cen_ID = this.costcenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
-    this.Getgodown(this.objreqi.Cost_Cen_ID)
+    this.objreqi.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.Getgodown(this.objreqi.Cost_Cen_ID);
     this.reqiFormSubmitted = false;
     this.AddMaterialsList = [];
     this.ReqNo = undefined;
@@ -151,14 +194,28 @@ export class MiclRequisitionComponent implements OnInit {
     this.projectDisable = false;
     this.reqValid = false;
     this.deleteError = false;
+    this.ProductCatList = [];
+    this.productTypeList = [];
+    this.Requisition_ID = undefined;
+    // this.Material_Type_ID = undefined;
+    // this.getMaterialType();
+    if (this.headerText === "Maintenance Indent") {
+      this.Material_Type_ID = "M.R.O";
+      this.mrodisabled = true;
+      this.getProductCategory();
+     } 
+     else {
+      this.Material_Type_ID = undefined;
+      this.mrodisabled = false;
+     }
    }
   addMaterials(valid){
-  console.log("valid",valid);
+  //console.log("valid",valid);
   this.requisitionmaterialFormSubmit = true;
   this.reqValid = true
   if(valid && this.GetSameProduct()){
      if(this.projectMand == 'Y' && (Number(this.productFilterObj.Can_Be_Used_Qty)< Number(this.objmaterial.Req_Qty) || 0 == Number(this.objmaterial.Req_Qty))){
-      console.log("done");
+      //console.log("done");
       this.reqValid = true
       return
      }
@@ -167,8 +224,8 @@ export class MiclRequisitionComponent implements OnInit {
      }
      
     const productFilter:any = this.productListview.filter((el:any)=>Number(el.Product_ID) === Number(this.objmaterial.Product_ID));
-    const productTypeFilter:any = this.productTypeList.filter((el:any)=> Number(el.Product_Type_ID) === Number(this.objmaterial.Product_Type_ID))
-     console.log("productFilter",productFilter);
+    const productTypeFilter:any = this.productTypeList.filter((el:any)=> Number(el.Product_Type_ID) === Number(this.objmaterial.Product_Type_ID));
+     //console.log("productFilter",productFilter);
     if(productFilter.length){
       this.AddMaterialsList.push({
         Product_ID: this.objmaterial.Product_ID,
@@ -179,10 +236,13 @@ export class MiclRequisitionComponent implements OnInit {
         Purpose: this.objmaterial.Purpose,
         Created_By: this.$CompacctAPI.CompacctCookies.User_ID,
         Product_Type_ID : this.objmaterial.Product_Type_ID,
-        Product_Type : productTypeFilter[0].Product_Type
+        Product_Type : productTypeFilter[0].Product_Type,
+        Product_Category : this.objmaterial.Product_Category,
+        Challan_No : null
       })
       this.requisitionmaterialFormSubmit = false;
       this.objmaterial = new material();
+      this.Current_Stock = undefined;
       this.productList = [];
       this.productListview = [];
       this.projectDisable = true;
@@ -208,7 +268,7 @@ export class MiclRequisitionComponent implements OnInit {
     }
     }
   SaveRequi(valid){ 
-   console.log("valid",valid);
+   //console.log("valid",valid);
    this.reqiFormSubmitted = true;
    this.validatation.required = true;
    this.ngxService.start();
@@ -317,16 +377,16 @@ export class MiclRequisitionComponent implements OnInit {
   }
   onConfirmSave(){
       let saveData:any = [];
-      let mgs = "";
-      if(this.ReqNo){
+      // let mgs = "";
+      // if(this.ReqNo){
  
-      }
-      else{
-       mgs = "Save"
+      // }
+      // else{
+      //  mgs = "Save"
         const consCenterFilter:any = this.costcenterList.filter((el:any)=> Number(el.Cost_Cen_ID) === Number(this.objreqi.Cost_Cen_ID))
         this.AddMaterialsList.forEach((el:any)=>{
         let save = {
-         Req_No: "A",
+         Req_No: this.reqDocNo ? this.reqDocNo : "A",
          Req_Date: this.requi_Date ? this.DateService.dateConvert(new Date(this.requi_Date)) : new Date(),
          Cost_Cen_ID: Number(this.objreqi.Cost_Cen_ID),
          Cost_Cen_Name: consCenterFilter[0].Cost_Cen_Name,
@@ -335,16 +395,20 @@ export class MiclRequisitionComponent implements OnInit {
          Req_Qty: Number(el.Req_Qty),
          UOM: el.UOM,
          Purpose: el.Purpose,
-         Created_By: el.Created_By,
+         Created_By: el.Created_By ? el.Created_By : this.$CompacctAPI.CompacctCookies.User_ID,
          Godown_ID: this.objreqi.Godown_ID,
          Product_Type_ID : Number(el.Product_Type_ID),
          Product_Type : el.Product_Type,
+         Type_Of_Product : el.Product_Category,
          To_Cost_Cen_ID : Number(this.toCostCenter),
-         Remarks : this.objreqi.Remarks
+         Remarks : this.objreqi.Remarks,
+         Requisiton_Type : this.Requisition_ID,
+         Material_Type : this.Material_Type_ID,
+         Challan_No : el.Challan_No
         }
         saveData.push(save)
         })
-        console.log("Save Data",saveData);
+        //console.log("Save Data",saveData);
         const obj = {
          "SP_String": "SP_Txn_Requisition",
          "Report_Name_String": "Create_Requisition",
@@ -352,9 +416,10 @@ export class MiclRequisitionComponent implements OnInit {
    
        }
        this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
-         console.log("After Data",data)
+         //console.log("After Data",data)
          this.docno = data[0].Column1;
          if(data[0].Column1){
+          var mgs = this.buttonname === "Save" ? "Save" : "Update"
             if(this.objproject.PROJECT_ID){
               const projectSaveData = await this.SaveProject(data[0].Column1);
               if(projectSaveData){
@@ -380,9 +445,14 @@ export class MiclRequisitionComponent implements OnInit {
            // this.SaveNPrintBill();
            this.Print(data[0].Column1)
             this.clearData();
+            this.Requisition_ID = undefined;
+            this.Material_Type_ID = undefined;
             this.Spinner = false;
             this.searchData(true);
             this.tabIndexToView = 0;
+            this.items = ["BROWSE", "CREATE", "STOCK", "STATUS", "MIS"];
+            this.buttonname = "Save";
+            this.reqDocNo = undefined;
             } else{
               this.Spinner = false;
               this.ngxService.stop();
@@ -394,7 +464,7 @@ export class MiclRequisitionComponent implements OnInit {
             });
          }
        })
-      }
+      // }
      
   }
   // checkreq(){
@@ -418,7 +488,7 @@ export class MiclRequisitionComponent implements OnInit {
     let flg = false
     if(this.openProject === "Y" && this.projectMand === "Y"){
       let getArrValue = Object.values(this.objProjectRequi);
-      console.log("getArrValue",getArrValue.length);
+      //console.log("getArrValue",getArrValue.length);
       if(getArrValue.indexOf(undefined) == -1){
         if(getArrValue.length === 5 || getArrValue.length > 5){
           flg = true
@@ -460,17 +530,20 @@ export class MiclRequisitionComponent implements OnInit {
       "Report_Name_String": "Get_Cost_Center",
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log("costcenterList  ===",data);
+      //console.log("costcenterList  ===",data);
      this.costcenterList = data;
      this.objreqi.Cost_Cen_ID = this.costcenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
      this.ObjBrowseData.Cost_Cen_ID = this.costcenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
-     this.Getgodown(this.objreqi.Cost_Cen_ID);
+     this.ObjReqStatusData.Cost_Cen_ID = this.costcenterList.length ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
+      this.Getgodown(this.objreqi.Cost_Cen_ID);
      this.GetgodownBrowse(this.ObjBrowseData.Cost_Cen_ID);
+     this.GetgodownReqStatus(this.ObjReqStatusData.Cost_Cen_ID);
+     this.searchData()
   })
   }
-  Getgodown(CostID){
+  Getgodown(CostID,edit?){
+    this.GodownList = [];
     if(CostID){
-      this.GodownList = [];
       const obj = {
         "SP_String": "SP_Txn_Requisition",
         "Report_Name_String": "Get_Cost_Center_Godown",
@@ -478,12 +551,18 @@ export class MiclRequisitionComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.GodownList = data;
-        this.objreqi.Godown_ID = this.GodownList[0].Godown_ID
-        console.log("this.toGodownList",this.GodownList);
+        if(edit){
+          this.objreqi.Godown_ID = edit;
+        }
+        else{
+          this.objreqi.Godown_ID = this.GodownList.length === 1 ? this.GodownList[0].Godown_ID : undefined;
+        }
+        
+        //console.log("this.toGodownList",this.GodownList);
         })
     }
     else{
-      this.GodownList = [];
+      // this.GodownList = [];
       this.objreqi.Godown_ID =undefined;
     }
 
@@ -500,8 +579,11 @@ export class MiclRequisitionComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.GodownBrowseList = data;
-        console.log("this.GodownBrowseList",this.GodownBrowseList);
+        //console.log("this.GodownBrowseList",this.GodownBrowseList);
+        // if(this.headerText === "Purchase Indent") {
         this.ObjBrowseData.Godown_ID = this.GodownBrowseList.length ? this.GodownBrowseList[0].Godown_ID : undefined
+        this.searchData()
+        // }
         })
     }
     else{
@@ -511,24 +593,89 @@ export class MiclRequisitionComponent implements OnInit {
 
    
   }
-  getMaterialType(){
+  GetgodownReqStatus(CostID){
+    if(CostID){
+      this.GodownReqStatusList = [];
+      const obj = {
+        "SP_String": "SP_Txn_Requisition",
+        "Report_Name_String": "Get_Cost_Center_Godown",
+        "Json_Param_String": JSON.stringify([{Cost_Cen_ID : CostID}])
+  
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.GodownReqStatusList = data;
+        //console.log("this.GodownReqStatusList",this.GodownReqStatusList);
+        // if(this.headerText === "Purchase Indent") {
+        this.ObjReqStatusData.Godown_ID = this.GodownReqStatusList.length ? this.GodownReqStatusList[0].Godown_ID : undefined
+        this.searchData()
+        // }
+        })
+    }
+    else{
+      this.GodownBrowseList = [];
+      this.ObjBrowseData.Godown_ID = undefined;
+    }
+
+   
+  }
+  getRequisitionType(){
     const obj = {
       "SP_String": "SP_Txn_Requisition",
-      "Report_Name_String": "Get_Type_Of_Product"
+      "Report_Name_String": "Get_Requisiton_Type"
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      this.MaterialTypeList = data;
-     console.log("MaterialTypeList",this.MaterialTypeList);
+      this.ReqTypeList = data;
+     //console.log("ReqTypeList",this.ReqTypeList);
+     })
+  }
+  getMaterialType(){
+    // this.MaterialTypeList = [];
+    const obj = {
+      "SP_String": "SP_Txn_Requisition",
+      "Report_Name_String": "Get_Material_Type"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // this.MaterialTypeList = data;
+      var materiallist = data;
+     //console.log("MaterialTypeList",this.MaterialTypeList);
+     if (this.headerText === "Maintenance Indent") {
+      this.MaterialTypeList = materiallist;
+      this.Material_Type_ID = "M.R.O";
+      this.mrodisabled = true;
+      this.getProductCategory();
+     } 
+     else {
+      var matdata = materiallist.filter(function(value){
+        return value.Material_Type != "M.R.O";
+      });
+      this.MaterialTypeList = matdata;
+      this.Material_Type_ID = undefined;
+      this.mrodisabled = false;
+     }
+     })
+  }
+  getProductCategory(){
+    this.ProductCatList = [];
+    const obj = {
+      "SP_String": "SP_Txn_Requisition",
+      "Report_Name_String": "Get_Type_Of_Product",
+      "Json_Param_String": JSON.stringify([{Material_Type : this.Material_Type_ID}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.ProductCatList = data;
+     //console.log("ProductCatList",this.ProductCatList);
      })
   }
   getProductType(){
+    this.productTypeList = [];
     const materialtype = {
-      Type_Of_Product : this.objmaterial.Material_Type_ID
+      Type_Of_Product : this.objmaterial.Product_Category
     }
     const obj = {
       "SP_String": "SP_Txn_Requisition",
       "Report_Name_String": "Get_product_Type_Details",
-      "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify({...this.objProjectRequi,...materialtype}) : JSON.stringify([{PROJECT_ID : 0,Type_Of_Product : this.objmaterial.Material_Type_ID}])
+      "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify({...this.objProjectRequi,...materialtype}) 
+                           : JSON.stringify([{PROJECT_ID : 0,Type_Of_Product : this.objmaterial.Product_Category,Material_Type : this.headerText === "Maintenance Indent" ? 'MRO' : ''}])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       data.forEach(el => {
@@ -537,7 +684,7 @@ export class MiclRequisitionComponent implements OnInit {
       });
        
       this.productTypeList = data;
-     console.log("productTypeList",this.productTypeList);
+     //console.log("productTypeList",this.productTypeList);
      })
   }
 
@@ -546,14 +693,21 @@ export class MiclRequisitionComponent implements OnInit {
       this.productListview = [];
       this.productList = [];
       this.objmaterial.Product_ID = undefined;
+      let reportname = '';
+      if(this.headerText === "Maintenance Indent") {
+        reportname = "Get_product_Details_MRO";
+      }
+      else {
+        reportname = "Get_product_Details";
+      }
       const obj = {
         "SP_String": "SP_Txn_Requisition",
-        "Report_Name_String": "Get_product_Details",
+        "Report_Name_String": reportname,
         "Json_Param_String":  Object.keys(this.objProjectRequi).length ? JSON.stringify([{...this.objProjectRequi,...{Product_Type_ID : Number(this.objmaterial.Product_Type_ID)}}]) : JSON.stringify([{Product_Type_ID : Number(this.objmaterial.Product_Type_ID)}])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.productListview = data;
-       console.log("productListview",this.productListview);
+       //console.log("productListview",this.productListview);
         this.productListview.forEach(el => {
           this.productList.push({
             label: el.Product_Description,
@@ -572,13 +726,28 @@ export class MiclRequisitionComponent implements OnInit {
   getUOM(){
     if(this.objmaterial.Product_ID){
       const ProductFilter = this.productListview.filter((el:any)=> Number(el.Product_ID) === Number(this.objmaterial.Product_ID))
-      console.log("ProductFilter",ProductFilter);
+      //console.log("ProductFilter",ProductFilter);
       this.productFilterObj = ProductFilter[0];
        this.objmaterial.UOM = ProductFilter[0].UOM
+       this.GetCurrentStock();
     }
     else {
       this.productFilterObj = {}
     }
+  }
+  GetCurrentStock(){
+    this.currentstocklist = [];
+    this.Current_Stock = undefined;
+    const obj = {
+      "SP_String": "SP_Txn_Requisition",
+      "Report_Name_String": "Get_Current_Stock_Inside_Store",
+      "Json_Param_String": JSON.stringify([{Product_ID : this.objmaterial.Product_ID}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.currentstocklist = data;
+      this.Current_Stock = data[0].Bln_Qty;
+     //console.log("ProductCatList",this.ProductCatList);
+     })
   }
   reqiValid(id:any){
    if(id || Number(id) == 0){
@@ -599,10 +768,9 @@ export class MiclRequisitionComponent implements OnInit {
       this.ObjBrowseData.To_Date = dateRangeObj[1];
     }
   }
-  searchData(valid){
+  searchData(valid?){
     this.RequistionSearchFormSubmit = true;
-    if(valid){
-      this.seachSpinner = true
+    this.seachSpinner = true
       const tempDate = {
         From_Date :this.ObjBrowseData.From_Date
         ? this.DateService.dateConvert(new Date(this.ObjBrowseData.From_Date))
@@ -613,7 +781,9 @@ export class MiclRequisitionComponent implements OnInit {
         Cost_Cen_ID :this.ObjBrowseData.Cost_Cen_ID ? this.ObjBrowseData.Cost_Cen_ID : 0,
         Godown_ID : this.ObjBrowseData.Godown_ID ? this.ObjBrowseData.Godown_ID : 0,
         proj : this.openProject ? this.openProject : "N",
-        To_Cost_Cen_ID : this.toCostCenter
+        To_Cost_Cen_ID : this.toCostCenter,
+        Material_Type : this.headerText === "Maintenance Indent" ? 'MRO' : '',
+        Created_By : this.$CompacctAPI.CompacctCookies.User_ID
       }
       const obj = {
         "SP_String": "SP_Txn_Requisition",
@@ -623,20 +793,20 @@ export class MiclRequisitionComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.allRequDataList = data;
         if(this.allRequDataList.length){
-          this.allRequDataListHeader =Object.keys(data[0])
+          this.allRequDataListHeader= Object.keys(data[0])
         }
         this.RequistionSearchFormSubmit = false;
         this.seachSpinner = false
-        console.log("this.allRequDataList",this.allRequDataList);
+        //console.log("this.allRequDataList",this.allRequDataList);
       })
-    }
+  
  
   }
   headerChange(header:any){
   return header === "Req_No" ? this.headerText+" No" : header.replaceAll('_',' ')
   }
   Active(col){
-    console.log("col",col);
+    //console.log("col",col);
     this.can_popup = false;
     this.Del = false;
     this.Save = false;
@@ -747,7 +917,7 @@ export class MiclRequisitionComponent implements OnInit {
 }
   }
   getProjectData(e){
-    console.log("e",e)
+    //console.log("e",e)
     this.objproject = e
     this.objproject.Budget_Group_ID = Number(e.Budget_Group_ID)
     this.objproject.Budget_Sub_Group_ID = Number(e.Budget_Sub_Group_ID)
@@ -787,15 +957,92 @@ export class MiclRequisitionComponent implements OnInit {
     "Json_Param_String": JSON.stringify([this.objproject]) 
     }
     const projectData = await  this.GlobalAPI.getData(obj).toPromise();
-    console.log("projectData",projectData);
+    //console.log("projectData",projectData);
     return projectData
+  }
+  //Edit
+  Edit(col){
+    this.clearData();
+    this.reqDocNo = undefined;
+    if(col.Req_No){
+      this.reqDocNo = col.Req_No;
+      this.tabIndexToView = 1;
+      this.items = ["BROWSE", "UPDATE", "STOCK", "STATUS", "MIS"];
+      this.buttonname = "Update";
+      this.geteditmaster(col.Req_No);
+      if(this.openProject === "Y"){
+        this.getEditProject(col.Req_No);
+      }
+     
+     }
+  }
+  geteditmaster(Dno){
+    const obj = {
+      "SP_String": "SP_Txn_Requisition",
+      "Report_Name_String": "Get_Requistion_Details_For_Edit",
+      "Json_Param_String": JSON.stringify([{Req_No : Dno}])
+   }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // let data = JSON.parse(res[0].Column1)
+      //console.log("Edit data",data);
+      this.requi_Date = new Date(data[0].Req_Date);
+      this.objreqi = data[0];
+      this.Getgodown(data[0].Cost_Cen_ID,data[0].Godown_ID);
+      // this.objreqi.Godown_ID = data[0].Godown_ID;
+      this.Requisition_ID = data[0].Requisiton_Type;
+      this.Material_Type_ID = data[0].Material_Type;
+      // this.objmaterial = data[0];
+      this.getProductCategory();
+      // this.objmaterial.Product_Category = data[0].Type_Of_Product;
+      this.getProductType();
+      // this.objmaterial.Product_Type_ID = data[0].Product_Type_ID;
+      this.GetProductsDetalis();
+      // this.objmaterial.Product_ID = data[0].Product_ID;
+      this.getUOM();
+      this.Current_Stock = data[0].Current_Stock;
+      // this.getreq();
+      // this.AddMaterialsList = data[0];
+      data.forEach(element => {
+        const  productObj = {
+           //ID : element.ID,
+           Product_Category : element.Type_Of_Product,
+           Product_Type : element.Product_Type,
+           Product_ID : element.Product_ID,
+           Product_Description : element.Product_Description,
+           Product_Code :  element.Product_Code,
+           Req_Qty : Number(element.Req_Qty),
+           UOM :  element.UOM,
+           Purpose : element.Purpose,
+           Challan_No : element.Challan_No
+         };
+          this.AddMaterialsList.push(productObj);
+        });
+      // this.AddTermList = data[0].Term_element ? data[0].Term_element : [] ;
+      // console.log("addPurchaseList",this.addPurchaseList)
+    })
+  }
+  getEditProject(DocNo){
+    if(DocNo){
+      const obj = {
+        "SP_String": "SP_BL_CRM_TXN_Project_Doc",
+        "Report_Name_String": "Get_BL_CRM_TXN_Project_Doc",
+        "Json_Param_String": JSON.stringify([{DOC_NO : DocNo}]) 
+       }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         this.projectEditData = data
+         // console.log("this.projectEditData",this.projectEditData);
+         
+          this.ProjectInput.ProjectEdit(this.projectEditData)
+         
+          })
+    }
   }
 
   ServerDate(){
     this.$http
     .get("/common/Get_Server_Date")
     .subscribe((data: any) => {
-     console.log("ServerDate",data)
+     //console.log("ServerDate",data)
      this.requi_Date  = new Date(data)
      
     })
@@ -804,12 +1051,12 @@ export class MiclRequisitionComponent implements OnInit {
     this.$http
     .get("/Common/Get_Allowed_Entry_Days?User_ID=" + this.$CompacctAPI.CompacctCookies.User_ID)
     .subscribe((rec: any) => {
-      console.log("AllowedEntryDays",rec)
+      //console.log("AllowedEntryDays",rec)
      let data = JSON.parse(rec)
       let days = Number(data[0].Allowed_Entry_Day)
-      console.log("days",days)
+      //console.log("days",days)
      this.minFromDate = new Date(this.requi_Date.getTime()-(days*24*60*60*1000));
-     console.log("minFromDate",this.minFromDate)
+     //console.log("minFromDate",this.minFromDate)
       
     })
   }
@@ -860,6 +1107,293 @@ export class MiclRequisitionComponent implements OnInit {
        this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
         });
     }
+    getReStatsuDateRange(dateRangeObj) {
+      if (dateRangeObj.length) {
+        this.ObjReqStatusData.From_Date = dateRangeObj[0];
+        this.ObjReqStatusData.To_Date = dateRangeObj[1];
+      }
+    }
+    GetRequisitionStatusData(){
+      // this.RequistionSearchFormSubmit = true;
+      this.reqstatusSpinner = true
+        const tempDate = {
+          From_Date :this.ObjReqStatusData.From_Date
+          ? this.DateService.dateConvert(new Date(this.ObjReqStatusData.From_Date))
+          : this.DateService.dateConvert(new Date()),
+          To_Date :this.ObjReqStatusData.To_Date
+          ? this.DateService.dateConvert(new Date(this.ObjReqStatusData.To_Date))
+          : this.DateService.dateConvert(new Date()),
+          // Cost_Cen_ID :this.ObjReqStatusData.Cost_Cen_ID ? this.ObjReqStatusData.Cost_Cen_ID : 0,
+          // Godown_ID : this.ObjReqStatusData.Godown_ID ? this.ObjReqStatusData.Godown_ID : 0,
+          proj : this.openProject ? this.openProject : "N",
+          To_Cost_Cen_ID : this.toCostCenter
+        }
+        let ReportName = "";
+        if (this.headerText === "Purchase Indent") {
+          ReportName = "Get_Purchase_Indent_Status";
+        }
+        else if (this.headerText === "Issue Requisition") {
+          ReportName = "Get_Issue_Requisition_Status";
+        }
+        else {
+          ReportName = "Get_MRO_Indent_Status";
+        }
+        const obj = {
+          "SP_String": "SP_Txn_Requisition",
+          "Report_Name_String": ReportName,
+          "Json_Param_String": JSON.stringify([tempDate])
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          this.ReqStatusDataList = data;
+          if(this.ReqStatusDataList.length){
+            this.DynamicReqStatusDataListHeader= Object.keys(data[0])
+          }
+          // this.RequistionSearchFormSubmit = false;
+          this.backUpReqStatusDataList = data;
+          this.GetDistinctStatus();
+          this.reqstatusSpinner = false
+          //console.log("this.ReqStatusDataList",this.ReqStatusDataList);
+        })
+    
+   
+    }
+    exportexcel(Arr,fileName): void {
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      XLSX.writeFile(workbook, fileName+'.xlsx');
+    }
+    FilterDistStatus() {
+      let department:any = [];
+      let producttype:any = [];
+      let SearchFieldsStatus:any =[];
+    if (this.SelectedDistDepartment.length) {
+      SearchFieldsStatus.push('Dept_Name');
+      department = this.SelectedDistDepartment;
+    }
+    if (this.SelectedDistProductType.length) {
+      SearchFieldsStatus.push('Product_Type');
+      producttype = this.SelectedDistProductType;
+    }
+    this.ReqStatusDataList = [];
+    if (SearchFieldsStatus.length) {
+      let LeadArr = this.backUpReqStatusDataList.filter(function (e) {
+        return (department.length ? department.includes(e['Dept_Name']) : true)
+        && (producttype.length ? producttype.includes(e['Product_Type']) : true)
+      });
+    this.ReqStatusDataList = LeadArr.length ? LeadArr : [];
+    } else {
+    this.ReqStatusDataList = [...this.backUpReqStatusDataList] ;
+    }
+    }
+    GetDistinctStatus() {
+      let department:any = [];
+      let producttype:any = [];
+      this.DistDepartment =[];
+      this.SelectedDistDepartment =[];
+      this.DistProductType =[];
+      this.SelectedDistProductType =[];
+      this.ReqStatusDataList.forEach((item) => {
+    if (department.indexOf(item.Dept_Name) === -1) {
+      department.push(item.Dept_Name);
+      this.DistDepartment.push({ label: item.Dept_Name, value: item.Dept_Name });
+      }
+     if (producttype.indexOf(item.Product_Type) === -1) {
+      producttype.push(item.Product_Type);
+     this.DistProductType.push({ label: item.Product_Type, value: item.Product_Type });
+     }
+    });
+       this.backUpReqStatusDataList = [...this.ReqStatusDataList];
+    }
+
+    // PENDING INDENT
+getDateRangeMis(dateRangeObj) {
+  if (dateRangeObj.length) {
+    this.MIS_start_date = dateRangeObj[0];
+    this.MIS_end_date = dateRangeObj[1];
+  }
+}
+GetMIS(){
+    // this.PendingIndentFormSubmitted = true;
+    this.seachSpinnerMis = true;
+    const start = this.MIS_start_date
+    ? this.DateService.dateConvert(new Date(this.MIS_start_date))
+    : this.DateService.dateConvert(new Date());
+    const end = this.MIS_end_date
+    ? this.DateService.dateConvert(new Date(this.MIS_end_date))
+    : this.DateService.dateConvert(new Date());
+    if (start && end) {
+    const tempobj = {
+     From_Date : start,
+     To_Date : end,
+    //  To_Cost_Cen_ID : this.ObjPendingIndent.Cost_Cen_ID,
+    //  proj : "N"
+    }
+    // if (valid) {
+    const obj = {
+      "SP_String": "SP_MICL_Dispatch_Challan",
+      "Report_Name_String": "Dispatch_MIS",
+      "Json_Param_String": JSON.stringify([tempobj])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.MISList = data;
+      this.BackupMISList = data;
+      this.BackupMISListFilter = data;
+      // this.GetDistinctMis();
+      this.GetDeptDist()
+      this.GetCostCenterDist()
+      this.getStockPoint()
+      if(this.MISList.length){
+        this.DynamicHeaderforMISList = Object.keys(data[0]);
+      }
+      else {
+        this.DynamicHeaderforMISList = [];
+      }
+      this.seachSpinnerMis = false;
+      this.TotalValue(this.MISList);
+      // console.log("DynamicHeaderforMISList",this.DynamicHeaderforMISList);
+    })
+    }
+    else {
+      this.seachSpinnerMis = false;
+      // this.ngxService.stop();
+      this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Something Wrong"
+        });
+    }
+}
+exportexcelmis(Arr,fileName): void {
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, fileName+'.xlsx');
+}
+FilterDistMis(v:any) {
+  let department:any = [];
+  let costcen:any = [];
+  let stockpoint:any = [];
+  let SearchFieldsMis:any =[];
+if (this.SelectedDistDepartmentmis.length) {
+  SearchFieldsMis.push('Dept_Name');
+  department = this.SelectedDistDepartmentmis;
+  console.log("department",department)
+}
+if (this.SelectedDistCostCen.length) {
+  SearchFieldsMis.push('Cost_Cen_Name');
+  costcen = this.SelectedDistCostCen;
+}
+if (this.SelectedDistStockPoint.length) {
+  SearchFieldsMis.push('Stock_Point');
+  stockpoint = this.SelectedDistStockPoint;
+}
+this.MISList = [];
+console.log("SearchFieldsMis",SearchFieldsMis)
+console.log("BackupMISList",this.BackupMISList)
+if (SearchFieldsMis.length) {
+  let LeadArr = this.BackupMISList.filter(function (e) {
+    return (department.length ? department.includes(e['Dept_Name']) : true)
+    && (costcen.length ? costcen.includes(e['Cost_Cen_Name']) : true)
+    && (stockpoint.length ? stockpoint.includes(e['Stock_Point']) : true)
+  });
+  console.log("LeadArr",LeadArr)
+this.MISList = LeadArr.length ? LeadArr : [];
+
+} else {
+this.MISList = [...this.BackupMISList] ;
+}
+this.TotalValue(this.MISList);
+if(v === "Dept_Name"){
+  this.getStockPoint()
+  this.GetCostCenterDist()
+  
+}
+if(v === "Cost_Cen_Name"){
+  this.getStockPoint()
+}
+if(v != "Stock_Point"){
+ // this.getStockPoint()
+}
+if(!this.SelectedDistDepartmentmis.length && !this.SelectedDistCostCen.length && !this.SelectedDistStockPoint.length){
+  this.GetDeptDist()
+  this.getStockPoint()
+  this.GetCostCenterDist()
+}
+}
+GetDistinctMis() {
+  //let department:any = [];
+  let costcen:any = [];
+  let stockpoint:any = [];
+  // this.DistDepartmentmis =[];
+  // this.SelectedDistDepartmentmis =[];
+  // this.DistCostCen =[];
+  // this.SelectedDistCostCen =[];
+  this.DistStockPoint =[];
+  this.SelectedDistStockPoint = [];
+  this.MISList.forEach((item) => {
+// if (department.indexOf(item.Dept_Name) === -1) {
+//   department.push(item.Dept_Name);
+//   this.DistDepartmentmis.push({ label: item.Dept_Name, value: item.Dept_Name });
+//   }
+//  if (costcen.indexOf(item.Cost_Cen_Name) === -1) {
+//   costcen.push(item.Cost_Cen_Name);
+//  this.DistCostCen.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
+//  }
+ if (stockpoint.indexOf(item.Stock_Point) === -1) {
+  stockpoint.push(item.Stock_Point);
+ this.DistStockPoint.push({ label: item.Stock_Point, value: item.Stock_Point });
+ }
+});
+   this.BackupMISList = [...this.MISList];
+}
+
+GetDeptDist(){
+  let department:any = [];
+  this.DistDepartmentmis =[];
+  this.SelectedDistDepartmentmis =[];
+  this.MISList.forEach((item) => {
+    if (department.indexOf(item.Dept_Name) === -1) {
+      department.push(item.Dept_Name);
+      this.DistDepartmentmis.push({ label: item.Dept_Name, value: item.Dept_Name });
+      }
+      this.BackupMISList = [...this.BackupMISListFilter];
+  })
+}
+GetCostCenterDist(){
+  let costcen:any = [];
+  this.DistCostCen =[];
+  this.SelectedDistCostCen =[];
+  console.log("MISList",this.MISList)
+  this.MISList.forEach((item) => {
+    if (costcen.indexOf(item.Cost_Cen_Name) === -1) {
+      costcen.push(item.Cost_Cen_Name);
+     this.DistCostCen.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
+     }
+      this.BackupMISList = [...this.BackupMISListFilter];
+  })
+}
+getStockPoint(){
+  let stockpoint:any = [];
+  this.DistStockPoint =[];
+  this.SelectedDistStockPoint = [];
+  this.MISList.forEach((item) => {
+    if (stockpoint.indexOf(item.Stock_Point) === -1) {
+      stockpoint.push(item.Stock_Point);
+     this.DistStockPoint.push({ label: item.Stock_Point, value: item.Stock_Point });
+     }
+      this.BackupMISList = [...this.BackupMISListFilter];
+  })
+}
+TotalValue(arrList:any){
+  if(arrList.length){
+    this.allTotalObj.Value =0
+    arrList.forEach(ele => {
+      this.allTotalObj.Value = Number(Number(ele.Value) + Number(this.allTotalObj.Value)).toFixed(2)
+    });
+  }
+  console.log(this.allTotalObj)
+}
 }
 
 class reqi{
@@ -872,6 +1406,7 @@ class reqi{
    }
 
 class material{
+  Product_Category:any;
   Product_ID:any;
   Product_Description:any;
   Req_Qty:any;
@@ -900,3 +1435,10 @@ class project{
   Budget_Sub_Group_ID:any
   Work_Details_ID:any
 }
+class ReqStatusData {
+  From_Date: string;
+  To_Date: string;
+  Cost_Cen_ID : any;
+  Godown_ID : any;
+  To_Cost_Cen_ID :any
+  }

@@ -130,17 +130,20 @@ export class DashBoardComponent implements OnInit {
         } else {
           dataArr[x] = [];
         }
-        obj = {
-          title: this.ChartTitle[x].report_name,
-          DynData: dataArr[x],
-          ChartToBind: dataArr[x][0].DefaultChart,
-          searchDetails: {
-            reportname: this.ChartTitle[x].report_name + " - Details",
-            StartDate: this.GloabalDateRange.from_date,
-            EndDate: this.GloabalDateRange.to_date
-          }
-        };
-        DynamicData.push(obj);
+        if(dataArr[x].length){
+          obj = {
+            title: this.ChartTitle[x].report_name,
+            DynData: dataArr[x],
+            ChartToBind: dataArr[x][0].DefaultChart,
+            searchDetails: {
+              reportname: this.ChartTitle[x].report_name + " - Details",
+              StartDate: this.GloabalDateRange.from_date,
+              EndDate: this.GloabalDateRange.to_date
+            }
+          };
+          DynamicData.push(obj);
+        }
+     
       }
       this.DynamicValue = DynamicData;
       this.seachSpinner1 = false;

@@ -199,6 +199,15 @@
                                                             <label class="control-label">Product Type <span class="text-danger"></span></label>
                                                             <p-multiSelect [options]="DistRMProductType" [(ngModel)]="SelectedDistRMProductType" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Product_Type" [resetFilterOnHide]="true"></p-multiSelect>
                                                         </div>
+                                                        <div class="col-sm-2">
+                                                            <label class="control-label"></label>
+                                                            <div class="checkBox">
+                                                                <label class="pull-right">
+                                                               <p-checkbox  [(ngModel)]="QtyRMSfilterFLag"  name="QtyRMsfilter"  (onChange)="QtyRMSFilter()"  binary="true" ></p-checkbox>
+                                                               Filter Qty
+                                                           </label>
+                                                            </div>
+                                                        </div>
                                                         <!-- <div class="col-sm-4">
                                     <label class="control-label">Product Type <sup class="text-danger">*</sup></label>
                                         <select class="form-control"
@@ -265,6 +274,15 @@
                                                         <div class="col-sm-3">
                                                             <label class="control-label">Product Type <span class="text-danger"></span></label>
                                                             <p-multiSelect [options]="DistProductType" [(ngModel)]="SelectedDistProductType" itemSize="30" (onChange)='FilterDistSF()' [styleClass]="'compacct-multiselect'" name="Product_Type" [resetFilterOnHide]="true"></p-multiSelect>
+                                                        </div>
+                                                        <div class="col-sm-2">
+                                                            <label class="control-label"></label>
+                                                            <div class="checkBox">
+                                                                <label class="pull-right">
+                                                               <p-checkbox  [(ngModel)]="QtySFinishfilterFLag"  name="QtySFinishfilter"  (onChange)="QtySFinishFilter()"  binary="true" ></p-checkbox>
+                                                               Filter Qty
+                                                           </label>
+                                                            </div>
                                                         </div>
                                                         <!-- <div class="col-sm-4">
                                     <label class="control-label">Product Type <sup class="text-danger">*</sup></label>

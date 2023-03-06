@@ -37,7 +37,7 @@
                                     </div>
                                     <div class="col-sm-2">
                                         <label class="control-label">Material Type <sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="mattype" #mattype="ngModel" [(ngModel)]="ObjBrowse.Material_Type" [ngClass]="{'clearance':SearchFactoryFormSubmit && mattype?.errors?.required}" required>
+                                        <select class="form-control" name="mattype" #mattype="ngModel" [(ngModel)]="ObjBrowse.Material_Type" [attr.disabled]="true" [ngClass]="{'clearance':SearchFactoryFormSubmit && mattype?.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
                                      <option *ngFor = "let option of mattypelist" [value] ="option.Material_Type">
                                         {{option.Material_Type}}
@@ -45,7 +45,7 @@
                                 </select>
                                     </div>
 
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-2">
                                         <button class="btn btn-primary pull-right1" data-toggle="modal" (click)="GetSearchedlist(SearchFactoryForm.form.valid)" id="load" [disabled]="seachSpinner">
                                       <p-progressSpinner
                                         *ngIf="seachSpinner"
@@ -59,6 +59,12 @@
                                       ></span
                                       >&nbsp;Search
                                     </button>
+                                    </div>
+                                    <div class="col-sm-2">
+                                    <button class="btn btn-success custombutton" data-toggle="modal" (click)="exportoexcelbrowse('RTF_Browse')" id="load" [disabled]="expotSpinner || !Searchedlist.length">
+                                      <p-progressSpinner *ngIf="expotSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!expotSpinner" class="glyphicon glyphicon-save"></span>&nbsp;Export to excel
+                                   </button>
                                     </div>
                                 </div>
 
@@ -89,6 +95,7 @@
                                             <th>To Stock Point</th>
                                             <th>Total Qty</th>
                                             <th>Accepted Qty</th>
+                                            <th>Total Amount</th>
                                             <th>Transaction Date & Time</th>
                                         </tr>
                                     </ng-template>
@@ -127,6 +134,11 @@
                                                                 <i class="fa fa-print" aria-hidden="true"></i> Print
                                                             </a>
                                                         </li>
+                                                        <li *ngIf="col.CR_No === 'NA' && col.Bill_No === 'NA' && col.franchise === 'Y'">
+                                                            <a (click)="UpdateQty(col)">
+                                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update Accepted Qty
+                                                            </a>
+                                                        </li>
                                                         <li *ngIf="col.Accepted_Qty == 0  &&  $CompacctAPI.CompacctCookies.Cost_Cen_ID != col.To_Cost_Cen_ID">
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-trash" aria-hidden="true"></i> Delete
@@ -158,6 +170,7 @@
                                             <td>{{col.To_godown_name}}</td>
                                             <td>{{col.Toyal_Qty}}</td>
                                             <td>{{col.Accepted_Qty}}</td>
+                                            <td>{{col.Total_Amount}}</td>
                                             <td>{{col.Transaction_Date_Time}}</td>
                                         </tr>
                                     </ng-template>
@@ -443,7 +456,7 @@
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="control-label">To Stock Point <sup class="text-danger">*</sup></label>
-                                            <select class="form-control" name="ToGodown" #ToGodown="ngModel" [(ngModel)]="ObjSaveForm.Godown_ID" [ngClass]="{'clearance': RFactoryaddFormSubmitted && ToGodown?.errors?.required}" required>
+                                            <select class="form-control" name="ToGodown" #ToGodown="ngModel" [(ngModel)]="ObjSaveForm.Godown_ID" [disabled]="true" [ngClass]="{'clearance': RFactoryaddFormSubmitted && ToGodown?.errors?.required}" required>
                                   <option  [ngValue]="undefined">Select</option>
                                     <option *ngFor = "let option of toGodownList" value="{{option.godown_id}}">
                                       {{option.godown_name}}
@@ -452,8 +465,8 @@
                                         </div>
 
                                         <div class="col-sm-3">
-                                            <label class="control-label">Material Type <sup class="text-danger">*</sup></label>
-                                            <select class="form-control" name="materialtype" #materialtype="ngModel" [(ngModel)]="ObjSaveForm.Material_Type" (ngModelChange)="getselectproduct()" [ngClass]="{'clearance':RFactoryaddFormSubmitted && materialtype?.errors?.required}" [disabled]="MTdisabled"
+                                             <label class="control-label">Material Type <sup class="text-danger">*</sup></label>  <!-- [disabled]="MTdisabled" -->
+                                            <select class="form-control" name="materialtype" #materialtype="ngModel" [(ngModel)]="ObjSaveForm.Material_Type" (ngModelChange)="getselectproduct()" [ngClass]="{'clearance':RFactoryaddFormSubmitted && materialtype?.errors?.required}" [disabled]="true"
                                                 required>
                                         <option  [ngValue]="undefined">Select</option>
                                  <option *ngFor = "let option of mattypelist" [value] ="option.Material_Type">

@@ -9,6 +9,7 @@ import { CompacctHeader } from "../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service"
 import { ActivatedRoute, Router } from "@angular/router";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-k4c-raw-material-stock-transfer',
@@ -18,7 +19,7 @@ import { ActivatedRoute, Router } from "@angular/router";
   encapsulation: ViewEncapsulation.None
 })
 export class K4cRawMaterialStockTransferComponent implements OnInit {
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   ShowSpinner = false;
@@ -28,40 +29,43 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
   ObjRawMateriali : RawMateriali = new RawMateriali ();
   RawMaterialIssueFormSubmitted = false;
   ObjBrowse : Browse = new Browse ();
-  Fcostcenlist = [];
-  FromGodownList = [];
-  Tocostcenlist = [];
-  ToGodownList = [];
+  Fcostcenlist:any = [];
+  FromGodownList:any = [];
+  Tocostcenlist:any = [];
+  ToGodownList:any = [];
   FCostdisableflag = false;
   FGdisableflag = false;
   TGdisableflag = false;
   IndentListFormSubmitted = false;
-  IndentList = [];
-  ProductList = [];
+  IndentList:any = [];
+  ProductList:any = [];
   SelectedIndent: any;
-  BackupIndentList = [];
-  IndentFilter = [];
-  TIndentList = [];
-  Searchedlist = [];
+  BackupIndentList:any = [];
+  IndentFilter:any = [];
+  TIndentList:any = [];
+  Searchedlist:any = [];
   flag = false;
-  productListFilter = [];
-  SelectedProductType :any = [];
+  productListFilter:any = [];
+  SelectedProductType:any = [];
   Param_Flag ='';
   CostCentId_Flag : any;
   MaterialType_Flag = '';
   TCdisableflag = false;
   todayDate = new Date();
-  initDate = [];
+  initDate:any = [];
   RawMaterialIssueSearchFormSubmitted = false;
-  ToBcostcenlist = [];
-  ToBGodownList = [];
+  ToBcostcenlist:any = [];
+  ToBGodownList:any = [];
   TBCdisableflag = false;
   TBGdisableflag = false;
   ViewPoppup = false;
-  Viewlist = [];
+  Viewlist:any = [];
   Doc_date: any;
   Formstockpoint: any;
   Tostockpoint: any;
+  displaysavepopup = false;
+  filteredData:any = [];
+  ShowPopupSpinner = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -72,21 +76,24 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
-  ) {}
-
-  ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      // console.log(params);
-      this.clearData();
-      this.Searchedlist = [];
-      this.BackupIndentList = [];
-     this.TIndentList = [];
-     this.SelectedIndent = [];
+    private ngxService: NgxUiLoaderService
+  ) {
+      this.route.queryParams.subscribe(params => {
+       //console.log("params",params);
       this.Param_Flag = params['Name'];
       this.CostCentId_Flag = params['Cost_Cen_ID'];
       this.MaterialType_Flag = params['Material_Type']
        console.log (this.CostCentId_Flag);
+  })
+  }
+
+  ngOnInit() {
     this.items = ["BROWSE", "CREATE"];
+    this.clearData();
+    this.Searchedlist = [];
+    this.BackupIndentList = [];
+    this.TIndentList = [];
+    this.SelectedIndent = [];
     this.Header.pushHeader({
       Header: this.MaterialType_Flag + " Stock Transfer - " + this.Param_Flag,
       Link: " Material Management -> " + this.MaterialType_Flag + " Stock Transfer - " + this.Param_Flag
@@ -95,7 +102,6 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     this.GetToCostCen();
     this.GetBToCostCen();
     this.GetProductType();
-  })
   }
   TabClick(e){
     // console.log(e)
@@ -294,7 +300,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
 
   filterProduct(){
     if(this.SelectedProductType.length){
-      let tempProduct = [];
+      let tempProduct:any = [];
       this.SelectedProductType.forEach(item => {
         this.BackupIndentList.forEach((el,i)=>{
 
@@ -313,7 +319,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     }
   }
 GetProductType(){
-  let DOrderBy = [];
+  let DOrderBy:any = [];
     this.productListFilter = [];
     //this.SelectedDistOrderBy1 = [];
     this.BackupIndentList.forEach((item) => {
@@ -329,7 +335,7 @@ GetProductType(){
   // GET PRODUCT LIST
   dataforproduct(){
     if(this.SelectedIndent.length) {
-      let Arr =[]
+      let Arr:any =[]
       this.SelectedIndent.forEach(el => {
         if(el){
           const Dobj = {
@@ -410,11 +416,48 @@ GetProductType(){
    return flag;
   }
   // SAVE AND UPDATE
+  showDialog() {
+    if(this.saveqty()){
+    this.filteredData = [];
+  //   this.BackUpproductDetails.forEach(obj => {
+  //     if(obj.Delivery_Qty && Number(obj.Delivery_Qty) !== 0 ){
+  //     //  console.log(filteredData.push(obj.Product_ID));
+  //     this.filteredData.push(obj);
+  //      // console.log("this.filteredData===",this.filteredData);
+  //   }
+  //  })
+   this.ProductList.forEach(obj => {
+    if(obj.Issue_Qty && Number(obj.Issue_Qty) !== 0){  //   && Number(obj.Delivery_Qty) !== 0
+    //  console.log(filteredData.push(obj.Product_ID));
+    this.filteredData.push(obj);
+    this.displaysavepopup = true;
+     // console.log("this.filteredData===",this.filteredData);
+  }
+ })
+  }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Quantity can't be more than in batch available quantity "
+        });
+  }
+  }
+  getTotalValue(key){
+    let Total = 0;
+    this.filteredData.forEach((item)=>{
+      Total += Number(item[key]);
+    });
+  
+    return Total ? Total.toFixed(2) : '-';
+  }
   dataforSaveRawMaterialIssue(){
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
      this.ObjRawMateriali.Doc_Date = this.DateService.dateConvert(new Date(this.todayDate));
     if(this.ProductList.length) {
-      let tempArr =[]
+      let tempArr:any =[]
       this.ProductList.forEach(item => {
         if(item.Issue_Qty && Number(item.Issue_Qty) != 0) {
      const TempObj = {
@@ -442,8 +485,12 @@ GetProductType(){
     }
   }
   SaveRawMaterialIssue(){
+    this.ShowPopupSpinner = true;
+    this.ngxService.start();
     if(this.ObjRawMateriali.From_Cost_Cen_ID == this.ObjRawMateriali.To_Cost_Cen_ID &&
       this.ObjRawMateriali.From_godown_id == this.ObjRawMateriali.To_godown_id){
+        this.ShowPopupSpinner = false;
+        this.ngxService.start();
       this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -479,9 +526,14 @@ GetProductType(){
          this.buttonname = "Save";
          this.GetSearchedList(true);
          this.clearData();
+         this.displaysavepopup = false;
+         this.ngxService.stop();
+         this.ShowPopupSpinner = false;
          this.ProductList =[];
          this.IndentListFormSubmitted = false;
         } else{
+          this.ShowPopupSpinner = false;
+          this.ngxService.stop();
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -493,6 +545,8 @@ GetProductType(){
       })
     }
     else{
+      this.ShowPopupSpinner = false;
+      this.ngxService.stop();
       this.compacctToast.clear();
       this.compacctToast.add({
           key: "compacct-toast",

@@ -29,7 +29,10 @@
                             <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                                 <div class="table-responsive no-padding">
                                     <div class="table-responsive no-padding">
-                                        <p-table [value]="AllData" [paginator]="AllData.length ? true : false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [globalFilterFields]="['','Primary/Alternative','Decimal_Place']"[rowHover]="true" #dt>
+                                        <p-table [value]="AllData" [paginator]="AllData.length ? true : false" 
+                                        [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" 
+                                        [rowsPerPageOptions]="[10,20,30]" 
+                                        [globalFilterFields]="['Name','User_Name','Cost_Cen_Name','User_Mobile','Menu_Ref_Name','Under_User','Apprv_Auth']"[rowHover]="true" #dt>
 
                                             <ng-template pTemplate="caption">
                                                 <div class="row">
@@ -43,11 +46,12 @@
                                                 <tr>
                                                     <th style="width:5em">Action</th>
                                                     <th>Name</th>
-                                                    <th>UserName</th>
+                                                    <th>User Name</th>
                                                     <th>CostCenter</th>
                                                     <th>Mobile No.</th>
-                                                    <th>User Name</th>
                                                     <th>Menu Reference</th>
+                                                    <th>Under User</th>
+                                                    <th>Approval Authority</th>
                                                     
                                                 </tr>
                                             </ng-template>
@@ -67,12 +71,12 @@
                                                                         <i class="fa fa-fw fa-pencil"></i> Edit
                                                                     </a>
                                                                 </li>
-                                                                <li *ngIf="col.Is_Active == 'Y'">
+                                                                <li *ngIf="col.Is_Active == 'Y' && col.User_ID != 4 ">
                                                                     <a (click)="DeleteUser(col)">
                                                                         <i class="fa fa-fw fa-trash"></i> Delete
                                                                     </a>
                                                                 </li>
-                                                                <li *ngIf="col.Is_Active == 'N'" >
+                                                                <li *ngIf="col.Is_Active == 'N' " >
                                                                     <a (click)="Active(col)">
                                                                           <i class="fa fa-power-off"></i> Active
                                                                     </a>
@@ -85,8 +89,9 @@
                                                     <td>{{col.User_Name}}</td>
                                                     <td>{{col.Cost_Cen_Name}}</td>
                                                     <td>{{col.User_Mobile}}</td>
-                                                    <td>{{col.User_Name}}</td>
                                                     <td>{{col.Menu_Ref_Name}}</td>
+                                                    <td>{{col.Under_User ? col.Under_User : "-"}}</td>
+                                                    <td>{{col.Apprv_Auth == "Y" ? "Yes" : "No"}}</td>
                                                     
                                                 </tr>
                                             </ng-template>
@@ -185,15 +190,19 @@
                                         <label class="control-label">Cost Center
                                             <sup class="taxt-danger">*</sup>
                                         </label>
-                                        <select class="form-control" 
-                                                name="Cost_Cen_ID" 
-                                                #Cost_Cen_ID ="ngModel"
-                                                [(ngModel)]="ObjUser.Cost_Cen_ID"
-                                                [ngClass]="{'clearance': userFormSubmitted && Cost_Cen_ID?.errors?.required}" 
-                                                required>
-                                            <option [ngValue]="undefined">Select</option>
-                                            <option *ngFor="let cost of costData"  value ={{cost.Cost_Cen_ID}}>{{cost.Cost_Cen_Name}}</option>
-                                      </select>
+                                        <p-dropdown [options]="costData"
+                                                        name="Cost_Cen_ID"
+                                                        #Cost_Cen_ID  ="ngModel"
+                                                        [showClear]="true"
+                                                        [emptyFilterMessage]="'No CostCenter Found'"
+                                                        [(ngModel)]="ObjUser.Cost_Cen_ID"
+                                                        [filter]="true"
+                                                        filterBy="label,value.name"
+                                                        [placeholder]="'Select CostCenter '"
+                                                        [virtualScroll]="true"
+                                                        itemSize="30"
+                                                        [ngClass]="{'clearance': userFormSubmitted && Cost_Cen_ID?.errors?.required}" required>
+                                        </p-dropdown>
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Department
@@ -210,6 +219,7 @@
                                         
                                         </select>
                                     </div>
+                                    <div class="clearfix"></div>
                                    <div class="col-sm-4">
                                         <label class="control-label">Sub Department
                                             <sup class="taxt-danger">*</sup>
@@ -243,17 +253,21 @@
                                         <label class="control-label">Menu Reference
                                             <sup class="taxt-danger">*</sup>
                                         </label>
-                                        <select class="form-control" 
-                                        name="Menu_Ref_ID"
-                                        #Menu_Ref_ID ="ngModel"
-                                        [(ngModel)]="ObjUser.Menu_Ref_ID"
-                                        [ngClass]="{'clearance': userFormSubmitted && Menu_Ref_ID?.errors?.required}" 
-                                        required >
-                                            <option [ngValue]="undefined">Select</option>
-                                            <option *ngFor="let menu of menuData"  value ={{menu.Menu_Ref_ID}}>{{menu.Menu_Ref_Name}}</option>
-                                        
-                                        </select>
+                                        <p-dropdown [options]="menuData"
+                                                        name="Menu_Ref_ID"
+                                                        #Menu_Ref_ID  ="ngModel"
+                                                        [showClear]="true"
+                                                        [emptyFilterMessage]="'No Menu Reference Found'"
+                                                        [(ngModel)]="ObjUser.Menu_Ref_ID"
+                                                        [filter]="true"
+                                                        filterBy="label,value.name"
+                                                        [placeholder]="'Select Menu Reference '"
+                                                        [virtualScroll]="true"
+                                                        itemSize="30"
+                                                        [ngClass]="{'clearance': userFormSubmitted && Menu_Ref_ID?.errors?.required}" required>
+                                        </p-dropdown>
                                     </div>
+                                    <div class="clearfix"></div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Expiry Date
                                        </label>
@@ -269,8 +283,7 @@
                                         name="API_User_Name"
                                         #API_User_Name ="ngModel"
                                         [(ngModel)]="ObjUser.API_User_Name"
-                                        [ngClass]="{'clearance': userFormSubmitted && API_User_Name?.errors?.required}" 
-                                        require>
+                                       >
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">User Time Required
@@ -281,9 +294,9 @@
                                         #User_Time ="ngModel"
                                         [(ngModel)]="ObjUser.User_Time"
                                         [ngClass]="{'clearance': userFormSubmitted && User_Time?.errors?.required}" 
-                                        require>
-                                            <option  value="N">No</option>
-                                            <option  value="Y">Yes</option>
+                                        required>
+                                            <option  value="NO">No</option>
+                                            <option  value="YES">Yes</option>
                                         </select>
                                     </div>
                                     <div class="col-sm-4">
@@ -295,20 +308,35 @@
                                         #Authorized_Computer ="ngModel"
                                         [(ngModel)]="ObjUser.Authorized_Computer"
                                         [ngClass]="{'clearance': userFormSubmitted && Authorized_Computer?.errors?.required}" 
-                                        require >
+                                        required >
                                        <option  value="N">No</option>
                                         <option  value="Y">Yes</option>
                                         </select>
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Upload Profile Photo</label>
-                                        <input type="uploded" class="form-control"
-                                        name="User_Pic"
-                                        #User_Pic ="ngModel"
-                                        [(ngModel)]="ObjUser.User_Pic"
-                                        [ngClass]="{'clearance': userFormSubmitted && User_Pic?.errors?.required}" 
-                                        require>
-                                              
+                                        <label class="control-label">Under User<sup class="taxt-danger">*</sup></label>
+                                        <p-dropdown [options]="Underuser"
+                                                        name="UnderUser"
+                                                        #UnderUser ="ngModel"
+                                                        [showClear]="true"
+                                                        [emptyFilterMessage]="'No User Found'"
+                                                        [(ngModel)]="ObjUser.Intro_ID"
+                                                        [filter]="true"
+                                                        filterBy="label,value.name"
+                                                        [placeholder]="'Select User '"
+                                                        [virtualScroll]="true"
+                                                        itemSize="30"
+                                                        [ngClass]="{'clearance': userFormSubmitted && UnderUser?.errors?.required}" required>
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Approval Authority</label>
+                                        <select class="form-control" name="Approval"
+                                        #Approval ="ngModel"
+                                        [(ngModel)]="ObjUser.Apprv_Auth">
+                                       <option  value="N">No</option>
+                                        <option  value="Y">Yes</option>
+                                        </select>
                                     </div>
                                </div> 
 

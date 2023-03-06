@@ -1,0 +1,780 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <!-- <div class="ui-g-6" >
+                <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div> -->
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+             <p-tabView [activeIndex]="tabIndexToView"> 
+                <form name="SearchForm" #SearchForm="ngForm" novalidate >
+                <div class="form-group" id="inner-Box" >
+                    <div class="col-sm-6" style="padding-bottom: 8px;;margin-left: 18px;">
+                        <label class="control-label">Patient Name<sup class="text-danger">*</sup></label>
+                        <p-dropdown [options]="Patientlist"
+                            name="Patient" 
+                            #Patient="ngModel" 
+                            [(ngModel)]="ObjFirst.Foot_Fall_ID"
+                            [showClear]="true" 
+                            [emptyFilterMessage]="' No Patient Found'" 
+                            [filter]="true" filterBy="label,value.name" 
+                            [resetFilterOnHide]="true" 
+                            [placeholder]="'Select Patient'" 
+                            [virtualScroll]="true"
+                            itemSize="30"
+                            (onChange)="GetPatientLIST()"
+                            [styleClass]="PatientFormSubmitted && Patient.errors?.required? 'clearance' : ''" [required]="true"> 
+                        </p-dropdown>
+                    </div>
+                    <div class="col-sm-4" style="padding-bottom: 8px;;margin-left: 18px;">
+                        <button class="btn btn-primary custombutton" (click)="GetPatientSearch(SearchForm.form.valid)" id="buttonserch"data-loading-text="<i class='fa fa-spinner fa-spin '></i> Searching">
+                            <span class="glyphicon glyphicon-search"></span> Search
+                        </button>
+                    </div>
+                </div>
+               </form>
+                <form name="MiddleForm" #MiddleForm="ngForm" novalidate style="margin-top: 24px;">
+                <div class="panel-group" style="margin-bottom: 20px"> 
+                    <div class="panel panel-primary" style="margin-bottom:0;border-radius: 4px;">                                   
+                        <div class="panel-body" style="padding: 15px;"> 
+                            <div class="form-group">
+                                <h5 style=" margin-top: -10px;padding-left: 16px;">
+                                    <i class="fa fa-user">
+                                    </i> &nbsp;<strong>Patient Details:</strong></h5>    
+                                <div class="col-sm-6">
+                                    <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                    <input
+                                     class="form-control"
+                                    name="PatientName"
+                                    #PatientName="ngModel" 
+                                    [(ngModel)]="ObjMiddle.Contact_Name"
+                                    placeholder="Type your Name"
+                                    [ngClass]="{'clearance': PatientMiddleFormSubmitted && PatientName?.errors?.required}" required>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Customer ID</label>
+                                    <input class="form-control"
+                                    name="Customer"
+                                    #Customer="ngModel" 
+                                    [(ngModel)]="ObjMiddle.Foot_Fall_ID"
+                                    placeholder="Type Customer ID" disabled> 
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Gender<sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                    name="Gender"
+                                    #Gender="ngModel"
+                                    [(ngModel)]="ObjMiddle.Gender"
+                                    [ngClass]="{'clearance': PatientMiddleFormSubmitted && Gender.errors?.required}" required >
+                                        <option  [ngValue]="undefined">Select</option>
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group"> 
+                            <div class="col-sm-4">
+                                <label class="control-label">Date of Birth<sup class="text-danger">*</sup></label>
+                                    <ejs-datepicker 
+                                    [(value)]="Date_Of_Birth" 
+                                    [format]="'dd/MMM/yyyy'"
+                                    name="Birth_date"
+                                    ></ejs-datepicker>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="control-label">Address<sup class="text-danger">*</sup></label>
+                                <input
+                                class="form-control"
+                                name="Address"
+                                #Address="ngModel" 
+                                [(ngModel)]="ObjMiddle.Address"
+                                placeholder="Type Address"
+                                [ngClass]="{'clearance': PatientMiddleFormSubmitted && Address?.errors?.required}" required>
+                            </div>
+                            <div class="col-sm-2">
+                                <label class="control-label">Pin Code<sup class="text-danger">*</sup></label>
+                                <input class="form-control" 
+                                placeholder="Pin code" 
+                                name="Pincode" 
+                                #Pincode="ngModel" 
+                                [(ngModel)]="ObjMiddle.Pin"
+                                maxlength="6"
+                                minlength="6"
+                                (ngModelChange)="StateDistrictChange(ObjMiddle.Pin)" 
+                                [ngClass]="{ 'clearance': PatientMiddleFormSubmitted && (Pincode.errors?.required || Pincode.errors?.maxlength || Pincode.errors?.minlength)}"required>
+                            </div>
+                           </div>
+                            <div class="form-group"> 
+                            <div class="col-sm-4">
+                                    <label class="control-label">State<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" name="State" #State="ngModel"(change)="GetDistrict()" 
+                                    [(ngModel)]="ObjMiddle.STATE" >
+                                    <option  [ngValue]="undefined">Select</option>
+                                    <option *ngFor = "let option of StateList"[value] ="option.STATE">{{option.STATE}}</option>                              
+                                    </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">District<sup class="text-danger">*</sup></label>
+                                <select class="form-control" name="District" #District="ngModel" [(ngModel)]="ObjMiddle.DISTRICT"  >
+                                    <option  [ngValue]="undefined">Select</option>
+                                    <option *ngFor = "let opt of DistrictList"[value] ="opt.DISTRICT">{{opt.DISTRICT}}</option>                             
+                                    </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Mobile No<sup class="text-danger">*</sup></label>
+                                <input
+                                class="form-control"
+                                name="MobileNo"
+                                #MobileNo="ngModel" 
+                                [(ngModel)]="ObjMiddle.Mobile"
+                                CompacctDigitonly="true"
+                                minlength="10"
+                                maxlength="10"
+                                placeholder="Type Mobile No"
+                                disabled>
+                            </div>
+                           </div> 
+                           <div class="form-group"> 
+                            <div class="col-sm-4">
+                                <label class="control-label">Other Mobile No</label>
+                                <input
+                                class="form-control"
+                                name="Landline"
+                                #Landline="ngModel" 
+                                [(ngModel)]="ObjMiddle.Mobile_2"
+                                CompacctDigitonly="true"
+                                minlength="10"
+                                maxlength="10"
+                                placeholder="Type Landline No"
+                                [ngClass]="{'clearance': Landline?.errors?.minlength}">
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Email ID</label>
+                                <input
+                                class="form-control"
+                                name="Email"
+                                #Email="ngModel" 
+                                [(ngModel)]="ObjMiddle.Email"
+                                placeholder="Type Email ID">
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Centre<sup class="text-danger">*</sup></label>
+                                <p-dropdown [options]="centerlist"
+                                name="Centre" 
+                                #Centre="ngModel" 
+                                [(ngModel)]="ObjMiddle.Cost_Cen_ID"
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Centre Found'" 
+                                [filter]="true" filterBy="label,value.name" 
+                                [resetFilterOnHide]="true" 
+                                [placeholder]="'Select Centre'" 
+                                [virtualScroll]="true"
+                                itemSize="30"
+                                (onChange)="GetAudilogist()"
+                                [styleClass]="PatientMiddleFormSubmitted && Centre.errors?.required? 'clearance' : ''" [required]="true"> 
+                            </p-dropdown>
+                            </div>
+                           </div>   
+                           <div class="form-group"> 
+                            <div class="col-sm-4">
+                                <!-- <label class="control-label">Audilogist<sup class="text-danger">*</sup></label>
+                                <p-dropdown [options]="Audilogistlist"
+                                name="Audilogist" 
+                                #Audilogist="ngModel" 
+                                [(ngModel)]="ObjMiddle.Audiologist_ID"
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Audilogist Found'" 
+                                [filter]="true" filterBy="label,value.name" 
+                                [resetFilterOnHide]="true" 
+                                [placeholder]="'Select Audilogist'" 
+                                [virtualScroll]="true"
+                                itemSize="30" 
+                                [styleClass]="PatientMiddleFormSubmitted && Audilogist.errors?.required? 'clearance' : ''" [required]="true"> 
+                            </p-dropdown> -->
+                            </div>
+                            <div class="col-sm-4"></div>
+                            <div class="col-sm-4" style="margin-top: 27px;">
+                               <button class="btn btn-primary pull-right"  id="load" (click)="UpdateMiddleForm(MiddleForm.form.valid)"   [disabled]="Spinner || !ObjMiddle.Foot_Fall_ID"> 
+                                    <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                            </button>
+                            </div>
+                           </div>
+                       </div>
+                    </div>
+                </div>
+                </form>
+                <form name="LASTForm" #LASTForm="ngForm" novalidate>
+                    <!-- HOW ARE YOUR EARS: -->
+                    <div class="form-group" style="padding: 1em;">
+                        <h5 style="
+                        padding: 0.5em 1em;
+                        background: #c1c1c185;
+                        border-top: 5px solid #3c8dbc;
+                        border-bottom: 1px solid #c6c6c6;
+                        margin-top: -20px;
+                        ">
+                        <i class="fa fa-user">
+                        </i> &nbsp;<strong>HOW ARE YOUR EARS:</strong>
+                    </h5>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-10">
+                                <div class="col-sm-4 ">
+                                <strong>Have you had a hearing check before?</strong>
+                                </div>
+                                <div class="col-sm-2">
+                                    <p-radioButton value="Y"  label="Yes"name=" hearingCheck" (onClick)="CustomerRadioChange()" [(ngModel)]="ObjLast.Is_Hearing_Check"></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="N" label="No"name=" hearingCheck"(onClick)="CustomerRadioChange()" [(ngModel)]="ObjLast.Is_Hearing_Check"></p-radioButton>
+                                </div>
+                                <div class="col-sm-2" *ngIf="IfYes">
+                                <strong>If yes, when:</strong>
+                                </div>
+                                <div class="col-sm-4 " *ngIf="IfYes" style="margin-top: -1em;">
+                            <input class="form-control" id="Designe"
+                                    name=" hearing"
+                                    #hearing="ngModel" [(ngModel)]="ObjLast.Hearing_Check_Details"
+                                    placeholder="Type Details" 
+                                    [ngClass]="{'clearance':PatientlastFormSubmitted && hearing?.errors?.required}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-12">
+                            <div class="col-sm-7">
+                                <strong>If you have a hearing loss, when have you noticed this and do you know what caused?</strong>
+                            </div>
+                            <div class="col-sm-5" style="margin-top: -1em;">
+                            <input class="form-control" id="Designe"
+                            name=" Hearing_Loss_Details"
+                            #Hearing_Loss_Details="ngModel" [(ngModel)]="ObjLast.Hearing_Loss_Details"
+                            placeholder="Type Details" >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-12">
+                                <div class="col-sm-5">
+                                <strong style="text-align: start;">Do you have a history of ear infections or drainage from ear?</strong>
+                                </div>
+                                <div class="col-sm-3">
+                                    <p-radioButton value="Y"  label="Yes"name="infections"(onClick)="CustomerRadioChange()" [(ngModel)]="ObjLast.Is_Ear_Infections" ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="N" label="No"name="infections"(onClick)="CustomerRadioChange()" [(ngModel)]="ObjLast.Is_Ear_Infections" ></p-radioButton>
+                                </div>
+                                <div class="col-sm-4"*ngIf="ifinfections">
+                                    <p-radioButton value="Right"  label="Right"name="drainage"[(ngModel)]="ObjLast.Ear_Infection_Side" ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="Left" label="Left"name="drainage"[(ngModel)]="ObjLast.Ear_Infection_Side" ></p-radioButton>  &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="Both" label="Both"name="drainage"[(ngModel)]="ObjLast.Ear_Infection_Side" ></p-radioButton>
+                                </div>      
+                        </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-10">
+                                <div class="col-sm-7">
+                                <strong style="text-align: start;">Do you suspect you have difficulty to understand speech, conversations?</strong>
+                                </div>
+                                <div class="col-sm-2">
+                                    <p-radioButton value="Y"  label="Yes"name="difficulty"[(ngModel)]="ObjLast.Is_Suspect_Difficulty" ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="N" label="No"name="difficulty"[(ngModel)]="ObjLast.Is_Suspect_Difficulty" ></p-radioButton>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-12">
+                                <div class="col-sm-4">
+                                <strong style="text-align: start;">Have you ever lost hearing suddenly or rapidly?</strong>
+                                </div>
+                                <div class="col-sm-3">
+                                    <p-radioButton value="Y"  label="Yes"name="suddenly"(onClick)="CustomerRadioChange()" [(ngModel)]="ObjLast.Is_Lost_Hearing_Suddenly"  ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="N" label="No"name="suddenly"(onClick)="CustomerRadioChange()" [(ngModel)]="ObjLast.Is_Lost_Hearing_Suddenly"  ></p-radioButton>
+                                </div>
+                                <div class="col-sm-4" *ngIf="Ifrapidly">
+                                    <p-radioButton value="Right"  label="Right"name="rapidly"[(ngModel)]="ObjLast.Lost_Hearing_Suddenly_Side" ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="Left" label="Left"name="rapidly"[(ngModel)]="ObjLast.Lost_Hearing_Suddenly_Side" ></p-radioButton>  &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="Both" label="Both"name="rapidly"[(ngModel)]="ObjLast.Lost_Hearing_Suddenly_Side" ></p-radioButton>
+                                </div> 
+                        </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-12"> 
+                                <div class="col-sm-5">
+                                <strong style="text-align: start;">Have you experienced any dizziness, vertigo problems, or falls?</strong>
+                                </div>
+                                <div class="col-sm-2">
+                                    <p-radioButton value="Y"  label="Yes"name="dizziness"[(ngModel)]="ObjLast.Is_Exp_Dizziness" ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="N" label="No"name="dizziness"[(ngModel)]="ObjLast.Is_Exp_Dizziness" ></p-radioButton>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-9">
+                                <div class="col-sm-3">
+                                <strong >Which is your better ear?</strong>
+                                </div>
+                                <div class="col-sm-4">
+                                    <p-radioButton value="Right"  label="Right"name="ear"[(ngModel)]="ObjLast.Better_Ear"></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="Left" label="Left"name="ear"[(ngModel)]="ObjLast.Better_Ear"></p-radioButton>  &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="Same" label="Same"name="ear"[(ngModel)]="ObjLast.Better_Ear"></p-radioButton>
+                                </div> 
+
+                        </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                            <div class="col-sm-12">
+                                <div class="col-sm-6">
+                                <strong style="text-align: start;">Have you had any pain/fullness in your ears within the past 90 days? </strong>
+                                </div>
+                                <div class="col-sm-3">
+                                    <p-radioButton value="Y"  label="Yes"name="pain"(onClick)="CustomerRadioChange()" [(ngModel)]="ObjLast.Is_Pain"  ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="N" label="No"name="pain"(onClick)="CustomerRadioChange()" [(ngModel)]="ObjLast.Is_Pain"  ></p-radioButton>
+                                </div>
+                                <div class="col-sm-3" *ngIf="Iffullness">
+                                    <p-radioButton value="Right"  label="Right"name="fullness"[(ngModel)]="ObjLast.Pain_Side" ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="Left" label="Left"name="fullness"[(ngModel)]="ObjLast.Pain_Side" ></p-radioButton>  &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="Both" label="Both"name="fullness"[(ngModel)]="ObjLast.Pain_Side" ></p-radioButton>
+                                </div> 
+                        </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-12">                       
+                                <div class="col-sm-6">
+                                <strong style="text-align: start;">Do you experience ringing/humming sensation in your ears (tinnitus)? </strong>
+                                </div>
+                                <div class="col-sm-3">
+                                    <p-radioButton value="Y"  label="Yes"name="ringing"(onClick)="CustomerRadioChange()" [(ngModel)]="ObjLast.Is_Exp_Ringing"  ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="N" label="No"name="ringing"(onClick)="CustomerRadioChange()" [(ngModel)]="ObjLast.Is_Exp_Ringing"  ></p-radioButton>
+                                </div>
+                                <div class="col-sm-3" *ngIf="Ifringing">
+                                    <p-radioButton value="Right"  label="Right"name="humming"[(ngModel)]="ObjLast.Exp_Ringing_Side" ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="Left" label="Left"name="humming"[(ngModel)]="ObjLast.Exp_Ringing_Side" ></p-radioButton>  &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="Both" label="Both"name="humming"[(ngModel)]="ObjLast.Exp_Ringing_Side" ></p-radioButton>
+                                </div> 
+                        </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-9">
+                                <div class="col-sm-5">
+                                <strong >Have you ever been expose to loud noise?</strong>
+                                </div>
+                                <div class="col-sm-3">
+                                    <p-radioButton value="Y"  label="Yes"name="loud"[(ngModel)]="ObjLast.Is_Loud_Noise" ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="N" label="No"name="loud"[(ngModel)]="ObjLast.Is_Loud_Noise" ></p-radioButton>  &nbsp;&nbsp;&nbsp;
+                                </div> 
+                        </div>
+                    </div>
+                     <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-12">
+                            <div class="col-sm-4">
+                            <strong style="text-align: start;">Medical problems (check all that apply):</strong>
+                            </div>
+                            <div class="col-sm-5">
+                                <!-- <div class="pull-left">
+                                    <span (click)="Refresh()" class="btn-vk  createPatient" style="cursor: pointer;"><i class="fa fa-refresh"></i> Refresh</span>
+                                </div>
+                                <br> -->
+                                <!-- <p-radioButton value="History of Infection"  label="History of Infection"name="Infection"[(ngModel)]="MedicalProblemObj.Infection" ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                <p-radioButton value="Heart problems" label="Heart problems"name="Heart"[(ngModel)]="MedicalProblemObj.Heart" ></p-radioButton>  &nbsp;&nbsp;&nbsp;
+                                <p-radioButton value="High blood pressure" label="High blood pressure"name="bloodPressure"[(ngModel)]="MedicalProblemObj.bloodPressure" ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                <p-radioButton value="Cancer"  label="Cancer"name="Cancer"[(ngModel)]="MedicalProblemObj.Cancer" ></p-radioButton> &nbsp;&nbsp;<br> <br>
+                                <p-radioButton value="Stroke" label="Stroke"name="Stroke"[(ngModel)]="MedicalProblemObj.Stroke" ></p-radioButton>  &nbsp;&nbsp;&nbsp;
+                                <p-radioButton value="Kidney issues" label="Kidney issues"name="Kidney"[(ngModel)]="MedicalProblemObj.Kidney" ></p-radioButton>  &nbsp;&nbsp;&nbsp;
+                                <p-radioButton value="Diabetes"  label="Diabetes"name="Diabetes"[(ngModel)]="MedicalProblemObj.Diabetes" ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                <p-radioButton value="Head injury" label="Head injury"name="HeadInjury"[(ngModel)]="MedicalProblemObj.HeadInjury" ></p-radioButton>  &nbsp;&nbsp;&nbsp;
+                                <p-radioButton value="Headache" label="Headache"name="Headache"[(ngModel)]="MedicalProblemObj.Headache" ></p-radioButton>           -->
+                                <p-multiSelect [options]="MedicalProblemsList" [(ngModel)]="SelectedMedicalProblems" [virtualScroll]="true"
+                            itemSize="30"  [styleClass]="'compacct-multiselect'"
+                            name="Medical"></p-multiSelect>
+                            </div> 
+                       </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-9">
+                                <div class="col-sm-3">
+                                <strong>Other (please explain):</strong>
+                                </div>
+                                <div class="col-sm-6" style="margin-top: -1em;">
+                                <input class="form-control" id="Designe"
+                                name=" Other"
+                                #Other="ngModel" [(ngModel)]="ObjLast.Medical_Problems_Other"
+                                placeholder="Type Details" >
+                               </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-12">
+                                <div class="col-sm-6">
+                                <strong style="text-align: start;">Have you received any medical or surgical treatment for your ears? </strong>
+                                </div>
+                                <div class="col-sm-3">
+                                    <p-radioButton value="Y"  label="Yes"name="medical"(onClick)="CustomerRadioChange()" [(ngModel)]="ObjLast.Is_Treatment"  ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="N" label="No"name="medical"(onClick)="CustomerRadioChange()" [(ngModel)]="ObjLast.Is_Treatment"  ></p-radioButton>
+                                </div>
+                                <div class="col-sm-3" *ngIf="Ifsurgical">
+                                    <p-radioButton value="Right"  label="Right"name="surgical"[(ngModel)]="ObjLast.Treatment_Side" ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="Left" label="Left"name="surgical"[(ngModel)]="ObjLast.Treatment_Side" ></p-radioButton>  &nbsp;&nbsp;&nbsp;
+                                    <p-radioButton value="Both" label="Both"name="surgical"[(ngModel)]="ObjLast.Treatment_Side" ></p-radioButton>
+                                </div>                
+                        </div>  
+                    </div>
+                    <br>
+                    <!-- HOW IS YOUR COMMUNICATION: -->
+                    <div class="form-group" style="padding: 1em;">
+                        <h5 style="
+                        padding: 0.5em 1em;
+                        background: #c1c1c185;
+                        border-top: 5px solid #3c8dbc;
+                        border-bottom: 1px solid #c6c6c6;
+                        margin-top: -20px;
+                        ">
+                        <i class="fa fa-user">
+                        </i> &nbsp;<strong>HOW IS YOUR COMMUNICATION:</strong>
+                      </h5>
+                      <br>
+                        <div class="col-sm-10">
+                                <div class="col-sm-6">
+                                <strong>Please rate your communication in the following situations</strong>
+                                </div>
+                                <div class="col-sm-2">
+                                <strong>Total Score</strong>
+                                </div>
+                                <div class="col-sm-4">
+                                    <Strong>{{TotalValue}}</Strong>
+                                    
+                                </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-10">
+                            <div class="col-sm-4">
+                                    <strong>Yes (4 pts) / Sometimes (2 pts) / No (0 pts)</strong>
+                            </div>
+                       </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                       <div class="col-sm-12">
+                        <div class="col-sm-7 ">
+                            <strong>1. Does a hearing problem cause you to feel embarrassed when you meet new people?</strong>
+                            </div>
+                            <div class="col-sm-2" >
+                                <select class="form-control" id="Select"name="Comm_1" (change)="Calculation()"
+                                #Comm_1="ngModel"
+                                [(ngModel)]="ObjLast.Comm_1" >
+                                    <option  [ngValue]="undefined">Select</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
+                            </select>
+                            </div>
+                       </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                       <div class="col-sm-12">
+                            <div class="col-sm-8">
+                            <strong>2. Does a hearing problem cause you to feel frustrated when talking to members of your family?
+                            </strong>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control" id="Select"name="Comm_2" (change)="Calculation()"
+                                #Comm_2="ngModel"
+                                [(ngModel)]="ObjLast.Comm_2"  >
+                                    <option  [ngValue]="undefined">Select</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
+                            </select>
+                            </div>
+                       </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                       <div class="col-sm-10">
+                            <div class="col-sm-7">
+                            <strong>3. Do you have difficulty hearing when someone speaks in a whisper?</strong>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control" id="Select"name="Comm_3" (change)="Calculation()"
+                                #Comm_3="ngModel"
+                                [(ngModel)]="ObjLast.Comm_3"  >
+                                    <option  [ngValue]="undefined">Select</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
+                            </select>
+                            </div>
+                       </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                       <div class="col-sm-10">
+                            <div class="col-sm-5">
+                            <strong>4. Do you feel handicapped by a hearing problem?</strong>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control" id="Select"name="Comm_4" (change)="Calculation()"
+                                #Comm_4="ngModel"
+                                [(ngModel)]="ObjLast.Comm_4"  >
+                                    <option  [ngValue]="undefined">Select</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
+                            </select>
+                            </div>
+                       </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                       <div class="col-sm-10">
+                            <div class="col-sm-9">
+                            <strong>5. Does a hearing problem cause you difficulty when visiting friends, relatives, or neighbors?
+                            </strong>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control" id="Select"name="Comm_5" (change)="Calculation()"
+                                #Comm_5="ngModel"
+                                [(ngModel)]="ObjLast.Comm_5"  >
+                                    <option  [ngValue]="undefined">Select</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
+                            </select>
+                            </div>          
+                       </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                       <div class="col-sm-12">                       
+                            <div class="col-sm-6">
+                            <strong>6. Does a hearing problem cause you to have arguments with family members?
+                            </strong>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control" id="Select"name="Comm_6" (change)="Calculation()"
+                                #Comm_6="ngModel"
+                                [(ngModel)]="ObjLast.Comm_6">
+                                    <option  [ngValue]="undefined">Select</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
+                            </select>
+                            </div>                   
+                       </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                       <div class="col-sm-12">
+                        <div class="col-sm-6 ">
+                            <strong>7. Does a hearing problem cause you difficulty to attend religious services or conferences (religious gatherings) less often than
+                                you would like?
+                            </strong>
+                        </div>
+                            <div class="col-sm-2">
+                                <select class="form-control" id="Select"name="Comm_7" (change)="Calculation()"
+                                #Comm_7="ngModel"
+                                [(ngModel)]="ObjLast.Comm_7"  >
+                                    <option  [ngValue]="undefined">Select</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
+                            </select>
+                            </div>
+                       </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                       <div class="col-sm-12">                      
+                            <div class="col-sm-6">
+                            <strong>8. Does a hearing problem cause you difficulty when listening to TV or radio?
+                            </strong>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control" id="Select"name="Comm_8" (change)="Calculation()"
+                                #Comm_8="ngModel"
+                                [(ngModel)]="ObjLast.Comm_8"  >
+                                    <option  [ngValue]="undefined">Select</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
+                            </select>
+                            </div>                      
+                       </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                       <div class="col-sm-11">                       
+                            <div class="col-sm-8">
+                            <strong>9. Do you feel that any difficulty with your hearing limits or hampers your personal or social life?
+                            </strong>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control" id="Select"name="Comm_9" (change)="Calculation()"
+                                #Comm_9="ngModel"
+                                [(ngModel)]="ObjLast.Comm_9">
+                                    <option  [ngValue]="undefined">Select</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
+                            </select>
+                            </div>                  
+                       </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                       <div class="col-sm-11">                
+                            <div class="col-sm-8">
+                            <strong>10. Does a hearing problem cause you difficulty when in a restaurant with relatives or friends?
+                            </strong>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control" id="Select"name="Comm_10" (change)="Calculation()"
+                                #Comm_10="ngModel"
+                                [(ngModel)]="ObjLast.Comm_10">
+                                    <option  [ngValue]="undefined">Select</option>
+                                    <option  value="Yes">Yes</option>
+                                    <option  value="No">No</option>
+                                    <option  value="Sometimes">Sometimes</option>
+                            </select>
+                            </div>                     
+                       </div>
+                    </div>
+                    <!-- IMPROVING YOUR HEARING -->
+                    <div class="form-group" style="padding: 1em;">
+                        <h5 style="
+                        padding: 0.5em 1em;
+                        background: #c1c1c185;
+                        border-top: 5px solid #3c8dbc;
+                        border-bottom: 1px solid #c6c6c6;
+                        margin-top: 5px;
+                        ">
+                        <i class="fa fa-user">
+                        </i> &nbsp;<strong>IMPROVING YOUR HEARING:</strong></h5><br>
+                        <div class="col-sm-4"> <strong>Is there anyone with hearing loss in your family?</strong></div>
+                        <div class="col-sm-2">
+                            <p-radioButton value="Y"  label="Yes"name="family"(onClick)="CustomerRadioChange()" [(ngModel)]="ObjLast.Is_Hearing_Loss_Family" ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                <p-radioButton value="N" label="No"name="family"(onClick)="CustomerRadioChange()" [(ngModel)]="ObjLast.Is_Hearing_Loss_Family" ></p-radioButton>  
+                        </div>
+                        <div class="col-sm-2"*ngIf="Iffamily">
+                            <strong>If yes, when:</strong>   
+                        </div>
+                        <div class="col-sm-4" *ngIf="Iffamily" style="margin-top: -1em;">
+                            <input class="form-control" id="Designe"  name=" Loss_Family_Who"
+                            #Loss_Family_Who="ngModel" [(ngModel)]="ObjLast.Loss_Family_Who"
+                            placeholder="Type Details">
+                      </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-5"><strong>Do other people notice/aware you have a hearing problem?</strong></div>
+                        <div class="col-sm-2">
+                            <p-radioButton value="Y"  label="Yes"name="notice"[(ngModel)]="ObjLast.Is_Other_Notice" ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                <p-radioButton value="N" label="No"name="notice"[(ngModel)]="ObjLast.Is_Other_Notice" ></p-radioButton>  
+                        </div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-12">
+                            <strong>How important is it for you to improve how you hear, understand, or communicate with others RIGHT NOW (mark on the line)</strong> 
+                        </div>
+                        <br>
+                   <div class="col-sm-3"></div>
+                   <div class="col-sm-6" style="text-align: center; padding: 1em;color:rgb(25 135 44 / 89%)">
+                        <p-slider name="Slider1" #Slider1="ngModel" [(ngModel)]="ObjLast.Important_To_Improve" [min]="0" [max]="10" [step]="0.5"></p-slider>
+                        <strong style="font-size: 17px;">Point Value:&nbsp;&nbsp;{{ObjLast.Important_To_Improve}}</strong>
+                   </div>
+                   <div class="col-sm-3"></div>
+                    </div>
+                    <div class="form-group" style="padding: 1em; margin-top: -2em;">
+                        <div class="col-sm-3"> <strong>Are you using a hearing aids?</strong></div>
+                        <div class="col-sm-2">
+                            <p-radioButton value="Y"  label="Yes"name="aids"(onClick)="CustomerRadioChange()" [(ngModel)]="ObjLast.Is_Using_HA" ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                <p-radioButton value="N" label="No"name="aids"(onClick)="CustomerRadioChange()" [(ngModel)]="ObjLast.Is_Using_HA" ></p-radioButton>  
+                        </div>
+                        <div class="col-sm-2"*ngIf="Ifaids">
+                            <strong>(details, if yes)</strong>   
+                        </div>
+                        <div class="col-sm-4" *ngIf="Ifaids"style="margin-top: -1em;">
+                            <input class="form-control" id="Designe" name=" HA_Name"
+                            #HA_Name="ngModel" [(ngModel)]="ObjLast.HA_Name"
+                            placeholder="Type Details">
+                      </div>  
+                    </div>
+                    <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-12">
+                            <strong>How confident are you in your own ability to use and take care of hearing aids if they are recommended? (mark on the line)</strong> 
+                        </div>
+                   <div class="col-sm-3"></div>
+                   <div class="col-sm-6"style="text-align: center; padding: 1em;color:rgb(25 135 44 / 89%)">
+                    <p-slider name="Slider2" #Slider2="ngModel" [(ngModel)]="ObjLast.Confident_To_Ability" [min]="0" [max]="10" [step]="0.5"></p-slider>
+                    <strong style="font-size: 17px;">Point Value:&nbsp;&nbsp;{{ObjLast.Confident_To_Ability}}</strong>
+                   </div>
+                   <div class="col-sm-3"></div>
+                    </div>
+                    <div class="form-group" style="padding: 1em;margin-top: -2em;">
+                        <div class="col-sm-4"><strong>Are you satisfied/ happy with your hearing status?</strong></div>
+                        <div class="col-sm-2">
+                            <p-radioButton value="Y"  label="Yes"name="satisfied"[(ngModel)]="ObjLast.Is_Satisfy_Hearing_Status" ></p-radioButton> &nbsp;&nbsp;&nbsp;
+                                <p-radioButton value="N" label="No"name="satisfied"[(ngModel)]="ObjLast.Is_Satisfy_Hearing_Status" ></p-radioButton>  
+                        </div>
+                    </div>
+                    <div class="form-group" style="padding: 2em;">
+                       <Strong >By Signing this form, you are consenting to and authorizing us/our partners to collect, store and use your information, including personal 
+                            information for internal activities of clinic. After your first visit with us, we may need to contact you on phone, letter or email about our future 
+                            provision of service to you despite your DND preferences. We will not be sharing your private data to any unauthorized third parties.</Strong>
+                     </div> <br> 
+                    <div class="form-group" style="padding: 1em;">
+                        <div class="col-sm-4">
+                        <label class="control-label">Date</label>
+                        <ejs-datepicker 
+                        [(value)]="Case_Date"
+                        [format]="'dd/MMM/yyyy'"
+                        ></ejs-datepicker> 
+                        </div>
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4"style="margin-top: 2em;">
+                            <p-dropdown [options]="Audilogistlist"
+                            name="Audilogist1" 
+                            #Audilogist1="ngModel" 
+                            [(ngModel)]="ObjLast.Audiologist_ID"
+                            [showClear]="true" 
+                            [emptyFilterMessage]="' No Audilogist Found'" 
+                            [filter]="true" filterBy="label,value.name" 
+                            [resetFilterOnHide]="true" 
+                            [placeholder]="'Select Audilogist'" 
+                            [virtualScroll]="true"
+                            itemSize="30" 
+                            [styleClass]="PatientlastFormSubmitted && Audilogist1.errors?.required? 'clearance' : ''" [required]="true"> 
+                        </p-dropdown>
+                        <div style="text-align:center;">
+                            <Strong >Audilogist</Strong>
+                        </div>                           
+                        </div>
+                  </div>
+                  <!-- button -->
+                  <div class="form-group" style="padding: 1em;">
+                    <div class="col-sm-4"></div>
+                  <div class="col-sm-6">
+                    <button class="btn btn-primary pull-right"  id="load" (click)="saveDataLast(LASTForm.form.valid)"   [disabled]="Active">
+                         <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save">Save</span>
+                 </button>
+                 </div> 
+                 <div class="col-sm-2">
+                    <button class="btn btn-success " (click)="GetPrint()" [disabled]="SaveAfter">
+                        <span class="glyphicon glyphicon-print"></span> Print
+                    </button>
+                </div>
+                 </div>             
+               </form>
+             </p-tabView>  
+               </div>
+            </div>
+        </div>
+    </div>
+</div>
+

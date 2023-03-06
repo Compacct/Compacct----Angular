@@ -8,7 +8,7 @@ import { CompacctProductDetailsComponent } from '../../../shared/compacct.compon
 import { CompacctgstandcustomdutyComponent } from '../../../shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
 import { CompacctFinancialDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component';
 import { ActivatedRoute } from '@angular/router';
-
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-master-product-general-consumables',
   templateUrl: './master-product-general-consumables.component.html',
@@ -18,18 +18,18 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class MasterProductGeneralConsumablesComponent implements OnInit {
   tabIndexToView= 0;
-  items = [];
+  items:any = [];
   buttonname = "Create";
-  menuList=[];
-  AllData = [];
-  productData =[];
-  productSubData =[];
-  sizeData =[];
-  materialCon =[];
-  catgData =[];
-  mfgData =[];
-  productFetr =[];
-  gradeTyp =[];
+  menuList:any =[];
+  AllData:any = [];
+  productData:any =[];
+  productSubData:any =[];
+  sizeData:any =[];
+  materialCon:any =[];
+  catgData:any =[];
+  mfgData:any =[];
+  productFetr:any =[];
+  gradeTyp:any =[];
   Objproduct: product =new product();
   ObjFinancialComponentData = new Financial();
   ProductFormSubmitted = false;
@@ -79,16 +79,16 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
   ObjproductDetails : any;
   ObjGstandCustonDuty : any;
   ObjFinancial: any;
-  UOMData=[]; 
-  UomDataList = [];
+  UOMData:any =[]; 
+  UomDataList:any = [];
   ViewUomModal = false;
   UOMTypeFormSubmitted = false;
   UOMTypeName = undefined;
   UOMTypeModal = false;
   mettypeid = undefined;
   Uomid = undefined;
-  AllUOMData = [];
-  AllUomDataList = [];
+  AllUOMData:any = [];
+  AllUomDataList:any = [];
   objGst:any = {};
   objProductrequ:any = {};
   @ViewChild("Product", { static: false })
@@ -98,6 +98,14 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
   @ViewChild("FinacialDetails", { static: false })
   FinacialDetailsInput: CompacctFinancialDetailsComponent;
 
+  MaterialData:any = [];
+  AllMaterialData:any = [];
+  MaterialTypeFormSubmitted = false;
+  MaterialTypeName: any;
+  MatTypeModal = false;
+  ViewMetTypeModal = false;
+  EXCELSpinner:boolean = false;
+  DescriptionCheck:any;
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -120,6 +128,7 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
       { label: "Edit", icon: "pi pi-fw pi-product-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
     ];
+    this.getMaterialTyp();
     this.getBrowseProduct();
     //this.getProductTyp();
     this.getProductSize();
@@ -174,6 +183,7 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
       this.objProductrequ.Product_Type_ID = e.Product_Type_ID;
       this.objProductrequ.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
       this.objProductrequ.Product_Description = e.Product_Description;
+      this.CheckDescription();
     }
   }
   getGstAndCustDutyData(e) {
@@ -236,6 +246,114 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
     }
   
   }
+  //Material Type 
+getMaterialTyp(){
+  this.MaterialData=[]; 
+   this.AllMaterialData = [];
+      const obj = {
+       "SP_String": "SP_Master_Product_New",
+       "Report_Name_String":"Get_Product_Material_Type_Data",
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.MaterialData = data;
+      console.log("MaterialData==",this.MaterialData);
+       this.MaterialData.forEach(el => {
+         this.AllMaterialData.push({
+           label: el.Material_Type,
+           value: el.Material_ID,
+         });
+       });
+     })
+}
+MaterialChange() {
+  this.Objproduct.Material_Type =undefined;
+if(this.Objproduct.Material_ID) {
+  const ctrl = this;
+  const MaterialObj = $.grep(ctrl.MaterialData,function(item:any) {return item.Material_ID == ctrl.Objproduct.Material_ID})[0];
+  // console.log(MaterialObj);
+  this.Objproduct.Material_Type = MaterialObj.Material_Type;
+
+}
+}
+MatTypePopup (){
+  this.MaterialTypeFormSubmitted = false;
+  this.MaterialTypeName = undefined;
+  this.MatTypeModal = true;
+  this.Spinner = false;
+}
+CreateMaterialType(valid){
+  this.MaterialTypeFormSubmitted = true;
+  //console.log(valid)
+   if(valid){
+      this.Spinner = true;
+      const saveData = {
+        Material_Type : this.MaterialTypeName,
+      }
+       const obj = {
+         "SP_String": "SP_Master_Product_New",
+         "Report_Name_String" : "Add_Product_Material_Type ",
+         "Json_Param_String": JSON.stringify([saveData])
+       }
+       this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+         console.log(data);
+         var tempID = data[0].Column1;
+         if(data[0].Column1){
+          this.compacctToast.clear();
+          //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+          this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "success",
+           summary: "Material Type ID  " + tempID,
+           detail: "Succesfully Created" //+ mgs
+         });
+         this.MaterialTypeFormSubmitted = false;
+         this.MaterialTypeName = undefined;
+         this.MatTypeModal = false;
+         this.Spinner = false;
+         this.getMaterialTyp();
+     
+         } else{
+           this.Spinner = false;
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "error",
+             summary: "Warn Message",
+             detail: "Error Occured "
+           });
+         }
+       })
+     
+      }
+}
+ViewMaterialType (){
+  this.MaterialData = [];
+   this.getMaterialTyp();
+  setTimeout(() => {
+    this.ViewMetTypeModal = true;
+  }, 200);
+}
+deleteMaterialType(mettype){
+  //console.log("view delete")
+  this.mettypeid = undefined;
+  this.protypeid = undefined
+  this.protypesubid = undefined;
+  this.Uomid = undefined;
+  if(mettype.Material_ID){
+  this.is_Active = false;
+  this.Is_View = true;
+    this.mettypeid = mettype.Material_ID;
+   // this.cnfrm2_popup = true;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "c",
+      sticky: true,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+    });
+  }
+}
   //Browse Api Data
   getBrowseProduct(){
       const obj = {
@@ -856,6 +974,27 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
     this.productCode = undefined;
     this.destroyChild();
    }
+   CheckDescription(){
+    const tempobj = {
+      Product_Type_ID : this.Objproduct.Product_Type_ID,
+      Product_Sub_Type_ID : this.Objproduct.Product_Sub_Type_ID,
+      Description_Like : this.Objproduct.Product_Description
+    }
+    const objtemp = {
+      Product_ID : this.Objproduct.Product_ID,
+      Description_Like : this.Objproduct.Product_Description
+    }
+        const obj = {
+         "SP_String": "SP_Harbauer_Master_Product_Civil",
+         "Report_Name_String":this.buttonname === "Update" ? 'Check_Product_Description_On_Update' : 'Check_Product_Description',
+         "Json_Param_String": this.buttonname === "Update" ? JSON.stringify([objtemp]) : JSON.stringify([tempobj])
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         this.DescriptionCheck = data[0].Column1;
+        console.log("DescriptionCheck==",this.DescriptionCheck);
+       })
+  
+   }
   
    //Save Data
 saveData(valid:any){
@@ -864,6 +1003,7 @@ saveData(valid:any){
     this.ProductFormSubmitted = true;
     console.log("checkrequ",this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ))
     if(valid && this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
+      if(this.DescriptionCheck === "OK") { 
       console.log("productCode==",this.productCode);
       
       // var mocdes = this.materialCon.filter(item => Number(item.MOC_ID) === Number(this.Objproduct.MOC_ID))
@@ -900,7 +1040,18 @@ saveData(valid:any){
             this.ProductFormSubmitted = false;
             this.Objproduct = new product();
            });
-       }
+      }
+      else {
+       this.Spinner = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Description already exists."
+          });
+     }
+     }
        else{
          console.error("Somthing Wrong")
        }    
@@ -1036,6 +1187,14 @@ saveData(valid:any){
   //   }
   //   FunctionRefresh = 'getProductSubTyp';
   // }
+  if (this.mettypeid) {
+    SPString ="SP_Master_Product_New"
+    ReportName = "Delete_Product_Material_Type"
+    ObjTemp = {
+      Material_ID: this.mettypeid
+    }
+    FunctionRefresh = 'getMaterialTyp';
+  }
   if (this.mocid) {
     SPString = "SP_Harbauer_Master_Product_mechanical"
     ReportName = "Delete_Master_Product_Mech_MOC_Data"
@@ -1278,9 +1437,37 @@ deleteProUom(uom){
     });
   }
 }
+exportexcel(Arr): void {
+  this.EXCELSpinner =true
+   let excelData:any = []
+  Arr.forEach(ele => {
+      excelData.push({
+          'Material Type': ele.Material_Type,
+          'Prodct Type': ele.Product_Type,
+          'Product Sub Type': ele.Product_Sub_Type,
+          'Product Description': ele.Product_Description,
+          'MOC (Material of Cons.)': ele.MOC_Description,
+          'Size/Capacity': ele.Capacity_Size_Desc,
+          'Product Feature': ele.Product_Feature_Desc,
+          'Grade': ele.Grade_Description,
+          'Unit of Mesurement (UOM)': ele.UOM,
+          'HSN Code': ele.HSN_NO,
+          'Remarks': ele.Remarks,
+          'GST %': ele.GST_Percentage,
+          'Manufacture Name (Optional)': ele.Mfg_Company
+          })
+   });
+
+ const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(excelData);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, 'master_product_general_consumables.xlsx');
+  this.EXCELSpinner = false
+}
 }
 
 class product{
+  Material_ID:number;
+  Material_Type:any;
   Product_Code:any;			
   Product_Description	:any;	
   Cat_ID:number;				

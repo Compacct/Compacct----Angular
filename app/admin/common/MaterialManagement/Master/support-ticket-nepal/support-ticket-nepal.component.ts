@@ -8,6 +8,7 @@ import { MessageService } from "primeng/api";
 import { FileUpload } from "primeng/primeng";
 import { AnyTxtRecord } from 'dns';
 import { DateNepalConvertService } from '../../../../shared/compacct.global/dateNepal.service';
+import * as XLSX from 'xlsx';
 declare var NepaliFunctions: any;
 const NepaliDate = require('nepali-date');
 declare var nepaliDatePicker: any;
@@ -30,7 +31,7 @@ export class SupportTicketNepalComponent implements OnInit {
   
   EngineerName = undefined;
   EngineerNameList = [];
-  items = [];
+  items:any = [];
 
   ObjSupportTicket = new SupportTicket();
   SupportTicketFormSubmit = false;
@@ -38,7 +39,7 @@ export class SupportTicketNepalComponent implements OnInit {
   ExpectedcompletionDate : any = {};
   SupportStartDate : any = {};
   SupportEndDate : any = {};
-  CallTypeList = [];
+  CallTypeList:any = [];
   CustomerList = [];
   LoctionList = [];
   MfList = [];
@@ -65,13 +66,14 @@ export class SupportTicketNepalComponent implements OnInit {
   EditList = [];
   Contract_ID = undefined;
   browsestartdate: Date;
-  CurrentDateNepal= undefined;
+  CurrentDateNepal:any= undefined;
 
   alignedenggid = undefined;
   alignedengineer = undefined;
   AlEngineerList = [];
   NewBrowseEndDate:any;
-  column =[];
+  column:any =[];
+  SpinnerExportoExcel:boolean = false
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -119,6 +121,7 @@ export class SupportTicketNepalComponent implements OnInit {
         { field: 'Machine', header: 'Machine' },
         { field: 'Serial_No', header: 'Machine Serial No' },
         { field: 'Member_Name', header: 'Engineer' },
+        { field: 'Support_Ticket_Status', header: 'Status' },
         { field: 'Contract_Status', header: 'Contract Status' },
         { field: 'Remarks', header: 'Remarks' }
       ];
@@ -151,6 +154,7 @@ export class SupportTicketNepalComponent implements OnInit {
      this.GetContractStatus();
      this.alignedenggid = undefined;
      this.alignedengineer = undefined;
+     this.SpinnerExportoExcel = false
   }
   
   GetEngineerName(){
@@ -170,7 +174,9 @@ export class SupportTicketNepalComponent implements OnInit {
           {Name : "Installation"},
           {Name : "PM"},
           {Name : "Sales & Training"},
-          {Name : "Breakdown"}
+          {Name : "Breakdown"},
+          {Name : "courtesy visit"},
+          {Name : "courtesy Call"}
         ];
   }
   GetCustomer(){
@@ -593,6 +599,35 @@ export class SupportTicketNepalComponent implements OnInit {
        // }  
       })
     }
+  }
+  exportoexcel(data): void {
+      if(data.length){
+        this.SpinnerExportoExcel = true
+        let Arr:any = []
+        data.forEach((z:any) => {
+          Arr.push({
+            ['Support Ticket No'] : z.Support_Ticket_No,
+            ['Support Ticket Date'] : this.DateService.dateConvert(z.Support_Ticket_Date),
+            ['Support Ticket Date(Nepali)'] : z.Support_Ticket_Date_Nepali,
+            ['Call Type'] : z.Call_Type,
+            ['Customer Name'] : z.Sub_Ledger_Name,
+            ['Location'] : z.Location_Name,
+            ['Machine Make'] : z.Mfg_Company,
+            ['Machine'] : z.Machine,
+            ['Machine Serial No'] : z.Serial_No,
+            ['Engineer'] : z.Member_Name,
+            ['Status'] : z.Support_Ticket_Status,
+            ['Contract Status'] : z.Contract_Status,
+            ['Remarks'] : z.Remarks
+           })
+         });
+ 
+        const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+        const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+        XLSX.writeFile(workbook,'SupportTicket.xlsx');
+        this.SpinnerExportoExcel = false
+      }
+    
   }
   Edit(){}
   onConfirm(){}

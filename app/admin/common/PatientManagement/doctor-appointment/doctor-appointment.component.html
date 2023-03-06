@@ -1,0 +1,348 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div> 
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" header="Appointment"
+                            leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="speechForm" #speechForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Appointment Date
+                                            <sup class="text-danger"></sup></label>
+                                        <ejs-datepicker [(value)]="appo_Date" (change)="GetAllDetails()"
+                                            [format]="'dd/MMM/yyyy'"></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Consultancy Type
+                                            <sup class="text-danger"></sup></label>
+                                        <select class="form-control" name="Consultancy" #Consultancy="ngModel"
+                                            [(ngModel)]="ConsultancyName" (change)="GetCentre()">
+                                            <option *ngFor="let option of ConsultancyList"
+                                                value="{{option.Consultancy_Type}}">{{option.Consultancy_Type}}</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Centre
+                                            <sup class="text-danger"></sup></label>
+                                        <!-- <p-multiSelect [options]="cosCenterList"name="filterCos" #filterCos="ngModel" [(ngModel)]="SelectedcosCenter"
+                                            [styleClass]="'compacct-multiselect'"  (onChange)="GetAllDetails()"
+                                           ></p-multiSelect> -->
+                                           <p-dropdown [options]="cosCenterList" name="Cost_Center" #Cost_Center="ngModel" 
+                                           [(ngModel)]="SelectedcosCenter" [showClear]="true" [emptyFilterMessage]="'No Item Found'" 
+                                           [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'"
+                                           [virtualScroll]="true" itemSize="30" (onChange)="GetAllDetails()">
+                                           </p-dropdown>
+   
+                                    </div>
+                                </div>   
+                                <div class="form-group">  
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Status
+                                            <sup class="text-danger"></sup></label>
+                                        <p-multiSelect [options]="ststusFilter" [(ngModel)]="Selectedstatus"
+                                            [styleClass]="'compacct-multiselect'" name="filterSta"
+                                            (onChange)="filterStatus()"></p-multiSelect>
+                                    </div>                      
+                                    <div class="col-sm-4">
+                                        <label class="control-label margin">Home Visit&nbsp;&nbsp;&nbsp;
+                                            <sup class="text-danger"></sup></label>
+                                            <p-checkbox name="Home" [(ngModel)]="HomeVisit" (onChange)="ClickCheck()" binary="true"></p-checkbox>
+                                    </div>
+                                    <div class="col-sm-4">
+
+                                    </div>
+                                </div>
+                            </form>
+
+
+                            <div class="table-responsive no-padding">
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="allDetalis" [paginator]="allDetalis.length ? true : false"
+                                        [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                        [rowsPerPageOptions]="[100,200,300]"
+                                        [globalFilterFields]="allDetalisHeader" [rowHover]="true" #dt>
+                                        <ng-template pTemplate="caption"  >
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                        class="searchInput form-control">
+                                                </div>
+                                                <div class="col-sm-1 pull-right">
+                                                    <button class="btn btn-primary" (click)="GetAllDetails()"   >
+                                                    <span class="glyphicon glyphicon-refresh"></span>
+                                                </button>
+                                                </div>
+                                                <div class="col-sm-3 pull-right" style="text-align: right" *ngIf="allDetalis.length">
+                                                    <label class="control-label txt">Total Appointment: {{allDetalis.length}}</label>
+                                                </div>
+                                            </div>
+
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th>Time</th>
+                                                <th>Status</th>
+                                                <th>Patient</th>
+                                                <th>Mobile</th>
+                                                <th>Center</th>
+                                                <th>Type</th>
+                                                <th>Consultancy</th>
+                                                <th>Package</th>
+                                                <th>Sub Type</th>
+                                                <th>Chargeable</th>
+                                                <th>Home Visit</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button
+                                                            class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                            type="button" data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <!-- <ul class="dropdown-menu" *ngFor="let list of getAction(col) " >
+                                                            <li >
+                                                                <a (click)="actionClick($event)">
+                                                                    <i [ngClass]="list.Icon"></i>
+                                                                   {{list.Name}}
+                                                                </a>
+                                                            </li>
+                                                          </ul> -->
+                                                         <ul class="dropdown-menu">
+                                                             <li *ngIf="col.Consultancy_Done == 'N' && col.Controller_Name == 'NA' " >
+                                                                <a (click)="actionClick(col ,'UpdateAppointment')" >
+                                                                    <i class="fa fa-repeat"></i>
+                                                                   Update Appointment
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Consultancy_Done == 'N' && col.Controller_Name != 'NA' ">
+                                                                <a (click)="actionClick(col,'CreateReport')">
+                                                                    <i class="fa fa-user-plus"></i>
+                                                                    Create Report
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Consultancy_Done == 'Y' && col.Controller_Name != 'NA' && dateCheck(col)" >
+                                                                <a (click)="actionClick(col,'EditReport')">
+                                                                    <i class="fa fa-edit"></i>
+                                                                    Edit Report
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Consultancy_Done == 'Y' && col.Print_Aspx != 'NA'" >
+                                                                <a (click)="actionClick(col,'PrintReport')">
+                                                                    <i class="fa fa-print"></i>
+                                                                    Print Report
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Package_Selection_ID != 0 && col.Status == 'Appointment'">
+                                                                <a (click)="actionClick(col ,'DisplayModel')" >
+                                                                    <i class="fa fa-plus"></i>
+                                                                   Therapy Attendance
+                                                                </a>
+                                                            </li>
+                                                         </ul>
+                                                    </div>
+                                                </td>
+                                                <td>{{col.Appo_Dt | date :" hh:mm a"}}</td>
+                                                <td nowrap><span [ngClass]="'badge bg-'+ getStatusWiseColor(col)" >{{col.Status }}</span></td>
+                                                <td>{{col.Patient}}</td>
+                                                <td style="font-weight: 800; width: 10%;"><a
+                                                        href="{{ 'tel:+91' + col.Mobile }}" ><i
+                                                            class="fa fa-fw fa-phone-square"></i> &nbsp;{{
+                                                        col.Mobile
+                                                        }}
+                                                    </a></td>
+                                                <td>{{col.Cost_Cen_Name}}</td>
+                                                <td>{{col.Consultancy_Type}}</td>
+                                                <td>{{col.Consultancy_Descr}}</td>
+                                                <td>{{col.Package_Name ? col.Package_Name : '-'}}</td>
+                                                <td>{{col.Session_Name ? col.Session_Name : '-'}}</td>
+                                                <td>{{col.Chargeable ? 'Yes' : 'No'}}</td>
+                                                <td>{{col.Home_Visit ? 'Yes' : 'No'}}</td>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                                            {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+
+                            </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- PO No view -->
+<p-dialog
+[header]="'Update AppointmentModel'"
+[appendTo]="'body'"
+[visible]="UpdateAppointmentModel"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '58%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="form-horizontal">
+    <form name="UpdateConsultancyForm" #UpdateConsultancyForm="ngForm" novalidate>
+        <update-consultancy #consultancy  (saveData)="updateConsultancysave($event)" ></update-consultancy>
+      
+    </form>
+      
+</div>
+
+<p-footer>
+    <button class="btn btn-primary pull-right" (click)="SaveUpdateConsultancy(UpdateConsultancyForm.form.valid)" id="load3" [disabled]="Spinner">
+        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+      <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Save
+      </button>
+    <button
+    type="button"
+    (click)="UpdateAppointmentModel = false"
+    class="btn btn-default"
+    ><span class="glyphicon glyphicon-remove"></span>
+    CLOSE
+    </button>
+
+</p-footer>
+</p-dialog>
+<!-- Therapy Attendance Dialog -->
+<p-dialog 
+[header]="'Therapy Attendance'"
+[appendTo]="'body'"
+[visible]="therapyAttendance"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '42%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+    <div class="form-horizontal">
+        <form name="tAttenddance" #tAttenddance="ngForm" novalidate>
+            <br>
+        <div class="row">
+            <div class="col-sm-4">
+                <label for="" class="control-label">Therapy Goal<sup class="text-danger">*</sup></label>
+            </div>
+            <div class="col-sm-8">
+                <input 
+                type="text"
+                     class="form-control"
+                     placeholder="Therapy Goal"
+                     name="Therapy_Goal"
+                     #Therapy_Goal="ngModel"
+                     [(ngModel)]="objTherapAttendance.Therapy_Goal"
+                     [ngClass]="{clearance: therapyFormSubmit && Therapy_Goal?.errors?.required}"
+                     required
+                >
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-sm-4">
+                <label for="" class="control-label">Clinical Observation<sup class="text-danger">*</sup></label>
+            </div>
+            <div class="col-sm-8">
+                <input 
+                type="text"
+                     class="form-control"
+                     placeholder="Clinical Observation"
+                     name="cObservation"
+                     #cObservation="ngModel"
+                     [(ngModel)]="objTherapAttendance.Clinical_Observation"
+                     [ngClass]="{clearance: therapyFormSubmit && cObservation?.errors?.required}"
+                     required
+                >
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-sm-4">
+                <label for="" class="control-label">Activities<sup class="text-danger">*</sup></label>
+            </div>
+            <div class="col-sm-8">
+                <input 
+                type="text"
+                     class="form-control"
+                     placeholder="Activities"
+                     name="activities"
+                     #activities="ngModel"
+                     [(ngModel)]="objTherapAttendance.Activities"
+                     [ngClass]="{clearance: therapyFormSubmit && activities?.errors?.required}"
+                     required
+                >
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-sm-4">
+                <label for="" class="control-label">Provisional Diagnosis<sup class="text-danger">*</sup></label>
+            </div>
+            <div class="col-sm-8">
+                <input 
+                type="text"
+                     class="form-control"
+                     placeholder="Provisional Diagnosis"
+                     name="Provisional_Diagnosis"
+                     #Provisional_Diagnosis="ngModel"
+                     [(ngModel)]="objTherapAttendance.Provisional_Diagnosis"
+                     [ngClass]="{clearance: therapyFormSubmit && Provisional_Diagnosis?.errors?.required}"
+                     required
+                >
+            </div>
+        </div>
+        <br>
+    </form>
+    </div>
+<p-footer>
+    <button class="btn btn-primary pull-right" (click)="SaveTherapyAttendance(tAttenddance.form.valid)" id="load3">
+      <span class="glyphicon glyphicon-save"></span> Save
+    </button>
+    <button type="button" (click)="closeTherapyAttendance()" class="btn btn-default" [disabled]="TherapySpinner">
+        <p-progressSpinner *ngIf="TherapySpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+      <span *ngIf="!TherapySpinner" class="glyphicon glyphicon-remove"></span>Close
+    </button>
+
+    
+</p-footer>
+</p-dialog>

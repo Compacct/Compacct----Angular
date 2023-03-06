@@ -181,7 +181,8 @@ div.table-responsive.table-id>p-table>div>div {
     background-color: rgb(33, 110, 17);
   } 
   
-   .A {
+   .A,
+   .L {
     background-color: #ff4141 !important;
     color: #ffff;
     text-align: center;
@@ -212,11 +213,18 @@ div.table-responsive.table-id>p-table>div>div {
   .SL,
   .CL,
   .PL {
-    background-color: rgb(78, 109, 235) !important;
+    background-color: rgb(27 56 173) !important;
     color: #ffff;
     text-align: center;
   }
-  .L{
+  /* .L{
+    text-align: center;
+  } */
+  .PWO,
+  .PW,
+  .PPH {
+    background-color:#42ca6d !important;
+    color: #ffff;
     text-align: center;
   }
   
@@ -253,5 +261,5 @@ div.table-responsive.table-id>p-table>div>div {
     width:250px;
   }
   .tablesmall {
-    width:65px;
+    width:88px;
   }

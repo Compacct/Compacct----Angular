@@ -106,7 +106,7 @@
                                         <th *ngFor="let option of DynamicHeader">{{option.replace('_',' ')}}</th>
                                     </tr>
                                 </ng-template>
-                                <ng-template pTemplate="body" let-col>
+                                <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
                                     <tr>
 
                                         <!-- <td>
@@ -135,6 +135,32 @@
 
                                         <ng-container *ngFor="let option of DynamicHeader" data->
                                             <td>{{col[option]}}</td>
+                                        </ng-container>
+                                    </tr>
+                                    <tr *ngIf="Searchlist.length == (rowIndex + 1) && ChooseReport === 'Sales Register'">
+                                        <ng-container>
+                                        <td colspan="5">Total</td>
+                                        <td>{{getTotalValue('Amount')}}</td>
+                                        <td></td>
+                                        <td>{{getTotalValue('Discount_Amt')}}</td>
+                                        
+                                        <td>{{getTotalValue('Taxable_Amt')}}</td>
+                                        <td>{{getTotalValue('CGST_Amt')}}</td>
+                                        
+                                        <td>{{getTotalValue('SGST_Amt')}}</td>
+                                        <td>{{getTotalValue('IGST_Amt')}}</td>
+                                        
+                                        <td>{{getTotalValue('Rounded_Off')}}</td>
+                                        <td>{{getTotalValue('Bill_Amount')}}</td>
+
+                                        <td>{{getTotalValue('Advance')}}</td>
+                                        <td>{{getTotalValue('Cash_Paid')}}</td>
+                                        
+                                        <td>{{getTotalValue('Card_Paid')}}</td>
+
+                                        <td></td>
+                                        <td>{{getTotalValue('Wallet_Paid')}}</td>
+                                        
                                         </ng-container>
                                     </tr>
                                 </ng-template>

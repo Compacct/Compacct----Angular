@@ -1,0 +1,542 @@
+<p-toast key="compacct-toast" baseZIndex="999999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{ message.summary }}</h3>
+            <p>{{ message.detail }}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="A" (onClose)="onReject()" [modal]="true" [autoZIndex]="true" baseZIndex="999999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{ message.summary }}</h3>
+            <p>{{ message.detail }}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm1()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="B" (onClose)="onReject()" [modal]="true" [autoZIndex]="true" baseZIndex="999999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{ message.summary }}</h3>
+            <p>{{ message.detail }}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="D" (onClose)="onReject()" [modal]="true" [autoZIndex]="true" baseZIndex="999999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{ message.summary }}</h3>
+            <p>{{ message.detail }}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm3()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal" style="margin-top: 8px">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]"
+                            leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">From Date <sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input  CompacctNepaliDatepicker id="BSdate" name="BSdate" #BSdate="ngModel"
+                                            Class="form-control" (ngModelChange)="BrowseStartDate= $event"
+                                            [(ngModel)]="BrowseStartDate" 
+                                            [ngClass]="{'clearance': SearchFormSubmit && BSdate?.errors?.required}" 
+                                            required
+                                            />
+                                           
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">To Date <sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input  CompacctNepaliDatepicker id="BEdate" name="BEdate" #BEdate="ngModel"
+                                             Class="form-control" (ngModelChange)="BrowseEndDate= $event"
+                                             [(ngModel)]="BrowseEndDate"
+                                             [ngClass]="{'clearance': SearchFormSubmit && BEdate?.errors?.required}" 
+                                            required/>
+                                           
+                                        </div>
+                                    </div>
+                                  <div class="col-sm-3">
+                                        <button class="btn btn-primary custombutton" 
+                                        data-toggle="modal" 
+                                        (click)="GetSearchedList(SearchForm.form.valid)" 
+                                        id="search" [disabled]="seachSpinner">
+                                        <p-progressSpinner
+                                        *ngIf="seachSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                        ></p-progressSpinner>
+                                        <span
+                                        *ngIf="!seachSpinner"
+                                        class="glyphicon glyphicon-search"
+                                        ></span
+                                        >&nbsp;Search
+                                    </button>
+                                    </div>
+                                    <div class="col-sm-3" ></div>
+                                </div>
+
+                            </form>
+                            <div class="table-responsive table-id">
+                                <p-table [value]="Searchedlist" 
+                                #dt [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[10,25,50,100]" 
+                                [rowHover]="true" 
+                                [globalFilterFields]='["Doc_No","Date","Payment_Method","Purchase_Type","Cat_Name"]'>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th style="width:12em">Purchase Request No</th>
+                                            <th>Group</th>
+                                            <th>Date</th>
+                                            <th>Payment Method </th>
+                                            <th>Purchase Type</th>
+                                           
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col let-i="rowIndex">
+                                        <tr >
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                      <i class="fa fa-fw fa-bars"></i>
+                                                      <span class="caret"></span>
+                                                  </button>
+                                                    <ul class="dropdown-menu">
+                                                      <li >
+                                                        <a (click)="EditNegotiate(col)">
+                                                            <i class="fa fa-fw fa-pencil"></i> Edit
+                                                        </a>
+                                               
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td>{{col.Purchase_Request_No}}</td>
+                                            <td>{{col.Cat_Name}}</td>
+                                            <td>{{col.Date }}</td>
+                                            <td>{{col.Payment_Method}}</td>
+                                            <td>{{col.Purchase_Type}}</td>
+                                          </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                             </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]"
+                            leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="NpriceSelectionForm" #NpriceSelectionForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-md-6">
+                                        <label class="control-label">Purchase Request No<sup class="text-danger"></sup></label>
+                                        <p-dropdown [options]="poRequestList" 
+                                        name="Purchase_Request_No" 
+                                        *ngIf="buttonname === 'Save'"
+                                        [(ngModel)]="ObjnegotiatePrice.Purchase_Request_No" 
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Purchase Request No Found'" 
+                                        [filter]="true" filterBy="label,value.name" 
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select Purchase Request No'" 
+                                        [virtualScroll]="true"
+                                        itemSize="30" #Purchase_Request_No="ngModel" 
+                                        (ngModelChange)="purchaseRequestChange()">
+                                    </p-dropdown>
+                                    <div class="label-t" *ngIf="buttonname === 'Update'">{{ObjnegotiatePrice.Purchase_Request_No}}</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="control-label">Purchase Request Date</label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input  CompacctNepaliDatepicker id="DPo" name="DPo" #PDate="ngModel"
+                                             Class="form-control" (ngModelChange)="PoDate= $event"  *ngIf="buttonname === 'Save'"
+                                             [(ngModel)]="PoDate"
+                                             disabled />
+                                            <div class="label-t" *ngIf="buttonname === 'Update'">{{EditPoDate ? EditPoDate :"-"}}</div>
+                                          </div>
+                                    </div>
+                                </div>
+                                    <div class="form-group" *ngIf="prList.length">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Purchase Type<sup class="text-danger">*</sup></label>
+                                            <!-- <div class="pull-right">
+                                                <button (click)="ViewPurchasePOP()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i>
+                                                    View</button> &nbsp;
+                                                <button (click)="PurchasePopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i>
+                                                    Create</button>
+                                            </div> -->
+                                            <p-dropdown [options]="PurchaseTypeList" name="PurchaseType" [(ngModel)]="PurchaseTypeSelect" [showClear]="true"
+                                                [emptyFilterMessage]="' No Purchase Type Found'" [filter]="true" filterBy="label,value.name"
+                                                [resetFilterOnHide]="true" [placeholder]="'Select Purchase Type'" [virtualScroll]="true" itemSize="30"
+                                                #PurchaseType="ngModel" [styleClass]="'textAlign'"(onChange)="getPaymentMethod()"
+                                                [ngClass]="{'clearance': vendorSelectionFormSubmit && PurchaseType?.errors?.required}" required>
+                                            </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-4" >
+                                            <label class="control-label">Payment Terms<sup class="text-danger">*</sup></label>
+                                            <!-- <div class="pull-right">
+                                                    <button (click)="ViewPaymentPOP()" class="btn btn-primary  createPatient" ><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
+                                                    <button (click)="PaymentPOP()" class="btn btn-primary  createPatient" ><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                                </div> -->
+                                            <p-dropdown [options]="PaymentMethodList" name="PaymentMethod" [(ngModel)]="PaymentMethodSelect"
+                                                [showClear]="true" [emptyFilterMessage]="' No Payment Terms Found'" [filter]="true"
+                                                filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Payment Terms'"
+                                                [virtualScroll]="true" itemSize="30" #PaymentMethod="ngModel" [styleClass]="'textAlign'"
+                                                 [ngClass]="{'clearance': vendorSelectionFormSubmit && PaymentMethod?.errors?.required}" required>
+                                            </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Payment Details</label>
+                                            <!-- <div class="pull-right">
+                                                    <button (click)="ViewPaymentPOP()" class="btn btn-primary  createPatient" ><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
+                                                    <button (click)="PaymentPOP()" class="btn btn-primary  createPatient" ><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                                </div> -->                 
+                                            <input class="form-control" placeholder="Type Payment details" name="Payment" #Payment="ngModel"
+                                                [(ngModel)]="PaymentTramsSelect">
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <div class="col-sm-4" >
+                                            <label class="control-label">Delivery Terms<sup class="text-danger">*</sup></label>
+                                            <!-- <div class="pull-right">
+                                                    <button (click)="ViewPaymentPOP()" class="btn btn-primary  createPatient" ><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
+                                                    <button (click)="PaymentPOP()" class="btn btn-primary  createPatient" ><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                                </div> -->
+                                            <p-dropdown [options]="DeliveryTermsList" name="Delivery" [(ngModel)]="DeliveryMethodSelect"
+                                                [showClear]="true" [emptyFilterMessage]="' No Delivery Terms Found'" [filter]="true"
+                                                filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Delivery Terms'"
+                                                [virtualScroll]="true" itemSize="30" #Delivery="ngModel" [styleClass]="'textAlign'"
+                                                [ngClass]="{'clearance': vendorSelectionFormSubmit && Delivery?.errors?.required}" required>
+                                            </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Currency<sup class="text-danger">*</sup></label>
+                                            <!-- <div class="pull-right">
+                                                <button (click)="ViewCurrencyPOP()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i>
+                                                    View</button> &nbsp;
+                                                <button (click)="CurrencyPOP()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i>
+                                                    Create</button>
+                                            </div> -->
+                                            <p-dropdown [options]="CurrencyList" name="Currency" [(ngModel)]="CurrencySelect" [showClear]="true"
+                                                [emptyFilterMessage]="' No Currency Found'" [filter]="true" filterBy="label,value.name"
+                                                [resetFilterOnHide]="true" [placeholder]="'Select Currency'" [virtualScroll]="true" itemSize="30"
+                                                #Currency="ngModel" [styleClass]="'textAlign'" (ngModelChange)="CurrencyChange()"
+                                                [ngClass]="{'clearance': vendorSelectionFormSubmit && Currency?.errors?.required}" required>
+                                            </p-dropdown>
+                                        </div>
+                                    </div>
+                            </form>
+                            <div class="table-responsive table-id">
+                                <p-table [value]="prList" 
+                                #dt1 [paginator]="true"
+                                *ngIf="prList.length"
+                                [rows]="10" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[10,25,50,100]" 
+                                [rowHover]="true" 
+                                [globalFilterFields]='["Product_Description","UOM","Purchase_Request_Qty"]' >
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>                                    
+                                    </div><br>
+                                </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th>Product Description</th>
+                                                <th>UOM</th>
+                                                <th>Purchase Request Qty</th>
+                                                <th>Negotiate Price</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col let-i="rowIndex">
+                                            <tr >
+                                                <td>{{col.Product_Description}}</td>
+                                                <td>{{col.UOM}}</td>
+                                                <td>{{col.Purchase_Request_Qty}}</td>
+                                                <!-- <td> <input type="text" 
+                                                    [name]="col.Product_Description" 
+                                                    [(ngModel)]='col.Negotiate_Price' 
+                                                    CompacctDigitonly="true" 
+                                                    class="form-control" 
+                                                    style="width: 71px;" />{{col.Currency}}</td> -->
+                                                    <td>
+                                                        <div class="input-group" style="width: 100px;">
+                                                            <input type="text" 
+                                                            [name]="col.Product_Description" 
+                                                            [(ngModel)]='col.Negotiate_Price' 
+                                                            CompacctDigitonly="true" 
+                                                            class="form-control" 
+                                                            />
+                                                                <span *ngIf="col.Currency" style="width: 45px;" class="input-group-addon">{{col.Currency}}</span>
+                                                            </div>
+                                                    </td>
+                                                </tr>
+                                        </ng-template>
+                                                        
+                                </p-table>
+                      
+                            </div>
+                            <div class="box-footer">
+                                <button class="btn btn-primary pull-right" 
+                                                (click)="negotiateSave(NpriceSelectionForm.form.valid)" 
+                                                id="Saveload"
+                                                *ngIf="ObjnegotiatePrice.Purchase_Request_No "
+                                                [disabled]="SaveSpinner || DisableBUT " >
+                                            <p-progressSpinner 
+                                            *ngIf="SaveSpinner" 
+                                            [style]="{width: '15px', height: '15px'}" 
+                                            strokeWidth="8"
+                                            animationDuration=".5s">
+                                        </p-progressSpinner>
+                                        <span *ngIf="!SaveSpinner" 
+                                        class="glyphicon glyphicon-save">
+                                        </span>{{buttonname}}
+                                </button>
+                        </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- VIEWS -->
+<!--Purchase Type -->
+<p-dialog [header]="'Purchase Type View'" [appendTo]="'body'" [visible]="ViewPurchaseTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+       <p-table [value]="PurchaseTypeList"  [rowHover]="true">
+             <ng-template pTemplate="header">
+                <tr>
+                    <th>Purchase Type </th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                     <td>{{col.Purchase_Type}}</td>
+                    <td><button class="btn btn-sm btn-danger" 
+                        (click)="deletePurchaseType(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewPurchaseTypeModal= false" class="btn btn-default">
+  CANCEL
+       </button>
+    </p-footer>
+</p-dialog>
+
+<!-- payment Type -->
+<p-dialog [header]="'View Payment Type'" [appendTo]="'body'" [(visible)]="ViewPaymentTypeModal" [closeOnEscape]="true" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="PaymentMethodList">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Payment Method</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Payment_Method}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deletePaymentType(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewPaymentTypeModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+
+<!-- Currency Type -->
+<p-dialog [header]="'View Currency Type'" [appendTo]="'body'" [(visible)]="ViewCurrencyTypeModal" [closeOnEscape]="true" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="CurrencyList">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Currency</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Currency}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteCurrencyType(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewCurrencyTypeModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+
+
+<!--Create-->
+<!--Purchase Type -->
+<p-dialog [header]="'Create Product Type'" [appendTo]="'body'" [visible]="PurchaseTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
+    [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="PurchaseTypeForm" #PurchaseTypeForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Purchase Type<sup class="text-danger">*</sup></label>
+                    <input type="text" class="form-control" 
+                    name="PT" #PT="ngModel" 
+                    [(ngModel)]="PurchaseTypeName" 
+                    placeholder="Purchase Type"  
+                    [ngClass]="{clearance: PurchaseTypeFormSubmitted && PT?.errors?.required}" required />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="PurchaseTypeModal = false" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreatPurchasePOP(PurchaseTypeForm.form.valid)" id="load2" [disabled]="Spinner">
+<span class="glyphicon glyphicon-save"></span>&nbsp;CREATE
+</button>
+    </p-footer>
+</p-dialog>
+
+<!-- payment Type -->
+<p-dialog [header]="'Create Payment Type'" [appendTo]="'body'" [visible]="PaymentTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
+    [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="PaymentTypeForm" #PaymentTypeForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Payment Type<sup class="text-danger">*</sup></label>
+                    <input type="text" class="form-control" 
+                    name="PST" #PST="ngModel" 
+                    [(ngModel)]="PaymentTypeName" placeholder="Payment Type" 
+                     [ngClass]="{ clearance: PaymentFormSubmitted && PST?.errors?.required}" required />
+                </div>
+            </div>
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="PaymentTypeModal = false" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="creatPaymentPOP(PaymentTypeForm.form.valid)" id="load2" [disabled]="Spinner">
+<span class="glyphicon glyphicon-save"></span
+>&nbsp;CREATE
+</button>
+    </p-footer>
+</p-dialog>
+
+<!-- Currency Type -->
+<p-dialog [header]="'Currency'" [appendTo]="'body'" [visible]="CurrencyTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="CurrencyForm" #CurrencyForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Currency <sup class="text-danger">*</sup></label>
+                    <input type="text" class="form-control"
+                     name="Currency" #Currency="ngModel" 
+                     [(ngModel)]="CurrencyName" placeholder="Type Currency"
+                      [ngClass]="{  clearance: CurrencyFormSubmitted && Currency?.errors?.required}" required />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="CurrencyTypeModal = false" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreatCurrencyPOP(CurrencyForm.form.valid)" id="load2" >
+<span class="glyphicon glyphicon-save"></span
+>&nbsp;CREATE
+</button>
+    </p-footer>
+</p-dialog>

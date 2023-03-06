@@ -34,6 +34,7 @@ export class LeaveApprovalComponent implements OnInit {
   DistEmpName:any = [];
   SelectedDistEmpName:any = [];
   SearchFields:any = [];
+  ShowObj:any = {};
 
   ApprovedApprovalList:any = [];
   BackupApprovedApprovalList:any = [];
@@ -48,6 +49,29 @@ export class LeaveApprovalComponent implements OnInit {
   DistEmpNameTab3:any = [];
   SelectedDistEmpNameTab3:any = [];
   SearchFieldsTab3:any = [];
+
+  DetailsModal = false;
+  AllEmpLeaveList:any = [];
+  Issued_From_Date:Date;
+  Issued_To_Date:Date;
+  txnid: any;
+  pendingempid: any;
+  attntypeid: any;
+  leaveapplyempownlist:any = [];
+  leaveapplyemplist:any = [];
+  // DisApprovedbutton = "DisApproved";
+  // Approvedbutton = "Approved"
+  BusinessManager: any;
+  ReportManager: any;
+  Apply_From_Date: Date;
+  Apply_To_Date: Date;
+  Approved_Note_Business_Manager: any;
+  Approved_Note_Reporting_Manager: any;
+  ApproveFormSubmit = false;
+  Approved_Status_Business_Manager: any;
+  Approved_Status_Reporting_Manager: any;
+  NoteBusinessManager: any;
+  NoteReportingManager: any;
 
   constructor(
     private route : ActivatedRoute,
@@ -100,8 +124,9 @@ export class LeaveApprovalComponent implements OnInit {
     //console.log(this.ObjBrowse.Doc_No);
     const obj = {
       "SP_String": "SP_Leave_Application",
-      "Report_Name_String": "Get_Leave_Apply_Data",
-      "Json_Param_String": JSON.stringify([{Emp_ID : this.empid , Heading:"PENDING APPROVAL"}])
+      // "Report_Name_String": "Get_Leave_Apply_Data",
+      "Report_Name_String": "PENDING APPROVAL",
+      "Json_Param_String": JSON.stringify([{Emp_ID : this.empid}]) //, Heading:"PENDING APPROVAL"
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -109,31 +134,31 @@ export class LeaveApprovalComponent implements OnInit {
       this.BackupApprovalList = data;
       this.GetDistinct();
       console.log("this.ApprovalList  ===",this.ApprovalList);
-      this.ApprovalList.forEach(element => {
-        if ((element['Approved_Status_Business_Manager'] === "Y") && (element['Approved_Status_Reporting_Manager'] === "Y")) {
-          element['approvedisabled'] = true;
-        }
-        else {
-          element['approvedisabled'] = false;
-        }
-        element['Approved_Status_Business_Manager'] = element['Approved_Status_Business_Manager'] != null ? 
-                                                      element['Approved_Status_Business_Manager'] : undefined;
-        element['Approved_Status_Reporting_Manager'] = element['Approved_Status_Reporting_Manager'] != null ?
-                                                       element['Approved_Status_Reporting_Manager'] : undefined;
-        if (Number(element['Business_Manager']) ===  Number(this.empid)) {
-          this.Reportdisabled = true;
-          this.Bussidisabled = false;
-        }
-        else if (Number(element['Report_Manager']) ===  Number(this.empid)) {
-          this.Bussidisabled = true;
-          this.Reportdisabled = false;
-        }
-        else {
-          this.Reportdisabled = false;
-          this.Bussidisabled = false;
-        }
+      // this.ApprovalList.forEach(element => {
+        // if ((element['Approved_Status_Business_Manager'] === "Y") && (element['Approved_Status_Reporting_Manager'] === "Y")) {
+        //   element['approvedisabled'] = true;
+        // }
+        // else {
+        //   element['approvedisabled'] = false;
+        // }
+        // element['Approved_Status_Business_Manager'] = element['Approved_Status_Business_Manager'] != null ? 
+        //                                               element['Approved_Status_Business_Manager'] : undefined;
+        // element['Approved_Status_Reporting_Manager'] = element['Approved_Status_Reporting_Manager'] != null ?
+        //                                                element['Approved_Status_Reporting_Manager'] : undefined;
+        // if (Number(element['Business_Manager']) ===  Number(this.empid)) {
+        //   this.Reportdisabled = true;
+        //   this.Bussidisabled = false;
+        // }
+        // else if (Number(element['Report_Manager']) ===  Number(this.empid)) {
+        //   this.Bussidisabled = true;
+        //   this.Reportdisabled = false;
+        // }
+        // else {
+        //   this.Reportdisabled = false;
+        //   this.Bussidisabled = false;
+        // }
 
-      });
+      // });
       // for(let i = 0; i < this.AuthorizedList.length ; i++){
       // this.AuthorizedList[i].Confirm_Qty = this.AuthorizedList[i].Order_Qty;
       // this.AuthorizedList[i].Confirm_Rate = this.AuthorizedList[i].Rate;
@@ -248,7 +273,7 @@ this.ApprovalList = [...this.BackupApprovalList] ;
         key: "compacct-toast",
         severity: "error",
         summary: "Warn Message",
-        detail: "Something Wrong"
+        detail: "Enter Remarks"
       });
     }
   }
@@ -266,13 +291,315 @@ this.ApprovalList = [...this.BackupApprovalList] ;
     this.compacctToast.clear("c");
   }
 
+  //View Pop Panding 
+  ApprovedPopup(col){
+    this.txnid = undefined;
+    this.pendingempid = undefined;
+    this.attntypeid = undefined;
+    this.Issued_From_Date = new Date();
+    this.Issued_To_Date = new Date();
+    this.Apply_From_Date = new Date();
+    this.Apply_To_Date = new Date();
+    this.BusinessManager = undefined;
+    this.ReportManager = undefined;
+    this.Approved_Note_Business_Manager = undefined;
+    this.Approved_Note_Reporting_Manager = undefined;
+    this.Approved_Status_Business_Manager = undefined;
+    this.Approved_Status_Reporting_Manager = undefined;
+    this.NoteBusinessManager = undefined;
+    this.NoteReportingManager = undefined;
+    if (col) {
+    this.ShowObj = col;
+    this.txnid = col.Txn_App_ID;
+    this.pendingempid = col.Emp_ID;
+    this.attntypeid = col.Atten_Type_ID;
+    this.BusinessManager = col.Business_Manager;
+    this.ReportManager = col.Report_Manager;
+    this.Issued_From_Date = new Date(col.Issued_From_Date);
+    this.Issued_To_Date = new Date(col.Issued_To_Date);
+    this.Apply_From_Date = new Date(col.Issued_From_Date);
+    this.Apply_To_Date = new Date(col.Issued_To_Date);
+    this.Approved_Status_Business_Manager = col.Approved_Status_Business_Manager;
+    this.Approved_Status_Reporting_Manager = col.Approved_Status_Reporting_Manager;
+    this.NoteBusinessManager = col.Approved_Note_Business_Manager;
+    this.NoteReportingManager = col.Approved_Note_Reporting_Manager;
+    if (Number(col.Business_Manager) ===  Number(this.empid)) {
+      this.Bussidisabled = true;
+      this.Reportdisabled = false;
+    }
+    else if (Number(col.Report_Manager) ===  Number(this.empid)) {
+      this.Reportdisabled = true;
+      this.Bussidisabled = false;
+    }
+    else {
+      this.Reportdisabled = false;
+      this.Bussidisabled = false;
+    }
+    this.Getleaveapplyempown();
+    }
+  }
+  Getleaveapplyempown(){
+    const sendobj = {
+      Emp_ID : this.pendingempid,
+      Issued_From_Date : this.DateService.dateConvert(new Date(this.Issued_From_Date)),
+      Issued_To_Date : this.DateService.dateConvert(new Date(this.Issued_To_Date))
+    }
+    const obj = {
+      "SP_String": "SP_Leave_Application",
+      "Report_Name_String": "Leave_Applied_Employee_Own_Details",
+      "Json_Param_String": JSON.stringify([sendobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.leaveapplyempownlist = data;
+      this.Getleaveapplyemp();
+      //  console.log("leaveapplyemplist ===", this.leaveapplyemplist);
+    })
+  }
+  Getleaveapplyemp(){
+    const sendobj = {
+      Emp_ID : this.pendingempid,
+      Atten_Type_ID : this.attntypeid,
+      Issued_From_Date : this.DateService.dateConvert(new Date(this.Issued_From_Date)),
+      Issued_To_Date : this.DateService.dateConvert(new Date(this.Issued_To_Date))
+    }
+    const obj = {
+      "SP_String": "SP_Leave_Application",
+      "Report_Name_String": "Leave_Applied_Employee_List",
+      "Json_Param_String": JSON.stringify([sendobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.leaveapplyemplist = data;
+      this.DetailsModal = true;
+      //  console.log("leaveapplyemplist ===", this.leaveapplyemplist);
+    })
+  }
+  ApprovedLeaves(valid){
+    this.ApproveFormSubmit = true;
+    if (valid && this.Apply_From_Date && this.Apply_To_Date){
+    if(this.txnid && this.pendingempid) {
+      if (((Number(this.BusinessManager) === Number(this.empid)) && (this.Approved_Note_Business_Manager)) || 
+         ((Number(this.ReportManager) === Number(this.empid)) && (this.Approved_Note_Reporting_Manager))){
+      // if ((obj.Approved_Status_Business_Manager && obj.Approved_Note_Business_Manager) || 
+      //     (obj.Approved_Status_Reporting_Manager && obj.Approved_Note_Reporting_Manager)) {
+      const TObj = {
+        Txn_App_ID : this.txnid,
+        Emp_ID : this.pendingempid,
+        // HR_Year_ID : obj.HR_Year_ID,
+        // LEAVE_TYPE : obj.Atten_Type_ID.toString(),
+        Apply_From_Date : this.DateService.dateConvert(new Date(this.Apply_From_Date)),
+        Apply_To_Date : this.DateService.dateConvert(new Date(this.Apply_To_Date)),
+        // No_Of_Days_Apply : obj.No_Of_Days_Apply,
+        // Remarks : obj.Remarks,
+        Issued_From_Date : this.DateService.dateConvert(new Date(this.Issued_From_Date)),
+        Issued_To_Date : this.DateService.dateConvert(new Date(this.Issued_To_Date)),
+        // No_Of_Days_Issued : obj.No_Of_Days_Issued,
+        Approved_Status_Business_Manager : this.Approved_Note_Business_Manager ? "Y" : this.Approved_Status_Business_Manager,
+        Approved_Status_Reporting_Manager : this.Approved_Note_Reporting_Manager ? "Y" : this.Approved_Status_Reporting_Manager,
+        Approved_Note_Business_Manager : this.Approved_Note_Business_Manager ? this.Approved_Note_Business_Manager : this.NoteBusinessManager,
+        Approved_Note_Reporting_Manager : this.Approved_Note_Reporting_Manager ? this.Approved_Note_Reporting_Manager : this.NoteReportingManager
+        // Approval_ID : obj.Approval_ID,
+        // HR_Remarks : obj.HR_Remarks
+       }
+    const Tempobj = {
+        "SP_String": "SP_Leave_Application",
+        "Report_Name_String": "Approve_Leave_Application",
+        "Json_Param_String" : JSON.stringify({...this.ShowObj,...TObj})
+      }
+      this.GlobalAPI.postData(Tempobj).subscribe((data:any)=>{
+           // console.log(data);
+            if(data[0].Column1 === "Done") {
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "success",
+                summary: 'Emp ID : ' + this.pendingempid,
+                detail: "Succesfully Approved."
+              });
+              this.ApproveFormSubmit = false;
+              this.DetailsModal = false;
+              this.Approved_Note_Business_Manager = undefined;
+              this.Approved_Note_Reporting_Manager = undefined;
+              this.getPedingApprovaldetails();
+              this.getApprovedApprovaldetails();
+              this.getDisApprovedApprovaldetails();
+            }
+            else if(data[0].Column1 === "Something Wrong") {
+              this.onReject();
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "c", 
+                sticky: true,
+                closable: false,
+                severity: "warn", // "info",
+                summary: "Approve date should be between apply date.",
+                // detail: data[0].Column1
+              });
+            }
+            else {
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "error",
+                summary: "Error",
+                detail: "Error Occured"
+              });
+            }
+      });
+      console.log('Update ===', TObj)
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Enter Remarks"
+      });
+    }
+  }
+  else {
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Something Wrong"
+    });
+  }
+    }
+  }
+  DisapprovedLeaves(valid){
+    this.ApproveFormSubmit = true;
+    if (valid && this.Apply_From_Date && this.Apply_To_Date){
+    if(this.txnid && this.pendingempid) {
+      if (((Number(this.BusinessManager) === Number(this.empid)) && (this.Approved_Note_Business_Manager)) || 
+         ((Number(this.ReportManager) === Number(this.empid)) && (this.Approved_Note_Reporting_Manager))){
+      // if ((obj.Approved_Status_Business_Manager && obj.Approved_Note_Business_Manager) || 
+      //     (obj.Approved_Status_Reporting_Manager && obj.Approved_Note_Reporting_Manager)) {
+      const TObj = {
+        Txn_App_ID : this.txnid,
+        Emp_ID : this.pendingempid,
+        // HR_Year_ID : obj.HR_Year_ID,
+        // LEAVE_TYPE : obj.Atten_Type_ID.toString(),
+        Apply_From_Date : this.DateService.dateConvert(new Date(this.Apply_From_Date)),
+        Apply_To_Date : this.DateService.dateConvert(new Date(this.Apply_To_Date)),
+        // No_Of_Days_Apply : obj.No_Of_Days_Apply,
+        // Remarks : obj.Remarks,
+        Issued_From_Date : this.DateService.dateConvert(new Date(this.Issued_From_Date)),
+        Issued_To_Date : this.DateService.dateConvert(new Date(this.Issued_To_Date)),
+        // No_Of_Days_Issued : obj.No_Of_Days_Issued,
+        Approved_Status_Business_Manager : this.Approved_Note_Business_Manager ? "N" : this.Approved_Status_Business_Manager,
+        Approved_Status_Reporting_Manager : this.Approved_Note_Reporting_Manager ? "N" : this.Approved_Status_Reporting_Manager,
+        Approved_Note_Business_Manager : this.Approved_Note_Business_Manager ? this.Approved_Note_Business_Manager : this.NoteBusinessManager,
+        Approved_Note_Reporting_Manager : this.Approved_Note_Reporting_Manager ? this.Approved_Note_Reporting_Manager : this.NoteReportingManager
+        // Approval_ID : obj.Approval_ID,
+        // HR_Remarks : obj.HR_Remarks
+       }
+    const Tempobj = {
+        "SP_String": "SP_Leave_Application",
+        "Report_Name_String": "Approve_Leave_Application",
+        "Json_Param_String" : JSON.stringify({...this.ShowObj,...TObj})
+      }
+      this.GlobalAPI.postData(Tempobj).subscribe((data:any)=>{
+           // console.log(data);
+            if(data[0].Column1 === "Done") {
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "success",
+                summary: 'Emp ID : ' + this.pendingempid,
+                detail: "Succesfully Approved."
+              });
+              this.ApproveFormSubmit = false;
+              this.DetailsModal = false;
+              this.Approved_Note_Business_Manager = undefined;
+              this.Approved_Note_Reporting_Manager = undefined;
+              this.getPedingApprovaldetails();
+              this.getApprovedApprovaldetails();
+              this.getDisApprovedApprovaldetails();
+            }
+            else if(data[0].Column1 === "Something Wrong") {
+              this.onReject();
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "c", 
+                sticky: true,
+                closable: false,
+                severity: "warn", // "info",
+                summary: "Approve date should be between apply date.",
+                // detail: data[0].Column1
+              });
+            }
+            else {
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "error",
+                summary: "Error",
+                detail: "Error Occured"
+              });
+            }
+      });
+      console.log('Update ===', TObj)
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Enter Remarks"
+      });
+    }
+  }
+  else {
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Something Wrong"
+    });
+  }
+    }
+  }
+  // showApproved(col:any){
+  // this.ViewPopList = [];
+  // this.masterPopview = undefined 
+  // if(col.Doc_No){
+  //   this.masterPopview = col.Doc_No
+  //   const tempobj = {
+  //     Doc_No  : this.masterPopview
+  //   }
+  //   const obj = {
+  //     "SP_String": "SP_PO_Authorization",
+  //     "Report_Name_String": "PO_approval_view",
+  //     "Json_Param_String": JSON.stringify([tempobj])
+  //   }
+  //   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //   this.ViewPopList = JSON.parse(data[0].T_element)
+  //   this.TElementobj = this.ViewPopList[0];
+  //   this.masterPopview = undefined;
+  //   this.DetailsArrList = this.ViewPopList[0].pod_Element ? this.ViewPopList[0].pod_Element :undefined;
+  //   this.TermsArrList = this.ViewPopList[0].term_Element ? this.ViewPopList[0].term_Element :undefined;
+  //  // console.log("TElementobj",this.TElementobj)
+  //   //console.log("DetailsArrList",this.DetailsArrList)
+  //  // console.log("TermsArrList",this.TermsArrList)
+  //      //console.log(this.TElementobj.Doc_NO);
+  //     })
+  //   setTimeout(() => {
+  //     this.ViewProTypeModal = true;
+  //   }, 300);
+  // }
+  // }
+
   // Approved Approval
   getApprovedApprovaldetails(){
     //console.log(this.ObjBrowse.Doc_No);
     const obj = {
       "SP_String": "SP_Leave_Application",
-      "Report_Name_String": "Get_Leave_Apply_Data",
-      "Json_Param_String": JSON.stringify([{Emp_ID : this.empid , Heading:"APPROVED APPROVAL"}])
+      "Report_Name_String": "APPROVED APPROVAL",
+      "Json_Param_String": JSON.stringify([{Emp_ID : this.empid}]) // , Heading:"APPROVED APPROVAL"
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -325,8 +652,8 @@ this.ApprovedApprovalList = [...this.BackupApprovedApprovalList] ;
     //console.log(this.ObjBrowse.Doc_No);
     const obj = {
       "SP_String": "SP_Leave_Application",
-      "Report_Name_String": "Get_Leave_Apply_Data",
-      "Json_Param_String": JSON.stringify([{Emp_ID : this.empid , Heading:"DISAPPROVED APPROVAL"}])
+      "Report_Name_String": "DISAPPROVED APPROVAL",
+      "Json_Param_String": JSON.stringify([{Emp_ID : this.empid}]) // , Heading:"DISAPPROVED APPROVAL"
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{

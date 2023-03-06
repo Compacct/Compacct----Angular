@@ -34,7 +34,7 @@
                                         </app-compacct-daterangepicker>
 
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-2">
                                         <label class="control-label">Brand &nbsp;<sup class="text-danger">*</sup>
                                         </label>
                                         <select class="form-control" name="Brand_ID1" #Brand_ID1="ngModel" [(ngModel)]="ObjBrowseData.Brand_ID" (change)="getCostcenterBro()" [ngClass]="{'clearance': RequistionSearchFormSubmit && Brand_ID1?.errors?.required}" required>
@@ -52,10 +52,16 @@
                                               <option *ngFor='let option of outletListBro' value="{{option.Cost_Cen_ID}}">{{option.Location}}</option>
                                       </select>
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-2">
                                         <button class="btn btn-primary custombutton" data-toggle="modal" (click)="searchData(RequistionSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
                                       <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                       <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                   </button>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-success custombutton" data-toggle="modal" (click)="exportoexcelbrowse('Dispatch_Challan_Browse')" id="load" [disabled]="expotSpinner || !GetAllDataList.length">
+                                      <p-progressSpinner *ngIf="expotSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!expotSpinner" class="glyphicon glyphicon-save"></span>&nbsp;Export to excel
                                    </button>
                                     </div>
 
@@ -101,7 +107,7 @@
                                                     <ul class="dropdown-menu">
                                                         <li *ngIf="col.Total_Qty === col.Total_Accepted_Qty">
                                                             <a (click)="Refresh(col)">
-                                                                <i class="fa fa-refresh"></i> Refresh
+                                                                <i class="fa fa-fw fa-refresh"></i> Refresh
                                                             </a>
                                                         </li>
                                                         <li>
@@ -116,12 +122,12 @@
                                                         </li>
                                                         <li>
                                                             <a (click)="Print(col.Doc_No)">
-                                                                <i class="fa fa-print"></i> Print
+                                                                <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
                                                         </li>
                                                         <li *ngIf="col.Bill_No != 'NA'">
                                                             <a (click)="SaleBillPrint(col)">
-                                                                <i class="fa fa-print"></i> Sale Bill Print
+                                                                <i class="fa fa-fw fa-print"></i> Sale Bill Print
                                                             </a>
                                                         </li>
                                                         <li *ngIf="col.Total_Accepted_Qty === 0">
@@ -146,9 +152,19 @@
                                                                 <i class="fa fa-bars" aria-hidden="true"></i> Regenerate Bill
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.Total_Qty === col.Total_Accepted_Qty && $CompacctAPI.CompacctCookies.Cost_Cen_ID != 'A'">
+                                                        <!-- <li *ngIf="col.Total_Qty === col.Total_Accepted_Qty && $CompacctAPI.CompacctCookies.Cost_Cen_ID != 'A'">
                                                             <a (click)="dataforUpdateQty(col)">
                                                                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update Qty
+                                                            </a>
+                                                        </li> -->
+                                                        <li *ngIf="col.Bill_No === 'NA' && col.Franchise === 'Y'">
+                                                            <a (click)="UpdateAcceptedQty(col)">
+                                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update Accepted Qty
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.E_Invoice_PDF_Link && col.Bill_No">
+                                                            <a (click)="DownloadEINV(col.E_Invoice_PDF_Link)">
+                                                                <i class="fa fa-fw fa-download"></i> Download E-INV
                                                             </a>
                                                         </li>
                                                     </ul>

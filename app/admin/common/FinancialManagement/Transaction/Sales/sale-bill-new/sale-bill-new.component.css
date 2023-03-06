@@ -1,0 +1,83 @@
+div.table-responsive.table-id>p-table>div>div {
+    width: auto !important;
+}
+  /* #ui-tabpanel-0 > div > p-table > div > div.ui-table-wrapper.ng-star-inserted {
+    width: auto !important;
+  } */
+body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+    border-bottom: 1px solid #c1c1c1 !important;
+    margin-bottom: 0px;
+}
+.ui-table-auto-layout > .ui-table-wrapper {
+    width: auto !important;
+    min-height: 170px !important;
+}
+.box-body {
+    padding-top: 10px !important;
+    padding-left: 10px !important;
+}
+.custombutton {
+    margin-top: 25px;
+}
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+.Outlet{
+    display: inline-block !important;
+}
+div.label-t {
+    padding: 6px 12px;
+    background: rgb(206 216 216 / 51%);
+}
+.text-red-active > td {
+    color:red;
+}
+.box.boxboxDivide-primary {
+    border-top-color: #f3efec;
+    height: 10px;
+    border: 0;
+    box-shadow: 0 10px 10px -10px #8c8b8b inset;
+}
+.col-sm-3 {
+    position: relative;
+    /* min-height: 63px; */
+    padding-right: 15px;
+    padding-left: 15px;
+}
+.amt-td {
+    background: #f1f1f1;
+    text-align: center;
+}
+body .ui-fieldset .ui-fieldset-legend a{
+    padding: 0.25em 1em !important;
+}
+fieldset {
+    border: 1px solid #ddd !important;
+    margin: 0;
+    min-width: 0;
+    padding: 10px;
+    position: relative;
+    border-radius:4px;
+    background-color:#f5f5f5;
+    padding-left:10px!important;
+}
+  
+legend {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 0px;
+    width: fit-content;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0px 10px 0px 10px;
+    background-color: #ffffff;
+}
+
+.ui-table p-sorticon {
+    /* float: right; */
+    padding-top: 1px;
+    padding-left: 6px;
+}

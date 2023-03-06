@@ -10,7 +10,7 @@ import { CompacctProductDetailsComponent } from '../../../shared/compacct.compon
 import { CompacctgstandcustomdutyComponent } from '../../../shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
 import { CompacctFinancialDetailsComponent } from "../../../shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component";
 import { ActivatedRoute } from '@angular/router';
-
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-product-master',
   templateUrl: './product-master.component.html',
@@ -20,45 +20,45 @@ import { ActivatedRoute } from '@angular/router';
 
 })
 export class ProductMasterComponent implements OnInit {
-  items = [];
-  menuList =[];
+  items:any = [];
+  menuList:any =[];
   tabIndexToView= 0;
-  AllData =[];
+  AllData:any =[];
   buttonname = "Create";
   Objproduct: product =new product();
   ObjFinancialComponentData = new Financial();
-  MaterialData = [];
-  AllMaterialData = [];
-  gstData = [];
-  AllgstlData = [];
-  productData= [];
-  AllproductData = [];
-  productSubData = [];
-  AllproductSubData = [];
-  UOMData =[];
-  UomDataList = [];
-  AllUOMData = [];
-  AllUomDataList = [];
-  PurchaseData=[]; 
-  AllPurchaseData = [];
-  SalesData=[]; 
-  AllSalesData = [];
-  PrData=[]; 
-  AllPr = [];
-  SalesReturn=[];
-  AllSalesR = []; 
-  DiscountData=[]; 
-  AllReceiveData = [];
-  GivenData=[]; 
-  MfgData=[]; 
-  AllMfgData = [];
+  MaterialData:any = [];
+  AllMaterialData:any = [];
+  gstData:any = [];
+  AllgstlData:any = [];
+  productData:any= [];
+  AllproductData:any = [];
+  productSubData:any = [];
+  AllproductSubData:any = [];
+  UOMData:any =[];
+  UomDataList:any = [];
+  AllUOMData:any = [];
+  AllUomDataList:any = [];
+  PurchaseData:any=[]; 
+  AllPurchaseData:any = [];
+  SalesData:any=[]; 
+  AllSalesData:any = [];
+  PrData:any=[]; 
+  AllPr:any = [];
+  SalesReturn:any=[];
+  AllSalesR:any= []; 
+  DiscountData:any=[]; 
+  AllReceiveData:any = [];
+  GivenData:any=[]; 
+  MfgData:any=[]; 
+  AllMfgData:any = [];
   PDFFlag = false;
   PDFViewFlag = false;
   materialPDFLink = undefined;
-  AllDiscountData = [];
-  AllVendorLedger=[];
-  VendorledgerList = [];
-  SelectedVendorLedger = [];
+  AllDiscountData:any = [];
+  AllVendorLedger:any=[];
+  VendorledgerList:any = [];
+  SelectedVendorLedger:any = [];
   Spinner = false;
   MaterialFormSubmit =false;
   materialId = undefined;
@@ -116,7 +116,8 @@ export class ProductMasterComponent implements OnInit {
   act_popup = false;
   SubCatFilter = [];
   headerData = ""
-
+  EXCELSpinner:boolean = false
+  DescriptionCheck:any;
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -191,6 +192,7 @@ TabClick(e) {
       this.objProductrequ.Product_Type_ID = e.Product_Type_ID;
       this.objProductrequ.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
       this.objProductrequ.Product_Description = e.Product_Description;
+        this.CheckDescription();
     }
     console.log("Product Detalis In master",this.Objproduct)
   }
@@ -935,7 +937,40 @@ getDiscountGiven(){
         });
      })
 }
+CheckDescription(){
+  const tempobj = {
+    Product_Type_ID : this.Objproduct.Product_Type_ID,
+    Product_Sub_Type_ID : this.Objproduct.Product_Sub_Type_ID,
+    Description_Like : this.Objproduct.Product_Description
+  }
+  const objtemp = {
+    Product_ID : this.Objproduct.Product_ID,
+    Description_Like : this.Objproduct.Product_Description
+  }
+      const obj = {
+       "SP_String": "SP_Harbauer_Master_Product_Civil",
+       "Report_Name_String":this.buttonname === "Update" ? 'Check_Product_Description_On_Update' : 'Check_Product_Description',
+       "Json_Param_String": this.buttonname === "Update" ? JSON.stringify([objtemp]) : JSON.stringify([tempobj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.DescriptionCheck = data[0].Column1;
+      console.log("DescriptionCheck==",this.DescriptionCheck);
+      // if(this.DescriptionCheck === "OK") {
+      //   this.saveData(true);
+      // }
+      // else {
+      //   this.Spinner = false;
+      //      this.compacctToast.clear();
+      //      this.compacctToast.add({
+      //        key: "compacct-toast",
+      //        severity: "error",
+      //        summary: "Warn Message",
+      //        detail: "Description already exists."
+      //      });
+      // }
+     })
 
+ }
 saveData(valid:any){
   console.log("savedata==",this.Objproduct);
   console.log("valid",valid)
@@ -943,6 +978,7 @@ saveData(valid:any){
   // console.log("this.Objproduct",this.Objproduct)
   // this.destroyChild();
   if(valid && this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
+    if(this.DescriptionCheck === "OK") { 
     console.log("buttonname==",this.buttonname);
     
     // var mocdes = this.materialCon.filter(item => Number(item.MOC_ID) === Number(this.Objproduct.MOC_ID))
@@ -978,13 +1014,25 @@ saveData(valid:any){
          this.destroyChild();
           this.getBrowseProduct();
           this.productCode = undefined;
-          // this.tabIndexToView = 0;
+          if (this.buttonname === "Update") {
+            this.tabIndexToView = 0;
+          }
           this.MaterialFormSubmit = false;
           this.GstAndCustomFormSubmit = false;
           this.Objproduct = new product();
           this.CheckifService = false;
          });
-   
+        }
+         else {
+          this.Spinner = false;
+             this.compacctToast.clear();
+             this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "error",
+               summary: "Warn Message",
+               detail: "Description already exists."
+             });
+        }
      }
      else{
        console.error("Somthing Wrong")
@@ -1311,6 +1359,27 @@ onReject(){
 sendJson(data){
   return JSON.parse(JSON.stringify(data))
  }
+ exportexcel(Arr): void {
+  this.EXCELSpinner =true
+   let excelData:any = []
+  Arr.forEach(ele => {
+      excelData.push({
+          'Material Type': ele.Material_Type,
+          'Product Code': ele.Product_Code,
+          'Product Type': ele.Product_Type,
+          'Product Sub Type': ele.Product_Sub_Type,
+          'Manufacturer': ele.Product_Manufacturing_Group,
+          'Product Description': ele.Product_Description,
+          'GST Category': ele.GST_Tax_Per,
+          'HSN Code': ele.HSN_Code,
+          })
+   });
+
+ const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(excelData);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, 'master_product.xlsx');
+  this.EXCELSpinner = false
+}
 }
 class product{
 Material_ID:number;	

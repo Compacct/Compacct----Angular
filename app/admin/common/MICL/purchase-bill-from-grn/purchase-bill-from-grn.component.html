@@ -1,4 +1,4 @@
-<!-- <p-toast key="compacct-toast" baseZIndex="99999">
+<p-toast key="compacct-toast" baseZIndex="99999">
 </p-toast>
 <p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
     <ng-template let-message pTemplate="message">
@@ -29,16 +29,16 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                             <form name="SearchForm" #SearchForm="ngForm" novalidate>
                             <div class="form-group">
-                                <div class="col-sm-4">
+                                <!-- <div class="col-sm-4">
                                     <label class="control-label">Date</label>
 
                                     <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)">
                                     </app-compacct-daterangepicker>
 
-                                </div>
+                                </div> -->
 
                                 <div class="col-sm-3">
-                                    <button class="btn btn-primary custombutton3" data-toggle="modal" (click)="GetSearchedlist()" id="load" [disabled]="seachSpinner">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetSearchedlist()" id="load" [disabled]="seachSpinner">
                                       <p-progressSpinner
                                         *ngIf="seachSpinner"
                                         [style]="{ width: '15px', height: '15px' }"
@@ -53,6 +53,25 @@
                                     </button>
                                 </div>
                                 <div class="col-sm-2">
+                                    <label class="control-label">Pan No </label>
+                                    <input class="form-control" name="billingname" #billingname="ngModel" id="txtPANCard" [(ngModel)]="Pan_No" placeholder="Pan No" minlength="10" maxlength="10" (ngModelChange)='ValidatePAN()' 
+                                    [ngClass]="{clearance:(PANvalidFlag) ||(billingname.errors?.minlength && billingname.touched)}" >
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">GST NO </label>
+                                    <input class="form-control" name="gstno" #gstno="ngModel" id="txtGSTCard" [(ngModel)]="GST_No" placeholder="Gst No" minlength="15" maxlength="15" (ngModelChange)='ValidateGST()' 
+                                    [ngClass]="{clearance:(GSTvalidFlag) ||(gstno.errors?.minlength && gstno.touched)}" >
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">input </label>
+                                    <input class="form-control" name="input" #input="ngModel" [(ngModel)]="Decimal" (ngModelChange)='checkdecimal()' >
+                                </div>
+                                <!-- <div class="col-sm-2">
+                                    <label class="control-label">Aadhar NO </label>
+                                    <input class="form-control" name="aadharno" #aadharno="ngModel" id="aadhaar" [(ngModel)]="Aadhar_No" placeholder="Aadhar No" minlength="12" maxlength="12" (ngModelChange)='ValidateAadhar()' 
+                                    [ngClass]="{clearance:(AadharvalidFlag) ||(aadharno.errors?.minlength && aadharno.touched)}" >
+                                </div> -->
+                                <!-- <div class="col-sm-2">
                                     <label class="control-label"></label>
 
                                     <div class="checkBox">
@@ -61,7 +80,7 @@
                                        Approved
                                    </label>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                             </form>
                             <div class="row">
@@ -422,6 +441,7 @@
                                             <td>{{obj.Product_Description}}</td>
                                             <td>{{obj.HSN_Code}}</td>
                                             <td>{{obj.Batch_No}}</td>
+                                            <td>
                                                 <input type="text" [name]="obj.Product_ID" [(ngModel)]='obj.Accepted_Qty' (ngModelChange)="AfterDiscCalChange(obj)" class="form-control" style="width: 80px;" />
                                             </td>
                                             <td>{{obj.UOM}}</td>
@@ -577,10 +597,14 @@
             </div>
         </div>
     </div>
-</div> -->
+</div>
 
 
-<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
+
+
+<!-- Attendance -->
+<!-- <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
 <p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
@@ -624,7 +648,6 @@
     <div class="panel-group">
         <div class="panel panel-primary">
             <div class="panel-body">
-                    <!-- <div class="clearfix"></div> -->
                     <div class="no-padding" >
                     <p-table [value]="AllAttendanceData"
                             [rowHover]="true" 
@@ -636,7 +659,7 @@
                             [columns]="cols" >
                             <ng-template pTemplate="colgroup" let-columns>
                                 <colgroup>
-                                     <col *ngFor="let col of DynamicHeader |  slice:1" [class]="col === 'Emp_Name' ? 'tablelarge' : 'tablesmall'"><!-- [class]="col.Emp_Name ? 'tablelarge' : 'tablesmall'" -->
+                                     <col *ngFor="let col of DynamicHeader |  slice:1" [class]="col === 'Emp_Name' ? 'tablelarge' : 'tablesmall'">
                                 </colgroup>
                             </ng-template>
                                     <ng-template pTemplate="header">
@@ -647,11 +670,8 @@
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr >
-                                            <!-- <ng-container *ngFor="let option of DynamicHeader ; let i = index"> -->
-                                                <!-- <td nowrap="nowrap">{{col[option]}}</td> -->
                                                 <td nowrap="nowrap" *ngFor="let option of DynamicHeader | slice:1; let i = index" 
                                                 (click)="tableCellData(option,col)" (contextmenu)="onrightclick(option,col)" [class]="getcellText(col[option],option)">{{getcellText(col[option],option)}} </td>
-                                            <!-- </ng-container> -->
                                             
                                         </tr>
                                     </ng-template>
@@ -679,12 +699,12 @@
 </div>
 </div>
 </div>
-</div>
+</div> -->
 
 
 
 <!-- FOR ONE EMPLOYEE (ONE CELL) -->
-<p-dialog header="Update Attendance" [appendTo]="'body'" [(visible)]="display" [modal]="true" [responsive]="true" [minY]="70" [closeOnEscape]="true" [style]="{ width: '35%', minWidth: '350px' }">
+<!-- <p-dialog header="Update Attendance" [appendTo]="'body'" [(visible)]="display" [modal]="true" [responsive]="true" [minY]="70" [closeOnEscape]="true" [style]="{ width: '35%', minWidth: '350px' }">
     <form name="attendancestatusForm" #attendancestatusForm="ngForm" novalidate>
         <div class="col-sm-12">
             <label>Employee Name:</label>&nbsp; {{employeename}}
@@ -712,10 +732,10 @@
             </div>
         </p-footer>
     </form>
-</p-dialog>
+</p-dialog> -->
 
 <!-- FOR ALL EMPLOYEE (ONE COLUMN)-->
-<p-dialog header={{DayName}} [appendTo]="'body'" [(visible)]="displayALLEmployee" [modal]="true" [responsive]="true" [minY]="70" [closeOnEscape]="true" [style]="{ width: '30%', minWidth: '300px' }">
+<!-- <p-dialog header={{DayName}} [appendTo]="'body'" [(visible)]="displayALLEmployee" [modal]="true" [responsive]="true" [minY]="70" [closeOnEscape]="true" [style]="{ width: '30%', minWidth: '300px' }">
     <div class="col-sm-12">
         <label>Date:</label>&nbsp; {{Doc_date_AllEmp}}
 
@@ -738,4 +758,4 @@
          </button>
         </div>
     </p-footer>
-</p-dialog>
+</p-dialog> -->

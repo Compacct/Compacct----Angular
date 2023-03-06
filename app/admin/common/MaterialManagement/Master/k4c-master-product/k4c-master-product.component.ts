@@ -59,6 +59,7 @@ export class K4cMasterProductComponent implements OnInit {
   act_popup = false;
   ParamFlaghtml = undefined;
   exceldisable = false;
+  billableSaleable = "Enable Saleable Product"
   constructor( private $http: HttpClient ,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -89,6 +90,7 @@ export class K4cMasterProductComponent implements OnInit {
     this.getRowData();
     this.getProductTypeListRow(0);
     this.GetCostCenter();
+    this.billableSaleable = "Enable Billable"
 
     }else if (this.Param_Flag === 'Semi Finished') {
       this.getBrand();
@@ -147,7 +149,7 @@ export class K4cMasterProductComponent implements OnInit {
           if (data[0].Column1 === "done"){
           
           
-            if(this.ParamFlaghtml === "Raw Material" || this.ParamFlaghtml === "Store Item - N/Saleable"){
+            if(this.ParamFlaghtml === "Raw Material"){
               this.getRowData();
             }
             else {
@@ -182,7 +184,7 @@ export class K4cMasterProductComponent implements OnInit {
           // console.log("del Data===", data[0].Column1)
           if (data[0].Column1 === "done"){
           
-            if(this.ParamFlaghtml === "Raw Material" ||  this.ParamFlaghtml === "Store Item - N/Saleable"){
+            if(this.ParamFlaghtml === "Raw Material"){
               this.getRowData();
             }
             else {
@@ -245,6 +247,7 @@ export class K4cMasterProductComponent implements OnInit {
           console.log(this.ObjmasterProduct);
           if (this.Param_Flag === 'Raw Material') {
              var TempId = this.ObjmasterProduct.Product_ID;
+             this.ObjmasterProduct.Billable = this.ObjmasterProduct.Saleable_Product;
             const obj = {
               "SP_String": "SP_Controller_Master",
               "Report_Name_String": "Update Raw Material Product",
@@ -384,7 +387,7 @@ export class K4cMasterProductComponent implements OnInit {
         else {
          // console.log("fire")
           if (this.Param_Flag === 'Raw Material'){
-         
+           this.ObjmasterProduct.Billable = this.ObjmasterProduct.Saleable_Product;
             const obj = {
               "SP_String": "SP_Controller_Master",
               "Report_Name_String": "Add Raw Material Product",
@@ -425,7 +428,7 @@ export class K4cMasterProductComponent implements OnInit {
               });
                 }
                 this.Spinner = false;
-                this.getRowData();
+                this.getBandlist();
             })
           }
           else if (this.Param_Flag === 'Finished'){
@@ -467,7 +470,8 @@ export class K4cMasterProductComponent implements OnInit {
                 });
                 }
                 this.Spinner = false;
-                this.getRowData();
+                // this.getRowData();
+                this.getBandlist();
             })
           }
           else if (this.Param_Flag === "Store Item - Saleable"){
@@ -542,6 +546,9 @@ export class K4cMasterProductComponent implements OnInit {
        this.ObjmasterProduct.Brand_ID = editDataList.Brand_ID === 0 ? undefined : editDataList.Brand_ID;
        this.brandInput = false;
        }
+       if (this.Param_Flag === 'Raw Material') {
+        this.ObjmasterProduct.Saleable_Product = data[0].Billable;
+       }
        console.log("this.ObjmasterProduct.Product_ID",this.ObjmasterProduct.Product_ID);
       
     })
@@ -559,7 +566,8 @@ export class K4cMasterProductComponent implements OnInit {
     })
   }
   getRowData(){
-    const TempReportName = this.Param_Flag === 'Store Item - N/Saleable' ? "Browse - Store Item Product Master" : "Browse - Raw Material Product Master";
+    // const TempReportName = this.Param_Flag === 'Store Item - N/Saleable' ? "Browse - Store Item Product Master" : "Browse - Raw Material Product Master";
+    const TempReportName = "Browse - Raw Material Product Master";
     console.log("Browse API",TempReportName);
     const obj = {
       "SP_String": "SP_Controller_Master",
@@ -955,6 +963,8 @@ class masterProduct {
   Shelf_Life_Hours: any;
   Critical_Level:any;
   Saleable_Product : false;
+  Premix_Item : any;
+  Daily_Weekly : any;
 }
 class brand{
   Brand_ID : number ;

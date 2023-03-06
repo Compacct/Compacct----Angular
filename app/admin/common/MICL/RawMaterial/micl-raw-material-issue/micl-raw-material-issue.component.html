@@ -1,0 +1,495 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="s" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal" style="margin-top: 8px;">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="RMReqSearchForm" #RMReqSearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Period</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getConfirmDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+
+                                    </div>
+                                    <!-- <div class="col-sm-4">
+                                        <label class="control-label">From Cost Center &nbsp;</label>
+                                        <select class="form-control" 
+                                        name="Cost_Cen_ID_Browse" 
+                                        #Cost_Cen_ID_Browse='ngModel' 
+                                        [(ngModel)]="ObjBrowseData.Cost_Cen_ID"
+                                        [disabled]="userType != 'A'">
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of costcenterList" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
+                                      </select>
+                                    </div> -->
+                                    <div class="col-sm-3">
+                                        <label class="control-label">To Furnace
+                                        </label>
+                                        <select class="form-control" 
+                                        name="Godown_ID_Browse" 
+                                        #Godown_ID_Browse="ngModel" 
+                                        [(ngModel)]="ObjBrowseData.Godown_ID">
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of ToFurnacebrowseList" [value]="option.Godown_ID">{{option.godown_name}}</option>
+                                      </select>
+
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="searchData()" id="load" [disabled]="seachSpinner">
+                                      <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                   </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="no-padding">
+                                <p-table [value]="RMrewBrowseList" 
+                                [paginator]="RMrewBrowseList.length ? true : false"
+                                *ngIf='RMrewBrowseList.length'
+                                [rows]="100" [rowHover]="true" 
+                                [autoLayout]="true" sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]="RMrewBrowseListDynamicHeader"
+                                    [rowHover]="true" #dt>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <!-- <th style="width:5em">Action</th> -->
+                                            <th nowrap="nowrap" *ngFor="let option of RMrewBrowseListDynamicHeader">{{option.replaceAll('_',' ')}}</th>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr [class]='col.Cancel_Requisition === "Y" ? "text-red-active" : ""'>
+
+                                            <!-- <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu"> -->
+                                                        <!-- <li *ngIf="companyname != 'HARBAUER India [P] Ltd' && $CompacctAPI.CompacctCookies.Del_Right === 'Y' && col.Approve_Status === 'Not Approved'">
+                                                            <a (click)="Edit(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> Edit
+                                                            </a>
+                                                        </li> -->
+                                                        <!-- <li>
+                                                            <a (click)="Active(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li> -->
+                                                        <!-- <li>
+                                                            <a (click)="Print(col.Req_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li> -->
+                                                    <!-- </ul>
+                                                </div>
+                                            </td> -->
+                                            <ng-container *ngFor="let option of RMrewBrowseListDynamicHeader">
+                                                <td nowrap="nowrap">{{col[option]}}</td>
+                                            </ng-container>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <div class="col-lg-12">
+                            <div class="panel-group">
+                            <div class="panel panel-primary">
+                            <!-- <div class="panel-heading">Select Outlet</div> -->
+                            <div class="panel-body">
+                            <form name="RMissueForm" #RMissueForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date</label>
+                                        <ejs-datepicker  [(value)]="RM_Issue_Date" [min]='minFromDate' [format]="'dd/MMM/yyyy'" [enabled]="docdateDisabled"
+                                        ></ejs-datepicker>
+                                    </div> 
+                                    <div class="col-sm-4">
+                                        <label class="control-label">From Cost Center<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" 
+                                        name="F_Cost_Cen_ID" 
+                                        #F_Cost_Cen_ID="ngModel"
+                                         [(ngModel)]='objRMissue.F_Cost_Cen_ID' 
+                                         [ngClass]="{'clearance': RMissueFormSubmit && F_Cost_Cen_ID?.errors?.required}" 
+                                         [disabled]="true"
+                                         required>
+                                         <option  [ngValue]="undefined">Select</option>
+                                         <option *ngFor="let option of FcostcenterList" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">From Stock Point<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" 
+                                        name="F_Godown_ID" 
+                                        #F_Godown_ID="ngModel" 
+                                        [(ngModel)]="objRMissue.F_Godown_ID" 
+                                        [disabled]="Topfielddisabled"
+                                        [ngClass]="{'clearance': RMissueFormSubmit && F_Godown_ID?.errors?.required}"
+                                        required 
+                                        >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of FGodownList" [value]="option.Godown_ID">{{option.godown_name}}</option>
+                                    </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">To Furnace<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" 
+                                        name="To_Godown_ID" 
+                                        #To_Godown_ID="ngModel" 
+                                        [(ngModel)]="objRMissue.To_Godown_ID" 
+                                        [disabled]="Topfielddisabled"
+                                        [ngClass]="{'clearance': RMissueFormSubmit && To_Godown_ID?.errors?.required}" 
+                                        (change)="GetRequisitionNo()"
+                                        required 
+                                        >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of ToGodownList" [value]="option.Godown_ID">{{option.godown_name}}</option>
+                                    </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Requisition No<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="ReqNoList" 
+                                        name="reqno" 
+                                        [(ngModel)]="objRMissue.Req_No"
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Req Found'" 
+                                        [filter]="true" 
+                                        filterBy="label,value" 
+                                        [resetFilterOnHide]="true"
+                                        [placeholder]="'Product'" 
+                                        [virtualScroll]="true" 
+                                        #reqno="ngModel"
+                                        [disabled]="Topfielddisabled"
+                                        [styleClass]="RMissueFormSubmit && reqno.errors?.required ? 'clearance': ''" 
+                                        required>
+                                    </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button type="button" class="btn btn-primary pull-right" style="margin-top: 30px; margin-right: 40px;" (click)="GetProductsDetalis(RMissueForm.form.valid)" [disabled]="productList.length" id="load" >
+                                                <!-- <p-progressSpinner *ngIf="SpinnerShow" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner> -->
+                                             <!-- <span *ngIf="!SpinnerShow"></span> --> Get Product <!-- class="glyphicon glyphicon-save" -->
+                                        </button>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button type="button" class="btn btn-primary pull-right1" (click)="clearbutton()" id="load" [disabled]="editDis">
+                                              <!-- <span class="glyphicon glyphicon glyphicon-remove"></span> --> Clear
+                                        </button>
+                                    </div>
+                                    </div>
+                            </form>
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                                <!-- <hr class="box boxboxDivide-primary"> -->
+                                <!-- <form name="RMissueaddForm" #RMissueaddForm="ngForm" novalidate>
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
+                                            <p-dropdown [options]="productList" 
+                                            name="Product_ID" 
+                                            [(ngModel)]="objRMissueadd.Product_ID"
+                                            [showClear]="true" 
+                                            [emptyFilterMessage]="' No Product Found'" 
+                                            [filter]="true" 
+                                            filterBy="label,value" 
+                                            [resetFilterOnHide]="true"
+                                            [placeholder]="'Product'" 
+                                            [virtualScroll]="true" 
+                                            #Product_ID="ngModel"
+                                            (ngModelChange) = "getUOM()"
+                                            [styleClass]="RMissueaddFormSubmit && Product_ID.errors?.required ? 'clearance': ''" 
+                                            required>
+                                        </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Yard<sup class="text-danger">*</sup></label>
+                                            <input class="form-control" 
+                                                name="yard" 
+                                                #yard="ngModel" 
+                                                [(ngModel)]="objRMissueadd.Yard" 
+                                                placeholder="Yard"
+                                                [ngClass]="{'clearance': RMissueaddFormSubmit && yard?.errors?.required}" 
+                                                required>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Lot No<sup class="text-danger">*</sup></label>
+                                            <input class="form-control" 
+                                                name="lotno" 
+                                                #lotno="ngModel" 
+                                                [(ngModel)]="objRMissueadd.Lot_No" 
+                                                placeholder="Lot No"
+                                                [ngClass]="{'clearance': RMissueaddFormSubmit && lotno?.errors?.required}" 
+                                                required>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">QTY<sup class="text-danger">*</sup></label>
+                                            <input class="form-control" 
+                                            name="Qty" 
+                                            #Qty="ngModel" 
+                                            [(ngModel)]="objRMissueadd.Qty" 
+                                            placeholder="Qty"
+                                            CompacctDigitonly="true"
+                                            [ngClass]="{'clearance': RMissueaddFormSubmit && Qty?.errors?.required}" 
+                                            required>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <button type="button" 
+                                        class="btn btn-primary custombutton" 
+                                        (click)="addRMissue(RMissueaddForm.form.valid)" >
+                                            <span class="glyphicon glyphicon-plus"></span> ADD
+                                        </button>
+                                        </div>
+                                     </div>
+                                     <div class="box-footer">
+                                    </div>
+                                 </form> -->
+                                 <div class="clearfix"></div>
+
+                                 <div class="no-padding">
+                                     <p-table [value]="productList" [globalFilterFields]="['Product_Description','Yard','Req_Qty','Batch_No','Batch_Qty','Delivery_Qty']" [rowHover]="true" [autoLayout]="true" #dt1>
+                                         <ng-template pTemplate="caption">
+                                             <div class="row">
+                                                 <div class="col-sm-3 pull-right" style="text-align: right; margin-top: 31px;">
+                                                     <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                 </div>
+                                                 <!-- <div class="col-sm-4 pull-left" style="text-align: left">
+                                                     <label class="control-label">Indent List<sup class="text-danger">*</sup> &nbsp;  </label>
+                                                     <p-multiSelect itemSize="30" [options]="IndentFilter" [styleClass]="'compacct-multiselect'" name="indentn" [(ngModel)]="SelectedIndent" [disabled]="createchallandisabled" [filter]="true" filterBy="label,value.name" (onChange)="filterIndentList()" [resetFilterOnHide]="true">
+                                                     </p-multiSelect>
+                     
+                                                 </div> -->
+                                             </div>
+     
+                                         </ng-template>
+                                         <ng-template pTemplate="header">
+                                             <tr>
+                                                 <th>Product Description</th>
+                                                 <th>Yard</th>
+                                                 <th>Req Qty</th>
+                                                 <th>Lot No</th>
+                                                 <th>Batch Qty</th>
+                                                 <th>Qty</th>
+                                                 <!-- <th *ngIf="EditList.length">Accept Reason</th> -->
+                                             </tr>
+                                         </ng-template>
+                                         <ng-template pTemplate="body" let-col let-i="rowIndex">
+                                             <tr>
+                                                 <td>{{col.Product_Description}}</td>
+                                                 <td>{{col.Yard}}</td>
+                                                 <td>{{col.Req_Qty}}</td>
+                                                 <td>{{col.Batch_No}}</td>
+                                                 <td>{{col.Batch_Qty}}</td>
+                                                 <td><input type="text" [name]="col.product_id" [(ngModel)]='col.Delivery_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                                 <!-- <td *ngIf="EditList.length">{{col.Accept_Reason}}</td> -->
+                                             </tr>
+                                             <!-- <tr>
+                                                 <td colspan="3" class="text-right">Total</td>
+                                                 <td *ngIf="reqQTYdis">{{TotalReq()}}</td>
+                                                 <td></td>
+                                                 <td></td>
+                                                 <td *ngIf="AccQtydis">{{getTotal('Accepted_Qty')}}</td>
+                                                 <td>{{getTotal('Batch_Qty')}}</td>
+                                                 <td>{{getTotal('Delivery_Qty')}}</td>
+                                             </tr> -->
+                                         </ng-template>
+                                     </p-table>
+                                 </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Remarks </label>
+                                            <textarea class="form-control" name="remarks" #remarks="ngModel" [(ngModel)]="objRMissue.Remarks" placeholder="Remarks" [ngClass]="{'clearance':RMissueFormSubmit && remarks?.errors?.required}" ></textarea>
+                                        </div>
+                                    </div>
+                                   <div class="box-footer">
+                                        <button class="btn btn-primary pull-right"
+                                                (click)="SaveIssue()"
+                                                id="load"
+                                                [disabled]="Spinner">
+                                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                        </button>
+                                    </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-hourglass">
+                            <form name="PendingIndentForm" #PendingIndentForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <!-- <div class="col-sm-4">
+                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" 
+                                    name="pgrncompany" 
+                                    #pgrncompany="ngModel" 
+                                    [(ngModel)]="ObjPendingGRN.Company_ID"
+                                    [ngClass]="{'clearance': PendingGRNFormSubmitted && pgrncompany?.errors?.required}"
+                                    required>
+                                    <option  [ngValue]="undefined">Select</option>
+                                       <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                          {{option.Company_Name}}
+                                        </option>
+                                  </select>
+                                </div> -->
+                                <div class="col-sm-3">
+                                    <label class="control-label">Date</label>
+
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Requisition For&nbsp;</label>
+                                    <select class="form-control" 
+                                    name="GodownPending" 
+                                    #GodownPending='ngModel' 
+                                    [(ngModel)]="ObjPendingIndent.Godown_ID"
+                                    [ngClass]="{'clearance': PendingIndentFormSubmitted && GodownPending?.errors?.required}" >
+                                        <option  [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of godownListPeding" [value]="option.Godown_ID">{{option.godown_name}}</option>
+                                  </select>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPendingIndent(PendingIndentForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="seachSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!seachSpinner"
+                                        class="glyphicon glyphicon-search"
+                                      ></span
+                                      >&nbsp;Search
+                                    </button>
+                                </div>
+                            </div>
+                            </form> 
+                            <div class="no-padding">
+                                <p-table [value]="PendingIndentList"
+                                [paginator]="PendingIndentList.length ? true : false"
+                                *ngIf='PendingIndentList.length'
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeaderforPIndent'
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <!-- <th style="width:5em">Action</th> -->
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforPIndent">{{option.replace('_',' ')}}</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+    
+                                            <!-- <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                                <a (click)="CreateChallan(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Issue Material 
+                                                                </a>
+                                                            </li>
+                                                        <li>
+                                                            <a (click)="PrintIndent(col.Req_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li> -->
+                                                        <!-- <li>
+                                                            <a (click)="Delete(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li> -->
+                                                    <!-- </ul>
+                                                </div>
+                                            </td> -->
+                                            <ng-container *ngFor="let option of DynamicHeaderforPIndent">
+                                                <td nowrap="nowrap">{{col[option]}}</td>
+                                            </ng-container>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            

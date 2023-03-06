@@ -1,0 +1,732 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" baseZIndex="99999" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="createProjectBill()" label="Yes" class="ui-button-success"></button>
+            </div>
+        <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" baseZIndex="99999" key="d" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+        <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)"> 
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Cost Center<sup class="text-danger"></sup></label>
+                                        <select class="form-control" 
+                                        name="Cost_Cen_ID" 
+                                        #Cost_Cen_ID="ngModel" 
+                                        [(ngModel)]="ObjBrowse.Cost_Cen_ID"
+                                        >
+                                        <option  [ngValue]="0">Select</option>
+                                           <option *ngFor = "let option of costCenterList" [value] ="option.Cost_Cen_ID">
+                                              {{option.Cost_Cen_Name}}
+                                            </option>
+                                      </select>
+                                    </div>
+                                    
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getAllData(SearchForm.form.valid)" id="load2" [disabled]="seachSpinner">
+                                          <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                          <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                       </button>
+                                    </div>
+                                    <div class="col-sm-2"></div>
+                                </div>
+                            </form>
+                            <div class="form-group" *ngIf='getAllDataList.length' style="padding:15px">
+
+                                <fieldset class="col-md-12">
+                                    <legend>Filter</legend>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Ref No <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="distRefNo" [(ngModel)]="selectDistRefNo" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Ref_No"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Customer Name <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="distCustomerName" [(ngModel)]="seleteDistCustomerName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Customer_Name"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Project Description <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistProjectDescription" [(ngModel)]="seleteDistProjectDescription" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Project_Description"></p-multiSelect>
+                                        </div>
+                                    </div>
+
+                                </fieldset>
+                            </div>
+                            <div class="no-padding">
+                                <p-table [value]="getAllDataList"
+                                [paginator]="getAllDataList.length ? true : false"
+                                *ngIf='getAllDataList.length'
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeader'
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeader">{{option.replaceAll('_',' ')}}</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+    
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <!-- <li>
+                                                                <a (click)="Edit(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li>-->
+                                                        <li> 
+                                                            <a (click)="Print(col)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="DeleteProjectBill(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <ng-container *ngFor="let option of DynamicHeader">
+                                                <td>{{col[option]}}</td>
+                                            </ng-container>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="BillingAddressForm" #BillingAddressForm="ngForm" novalidate >
+                                <h5 class="customh5">
+                                <i class="fa fa-fw fa-fax">
+                                </i> &nbsp;<strong>Billing Address :</strong>
+                                </h5>
+                                <div class="form-group">
+                                    <div class="col-sm-6"> 
+                                        <label class="control-label">Subledger Name<sup class="text-danger">*</sup></label>
+                                        <p-dropdown 
+                                            [options]="AllSubledger" 
+                                            name="Subledger"
+                                            #Subledger="ngModel" 
+                                            [(ngModel)]="ObjProjectBill.Sub_Ledger_ID"
+                                            [showClear]="true" 
+                                            [emptyFilterMessage]="' No Subledger Found'" 
+                                            (onChange)="SubledgerChange()"
+                                            [filter]="true" filterBy="label,value.name" 
+                                            [resetFilterOnHide]="true" 
+                                            [placeholder]="'Select Subledger'" 
+                                            [virtualScroll]="true" 
+                                            itemSize="30" 
+                                            [ngClass]="{'clearance': projuctBillDetailsFormSubmit && Subledger?.errors?.required }"
+                                            [disabled] ="addProductList.length" 
+                                            required
+                                            >
+                                            </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Address<sup class="text-danger"></sup></label>
+                                        <div class="label-t">
+                                            {{fullAddress ? fullAddress : "-"}}
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3"> 
+                                        <label class="control-label">Land Mark<sup class="text-danger"></sup></label>
+                                        <div class="label-t">
+                                            {{ObjProjectBill.Sub_Ledger_Land_Mark ? ObjProjectBill.Sub_Ledger_Land_Mark : "-"}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">District<sup class="text-danger"></sup></label>
+                                        <div class="label-t">
+                                            {{ObjProjectBill.Sub_Ledger_District ? ObjProjectBill.Sub_Ledger_District : "-"}}
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">State<sup class="text-danger"></sup></label>
+                                        <div class="label-t">
+                                            {{ObjProjectBill.Sub_Ledger_State ? ObjProjectBill.Sub_Ledger_State : "-"}}
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">PIN<sup class="text-danger"></sup></label>
+                                        <div class="label-t">
+                                            {{ObjProjectBill.Sub_Ledger_Pin ? ObjProjectBill.Sub_Ledger_Pin : "-"}}
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">GST<sup class="text-danger"></sup></label>
+                                        <div class="label-t">
+                                            {{ObjProjectBill.Sub_Ledger_GST_No ? ObjProjectBill.Sub_Ledger_GST_No : "-"}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <form name="ShippingAddressForm" #ShippingAddressForm="ngForm" novalidate >
+                                <h5 class="customh5">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>Shipping Address :</strong>
+                                </h5>
+                                <div class="form-group">
+                                <div class="col-sm-4" >
+                                    <label class="control-label">Customer Name<sup class="text-danger">*</sup></label>
+                                    <input type="text" 
+                                            class="form-control" 
+                                            placeholder="Customer Name" 
+                                            name="Shipping_Customer_Name"
+                                            #Shipping_Customer_Name="ngModel"
+                                            [(ngModel)]="ObjProjectBill.Shipping_Customer_Name"
+                                            [ngClass]="{'clearance': projuctBillDetailsFormSubmit && Shipping_Customer_Name?.errors?.required }"
+                                            required
+                                            [disabled]="addProductList.length"> 
+                                </div>
+                                <div class="col-sm-4" >
+                                    <label class="control-label">GST Number<sup class="text-danger"></sup></label>
+                                    <input type="text" class="form-control" 
+                                    placeholder="GST Number" 
+                                    name="GST_Number"
+                                    #GST_Number="ngModel"
+                                    [(ngModel)]="ObjProjectBill.Shipping_GST_No"
+                                    [disabled]="addProductList.length"
+                                    >
+                                </div>
+                                <div class="col-sm-4" >
+                                    <label class="control-label">Site Address<sup class="text-danger"></sup></label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           placeholder="Site Address" 
+                                           name="Shipping_Site_Address" 
+                                           #Shipping_Site_Address = "ngModel"
+                                           [(ngModel)]="ObjProjectBill.Shipping_Site_Address"
+                                           [disabled]="addProductList.length">
+                                </div>
+                                </div>
+                                <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Place of Supply<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" 
+                                    name="Shipping_Place_Of_Supply" 
+                                    #Shipping_Place_Of_Supply="ngModel" 
+                                    [(ngModel)]="ObjProjectBill.Shipping_Place_Of_Supply"
+                                    (change)="changeState()"
+                                    [ngClass]="{'clearance': projuctBillDetailsFormSubmit && Shipping_Place_Of_Supply?.errors?.required }"
+                                    required
+                                    [disabled]="addProductList.length"
+                                    >
+                                        <option  [ngValue]="undefined">Select</option>
+                                        <option  *ngFor="let option of stateList" [ngValue]="option.State_Name">
+                                            {{option.State_Name}}
+                                        </option>
+                                        </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">State Code<sup class="text-danger">*</sup></label>
+                                    <input type="number" 
+                                    class="form-control"
+                                        placeholder="State Code" 
+                                        name="State_Code"
+                                        #State_Code = "ngModel"
+                                        [(ngModel)]="ShippingStateCode"
+                                        [disabled]="true">
+                                </div>
+                                <div class="col-sm-4">
+                                    
+                                </div>
+                                </div>
+                            </form>
+                            <form name="RunningAccountDetailsForm" #RunningAccountDetailsForm="ngForm" novalidate >
+                                     <h5 class="customh5">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>Project Billing Details :</strong>
+                                     </h5>
+                                     <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Percentage claimed upto Previous Bills</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" 
+                                                 name="Percentage_claimed_Previous_Bills"
+                                                 #Percentage_claimed_Previous_Bills = "ngModel"
+                                                 [(ngModel)]="ObjProjectBill.Percentage_claimed_Previous_Bills"
+                                                 CompacctDigitonly="true"
+                                                 (ngModelChange)="CalClaimupto()"
+                                                [disabled]="addProductList.length">
+                                                <span class="input-group-addon">%</span>
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Percentage claim in this Bill</label>
+                                            <div class="input-group">
+                                                <input type="text" 
+                                                class="form-control"  
+                                                CompacctDigitonly="true" 
+                                                name="Percentage_claimed_This_Bill" 
+                                                #Percentage_claimed_This_Bill = "ngModel"
+                                                [(ngModel)]="ObjProjectBill.Percentage_claimed_This_Bill"
+                                                (ngModelChange)="CalClaimupto()"
+                                                [disabled]="addProductList.length">
+                                                <span class="input-group-addon">%</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Percentage claim upto date</label>
+                                            <div class="input-group">
+                                                <input type="text" 
+                                                        class="form-control"  
+                                                        CompacctDigitonly="true"  
+                                                        name="Percentage_claimed_upto_date"
+                                                        #Percentage_claimed_upto_date="ngModel"
+                                                        [(ngModel)]="ObjProjectBill.Percentage_claimed_upto_date"
+                                                        disabled>
+                                                <span class="input-group-addon">%</span>
+                                            </div>
+                                        </div>
+                                     </div>
+                                     <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Total Work Order Value (Ex GST)</label>
+                                            <input type="text" 
+                                                    class="form-control" 
+                                                    name="Total_Work_Order_Value"
+                                                    #Total_Work_Order_Value = "ngModel"
+                                                    [(ngModel)]="ObjProjectBill.Total_Work_Order_Value"
+                                                    CompacctDigitonly="true" 
+                                                    [disabled]="addProductList.length">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Running Bill Status</label>
+                                            <input type="text" 
+                                                    class="form-control" 
+                                                    name="Running_Bill_Status"
+                                                    #Running_Bill_Status="ngModel"
+                                                    [(ngModel)]="ObjProjectBill.Running_Bill_Status" 
+                                                    [disabled]="addProductList.length">
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Doc Date.</label>
+                                        <ejs-datepicker [(value)]="Doc_Date" [format]="'dd/MMM/yyyy'"  [enabled]="!addProductList.length"></ejs-datepicker> 
+                                    </div>
+                                        <div class="col-sm-2"> 
+                                            <label class="control-label">Ref No.</label>
+                                            <input type="text" 
+                                                    class="form-control" 
+                                                    placeholder="Ref No." 
+                                                    name="Ref_NO"
+                                                    #Ref_NO="ngModel"
+                                                    [(ngModel)]="ObjProjectBill.Ref_NO"
+                                                    [disabled]="addProductList.length">
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Ref Date.</label>
+                                        <ejs-datepicker [(value)]="Ref_Date" [format]="'dd/MMM/yyyy'"  [enabled]="!addProductList.length"></ejs-datepicker> 
+                                    </div>
+                                     </div>
+                                     <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <label class="control-label">Name of the Work</label>
+                                            <textarea class="form-control" 
+                                            name="Name_Of_the_Work" 
+                                            #Name_Of_the_Work="ngModel" 
+                                            rows='1' 
+                                            [(ngModel)]="ObjProjectBill.Name_Of_the_Work"
+                                            [disabled]="addProductList.length"></textarea>
+                                        </div>
+                                     </div>
+                            </form>
+                            <form name="BillingCostCenterDetailsForm" #BillingCostCenterDetailsForm="ngForm" novalidate >
+                                <h5 class="customh5">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>Billing Cost Center Detalis:</strong>
+                                </h5>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Cost Center Name</label>
+                                        <select class="form-control"
+                                                name="Cost_Cen_ID" 
+                                                #Cost_Cen_ID="ngModel"
+                                                [(ngModel)]="ObjProjectBill.Cost_Cen_ID"
+                                                (change)="changeCostCenter(ObjProjectBill.Cost_Cen_ID)"
+                                                [disabled]="addProductList.length">
+                                             <option [ngValue]="undefined" >Select</option>
+                                             <option *ngFor=" let option of costCenterList"  [ngValue]="option.Cost_Cen_ID" >
+                                                {{option.Cost_Cen_Name}}
+                                             </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">State</label>
+                                        <input class="form-control" 
+                                               name="Cost_State" 
+                                               #Cost_State="ngModel" 
+                                               [(ngModel)]="ObjProjectBill.Cost_Cen_State" 
+                                               [disabled]="true">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">State Code</label>
+                                        <input class="form-control" 
+                                               name="cost_state_code" 
+                                               #cost_state_code="ngModel" 
+                                               [(ngModel)]="CostCenCode" 
+                                               [disabled]="true">
+                                    </div>
+                                </div>
+                            </form>
+                            <hr class="box boxboxDivide-primary">
+                            <form name="ProductDetailsForm" #ProductDetailsForm="ngForm" novalidate >
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Project<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Project" #Project="ngModel" 
+                                        [(ngModel)]="ObjProductDetalis.Project_ID"
+                                        (change)="GetWorkDetalis()"
+                                        [ngClass]="{'clearance': ProductDetailsFormSubmit && Project?.errors?.required }"
+                                        required
+                                        [disabled]="addProductList.length">
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of projectList" [ngValue]="option.Project_ID" >
+                                                {{option.Project_Description}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Work Details <sup class="text-danger">*</sup> </label>
+                                        <select class="form-control" 
+                                        name="Work_Details" 
+                                        #Work_Details="ngModel" 
+                                        [(ngModel)]="ObjProductDetalis.Work_Details_ID"
+                                        (change)="getProduct()" 
+                                        [ngClass]="{'clearance': ProductDetailsFormSubmit && Work_Details?.errors?.required }"
+                                        required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of WorkDetalisList" [ngValue]="option.Work_Details_ID" >
+                                                {{option.Work_Details}}
+                                            </option>
+                                         </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Actual Billing item<sup class="text-danger">*</sup></label>
+                                      
+                                         <p-dropdown 
+                                            [options]="ProductList" 
+                                            name="Product_ID"
+                                            #Product_ID="ngModel" 
+                                            [(ngModel)]="ObjProductDetalis.Product_ID"
+                                            [showClear]="true" 
+                                            [emptyFilterMessage]="'No item Found'" 
+                                            (onChange)="productChange()"
+                                            [filter]="true" filterBy="label,value.name" 
+                                            [resetFilterOnHide]="true" 
+                                            [placeholder]="'Select item'" 
+                                            [virtualScroll]="true" 
+                                            itemSize="30" 
+                                            [ngClass]="{'clearance': ProductDetailsFormSubmit && Product_ID?.errors?.required }"
+                                            required
+                                            >
+                                            </p-dropdown>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                 <div class="col-sm-2">
+                                    <label class="control-label">HSN / SAC Code.<sup class="text-danger">*</sup></label>
+                                    <input type="text" 
+                                    class="form-control" 
+                                    placeholder="HSN / SAC Code." 
+                                    name="HSN_code"
+                                    #HSN_code="ngModel"
+                                    [(ngModel)]="ObjProductDetalis.HSL_No"
+                                    CompacctDigitonly="true"
+                                    [ngClass]="{'clearance': ProductDetailsFormSubmit && HSN_code?.errors?.required }"
+                                    required>
+                                 </div>
+                                 <div class="col-sm-2">
+                                    <label class="control-label">Unit Rate.<sup class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" 
+                                     placeholder="Unit Rate."
+                                     name="Rate"
+                                     #Rate="ngModel"
+                                     [(ngModel)]="ObjProductDetalis.MRP"
+                                     (ngModelChange)="getTaxableValue()"
+                                     CompacctDigitonly="true"
+                                     [ngClass]="{'clearance': ProductDetailsFormSubmit && Rate?.errors?.required }"
+                                    required>
+                                 </div>
+                                 <div class="col-sm-2">
+                                    <label class="control-label">Unit. <sup class="text-danger">*</sup> </label>
+                                    <input type="text" class="form-control" placeholder="Unit." 
+                                    name="Unit"
+                                    #Unit="ngModel"
+                                    [(ngModel)]="ObjProductDetalis.UOM"
+                                    [ngClass]="{'clearance':ProductDetailsFormSubmit && Unit?.errors?.required }" required>
+                                 </div>
+                                 <div class="col-sm-2">
+                                    <label class="control-label">Qty.<sup class="text-danger">*</sup></label>
+                                    <input type="text" 
+                                    class="form-control" 
+                                    placeholder="Qty." 
+                                    name="Qty"
+                                    #Qty="ngModel"
+                                    [(ngModel)]="ObjProductDetalis.Qty"
+                                    (ngModelChange)="getTaxableValue()"
+                                    CompacctDigitonly="true"
+                                    [ngClass]="{'clearance':ProductDetailsFormSubmit && Qty?.errors?.required }" 
+                                    required>
+                                 </div>
+                                 <div class="col-sm-2">
+                                    <label class="control-label">Claim in RA<sup class="text-danger">*</sup></label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" 
+                                        placeholder="Claim in RA" 
+                                        name="Claim_in_RA"
+                                        #Claim_in_RA="ngModel"
+                                        [(ngModel)]="ObjProductDetalis.Claim_in_RA"
+                                        CompacctDigitonly="true"
+                                        (ngModelChange)="getTaxableValue()"
+                                        [ngClass]="{'clearance':ProductDetailsFormSubmit && Claim_in_RA?.errors?.required }" 
+                                        required>
+                                        <span class="input-group-addon">%</span>
+                                    </div>
+                                    
+                                 </div>
+                                 <div class="col-sm-2">
+                                    <label class="control-label">Total Amount.<sup class="text-danger"></sup></label>
+                                    <div class="label-t">
+                                        {{totalAmt ? getTofix(totalAmt) : 0}}
+                                    </div>
+                                 </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Discount Type<sup class="text-danger"></sup></label>
+                                        <select class="form-control"
+                                                name="Discount_Type"
+                                                #Discount_Type="ngModel"
+                                                (change)="getTaxableValue()"
+                                                [(ngModel)]="ObjProductDetalis.Discount_Type" >
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of DiscountTypeList" [ngValue]="option.Dtype">{{option.Dtype}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Discount <span>{{ObjProductDetalis.Discount_Type}}</span><sup class="text-danger"></sup></label>
+                                        <input type="text"
+                                        class="form-control"
+                                        name="Discount"
+                                        #Discount="ngModel"
+                                        [(ngModel)]="ObjProductDetalis.Discount"
+                                        (ngModelChange)="getTaxableValue()"
+                                        placeholder="Discount"
+                                        CompacctDigitonly="true"
+                                        [disabled] = "!ObjProductDetalis.Discount_Type"
+                                        >
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Discount Amount<sup class="text-danger"></sup></label>
+                                         <div class="label-t">
+                                        {{ObjProductDetalis.Discount_Type_Amount ? getTofix(ObjProductDetalis.Discount_Type_Amount) : 0}}
+                                    </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Total Taxable Value.<sup class="text-danger"></sup></label>
+                                        <input type="text" 
+                                        class="form-control" 
+                                        placeholder="Total Taxable" 
+                                        name="Total_Taxable"
+                                        #Total_Taxable="ngModel"
+                                        [(ngModel)]="ObjProductDetalis.Taxable_Amount"
+                                        CompacctDigitonly="true"
+                                        disabled>
+                                    </div>
+                                </div>
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right" 
+                                    type="button" (click)="addProductDetalis(BillingAddressForm.form.valid,
+                                                                            ShippingAddressForm.form.valid,
+                                                                            RunningAccountDetailsForm.form.valid,
+                                                                            BillingCostCenterDetailsForm.form.valid,
+                                                                            ProductDetailsForm.form.valid)" 
+                                    [disabled]="AddSpinner">
+                                        <p-progressSpinner 
+                                        *ngIf="AddSpinner" 
+                                        [style]="{width: '15px', height: '15px'}" 
+                                        strokeWidth="8"  
+                                        animationDuration=".5s">
+                                    </p-progressSpinner>
+                                    <span *ngIf="!AddSpinner" 
+                                    class="glyphicon glyphicon-plus">
+                                  </span>Add
+                                </button>
+                                </div>
+                            </form>
+                            <div class="table table-responsive" style="margin-top: 13px;">
+                            <table class="table table-bordered">
+                                    <thead>
+                                        <tr style="background-color:#3c8dbc;color:white;">
+                                    <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Sl. No.</th>
+                                    <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Project</th>
+                                    <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Work Details</th>
+                                    <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Actual Billing item</th>
+                                    <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">HSN / SAC Code</th>
+                                    <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Unit Rate</th>
+                                    <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Unit</th>
+                                    <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Qty</th>
+                                    <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Claim in RA(%)</th>
+                                    <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Total Amount</th>
+                                    <th nowrap="" colspan="3" style="vertical-align : middle;text-align:center;">Discount</th>
+                                    <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Taxable Value</th>
+                                    <th nowrap="" colspan="2" style="vertical-align : middle;text-align:center;">CGST</th>
+                                    <th nowrap="" colspan="2" style="vertical-align : middle;text-align:center;">SGST </th>
+                                    <th nowrap="" colspan="2" style="vertical-align : middle;text-align:center;">IGST</th>
+                                    <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Line Total (INR)</th>
+                                    <th nowrap="" rowspan="2" style="vertical-align : middle;text-align:center;">Delete</th>
+                                        </tr>
+                                    <tr style="background-color:#3c8dbc;color:white;">
+                                        <th nowrap="" style="text-align: center;">Discount Type</th>
+                                        <th nowrap="" style="text-align: center;">Discount</th>
+                                        <th nowrap="" style="text-align: center;">Discount Amount</th>
+                                        <th nowrap="" style="text-align: center;">Rate</th>
+                                        <th nowrap="" style="text-align: center;">Amount (INR)</th>
+                                        <th nowrap="" style="text-align: center;">Rate</th>
+                                        <th nowrap="" style="text-align: center;">Amount (INR)</th>
+                                        <th nowrap="" style="text-align: center;">Rate</th>
+                                        <th nowrap="" style="text-align: center;">Amount (INR)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor='let col of addProductList let i = index' >
+                                            <td>{{i + 1}}</td>
+                                            <td>{{col.Project_Description}}</td>
+                                            <td>{{col.Work_Details}}</td>
+                                            <td>{{col.Product_Name ? col.Product_Name : '-'}}</td>
+                                            <td>{{col.HSL_No ? col.HSL_No : '-'}}</td>
+                                            <td>{{col.MRP}}</td>
+                                            <td>{{col.UOM}}</td>
+                                            <td>{{col.Qty}}</td>
+                                            <td>{{col.Claim_in_RA ? col.Claim_in_RA : 0}}</td>
+                                            <td>{{getTofix(col.Amount)}}</td>
+                                            <td>{{col.Discount_Type}}</td>
+                                            <td>{{col.Discount}}</td>
+                                            <td>{{col.Claim_in_RA ? getTofix(col.Discount_Type_Amount) : 0}}</td>
+                                            <td>{{col.Taxable_Amount ? getTofix(col.Taxable_Amount) : 0}}</td>
+                                            <td>{{col.CGST_Rate ? col.CGST_Rate :0}}</td>
+                                            <td>{{col.CGST_Amount ? getTofix(col.CGST_Amount) : 0}}</td>
+                                            <td>{{col.SGST_Rate ? col.SGST_Rate : 0}}</td>
+                                            <td>{{col.SGST_Amount ? getTofix(col.SGST_Amount) : 0}}</td>
+                                            <td>{{col.IGST_Rate ? col.IGST_Rate : 0}}</td>
+                                            <td>{{col.IGST_Amount ? getTofix(col.IGST_Amount) : 0}}</td>
+                                            <td>{{col.Line_Total ? getTofix(col.Line_Total) : 0}}</td>
+                                                <td> <a (click)="DeleteAddPurchase(i)"
+                                            ><div><i class="fa fa-fw fa-trash"> </i></div>
+                                            </a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive" *ngIf="addProductList.length">
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                    <th>Total Amount:</th>
+                                    <td class="amt-td">{{getTofix(grTotalAmt)}}</td>
+                                    <th>CGST Amount :</th>
+                                    <td class="amt-td ">{{getTofix(grCGST)}}</td>
+                                    <th>Rounded Off :</th>
+                                    <td class="amt-td">{{roundOffValue()}}</td>
+                                     </tr>
+                                    <tr>
+                                    <th>Discount Amount:</th>
+                                    <td class="amt-td">{{getTofix(grDiscount)}}</td>
+                                    <th>SGST Amount :</th>
+                                    <td class="amt-td">{{getTofix(grSGST)}}</td>
+                                    <th>Net Amount : </th>
+                                    <td class="amt-td">{{RoundOff(grNetAMt)}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Taxable Amount:</th>
+                                        <td class="amt-td">{{getTofix(grTaxable)}}</td>
+                                        <th>IGST Amount:</th>
+                                        <td class="amt-td ">{{getTofix(grIGST)}}</td>
+                                        <th></th>
+                                        <td class="amt-td"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="box-footer">
+                                <button class="btn btn-primary pull-right" type="button" (click)="saveProject()" [disabled]="Spinner">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                            </button>
+                            </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

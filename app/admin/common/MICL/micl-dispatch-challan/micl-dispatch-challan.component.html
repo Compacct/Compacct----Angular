@@ -8,9 +8,15 @@
         </div>
 
         <div class="ui-g ui-fluid">
-            <div class="ui-g-6">
+            <!-- <div class="ui-g-6">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div> -->
+            <div class="ui-g-6" *ngIf="Save && !Del">
+                <button type="button" pButton (click)="saveDispatch()" label="Yes" class="ui-button-success"></button>
             </div>
+            <div class="ui-g-6" *ngIf="Del && !Save">
+              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+          </div>
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
             </div>
@@ -35,7 +41,7 @@
 
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">From Cost Center<span class="text-danger">*</span></label>
+                                        <label class="control-label">To Cost Center</label>
                                         <select class="form-control" name="CostCent" #CostCent="ngModel" [(ngModel)]='ObjBrowseData.Cost_Cen_ID' [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'" [ngClass]="{'clearance': DispatchSearchFormSubmit && CostCent?.errors?.required}" (change)="GetBrowseGodown()" 
                                                     >
                                               <option  [ngValue]="undefined">Select</option>
@@ -43,7 +49,7 @@
                                         </select>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">From Stock Point<span class="text-danger">*</span></label>
+                                        <label class="control-label">To Stock Point</label>
                                         <select class="form-control" name="Godown" #Godown="ngModel" [(ngModel)]="ObjBrowseData.Godown_ID" [ngClass]="{'clearance' : DispatchSearchFormSubmit && Godown.errors?.required}" 
                                                           >
                                               <option  [ngValue]="undefined">Select</option>
@@ -184,12 +190,12 @@
                                                     <div class="col-sm-4">
                                                         <label class="control-label">Issue Date</label>
                                                         <!-- <div  class="label-t">{{myDate  | date :"dd/MMM/yyyy"}}</div> -->
-                                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='ChallanDate' [enabled]="docdateDisabled"></ejs-datepicker>
+                                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='ChallanDate' [enabled]="docdateDisabled" (change)="GetshowProduct()"></ejs-datepicker>
 
                                                     </div>
                                                     <div class="col-sm-4">
                                                         <label class="control-label">From Cost Center<span class="text-danger">*</span></label>
-                                                        <select class="form-control" name="FCostCent" #FCostCent="ngModel" [(ngModel)]='Objdispatch.F_Cost_Cen_ID' [disabled]="inputBoxDisabled" [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'" [ngClass]="{'clearance': DispatchFormSubmit && FCostCent?.errors?.required}" (change)="GetFromGodown()" 
+                                                        <select class="form-control" name="FCostCent" #FCostCent="ngModel" [(ngModel)]='Objdispatch.F_Cost_Cen_ID' [disabled]="true" [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'" [ngClass]="{'clearance': DispatchFormSubmit && FCostCent?.errors?.required}" (change)="GetFromGodown()" 
                                                                     required>
                                                               <option  [ngValue]="undefined">Select</option>
                                                               <option *ngFor="let option of FromCostCenterList" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
@@ -197,7 +203,7 @@
                                                     </div>
                                                     <div class="col-sm-4">
                                                         <label class="control-label">From Stock Point<sup class="text-danger">*</sup></label>
-                                                        <select class="form-control" name="FromGodown" #FromGodown="ngModel" [(ngModel)]="Objdispatch.F_Godown_ID" [disabled]="inputBoxDisabled" [ngClass]="{'clearance': DispatchFormSubmit && FromGodown?.errors?.required}" required>
+                                                        <select class="form-control" name="FromGodown" #FromGodown="ngModel" [(ngModel)]="Objdispatch.F_Godown_ID" [disabled]="formstockpointDisabled" [ngClass]="{'clearance': DispatchFormSubmit && FromGodown?.errors?.required}" required>
                                                                 <option  [ngValue]="undefined">Select</option>
                                                                 <option *ngFor="let option of FromGodownList" [value]="option.Godown_ID">{{option.godown_name}}</option>
                                                         </select>
@@ -221,8 +227,8 @@
                                                         </select>
                                                     </div>
                                                     <div class="col-sm-4">
-                                                        <label class="control-label">Vehicle Details / Delivery By<span class="text-danger">*</span></label>
-                                                        <input class="form-control" name="Vehicle_Details" #Vehicle_Details="ngModel" [(ngModel)]="Objdispatch.Vehicle_Details" [disabled]="inputBoxDisabled" placeholder="Vehicle Details" [ngClass]="{'clearance':DispatchFormSubmit && Vehicle_Details?.errors?.required}" required>
+                                                        <label class="control-label">Received By<span class="text-danger">*</span></label>
+                                                        <input class="form-control" name="Vehicle_Details" #Vehicle_Details="ngModel" [(ngModel)]="Objdispatch.Vehicle_Details"  placeholder="Received By" [ngClass]="{'clearance':DispatchFormSubmit && Vehicle_Details?.errors?.required}" required>
                                                     </div>
                                                 </div>
                                                     <div class="form-group">
@@ -355,10 +361,10 @@
                                                 <p-multiSelect itemSize="30" [options]="IndentFilter" [styleClass]="'compacct-multiselect'" name="indentn" [(ngModel)]="SelectedIndent" [disabled]="createchallandisabled" [filter]="true" filterBy="label,value.name" (onChange)="filterIndentList()" [resetFilterOnHide]="true">
                                                 </p-multiSelect>
                 
-                                            </div> -->
+                                            </div> --><!--indentlistdisabled -->
                                             <div class="col-sm-4 pull-left" style="text-align: left">
-                                                <label class="control-label">Indent List<span class="text-danger">*</span></label>
-                                                <select class="form-control" name="indent" #indent="ngModel" [(ngModel)]='SelectedIndent' [disabled]="indentlistdisabled" (change)="GetshowProduct()" 
+                                                <label class="control-label">Requisition No.<span class="text-danger">*</span></label>
+                                                 <select class="form-control" name="indent" #indent="ngModel" [(ngModel)]='SelectedIndent' [disabled]="productDetails.length" (change)="GetshowProduct()" 
                                                             >
                                                       <option  [ngValue]="undefined">Select</option>
                                                       <option *ngFor="let option of IndentNoList" [value]="option.Req_No">{{option.Req_No}}</option>
@@ -373,36 +379,44 @@
                                             <th>Product Description</th>
                                             <th>UOM</th>
                                             <th *ngIf="reqQTYdis">Req Qty</th>
+                                            <th>Purpose</th>
                                             <th>Batch No</th>
                                             <th *ngIf="!reqQTYdis">Accepted Qty</th>
                                             <th>Batch Qty</th>
                                             <th>Issue Qty</th>
-                                            <th *ngIf="EditList.length">Accept Reason</th>
+                                            <!-- <th *ngIf="EditList.length">Accept Reason</th> -->
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col let-i="rowIndex">
                                         <tr>
-                                            <!-- <ng-container *ngIf="CheckLengthProductID(col.product_id) !== 1 && CheckIndexProductID(col.product_id) === i;" >
+                                            <ng-container *ngIf="CheckLengthProductID(col.product_id) !== 1 && CheckIndexProductID(col.product_id) === i;" >
+                                                <td [attr.rowspan]="CheckLengthProductID(col.product_id)">{{col.product_type}}</td>
                                                 <td [attr.rowspan]="CheckLengthProductID(col.product_id)">{{col.Product_Description}}</td>
+                                                <td [attr.rowspan]="CheckLengthProductID(col.product_id)">{{col.UOM}}</td>
                                                 <td [attr.rowspan]="CheckLengthProductID(col.product_id)">{{col.Req_Qty}}</td>
+                                                <td [attr.rowspan]="CheckLengthProductID(col.product_id)">
+                                                    <input type="text" [name]="col.product_id" [(ngModel)]='col.Purpose' class="form-control" style="width: 200px;" />
+                                                </td>
 
-                                            </ng-container> -->
-
+                                            </ng-container>
+                                            <ng-container *ngIf="CheckLengthProductID(col.product_id) === 1">
                                             <td>{{col.product_type}}</td>
                                             <td>{{col.Product_Description}}</td>
                                             <td>{{col.UOM}}</td>
                                             <td *ngIf="reqQTYdis">{{col.Req_Qty}}</td>
+                                            <td><input type="text" [name]="col.product_id" [(ngModel)]='col.Purpose'  class="form-control" style="width: 200px;" /></td>
+                                            </ng-container>
 
                                             <td>{{col.Batch_No}}</td>
                                             <td *ngIf="AccQtydis">{{col.Accepted_Qty}}</td>
                                             <td>{{col.Batch_Qty}}</td>
                                             <td><input type="text" [name]="col.product_id" [(ngModel)]='col.Delivery_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
-                                            <td *ngIf="EditList.length">{{col.Accept_Reason}}</td>
-
+                                            <!-- <td *ngIf="EditList.length">{{col.Accept_Reason}}</td> -->
                                         </tr>
                                         <tr *ngIf='i === (productDetails.length - 1)'>
                                             <td colspan="3" class="text-right">Total</td>
-                                            <td *ngIf="reqQTYdis">{{getTotal('Req_Qty')}}</td>
+                                            <td *ngIf="reqQTYdis">{{TotalReq()}}</td>
+                                            <td></td>
                                             <td></td>
                                             <td *ngIf="AccQtydis">{{getTotal('Accepted_Qty')}}</td>
                                             <td>{{getTotal('Batch_Qty')}}</td>
@@ -545,6 +559,150 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-list-alt">
                             <app-stock-report></app-stock-report>
                         </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[4]" leftIcon="glyphicon glyphicon-list-alt">
+                            <!-- <form name="PendingIndentForm" #PendingIndentForm="ngForm" novalidate> -->
+                            <div class="form-group">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Date</label>
+
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRangeMis($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetMIS()" id="load" [disabled]="seachSpinnerMis">
+                                      <p-progressSpinner
+                                        *ngIf="seachSpinnerMis"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!seachSpinnerMis"
+                                        class="glyphicon glyphicon-search"
+                                      ></span
+                                      >&nbsp;Search
+                                    </button>
+                                </div>
+                                <div class="col-sm-2">  
+                                    <button class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcel(MISList, 'MIS')" id="load1" [disabled]="MISList.length ? false : true">
+                                    <span class="fa fa-fw  fa-download"></span>&nbsp;EXPORT TO EXCEL
+                                 </button>
+                                 <!-- <button *ngIf="ClosingReportList.length" class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcel2(ClosingReportList,'Closing_Stock_Report')" id="load1" [disabled]="EXCELClosingSpinner">
+                                    <p-progressSpinner *ngIf="EXCELClosingSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!EXCELClosingSpinner" class="fa fa-file-excel-o"></span>&nbsp;EXPORT TO EXCEL
+                                </button> -->
+                                </div>
+                            </div>
+                            <!-- </form>  -->
+                            <br>
+                            <div class="form-group" *ngIf="MISList.length">
+    
+                                <fieldset class="col-md-12">
+                                    <legend>Filter</legend>
+                            
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Department <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistDepartment" [(ngModel)]="SelectedDistDepartment" itemSize="30" (onChange)='FilterDistMis()' [styleClass]="'compacct-multiselect'" name="Department"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Cost Center <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistCostCen" [(ngModel)]="SelectedDistCostCen" itemSize="30" (onChange)='FilterDistMis()' [styleClass]="'compacct-multiselect'" name="Cost_Cen_Name"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Stock Point <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistStockPoint" [(ngModel)]="SelectedDistStockPoint" itemSize="30" (onChange)='FilterDistMis()' [styleClass]="'compacct-multiselect'" name="Stock_Point"></p-multiSelect>
+                                        </div>
+                                    </div>
+                            
+                                </fieldset>
+                            </div>
+                            <br>
+                            <div class="no-padding">
+                                <p-table [value]="MISList"
+                                [paginator]="MISList.length ? true : false"
+                                *ngIf='MISList.length'
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeaderforMISList'
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <!-- <th style="width:5em">Action</th> -->
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforMISList">{{option.replaceAll('_',' ')}}</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+    
+                                            <!-- <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                                <a (click)="CreateChallan(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Issue Material 
+                                                                </a>
+                                                            </li>
+                                                        <li>
+                                                            <a (click)="PrintIndent(col.Req_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="Delete(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td> -->
+                                            <ng-container *ngFor="let option of DynamicHeaderforMISList">
+                                                <td nowrap="nowrap">{{col[option]}}</td>
+                                            </ng-container>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                            <div class="table-responsive no-padding">
+                                <table class="table bidopen table-bordered" *ngIf="MISList.length">
+                                    <thead>
+                                      <tr>
+                                            <th style=" width: 50% ;" ></th>
+                                            <th style=" width: 10% ;" >Total Value </th>
+                                      </tr>
+                                      <tr>
+                                        <th style=" width: 50% ;" ></th>
+                                        <th style=" width: 10% ;" >{{allTotalObj.Value ? allTotalObj.Value : 0}}</th>
+                                  </tr>
+                              
+                                    </thead>
+                                    
+                                  </table>
+                            </div>
+
+                        </p-tabPanel>
                     </p-tabView>
                 </div>
             </div>
@@ -557,7 +715,7 @@
         <thead>
             <tr>
                 <th scope="col">Product Description</th>
-                <th scope="col" *ngIf="reqQTYdis">Indent Qty</th>
+                <th scope="col" *ngIf="reqQTYdis">Req Qty</th>
                 <th scope="col">Batch Qty</th>
                 <th scope="col">Issue Qty</th>
             </tr>

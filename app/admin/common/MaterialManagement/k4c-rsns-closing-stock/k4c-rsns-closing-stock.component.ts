@@ -6,6 +6,7 @@ import { CompacctHeader } from "../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service"
 import { ActivatedRoute, Router } from "@angular/router";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-k4c-rsns-closing-stock',
@@ -15,7 +16,7 @@ import { ActivatedRoute, Router } from "@angular/router";
   encapsulation: ViewEncapsulation.None
 })
 export class K4cRsnsClosingStockComponent implements OnInit {
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   ShowSpinner = false;
@@ -26,22 +27,22 @@ export class K4cRsnsClosingStockComponent implements OnInit {
   rsnsClosingStockFormSubmitted = false;
   ObjBrowse : Browse = new Browse ();
   RSNSSearchFormSubmitted = false;
-  costcenlist = [];
-  GodownList = [];
+  costcenlist:any = [];
+  GodownList:any = [];
   Costdisableflag = false;
   Gdisableflag = false;
   Costbrowsedisableflag = false;
   Gbrowsedisableflag = false;
   IndentListFormSubmitted = false;
-  ProductList = [];
-  BackupProList = [];
+  ProductList:any = [];
+  BackupProList:any = [];
   SelectedIndent: any;
-  BackupIndentList = [];
-  IndentFilter = [];
-  TIndentList = [];
-  Searchedlist = [];
+  BackupIndentList:any = [];
+  IndentFilter:any = [];
+  TIndentList:any = [];
+  Searchedlist:any = [];
   flag = false;
-  productListFilter = [];
+  productListFilter:any = [];
   SelectedProductType :any = [];
   Param_Flag ='';
   CostCentId_Flag : any;
@@ -50,17 +51,20 @@ export class K4cRsnsClosingStockComponent implements OnInit {
   minDate : any = new Date();
   maxDate :  any = new Date();
   Doc_No = undefined;
-  Editlist = [];
-  ViewList = [];
+  Editlist:any = [];
+  ViewList:any = [];
   ViewPoppup = false;
   Doc_date = undefined;
   Cost_Cent_ID = undefined;
   Godown_ID = undefined;
   MaterialType = undefined;
   remarks = undefined;
-  datepickerdisable = false;
+  datepickerdisable = true;
   Browsecostcenlist:any = [];
   BrowseGodownList:any = [];
+  Date: Date;
+  ViewDoc_No: any;
+  Viewlist:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -71,6 +75,7 @@ export class K4cRsnsClosingStockComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) {
     this.route.queryParams.subscribe(params => {
       // console.log(params);
@@ -138,12 +143,20 @@ export class K4cRsnsClosingStockComponent implements OnInit {
      this.items = ["BROWSE", "CREATE"];
      this.buttonname = "Save";
      this.clearData();
+     this.GetDate();
      this.BackupIndentList = [];
      this.TIndentList = [];
      this.SelectedIndent = [];
      this.ProductList = [];
      this.productListFilter = [];
      this.Gdisableflag = false;
+     this.ViewDoc_No = undefined;
+     this.seachSpinner = false;
+     this.ngxService.stop();
+     if (this.buttonname === "Save") {
+      this.Doc_No = undefined;
+      this.Doc_date = undefined;
+     }
    }
    GetBrowseCostCen(){
     const obj = {
@@ -249,7 +262,10 @@ export class K4cRsnsClosingStockComponent implements OnInit {
       Cost_Cen_ID : this.ObjrsnsClosingStock.Cost_Cen_ID,
       Godown_ID : this.ObjrsnsClosingStock.godown_id,
       Product_Type_ID : 0,
-      Material_Type : this.MaterialType_Flag
+      Material_Type : this.MaterialType_Flag,
+      Doc_Type : this.buttonname === "Save" ? "Create" : "Edit",
+      Doc_No : this.buttonname === "Save" ? "" : this.Doc_No,
+      Doc_Date : this.buttonname === "Save" ? "" : this.DateService.dateConvert(new Date(this.Date))
      }
    const obj = {
     "SP_String": "SP_K4C_RSNS_Closing_Stock",
@@ -277,7 +293,7 @@ export class K4cRsnsClosingStockComponent implements OnInit {
 
   filterProduct(){
     if(this.SelectedProductType.length){
-      let tempProduct = [];
+      let tempProduct:any = [];
       this.SelectedProductType.forEach(item => {
         this.BackupIndentList.forEach((el,i)=>{
 
@@ -296,7 +312,7 @@ export class K4cRsnsClosingStockComponent implements OnInit {
     }
   }
 GetProductType(){
-  let DOrderBy = [];
+  let DOrderBy:any = [];
     this.productListFilter = [];
     //this.SelectedDistOrderBy1 = [];
     this.BackupIndentList.forEach((item) => {
@@ -311,7 +327,7 @@ GetProductType(){
 VarianceqtyChq(indx){
   this.ProductList[indx]['Varience_Qty'] =  0;
   if(this.ProductList[indx]['Batch_Qty'] && this.ProductList[indx]['Closing_Qty']){
-    this.ProductList[indx]['Varience_Qty'] = this.ProductList[indx]['Batch_Qty'] - this.ProductList[indx]['Closing_Qty'];
+    this.ProductList[indx]['Varience_Qty'] = (this.ProductList[indx]['Batch_Qty'] - this.ProductList[indx]['Closing_Qty']).toFixed(2);
   }
   //this.changeRemarks(indx);
   this.ProductList.forEach(el=>{
@@ -345,10 +361,10 @@ console.log(this.Editlist)
 }
 GetDataForSave(){
   if(this.ProductList.length) {
-    let tempArr =[];
+    let tempArr:any =[];
     const TempObj = {
-      //Doc_No	 : this.Doc_No ? this.Doc_No : "A",
-      Doc_No : "A",
+      Doc_No	 : this.Doc_No ? this.Doc_No : "A",
+      // Doc_No : "A",
       Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
       Cost_Cen_ID	: this.ObjrsnsClosingStock.Cost_Cen_ID,
       Godown_ID	: this.ObjrsnsClosingStock.godown_id,
@@ -380,6 +396,70 @@ GetDataForSave(){
 
   }
 }
+SaveBeforeCheck(){
+    this.Spinner = true;
+  if (this.ProductList.length) {
+const tempo = {
+  Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
+  Cost_Cen_ID : this.ObjBrowse.Cost_Cen_ID,
+  Godown_ID : this.ObjBrowse.godown_id,
+  Material_Type : this.MaterialType_Flag
+}
+const obj = {
+  "SP_String": "SP_K4C_RSNS_Closing_Stock",
+  "Report_Name_String": "Check_K4C_RSNS_Closing_Stock_Exit_Or_Not",
+  "Json_Param_String": JSON.stringify([tempo])
+}
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  if (this.buttonname === "Save") {
+   if (data[0].Column1 === "OK"){
+    // this.SaveBeforeCheck();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "s",
+      sticky: true,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+    });
+   }
+   else {
+    this.Spinner = false;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Already Saved ! ",
+      detail: "Please go to browse and update  "
+    });
+   }
+  }
+   else {
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "s",
+      sticky: true,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+    });
+   }
+ })
+}
+}
+// SaveBeforeCheck(){
+//    this.Spinner = true;
+//    if (this.ProductList.length) {
+//     this.compacctToast.clear();
+//     this.compacctToast.add({
+//       key: "s",
+//       sticky: true,
+//       severity: "warn",
+//       summary: "Are you sure?",
+//       detail: "Confirm to proceed"
+//     });
+//   }
+// }
 Save(){
   //if(valid){
     const obj = {
@@ -401,17 +481,22 @@ Save(){
          summary: "Doc_No  " + tempID,
          detail: "Succesfully  "  + mgs
        });
+       this.Spinner = false;
        if (this.buttonname != "Save") {
           this.tabIndexToView = 0;
           this.items = ["BROWSE", "CREATE"];
           this.buttonname = "Create";
           this.clearData();
+          this.GetDate();
           this.GetSearchedList(true);
+          this.Doc_No = undefined;
+          this.Doc_date = undefined;
        }
        //this.clearData();
       // this.IssueStockFormSubmitted = false;
 
       } else{
+        this.Spinner = false;
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -432,6 +517,7 @@ getDateRange(dateRangeObj) {
 GetSearchedList(valid){
   this.RSNSSearchFormSubmitted = true;
     this.Searchedlist = [];
+    this.seachSpinner = true;
   const start = this.ObjBrowse.start_date
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
   : this.DateService.dateConvert(new Date());
@@ -471,15 +557,18 @@ this.Cost_Cent_ID = undefined;
 this.Godown_ID = undefined;
 this.remarks = undefined;
 if(DocNo.Doc_No){
+  this.ngxService.start();
   this.ProductList = [];
   this.BackupProList = [];
 this.Doc_No = DocNo.Doc_No;
+this.Date = new Date(DocNo.Doc_Date);
 // this.ViewPoppup = true;
  this.tabIndexToView = 1;
  this.items = ["BROWSE", "UPDATE"];
  this.buttonname = "Update";
- this.datepickerdisable = true;
+ this.datepickerdisable = false;
  this.Gdisableflag = true;
+ this.todayDate = this.Date;
 // console.log("VIew ==", this.Objproduction.Doc_No);
  this.GetProductList(true); // await
  const ctrl = this;
@@ -500,10 +589,11 @@ GetdataforEdit(Doc_No){
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("Edit Data From API",data);
     this.Editlist = data;
-       this.todayDate = data[0].Doc_Date;
+      //  this.todayDate = new Date(data[0].Doc_Date);
       //  this.minDate = new Date(data[0].Doc_Date.getDate());
       //  this.maxDate = new Date(data[0].Doc_Date.getDate());
        this.ObjrsnsClosingStock.Cost_Cen_ID = data[0].Cost_Cen_ID;
+       this.GetGodown();
        this.ObjrsnsClosingStock.godown_id = data[0].godown_id;
       //    data.forEach(element => {
       //      const  productObj = {
@@ -525,7 +615,8 @@ GetdataforEdit(Doc_No){
       const ctrl = this;
       setTimeout(function () {
         ctrl.BackupProList.forEach(ele => {
-        const ARR = ctrl.Editlist.filter(item => item.Product_ID === ele.Product_ID);
+        const ARR = ctrl.Editlist.filter(item => (Number(item.Product_ID) == Number(ele.Product_ID) && (item.Batch_No == ele.Batch_No)))
+        console.log("ARR",ARR)
         if (ARR.length) {
           ele['Closing_Qty']= ARR[0].Closing_Qty,
           // el.Product_Type_ID = aRR[0].Product_Type_ID,
@@ -541,37 +632,58 @@ GetdataforEdit(Doc_No){
           ele['Remarks'] = ARR[0].Remarks
         }
         ctrl.ProductList = ctrl.BackupProList;
-        console.log("edit ProductList===", ARR);
+       // console.log("edit ProductList===", ARR);
       });
     }, 600)
     //   this.ProductList = [...this.ProductList];
      
-      
+    this.ngxService.stop();
       // FOR VIEW
-      this.Doc_No = data[0].Doc_No;
-      this.Doc_date = new Date(data[0].Doc_Date);
-      this.Cost_Cent_ID = data[0].Location;
-      this.Godown_ID = data[0].godown_name;
-      this.MaterialType = data[0].Brand_Name;
+      // this.Doc_No = data[0].Doc_No;
+      // this.Doc_date = new Date(data[0].Doc_Date);
+      // this.Cost_Cent_ID = data[0].Location;
+      // this.Godown_ID = data[0].godown_name;
+      // this.MaterialType = data[0].Brand_Name;
     })
 }
 View(DocNo){
   //console.log("View ==",DocNo);
 this.clearData();
 //this.editList = [];
-this.Doc_No = undefined;
+this.ViewDoc_No = undefined;
 this.Doc_date = undefined;
 this.MaterialType = undefined;
 this.Cost_Cent_ID = undefined;
 this.Godown_ID = undefined;
 this.remarks = undefined;
 if(DocNo.Doc_No){
-this.Doc_No = DocNo.Doc_No;
- this.ViewPoppup = true;
-// console.log("VIew ==", this.Objproduction.Doc_No);
-this.GetdataforEdit(this.Doc_No);
+this.ViewDoc_No = DocNo.Doc_No;
+console.log("VIew ==", this.ViewDoc_No);
+this.GetdataforView();
 //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
 }
+}
+GetdataforView(){
+  this.Viewlist = [];
+  //this.OTclosingstockwithbatchFormSubmitted = false;
+    const obj = {
+      "SP_String": "SP_K4C_RSNS_Closing_Stock",
+      "Report_Name_String": "Get_Edit_Data",
+      "Json_Param_String": JSON.stringify([{Doc_No  : this.ViewDoc_No}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("View Data From API",data);
+    this.Viewlist = data;
+    this.ViewPoppup = true;
+      console.log("view Viewlist===", this.BackupProList);
+      // FOR VIEW
+      this.ViewDoc_No = data[0].Doc_No;
+      this.Doc_date = new Date(data[0].Doc_Date);
+      this.Cost_Cent_ID = data[0].Location;
+      this.Godown_ID = data[0].godown_name;
+      this.MaterialType = data[0].Brand_Name;
+    })
 }
 Delete(row){
   // console.log("delete",row)
@@ -618,6 +730,8 @@ onConfirm(){
  }
  onReject(){
    this.compacctToast.clear("c");
+   this.compacctToast.clear("s");
+   this.Spinner = false;
  }
 
   clearData(){
@@ -649,6 +763,7 @@ onConfirm(){
     this.rsnsClosingStockFormSubmitted = false;
     this.SelectedProductType = [];
     this.ShowSpinner = false;
+    this.Spinner = false;
     this.RSNSSearchFormSubmitted = false;
     this.ObjrsnsClosingStock.Doc_No = undefined;
     this.items = ["BROWSE", "CREATE"];
@@ -656,8 +771,11 @@ onConfirm(){
     //this.todayDate = new Date();
     // this.minDate = new Date(this.todayDate.getDate());
     // this.maxDate = new Date(this.todayDate.getDate());
-    this.datepickerdisable = false;
-    this.GetDate();
+    this.datepickerdisable = true;
+    // this.GetDate();
+    this.Editlist = [];
+    this.ViewDoc_No = undefined;
+    this.ViewList = [];
   }
 
 }

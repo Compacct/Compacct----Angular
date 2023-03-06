@@ -24,52 +24,52 @@ export class MiclDispatchChallanComponent implements OnInit {
   // Objadditem: additem = new additem ()
   ObjBrowseData : BrowseData = new BrowseData ()
   DispatchFormSubmit = false;
-  FromCostCenterList = [];
-  FromGodownList = [];
+  FromCostCenterList:any = [];
+  FromGodownList:any = [];
   ToCostCenterList = [];
-  ToGodownList = [];
+  ToGodownList:any = [];
   ReqDate : any = new Date();
 
   DispatchSearchFormSubmit = false;
-  BrowseCostCenterList = [];
-  BrowseGodownList = [];
+  BrowseCostCenterList:any = [];
+  BrowseGodownList:any = [];
 
   doc_no : any;
   createdby : any;
 
-  costcenterList = [];
+  costcenterList:any = [];
   myDate : Date;
   ChallanDate : any = new Date() ;
-  productDetails = [];
+  productDetails:any = [];
   buttonname = "Create";
   Spinner = false;
   SpinnerShow = false;
-  itemList =[];
-  items = [];
+  itemList:any =[];
+  items:any = [];
   tabIndexToView = 0;
-  menuList = [];
+  menuList:any = [];
   brandInput = false ;
-  NativeitemList = [];
+  NativeitemList:any = [];
   adlist: any = {};
-  EditList = [];
+  EditList:any = [];
   inList = false;
-  saveData = [];
+  saveData:any = [];
   outLetDis = false;
-  GetAllDataList = [];
-  VehicleList = [];
+  GetAllDataList:any = [];
+  VehicleList:any = [];
   AddtionalFormSubmit = false;
   matchflag = true;
   AdditioanFormSubmit = false;
   OutletFormSubmit = false;
   disabled: boolean = true;
   seachSpinner = false;
-  outletList = [];
-  brandList = [];
-  brandListBro = [];
-  toGodownList = [];
-  BatchList = [];
+  outletList:any = [];
+  brandList:any = [];
+  brandListBro:any = [];
+  toGodownList:any = [];
+  BatchList:any = [];
   reqNumber:any;
-  outletListBro = [];
+  outletListBro:any = [];
   data = "(Show All Products)";
   inputBoxDisabled = false;
   docdateDisabled = true;
@@ -81,7 +81,7 @@ export class MiclDispatchChallanComponent implements OnInit {
   To_Godown_ID_Dis = false;
   From_Godown_ID_Dis = false;
   editPopUp = false;
-  editdataList = [];
+  editdataList:any = [];
   brand = undefined;
   toOutlet = undefined;
   OutletStokePoint = undefined;
@@ -95,17 +95,17 @@ export class MiclDispatchChallanComponent implements OnInit {
   AccQtydis = false;
   initDate:any = [];
   doc_date: any;
-  filteredData = [];
+  filteredData:any = [];
   displaysavepopup = false;
-  IndentNoList = [];
-  BackupIndentList = [];
-  IndentFilter = [];
+  IndentNoList:any = [];
+  BackupIndentList:any = [];
+  IndentFilter:any = [];
   SelectedIndent: any;
-  TIndentList = [];
-  BackUpproductDetails = [];
-  Refreshlist = [];
-  RefreshData = [];
-  editIndentList = [];
+  TIndentList:any = [];
+  BackUpproductDetails:any = [];
+  Refreshlist:any = [];
+  RefreshData:any = [];
+  editIndentList:any = [];
   Auto_Accepted: any;
   totalqty: any;
   totalaccpqty: any;
@@ -114,9 +114,9 @@ export class MiclDispatchChallanComponent implements OnInit {
 
   FranchiseBill:any;
   dispatchchallanno: any;
-  FranchiseProductList = [];
+  FranchiseProductList:any = [];
   currentDate : any = new Date();
-  FranchiseList = [];
+  FranchiseList:any = [];
   subledgerid:any;
   franchisecostcenid:any;
 
@@ -129,13 +129,13 @@ export class MiclDispatchChallanComponent implements OnInit {
   Round_Off: any;
   editdocno: any;
 
-  viewproductDetails = [];
+  viewproductDetails:any = [];
   viewDocNO = undefined;
   viewFromStokePoint = undefined;
   viewdate = undefined;
   tabView = false;
 
-  Regeneratelist = [];
+  Regeneratelist:any = [];
   contactname = undefined;
   taxableRegenerate: any;
   cgstRegenerate: any;
@@ -153,13 +153,33 @@ export class MiclDispatchChallanComponent implements OnInit {
 
   ObjPendingIndent = new PendingIndent();
   PendingIndentFormSubmitted = false;
-  PendingIndentList = [];
-  DynamicHeaderforPIndent = [];
-  costcenterListPeding = [];
+  PendingIndentList:any = [];
+  DynamicHeaderforPIndent:any = [];
+  costcenterListPeding:any = [];
 
   createchallandisabled = false;
   createChallanflag = true;
   indentlistdisabled = false;
+  creteChallanList: any = [];
+  DOrderBy:any = []
+  BackupfilteredData: any = [];
+  Save = false;
+  Del = false;
+
+  seachSpinnerMis = false;
+  MIS_start_date: Date;
+  MIS_end_date: Date;
+  MISList:any = [];
+  DynamicHeaderforMISList:any = [];
+  allTotalObj:any = {}
+  BackupMISList:any = [];
+  SelectedDistDepartment:any = [];
+  SelectedDistCostCen:any = [];
+  DistDepartment:any = [];
+  DistCostCen:any = [];
+  DistStockPoint:any =[];
+  SelectedDistStockPoint:any = [];
+  formstockpointDisabled = false;
 
   constructor(
     private $http: HttpClient,
@@ -173,7 +193,7 @@ export class MiclDispatchChallanComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE", "PENDING ISSUE REQ", "STOCK"];
+    this.items = ["BROWSE", "CREATE", "PENDING ISSUE REQ", "STOCK", "MIS"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
@@ -186,6 +206,7 @@ export class MiclDispatchChallanComponent implements OnInit {
     this.GetFromCostcenter();
     // this.GetFromGodown();
     this.GetToCostCenter();
+    // this.Objdispatch.To_Godown_ID= this.ToGodownList.length ? this.ToGodownList[0].Godown_ID : undefined;
     // this.GetToGodown();
     this.GetBrowseCostcenter();
     // this.ObjBrowseData.Cost_Cen_ID = undefined;
@@ -193,7 +214,7 @@ export class MiclDispatchChallanComponent implements OnInit {
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE", "PENDING ISSUE REQ", "STOCK"];
+    this.items = ["BROWSE", "CREATE", "PENDING ISSUE REQ", "STOCK", "MIS"];
     this.brandInput = false ;
     this.buttonname = "Save";
     //this.ObjBrowseData = new BrowseData ()
@@ -203,6 +224,7 @@ export class MiclDispatchChallanComponent implements OnInit {
     this.productDetails = [];
     this.BackUpproductDetails = [];
     this.inputBoxDisabled = false;
+    this.formstockpointDisabled = false;
     this.createchallandisabled = false;
     this.indentlistdisabled = false;
     this.indentdateDisabled = true;
@@ -218,17 +240,23 @@ export class MiclDispatchChallanComponent implements OnInit {
     //this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
     this.SelectedIndent = undefined;
     this.IndentFilter = [];
+    this.TotalValue(this.MISList);
   }
   clearData(){
   // this.ObjBrowseData.Cost_Cen_ID = this.BrowseCostCenterList.length === 1 ? this.BrowseCostCenterList[0].Cost_Cen_ID : undefined;
   // this.Objdispatch.F_Cost_Cen_ID = this.FromCostCenterList.length === 1 ? this.FromCostCenterList[0].Cost_Cen_ID : undefined;
   // this.Objdispatch.To_Cost_Cen_ID = this.ToCostCenterList.length === 1 ? this.ToCostCenterList[0].Cost_Cen_ID : undefined;
-  this.ObjBrowseData.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-  this.ObjBrowseData.Godown_ID = this.BrowseGodownList[0].Godown_ID;
+  // this.ObjBrowseData.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+  // this.GetBrowseGodown();
+  // this.ObjBrowseData.Godown_ID = this.BrowseGodownList[0].Godown_ID;
   this.Objdispatch.F_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-  this.Objdispatch.F_Godown_ID = this.FromGodownList[0].Godown_ID;
+  this.GetFromGodown();
+  // this.Objdispatch.F_Godown_ID = this.FromGodownList[0].Godown_ID;
   this.Objdispatch.To_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-  this.Objdispatch.To_Godown_ID = this.ToGodownList[0].Godown_ID;
+  this.GetToGodown();
+  this.creteChallanList = [];
+  // this.Objdispatch.To_Godown_ID= this.ToGodownList.length ? this.ToGodownList[0].Godown_ID : undefined;
+  // this.Objdispatch.To_Godown_ID = this.ToGodownList[0].Godown_ID;
   console.log("this.ObjBrowseData.Cost_Cen_ID",this.ObjBrowseData.Cost_Cen_ID);
   this.doc_no = undefined;
   this.DispatchFormSubmit = false;
@@ -244,6 +272,8 @@ export class MiclDispatchChallanComponent implements OnInit {
   // this.IndentNoList = [];
   // this.BackupIndentList = [];
   //this.IndentFilter = []
+  this.IndentNoList = [];
+  this.SelectedIndent = undefined;
   this.ngxService.stop();
   this.createchallandisabled = false;
   this.indentlistdisabled = false;
@@ -288,7 +318,7 @@ export class MiclDispatchChallanComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.FromGodownList = data;
       console.log("this.FromGodownList",this.FromGodownList);
-      this.Objdispatch.F_Godown_ID= this.FromGodownList[0].Godown_ID ;
+      this.Objdispatch.F_Godown_ID= this.FromGodownList.length ? this.FromGodownList[0].Godown_ID : undefined;
       // if(this.Objdispatch.F_Godown_ID){
       //   this.To_Godown_ID_Dis = true;
       // }
@@ -322,7 +352,9 @@ export class MiclDispatchChallanComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.ToGodownList = data;
       console.log("this.toGodownList",this.ToGodownList);
-      this.Objdispatch.To_Godown_ID= this.ToGodownList[0].Godown_ID ;
+      if (!this.creteChallanList.length){
+      this.Objdispatch.To_Godown_ID= this.ToGodownList.length ? this.ToGodownList[0].Godown_ID : undefined;
+      }
       // if(this.Objdispatch.To_Godown_ID){
       //   this.To_Godown_ID_Dis = true;
       // }
@@ -335,6 +367,7 @@ export class MiclDispatchChallanComponent implements OnInit {
     this.DispatchFormSubmit = true;
      if(valid){
       this.SpinnerShow = true;
+      if(Number(this.Objdispatch.F_Godown_ID) !== Number(this.Objdispatch.To_Godown_ID)){
      const TempObj = {
        Req_Date : this.DateService.dateConvert(new Date(this.ReqDate)),
        Cost_Cen_ID : this.Objdispatch.To_Cost_Cen_ID,
@@ -356,7 +389,8 @@ export class MiclDispatchChallanComponent implements OnInit {
       // this.adDisabled = false;
       if (!this.createchallandisabled) {
       this.inputBoxDisabled = true;
-      this.docdateDisabled = false;
+      this.formstockpointDisabled = this.createChallanflag ? true : false;
+      this.docdateDisabled = true;
       this.indentlistdisabled = false;
       }
       this.createchallandisabled = true;
@@ -373,6 +407,17 @@ export class MiclDispatchChallanComponent implements OnInit {
     console.log("this.Indentlist======",this.IndentNoList);
     this.GetIndent();
    })
+  }
+  else{
+    this.SpinnerShow = false;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "can't use same stock point"
+    });
+  }
   }
    }
    GetIndent(){
@@ -430,6 +475,7 @@ export class MiclDispatchChallanComponent implements OnInit {
      this.productDetails = [];
      this.BackUpproductDetails = [];
      this.inputBoxDisabled = false;
+     this.formstockpointDisabled = false;
      this.createchallandisabled = false;
      this.indentlistdisabled = false;
      this.indentdateDisabled = true;
@@ -445,7 +491,7 @@ export class MiclDispatchChallanComponent implements OnInit {
    }// TABLE DATA
   dataforShowproduct(){
     if(this.SelectedIndent) {
-      let Arr =[]
+      let Arr:any =[]
       // this.SelectedIndent.forEach(el => {
         // if(el){
           const Dobj = {
@@ -488,6 +534,10 @@ GetshowProduct(){
       //this.SpinnerShow = false;
       this.BackUpproductDetails = [...this.productDetails];
       console.log("this.productDetails",this.productDetails);
+      this.productDetails.forEach(element => {
+        element.Delivery_Qty = element.Req_Qty;
+      });
+      this.backupTotalReq()
       // this.inputBoxDisabled = true;
       // this.indentdateDisabled = false;
       // this.From_Godown_ID_Dis = true;
@@ -499,7 +549,48 @@ GetshowProduct(){
  }
 
 }
+CheckLengthProductID(ID) {
+  const tempArr = this.productDetails.filter(item=> item.product_id == ID);
+  return tempArr.length
+}
+CheckIndexProductID(ID) {
+  let found = 0;
+  for(let i = 0; i < this.productDetails.length; i++) {
+      if (this.productDetails[i].product_id == ID) {
+          found = i;
+          break;
+      }
+  }
+  return found;
+}
+
+backupTotalReq(){
+  this.DOrderBy = []
+  let checkarr:any = []
+  this.productDetails.forEach((item) => {
+      if (checkarr.indexOf(item.product_id) === -1) {
+        checkarr.push(item.product_id);
+        this.DOrderBy.push({product_id:item.product_id, Req_Qty:item.Req_Qty})
+      }
+    });
+    console.log("DOrderBy",this.DOrderBy)
+}
+
+
+TotalReq(){
+  let TotalAmt = 0;
+ if(this.DOrderBy.length){
+    this.DOrderBy.forEach((x:any) => {
+      TotalAmt += Number(x.Req_Qty);
+    });
+  
+    return TotalAmt ? TotalAmt.toFixed(2) : '-';
+  }
+
+}
+
 getTotal(key){
+  
   let TotalAmt = 0;
   this.productDetails.forEach((item)=>{
     TotalAmt += Number(item[key]);
@@ -574,6 +665,28 @@ saveqty(){
  for(let i = 0; i < this.productDetails.length ; i++){
   if(Number(this.productDetails[i].Batch_Qty) <  Number(this.productDetails[i].Delivery_Qty)){
     flag = false;
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Quantity can't be more than in batch available quantity "
+      });
+    break;
+  }
+  else if(Number(this.productDetails[i].Req_Qty) <  Number(this.productDetails[i].Delivery_Qty)){
+    flag = false;
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Quantity can't be more than Requisition quantity "
+      });
     break;
   }
  }
@@ -589,27 +702,57 @@ saveqty(){
 //  }
 //  return flag;
 // }
-  showDialog(valid) {
-    this.DispatchFormSubmit = true;
-    if (valid) {
-      this.DispatchFormSubmit = false;
-    this.displaysavepopup = true;
-    this.filteredData = [];
+  // showDialog() {
+  //   this.DispatchFormSubmit = true;
+  //   if (this.productDetails.length) {
+  //     this.DispatchFormSubmit = false;
+  //   this.displaysavepopup = true;
+  //   this.filteredData = [];
   //   this.BackUpproductDetails.forEach(obj => {
   //     if(obj.Delivery_Qty && Number(obj.Delivery_Qty) !== 0 ){
   //     //  console.log(filteredData.push(obj.Product_ID));
   //     this.filteredData.push(obj);
+  //     // this.BackupfilteredData = [...this.filteredData];
   //      // console.log("this.filteredData===",this.filteredData);
   //   }
   //  })
-   this.productDetails.forEach(obj => {
-    if(obj.Delivery_Qty){  //   && Number(obj.Delivery_Qty) !== 0
-    //  console.log(filteredData.push(obj.Product_ID));
-    this.filteredData.push(obj);
-     // console.log("this.filteredData===",this.filteredData);
-  }
- })
- }
+//    this.productDetails.forEach(obj => {
+//     if(obj.Delivery_Qty){  //   && Number(obj.Delivery_Qty) !== 0
+//     //  console.log(filteredData.push(obj.Product_ID));
+//     this.filteredData.push(obj);
+//      // console.log("this.filteredData===",this.filteredData);
+//   }
+//  })
+//  }
+//   }
+  showDialog(valid){
+    this.DispatchFormSubmit = true;
+     // this.ngxService.start();
+     this.Save = false;
+     this.Del = false;
+     if (valid && this.productDetails.length) {
+      this.DispatchFormSubmit = false;
+      // this.BackUpproductDetails.forEach(obj => {
+      //  if(obj.Delivery_Qty){
+     this.Save = true;
+     this.Del = false;
+     this.Spinner = true;
+     this.ngxService.start();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "c",
+      sticky: true,
+      closable: false,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+    });
+    // }
+    // })
+    }
+    else {
+ 
+    }
   }
   getTotalIndValue(){
     let Indval = 0;
@@ -668,7 +811,8 @@ saveqty(){
   saveDispatch(){
    console.log("saveqty",this.saveqty());
    console.log("this.BackUpproductDetails",this.BackUpproductDetails);
-  if(this.BackUpproductDetails.length && this.saveqty()){
+  if(this.BackUpproductDetails.length){
+    if(this.saveqty()) {
     // this.ngxService.start();
     // this.displaysavepopup = false;
     // if(this.doc_no){
@@ -788,10 +932,12 @@ saveqty(){
             Product_ID: el.product_id,
             Batch_No: el.Batch_No,
             Req_Qty: el.Req_Qty,
+            Purpose: el.Purpose,
             Qty: el.Delivery_Qty,
             Accepted_Qty: el.Delivery_Qty,
             // Rate: 0,
             UOM: el.UOM,
+            Req_No: this.SelectedIndent
             // User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
             // REMARKS: this.Objdispatch.REMARKS ? this.Objdispatch.REMARKS : "NA",
             // Fin_Year_ID: this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
@@ -834,8 +980,11 @@ saveqty(){
       // this.items = ["BROWSE", "CREATE"];
       // this.buttonname = "Create";
       this.clearData();
+      this.Spinner = false;
+      this.tabIndexToView = 0;
       this.PrintDispatch(data[0].Column1);
       this.inputBoxDisabled = false;
+      this.formstockpointDisabled = false;
       this.createchallandisabled = false;
       this.indentlistdisabled = false;
       this.indentdateDisabled = true;
@@ -861,6 +1010,7 @@ saveqty(){
     //  this.ReqDate = new Date();
     //  this.ChallanDate = this.DateService.dateConvert(new Date(this.challanDate));
      }else{
+      this.Spinner = false;
       this.ngxService.stop();
       this.compacctToast.clear();
           this.compacctToast.add({
@@ -874,7 +1024,9 @@ saveqty(){
 
     // }
   }
+  }
   else{
+    this.Spinner = false;
     this.ngxService.stop();
     this.compacctToast.clear();
         this.compacctToast.add({
@@ -901,7 +1053,7 @@ saveqty(){
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("costcenterList  ===",data);
       this.BrowseCostCenterList = data;
-      this.ObjBrowseData.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      // this.ObjBrowseData.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       // if(this.Objdispatch.F_Cost_Cen_ID){
       //   this.toutLetDis = true;
       // }
@@ -909,6 +1061,7 @@ saveqty(){
       })
   }
   GetBrowseGodown(){
+    this.BrowseGodownList = [];
     // this.toutLetDis = true;
     // console.log(this.Objdispatch.Cost_Cen_ID)
     const obj = {
@@ -920,7 +1073,7 @@ saveqty(){
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.BrowseGodownList = data;
       console.log("this.BrowseGodownList",this.BrowseGodownList);
-      this.ObjBrowseData.Godown_ID= this.BrowseGodownList[0].Godown_ID ;
+      this.ObjBrowseData.Godown_ID= this.BrowseGodownList.length ? this.BrowseGodownList[0].Godown_ID : undefined;
       // if(this.Objdispatch.F_Godown_ID){
       //   this.To_Godown_ID_Dis = true;
       // }
@@ -983,7 +1136,11 @@ saveqty(){
 deleteDispatch(data){
  console.log("deleteCol",data)
  this.doc_no = undefined;
+ this.Save = false;
+ this.Del = false;
  if (data.Doc_No) {
+ this.Save = false;
+ this.Del = true;
   this.doc_no = data.Doc_No;
   this.createdby = data.Created_By;
   this.compacctToast.clear();
@@ -1030,6 +1187,8 @@ onConfirm(){
 }
 onReject(){
   this.compacctToast.clear("c");
+  this.Spinner = false;
+  this.ngxService.stop();
 }
 
 // PENDING INDENT
@@ -1098,42 +1257,209 @@ PrintIndent(DocNo) {
   })
   }
 }
-CreateChallan(obj){
+// CreateChallan(obj){
+//   this.clearData();
+//   this.IndentNoList = [];
+//   this.SelectedIndent = undefined;
+//   this.inputBoxDisabled = false;
+//   this.ReqDate = new Date();
+//   if(obj.Req_No) {
+//     // this.IndentFilter.push({ label: obj.Req_No , value: obj.Req_No });
+//     // this.SelectedIndent.push(obj.Req_No);
+//     this.tabIndexToView = 1;
+//     this.inputBoxDisabled = false;
+//     this.createchallandisabled = true;
+//     this.indentlistdisabled = true;
+//     this.indentdateDisabled = false;
+//     this.createChallanflag = false;
+//     this.Objdispatch.F_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+//     this.GetFromGodown();
+//     var tocostcent = this.ToCostCenterList.filter(el=> el.Cost_Cen_Name === obj.Cost_Cen_Name)
+//     this.Objdispatch.To_Cost_Cen_ID = tocostcent[0].Cost_Cen_ID;
+//     this.GetToGodown();
+//     var togodown = this.ToGodownList.filter(el=> el.godown_name === obj.Stock_Point)
+//     this.Objdispatch.To_Godown_ID = togodown[0].Godown_ID;
+//     // console.log("togodown==",this.Objdispatch.To_Godown_ID)
+//     this.ReqDate = new Date(obj.Req_Date);
+//     // console.log("ReqDate==",this.ReqDate)
+//     this.GetIndentList(true);
+//     this.SelectedIndent = obj.Req_No;
+//     // console.log("obj.Req_No==",this.SelectedIndent)
+//     this.GetshowProduct();
+//     // this.SelectedIndent = obj.Req_No;
+//           // obj.Req_No.forEach(ele => {
+//             // this.IndentFilter.push({ label: obj.Req_No , value: obj.Req_No });
+//             // this.BackupIndentList = [...this.IndentNoList];
+//             // });
+//           // this.SelectedIndent = obj.Req_No;
+//   }
+// }
+CreateChallan(row){
   this.clearData();
-  this.IndentNoList = [];
-  this.SelectedIndent = undefined;
+  // this.IndentNoList = [];
+  // this.SelectedIndent = undefined;
   this.inputBoxDisabled = false;
+  this.formstockpointDisabled = false;
   this.ReqDate = new Date();
-  if(obj.Req_No) {
-    // this.IndentFilter.push({ label: obj.Req_No , value: obj.Req_No });
-    // this.SelectedIndent.push(obj.Req_No);
+  if(row.Req_No) {
     this.tabIndexToView = 1;
     this.inputBoxDisabled = false;
-    this.createchallandisabled = true;
+    this.formstockpointDisabled = false;
+    // this.createchallandisabled = true;
     this.indentlistdisabled = true;
     this.indentdateDisabled = false;
     this.createChallanflag = false;
+    this.dataforcreateChallan(row.Req_No);
+  }
+      
+}
+dataforcreateChallan(Doc_No){
+  const obj = {
+    "SP_String": "SP_MICL_Dispatch_Challan",
+    "Report_Name_String": "Get_Issue_Requisition_Details",
+    "Json_Param_String": JSON.stringify([{Doc_No:Doc_No}])
+    }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.creteChallanList = data;
     this.Objdispatch.F_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.GetFromGodown();
-    var tocostcent = this.ToCostCenterList.filter(el=> el.Cost_Cen_Name === obj.Cost_Cen_Name)
-    this.Objdispatch.To_Cost_Cen_ID = tocostcent[0].Cost_Cen_ID;
+    this.Objdispatch.To_Cost_Cen_ID = data[0].Cost_Cen_ID;
     this.GetToGodown();
-    // var togodown = this.ToGodownList.filter(el=> el.godown_name === obj.Stock_Point)
-    // this.Objdispatch.To_Godown_ID = togodown[0].Godown_ID;
+    this.Objdispatch.To_Godown_ID = data[0].Godown_ID;
     // console.log("togodown==",this.Objdispatch.To_Godown_ID)
-    this.ReqDate = new Date(obj.Req_Date);
+    this.ReqDate = new Date(data[0].Req_Date);
     // console.log("ReqDate==",this.ReqDate)
     this.GetIndentList(true);
-    this.SelectedIndent = obj.Req_No;
+    this.SelectedIndent = data[0].Req_No;
     // console.log("obj.Req_No==",this.SelectedIndent)
     this.GetshowProduct();
-    // this.SelectedIndent = obj.Req_No;
-          // obj.Req_No.forEach(ele => {
-            // this.IndentFilter.push({ label: obj.Req_No , value: obj.Req_No });
-            // this.BackupIndentList = [...this.IndentNoList];
-            // });
-          // this.SelectedIndent = obj.Req_No;
+  })
+}
+// PENDING INDENT
+getDateRangeMis(dateRangeObj) {
+  if (dateRangeObj.length) {
+    this.MIS_start_date = dateRangeObj[0];
+    this.MIS_end_date = dateRangeObj[1];
   }
+}
+GetMIS(){
+    // this.PendingIndentFormSubmitted = true;
+    this.seachSpinnerMis = true;
+    const start = this.MIS_start_date
+    ? this.DateService.dateConvert(new Date(this.MIS_start_date))
+    : this.DateService.dateConvert(new Date());
+    const end = this.MIS_end_date
+    ? this.DateService.dateConvert(new Date(this.MIS_end_date))
+    : this.DateService.dateConvert(new Date());
+    if (start && end) {
+    const tempobj = {
+     From_Date : start,
+     To_Date : end,
+    //  To_Cost_Cen_ID : this.ObjPendingIndent.Cost_Cen_ID,
+    //  proj : "N"
+    }
+    // if (valid) {
+    const obj = {
+      "SP_String": "SP_MICL_Dispatch_Challan",
+      "Report_Name_String": "Dispatch_MIS",
+      "Json_Param_String": JSON.stringify([tempobj])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.MISList = data;
+      this.BackupMISList = data;
+      this.GetDistinctMis();
+      if(this.MISList.length){
+        this.DynamicHeaderforMISList = Object.keys(data[0]);
+      }
+      else {
+        this.DynamicHeaderforMISList = [];
+      }
+      this.seachSpinnerMis = false;
+      this.TotalValue(this.MISList);
+      // console.log("DynamicHeaderforMISList",this.DynamicHeaderforMISList);
+    })
+    }
+    else {
+      this.seachSpinnerMis = false;
+      // this.ngxService.stop();
+      this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Something Wrong"
+        });
+    }
+}
+exportexcel(Arr,fileName): void {
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, fileName+'.xlsx');
+}
+FilterDistMis() {
+  let department:any = [];
+  let costcen:any = [];
+  let stockpoint:any = [];
+  let SearchFieldsMis:any =[];
+if (this.SelectedDistDepartment.length) {
+  SearchFieldsMis.push('Dept_Name');
+  department = this.SelectedDistDepartment;
+}
+if (this.SelectedDistCostCen.length) {
+  SearchFieldsMis.push('Cost_Cen_Name');
+  costcen = this.SelectedDistCostCen;
+}
+if (this.SelectedDistStockPoint.length) {
+  SearchFieldsMis.push('Stock_Point');
+  stockpoint = this.SelectedDistStockPoint;
+}
+this.MISList = [];
+if (SearchFieldsMis.length) {
+  let LeadArr = this.BackupMISList.filter(function (e) {
+    return (department.length ? department.includes(e['Dept_Name']) : true)
+    && (costcen.length ? costcen.includes(e['Cost_Cen_Name']) : true)
+    && (stockpoint.length ? stockpoint.includes(e['Stock_Point']) : true)
+  });
+this.MISList = LeadArr.length ? LeadArr : [];
+} else {
+this.MISList = [...this.BackupMISList] ;
+}
+this.TotalValue(this.MISList);
+}
+GetDistinctMis() {
+  let department:any = [];
+  let costcen:any = [];
+  let stockpoint:any = [];
+  this.DistDepartment =[];
+  this.SelectedDistDepartment =[];
+  this.DistCostCen =[];
+  this.SelectedDistCostCen =[];
+  this.DistStockPoint =[];
+  this.SelectedDistStockPoint = [];
+  this.MISList.forEach((item) => {
+if (department.indexOf(item.Dept_Name) === -1) {
+  department.push(item.Dept_Name);
+  this.DistDepartment.push({ label: item.Dept_Name, value: item.Dept_Name });
+  }
+ if (costcen.indexOf(item.Cost_Cen_Name) === -1) {
+  costcen.push(item.Cost_Cen_Name);
+ this.DistCostCen.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
+ }
+ if (stockpoint.indexOf(item.Stock_Point) === -1) {
+  stockpoint.push(item.Stock_Point);
+ this.DistStockPoint.push({ label: item.Stock_Point, value: item.Stock_Point });
+ }
+});
+   this.BackupMISList = [...this.MISList];
+}
+TotalValue(arrList:any){
+  if(arrList.length){
+    this.allTotalObj.Value =0
+    arrList.forEach(ele => {
+      this.allTotalObj.Value = Number(Number(ele.Value) + Number(this.allTotalObj.Value)).toFixed(2)
+    });
+  }
+  console.log(this.allTotalObj)
 }
 }
 

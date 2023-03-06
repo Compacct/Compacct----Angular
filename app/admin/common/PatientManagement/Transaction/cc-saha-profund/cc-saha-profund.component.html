@@ -36,6 +36,12 @@
                                         <sup class="text-danger"></sup></label>
                                     <p-multiSelect [options]="AudiologistFilter" [(ngModel)]="SelectedAudiologist" [styleClass]="'compacct-multiselect'" name="filterAudio" (onChange)="filterAudiologist()"></p-multiSelect>
                                 </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Age Upto</label>
+                                    <input type="text" pInputText size="50" placeholder="Search"name="Age" #Age="ngModel"  [(ngModel)]="SelectedAge"
+                                        class="form-control" (keyup)="search()">
+                                       
+                                </div>
                             </div>
                         </form>
                         <div class="table-responsive no-padding">
@@ -59,6 +65,7 @@
                                         <th nowrap>Audiologist Name</th>
                                         <th nowrap>Pure Tone Left</th>
                                         <th nowrap>Pure Tone Right</th>
+                                        <th nowrap>Age</th>
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-col>
@@ -96,6 +103,7 @@
                                         <td nowrap>{{col.Doctor_Name ? col.Doctor_Name : '-'}}</td>
                                         <td nowrap>{{col.PT_LEFT ? col.PT_LEFT : '-'}}</td>
                                         <td nowrap>{{col.PT_RIGHT ? col.PT_RIGHT : '-' }}</td>
+                                        <td nowrap>{{col.Age ? col.Age : '-' }}</td>
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="paginatorright" let-state>

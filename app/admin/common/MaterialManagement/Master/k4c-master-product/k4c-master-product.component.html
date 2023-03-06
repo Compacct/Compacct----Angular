@@ -255,12 +255,13 @@
                                     </div>
                                     <!--  -->
                                     <div class="clearfix" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Store Item - Saleable'"></div>
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Raw Material'">
-                                        <label class="control-label">Saleable Product<sup class="text-danger"></sup></label>
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished'">
+                                        <label class="control-label" *ngIf="Param_Flag != 'Raw Material'">Saleable Product<sup class="text-danger"></sup></label>
+                                        <label class="control-label" *ngIf="Param_Flag === 'Raw Material'">Billable<sup class="text-danger"></sup></label>
                                         <div class="checkBox">
                                             <label>
                                        <p-checkbox  [(ngModel)]="ObjmasterProduct.Saleable_Product" #Saleable_Product="ngModel" name="Saleable_Product" binary="true"
-                                       ></p-checkbox> Enable Saleable Product
+                                       ></p-checkbox>  {{billableSaleable}}
                                    </label>
                                         </div>
                                     </div>
@@ -342,6 +343,23 @@
                                         <label class="control-label">Shelf Life (In Hours)<sup class="text-danger">*</sup></label>
                                         <input class="form-control" name="Shelf_Life_Hours" #Shelf_Life_Hours="ngModel" [(ngModel)]="ObjmasterProduct.Shelf_Life_Hours" placeholder="Shelf Life (In Hours)" CompacctDigitonly="true" [ngClass]="{'clearance': masterProductFormSubmitted && Shelf_Life_Hours?.errors?.required}"
                                             required>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Premix</label>
+                                        <select class="form-control" name="premix" #premix="ngModel" [(ngModel)]="ObjmasterProduct.Premix_Item" [ngClass]="{'clearance': masterProductFormSubmitted && premix?.errors?.required}">
+                                              <option  [ngValue]="undefined">Select</option>
+                                              <option  value="Y">Yes</option>
+                                              <option  value="N">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Daily/Weekly</label>
+                                        <select class="form-control" name="dailyweekly" #dailyweekly="ngModel" [(ngModel)]="ObjmasterProduct.Daily_Weekly" [ngClass]="{'clearance': masterProductFormSubmitted && dailyweekly?.errors?.required}">
+                                              <option  [ngValue]="undefined">Select</option>
+                                              <option  value="Daily">Daily</option>
+                                              <option  value="Weekly">Weekly</option>
+                                              <option  value="NA">NA</option>
+                                        </select>
                                     </div>
                                     <div class="col-sm-4">
 
