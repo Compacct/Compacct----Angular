@@ -179,7 +179,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Vendor<sup class="text-danger">*</sup></label>
-                                        <p-dropdown [options]="VendorList" name="Vendor" #Vendor="ngModel" [(ngModel)]="ObjPurchase.Sub_Ledger_ID"
+                                        <p-dropdown [options]="VendorList" name="Vendor" #Vendor="ngModel" [(ngModel)]="SubLedgerID"
                                             [showClear]="true" [emptyFilterMessage]="' No Vendor Found'" [filter]="true" filterBy="label,value.name"
                                             [resetFilterOnHide]="true" [placeholder]="'Select Vendor'" [virtualScroll]="true" itemSize="30"
                                             (onChange)="getPRno()" [disabled]="buttonname == 'Update'"
@@ -388,7 +388,22 @@
                                     </p-multiSelect>
                                 </div>
                             </div>
-                            
+                            <div class="container"   >
+                                <div class="col-sm-2" *ngIf="SubLedgerID">
+                                    <label class="control-label">Send SMS ?</label>
+                                    <div class="checkBox">
+                                        <p-checkbox name="Email" [(ngModel)]="SMSCheck" binary="true" [disabled]="true" ></p-checkbox>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3" *ngIf="SMSCheck">
+                                    <label class="control-label">To Mobile No<sup class="text-danger">*</sup></label>
+                                    <p-multiSelect [options]="SMSList" name="SMS" #SMS="ngModel" [(ngModel)]="SMSSelect"
+                                        [virtualScroll]="true" itemSize="30" [defaultLabel]="'Choose Mobile No'" [emptyFilterMessage]="' Mobile No Found'"
+                                        [styleClass]="'compacct-multiselect'"
+                                         >
+                                    </p-multiSelect>
+                                </div>  
+                            </div>
                             <div class="box-footer">
                                 <!-- <button class="btn btn-primary pull-right" type="button" (click)="SavePo(POForms.form.valid)" id="load">
                                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
