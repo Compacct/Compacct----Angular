@@ -75,8 +75,8 @@
                             </form>
                             <div class="table-responsive no-padding">
                                 <p-table #dt [value]="Searchedlist"
-                                    [globalFilterFields]="['Doc_No','Godown','Purchase_Request_No','Grant_Total']"
-                                    [paginator]="" [rows]="100" [rowHover]="true" [autoLayout]="true"
+                                    [globalFilterFields]="['Doc_No','Doc_Date','Billing_To','Sub_Ledger_Name','Purchase_Request_No','Grant_Total','Current_Status']"
+                                    [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true"
                                     sortMode="multiple" [rowsPerPageOptions]="[100,300,500]" [rowHover]="true">
                                     <ng-template pTemplate="caption">
                                         <div class="row">
@@ -97,7 +97,7 @@
                                             <th>Sub Ledger Name</th>
                                             <th>Purchase Request No</th>
                                             <th>Grant Total</th>
-                                            <th>Current Status</th>
+                                            <!-- <th>Current Status</th> -->
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -155,7 +155,7 @@
                                             <td>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
                                             <td>{{col.Purchase_Request_No ? col.Purchase_Request_No : '-'}}</td>
                                             <td>{{col.Grant_Total ? col.Grant_Total : '-'}}</td> 
-                                            <td>{{col.Current_Status ? col.Current_Status : '-'}}</td>                                       
+                                            <!-- <td>{{col.Current_Status ? col.Current_Status : '-'}}</td>                                        -->
                                         </tr>
                                     </ng-template>                                 
                                 </p-table>
@@ -179,7 +179,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Vendor<sup class="text-danger">*</sup></label>
-                                        <p-dropdown [options]="VendorList" name="Vendor" #Vendor="ngModel" [(ngModel)]="SubLedgerID"
+                                        <p-dropdown [options]="VendorList" name="Vendor" #Vendor="ngModel" [(ngModel)]="ObjPurchase.Sub_Ledger_ID"
                                             [showClear]="true" [emptyFilterMessage]="' No Vendor Found'" [filter]="true" filterBy="label,value.name"
                                             [resetFilterOnHide]="true" [placeholder]="'Select Vendor'" [virtualScroll]="true" itemSize="30"
                                             (onChange)="getPRno()" [disabled]="buttonname == 'Update'"
@@ -349,7 +349,7 @@
                                     </p-editor>
                                 </div>                              
                             </form><br>
-                            <div class="container">
+                            <div class="container" style="padding-bottom: 8px;" >
                                 <div class="col-sm-2" *ngIf="ObjPurchase.Sub_Ledger_ID">
                                     <label class="control-label">Send To Email ?</label>
                                     <div class="checkBox">
@@ -388,11 +388,11 @@
                                     </p-multiSelect>
                                 </div>
                             </div>
-                            <div class="container"   >
-                                <div class="col-sm-2" *ngIf="SubLedgerID">
+                            <div class="container" style="margin-top: 10px;"  >
+                                <div class="col-sm-2" *ngIf="ObjPurchase.Sub_Ledger_ID">
                                     <label class="control-label">Send SMS ?</label>
                                     <div class="checkBox">
-                                        <p-checkbox name="Email" [(ngModel)]="SMSCheck" binary="true" [disabled]="true" ></p-checkbox>
+                                        <p-checkbox name="Email" [(ngModel)]="SMSCheck" (onChange)="smsCheckbox()" binary="true" ></p-checkbox>
                                     </div>
                                 </div>
                                 <div class="col-sm-3" *ngIf="SMSCheck">
@@ -404,17 +404,12 @@
                                     </p-multiSelect>
                                 </div>  
                             </div>
-                            <div class="box-footer">
-                                <!-- <button class="btn btn-primary pull-right" type="button" (click)="SavePo(POForms.form.valid)" id="load">
-                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
-                                </button> -->
                                 <div class="box-footer">
                                     <button class="btn btn-primary pull-right" (click)="SavePo(POForms.form.valid)" id="loadSave" [disabled]="saveSpinner">
                                         <p-progressSpinner *ngIf="saveSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                     <span *ngIf="!saveSpinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                 </button>
                                 </div>
-                            </div>
                         </p-tabPanel>
 
                     </p-tabView>
@@ -504,7 +499,7 @@
             <div class="form-group">
                 <div class="col-sm-12">
                     <label class="control-label">Company Email<sup class="text-danger">*</sup></label>
-                    <input type="text" class="form-control" name="MT" #MT="ngModel" [(ngModel)]="CompantEmailName"
+                    <input type="text" class="form-control" name="MT" #MT="ngModel" [(ngModel)]="CreatEmailFild"
                         placeholder="Type Company Email"
                         [ngClass]="{clearance: NewEmailFormSubmitted && MT?.errors?.required}" required />
                 </div>
