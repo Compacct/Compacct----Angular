@@ -324,8 +324,20 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
           severity: "error",
           detail: "Have to selete Atleast one CC Email/Company CC Email",
         });
+         this.saveSpinner = false;
         return
-       }
+      }
+       if (this.SMSCheck && this.SMSSelect.length ==0) {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Failed to Send SMS",
+          detail: "No Mobile Number has been selected"
+            });
+        this.saveSpinner = false;
+        return
+      }
       this.saveSpinner = true
       this.ProductList.forEach(element => {
         const TempObj = {
@@ -378,7 +390,12 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
             if (this.SMSCheck) {
                this.sendSms(data[0].Column1)
             }
-           
+              this.tabIndexToView = 0;
+              this.PurchaseOrderForm = false;
+              this.items = ["BROWSE", "CREATE"];
+              this.Searchedlist = [];
+              this.saveSpinner = false
+              this.buttonname = 'Save'
            
           }
         }
@@ -828,7 +845,6 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
               element['value'] = element.email
           });
           this.toEmailList = [...data];
-          this.CCEmailList = [...data]
         }
         else {
           this.toEmailList = [];
@@ -1368,7 +1384,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.ProductList.splice(index, 1);
   }
   toEmailChange(){
-   const bckp = [...this.toEmailList]
+   this.CCEmailSelect = [];
    this.CCEmailList =[...this.toEmailList]
    this.CCEmailList.forEach((el:any,i:any) => {
         if(el.email === this.ToEmailSelect){
@@ -1457,7 +1473,4 @@ Subledger_Address: any;
 Company_Name: any;
 Shipping_Address: any;
 Billing_Address:any
-}
-class browseEmail{
-
 }
