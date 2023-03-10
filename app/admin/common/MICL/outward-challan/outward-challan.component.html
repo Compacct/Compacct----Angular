@@ -18,6 +18,42 @@
       </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" key="s" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+            <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
+        </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="bill" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+            <button type="button" pButton (click)="RedrectEdit()" label="Yes" class="ui-button-success"></button>
+        </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+    </ng-template>
+</p-toast>
 
 <div class="row">
     <div class="col-xs-12">
@@ -263,7 +299,7 @@
                                             <div class="form-group">
                                                 <div class="col-sm-3">
                                                     <label class="control-label">CostCenter<sup class="text-danger">*</sup></label>
-                                                    <select class="form-control" name="costcenter" #costcenter="ngModel" [(ngModel)]="ObjPurChaseBill.Cost_Cen_ID" 
+                                                    <select class="form-control" name="costcenter" #costcenter="ngModel" [(ngModel)]="Cost_Cen_ID" 
                                                     [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'" 
                                                     (change)="GetCosCenAddress()"
                                                     [ngClass]="{'clearance': PurchaseBillFormSubmitted && costcenter?.errors?.required}" 
@@ -484,7 +520,7 @@
                             </div>
                             <div class="col-sm-4">
                                 <label>Product Description<sup class="text-danger">*</sup></label>
-                                <select class="form-control" name="Description" #Description="ngModel" 
+                                <!-- <select class="form-control" name="Description" #Description="ngModel" 
                                     [(ngModel)]="ObjProductInfo.Product_Specification"
                                     (change)="GetLot()"
                                     [ngClass]="{clearance: TermFormSubmitted && Description?.errors?.required}" 
@@ -493,8 +529,29 @@
                                     <option *ngFor="let option of ProductDetalist" [value]="option.value">
                                         {{option.label}}
                                     </option>
+                                </select> -->
+                                <p-dropdown [options]="ProductDetalist" name="Description" #Description="ngModel"  
+                                    [(ngModel)]="ObjProductInfo.Product_Specification" 
+                                    [showClear]="true" [emptyFilterMessage]="' No Product Found'" 
+                                    (onChange)="GetLot()" [filter]="true" filterBy="label,value.name"
+                                    [resetFilterOnHide]="true" [placeholder]="'Select Product'"
+                                    [virtualScroll]="true" itemSize="30" 
+                                    [ngClass]="{'clearance':TermFormSubmitted && Description?.errors?.required}" [required]="true">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-sm-4">
+                                <label>Tax Category<sup class="text-danger">*</sup></label>
+                                <select class="form-control" name="taxcat" #taxcat="ngModel" 
+                                    [(ngModel)]="Tax_Category"
+                                    [ngClass]="{clearance: TermFormSubmitted && taxcat?.errors?.required}" 
+                                    required>
+                                    <option [ngValue]="undefined">Select</option>
+                                    <option *ngFor="let option of TaxCategoryList" [value]="option.Cat_ID">
+                                        {{option.Cat_Name}}
+                                    </option>
                                 </select>
                             </div>
+                            <div class="clearfix"></div>
                             <div class="col-sm-3">
                                 <label class="control-label">Lot No./Batch No. <sup class="text-danger">*</sup></label>
                                 <select class="form-control" name="BatchNo" #BatchNo="ngModel" 
@@ -507,7 +564,7 @@
                                 </option>
                                 </select>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-2">
                                 <label class="control-label">Qty <sup class="text-danger">*</sup></label>
                                 <div class="input-group">                                  
                                 <input class="form-control"  name="Qty" #Qty="ngModel" 
@@ -563,7 +620,7 @@
                               <th colspan="2" scope="colgroup" class="text-center">SGST</th>
                               <th colspan="2" scope="colgroup" class="text-center">IGST</th>
                               <th rowspan="2" class="text-center" style="vertical-align:middle">Net Amount</th>
-                              <!-- <th rowspan="2" class="text-center" style="vertical-align:middle">Detete</th> -->
+                              <th rowspan="2" class="text-center" style="vertical-align:middle">Detete</th>
                             </tr>
                             <tr style="background-color:#3c8dbc;color:white">
                                <th scope="col" class="text-center">Rate</th>
@@ -594,7 +651,7 @@
                             <td>{{ TermTableList.IGST_Rate }}</td>
                             <td>{{ TermTableList.IGST_Amt }}</td>
                             <td>{{ TermTableList.Line_Total_Amount }}</td>
-                              <!-- <td><button (click)="DeteteTerm(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td> -->
+                            <td><button (click)="Deteteaddlist(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                             </tr>
                         </tbody>
                        </table>

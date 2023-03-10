@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, NavigationExtras, Router} from '@angular/router';
 import { MessageService } from "primeng/api";
 import {CompacctHeader} from "../../../shared/compacct.services/common.header.service"
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -103,6 +103,7 @@ export class OutwardChallanComponent implements OnInit {
   ProductType: any = [];
   ProductSub: any = [];
   ProductDetalist: any = [];
+  TaxCategoryList:any = [];
   LotNolist: any = [];
   UomList: string = '';
   Tax: any = undefined;
@@ -116,6 +117,10 @@ export class OutwardChallanComponent implements OnInit {
   SerarchOwterBillListHeader: any = [];
   VendorListbrowse: any = [];
   TermFormSubmitted: boolean = false;
+  Cost_Cen_ID:any;
+  Tax_Category:any;
+  challanno:any;
+  subledgerid:any;
   constructor(
     private Header: CompacctHeader,
     private router: Router,
@@ -146,10 +151,11 @@ export class OutwardChallanComponent implements OnInit {
     this.GetCostcenter();
     this.Costcenter();
     this.getProduct();
+    this.GetTaxCategory();
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE", "PENDING GRN"];
+    this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Create";
     this.Spinner = false;
     this.Same_as_Bill = true;
@@ -170,7 +176,7 @@ export class OutwardChallanComponent implements OnInit {
     this.ObjPurChaseBill.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;  
     this.DocDate = new Date();
     this.SupplierBillDate = new Date();
-    this.ObjPurChaseBill.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.GetCosCenAddress();
     this.Tax = undefined;
     this.CGST = undefined;
@@ -351,7 +357,7 @@ export class OutwardChallanComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       this.CostCenterList = data;
       console.log("this.CostCenterList", this.CostCenterList)
-      this.ObjPurChaseBill.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       this.GetCosCenAddress();
     })
   }
@@ -376,9 +382,9 @@ export class OutwardChallanComponent implements OnInit {
   }
   GetCosCenAddress() {
     //this.ExpiredProductFLag = false;
-    if (this.ObjPurChaseBill.Cost_Cen_ID) {
+    if (this.Cost_Cen_ID) {
       const ctrl = this;
-      const costcenObj = $.grep(ctrl.CostCenterList, function (item: any) { return item.Cost_Cen_ID == ctrl.ObjPurChaseBill.Cost_Cen_ID })[0];
+      const costcenObj = $.grep(ctrl.CostCenterList, function (item: any) { return item.Cost_Cen_ID == ctrl.Cost_Cen_ID })[0];
       // console.log(costcenObj);
       this.ObjPurChaseBill = costcenObj
       this.ObjPurChaseBill.Cost_Cen_Email = costcenObj.Cost_Cen_Email1;
@@ -451,6 +457,18 @@ export class OutwardChallanComponent implements OnInit {
     }
   
   }
+  GetTaxCategory() {
+    this.TaxCategoryList = [];
+      const obj = {
+        "SP_String": "SP_MICL_Sale_Bill",
+        "Report_Name_String": "Get_TAX_Catagory",
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("TaxCategoryList  ===", data);
+        this.TaxCategoryList = data;
+      })
+  
+  }
   GetLot() {
     if (this.ObjProductInfo.Product_Specification) {
      this.getUom(); 
@@ -492,15 +510,20 @@ export class OutwardChallanComponent implements OnInit {
   AddProduct(valid: any) {
     this.TermFormSubmitted = true;
     if (valid) {
-      const LotNoArry: any = this.LotNolist.filter((el: any) => Number(el.Batch_No) === Number(this.ObjProductInfo.Batch_Number));
+      const LotNoArry: any = this.LotNolist.filter((el: any) => el.Batch_No == this.ObjProductInfo.Batch_Number);
       this.BatchQtyCheck = LotNoArry[0].Batch_Qty;
       if(this.BatchQtyCheck >= this.ObjProductInfo.Qty) {
         const CostMatch: any = this.CenterList.filter((el: any) => Number(el.Cost_Cen_ID) === Number(this.ObjProductInfo.Cost_Cen_ID));
       const ProductDArry: any = this.ProductDetalist.filter((el: any) => Number(el.value) === Number(this.ObjProductInfo.Product_Specification));
+      const TaxCatArry: any = this.TaxCategoryList.filter((el: any) => Number(el.Cat_ID) === Number(this.Tax_Category));
       this.ObjProductInfo.Cost_Cen_State = CostMatch[0].Cost_Cen_State;
-      this.ObjProductInfo.CGST_Rate = ProductDArry[0].CGST_Rate;
-      this.ObjProductInfo.SGST_Rate = ProductDArry[0].SGST_Rate;
-      this.ObjProductInfo.IGST_Rate = ProductDArry[0].IGST_Rate;
+      // this.ObjProductInfo.CGST_Rate = ProductDArry[0].CGST_Rate;
+      // this.ObjProductInfo.SGST_Rate = ProductDArry[0].SGST_Rate;
+      // this.ObjProductInfo.IGST_Rate = ProductDArry[0].IGST_Rate;
+      var gstper = Number(TaxCatArry[0].GST_Tax_Per / 2).toFixed(2);
+      this.ObjProductInfo.CGST_Rate = Number(gstper);
+      this.ObjProductInfo.SGST_Rate = Number(gstper);
+      this.ObjProductInfo.IGST_Rate = Number(TaxCatArry[0].GST_Tax_Per);
       const SubLedgerState = this.ObjPurChaseBill.Cost_Cen_State
         ? this.ObjPurChaseBill.Cost_Cen_State.toUpperCase()
         : undefined;
@@ -565,6 +588,7 @@ export class OutwardChallanComponent implements OnInit {
       this.UomList = '';
       this.ObjProductInfo.Rate = undefined;
       this.ObjProductInfo.Taxable_Amount = undefined;
+      this.Tax_Category = undefined;
       }
       else {
          this.compacctToast.clear();
@@ -575,6 +599,9 @@ export class OutwardChallanComponent implements OnInit {
           });
       }
     }
+  }
+  Deteteaddlist(index){
+    this.AddProdList.splice(index,1)
   }
   TotalCalculation() {
     this.Tax = undefined;
@@ -600,10 +627,24 @@ export class OutwardChallanComponent implements OnInit {
     this.IGST = count4.toFixed(2);
     this.NetAMT = count5.toFixed(2);
   }
-  SaveOutward(valid: any) {
+  SaveOutward(valid: any){
     this.SaveLowerData = [];
     this.PurchaseBillFormSubmitted = true;
     if (valid && this.AddProdList.length) {
+      this.compacctToast.clear();
+     this.compacctToast.add({
+       key: "s",
+       sticky: true,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+     });
+    }
+  }
+  onConfirmSave() {
+    // this.SaveLowerData = [];
+    // this.PurchaseBillFormSubmitted = true;
+    // if (valid && this.AddProdList.length) {
       this.AddProdList.forEach(element => {
         this.SaveLowerData.push({
           Product_ID: element.Product_ID,
@@ -645,7 +686,7 @@ export class OutwardChallanComponent implements OnInit {
         Consignee_State: this.ObjPurChaseBill.Sub_Ledger_State_2,
         Consignee_GST_No: this.ObjPurChaseBill.Sub_Ledger_GST_No_2,
           
-        Cost_Cen_ID: this.ObjPurChaseBill.Cost_Cen_ID,
+        Cost_Cen_ID: this.Cost_Cen_ID,
         Cost_Cen_Name: this.ObjPurChaseBill.Cost_Cen_Name,
         Cost_Cen_Address1: this.ObjPurChaseBill.Cost_Cen_Address1,
         Cost_Cen_Address2: this.ObjPurChaseBill.Cost_Cen_Address2,
@@ -678,19 +719,30 @@ export class OutwardChallanComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         var tempID = data[0].Column1;
+        this.challanno = data[0].Column1;
+        this.subledgerid = data[0].Column2;
         if (data[0].Column1) {
+          // this.RedrectEdit(data[0].Column1);
+          // this.compacctToast.clear();
+          // this.compacctToast.add({
+          //   key: "compacct-toast",
+          //   severity: "success",
+          //   summary: tempID,
+          //   detail: "successfully Create ",
+          // });
           this.compacctToast.clear();
           this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "success",
-            summary: tempID,
-            detail: "successfully Create ",
+            key: "bill",
+            sticky: true,
+            severity: "warn",
+            summary: "Successfully create challan no ("+tempID+")." + "Do you want to create a Bill ?",
+            detail: "Confirm to proceed"
           });
       this.ObjPurChaseBill = new PurChaseBill();
       this.DocDate = new Date();
       this.SupplierBillDate = new Date();
       this.PurchaseBillFormSubmitted = false
-      this.tabIndexToView = 0;
+      // this.tabIndexToView = 0;
       this.items = ["BROWSE", "CREATE"];
       this.Tax = undefined;
       this.CGST = undefined;
@@ -704,10 +756,12 @@ export class OutwardChallanComponent implements OnInit {
      }
     }); 
      
-    }
+    // }
   }
   onReject() {
     this.compacctToast.clear("c");
+    this.compacctToast.clear("s");
+    this.compacctToast.clear("bill");
   }
   Print(DocNo) {
     if (DocNo) {
@@ -758,6 +812,25 @@ export class OutwardChallanComponent implements OnInit {
      });
     }
    }
+   DynamicRedirectTo (obj){
+    const navigationExtras: NavigationExtras = {
+      queryParams: obj,
+    };
+    this.router.navigate([obj.Redirect_To], navigationExtras);
+  }
+   RedrectEdit() {
+    if (this.challanno) {
+      const TempObj = {
+        Redirect_To : './MICL_Sale_Bill',
+        Challan_No : this.challanno,
+        Sub_Ledger_ID : this.subledgerid,
+        Cost_Cen_ID : this.Cost_Cen_ID,
+        Cat_ID : this.Tax_Category
+      }
+      this.DynamicRedirectTo(TempObj); 
+    }// CHALLAN TO BILL
+
+  }
 
 }
 class PurChaseBill {
