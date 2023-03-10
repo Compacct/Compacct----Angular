@@ -201,6 +201,8 @@ changeMaterialName(ProductID:any){
  if(ProductID){
     const FilterAllMaterialName = this.AllMaterialName.find((el:any) => Number(el.Product_ID) == Number(ProductID))
     console.log("FilterAllMaterialName",FilterAllMaterialName)
+    this.ObjRawMatRev.PO_Qty = FilterAllMaterialName ? FilterAllMaterialName.PO_Qty : ""
+    this.ObjRawMatRev.Pending_PO_Qty = FilterAllMaterialName ? FilterAllMaterialName.Pending_PO_Qty : ""
     this.ObjRawMatRev.UOM = FilterAllMaterialName ? FilterAllMaterialName.UOM : ""
     this.GetParamDetailsforProduct();
  }
@@ -271,6 +273,7 @@ AddRawMatRev(valid:any){
   console.log("valid",valid)
   this.RawMatRevFormSubmitted = true 
  if(valid && this.Getsameproduct()){
+  if (Number(this.ObjRawMatRev.Receive_Qty)  <= Number(this.ObjRawMatRev.Pending_PO_Qty)) {
   const FilterReferenceDataList = this.ReferenceDataList.find((el:any)=> el.Production_Ref_NO == this.ObjRawMatRev.Production_Ref_NO)
   const FilterAllMaterialName = this.AllMaterialName.find((el:any) => Number(el.Product_ID) == Number(this.ObjRawMatRev.Product_ID) )
   const FilterStockPointList= this.StockPointList.find((el:any) => Number(el.godown_id) == Number(this.ObjRawMatRev.Godown_ID) )
@@ -303,6 +306,8 @@ AddRawMatRev(valid:any){
       Product_ID: Number(this.ObjRawMatRev.Product_ID),
       Product_Name: FilterAllMaterialName ? FilterAllMaterialName.Product_Name : " ",
       UOM:  this.ObjRawMatRev.UOM,
+      PO_Qty: this.ObjRawMatRev.PO_Qty,
+      Pending_PO_Qty:this.ObjRawMatRev.Pending_PO_Qty,
       Receive_Qty: this.ObjRawMatRev.Receive_Qty,
       Batch_Lot_No: this.ObjRawMatRev.Batch_Lot_No,
       Rate: FilterAllMaterialName ? FilterAllMaterialName.Rate : " ",
@@ -338,6 +343,8 @@ AddRawMatRev(valid:any){
   this.ObjRawMatRev.Remarks = bckupTempObj.Remarks
   // this.ObjRawMatRev = new RawMatRev()
   this.ObjRawMatRev.Product_ID = undefined;
+  this.ObjRawMatRev.PO_Qty = undefined;
+  this.ObjRawMatRev.Pending_PO_Qty = undefined;
   this.ObjRawMatRev.Receive_Qty = undefined;
   this.ObjRawMatRev.UOM = undefined;
   this.ObjRawMatRev.Batch_Lot_No = undefined;
@@ -348,6 +355,17 @@ AddRawMatRev(valid:any){
   this.recdatedisabled = false;
   this.minFromDate = new Date('01/01/1990')
   this.RawMatRevFormSubmitted =false
+ 
+ }
+ else {
+  this.compacctToast.clear();
+  this.compacctToast.add({
+    key: "compacct-toast",
+    severity: "error",
+    summary: "Warn Message",
+    detail: "Receive Qty is more than Pending PO Qty. "
+  });
+  }
  }
 }
 DeleteRawMatRevListROW(index:any){
@@ -900,6 +918,8 @@ class RawMatRev{
   Product_ID:any;
   Product_Name:any;
   UOM:any;
+  PO_Qty:any;
+  Pending_PO_Qty:any;
   Receive_Qty:any;
   Batch_Lot_No:any;
   Note_Description:any;

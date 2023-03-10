@@ -434,7 +434,7 @@
                             <div class="col-sm-4">
                                 <label class="control-label">Apply From Date
                                     <sup class="text-danger">*</sup> <span *ngIf="applydays">(Apply Day - {{applydays}})</span></label>
-                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='FromDatevalue' [min]='minFromDate' [max]='maxFromDate' (change)="GetNumberOfdays()"></ejs-datepicker>
+                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='FromDatevalue' [min]='minFromDate' [max]='maxFromDate' (change)="GetNoOfDays()"></ejs-datepicker>
                                     <!-- <ejs-datepicker 
                                     [(value)]="From_Time" 
                                         [min]='minDateFrom_Time'
@@ -447,7 +447,7 @@
                             <div class="col-sm-4">
                                 <label class="control-label">Apply To Date
                                     <sup class="text-danger">*</sup></label>
-                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='ToDatevalue' [min]='minToDate' [max]='maxToDate' (change)="GetNumberOfdays()"></ejs-datepicker>
+                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='ToDatevalue' [min]='minToDate' [max]='maxToDate' (change)="GetNoOfDays()"></ejs-datepicker>
                                     <!-- <ejs-datepicker 
                                     [(value)]="To_Time" 
                                     [min]='minDateTo_Time'

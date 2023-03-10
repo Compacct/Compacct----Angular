@@ -121,6 +121,7 @@ export class OutwardChallanComponent implements OnInit {
   Tax_Category:any;
   challanno:any;
   subledgerid:any;
+  Choose_Address:any;
   constructor(
     private Header: CompacctHeader,
     private router: Router,
@@ -169,6 +170,7 @@ export class OutwardChallanComponent implements OnInit {
     this.ObjProductInfo.Cost_Cen_ID = this.CenterList[0].Cost_Cen_ID ? this.CenterList[0].Cost_Cen_ID : undefined;
     this.GetGodown();
     this.clearData();
+    this.Choose_Address = undefined;
   }
   clearData() { 
     this.PurchaseBillFormSubmitted = false;
@@ -302,22 +304,24 @@ export class OutwardChallanComponent implements OnInit {
 
   }
   onChangeAdd() {
-    if (this.ObjPurChaseBill.Choose_Address) {
-      this.ObjPurChaseBill.Sub_Ledger_Address_1 = this.SaveAddress[0].Address_1,
-        this.ObjPurChaseBill.Sub_Ledger_District = this.SaveAddress[0].District,
-        this.ObjPurChaseBill.Sub_Ledger_State = this.SaveAddress[0].State,
+    if (this.Choose_Address) {
+      const address1 = this.SaveAddress.filter(item=> item.Address_Caption == this.Choose_Address)
+        this.ObjPurChaseBill.Sub_Ledger_Address_1 = address1.length ? address1[0].Address_1 : undefined;
+        this.ObjPurChaseBill.Sub_Ledger_District = address1.length ? address1[0].District : undefined;
+        this.ObjPurChaseBill.Sub_Ledger_State = address1.length ? address1[0].State : undefined;
         this.GetStateList()
-      this.ObjPurChaseBill.Sub_Ledger_Pin = this.SaveAddress[0].Pin
-      this.ObjPurChaseBill.Sub_Ledger_GST_No = this.SaveAddress[0].Sub_Ledger_GST_No
+        this.ObjPurChaseBill.Sub_Ledger_Pin = address1.length ? address1[0].Pin : undefined;
+        this.ObjPurChaseBill.Sub_Ledger_GST_No = address1.length ? address1[0].Sub_Ledger_GST_No : undefined;
     }
    
     if (this.ObjPurChaseBill.Choose_Address2) {
-      this.ObjPurChaseBill.Sub_Ledger_Address_2 = this.SaveAddress[0].Address_1,
-        this.ObjPurChaseBill.Sub_Ledger_District_2 = this.SaveAddress[0].District,
-        this.ObjPurChaseBill.Sub_Ledger_State_2 = this.SaveAddress[0].State,
+      const address2 = this.SaveAddress.filter(item=> item.Address_Caption == this.ObjPurChaseBill.Choose_Address2)
+      this.ObjPurChaseBill.Sub_Ledger_Address_2 = address2.length ? address2[0].Address_1 : undefined;
+        this.ObjPurChaseBill.Sub_Ledger_District_2 = address2.length ? address2[0].District : undefined;
+        this.ObjPurChaseBill.Sub_Ledger_State_2 = address2.length ? address2[0].State : undefined;
         this.GetStateList()
-      this.ObjPurChaseBill.Sub_Ledger_Pin_2 = this.SaveAddress[0].Pin
-      this.ObjPurChaseBill.Sub_Ledger_GST_No_2 = this.SaveAddress[0].Sub_Ledger_GST_No
+      this.ObjPurChaseBill.Sub_Ledger_Pin_2 = address2.length ? address2[0].Pin : undefined;
+      this.ObjPurChaseBill.Sub_Ledger_GST_No_2 = address2.length ? address2[0].Sub_Ledger_GST_No : undefined;
     }
    
   }
@@ -382,13 +386,34 @@ export class OutwardChallanComponent implements OnInit {
   }
   GetCosCenAddress() {
     //this.ExpiredProductFLag = false;
+      this.ObjPurChaseBill.Cost_Cen_Address1 = undefined;
+      this.ObjPurChaseBill.Cost_Cen_Address2 = undefined;
+      this.ObjPurChaseBill.Cost_Cen_State = undefined;
+      this.ObjPurChaseBill.Cost_Cen_GST_No = undefined;
+      this.ObjPurChaseBill.Cost_Cen_Location = undefined;
+      this.ObjPurChaseBill.Cost_Cen_PIN = undefined;
+      this.ObjPurChaseBill.Cost_Cen_District = undefined;
+      this.ObjPurChaseBill.Cost_Cen_Country = undefined;
+      this.ObjPurChaseBill.Cost_Cen_Mobile = undefined;
+      this.ObjPurChaseBill.Cost_Cen_Phone = undefined;
+      this.ObjPurChaseBill.Cost_Cen_Email = undefined;
+      this.ObjPurChaseBill.Cost_Cen_Name = undefined;
     if (this.Cost_Cen_ID) {
       const ctrl = this;
       const costcenObj = $.grep(ctrl.CostCenterList, function (item: any) { return item.Cost_Cen_ID == ctrl.Cost_Cen_ID })[0];
       // console.log(costcenObj);
-      this.ObjPurChaseBill = costcenObj
-      this.ObjPurChaseBill.Cost_Cen_Email = costcenObj.Cost_Cen_Email1;
+      // this.ObjPurChaseBill = costcenObj
+      this.ObjPurChaseBill.Cost_Cen_Address1 = costcenObj.Cost_Cen_Address1;
+      this.ObjPurChaseBill.Cost_Cen_Address2 = costcenObj.Cost_Cen_Address2;
       this.ObjPurChaseBill.Cost_Cen_State = costcenObj.Cost_Cen_State;
+      this.ObjPurChaseBill.Cost_Cen_GST_No = costcenObj.Cost_Cen_GST_No;
+      this.ObjPurChaseBill.Cost_Cen_Location = costcenObj.Cost_Cen_Location;
+      this.ObjPurChaseBill.Cost_Cen_PIN = costcenObj.Cost_Cen_PIN;
+      this.ObjPurChaseBill.Cost_Cen_District = costcenObj.Cost_Cen_District;
+      this.ObjPurChaseBill.Cost_Cen_Country = costcenObj.Cost_Cen_Country;
+      this.ObjPurChaseBill.Cost_Cen_Mobile = costcenObj.Cost_Cen_Mobile;
+      this.ObjPurChaseBill.Cost_Cen_Phone = costcenObj.Cost_Cen_Phone;
+      this.ObjPurChaseBill.Cost_Cen_Email = costcenObj.Cost_Cen_Email1;
       this.ObjPurChaseBill.Cost_Cen_Name = costcenObj.Cost_Cen_Name;
     }
   }
@@ -573,6 +598,7 @@ export class OutwardChallanComponent implements OnInit {
         SGST_Amt: this.ObjProductInfo.SGST_Amount,
         IGST_Amt: this.ObjProductInfo.IGST_Amount,
         Line_Total_Amount: this.ObjProductInfo.Net_Amt,
+        Cat_ID : this.Tax_Category
       };
       this.AddProdList.push(TemopArry)
       this.TotalCalculation();
@@ -665,6 +691,7 @@ export class OutwardChallanComponent implements OnInit {
           IGST_Rate: element.IGST_Rate,
           IGST_Amount: element.IGST_Amt,
           Line_Total_Amount: element.Line_Total_Amount,
+          Cat_ID : element.Cat_ID
         })
       });
       const T_Elemnts = {
@@ -825,7 +852,7 @@ export class OutwardChallanComponent implements OnInit {
         Challan_No : this.challanno,
         Sub_Ledger_ID : this.subledgerid,
         Cost_Cen_ID : this.Cost_Cen_ID,
-        Cat_ID : this.Tax_Category
+        Choose_Address : this.Choose_Address
       }
       this.DynamicRedirectTo(TempObj); 
     }// CHALLAN TO BILL
@@ -866,16 +893,16 @@ class PurChaseBill {
   Sub_Ledger_CIN_No : any;
 
   Cost_Cen_ID : any;
-  Cost_Cen_Name : string;
-  Cost_Cen_Address1 : string;
-  Cost_Cen_Address2 : string;
-  Cost_Cen_Location : string;
-  Cost_Cen_District : string;
-  Cost_Cen_State : string;
-  Cost_Cen_Country : string;
+  Cost_Cen_Name : any;
+  Cost_Cen_Address1 : any;
+  Cost_Cen_Address2 : any;
+  Cost_Cen_Location : any;
+  Cost_Cen_District : any;
+  Cost_Cen_State : any;
+  Cost_Cen_Country : any;
   Cost_Cen_PIN : any;
-  Cost_Cen_Mobile : number;
-  Cost_Cen_Phone : number;
+  Cost_Cen_Mobile : any;
+  Cost_Cen_Phone : any;
   Cost_Cen_Email : any;
   Cost_Cen_VAT_CST : any;
   Cost_Cen_CST_NO : any;

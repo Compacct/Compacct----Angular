@@ -56,7 +56,8 @@ export class SaleBillComponent implements OnInit {
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
     private route : ActivatedRoute,
-    private ngxService: NgxUiLoaderService
+    private ngxService: NgxUiLoaderService,
+    private router: Router,
   ){
      this.route.queryParamMap.subscribe((val:any) => {
       this.GetCustmer();
@@ -84,7 +85,6 @@ export class SaleBillComponent implements OnInit {
     this.Finyear();
     this.GetTaxCategory();
     this.ObjTopSale.Sub_Ledger_ID = Number(this.QueryStringObj.Sub_Ledger_ID);
-    // this.Tax_Category = Number(this.QueryStringObj.Cat_ID);
   }
   TabClick(e:any) {
     this.tabIndexToView = e.index;
@@ -94,7 +94,7 @@ export class SaleBillComponent implements OnInit {
   }
   clearData() {
     this.SaleBillFormSubmitted = false;
-   // this.ObjTopSale.Sub_Ledger_ID = undefined;
+    this.ObjTopSale.Sub_Ledger_ID = undefined;
     this.ChallanNoList = [];
     this.ObjTopSale.Bill_No = undefined;
     this.BillDate = new Date();
@@ -187,14 +187,24 @@ export class SaleBillComponent implements OnInit {
       this.ObjTopSale.Bill_No = []
       const ctrl = this;
       const costcenObj = $.grep(ctrl.CostCenterList, function (item: any) { return item.Cost_Cen_ID == ctrl.ObjTopSale.Cost_Cen_ID })[0];
-      this.ObjTopSale = {...costcenObj}
+      // this.ObjTopSale = {...costcenObj}
       this.ObjTopSale.Sub_Ledger_ID = Number(this.QueryStringObj.Sub_Ledger_ID)
       if(this.ObjTopSale.Sub_Ledger_ID){
         this.CustmerNameChange();
       }
       this.ObjTopSale.Bill_No.push(this.QueryStringObj.Challan_No)
-     this.ObjTopSale.Cost_Cen_Email = costcenObj.Cost_Cen_Email1;
+
+      this.ObjTopSale.Cost_Cen_Address1 = costcenObj.Cost_Cen_Address1;
+      this.ObjTopSale.Cost_Cen_Address2 = costcenObj.Cost_Cen_Address2;
       this.ObjTopSale.Cost_Cen_State = costcenObj.Cost_Cen_State;
+      this.ObjTopSale.Cost_Cen_GST_No = costcenObj.Cost_Cen_GST_No
+      this.ObjTopSale.Cost_Cen_Location = costcenObj.Cost_Cen_Location;
+      this.ObjTopSale.Cost_Cen_PIN = costcenObj.Cost_Cen_PIN;
+      this.ObjTopSale.Cost_Cen_Phone = costcenObj.Cost_Cen_Phone;
+      this.ObjTopSale.Cost_Cen_District = costcenObj.Cost_Cen_District;
+      this.ObjTopSale.Cost_Cen_Country = costcenObj.Cost_Cen_Country;
+      this.ObjTopSale.Cost_Cen_Mobile = costcenObj.Cost_Cen_Mobile;
+      this.ObjTopSale.Cost_Cen_Email = costcenObj.Cost_Cen_Email1;
       this.ObjTopSale.Cost_Cen_Name = costcenObj.Cost_Cen_Name; 
     }
      else {
@@ -232,7 +242,7 @@ export class SaleBillComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         this.SaveAddress = data;
         if (this.QueryStringObj.Sub_Ledger_ID) {
-        this.ObjTopSale.Choose_Address = "MAIN";
+          this.ObjTopSale.Choose_Address = this.QueryStringObj.Choose_Address;
         this.onChangeAdd();
         }
       })
@@ -242,12 +252,13 @@ export class SaleBillComponent implements OnInit {
   }
   onChangeAdd() {
     if (this.ObjTopSale.Choose_Address) {
-      this.ObjTopSale.Sub_Ledger_Address_1 = this.SaveAddress[0].Address_1,
-      this.ObjTopSale.Sub_Ledger_District = this.SaveAddress[0].District,
-      this.ObjTopSale.Sub_Ledger_State = this.SaveAddress[0].State,
+      const address1 = this.SaveAddress.filter(item=> item.Address_Caption == this.ObjTopSale.Choose_Address)
+      this.ObjTopSale.Sub_Ledger_Address_1 = address1.length ? address1[0].Address_1 : undefined;
+      this.ObjTopSale.Sub_Ledger_District = address1.length ? address1[0].District : undefined;
+      this.ObjTopSale.Sub_Ledger_State = address1.length ? address1[0].State : undefined;
       this.GetStateList()
-      this.ObjTopSale.Sub_Ledger_Pin = this.SaveAddress[0].Pin
-      this.ObjTopSale.Sub_Ledger_GST_No = this.SaveAddress[0].Sub_Ledger_GST_No
+      this.ObjTopSale.Sub_Ledger_Pin = address1.length ? address1[0].Pin : undefined;
+      this.ObjTopSale.Sub_Ledger_GST_No = address1.length ? address1[0].Sub_Ledger_GST_No : undefined;
     } 
     else {
       this.ObjTopSale.Sub_Ledger_Address_1 =undefined ,
@@ -518,6 +529,7 @@ export class SaleBillComponent implements OnInit {
       this.IGST = undefined;
       this.NetAMT = undefined;
       this.GridList = [];
+      this.router.navigate(['./MICL_Sale_Bill']);
       this.GetSerarchBrowse(true);
       // this.Tax_Category = undefined;
      }

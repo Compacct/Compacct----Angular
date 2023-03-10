@@ -148,11 +148,16 @@
                                                             <i class="fa fa-save"></i> Final Save
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.Approve_Status =='Pending'">
+                                                        <li *ngIf="col.Approve_Status =='Pending' && cookiesuserid != 95 && col.Cancel_PO != 'Y'">
                                                                 <a (click)="Edit(col)">
                                                                     <i class="fa fa-fw fa-pencil"></i> Edit
                                                                 </a>
                                                         </li>
+                                                        <li *ngIf="cookiesuserid === 95 && col.Cancel_PO != 'Y'">
+                                                            <a (click)="Edit(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> Edit
+                                                            </a>
+                                                    </li>
                                                         <li>
                                                             <a (click)="Print(col.Doc_No)">
                                                                 <i class="fa fa-fw fa-print"></i> Print

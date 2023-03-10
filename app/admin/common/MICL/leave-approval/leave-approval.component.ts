@@ -508,7 +508,7 @@ this.ApprovalList = [...this.BackupApprovalList] ;
                 key: "compacct-toast",
                 severity: "success",
                 summary: 'Emp ID : ' + this.pendingempid,
-                detail: "Succesfully Approved."
+                detail: "Leave Disapproved."
               });
               this.ApproveFormSubmit = false;
               this.DetailsModal = false;
