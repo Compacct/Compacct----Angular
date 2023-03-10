@@ -62,6 +62,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   EmailId: any = undefined;
   NewEmailFormSubmitted: boolean = false;
   CompantEmailName: any = [];
+  CreatEmailFild: any = undefined;
   toEmailList: any = [];
   CCEmailList: any = [];
   EmailCheck: any = false;
@@ -150,10 +151,18 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.clearData();
-     this.ToEmailSelect = undefined
+    this.ToEmailSelect = undefined
     this.CCEmailSelect = []
     this.CompantEmailName = []
     this.EmailCheck = false
+    this.SMSCheck = false
+    this.SMSSelect = []
+    const trmpobj: any = { ...this.ObjPurchase };
+    this.ObjPurchase = new Purchase();
+    this.ObjPurchase.Godown1 = trmpobj.Godown1;
+    this.Alladdress()
+    this.ObjPurchase.Godown2 = trmpobj.Godown2;
+    this.Alladdress()
   }
   TabClick1(r) {
     this.tabIndex = r.index;
@@ -239,6 +248,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     }
   }
   getPRno() {
+    console.log("click")
     this.POnoList = []
     this.ObjPurchase.Address_Caption = undefined
     this.ObjPurchase.Subledger_Address = undefined
@@ -255,7 +265,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
             xy['value'] = xy.Purchase_Request_No
           });
           this.POnoList = data
-          // console.log("POnoList==",this.POnoList)
+           console.log("POnoList==",this.POnoList)
           this.getSMS(this.ObjPurchase.Sub_Ledger_ID)
         }
       });
@@ -307,15 +317,27 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     let ArrData: any = [];
    
     if (vaild) {
-       if(this.CompantEmailName.length == 0 && this.CCEmailSelect.length == 0){
+       if(this.CompantEmailName.length == 0 && this.CCEmailSelect.length == 0 && this.EmailCheck){
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
           severity: "error",
           detail: "Have to selete Atleast one CC Email/Company CC Email",
         });
+         this.saveSpinner = false;
         return
-       }
+      }
+       if (this.SMSCheck && this.SMSSelect.length ==0) {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Failed to Send SMS",
+          detail: "No Mobile Number has been selected"
+            });
+        this.saveSpinner = false;
+        return
+      }
       this.saveSpinner = true
       this.ProductList.forEach(element => {
         const TempObj = {
@@ -361,7 +383,19 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
               summary: this.PoCode ? this.PoCode : "Purchase Order",
               detail: "Succesfully " + this.buttonname,
             });
-            this.getFileDetalis(data[0].Column1)
+            if (this.EmailCheck && this.ToEmailSelect) {
+               this.getFileDetalis(data[0].Column1)
+            }
+            
+            if (this.SMSCheck) {
+               this.sendSms(data[0].Column1)
+            }
+              this.tabIndexToView = 0;
+              this.PurchaseOrderForm = false;
+              this.items = ["BROWSE", "CREATE"];
+              this.Searchedlist = [];
+              this.saveSpinner = false
+              this.buttonname = 'Save'
            
           }
         }
@@ -410,9 +444,10 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       
     })
   } 
- sendEmail(doc:any,fileData:any,SubLedgerName:any){
+  sendEmail(doc:any,fileData:any,SubLedgerName:any){
     if(this.EmailCheck && this.ToEmailSelect){
       this.btnBrowseSendEmail = 'Sending Email....'
+      
       let ccdetailsList:any = []
       if(this.CCEmailSelect.length){
         this.CCEmailSelect.forEach((ele:any) => {
@@ -451,6 +486,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
           summary: this.PoCode ? this.PoCode : "Purchase Order",
           detail: data.message,
         });
+        if (!this.SMSCheck) {
         this.tabIndexToView = 0;
         this.ObjPurchase = new Purchase();
         this.PurchaseOrderForm = false;
@@ -461,16 +497,20 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
         this.saveSpinnerBrowse = false
         this.btnBrowseSendEmail = 'Send Email'
         this.sendEmailBrowseModel = false
+        }
+     
+        this.EmailCheck = false
       }
    
     }),
     (error:any)=>{
       console.log(error)
+       this.btnBrowseSendEmail = 'Save'
       this.saveSpinner = false
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "compacct-toast",
-        severity: "success",
+        severity: "error",
         summary: this.PoCode ? this.PoCode : "Purchase Order",
         detail: error,
       });
@@ -481,7 +521,44 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     );
     console.log("sendObj",sendObj)
     }
- }
+  }
+  sendSms(Sms_Doc: any) {
+    this.buttonname = "Save"
+    if (Sms_Doc) {
+      if (!this.SMSSelect.length) {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Failed to Send SMS",
+          detail: "no phone number has been selected"
+            });
+        this.saveSpinner = false;
+        return
+      }
+       this.SMSSelect.forEach((ele:any) => {
+         this.$http.get('Nepal_BL_Txn_Purchase_Order/Send_PO_Message?Mobile_No='+ele+'&Doc_No='+Sms_Doc)
+          .subscribe(((data: any) => {
+            console.log("sms data", data)
+            if (!this.EmailCheck) {
+              this.tabIndexToView = 0;
+              this.buttonname = 'Save';
+              this.PurchaseOrderForm = false;
+              this.items = ["BROWSE", "CREATE"];
+              this.Searchedlist = [];
+              this.saveSpinner = false;
+              this.saveSpinnerBrowse = false;
+              this.sendEmailBrowseModel = false;
+            }
+         
+            this.SMSCheck = false;
+            this.SMSSelect = [];
+          }))
+       
+    });
+    }
+    
+  }
  
   BrowseSearch(valid) {
     this.SearchFormSubmit = true
@@ -575,9 +652,12 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
           this.ObjPurchase.Remarks = data[0].Remarks,
           this.ObjPurchase.Heading = data[0].Remarks1,
           this.ObjPurchase.Company_Name = data[0].Company_Name
-        this.ObjPurchase.Sub_Ledger_ID = data[0].Sub_Ledger_ID,
+          this.ObjPurchase.Sub_Ledger_ID = data[0].Sub_Ledger_ID,
           this.getPRno(),
-          this.ObjPurchase.Address_Caption = data[0].Address_Caption,
+          setTimeout(() => {
+            this.getSMS(this.ObjPurchase.Sub_Ledger_ID)
+          }, 300);
+           this.ObjPurchase.Address_Caption = data[0].Address_Caption,
           setTimeout(() => {
             this.getVaddress()
           }, 300);
@@ -765,7 +845,6 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
               element['value'] = element.email
           });
           this.toEmailList = [...data];
-          this.CCEmailList = [...data]
         }
         else {
           this.toEmailList = [];
@@ -783,6 +862,9 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       this.CCEmailSelect = [];
       this.CompantEmailName = [];
     }
+  }
+  smsCheckbox() {
+    this.SMSSelect = []
   }
   getCompanyMail() {
     this.CompanyEmailList = []
@@ -834,7 +916,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
-            severity: 'success',
+            severity: 'error',
             summary: "Email ID:- " + this.EmailId,
             detail: "Succesfully Delete"
           });
@@ -850,13 +932,14 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   CompCreatPopup() {
     this.NewEmailFormSubmitted = false;
     this.CompantEmailName = [];
-    this.CreateEmailModal = true
+    this.CreateEmailModal = true;
+    this.CreatEmailFild = undefined;
   }
   CreateEmailType(valid) {
     this.NewEmailFormSubmitted = true;
     if (valid) {
       const tempSave = {
-        Email_ID: this.CompantEmailName,
+        Email_ID: this.CreatEmailFild,
       }
       const obj = {
         "SP_String": "sp_Bl_Txn_Purchase_Request",
@@ -869,7 +952,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "success",
-            summary: "Email ID:- " + this.CompantEmailName,
+            summary: "Email ID:- " + this.CreatEmailFild,
             detail: "Succesfully Created"
           });
           this.getCompanyMail();
@@ -1301,7 +1384,7 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
     this.ProductList.splice(index, 1);
   }
   toEmailChange(){
-   const bckp = [...this.toEmailList]
+   this.CCEmailSelect = [];
    this.CCEmailList =[...this.toEmailList]
    this.CCEmailList.forEach((el:any,i:any) => {
         if(el.email === this.ToEmailSelect){
@@ -1390,7 +1473,4 @@ Subledger_Address: any;
 Company_Name: any;
 Shipping_Address: any;
 Billing_Address:any
-}
-class browseEmail{
-
 }

@@ -867,57 +867,6 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
      
     }
   }
-  // getDis(){
-  //   if(this.ObjaddWorkOrder.Discount_Type === 'AMT'){
-  //       this.ObjaddWorkOrder.Discount_AMT = undefined;
-  //       //const tempTotal = this.totalAmtBackUp ? this.totalAmtBackUp : this.totalbackUp ? this.totalbackUp : this.totalRate
-  //       let taxacl:number =  this.ObjaddWorkOrder.taxable_AMT
-  //       this.ObjaddWorkOrder.taxable_AMT = undefined
-  //       this.ObjaddWorkOrder.Discount_AMT = this.ObjaddWorkOrder.Discount;
-  //       //  if(this.disAmtBackUpAMT > this.objaddPurchacse.Discount_AMT){
-  //       //   taxacl = Number(this.disAmtBackUpAMT) + Number(taxacl)
-  //       //  }
-  //       //  this.disAmtBackUpAMT = 0
-  //       //  this.disAmtBackUpAMT = this.objaddPurchacse.Discount_AMT ? Number(this.objaddPurchacse.Discount_AMT) : 0;
-  //       if(this.ObjaddWorkOrder.Discount_AMT){
-  //         this.ObjaddWorkOrder.taxable_AMT  = (Number(taxacl) - Number(this.ObjaddWorkOrder.Discount_AMT)).toFixed(2);
-  //         this.GetGSTAmt();
-  //       }
-  //       else {
-  //         this.ObjaddWorkOrder.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
-  //         this.GetGSTAmt();
-  //       }
-         
-  //       }
-  //     else if(this.ObjaddWorkOrder.Discount_Type === '%'){
-  //       this.ObjaddWorkOrder.Discount_AMT = undefined;
-  //       let taxacl:number =  this.ObjaddWorkOrder.taxable_AMT
-  //       this.ObjaddWorkOrder.taxable_AMT = undefined
-  //       let tempExiAmt = this.ObjaddWorkOrder.Excise_Tax ? Number(this.ObjaddWorkOrder.Excise_Tax) : 0 
-  //       let tempGrsAmt = this.ObjaddWorkOrder.Gross_Amt ? Number(this.ObjaddWorkOrder.Gross_Amt) : 0 
-  //       let totalAmt = (Number(tempExiAmt) + Number(tempGrsAmt))
-        
-  //      this.ObjaddWorkOrder.Discount_AMT = (Number(totalAmt) * Number(this.ObjaddWorkOrder.Discount)/100).toFixed(2);
-       
-  //      if(this.ObjaddWorkOrder.Discount_AMT){
-  //       this.ObjaddWorkOrder.taxable_AMT  = (Number(totalAmt) - Number(this.ObjaddWorkOrder.Discount_AMT)).toFixed(2);
-  //       this.GetGSTAmt();
-  //     }
-  //     else {
-  //       this.ObjaddWorkOrder.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
-  //       this.GetGSTAmt();
-  //     }
-  //       // this.objaddPurchacse.taxable_AMT = (Number(this.objaddPurchacse.taxable_AMT) - Number(this.objaddPurchacse.Discount_AMT)).toFixed(2);
-  //       // this.getTaxAble()
-  //     }
-  //    else {
-  //     this.ObjaddWorkOrder.Discount_AMT = undefined;
-  //     this.ObjaddWorkOrder.Total_Amount = undefined;
-  //     this.ObjaddWorkOrder.GST_AMT = undefined
-  //     this.ObjaddWorkOrder.taxable_AMT = this.totalbackUp ? this.totalbackUp : this.totalRate;
-  //     this.GetGSTAmt();
-  //   }
-  // }
   getDis(){
     if(this.ObjaddWorkOrder.Discount_Type === 'AMT'){
         if(this.ObjaddWorkOrder.Discount){
