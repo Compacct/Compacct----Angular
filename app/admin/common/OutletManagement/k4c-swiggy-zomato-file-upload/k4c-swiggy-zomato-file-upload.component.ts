@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from "primeng/api";
 import {CompacctHeader} from "../../../shared/compacct.services/common.header.service"
@@ -7,7 +7,7 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import * as XLSX from 'xlsx';
-
+import { FileUpload } from 'primeng/fileupload';
 @Component({
   selector: 'app-k4c-swiggy-zomato-file-upload',
   templateUrl: './k4c-swiggy-zomato-file-upload.component.html',
@@ -19,7 +19,10 @@ export class K4cSwiggyZomatoFileUploadComponent implements OnInit {
   ChooseList:any = []
   seleteChoose:any = undefined
   tableDataList:any = []
+  tableDataListHeader:any = []
   LeadListFromFile:any = [];
+  tabIndexToView:any = 0
+  @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
   constructor(
     private route : ActivatedRoute,
     private Header: CompacctHeader,
@@ -35,11 +38,15 @@ export class K4cSwiggyZomatoFileUploadComponent implements OnInit {
       Header: "CSV UPLOAD",
       Link: "Outlet Management -> CSV UPLOAD"
     });
-    this.ChooseList = [{value:'Swiggy'},{value:'Zomato'}]
+    this.ChooseList = [{value:'Swiggy',color:'#FC8019'},{value:'Zomato',color:'#cb202d'}]
   }
   
   changeChoode(){
-
+    console.log(this.fileInput)
+   
+    this.fileInput? this.fileInput.clear():''
+    this.tableDataList = [];
+    this.tableDataListHeader = []
   }
   handleFileSelect(e:any){
   var reader : any = new FileReader();
@@ -58,10 +65,50 @@ export class K4cSwiggyZomatoFileUploadComponent implements OnInit {
       
   }
  getTableData(allData:any){
+  this.tableDataList = []
+  this.tableDataListHeader = []
   if(this.seleteChoose === 'Swiggy'){
      if(allData[0].hasOwnProperty('Order ID') && allData[0].hasOwnProperty('Order-delivery-time') && allData[0].hasOwnProperty('Total-bill-amount <bill>')){
-
+        this.tableDataList = [...allData]
+        this.tableDataListHeader = Object.keys(this.tableDataList[0])
+        this.tableDataList.forEach((ele:any) => {
+          ele['Order-delivery-time'] = this.DateService.dateTimeConvert(new Date(ele['Order-delivery-time']))
+        });
+        console.log('tableDataList',this.tableDataList)
      }
+     else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "error",
+        summary: "failed to load CSV file ",
+        detail: "The CSV File Was Not Properly Formatted"
+        });
+    }
   }
+  if(this.seleteChoose === 'Zomato'){
+    if(allData[0].hasOwnProperty('Order ID') && allData[0].hasOwnProperty('Order Placed At') && allData[0].hasOwnProperty('Bill Amount')){
+       this.tableDataList = [...allData]
+       this.tableDataListHeader = Object.keys(this.tableDataList[0])
+       this.tableDataList.forEach((ele:any) => {
+         ele['Order Placed At'] = this.DateService.dateTimeConvert(new Date(ele['Order Placed At']))
+       });
+       console.log('tableDataList',this.tableDataList)
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "error",
+        summary: "failed to load CSV file ",
+        detail: "The CSV File Was Not Properly Formatted"
+        });
+    }
  }
+ }
+ onReject() {
+  this.compacctToast.clear("c");
+}
 }
