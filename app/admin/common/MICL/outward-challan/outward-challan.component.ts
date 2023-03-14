@@ -171,6 +171,7 @@ export class OutwardChallanComponent implements OnInit {
     this.GetGodown();
     this.clearData();
     this.Choose_Address = undefined;
+    this.ObjPurChaseBill.Vehicle_Type = "Regular";
   }
   clearData() { 
     this.PurchaseBillFormSubmitted = false;
@@ -732,6 +733,9 @@ export class OutwardChallanComponent implements OnInit {
         Fin_Year_ID: this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
           
         Mode_Of_Delivery: this.ObjPurChaseBill.Mode_Of_Delivery,
+        Vehicle_Type:this.ObjPurChaseBill.Vehicle_Type,
+        Transportation_Distance : this.ObjPurChaseBill.Transportation_Distance,
+        Transporter_ID: this.ObjPurChaseBill.Transporter_ID,
         Delivery_Point: this.ObjPurChaseBill.Delivery_Point,
         Vehicle_No: this.ObjPurChaseBill.Vehicle_No,
         Transporter: this.ObjPurChaseBill.Transporterr,
@@ -780,6 +784,7 @@ export class OutwardChallanComponent implements OnInit {
       this.ProductSub = [];
       this.ProductDetalist = [];
       this.LotNolist = [];
+      this.ObjPurChaseBill.Vehicle_Type = "Regular";
      }
     }); 
      
@@ -858,7 +863,6 @@ export class OutwardChallanComponent implements OnInit {
     }// CHALLAN TO BILL
 
   }
-
 }
 class PurChaseBill {
   Receiver_Name: any;
@@ -911,8 +915,11 @@ class PurChaseBill {
 
   Delivery_Point : any;
   Mode_Of_Delivery : any;
+  Transportation_Distance = 0;
+  Vehicle_Type : any;
   Vehicle_No : any;
   Transporterr : any;
+  Transporter_ID : any;
   Supp_Ref_Date : any;
   LR_No : any;
   CN_Date : any;
