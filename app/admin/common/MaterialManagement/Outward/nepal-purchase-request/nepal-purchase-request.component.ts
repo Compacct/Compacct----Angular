@@ -55,6 +55,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
   ProductCategoryList:any = []
   editFlg: boolean = false
   DynamicSearchedlist: any = [];
+  SpinnerEXCEL:boolean = false
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -498,7 +499,20 @@ export class NepalPurchaseRequestComponent implements OnInit {
   
  //  return flg
   }
-  
+  exportexcel(): void {
+    if(this.objpurchaseRequest.Cat_ID ){
+     this.SpinnerEXCEL=true
+   this.$http.get('Nepal_BL_Txn_Purchase_Request/Get_All_Data_For_Purchase_Request?to_date='+this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate))+'&Cat_ID='+Number(this.objpurchaseRequest.Cat_ID)).pipe(map((data:any) => data ? JSON.parse(data) : []))
+        .subscribe((data:any)=>{
+          this.SpinnerEXCEL=false
+         if(data.length){
+          const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+          const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+          XLSX.writeFile(workbook, 'Purchase_Request.xlsx');
+        }
+        })
+    }
+   }
 }
 class purchaseRequest{
   Purchase_Request_No:any
