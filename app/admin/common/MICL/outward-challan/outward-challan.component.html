@@ -476,7 +476,7 @@
                                                     [(ngModel)]="ObjPurChaseBill.Vehicle_No"
                                                     pattern="[a-zA-Z]{2}(.*)"
                                                     placeholder="Vehicle No" 
-                                                    [ngClass]="{'clearance':PurchaseBillFormSubmitted && (Vehicle?.errors?.required || Vehicle?.errors?.pattern )}"required><!-- ^[A-Z]{2}[ -][0-9]{1,2}(?: [A-Z])?(?: [A-Z]*)? [0-9]{4}$ -->
+                                                    [ngClass]="{'clearance':PurchaseBillFormSubmitted && (Vehicle?.errors?.required || Vehicle?.errors?.pattern )}"required>
                                                 </div> 
                                             <div class="col-sm-3">
                                                 <label class="control-label">Delivery Point <sup class="text-danger">*</sup></label>
