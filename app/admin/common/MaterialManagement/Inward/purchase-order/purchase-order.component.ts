@@ -167,6 +167,8 @@ export class PurchaseOrderComponent implements OnInit {
   
   TCSTaxRequiredValidation = false;
   TCSdataList:any = [];
+  cookiesuserid:any;
+  status:any;
 
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
@@ -217,6 +219,8 @@ ngOnInit() {
       this.GettermAmt()
      this.userType = this.$CompacctAPI.CompacctCookies.User_Type
      this.companyname = this.$CompacctAPI.CompacctCookies.Company_Name
+     this.cookiesuserid = Number(this.$CompacctAPI.CompacctCookies.User_ID)
+     console.log("cookiesuserid ===",this.cookiesuserid)
     //  console.log("companyname ===",this.companyname)
      // console.log("proj",this.openProject);
      if(this.openProject !== "Y"){
@@ -246,6 +250,7 @@ TabClick(e) {
     this.GetCostCenter();
     // this.getTotal(this.misReportList)
     this.addPurchaseListInput = false
+    this.status = undefined;
     
     // this.gettermsdetails();
       // setTimeout(function(){
@@ -999,12 +1004,14 @@ this.objpurchase.Term_Net = this.getTofix(this.grNetTerm)
 this.objpurchase.Total_GST = this.getTofix(Number(this.GSTTotal) + Number(this.GrGstTermAmt))
 this.objpurchase.Rounded_Off = Number(this.getRoundedOff());
 this.objpurchase.Total_Net_Amount = Number(this.RoundOff(this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt));
+
  let save = []
  if(this.addPurchaseList.length){
  if(this.DocNo){
   msg = "Update"
   rept = "Purchase_Order_Edit"
    this.objpurchase.Doc_No = this.DocNo;
+   this.objpurchase.Approve_Status = this.status;
   this.objpurchase.L_element = this.addPurchaseList
   save = {...tempCost,...tempsub,...this.objpurchase}
  }
@@ -1031,6 +1038,7 @@ this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
       if(projectSaveData){
         this.showTost(msg,"Purchase order")
         this.Spinner = false;
+        this.status = undefined;
         this.getAllData(true);
         this.getPendingReq(true);
         this.ngxService.stop();
@@ -1325,9 +1333,11 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
 }
 }
 Edit(col){
+  this.status = undefined;
   if(col.Doc_No){
     this.DocNo = undefined;
     this.DocNo = col.Doc_No;
+    this.status = col.Approve_Status;
     this.tabIndexToView = 1;
     this.items = [ 'BROWSE', 'UPDATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT'];
     this.buttonname = "Update";
@@ -2285,6 +2295,7 @@ class purchase {
         TCS_Persentage : any;
         TCS_Amount : number = 0;
         TCS_Per : any;
+        Approve_Status : any;
 }
 class addPurchacse{
       Product_ID:any;

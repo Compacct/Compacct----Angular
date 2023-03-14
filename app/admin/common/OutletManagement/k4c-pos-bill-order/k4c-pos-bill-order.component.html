@@ -119,11 +119,21 @@
       <div class="col-sm-3">
         <button class="pos-btn pos-btn-sep shopping">TAKE AWAY</button>
       </div> -->
-            <div class="col-sm-6">
+            <!-- <div class="col-sm-6">
                 <div class="info-box btn-foursquare" (click)='ShowCustomerDetailsPopUp("./K4C_Outlet_Sale_Bill")'>
                     <span class="info-box-icon"><i class="fa fa-shopping-bag"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text" style="font-size: 1.2em;">TAKE AWAY</span>
+
+                    </div>
+                </div>
+
+            </div> -->
+            <div class="col-sm-6">
+                <div class="info-box AutoB" (click)='ShowCustomerDetailsPopUp("./Outlet_Sale_Bill_WithOut_batch_Select")'>
+                    <span class="info-box-icon"><i class="fa fa-shopping-bag" style="color: white;"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text" style="font-size: 1.2em; color: white;">TAKE AWAY (Auto Batch)</span>
 
                     </div>
                 </div>
@@ -139,11 +149,12 @@
                 </div>
 
             </div>
-            <div class="col-sm-6">
-                <div class="info-box AutoB" (click)='ShowCustomerDetailsPopUp("./Outlet_Sale_Bill_WithOut_batch_Select")'>
-                    <span class="info-box-icon"><i class="fa fa-shopping-bag" style="color: white;"></i></span>
+            
+            <div class=" col-sm-6">
+                <div class="info-box bg-purple" (click)='RedirectTo("bill")'>
+                    <span class="info-box-icon"><i class="fa fa-search"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text" style="font-size: 1.2em; color: white;">TAKE AWAY (Auto Batch)</span>
+                        <span class="info-box-text" style="font-size: 1.2em;">Browse Bill</span>
 
                     </div>
                 </div>
@@ -159,16 +170,7 @@
                 </div>
 
             </div>
-            <div class=" col-sm-6">
-                <div class="info-box bg-purple" (click)='RedirectTo("bill")'>
-                    <span class="info-box-icon"><i class="fa fa-search"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text" style="font-size: 1.2em;">Browse Bill</span>
-
-                    </div>
-                </div>
-
-            </div>
+            
             <div class=" col-sm-6">
                 <div class="info-box bg-red" (click)='RedirectTo("requisition")'>
                     <span class="info-box-icon"><i class="fa fa-file-text-o"></i></span>
@@ -179,7 +181,16 @@
                 </div>
 
             </div>
+            <div class=" col-sm-6">
+                <div class="info-box bg-olive" (click)='RedirectTo("acceptchallan")'>
+                    <span class="info-box-icon"><i class="fa fa-check-square-o"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text" style="font-size: 1.2em;">Accept Challan</span>
 
+                    </div>
+                </div>
+
+            </div>
 
             <div class="col-sm-6" *ngFor='let obj of OnlineLedgerList'>
                 <div class="info-box bg-light-blue-gradient" (click)='ShowOnlineDelOrderNo(obj)'>
@@ -223,16 +234,7 @@
 
       </div> -->
 
-            <div class=" col-sm-6">
-                <div class="info-box bg-olive" (click)='RedirectTo("acceptchallan")'>
-                    <span class="info-box-icon"><i class="fa fa-check-square-o"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text" style="font-size: 1.2em;">Accept Challan</span>
-
-                    </div>
-                </div>
-
-            </div>
+            
             <div class=" col-sm-6">
                 <div class="info-box bg-aqua" (click)='RedirectTo("outletstocktrancfer")'>
                     <span class="info-box-icon"><i class="fa fa-exchange"></i></span>
