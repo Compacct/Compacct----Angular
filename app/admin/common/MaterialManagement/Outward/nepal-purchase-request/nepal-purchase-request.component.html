@@ -240,6 +240,19 @@
                                         class="searchInput form-control"
                                         />
                                     </div>
+                                    <div class="col-sm-2 pull-right" style="text-align: right">  
+                                     <button type="button" 
+                                     class="btn btn-success" 
+                                     (click)="exportexcel()" 
+                                     id="EXCEL" 
+                                     [disabled]="SpinnerEXCEL">
+                                 <p-progressSpinner *ngIf="SpinnerEXCEL" 
+                                 [style]="{width: '15px', height: '15px'}" 
+                                 strokeWidth="8"  
+                                 animationDuration=".5s"></p-progressSpinner>
+                                 <span *ngIf="!SpinnerEXCEL" class="fa fa-fw  fa-download"></span> EXPORT TO EXCEL
+                                </button>
+                                    </div>
                                     </div>
                                 </ng-template>
                                 <ng-template pTemplate="colgroup" let-columns>
