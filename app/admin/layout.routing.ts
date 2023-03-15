@@ -341,6 +341,7 @@ import { K4cSwiggyZomatoFileUploadComponent } from "./common/OutletManagement/k4
 import { HrLoanApplicationComponent } from './common/MICL/hr-loan-application/hr-loan-application.component';
 import { TherapyAttendanceEntryComponent } from './common/PatientManagement/therapy-attendance-entry/therapy-attendance-entry.component';
 import { NepalSupTktCustomerAccountCreationComponent } from "./common/TicketManagement/nepal-sup-tkt-customer-account-creation/nepal-sup-tkt-customer-account-creation.component";
+import { StockInterchangeComponent } from './common/MICL/RawMaterial/stock-interchange/stock-interchange.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2581,6 +2582,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: NepalSupTktCustomerAccountCreationComponent,
       data: {
         title: 'Customer Account Creation'
+  }
+  },
+  {
+    path: 'Stock_Interchange',
+      component: StockInterchangeComponent,
+      data: {
+        title: 'Stock Interchange'
   }
   },
 

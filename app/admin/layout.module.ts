@@ -438,6 +438,7 @@ import { K4cSwiggyZomatoFileUploadComponent } from './common/OutletManagement/k4
 import { HrLoanApplicationComponent } from './common/MICL/hr-loan-application/hr-loan-application.component';
 import { TherapyAttendanceEntryComponent } from './common/PatientManagement/therapy-attendance-entry/therapy-attendance-entry.component';
 import { NepalSupTktCustomerAccountCreationComponent } from './common/TicketManagement/nepal-sup-tkt-customer-account-creation/nepal-sup-tkt-customer-account-creation.component';
+import { StockInterchangeComponent } from './common/MICL/RawMaterial/stock-interchange/stock-interchange.component';
 
 @NgModule({
   declarations: [
@@ -792,7 +793,8 @@ import { NepalSupTktCustomerAccountCreationComponent } from './common/TicketMana
     K4cSwiggyZomatoFileUploadComponent,
     HrLoanApplicationComponent,
     TherapyAttendanceEntryComponent,
-    NepalSupTktCustomerAccountCreationComponent
+    NepalSupTktCustomerAccountCreationComponent,
+    StockInterchangeComponent
 
   ],
   imports: [

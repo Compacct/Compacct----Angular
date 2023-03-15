@@ -273,7 +273,7 @@ AddRawMatRev(valid:any){
   console.log("valid",valid)
   this.RawMatRevFormSubmitted = true 
  if(valid && this.Getsameproduct()){
-  if (Number(this.ObjRawMatRev.Receive_Qty)  <= Number(this.ObjRawMatRev.Pending_PO_Qty)) {
+  // if (Number(this.ObjRawMatRev.Receive_Qty)  <= Number(this.ObjRawMatRev.Pending_PO_Qty)) {
   const FilterReferenceDataList = this.ReferenceDataList.find((el:any)=> el.Production_Ref_NO == this.ObjRawMatRev.Production_Ref_NO)
   const FilterAllMaterialName = this.AllMaterialName.find((el:any) => Number(el.Product_ID) == Number(this.ObjRawMatRev.Product_ID) )
   const FilterStockPointList= this.StockPointList.find((el:any) => Number(el.godown_id) == Number(this.ObjRawMatRev.Godown_ID) )
@@ -356,16 +356,16 @@ AddRawMatRev(valid:any){
   this.minFromDate = new Date('01/01/1990')
   this.RawMatRevFormSubmitted =false
  
- }
- else {
-  this.compacctToast.clear();
-  this.compacctToast.add({
-    key: "compacct-toast",
-    severity: "error",
-    summary: "Warn Message",
-    detail: "Receive Qty is more than Pending PO Qty. "
-  });
-  }
+//  }
+//  else {
+//   this.compacctToast.clear();
+//   this.compacctToast.add({
+//     key: "compacct-toast",
+//     severity: "error",
+//     summary: "Warn Message",
+//     detail: "Receive Qty is more than Pending PO Qty. "
+//   });
+//   }
  }
 }
 DeleteRawMatRevListROW(index:any){
