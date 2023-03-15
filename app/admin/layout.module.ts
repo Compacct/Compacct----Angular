@@ -437,6 +437,7 @@ import { HrLateArrivalEarlyDepartureComponent } from './common/MICL/hr-late-arri
 import { K4cSwiggyZomatoFileUploadComponent } from './common/OutletManagement/k4c-swiggy-zomato-file-upload/k4c-swiggy-zomato-file-upload.component';
 import { HrLoanApplicationComponent } from './common/MICL/hr-loan-application/hr-loan-application.component';
 import { TherapyAttendanceEntryComponent } from './common/PatientManagement/therapy-attendance-entry/therapy-attendance-entry.component';
+import { NepalSupTktCustomerAccountCreationComponent } from './common/TicketManagement/nepal-sup-tkt-customer-account-creation/nepal-sup-tkt-customer-account-creation.component';
 
 @NgModule({
   declarations: [
@@ -790,7 +791,8 @@ import { TherapyAttendanceEntryComponent } from './common/PatientManagement/ther
     HrLateArrivalEarlyDepartureComponent,
     K4cSwiggyZomatoFileUploadComponent,
     HrLoanApplicationComponent,
-    TherapyAttendanceEntryComponent
+    TherapyAttendanceEntryComponent,
+    NepalSupTktCustomerAccountCreationComponent
 
   ],
   imports: [
