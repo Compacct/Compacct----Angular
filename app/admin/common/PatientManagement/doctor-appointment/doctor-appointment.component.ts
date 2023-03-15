@@ -49,7 +49,28 @@ export class DoctorAppointmentComponent implements OnInit {
   UpdateAppointmentModel:boolean = false
   updateConsultancyInputObj:any = {}
   ObjupdateConsultancy:any = {}
-  Spinner:boolean = false
+  Spinner: boolean = false
+  
+  PTAmodal: boolean = false;
+  testType: any = undefined;
+  DegreeLossLeft: any = [];
+  DegreeLossRight: any = [];
+  ConfigLossLeft:any =[];
+  ConfigLossRight: any = [];
+  TypeLossLeft:any =[];
+  TypeLossRight:any =[];
+  ObjPta: Pta = new Pta();
+  TinnitusList: any = [];
+  SubTypList: any = [];
+  ObjectionList: any = [];
+  FinalStatusList: any = [];
+  // totalPtaRight: any = undefined;
+  // totalPtaLeft: any = undefined;
+  DisableTypL: boolean = false;
+  DisableTypR: boolean = false;
+  SupportShow: boolean = false;
+  SupportShow2nd: boolean = false;
+  // AppoId: any = undefined;
   @ViewChild("consultancy", { static: false })
   UpdateConsultancy: UpdateConsultancyComponent;
   constructor(    
@@ -141,8 +162,17 @@ export class DoctorAppointmentComponent implements OnInit {
           Appo_ID : col.Appo_ID,
           required : true
         }
-
-      break;
+       break;
+    case 'PTA':
+       this.PTAmodal = true;
+       this.testType = col.Consultancy_Descr;
+       this.ObjPta.Appo_ID = col.Appo_ID;
+       this.SupportShow = true;
+       this.SupportShow2nd = true;
+       this.getDegreeloss(this.testType);
+       this.getConfiloss();
+       this.getTypeloss();
+    break;
     case 'CreateReport':
       window.open(col.Controller_Name + col.Appo_ID, '_blank');
     break;
@@ -257,7 +287,7 @@ export class DoctorAppointmentComponent implements OnInit {
       // console.log("else GetAllDataList", this.allDetalis)
     }
   }
- GetDist3() {
+  GetDist3() {
       let DOrderBy:any = [];
       this.ststusFilter = [];
       this.SelectedDistOrderBy1 = [];
@@ -395,9 +425,264 @@ export class DoctorAppointmentComponent implements OnInit {
         
        }
      })
-    }
-   }
+  }
+  
 
+  // PtA Pop  all function 
+  TotalPta() {
+    if (this.ObjPta.PTA_Right_500 && this.ObjPta.PTA_Right_1000 && this.ObjPta.PTA_Right_2000) {
+      let totalR =0
+      totalR = Number(this.ObjPta.PTA_Right_500) + Number(this.ObjPta.PTA_Right_1000) + Number(this.ObjPta.PTA_Right_2000)
+      this.ObjPta.PTA_Right = (totalR / 3).toFixed(2);
+    }
+    else {
+      this.ObjPta.PTA_Right = '';
+    }
+    if (this.ObjPta.PTA_Left_500 && this.ObjPta.PTA_Left_1000 && this.ObjPta.PTA_Left_2000) {
+      let totalL =0
+      totalL = Number(this.ObjPta.PTA_Left_500) + Number(this.ObjPta.PTA_Left_1000) + Number(this.ObjPta.PTA_Left_2000)
+      this.ObjPta.PTA_Left = (totalL /3).toFixed(2)
+    }
+    else {
+      this.ObjPta.PTA_Left = '';
+    }
+  }
+  getDegreeloss(type:any){
+  this.DegreeLossLeft = [];
+  this.DegreeLossRight = [];
+    const tempobj = {
+     Test_Type: type
+    }
+    const obj = {
+      "SP_String": "sp_Hearing_Test",
+      "Report_Name_String": "Get_Degree_Of_Loss_Dropdown",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Degree_Of_Loss_Name,
+          element['value'] = element.Degree_Of_Loss_ID
+        });
+       this.DegreeLossLeft = data;
+       this.DegreeLossRight = data;
+         //console.log("degri",data);
+      }
+    }); 
+  }
+  getConfiloss(){
+  this.ConfigLossLeft = [];
+  this.ConfigLossRight = [];
+    const obj = {
+      "SP_String": "sp_Hearing_Test",
+      "Report_Name_String": "Get_Hearing_Loss_dropdown",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Hearing_Loss,
+          element['value'] = element.Hearing_Loss_ID
+        });
+      this.ConfigLossLeft = data;
+      this.ConfigLossRight = data;
+         //console.log("config",data);
+      }
+    }); 
+  }
+  getTypeloss(){
+  this.TypeLossLeft = [];
+  this.TypeLossRight = [];
+    const obj = {
+      "SP_String": "sp_Hearing_Test",
+      "Report_Name_String": "Get_Type_Of_Loss_dropdown",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Type_Of_Loss,
+          element['value'] = element.Type_Of_Loss_ID
+        });
+      this.TypeLossLeft = data;
+      this.TypeLossRight = data;
+        //console.log("type", data);
+      }
+    });  
+  }
+  getTinnitus(Deg_los_id: any) {
+  this.ObjPta.Tinnitus_Status_ID = undefined;
+  this.ObjPta.Sub_Status_ID = undefined;
+  this.ObjPta.Final_Status_ID = undefined;
+  this.ObjPta.Objection_ID = undefined;
+  this.TinnitusList = [];
+    const tempobj = {
+     Degree_Of_Loss_ID: Deg_los_id
+    }
+    const obj = {
+      "SP_String": "sp_Hearing_Test",
+      "Report_Name_String": "Get_Tinnitus_Status_dropdown",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Tinnitus_Status,
+          element['value'] = element.Tinnitus_Status_ID
+        });
+       this.TinnitusList = data;
+         //console.log("Tinnitus",data);
+      }
+    });  
+    this.getChangeType();
+    this.SupportCheck();
+  }
+  getSubType() {
+    this.ObjPta.Sub_Status_ID = undefined;
+    this.ObjPta.Final_Status_ID = undefined;
+    this.ObjPta.Objection_ID = undefined;
+  this.SubTypList = [];
+    const tempobj = {
+     Tinnitus_Status_ID: this.ObjPta.Tinnitus_Status_ID
+    }
+    const obj = {
+      "SP_String": "sp_Hearing_Test",
+      "Report_Name_String": "Get_Sub_Status_dropdown",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Sub_Status,
+          element['value'] = element.Sub_Status_ID
+        });
+       this.SubTypList = data;
+         //console.log("Tinnitus",data);
+      }
+    });    
+  }
+  getFinalStatus() {
+  this.ObjPta.Final_Status_ID = undefined;
+  this.ObjPta.Objection_ID = undefined;
+  this.FinalStatusList = [];
+    const tempobj = {
+     Sub_Status_ID: this.ObjPta.Sub_Status_ID
+    }
+    const obj = {
+      "SP_String": "sp_Hearing_Test",
+      "Report_Name_String": "Get_Final_Status_dropdown",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Final_Status,
+          element['value'] = element.Final_Status_ID
+        });
+       this.FinalStatusList = data;
+         //console.log("FinalStatus",data);
+      }
+    });    
+  }
+  ObjectionType() {
+ this.ObjPta.Objection_ID = undefined;
+  this.ObjectionList = [];
+    const tempobj = {
+     Final_Status_ID: this.ObjPta.Final_Status_ID
+    }
+    const obj = {
+      "SP_String": "sp_Hearing_Test",
+      "Report_Name_String": "Get_Objection_dropdown",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Objection,
+          element['value'] = element.Objection_ID
+        });
+       this.ObjectionList = data;
+         //console.log("Objection",data);
+      }
+    });    
+  }
+  getChangeType() {
+    this.DisableTypL = false;
+    this.DisableTypR = false;
+    const leftType = this.TypeLossLeft.filter((el: any) => el.Type_Of_Loss_ID === 1);
+    const leftTypeTwo = this.TypeLossLeft.filter((el: any) => el.Type_Of_Loss_ID === 2);
+    const leftTypeThree = this.TypeLossLeft.filter((el: any) => el.Type_Of_Loss_ID === 6);
+    const RigtType = this.TypeLossRight.filter((el: any) => el.Type_Of_Loss_ID === 1);
+    const RightTypeTwo = this.TypeLossRight.filter((el: any) => el.Type_Of_Loss_ID === 2);
+    const RightTypeThree = this.TypeLossRight.filter((el: any) => el.Type_Of_Loss_ID === 6);
+    if (this.ObjPta.Degree_Of_Loss_ID === 1) {
+      this.ObjPta.Type_Of_Loss_ID = leftType[0].Type_Of_Loss_ID;
+      this.DisableTypL = true;
+    }
+    else if (this.ObjPta.Degree_Of_Loss_ID === 3) {
+      this.ObjPta.Type_Of_Loss_ID = leftTypeTwo[0].Type_Of_Loss_ID;
+      this.DisableTypL = true;
+    }
+    else if (this.ObjPta.Degree_Of_Loss_ID === 10) {
+      this.ObjPta.Type_Of_Loss_ID = leftTypeThree[0].Type_Of_Loss_ID;
+      this.DisableTypL = true;
+    }
+    else {
+      this.ObjPta.Type_Of_Loss_ID = '';
+      this.DisableTypL = false;
+    }
+     if (this.ObjPta.Degree_Of_Loss_Right_ID === 1) {
+       this.ObjPta.Type_Of_Loss_Right_ID = RigtType[0].Type_Of_Loss_ID;
+        this.DisableTypR = true;
+    }
+    else if (this.ObjPta.Degree_Of_Loss_Right_ID === 3) {
+       this.ObjPta.Type_Of_Loss_Right_ID = RightTypeTwo[0].Type_Of_Loss_ID;
+        this.DisableTypR = true;
+     }
+    else if (this.ObjPta.Degree_Of_Loss_Right_ID === 10) {
+       this.ObjPta.Type_Of_Loss_Right_ID = RightTypeThree[0].Type_Of_Loss_ID;
+        this.DisableTypR = true;
+    }
+    else {
+       this.ObjPta.Type_Of_Loss_Right_ID = '';
+        this.DisableTypR = false;
+    }
+  }
+  SupportCheck() {
+    if (this.ObjPta.Degree_Of_Loss_ID === 1 || this.ObjPta.Degree_Of_Loss_ID === 3 ||this.ObjPta.Degree_Of_Loss_ID === null ) {
+      this.SupportShow = true;
+    }
+    else {
+    this.SupportShow = false;  
+    }
+    if (this.ObjPta.Degree_Of_Loss_Right_ID === 1 || this.ObjPta.Degree_Of_Loss_Right_ID === 3 || this.ObjPta.Degree_Of_Loss_Right_ID === null) {
+      this.SupportShow2nd = true;
+    }
+    else {
+     this.SupportShow2nd = false; 
+    }
+  }
+  SavePtaPop() {
+    if (this.ObjPta.Appo_ID) {
+      const obj = {
+        "SP_String": "sp_Hearing_Test",
+        "Report_Name_String": 'Update_PTA_Deatils',
+        "Json_Param_String": JSON.stringify([this.ObjPta]) 
+       }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        if (data[0].Column1){
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: this.ObjPta.Appo_ID,
+            detail: "Succesfully Update "
+          });
+          this.ObjPta = new Pta();
+          this.PTAmodal = false;
+          }
+        });
+   } 
+  }
+}
 class TherapAttendance {
   Therapy_Goal:any;
   Clinical_Observation:any;
@@ -406,4 +691,33 @@ class TherapAttendance {
   SLP:any;
   Appo_ID:any;
   // Foot_Fall_ID:any;
+}
+class Pta{
+  Appo_ID : any;                   
+  Degree_Of_Loss_ID : any;             
+  Hearing_Loss_ID : any;                
+  Type_Of_Loss_ID: any;  
+  Degree_Of_Loss_Right_ID: any;   
+  Hearing_Loss_Right_ID : any; 
+  Type_Of_Loss_Right_ID: any;  
+  Tinnitus_Status_ID : any;               
+  Sub_Status_ID : any;                   
+  Final_Status_ID : any;                 
+  Objection_ID: any;                   
+  PTA_Right_500: any;                   
+  PTA_Right_250 : any;                   
+  PTA_Right_1000: any;
+  PTA_Right_2000: any;
+  PTA_Right_4000: any;
+  PTA_Right_8000 : any;                  
+  PTA_Right : any;                       
+  PTA_Left_250 : any;                    
+  PTA_Left_500 : any;                    
+  PTA_Left_1000: any; 
+  PTA_Left_2000: any;
+  PTA_Left_4000 : any;                   
+  PTA_Left_8000 : any;                   
+  PTA_Left : any;                        
+  PTA_Remarks : any;                     
+  PTA_Support_Convert : any;             
 }
