@@ -144,6 +144,12 @@
                                                                    Update Appointment
                                                                 </a>
                                                             </li>
+                                                            <li *ngIf="col.Consultancy_Descr == 'PTA' ">
+                                                                <a (click)="actionClick(col ,'PTA')">
+                                                                    <i class="fa fa-pinterest-p"></i>
+                                                                    PTA
+                                                                </a>
+                                                            </li>
                                                             <li *ngIf="col.Consultancy_Done == 'N' && col.Controller_Name != 'NA' ">
                                                                 <a (click)="actionClick(col,'CreateReport')">
                                                                     <i class="fa fa-user-plus"></i>
@@ -345,4 +351,319 @@ style="text-align: center;"
 
     
 </p-footer>
+</p-dialog>
+
+<!-- PTA Pop-->
+<p-dialog [header]="'PTA'" [appendTo]="'body'" [visible]="PTAmodal" [closeOnEscape]="true" [autoZIndex]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '82%', minWidth: '200px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="PtaFill" #PtaFill="ngForm" novalidate>
+                <h5 style="background: #c1c1c185;
+                    border-top: 5px solid #3c8dbc;
+                    border-bottom: 1px solid #c6c6c6;
+                    margin-left: -8px;margin-right: -8px;">
+                    <strong>HEARING THRESHOLDS</strong> </h5>
+                    <div class="row">
+                        <table style="margin-top: -15px;">
+                            <thead class="table-header">
+                                <tr>
+                                    <th><i class="fas fa-ear"></i></th>
+                                    <th>250Hz</th>
+                                    <th>500Hz</th>
+                                    <th>1000Hz</th>
+                                    <th>2000Hz</th>
+                                    <th>4000Hz</th>
+                                    <th>8000Hz</th>
+                                    <th>PTA</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                    <b>RIGHT</b> 
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" CompacctDigitonly="true" name="Right250"
+                                            #Right250="ngModel"  [(ngModel)]="ObjPta.PTA_Right_250"placeholder="Write Here...">
+                                                <div class="input-group-addon">
+                                                    <strong>dB</strong>
+                                                </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" CompacctDigitonly="true" name="Right500" 
+                                        #Right500="ngModel"  [(ngModel)]="ObjPta.PTA_Right_500" (change)="TotalPta()" placeholder="Write Here...">
+                                        <div class="input-group-addon">
+                                            <strong>dB</strong>
+                                        </div>
+                                    </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" CompacctDigitonly="true" name="Right1000"
+                                             #Right1000="ngModel"  [(ngModel)]="ObjPta.PTA_Right_1000" (change)="TotalPta()" placeholder="Write Here...">
+                                            <div class="input-group-addon">
+                                                <strong>dB</strong>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" CompacctDigitonly="true" name="Right2000"
+                                             #Right2000="ngModel"  [(ngModel)]="ObjPta.PTA_Right_2000" (change)="TotalPta()" placeholder="Write Here...">
+                                            <div class="input-group-addon">
+                                                <strong>dB</strong>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" CompacctDigitonly="true" name="Right4000"
+                                         #Right4000="ngModel"  [(ngModel)]="ObjPta.PTA_Right_4000" placeholder="Write Here...">
+                                        <div class="input-group-addon">
+                                            <strong>dB</strong>
+                                        </div>
+                                    </div>
+                                    </td>
+                                    <td>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" CompacctDigitonly="true" name="Right8000"
+                                        #Right8000="ngModel"  [(ngModel)]="ObjPta.PTA_Right_8000" placeholder="Write Here...">
+                                        <div class="input-group-addon">
+                                            <strong>dB</strong>
+                                        </div>
+                                    </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                           <div class="label-t">{{ObjPta.PTA_Right ?ObjPta.PTA_Right : 0}}</div>
+                                            <div class="input-group-addon">
+                                                <strong>dB</strong>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                    <b>LEFT</b> 
+                                    </td>
+                                    <td>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" CompacctDigitonly="true" name="Left250"
+                                         #Left250="ngModel"  [(ngModel)]="ObjPta.PTA_Left_250"placeholder="Write Here...">
+                                        <div class="input-group-addon">
+                                            <strong>dB</strong>
+                                        </div>
+                                    </div>
+                                    </td>
+                                    <td>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" CompacctDigitonly="true"name="Left500"
+                                         #Left500="ngModel"  [(ngModel)]="ObjPta.PTA_Left_500" (change)="TotalPta()" placeholder="Write Here...">
+                                        <div class="input-group-addon">
+                                            <strong>dB</strong>
+                                        </div>
+                                    </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" CompacctDigitonly="true"name="Left1000"
+                                              #Left1000="ngModel"  [(ngModel)]="ObjPta.PTA_Left_1000" (change)="TotalPta()"placeholder="Write Here...">
+                                            <div class="input-group-addon">
+                                                <strong>dB</strong>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" CompacctDigitonly="true" name="Left2000"
+                                              #Left2000="ngModel"  [(ngModel)]="ObjPta.PTA_Left_2000" (change)="TotalPta()"placeholder="Write Here...">
+                                            <div class="input-group-addon">
+                                                <strong>dB</strong>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" CompacctDigitonly="true"name="Left4000"
+                                              #Left4000="ngModel"  [(ngModel)]="ObjPta.PTA_Left_4000" placeholder="Write Here...">
+                                            <div class="input-group-addon">
+                                                <strong>dB</strong>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" CompacctDigitonly="true" name="Left8000"
+                                             #Left8000="ngModel"  [(ngModel)]="ObjPta.PTA_Left_8000"placeholder="Write Here...">
+                                            <div class="input-group-addon">
+                                                <strong>dB</strong>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <div class="label-t">{{ObjPta.PTA_Left ? ObjPta.PTA_Left : 0}}</div>
+                                            <div class="input-group-addon">
+                                                <strong>dB</strong>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+        <br>
+        <div class="row">
+                <div class="col-sm-4">
+                    <h5 style="padding: 0.5em 1em;
+                            background: #c1c1c185;
+                            border-top: 5px solid #3c8dbc;
+                            border-bottom: 1px solid #c6c6c6;
+                            margin-top: -4px;"><strong>Degree Of Loss</strong> </h5>
+                        <div class="input-group" style="padding-bottom: 10px;">
+                            <div class="input-group-addon">
+                                <strong>Left</strong>
+                            </div>
+                            <p-dropdown [options]="DegreeLossLeft"  name="Left" #Left="ngModel" [(ngModel)]="ObjPta.Degree_Of_Loss_ID"
+                                [showClear]="true" [emptyFilterMessage]="'No Item Found'" [filter]="true" filterBy="label,value.name"
+                                [resetFilterOnHide]="true" (onChange)="getTinnitus(ObjPta.Degree_Of_Loss_ID)"[placeholder]="'Choose Left'" [virtualScroll]="true" itemSize="30">
+                            </p-dropdown>
+                        </div>
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <strong>Right</strong>
+                            </div>
+                            <p-dropdown [options]="DegreeLossRight" name="Right" #Right="ngModel" [(ngModel)]="ObjPta.Degree_Of_Loss_Right_ID"
+                                [showClear]="true" [emptyFilterMessage]="'No Item Found'" [filter]="true"filterBy="label,value.name" 
+                                [resetFilterOnHide]="true" (onChange)="getTinnitus(ObjPta.Degree_Of_Loss_Right_ID)" [placeholder]="'Choose Right'" [virtualScroll]="true"
+                                itemSize="30">
+                            </p-dropdown>
+                        </div>
+                </div>
+                <div class="col-sm-4">
+                    <h5 style="padding: 0.5em 1em;
+                            background: #c1c1c185;
+                            border-top: 5px solid #3c8dbc;
+                            border-bottom: 1px solid #c6c6c6;
+                            margin-top: -4px;"><strong>Configuration of Hearing Loss</strong> </h5>
+                            <div class="input-group" style="padding-bottom: 10px;">
+                                <div class="input-group-addon">
+                                    <strong>Left</strong>
+                                </div>
+                                <p-dropdown [options]="ConfigLossLeft" [showClear]="true" [emptyFilterMessage]="'No Item Found'" [filter]="true"
+                                      name="LeftCon" #LeftCon="ngModel"  [(ngModel)]="ObjPta.Hearing_Loss_ID" [disabled]="DisableTypR || DisableTypL "
+                                    filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'" [virtualScroll]="true"
+                                    itemSize="30">
+                                </p-dropdown>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <strong>Right</strong>
+                                </div>
+                                <p-dropdown [options]="ConfigLossRight" [showClear]="true" [emptyFilterMessage]="'No Item Found'" [filter]="true"
+                                    name="RightConf" #RightConf="ngModel"  [(ngModel)]="ObjPta.Hearing_Loss_Right_ID"  [disabled]="DisableTypR || DisableTypL"
+                                    filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'" [virtualScroll]="true"
+                                    itemSize="30">
+                                </p-dropdown>
+                            </div>
+                </div>
+                <div class="col-sm-4">
+            <h5 style="padding: 0.5em 1em;
+                    background: #c1c1c185;
+                    border-top: 5px solid #3c8dbc;
+                    border-bottom: 1px solid #c6c6c6;
+                    margin-top: -4px;"><strong>Types Of Loss</strong> </h5>
+                    <div class="input-group" style="padding-bottom: 10px;">
+                        <div class="input-group-addon">
+                            <strong>Left</strong>
+                        </div>
+                        <p-dropdown [options]="TypeLossLeft" [showClear]="true" [emptyFilterMessage]="'No Item Found'" [filter]="true"
+                             name="TYpeLeft" #TYpeLeft="ngModel" [(ngModel)]="ObjPta.Type_Of_Loss_ID" [disabled]="DisableTypL"
+                            filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'" [virtualScroll]="true" 
+                            itemSize="30">
+                        </p-dropdown>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <strong>Right</strong>
+                        </div>
+                        <p-dropdown [options]="TypeLossRight" [showClear]="true" [emptyFilterMessage]="'No Item Found'" [filter]="true"
+                            name="TYpeRight" #TYpeRight="ngModel" [(ngModel)]="ObjPta.Type_Of_Loss_Right_ID" [disabled]="DisableTypR"
+                            filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'" [virtualScroll]="true"
+                            itemSize="30">
+                        </p-dropdown>
+                    </div>       
+               </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3" *ngIf="ObjPta.Degree_Of_Loss_ID  || ObjPta.Degree_Of_Loss_Right_ID">
+                <h5 style="padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;"><strong>Tinnitus Status</strong> </h5>
+                    <p-dropdown [options]="TinnitusList" name="Tinnitus" #Tinnitus="ngModel" [(ngModel)]="ObjPta.Tinnitus_Status_ID"
+                        [showClear]="true" [emptyFilterMessage]="'No Item Found'" [filter]="true" (onChange)="getSubType()"
+                        filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'" [virtualScroll]="true"
+                        itemSize="30">
+                    </p-dropdown>
+            </div>
+            <div class="col-sm-3" *ngIf="ObjPta.Tinnitus_Status_ID">
+                <h5 style="padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;"><strong>Sub Status</strong> </h5>
+                    <p-dropdown [options]="SubTypList" name="Sub_Status_ID" #Sub_Status_ID="ngModel" [(ngModel)]="ObjPta.Sub_Status_ID"
+                        [showClear]="true" [emptyFilterMessage]="'No Item Found'" [filter]="true" (onChange)="getFinalStatus()"
+                        filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'" [virtualScroll]="true"
+                        itemSize="30">
+                    </p-dropdown>
+            </div>
+            <div class="col-sm-3" *ngIf="ObjPta.Sub_Status_ID">
+                <h5 style="padding: 0.5em 1em;
+                            background: #c1c1c185;
+                            border-top: 5px solid #3c8dbc;
+                            border-bottom: 1px solid #c6c6c6;"><strong>Final Status</strong> </h5>              
+                    <p-dropdown [options]="FinalStatusList" name="Final_Status_ID" #Final_Status_ID="ngModel" [(ngModel)]="ObjPta.Final_Status_ID"
+                        [showClear]="true" [emptyFilterMessage]="'No Item Found'" [filter]="true" (onChange)="ObjectionType()"
+                        filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'" [virtualScroll]="true"
+                        itemSize="30">
+                    </p-dropdown>
+            </div>
+            <div class="col-sm-3" *ngIf="ObjPta.Final_Status_ID">
+                <h5 style="padding: 0.5em 1em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;"><strong>Objection</strong> </h5>
+                <p-dropdown [options]="ObjectionList" name="Objection" #Objection="ngModel" [(ngModel)]="ObjPta.Objection_ID"
+                    [showClear]="true" [emptyFilterMessage]="'No Item Found'" [filter]="true"
+                    filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'" [virtualScroll]="true"
+                    itemSize="30">
+                </p-dropdown>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                  <label class="control-label">Remarks</label>
+                  <textarea class="form-control" name="Remarks" #Remarks="ngModel"  [(ngModel)]="ObjPta.PTA_Remarks" placeholder="Remarks"></textarea>
+            </div>
+            <div class="col-sm-6">
+                  <label class="control-label">Support required To Convert</label>
+                <input type="text" class="form-control" name="Support" #Support="ngModel" [disabled]="SupportShow || SupportShow2nd"
+                    [(ngModel)]="ObjPta.PTA_Support_Convert" placeholder="Support required To Convert">
+            </div>
+        </div>
+        </form>
+    </div>
+    <p-footer>
+        <button class="btn btn-primary pull-right" (click)="SavePtaPop(PtaFill.form.valid)">
+            <span class="glyphicon glyphicon-save"></span> Update
+        </button>
+        <button type="button" (click)="PTAmodal = false" class="btn btn-secondary">
+            <span  class="glyphicon glyphicon-remove"></span>Close
+        </button>
+    </p-footer>
 </p-dialog>
