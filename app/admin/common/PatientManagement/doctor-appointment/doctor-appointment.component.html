@@ -555,7 +555,7 @@ style="text-align: center;"
                                     <strong>Left</strong>
                                 </div>
                                 <p-dropdown [options]="ConfigLossLeft" [showClear]="true" [emptyFilterMessage]="'No Item Found'" [filter]="true"
-                                      name="LeftCon" #LeftCon="ngModel"  [(ngModel)]="ObjPta.Hearing_Loss_ID" [disabled]="DisableTypR || DisableTypL "
+                                      name="LeftCon" #LeftCon="ngModel"  [(ngModel)]="ObjPta.Hearing_Loss_ID" [disabled]=" Disable || DisableL "
                                     filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'" [virtualScroll]="true"
                                     itemSize="30">
                                 </p-dropdown>
@@ -565,7 +565,7 @@ style="text-align: center;"
                                     <strong>Right</strong>
                                 </div>
                                 <p-dropdown [options]="ConfigLossRight" [showClear]="true" [emptyFilterMessage]="'No Item Found'" [filter]="true"
-                                    name="RightConf" #RightConf="ngModel"  [(ngModel)]="ObjPta.Hearing_Loss_Right_ID"  [disabled]="DisableTypR || DisableTypL"
+                                    name="RightConf" #RightConf="ngModel"  [(ngModel)]="ObjPta.Hearing_Loss_Right_ID"  [disabled]=" Disable || DisableL  "
                                     filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'" [virtualScroll]="true"
                                     itemSize="30">
                                 </p-dropdown>

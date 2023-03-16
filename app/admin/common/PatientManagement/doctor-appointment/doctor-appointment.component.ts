@@ -64,13 +64,12 @@ export class DoctorAppointmentComponent implements OnInit {
   SubTypList: any = [];
   ObjectionList: any = [];
   FinalStatusList: any = [];
-  // totalPtaRight: any = undefined;
-  // totalPtaLeft: any = undefined;
   DisableTypL: boolean = false;
   DisableTypR: boolean = false;
+  Disable: boolean = false;
+  DisableL: boolean = false;
   SupportShow: boolean = false;
   SupportShow2nd: boolean = false;
-  // AppoId: any = undefined;
   @ViewChild("consultancy", { static: false })
   UpdateConsultancy: UpdateConsultancyComponent;
   constructor(    
@@ -616,34 +615,42 @@ export class DoctorAppointmentComponent implements OnInit {
     if (this.ObjPta.Degree_Of_Loss_ID === 1) {
       this.ObjPta.Type_Of_Loss_ID = leftType[0].Type_Of_Loss_ID;
       this.DisableTypL = true;
+       this.DisableL = true;
     }
     else if (this.ObjPta.Degree_Of_Loss_ID === 3) {
       this.ObjPta.Type_Of_Loss_ID = leftTypeTwo[0].Type_Of_Loss_ID;
       this.DisableTypL = true;
+       this.DisableL = true;
     }
     else if (this.ObjPta.Degree_Of_Loss_ID === 10) {
       this.ObjPta.Type_Of_Loss_ID = leftTypeThree[0].Type_Of_Loss_ID;
       this.DisableTypL = true;
+      this.DisableL = false;
     }
     else {
       this.ObjPta.Type_Of_Loss_ID = '';
       this.DisableTypL = false;
+      this.DisableL = false;
     }
      if (this.ObjPta.Degree_Of_Loss_Right_ID === 1) {
        this.ObjPta.Type_Of_Loss_Right_ID = RigtType[0].Type_Of_Loss_ID;
-        this.DisableTypR = true;
+       this.DisableTypR = true;
+       this.Disable = true;
     }
     else if (this.ObjPta.Degree_Of_Loss_Right_ID === 3) {
        this.ObjPta.Type_Of_Loss_Right_ID = RightTypeTwo[0].Type_Of_Loss_ID;
-        this.DisableTypR = true;
+       this.DisableTypR = true;
+       this.Disable = true;
      }
     else if (this.ObjPta.Degree_Of_Loss_Right_ID === 10) {
        this.ObjPta.Type_Of_Loss_Right_ID = RightTypeThree[0].Type_Of_Loss_ID;
-        this.DisableTypR = true;
+       this.DisableTypR = true;
+       this.Disable = false;
     }
     else {
        this.ObjPta.Type_Of_Loss_Right_ID = '';
-        this.DisableTypR = false;
+       this.DisableTypR = false;
+       this.Disable = false;
     }
   }
   SupportCheck() {
