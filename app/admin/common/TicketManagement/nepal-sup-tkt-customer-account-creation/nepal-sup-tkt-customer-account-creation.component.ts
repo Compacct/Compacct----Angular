@@ -44,6 +44,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
   imageCompRegistration:any = undefined
   imagePANVATRegistration:any = undefined
   updateModal:boolean = false
+  SearchedBrowselistHeader:any = []
   view:boolean = false
   @ViewChild("crcDoc", { static: false }) crcDoc!: FileUpload;
   @ViewChild("pvrcDoc", { static: false }) pvrcDoc!: FileUpload;
@@ -236,6 +237,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
         if (data.length) {
           console.log("Searchedlist", data)
           this.SearchedBrowselist = [...data]
+          this.SearchedBrowselistHeader = data.length ? Object.keys(data[0]) : []
           this.SearchedBrowselist.forEach((y: any) => {
             if( y.Trn_Date){
             y.Trn_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(y.Trn_Date);

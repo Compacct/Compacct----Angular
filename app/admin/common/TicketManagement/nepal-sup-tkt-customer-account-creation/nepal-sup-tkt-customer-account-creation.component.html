@@ -56,7 +56,7 @@
                             </form>
                             <div class="table-responsive no-padding">
                                 <p-table #dt [value]="SearchedBrowselist"
-                                    [globalFilterFields]="['Doc_No','Doc_Date','Billing_To','Sub_Ledger_Name','Purchase_Request_No','Grant_Total','Current_Status']"
+                                    [globalFilterFields]="SearchedBrowselistHeader"
                                     [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true"
                                     sortMode="multiple" [rowsPerPageOptions]="[100,300,500]" [rowHover]="true">
                                     <ng-template pTemplate="caption">
@@ -719,7 +719,8 @@
                                     <p style="padding: 5px;font-size: 1.4rem;font-weight: 800;">
                                         <span class="glyphicon glyphicon-book">&nbsp;</span>FOR INTERNAL PURPOSE ONLY:-</p>
                                 </div>
-                                <form name="UpdatecusacccreationForms" #UpdatecusacccreationForms="ngForm" novalidate>
+                                <form name="UpdatecusacccreationForms" #UpdatecusacccreationForms="ngForm" style="margin-left: 14px;
+                                " novalidate>
                                     <div class="form-group">
                                        <div class="col-sm-4">
                                             <label class="control-label">VAT<sup class="text-danger">*</sup></label>

@@ -341,6 +341,8 @@ import { K4cSwiggyZomatoFileUploadComponent } from "./common/OutletManagement/k4
 import { HrLoanApplicationComponent } from './common/MICL/hr-loan-application/hr-loan-application.component';
 import { TherapyAttendanceEntryComponent } from './common/PatientManagement/therapy-attendance-entry/therapy-attendance-entry.component';
 import { NepalSupTktCustomerAccountCreationComponent } from "./common/TicketManagement/nepal-sup-tkt-customer-account-creation/nepal-sup-tkt-customer-account-creation.component";
+import { FinsCreateProjectComponent } from "./common/Finshore/fins-create-project/fins-create-project.component";
+import { FinsBrowseProjectComponent } from "./common/Finshore/fins-browse-project/fins-browse-project.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2581,6 +2583,20 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: NepalSupTktCustomerAccountCreationComponent,
       data: {
         title: 'Customer Account Creation'
+  }
+  },
+  {
+    path: 'Finshore_Create_Project',
+      component: FinsCreateProjectComponent,
+      data: {
+        title: 'Create Project'
+  }
+  },
+  {
+    path: 'Finshore_Browse_Project',
+      component: FinsBrowseProjectComponent,
+      data: {
+        title: 'Browse Project'
   }
   },
 
