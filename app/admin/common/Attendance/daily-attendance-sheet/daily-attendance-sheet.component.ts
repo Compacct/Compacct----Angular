@@ -50,10 +50,13 @@ export class DailyAttendanceSheetComponent implements OnInit {
   Total_Absent: any;
   Leave_Without_Pay: any;
   Total_Left: any;
+  Total_Late:any;
   DistWorkLocation:any = [];
   SelectedDistWorkLocation:any = [];
   SearchFields:any = [];
-  databaseName:any
+  databaseName:any;
+  recaptureSpinner = false;
+  Recapture:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -102,6 +105,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
    GetEmpData(){
     this.seachSpinner = true;
     this.checkbuttonname = undefined;
+    this.Recapture = undefined;
     const AtObj = {
       Date : this.DateService.dateConvert(new Date(this.Daily_Atten_Date)),
     }
@@ -116,6 +120,49 @@ export class DailyAttendanceSheetComponent implements OnInit {
       this.GetDistinct();
       this.seachSpinner = false;
       this.checkbuttonname = data[0].Btn_Name;
+      if (this.checkbuttonname === "Update") {
+        this.buttonname = "Update";
+      }
+      else{
+        this.buttonname = "Save";
+      }
+      this.EmpDailyAttenList.forEach((val) => {
+        val["OTdisabled"] = false;
+        val["Work_Minute"] = 0;//val.Work_Minute;
+        val["minDate"] = Date;
+        if(val.Atten_Type_ID) {
+        var attendanceid = this.AttenTypelist.filter( ele => Number(ele.Atten_Type_ID) === Number(val.Atten_Type_ID));
+        val.Atten_Type_ID = attendanceid ?  attendanceid[0].Sht_Desc : null;
+        }
+        if(val.OT_Avail === 0 || val.OT_Avail === null) {
+          // val["OT_Minutes"] = val.OT_Minutes;
+          val["OTdisabled"] = true;
+        } else {
+          val["OTdisabled"] = false;
+        }
+      })
+      this.TotalLeaveType();
+     })
+  }
+  GetReCaptureData(){
+    this.recaptureSpinner = true;
+    this.checkbuttonname = undefined;
+    this.Recapture = undefined;
+    const AtObj = {
+      Date : this.DateService.dateConvert(new Date(this.Daily_Atten_Date)),
+    }
+    const obj = {
+      "SP_String": "SP_HR_Attn_Sheet_Day_Wise",
+      "Report_Name_String": "Recapture_HR_Attn_Sheet_Day_Wise",
+      "Json_Param_String": JSON.stringify([AtObj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.EmpDailyAttenList = data;
+      this.BackupEmpDailyAttenList = data;
+      this.GetDistinct();
+      this.recaptureSpinner = false;
+      this.checkbuttonname = data[0].Btn_Name;
+      this.Recapture = data[0].Recapture;
       if (this.checkbuttonname === "Update") {
         this.buttonname = "Update";
       }
@@ -224,6 +271,10 @@ export class DailyAttendanceSheetComponent implements OnInit {
     var left = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "L")
     this.Total_Left = left.length ? left.length : undefined;
     console.log("this.Total_Left===",this.Total_Left);
+
+    var late = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "LT")
+    this.Total_Late = late.length ? late.length : undefined;
+    console.log("this.Total_Late===",this.Total_Late);
   }
   getAttenTypedropdown(atnid){
     const obj = {
@@ -472,6 +523,20 @@ export class DailyAttendanceSheetComponent implements OnInit {
     // }
     }
   }
+  Showdialog(){
+    if(this.Recapture === "Recapture") {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "re",
+       sticky: true,
+       severity: "warn",
+       summary: "All Attendance data will remove for this Date. Want to Procced?"
+     });
+    }
+    else {
+      this.SaveDailyAttendance();
+    }
+  }
   SaveDailyAttendance(){
       if(this.BackupEmpDailyAttenList.length){
       const obj = {
@@ -517,6 +582,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
 onConfirm(){}
 onReject(){
   this.compacctToast.clear("c");
+  this.compacctToast.clear("re");
 }
 information() {
   // if(DocNo) {

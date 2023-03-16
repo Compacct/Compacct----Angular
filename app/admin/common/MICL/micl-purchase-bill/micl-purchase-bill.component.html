@@ -571,7 +571,17 @@
                                             <!-- <td>{{obj.Batch_Number ? obj.Batch_Number : '-'}}</td>
                                             <td>{{obj.Serial_No ? obj.Serial_No : '-'}}</td>
                                             <td>{{obj.Expiry_Date ? obj.Expiry_Date : '-'}}</td> -->
-                                            <td>{{obj.Qty}}</td>
+                                            <!-- <td>{{obj.Qty}}</td> -->
+                                            <td>
+                                                <input type="text"
+                                                  class="form-control"
+                                                  name="obj.Qty"
+                                                  [(ngModel)]="obj.Qty"
+                                                  (ngModelChange)="calculateamount(obj)"
+                                                  CompacctDigitonly="true"
+                                                  [ngClass]="{'clearance': validationflag}"
+                                                  style="width: 71px;">
+                                            </td>
                                             <td>{{obj.UOM}}</td>
                                             <td>{{obj.Rate}}</td>
                                             <td>{{obj.Amount}}</td>

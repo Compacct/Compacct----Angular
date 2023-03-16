@@ -581,6 +581,18 @@ export class SaleBillComponent implements OnInit {
      });
     }
   }
+  Print(DocNo) {
+    if (DocNo) {
+      const objtemp = {
+        "SP_String": "SP_MICL_Sale_Bill",
+        "Report_Name_String": "Sale_Bill_Print"
+      }
+      this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
+        var printlink = data[0].Column1;
+        window.open(printlink + "?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      })
+    }
+  }
   onReject() {
     this.compacctToast.clear("c");
     this.compacctToast.clear("s");

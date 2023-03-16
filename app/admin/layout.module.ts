@@ -440,6 +440,7 @@ import { TherapyAttendanceEntryComponent } from './common/PatientManagement/ther
 import { NepalSupTktCustomerAccountCreationComponent } from './common/TicketManagement/nepal-sup-tkt-customer-account-creation/nepal-sup-tkt-customer-account-creation.component';
 import { FinsCreateProjectComponent } from './common/Finshore/fins-create-project/fins-create-project.component';
 import { FinsBrowseProjectComponent } from './common/Finshore/fins-browse-project/fins-browse-project.component';
+import { StockInterchangeComponent } from './common/MICL/RawMaterial/stock-interchange/stock-interchange.component';
 
 @NgModule({
   declarations: [
@@ -796,7 +797,8 @@ import { FinsBrowseProjectComponent } from './common/Finshore/fins-browse-projec
     TherapyAttendanceEntryComponent,
     NepalSupTktCustomerAccountCreationComponent,
     FinsCreateProjectComponent,
-    FinsBrowseProjectComponent
+    FinsBrowseProjectComponent,
+    StockInterchangeComponent
 
   ],
   imports: [

@@ -53,7 +53,7 @@ export class MICLRawMaterialQAComponent implements OnInit {
     });
     this.items = ["BROWSE", "CREATE"];
     this.Finyear();
-    this.getRecvDoc();
+    this.gePONo();
     this.Created_By= Number(this.$CompacctAPI.CompacctCookies.User_ID);
     this.Cost_Cen_ID= Number(this.$CompacctAPI.CompacctCookies.Cost_Cen_ID);
   }
@@ -80,11 +80,13 @@ export class MICLRawMaterialQAComponent implements OnInit {
       });
   }
 
-  getRecvDoc(){
+  gePONo(){
     this.RecvDocList=[];
     const obj = {
       "SP_String": "SP_BL_Txn_Raw_Material_QA",
-      "Report_Name_String": "Get_Receive_Doc_Nos" 
+      // "Report_Name_String": "Get_Receive_Doc_Nos" 
+      "Report_Name_String": "Get_PO_Doc_Nos" 
+      
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       // console.log("Get RecvDocList",data);
@@ -112,7 +114,9 @@ export class MICLRawMaterialQAComponent implements OnInit {
       for(let item of this.RecvDocList){
         if(item.Doc_No == DocNO){
           this.ObjRaw.VendorName= item.Sub_Ledger_Name;
-          this.ObjRaw.RecievedOn= item.Doc_Date;
+          // this.ObjRaw.RecievedOn= item.Doc_Date;
+          this.ObjRaw.PO_Doc_Date= item.Doc_Date;
+          this.ObjRaw.Ref_No = item.Ref_No;
           this.ObjRaw.VendorInvNo= item.Inv_No_Date ? item.Inv_No_Date.split('&')[0] : "-";
           this.ObjRaw.VendorInvDate= item.Inv_No_Date ? item.Inv_No_Date.split('&')[1] : "-";
           this.ObjRaw.Inv_No_Date= item.Inv_No_Date;
@@ -215,10 +219,11 @@ export class MICLRawMaterialQAComponent implements OnInit {
     const SaveObj = {
       Doc_No: "A",
       Doc_Date: this.DateService.dateConvert(new Date()),
-      Rec_Doc_No: this.ObjRaw.RecvDoc,
-      Rec_Doc_Date: this.ObjRaw.RecievedOn,
+      PO_Doc_No: this.ObjRaw.RecvDoc,
+      PO_Doc_Date: this.ObjRaw.PO_Doc_Date,
       Sub_Ledger_ID: this.ObjRaw.Sub_Ledger_ID,
-      Inv_No_Date: this.ObjRaw.Inv_No_Date,
+      Ref_No: this.ObjRaw.Ref_No,
+      // Inv_No_Date: this.ObjRaw.Inv_No_Date,
       Created_By: this.Created_By,
       Cost_Cen_ID: this.Cost_Cen_ID,
       Product_ID: this.ObjRaw.SelectProduct,
@@ -361,6 +366,8 @@ class RawMaterial{
   RecvDoc: any;
   VendorName: any;
   RecievedOn: any;
+  PO_Doc_Date:any;
+  Ref_No: any;
   VendorInvNo: any;
   VendorInvDate: any;
   Inv_No_Date: any;
