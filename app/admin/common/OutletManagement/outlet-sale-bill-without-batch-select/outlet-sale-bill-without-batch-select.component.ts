@@ -19,29 +19,29 @@ declare var $:any;
   encapsulation: ViewEncapsulation.None
 })
 export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
-  items = [];
+  items:any = [];
   tabIndexToView = 0;
   searchObj : search = new search();
   seachSpinner = false;
-  Searchedlist = [];
+  Searchedlist:any = [];
 
   addbillFormSubmitted = false;
   ObjaddbillForm : addbillForm  = new addbillForm();
   url = window["config"];
-  billdate = [];
+  billdate:any = [];
   //Billno = false;
-  selectitem = [];
-  selectitemView = [];
+  selectitem:any = [];
+  selectitemView:any = [];
   EditDoc_No = undefined;
   dateList: any;
   myDate: Date;
-  returnedID = [];
+  returnedID:any = [];
   buttonname = "Save & Print Bill";
   Spinner = false;
-  addbillForm = [];
-  tempArr = [];
+  addbillForm:any = [];
+  tempArr:any = [];
   data = [];
-  productSubmit = [];
+  productSubmit:any = [];
   Dis_Amount : any;
   Total:any;
   Amount:any;
@@ -74,10 +74,10 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
   Hold_Bill_Flag = false;
   AdvOderDetailList: any;
   godown_id: any;
-  Batch_NO = [];
+  Batch_NO:any = [];
   Adv_Order_No: any;
   IsAdvance = false;
-  ProductTypeFilterList = [];
+  ProductTypeFilterList:any = [];
   ProductTypeFilterSelected:any;
   FromCostCentId: any;
   checkSave = true;
