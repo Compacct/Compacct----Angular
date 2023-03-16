@@ -343,6 +343,7 @@ import { TherapyAttendanceEntryComponent } from './common/PatientManagement/ther
 import { NepalSupTktCustomerAccountCreationComponent } from "./common/TicketManagement/nepal-sup-tkt-customer-account-creation/nepal-sup-tkt-customer-account-creation.component";
 import { FinsCreateProjectComponent } from "./common/Finshore/fins-create-project/fins-create-project.component";
 import { FinsBrowseProjectComponent } from "./common/Finshore/fins-browse-project/fins-browse-project.component";
+import { StockInterchangeComponent } from './common/MICL/RawMaterial/stock-interchange/stock-interchange.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2597,6 +2598,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: FinsBrowseProjectComponent,
       data: {
         title: 'Browse Project'
+  }
+  },
+  {
+    path: 'Stock_Interchange',
+      component: StockInterchangeComponent,
+      data: {
+        title: 'Stock Interchange'
   }
   },
 

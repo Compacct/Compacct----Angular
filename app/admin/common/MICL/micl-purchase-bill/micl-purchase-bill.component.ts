@@ -154,6 +154,7 @@ export class MiclPurchaseBillComponent implements OnInit {
   editDocNo : any;
   TCSTaxRequiredValidation = false;
   TCSdataList:any = [];
+  validationflag = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -507,8 +508,9 @@ export class MiclPurchaseBillComponent implements OnInit {
       //  this.ChangePurchaseOrder();
     //  }
   }
-GetGRNNoProductdetails(){
+  GetGRNNoProductdetails(){
   this.GRNNoProlist = [];
+  this.TCSTaxRequiredValidation = false;
   if (this.ObjProductInfo.GRN_No) {
   const obj = {
     "SP_String": "SP_MICL_Purchase_Bill_New",
@@ -532,7 +534,7 @@ GetGRNNoProductdetails(){
   })
 }
 
-}
+  }
   CalCulateTotalAmt(){
     this.ObjProductInfo.Amount = 0;
     if (this.ObjProductInfo.Qty && this.ObjProductInfo.Rate) {
@@ -558,6 +560,28 @@ GetGRNNoProductdetails(){
    }
    
   
+  }
+  calculateamount(col){
+    if(col.Qty){
+      col.Amount = Number(col.Qty * col.Rate).toFixed(2);
+      col.Taxable_Amount = Number(col.Amount - col.Discount).toFixed(2);
+      this.AfterDiscCalChange(col);
+      this.calculategstamt();
+      this.CalculateCessAmt();
+      this.calculatenetamt();
+      this.ListofTotalAmount();
+      this.TcsAmtCalculation();
+      this.validationqty(col);
+    }
+    else {
+      this.AfterDiscCalChange(col);
+      this.calculategstamt();
+      this.CalculateCessAmt();
+      this.calculatenetamt();
+      this.ListofTotalAmount();
+      this.TcsAmtCalculation();
+      this.validationqty(col);
+    }
   }
   DiscChange(col){
     if(!col.Discount_Type){
@@ -1159,6 +1183,12 @@ GetGRNNoProductdetails(){
       });
     }
   }
+  validationqty(col){
+    this.validationflag = true;
+    if(col.Qty) {
+      this.validationflag = false;
+    }
+  }
   SavePurchaseBill(valid){
     this.DocNo = undefined;
     this.Save = false;
@@ -1166,7 +1196,8 @@ GetGRNNoProductdetails(){
     this.PurchaseBillFormSubmitted = true;
     this.TCSTaxRequiredValidation = true;
     this.validatation.required = true
-    if(valid && this.ObjPurChaseBill.TCS_Y_N){
+    if(valid){
+      if(this.GRNNoProlist.length && this.ObjPurChaseBill.TCS_Y_N && !this.validationflag) {
       this.Save = true;
       this.Del = false;
       this.Spinner = true;
@@ -1181,7 +1212,8 @@ GetGRNNoProductdetails(){
        detail: "Confirm to proceed"
      });
     }
-   }
+    }
+  }
   async onConfirmSave(){
     // this.PurchaseBillFormSubmitted = true;
     // this.validatation.required = true
@@ -1370,6 +1402,7 @@ GetGRNNoProductdetails(){
   }
   EditPurchaseBill(col){
     this.editDocNo = undefined;
+    this.validationflag = false;
     if(col.Doc_No){
      this.editDocNo = col.Doc_No
      this.tabIndexToView = 1;

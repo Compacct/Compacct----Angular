@@ -42,3 +42,26 @@ div.badge {
   color: blue;
   font-size: 18px;
 }
+.table-header {
+  color: #ffffff !important;
+  background-color: #3c8dbc !important;
+}
+
+th {
+  text-align: center;
+}
+
+table,
+th,
+td {
+  border: 1px solid #ffffff !important;
+  padding: 5px;
+}
+
+.mrg {
+  margin-left: 15px;
+}
+
+.mrgtop {
+  margin-top: 8px;
+}

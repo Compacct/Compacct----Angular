@@ -19,6 +19,24 @@
         </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" key="re" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="SaveDailyAttendance()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 
 <div class="row">
     <div class="col-xs-12">
@@ -34,17 +52,23 @@
                             <label class="control-label">Date  <sup class="text-danger">*</sup></label>
                             <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Daily_Atten_Date'></ejs-datepicker>
                         </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-1">
                                 <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetEmpData()" id="load" [disabled]="seachSpinner">
                           <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                           <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                       </button>
+                            </div>
+                            <div class="col-sm-2">
+                                <button class="btn btn-warning custombutton" data-toggle="modal" (click)="GetReCaptureData()" id="load" [disabled]="recaptureSpinner">
+                          <p-progressSpinner *ngIf="recaptureSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                          Re-Capture bio matric data
                        </button>
                             </div>
                                 <div class="col-sm-3" *ngIf="databaseName == 'GN_CCSAHA_Kolkata'">
                                     <label class="control-label">Work Location <span class="text-danger"></span></label>
                                     <p-multiSelect [options]="DistWorkLocation" [(ngModel)]="SelectedDistWorkLocation" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Work_Location"></p-multiSelect>
                                 </div>
-                            <div class="databaseName == 'GN_CCSAHA_Kolkata' ? 'col-sm-3' : 'col-sm-6'">
+                            <div class="databaseName == 'GN_CCSAHA_Kolkata' ? 'col-sm-2' : 'col-sm-5'">
                                 <span  class="fa fa-question-circle pull-right"  (click)="information()"></span>
                             </div>
                         </div>
@@ -110,6 +134,7 @@
                                             <th style=" width: 7% ;" *ngIf="Total_Absent">Absent</th>
                                             <th style=" width: 8% ;" *ngIf="Leave_Without_Pay">Leave Without Pay</th>
                                             <th style=" width: 7% ;" *ngIf="Total_Left">Left</th>
+                                            <th style=" width: 7% ;" *ngIf="Total_Late">Late</th>
                                       </tr>
                                       <tr>
                                         <th style=" width: 7% ;" *ngIf="Total_Present">{{Total_Present ? Total_Present : 0}}</th>
@@ -125,6 +150,7 @@
                                         <th style=" width: 7% ;" *ngIf="Total_Absent">{{Total_Absent ? Total_Absent : 0}}</th>
                                         <th style=" width: 8% ;" *ngIf="Leave_Without_Pay">{{Leave_Without_Pay ? Leave_Without_Pay : 0}}</th>
                                         <th style=" width: 7% ;" *ngIf="Total_Left">{{Total_Left ? Total_Left : 0}}</th>
+                                        <th style=" width: 7% ;" *ngIf="Total_Late">{{Total_Late ? Total_Late : 0}}</th>
                                   </tr>
                               
                                     </thead>
@@ -138,7 +164,7 @@
                                </div>
                            </div>
                            <div class="box-footer">
-                               <button *ngIf="EmpDailyAttenList.length" class="btn btn-primary pull-right" (click)="SaveDailyAttendance()" id="load" [disabled]="Spinner">
+                               <button *ngIf="EmpDailyAttenList.length" class="btn btn-primary pull-right" (click)="Showdialog()" id="load" [disabled]="Spinner">
                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                    </button>
