@@ -160,7 +160,7 @@
                                             </div>
                                             <input CompacctNepaliDatepicker id="Docdate" name="Docdate" #Docdate="ngModel" Class="form-control"
                                                 (ngModelChange)="DocDate= $event" [(ngModel)]="DocDate"
-                                                [ngClass]="{'clearance': PurchaseOrderForm && Docdate?.errors?.required}" 
+                                                [ngClass]="{'clearance': cusacccreationFormsSubmitted && Docdate?.errors?.required}" 
                                             required 
                                             [disabled]="view">                                      
                                         </div> 
@@ -854,8 +854,8 @@
                                           class="form-control"
                                           name="Property">
                                           <option [ngValue]="undefined">Select</option>
-                                          <option [ngValue]="Y">YES</option>
-                                          <option [ngValue]="N">NO</option>
+                                          <option [ngValue]="'Y'">YES</option>
+                                          <option [ngValue]="'N'">NO</option>
                                          </select>
                                  </div>
                                  <div class="col-sm-3" >
@@ -864,8 +864,8 @@
                                      class="form-control"
                                      name="Agreement">
                                      <option [ngValue]="undefined">Select</option>
-                                     <option [ngValue]="Y">YES</option>
-                                     <option [ngValue]="N">NO</option>
+                                     <option [ngValue]="'Y'">YES</option>
+                                     <option [ngValue]="'N'">NO</option>
                                     </select>
                                  </div>
                                  <div class="col-sm-3" >
