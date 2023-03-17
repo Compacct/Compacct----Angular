@@ -113,6 +113,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
   this.imageCitizenshipOwner = undefined
   this.imageCompRegistration = undefined
   this.imagePANVATRegistration = undefined
+  this.view = false
     if(!this.imageCompRegistration){
       this.crcDoc.clear();
     }
