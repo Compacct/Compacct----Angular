@@ -1,1 +1,220 @@
-<p>stock-interchange works!</p>
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+           <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="s" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
+            </div>
+           <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+
+                        <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date Range</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getAlldata()" id="load" [disabled]="">
+                                            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <div class="table-responsive no-padding">
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="Searchedlist" [paginator]="Searchedlist.length ? true : false"
+                                        [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                        [rowsPerPageOptions]="[100,200,300]"
+                                        [globalFilterFields]="SearchedlistHeader" [rowHover]="true" #dt1>
+    
+                                        <ng-template pTemplate="caption"  >
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                                        class="searchInput form-control">
+                                                </div>
+                                            </div>
+                                        </ng-template>
+    
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th *ngFor="let option of SearchedlistHeader">{{option.replaceAll('_',' ')}}</th>
+                                            </tr>
+                                        </ng-template>
+    
+                                        <ng-template pTemplate="body" let-col >
+                                        <tr>
+                                            <ng-container *ngFor="let option of SearchedlistHeader">
+                                                <td>{{col[option]}}</td>
+                                            </ng-container>
+                                        </tr>
+                                        </ng-template>
+    
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                                            {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                        </p-tabPanel> -->
+
+                        <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save"> -->
+
+                        <form name="stockinterchange" #stockinterchange="ngForm" novalidate>
+
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label class="control-label">Furnace No<sup class="text-danger">*</sup></label>                                 
+                                <p-dropdown [options]="FurnaceNoList"
+                                name="furno" 
+                                #furno="ngModel" 
+                                [(ngModel)]="Objstockinterc.Furnace_ID"
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Doc Found'" 
+                                [filter]="true" filterBy="label,value.name" 
+                                [resetFilterOnHide]="true" 
+                                [placeholder]="'Select Doc'" 
+                                [virtualScroll]="true"
+                                itemSize="30" 
+                                [styleClass]="stockinterchangeSubmitted &&  furno.errors?.required ? 'clearance' :''"
+                                required  
+                                > 
+                                </p-dropdown>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                <ejs-datepicker  [(value)]="Doc_Date" [format]="'dd/MMM/yyyy'"></ejs-datepicker>
+                            </div>
+                            <div class="col-sm-2">
+                                <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getProductionData(stockinterchange.form.valid)" id="load" [disabled]="seachSpinner">
+                                    <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                </button>
+                            </div>
+                        </div> 
+                        </form>
+                        
+                            <div class="table-responsive no-padding">
+                                <p-table [value]="ProductionList" [paginator]="ProductionList.length ? true : false"
+                                    [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                    [rowsPerPageOptions]="[100,200,300]"
+                                    [globalFilterFields]="allDetalisHeader" [rowHover]="true" #dt>
+
+                                    <ng-template pTemplate="caption"  >
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search"
+                                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                    class="searchInput form-control">
+                                            </div>
+                                        </div>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Stock Point</th>
+                                            <th>Product Type</th>
+                                            <th>Product Sub Type</th>
+                                            <th>Product Description</th>
+                                            <th>Lot No.</th>
+                                            <th>Qty</th>
+                                            <th>Changed Qty</th>
+                                            <th>UOM</th>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="body" let-col let-i="rowIndex">
+                                        <tr>
+                                            <td>{{col.Godown_Name}}</td>
+                                            <td>{{col.Product_Type}}</td>
+                                            <td>{{col.Product_Sub_Type}}</td>
+                                            <td>{{col.Product_Description}}</td>
+                                            <td>{{col.Batch_No}}</td>
+                                            <td>{{col.Qty}}</td>
+                                            <td>
+                                                <input class="form-control"
+                                                    CompacctDigitonly="true"
+                                                    name="QAvalue"
+                                                    [(ngModel)]="col.Changed_Qty" 
+                                                    style="width: 71px;"
+                                                    (ngModelChange)="getTotal()"
+                                                    [ngClass]="{clearance: stockinterchangeSubmitted && QAvalue?.errors?.required }" 
+                                                    required
+                                                >     
+                                            </td>
+                                            <td>{{col.UOM}}</td>
+                                        </tr>
+                                        <tr *ngIf='i === (ProductionList.length - 1)'>
+                                            <td colspan="5" class="text-right">Total</td>
+                                            <td>{{Qty}}</td>
+                                            <td>{{Changes_Qty}}</td>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                                        {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        
+
+                        <br>
+                        <div class="row">
+                            <button class="btn btn-primary pull-right" (click)="SaveDoc()"  id="load"   [disabled]="">
+                                <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                              <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                            </button>
+                        </div>
+
+                        <!-- </p-tabPanel> -->
+
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -667,7 +667,7 @@ export class DoctorAppointmentComponent implements OnInit {
      this.SupportShow2nd = false; 
     }
   }
-  SavePtaPop() {
+  SavePtaPop(valid?:any) {
     if (this.ObjPta.Appo_ID) {
       const obj = {
         "SP_String": "sp_Hearing_Test",

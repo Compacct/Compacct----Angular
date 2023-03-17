@@ -287,7 +287,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       if (this.databaseName === "K4C") {
         printlink = "/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" ;
       }
-      else if (this.databaseName === "BSHPL") {
+      else if (this.databaseName === "BSHPL" || this.databaseName === "MICL") {
         printlink = "/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_Print.aspx?Doc_No=" ;
       }
       else {

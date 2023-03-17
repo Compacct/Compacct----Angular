@@ -35,8 +35,8 @@ export class TherapyAttendanceEntryComponent implements OnInit {
 
   ngOnInit() {
     this.Header.pushHeader({
-      Header:"Therapy Attendance Entry",
-      Link:"PatientManagement --> Therapy Attendance Entry"
+      Header:"Therapy Attendance Card",
+      Link:"PatientManagement --> Therapy Attendance Card"
     });
 
     this.getPatientList();
