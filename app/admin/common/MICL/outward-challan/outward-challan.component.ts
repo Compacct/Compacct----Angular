@@ -172,6 +172,7 @@ export class OutwardChallanComponent implements OnInit {
     this.clearData();
     this.Choose_Address = undefined;
     this.ObjPurChaseBill.Vehicle_Type = "Regular";
+    this.ObjPurChaseBill.Transportation_Distance = undefined;
   }
   clearData() { 
     this.PurchaseBillFormSubmitted = false;
@@ -432,13 +433,17 @@ export class OutwardChallanComponent implements OnInit {
   // CALCULATE DISTANCE
   CalculateDistance(){
     if (this.ObjPurChaseBill.Sub_Ledger_Pin_2 && this.ObjPurChaseBill.Cost_Cen_PIN) {
+      this.ngxService.start();
       const sendObj = {
         fromPincode : this.ObjPurChaseBill.Sub_Ledger_Pin_2,
         toPincode : this.ObjPurChaseBill.Cost_Cen_PIN
       }
-      this.$http.get("https://pro.mastersindia.co/distance?access_token=67de68c055600f7732171e73e14475bc53954950&fromPincode="+this.ObjPurChaseBill.Sub_Ledger_Pin_2+"&toPincode="+this.ObjPurChaseBill.Cost_Cen_PIN)
+      this.$http.get("https://azdistancecalc.azurewebsites.net/api/Distance?code=OTrdwwzB0Q8uzU1BIhgflRcUMM60Q1uRSS22Wx0-99QwAzFuk-uwmw==&fromPincode="+this.ObjPurChaseBill.Cost_Cen_PIN+"&toPincode="+this.ObjPurChaseBill.Sub_Ledger_Pin_2)
      .subscribe((data:any)=>{
       console.log("data",data)
+      this.ObjPurChaseBill.Transportation_Distance = data[0].distance;
+      this.ngxService.stop();
+      // console.log("Transportation_Distance",this.ObjPurChaseBill.Transportation_Distance)
      })
     }
   }
@@ -798,6 +803,7 @@ export class OutwardChallanComponent implements OnInit {
       this.ProductDetalist = [];
       this.LotNolist = [];
       this.ObjPurChaseBill.Vehicle_Type = "Regular";
+      this.ObjPurChaseBill.Transportation_Distance = undefined;
      }
     }); 
      
@@ -928,7 +934,7 @@ class PurChaseBill {
 
   Delivery_Point : any;
   Mode_Of_Delivery : any;
-  Transportation_Distance = 0;
+  Transportation_Distance :any;
   Vehicle_Type : any;
   Vehicle_No : any;
   Transporterr : any;
