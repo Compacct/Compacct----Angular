@@ -88,6 +88,8 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
     this.clearData();
     this.getbilldate();
     this.Doc_No = undefined;
+    this.OTclosingstockwithbatchFormSubmitted = false;
+    this.ObjOTclosingwithbatch.Daily_Weekly = undefined;
   }
   getbilldate(){
     const obj = {
@@ -211,10 +213,12 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
     if(valid) {
     const TempObj = {
       Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-      Date : this.DateService.dateConvert(new Date(this.BillDate))
+      Date : this.DateService.dateConvert(new Date(this.BillDate)),
+      Daily_Weekly : this.ObjOTclosingwithbatch.Daily_Weekly
    }
     const obj = {
-      "SP_String": "SP_K4C_Day_End_Process",
+      // "SP_String": "SP_K4C_Day_End_Process",
+      "SP_String": "SP_Outlet_Closing_Stock_With_Batch",
       "Report_Name_String": "Check_Closing_Stock_Status",
       "Json_Param_String": JSON.stringify([TempObj])
     }
@@ -236,6 +240,9 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
       }
     })
    }
+   else {
+    this.ShowSpinner = false;
+   }
   }
   GetProduct(){
     // this.OTclosingstockwithbatchFormSubmitted = true;
@@ -245,7 +252,8 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
       Cost_Cen_ID : this.ObjOTclosingwithbatch.Cost_Cen_ID,
       From_godown_id : this.ObjOTclosingwithbatch.godown_id,
       Product_Type_ID : 0,
-      Bill_Date : this.DateService.dateConvert(new Date(this.BillDate))
+      Bill_Date : this.DateService.dateConvert(new Date(this.BillDate)),
+      Daily_Weekly : this.ObjOTclosingwithbatch.Daily_Weekly
     }
     const obj = {
       "SP_String": "SP_Outlet_Closing_Stock_With_Batch",
@@ -295,13 +303,14 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
         Doc_Date : this.DateService.dateConvert(new Date(this.BillDate)),
         Cost_Cen_ID	: this.ObjOTclosingwithbatch.Cost_Cen_ID,
         Godown_ID	: this.ObjOTclosingwithbatch.godown_id,
+        Daily_Weekly : this.ObjOTclosingwithbatch.Daily_Weekly,
         User_ID	: this.$CompacctAPI.CompacctCookies.User_ID,
         Product_Type_ID : 0,
         Product_ID : 0,
         UOM : 'NA',
         Batch_No : 'NA',
         Closing_Qty	: 0,
-        Remarks : 'NA'
+        Remarks : 'NA',
       }
       const obj = {
         "SP_String": "SP_Outlet_Closing_Stock_With_Batch",
@@ -334,10 +343,12 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
           this.items = ["BROWSE", "CREATE"];
           this.buttonname = "Save";
           this.clearData();
+          this.ObjOTclosingwithbatch.Daily_Weekly = undefined;
           this.getbilldate();
           this.GetSearchedList(true);
         } else {
          this.clearData();
+         this.ObjOTclosingwithbatch.Daily_Weekly = undefined;
          this.getbilldate();
         }
         // this.IssueStockFormSubmitted = false;
@@ -415,6 +426,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
         Doc_Date : this.DateService.dateConvert(new Date(this.BillDate)),
         Cost_Cen_ID	: this.ObjOTclosingwithbatch.Cost_Cen_ID,
         Godown_ID	: this.ObjOTclosingwithbatch.godown_id,
+        Daily_Weekly : this.ObjOTclosingwithbatch.Daily_Weekly,
         //Narration	: this.ObjOTclosingwithbatch.Remarks,
         User_ID	: this.$CompacctAPI.CompacctCookies.User_ID,
        // Process_ID : 100,
@@ -475,11 +487,13 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
           this.items = ["BROWSE", "CREATE"];
           this.buttonname = "Save";
           this.clearData();
+          this.ObjOTclosingwithbatch.Daily_Weekly = undefined;
           this.getbilldate();
           this.GetSearchedList(true);
           this.Doc_No = undefined;
         } else {
          this.clearData();
+         this.ObjOTclosingwithbatch.Daily_Weekly = undefined;
          this.getbilldate();
         }
         // this.IssueStockFormSubmitted = false;
@@ -554,6 +568,7 @@ const obj = {
   Edit(DocNo){
     // console.log("editmaster ==",DocNo);
      this.clearData();
+     this.ObjOTclosingwithbatch.Daily_Weekly = undefined;
      if(DocNo.Doc_No){
      this.Doc_No = DocNo.Doc_No;
      this.tabIndexToView = 1;
@@ -579,6 +594,7 @@ const obj = {
           this.ObjOTclosingwithbatch.Brand_ID = data[0].Brand_ID;
             this.ObjOTclosingwithbatch.Cost_Cen_ID = data[0].Cost_Cen_ID;
             this.ObjOTclosingwithbatch.godown_id = data[0].godown_id;
+            this.ObjOTclosingwithbatch.Daily_Weekly = data[0].Daily_Weekly;
             this.BillDate = new Date(data[0].Doc_Date);
             let Datetemp:Date =  new Date(data[0].Doc_Date)
             const Timetemp =  Datetemp.setDate(Datetemp.getDate() - 1);
@@ -791,6 +807,7 @@ class OTclosingwithbatch {
   Cost_Cen_ID : string;
   godown_id : string;
   Remarks : any;
+  Daily_Weekly : any;
  }
  class Browse {
   start_date : Date ;

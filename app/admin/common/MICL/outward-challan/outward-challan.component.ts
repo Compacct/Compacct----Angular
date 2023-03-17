@@ -429,6 +429,19 @@ export class OutwardChallanComponent implements OnInit {
       console.log("this.CostCenterList222222", this.CenterList)
     })
   }
+  // CALCULATE DISTANCE
+  CalculateDistance(){
+    if (this.ObjPurChaseBill.Sub_Ledger_Pin_2 && this.ObjPurChaseBill.Cost_Cen_PIN) {
+      const sendObj = {
+        fromPincode : this.ObjPurChaseBill.Sub_Ledger_Pin_2,
+        toPincode : this.ObjPurChaseBill.Cost_Cen_PIN
+      }
+      this.$http.get("https://pro.mastersindia.co/distance?access_token=67de68c055600f7732171e73e14475bc53954950&fromPincode="+this.ObjPurChaseBill.Sub_Ledger_Pin_2+"&toPincode="+this.ObjPurChaseBill.Cost_Cen_PIN)
+     .subscribe((data:any)=>{
+      console.log("data",data)
+     })
+    }
+  }
   getProduct() {
     const obj = {
       "SP_String": "SP_MICL_Sale_Bill",

@@ -236,39 +236,46 @@
                                                         <label class="control-label">Date</label>
                                                         <input class="form-control" name="Date" [disabled]="true" [ngModel]='EditBillDate  | date :"dd-MMM-yyyy"'>
                                                     </div> -->
-                                                    <div class="col-sm-3">
+                                                    <div class="col-sm-2">
                                                         <label class="control-label"> Brand<sup class="text-danger">*</sup></label>
                                                         <select class="form-control" name="Brand_ID" #Brand_ID="ngModel" [(ngModel)]="ObjOTclosingwithbatch.Brand_ID" [attr.disabled]="BrandDisable ? true : null" [ngClass]="{'clearance': OTclosingstockwithbatchFormSubmitted && Brand_ID?.errors?.required}" required>
-                                <option  [ngValue]="undefined">Select</option>
-                            <option *ngFor="let option of BrandList" value="{{option.Brand_ID}}">
-                                {{option.Brand_INI}}
-                            </option>
-                        </select>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <label class="control-label">Cost center <sup class="text-danger">*</sup>
-                                  </label>
-                                                        <select class="form-control" name="issuecostcenter" #issuecostcenter="ngModel" [(ngModel)]="ObjOTclosingwithbatch.Cost_Cen_ID" (change)="getGodown()" [attr.disabled]="costcentdisableflag ? true : null" [ngClass]="{'clearance':OTclosingstockwithbatchFormSubmitted && issuecostcenter?.errors?.required}"
-                                                            required>
-                                        <option  [ngValue]="undefined">Select</option>
-                                    <!-- <option *ngFor="let option of CostCenter" value="{{option.Cost_Cen_ID}}">
-                                        {{option.Location}}
-                                    </option> -->
-                                    <option *ngFor = "let option of CostCenter" [value] ="option.Cost_Cen_ID">
-                                      {{option.Cost_Cen_Name}}
-                                    </option>
-                                </select>
+                                                            <option  [ngValue]="undefined">Select</option>
+                                                            <option *ngFor="let option of BrandList" value="{{option.Brand_ID}}">
+                                                                {{option.Brand_INI}}
+                                                            </option>
+                                                        </select>
                                                     </div>
                                                     <div class="col-sm-3">
-                                                        <label class="control-label">Godown <sup class="text-danger">*</sup>
-                                  </label>
+                                                        <label class="control-label">Cost center <sup class="text-danger">*</sup></label>
+                                                        <select class="form-control" name="issuecostcenter" #issuecostcenter="ngModel" [(ngModel)]="ObjOTclosingwithbatch.Cost_Cen_ID" (change)="getGodown()" [attr.disabled]="costcentdisableflag ? true : null" [ngClass]="{'clearance':OTclosingstockwithbatchFormSubmitted && issuecostcenter?.errors?.required}"
+                                                            required>
+                                                            <option  [ngValue]="undefined">Select</option>
+                                                            <!-- <option *ngFor="let option of CostCenter" value="{{option.Cost_Cen_ID}}">
+                                                                {{option.Location}}
+                                                            </option> -->
+                                                            <option *ngFor = "let option of CostCenter" [value] ="option.Cost_Cen_ID">
+                                                              {{option.Cost_Cen_Name}}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Godown <sup class="text-danger">*</sup></label>
                                                         <select class="form-control" name="godown" #godown="ngModel" [(ngModel)]="ObjOTclosingwithbatch.godown_id" [attr.disabled]="godowndisableflag ? true : null" [ngClass]="{'clearance':OTclosingstockwithbatchFormSubmitted && godown?.errors?.required}" required>
-                                        <option  [ngValue]="undefined">Select</option>
-                                  <option *ngFor = "let option of GodownId" [value] ="option.godown_id">
-                                    {{option.godown_name}}
-                                  </option>
-                                </select>
+                                                            <option  [ngValue]="undefined">Select</option>
+                                                            <option *ngFor = "let option of GodownId" [value] ="option.godown_id">
+                                                            {{option.godown_name}}
+                                                            </option>
+                                                        </select>
 
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <label class="control-label">Daily/Weekly<sup class="text-danger">*</sup></label>
+                                                        <select class="form-control" name="dailyweekly" #dailyweekly="ngModel" [(ngModel)]="ObjOTclosingwithbatch.Daily_Weekly" [ngClass]="{'clearance': OTclosingstockwithbatchFormSubmitted && dailyweekly?.errors?.required}"  
+                                                        [disabled]="editList.length" required><!--[disabled]="Gdisableflag" [attr.disabled]="ProductList.length? true : null"-->
+                                                              <option  [ngValue]="undefined">Select</option>
+                                                              <option  value="Daily">Daily</option>
+                                                              <option  value="Weekly">Weekly</option>
+                                                        </select>
                                                     </div>
                                                     <!-- <div class="col-sm-4">
                                   <label class="control-label"
@@ -428,19 +435,19 @@
 
         <div class="col-sm-4">
             <label class="control-label">Brand</label>
-            <div class="label-t">{{BrandId}}</div>
+            <div class="label-t">{{BrandId ? BrandId : '-'}}</div>
 
         </div>
     </div>
     <div class="form-group">
         <div class="col-sm-4">
             <label class="control-label">Cost Cent Name</label>
-            <div class="label-t">{{Cost_Cent_ID}}</div>
+            <div class="label-t">{{Cost_Cent_ID ? Cost_Cent_ID : '-'}}</div>
 
         </div>
         <div class="col-sm-4">
             <label class="control-label">Stock Point</label>
-            <div class="label-t">{{Godown_ID}}</div>
+            <div class="label-t">{{Godown_ID ? Godown_ID : '-'}}</div>
 
         </div>
         <!-- <div class="col-sm-4">
