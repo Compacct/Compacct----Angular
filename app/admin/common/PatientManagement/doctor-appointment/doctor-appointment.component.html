@@ -144,7 +144,7 @@
                                                                    Update Appointment
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="col.Consultancy_Descr == 'PTA' ">
+                                                            <li *ngIf="col.Consultancy_Descr == 'PTA' || col.Consultancy_Descr == 'Hearing Aid Trial'">
                                                                 <a (click)="actionClick(col ,'PTA')">
                                                                     <i class="fa fa-pinterest-p"></i>
                                                                     PTA
@@ -355,8 +355,8 @@ style="text-align: center;"
 
 <!-- PTA Pop-->
 <p-dialog [header]="'PTA'" [appendTo]="'body'" [visible]="PTAmodal" [closeOnEscape]="true" [autoZIndex]="true"
-    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '82%', minWidth: '200px' }"
-    style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '82%', minWidth: '200px', minHeight: '700px' }"
+    style="text-align: center;"[minY]="70" [maximizable]="true" [baseZIndex]="10000">
     <div class="form-horizontal">
         <form name="PtaFill" #PtaFill="ngForm" novalidate>
                 <h5 style="background: #c1c1c185;
@@ -516,7 +516,11 @@ style="text-align: center;"
                             </tbody>
                         </table>
                     </div>
-        <br>
+        <h5 style="background: #c1c1c185;
+                            border-top: 5px solid #3c8dbc;
+                            border-bottom: 1px solid #c6c6c6;">
+            <strong>PROVISIONAL DIAGNOSIS</strong>
+        </h5>
         <div class="row">
                 <div class="col-sm-4">
                     <h5 style="padding: 0.5em 1em;
@@ -555,7 +559,7 @@ style="text-align: center;"
                                     <strong>Left</strong>
                                 </div>
                                 <p-dropdown [options]="ConfigLossLeft" [showClear]="true" [emptyFilterMessage]="'No Item Found'" [filter]="true"
-                                      name="LeftCon" #LeftCon="ngModel"  [(ngModel)]="ObjPta.Hearing_Loss_ID" [disabled]=" Disable || DisableL "
+                                      name="LeftCon" #LeftCon="ngModel"  [(ngModel)]="ObjPta.Hearing_Loss_ID" [disabled]="  DisableL "
                                     filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'" [virtualScroll]="true"
                                     itemSize="30">
                                 </p-dropdown>
@@ -565,7 +569,7 @@ style="text-align: center;"
                                     <strong>Right</strong>
                                 </div>
                                 <p-dropdown [options]="ConfigLossRight" [showClear]="true" [emptyFilterMessage]="'No Item Found'" [filter]="true"
-                                    name="RightConf" #RightConf="ngModel"  [(ngModel)]="ObjPta.Hearing_Loss_Right_ID"  [disabled]=" Disable || DisableL  "
+                                    name="RightConf" #RightConf="ngModel"  [(ngModel)]="ObjPta.Hearing_Loss_Right_ID"  [disabled]=" Disable "
                                     filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'" [virtualScroll]="true"
                                     itemSize="30">
                                 </p-dropdown>
@@ -599,6 +603,11 @@ style="text-align: center;"
                     </div>       
                </div>
         </div>
+        <h5 *ngIf="ObjPta.Degree_Of_Loss_ID  || ObjPta.Degree_Of_Loss_Right_ID" style="background: #c1c1c185; 
+                            border-top: 5px solid #3c8dbc;
+                            border-bottom: 1px solid #c6c6c6;margin-bottom: -3px;">
+            <strong>PTA RECOMMENDATION</strong>
+        </h5>
         <div class="row">
             <div class="col-sm-3" *ngIf="ObjPta.Degree_Of_Loss_ID  || ObjPta.Degree_Of_Loss_Right_ID">
                 <h5 style="padding: 0.5em 1em;
