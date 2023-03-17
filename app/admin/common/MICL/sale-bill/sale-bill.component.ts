@@ -5,6 +5,8 @@ import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-sale-bill',
@@ -41,6 +43,11 @@ export class SaleBillComponent implements OnInit {
   SerarchSaleBillHeader: any = [];
   DocNo :any  = undefined;
   Spinner = false;
+  public QueryStringObj : any;
+  SubLedgerID:any = undefined
+  Challan_No:any;
+  Tax_Category:any;
+  TaxCategoryList:any = [];
   constructor(
     private Header: CompacctHeader,
     private $http: HttpClient,
@@ -48,7 +55,23 @@ export class SaleBillComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
-  ){}
+    private route : ActivatedRoute,
+    private ngxService: NgxUiLoaderService,
+    private router: Router,
+  ){
+     this.route.queryParamMap.subscribe((val:any) => {
+      this.GetCustmer();
+      if(val.params) {
+        // this.ngxService.start();
+        this.QueryStringObj = val.params;
+        if(this.QueryStringObj.Challan_No) {
+          this.tabIndexToView = 1;
+          // this.SubLedgerID = Number(this.QueryStringObj.Sub_Ledger_ID)
+          // this.Tax_Category = this.QueryStringObj.Cat_ID
+         }
+      }
+    } );
+   }
 
   ngOnInit() {
      this.items = ["BROWSE", "CREATE"];
@@ -60,8 +83,10 @@ export class SaleBillComponent implements OnInit {
     this.GetCostcenter();
     this.GetStateList();
     this.Finyear();
+    this.GetTaxCategory();
+    this.ObjTopSale.Sub_Ledger_ID = Number(this.QueryStringObj.Sub_Ledger_ID);
   }
-  TabClick(e) {
+  TabClick(e:any) {
     this.tabIndexToView = e.index;
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Create";
@@ -89,6 +114,7 @@ export class SaleBillComponent implements OnInit {
     this.IGST = undefined;
     this.NetAMT = undefined;
     this.SerarchSaleBill = [];
+  
   }
   Finyear() {
     this.$http
@@ -139,7 +165,9 @@ export class SaleBillComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       this.CustmerList = data;
       this.CustmerListbrowse = data;
-      //console.log("CustmerList==", this.CustmerList);
+      
+      
+      console.log("CustmerList==", this.ObjTopSale.Sub_Ledger_ID);
     });
   }
   GetCostcenter() {
@@ -150,17 +178,33 @@ export class SaleBillComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       this.CostCenterList = data;
       //console.log("this.CostCenterList", this.CostCenterList)
-      this.ObjTopSale.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.ObjTopSale.Cost_Cen_ID = this.QueryStringObj.Cost_Cen_ID ? Number(this.QueryStringObj.Cost_Cen_ID) : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       this.GetCosCenAddress();
     })
   }
   GetCosCenAddress() {
     if (this.ObjTopSale.Cost_Cen_ID) {
+      this.ObjTopSale.Bill_No = []
       const ctrl = this;
       const costcenObj = $.grep(ctrl.CostCenterList, function (item: any) { return item.Cost_Cen_ID == ctrl.ObjTopSale.Cost_Cen_ID })[0];
-      this.ObjTopSale = {...costcenObj}
-      this.ObjTopSale.Cost_Cen_Email = costcenObj.Cost_Cen_Email1;
+      // this.ObjTopSale = {...costcenObj}
+      this.ObjTopSale.Sub_Ledger_ID = Number(this.QueryStringObj.Sub_Ledger_ID)
+      if(this.ObjTopSale.Sub_Ledger_ID){
+        this.CustmerNameChange();
+      }
+      this.ObjTopSale.Bill_No.push(this.QueryStringObj.Challan_No)
+
+      this.ObjTopSale.Cost_Cen_Address1 = costcenObj.Cost_Cen_Address1;
+      this.ObjTopSale.Cost_Cen_Address2 = costcenObj.Cost_Cen_Address2;
       this.ObjTopSale.Cost_Cen_State = costcenObj.Cost_Cen_State;
+      this.ObjTopSale.Cost_Cen_GST_No = costcenObj.Cost_Cen_GST_No
+      this.ObjTopSale.Cost_Cen_Location = costcenObj.Cost_Cen_Location;
+      this.ObjTopSale.Cost_Cen_PIN = costcenObj.Cost_Cen_PIN;
+      this.ObjTopSale.Cost_Cen_Phone = costcenObj.Cost_Cen_Phone;
+      this.ObjTopSale.Cost_Cen_District = costcenObj.Cost_Cen_District;
+      this.ObjTopSale.Cost_Cen_Country = costcenObj.Cost_Cen_Country;
+      this.ObjTopSale.Cost_Cen_Mobile = costcenObj.Cost_Cen_Mobile;
+      this.ObjTopSale.Cost_Cen_Email = costcenObj.Cost_Cen_Email1;
       this.ObjTopSale.Cost_Cen_Name = costcenObj.Cost_Cen_Name; 
     }
      else {
@@ -178,35 +222,43 @@ export class SaleBillComponent implements OnInit {
       }
   }
   CustmerNameChange() {
-    this.ObjTopSale.Choose_Address = undefined;
-    this.ObjTopSale.Bill_No = undefined;
-    this.ObjTopSale.Sub_Ledger_Address_1 = undefined;
-    this.ObjTopSale.Sub_Ledger_District = undefined;
-    this.ObjTopSale.Sub_Ledger_State = undefined;
-    this.ObjTopSale.Sub_Ledger_Pin = undefined;
-    this.ObjTopSale.Sub_Ledger_GST_No = undefined;
-    this.SaveAddress = [];
-    const TempObj = {
-      Sub_Ledger_ID: this.ObjTopSale.Sub_Ledger_ID,
+    if(this.ObjTopSale.Sub_Ledger_ID){
+      this.ObjTopSale.Choose_Address = undefined;
+      this.ObjTopSale.Bill_No = [];
+      this.ObjTopSale.Sub_Ledger_Address_1 = undefined;
+      this.ObjTopSale.Sub_Ledger_District = undefined;
+      this.ObjTopSale.Sub_Ledger_State = undefined;
+      this.ObjTopSale.Sub_Ledger_Pin = undefined;
+      this.ObjTopSale.Sub_Ledger_GST_No = undefined;
+      this.SaveAddress = [];
+      const TempObj = {
+        Sub_Ledger_ID: this.ObjTopSale.Sub_Ledger_ID,
+      }
+      const obj = {
+        "SP_String": "SP_MICL_Sale_Bill",
+        "Report_Name_String": "Get_Subledger_Address",
+        "Json_Param_String": JSON.stringify([TempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        this.SaveAddress = data;
+        if (this.QueryStringObj.Sub_Ledger_ID) {
+          this.ObjTopSale.Choose_Address = this.QueryStringObj.Choose_Address;
+        this.onChangeAdd();
+        }
+      })
+      this.getChallanNo();  
     }
-    const obj = {
-      "SP_String": "SP_MICL_Sale_Bill",
-      "Report_Name_String": "Get_Subledger_Address",
-      "Json_Param_String": JSON.stringify([TempObj])
-    }
-    this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      this.SaveAddress = data;
-    })
-    this.getChallanNo();  
+    
   }
   onChangeAdd() {
     if (this.ObjTopSale.Choose_Address) {
-      this.ObjTopSale.Sub_Ledger_Address_1 = this.SaveAddress[0].Address_1,
-      this.ObjTopSale.Sub_Ledger_District = this.SaveAddress[0].District,
-      this.ObjTopSale.Sub_Ledger_State = this.SaveAddress[0].State,
+      const address1 = this.SaveAddress.filter(item=> item.Address_Caption == this.ObjTopSale.Choose_Address)
+      this.ObjTopSale.Sub_Ledger_Address_1 = address1.length ? address1[0].Address_1 : undefined;
+      this.ObjTopSale.Sub_Ledger_District = address1.length ? address1[0].District : undefined;
+      this.ObjTopSale.Sub_Ledger_State = address1.length ? address1[0].State : undefined;
       this.GetStateList()
-      this.ObjTopSale.Sub_Ledger_Pin = this.SaveAddress[0].Pin
-      this.ObjTopSale.Sub_Ledger_GST_No = this.SaveAddress[0].Sub_Ledger_GST_No
+      this.ObjTopSale.Sub_Ledger_Pin = address1.length ? address1[0].Pin : undefined;
+      this.ObjTopSale.Sub_Ledger_GST_No = address1.length ? address1[0].Sub_Ledger_GST_No : undefined;
     } 
     else {
       this.ObjTopSale.Sub_Ledger_Address_1 =undefined ,
@@ -256,7 +308,15 @@ export class SaleBillComponent implements OnInit {
          element['label'] = element.Doc_No,
          element['value'] = element.Doc_No								
        });
-       this.ChallanNoList = data;   
+       this.ChallanNoList = data;
+       if (this.QueryStringObj.Challan_No) {
+        // var challanarr:any = [];
+        // challanarr = this.QueryStringObj.Challan_No;
+        // console.log("challanarr", challanarr);
+        // this.ObjTopSale.Bill_No = challanarr;
+        //   console.log("this.ObjTopSale.Bill_No", this.ObjTopSale.Bill_No);
+       this.getButtomTable();
+       }
       } 
    });
   }
@@ -268,9 +328,11 @@ export class SaleBillComponent implements OnInit {
     this.SGST = undefined;
     this.IGST = undefined;
     this.NetAMT = undefined;
+    // console.log("this.ObjTopSale.Bill_No>>>>>",this.ObjTopSale.Bill_No)
+    this.ngxService.start();
     this.ObjTopSale.Bill_No.forEach(element => {
       this.TempObj.push({
-        Doc_No:element
+        Doc_No:element 
       })
     });
     const obj = {
@@ -282,9 +344,22 @@ export class SaleBillComponent implements OnInit {
       if (data.length) {
         this.GridList = data; 
          this.TotalCalculation();
+         this.ngxService.stop();
       }
      
     })  
+  }
+  GetTaxCategory() {
+    this.TaxCategoryList = [];
+      const obj = {
+        "SP_String": "SP_MICL_Sale_Bill",
+        "Report_Name_String": "Get_TAX_Catagory",
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("TaxCategoryList  ===", data);
+        this.TaxCategoryList = data;
+      })
+  
   }
   TotalCalculation() {
     this.Tax = undefined;
@@ -312,8 +387,86 @@ export class SaleBillComponent implements OnInit {
   }
   SaveSaleBill(valid:any) {
     this.SaleBillFormSubmitted = true;
+    console.log("SubLedgerID",this.ObjTopSale.Sub_Ledger_ID)
     if (valid) {
-      const FilterSubledger = this.CustmerList.filter((el: any) => Number(el.value) === Number(this.ObjTopSale.Sub_Ledger_ID))
+      this.compacctToast.clear();
+     this.compacctToast.add({
+       key: "s",
+       sticky: true,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+     });
+    //   const FilterSubledger = this.CustmerList.filter((el: any) => Number(el.value) === Number(this.ObjTopSale.Sub_Ledger_ID))
+    //   const TempSaveList = {
+    //   Doc_Date: this.DateService.dateConvert(this.BillDate),	
+    //   Sub_Ledger_ID	 : this.ObjTopSale.Sub_Ledger_ID,
+		// 	Sub_Ledger_Name	: FilterSubledger[0].label,	
+		// 	Sub_Ledger_GST	:	this.ObjTopSale.Sub_Ledger_GST_No,			
+		// 	Billing_Name:	FilterSubledger[0].label,				
+		// 	Address_1	:	this.ObjTopSale.Sub_Ledger_Address_1,			
+		// 	Address_2	:	FilterSubledger[0].Sub_Ledger_Address_2,			
+		// 	Address_3	:	FilterSubledger[0].Sub_Ledger_Address_3,	
+		// 	Land_Mark	:	FilterSubledger[0].Sub_Ledger_Land_Mark,			
+		// 	Pin	:		this.ObjTopSale.Sub_Ledger_Pin,					
+		// 	District	:	this.ObjTopSale.Sub_Ledger_District	,						
+		// 	State	:	this.ObjTopSale.Sub_Ledger_State,					
+		// 	Country		:	FilterSubledger[0].Sub_Ledger_Country,				
+		// 	Email:	FilterSubledger[0].Sub_Ledger_Email,					
+		// 	Mobile_No	:FilterSubledger[0].Sub_Ledger_Mobile_No,					
+		// 	Phone	:	FilterSubledger[0].Sub_Ledger_Mobile_No,							
+		// 	Taxable_Amt	: this.Tax,				
+		// 	CGST_Amt:	this.CGST,					
+		// 	SGST_Amt: this.SGST	,					
+		// 	IGST_Amt:	this.IGST	,					
+		// 	Gross_Amt: this.NetAMT,					
+		// 	Tax_Amt	: this.Tax,								
+		// 	Net_Amt: this.NetAMT,								
+		// 	User_ID	:	this.$CompacctAPI.CompacctCookies.User_ID	,									
+		// 	Cost_Cen_ID	:this.ObjTopSale.Cost_Cen_ID,																							
+    //   Grand_Total: this.NetAMT,
+    //   Fin_Year_ID : this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
+    //   }
+    //   this.ChallanSave = [];
+    //   this.ObjTopSale.Bill_No.forEach(element => {
+    //   this.ChallanSave.push({
+    //     Challan_No:element
+    //   })
+    // });
+    //        const obj = {
+    //     "SP_String": "SP_MICL_Sale_Bill",
+    //     "Report_Name_String": "Sale_Bill_Create",
+    //     "Json_Param_String": JSON.stringify([TempSaveList]),
+    //     "Json_1_String" : JSON.stringify(this.ChallanSave)
+    //   }
+    //   this.GlobalAPI.getData(obj).subscribe((data: any) => {
+    //     var tempID = data[0].Column1;
+    //     if (data[0].Column1) {
+    //       this.compacctToast.clear();
+    //       this.compacctToast.add({
+    //         key: "compacct-toast",
+    //         severity: "success",
+    //         summary: tempID,
+    //         detail: "successfully Create ",
+    //       });
+    //   this.ObjTopSale = new TopSale();
+    //   this.BillDate = new Date();
+    //   this.SaleBillFormSubmitted = false
+    //   this.tabIndexToView = 0;
+    //   this.items = ["BROWSE", "CREATE"];
+    //   this.Tax = undefined;
+    //   this.CGST = undefined;
+    //   this.SGST = undefined;
+    //   this.IGST = undefined;
+    //   this.NetAMT = undefined;
+    //   this.GridList = [];
+    //   // this.Tax_Category = undefined;
+    //  }
+    // });
+    }
+  }
+  onConfirmSave(){
+    const FilterSubledger = this.CustmerList.filter((el: any) => Number(el.value) === Number(this.ObjTopSale.Sub_Ledger_ID))
       const TempSaveList = {
       Doc_Date: this.DateService.dateConvert(this.BillDate),	
       Sub_Ledger_ID	 : this.ObjTopSale.Sub_Ledger_ID,
@@ -376,9 +529,20 @@ export class SaleBillComponent implements OnInit {
       this.IGST = undefined;
       this.NetAMT = undefined;
       this.GridList = [];
+      this.router.navigate(['./MICL_Sale_Bill']);
+      this.GetSerarchBrowse(true);
+      // this.Tax_Category = undefined;
+     }
+     else {
+         this.compacctToast.clear();
+         this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "error",
+           summary: "Warn Message"  ,
+           detail: "Error occured",                 
+          });
      }
     });
-    }
   }
   onConfirm() {
     if (this.DocNo) {
@@ -417,8 +581,21 @@ export class SaleBillComponent implements OnInit {
      });
     }
   }
+  Print(DocNo) {
+    if (DocNo) {
+      const objtemp = {
+        "SP_String": "SP_MICL_Sale_Bill",
+        "Report_Name_String": "Sale_Bill_Print"
+      }
+      this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
+        var printlink = data[0].Column1;
+        window.open(printlink + "?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      })
+    }
+  }
   onReject() {
     this.compacctToast.clear("c");
+    this.compacctToast.clear("s");
   }
 }
 class TopSale{
@@ -429,10 +606,8 @@ class TopSale{
   Sub_Ledger_State: any;
   Sub_Ledger_Pin: any;
   Sub_Ledger_GST_No: any;
-
-  Same_as_Bill: any;
-
-  Cost_Cen_ID: any;
+    Same_as_Bill: any;
+    Cost_Cen_ID: any;
   Cost_Cen_Name: any;
   Cost_Cen_Address1: any;
   Cost_Cen_Address2: any;
@@ -446,7 +621,7 @@ class TopSale{
   Cost_Cen_Phone: any;
   Cost_Cen_Email: any;
 
-  Bill_No: any;
+  Bill_No:any = [];
 }
 class BrowseSaleBill {
   Sub_Ledger_ID: any;

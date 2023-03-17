@@ -193,7 +193,8 @@ div.table-responsive.table-id>p-table>div>div {
   .LP,
   .ED,
   .HL,
-  .LWP {
+  .LWP,
+  .LT {
     background-color: rgb(244 121 38) !important;
     color: #ffff;
     text-align: center;
@@ -223,7 +224,7 @@ div.table-responsive.table-id>p-table>div>div {
   .PWO,
   .PW,
   .PPH {
-    background-color:#42ca6d !important;
+    background-color:#45fc7f !important;
     color: #ffff;
     text-align: center;
   }

@@ -18,6 +18,42 @@
       </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" key="s" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+            <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
+        </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="bill" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+            <button type="button" pButton (click)="RedrectEdit()" label="Yes" class="ui-button-success"></button>
+        </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+    </ng-template>
+</p-toast>
 
 <div class="row">
     <div class="col-xs-12">
@@ -128,7 +164,7 @@
                                                             <div class="col-sm-12">
                                                                 <label class="control-label">Choose Address<sup class="text-danger">*</sup></label>
                                                                 <select class="form-control" name="billchooseaddress" 
-                                                                #billchooseaddress="ngModel" [(ngModel)]="ObjPurChaseBill.Choose_Address"
+                                                                #billchooseaddress="ngModel" [(ngModel)]="Choose_Address"
                                                                 (change)="onChangeAdd()">
                                                                     <option  [ngValue]="undefined">Select</option>
                                                                     <option *ngFor="let option of SaveAddress" value="{{option.Address_Caption}}">
@@ -140,20 +176,20 @@
                                                                 <label class="control-label">Address<sup class="text-danger">*</sup></label>
                                                                 <input class="form-control" name="billaddress" #billaddress="ngModel"
                                                                     [(ngModel)]="ObjPurChaseBill.Sub_Ledger_Address_1" placeholder="Address"
-                                                                    [disabled]="ObjPurChaseBill.Choose_Address"
+                                                                    [disabled]="Choose_Address"
                                                                     [ngClass]="{'clearance':PurchaseBillFormSubmitted && billaddress?.errors?.required}" required>
                                                             </div>
                                                             <div class="col-sm-12">
                                                                 <label class="control-label">District<sup class="text-danger">*</sup></label>
                                                                 <input class="form-control" name="billdistrict" #billdistrict="ngModel"
                                                                     [(ngModel)]="ObjPurChaseBill.Sub_Ledger_District" placeholder="District"
-                                                                    [disabled]="ObjPurChaseBill.Choose_Address"
+                                                                    [disabled]="Choose_Address"
                                                                     [ngClass]="{'clearance':PurchaseBillFormSubmitted && billdistrict?.errors?.required}" required>
                                                             </div>
                                                             <div class="col-sm-12">
                                                                 <label class="control-label">State<sup class="text-danger">*</sup></label>
                                                                 <select class="form-control" name="billstate" #billstate="ngModel"
-                                                                [(ngModel)]="ObjPurChaseBill.Sub_Ledger_State"  [disabled]="ObjPurChaseBill.Choose_Address" 
+                                                                [(ngModel)]="ObjPurChaseBill.Sub_Ledger_State"  [disabled]="Choose_Address" 
                                                                 [ngClass]="{'clearance': PurchaseBillFormSubmitted && billstate?.errors?.required}" required>
                                                                     <option  [ngValue]="undefined">Select</option>
                                                                         <option  *ngFor="let option of StateList" value="{{option.state}}">
@@ -164,7 +200,7 @@
                                                             <div class="col-sm-12">
                                                                 <label class="control-label">PIN<sup class="text-danger">*</sup> </label>
                                                                 <input class="form-control" name="billpin" #billpin="ngModel" [(ngModel)]="ObjPurChaseBill.Sub_Ledger_Pin"
-                                                                    placeholder="PIN" [disabled]="ObjPurChaseBill.Choose_Address"
+                                                                    placeholder="PIN" [disabled]="Choose_Address"
                                                                     [ngClass]="{'clearance':PurchaseBillFormSubmitted && billpin?.errors?.required}" required>
                                                             </div>
                                                             <div class="col-sm-12">
@@ -172,7 +208,7 @@
                                                                 <input class="form-control" name="billgstno" #billgstno="ngModel" 
                                                                 [(ngModel)]="ObjPurChaseBill.Sub_Ledger_GST_No" placeholder="GST No" 
                                                                 pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$"
-                                                                [disabled]="ObjPurChaseBill.Choose_Address" 
+                                                                [disabled]="Choose_Address" 
                                                                 [ngClass]="{'clearance':PurchaseBillFormSubmitted && (billgstno?.errors?.required || billgstno?.errors?.pattern)}" required >
                                                             </div>                                           
                                                         </div>
@@ -263,7 +299,7 @@
                                             <div class="form-group">
                                                 <div class="col-sm-3">
                                                     <label class="control-label">CostCenter<sup class="text-danger">*</sup></label>
-                                                    <select class="form-control" name="costcenter" #costcenter="ngModel" [(ngModel)]="ObjPurChaseBill.Cost_Cen_ID" 
+                                                    <select class="form-control" name="costcenter" #costcenter="ngModel" [(ngModel)]="Cost_Cen_ID" 
                                                     [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'" 
                                                     (change)="GetCosCenAddress()"
                                                     [ngClass]="{'clearance': PurchaseBillFormSubmitted && costcenter?.errors?.required}" 
@@ -369,29 +405,49 @@
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label class="control-label">Mode Of Delivery <sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="Mode" #Mode="ngModel" 
+                                                    <!-- <input class="form-control" name="Mode" #Mode="ngModel" 
                                                     [(ngModel)]="ObjPurChaseBill.Mode_Of_Delivery"
                                                     placeholder="Mode Of Delivery" 
-                                                    [ngClass]="{'clearance':PurchaseBillFormSubmitted && Mode?.errors?.required}"required>
+                                                    [ngClass]="{'clearance':PurchaseBillFormSubmitted && Mode?.errors?.required}"required> -->
+                                                    <select class="form-control" name="Mode" #Mode="ngModel" [(ngModel)]="ObjPurChaseBill.Mode_Of_Delivery"
+                                                    [ngClass]="{'clearance': PurchaseBillFormSubmitted && Mode?.errors?.required}" 
+                                                     required>
+                                                          <option  [ngValue]="undefined">Select</option>
+                                                          <option  value="Road">Road</option>
+                                                          <option  value="Rail">Rail</option>
+                                                          <option  value="Air">Air</option>
+                                                          <option  value="Ship">Ship</option>
+                                                          <!-- <option  *ngFor="let option of CostCenterList" value="{{option.Cost_Cen_ID}}">
+                                                            {{option.Cost_Cen_Name}}
+                                                          </option> -->
+                                                    </select>
                                                 </div>
                                                 <div class="col-sm-3">
-                                                    <label class="control-label">Delivery Point <sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="Point" #Point="ngModel" 
-                                                    [(ngModel)]="ObjPurChaseBill.Delivery_Point"
-                                                    placeholder="Delivery Point" 
-                                                    [ngClass]="{'clearance':PurchaseBillFormSubmitted && Point?.errors?.required}"required>
+                                                    <label class="control-label">Vehicle Type <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="vehicletype" #vehicletype="ngModel" 
+                                                    [(ngModel)]="ObjPurChaseBill.Vehicle_Type"
+                                                    placeholder="Vehicle Type" 
+                                                    [ngClass]="{'clearance':PurchaseBillFormSubmitted && vehicletype?.errors?.required}"required>
                                                 </div>
                                                 <div class="col-sm-3">
-                                                    <label class="control-label">Vehicle No<sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="Vehicle" #Vehicle="ngModel" 
-                                                    [(ngModel)]="ObjPurChaseBill.Vehicle_No"
-                                                    placeholder="Vehicle No" 
-                                                    [ngClass]="{'clearance':PurchaseBillFormSubmitted && Vehicle?.errors?.required}"required>
+                                                    <label class="control-label">Transportation Distance <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="transportdistance" #transportdistance="ngModel" CompacctDigitonly="true"
+                                                    [(ngModel)]="ObjPurChaseBill.Transportation_Distance"
+                                                    placeholder="Transport Distance" 
+                                                    [ngClass]="{'clearance':PurchaseBillFormSubmitted && transportdistance?.errors?.required}"required>
                                                 </div>
+                                                
                                             </div>
                                             <div class="form-group">
                                                 <div class="col-sm-3">
-                                                    <label class="control-label">Transporter<sup class="text-danger">*</sup> </label>
+                                                    <label class="control-label">Transporter GST </label>
+                                                    <input class="form-control" name="transportergst" #transportergst="ngModel" 
+                                                    [(ngModel)]="ObjPurChaseBill.Transporter_ID" placeholder="GST No" 
+                                                    pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$"
+                                                    [ngClass]="{'clearance':PurchaseBillFormSubmitted && transportergst?.errors?.pattern}">
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Transporter Name<sup class="text-danger">*</sup> </label>
                                                     <input class="form-control" name="Transporter" #Transporter="ngModel"
                                                     [(ngModel)]="ObjPurChaseBill.Transporterr" placeholder="Transporter" 
                                                     [ngClass]="{'clearance':PurchaseBillFormSubmitted && Transporter?.errors?.required}" required>
@@ -412,6 +468,23 @@
                                                     
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Vehicle No<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="Vehicle" #Vehicle="ngModel" 
+                                                    [(ngModel)]="ObjPurChaseBill.Vehicle_No"
+                                                    pattern="[a-zA-Z]{2}(.*)"
+                                                    placeholder="Vehicle No" 
+                                                    [ngClass]="{'clearance':PurchaseBillFormSubmitted && (Vehicle?.errors?.required || Vehicle?.errors?.pattern )}"required>
+                                                </div> 
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Delivery Point <sup class="text-danger">*</sup></label>
+                                                <input class="form-control" name="Point" #Point="ngModel" 
+                                                [(ngModel)]="ObjPurChaseBill.Delivery_Point"
+                                                placeholder="Delivery Point" 
+                                                [ngClass]="{'clearance':PurchaseBillFormSubmitted && Point?.errors?.required}"required>
+                                            </div>
                                             </div> 
                                             </div>
                                         </form>
@@ -484,7 +557,7 @@
                             </div>
                             <div class="col-sm-4">
                                 <label>Product Description<sup class="text-danger">*</sup></label>
-                                <select class="form-control" name="Description" #Description="ngModel" 
+                                <!-- <select class="form-control" name="Description" #Description="ngModel" 
                                     [(ngModel)]="ObjProductInfo.Product_Specification"
                                     (change)="GetLot()"
                                     [ngClass]="{clearance: TermFormSubmitted && Description?.errors?.required}" 
@@ -493,8 +566,29 @@
                                     <option *ngFor="let option of ProductDetalist" [value]="option.value">
                                         {{option.label}}
                                     </option>
+                                </select> -->
+                                <p-dropdown [options]="ProductDetalist" name="Description" #Description="ngModel"  
+                                    [(ngModel)]="ObjProductInfo.Product_Specification" 
+                                    [showClear]="true" [emptyFilterMessage]="' No Product Found'" 
+                                    (onChange)="GetLot()" [filter]="true" filterBy="label,value.name"
+                                    [resetFilterOnHide]="true" [placeholder]="'Select Product'"
+                                    [virtualScroll]="true" itemSize="30" 
+                                    [ngClass]="{'clearance':TermFormSubmitted && Description?.errors?.required}" [required]="true">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-sm-4">
+                                <label>Tax Category<sup class="text-danger">*</sup></label>
+                                <select class="form-control" name="taxcat" #taxcat="ngModel" 
+                                    [(ngModel)]="Tax_Category"
+                                    [ngClass]="{clearance: TermFormSubmitted && taxcat?.errors?.required}" 
+                                    required>
+                                    <option [ngValue]="undefined">Select</option>
+                                    <option *ngFor="let option of TaxCategoryList" [value]="option.Cat_ID">
+                                        {{option.Cat_Name}}
+                                    </option>
                                 </select>
                             </div>
+                            <div class="clearfix"></div>
                             <div class="col-sm-3">
                                 <label class="control-label">Lot No./Batch No. <sup class="text-danger">*</sup></label>
                                 <select class="form-control" name="BatchNo" #BatchNo="ngModel" 
@@ -507,7 +601,7 @@
                                 </option>
                                 </select>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-2">
                                 <label class="control-label">Qty <sup class="text-danger">*</sup></label>
                                 <div class="input-group">                                  
                                 <input class="form-control"  name="Qty" #Qty="ngModel" 
@@ -563,7 +657,7 @@
                               <th colspan="2" scope="colgroup" class="text-center">SGST</th>
                               <th colspan="2" scope="colgroup" class="text-center">IGST</th>
                               <th rowspan="2" class="text-center" style="vertical-align:middle">Net Amount</th>
-                              <!-- <th rowspan="2" class="text-center" style="vertical-align:middle">Detete</th> -->
+                              <th rowspan="2" class="text-center" style="vertical-align:middle">Detete</th>
                             </tr>
                             <tr style="background-color:#3c8dbc;color:white">
                                <th scope="col" class="text-center">Rate</th>
@@ -594,7 +688,7 @@
                             <td>{{ TermTableList.IGST_Rate }}</td>
                             <td>{{ TermTableList.IGST_Amt }}</td>
                             <td>{{ TermTableList.Line_Total_Amount }}</td>
-                              <!-- <td><button (click)="DeteteTerm(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td> -->
+                            <td><button (click)="Deteteaddlist(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                             </tr>
                         </tbody>
                        </table>

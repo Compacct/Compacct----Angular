@@ -194,7 +194,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
      let reportnamepeninv = "";
-      if (this.databaseName === "K4C") {
+      if (this.databaseName === "K4C" || this.databaseName === "MICL") {
         reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==";
       }
       else if (this.databaseName === "BSHPL") {
@@ -287,7 +287,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       if (this.databaseName === "K4C") {
         printlink = "/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" ;
       }
-      else if (this.databaseName === "BSHPL") {
+      else if (this.databaseName === "BSHPL" || this.databaseName === "MICL") {
         printlink = "/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_Print.aspx?Doc_No=" ;
       }
       else {
@@ -384,7 +384,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
      let reportnamefailedinv = "";
-      if (this.databaseName === "K4C") {
+      if (this.databaseName === "K4C" || this.databaseName === "MICL") {
         reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==";
       }
       else if (this.databaseName === "BSHPL") {
@@ -581,7 +581,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
      let reportnamepencrnote = "";
-      if (this.databaseName === "K4C") {
+      if (this.databaseName === "K4C" || this.databaseName === "MICL") {
         reportnamepencrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==";
       }
       else if (this.databaseName === "BSHPL") {
@@ -760,7 +760,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
      let reportnamefailedcrnote = "";
-      if (this.databaseName === "K4C") {
+      if (this.databaseName === "K4C" || this.databaseName === "MICL") {
         reportnamefailedcrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==";
       }
       else if (this.databaseName === "BSHPL") {

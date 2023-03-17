@@ -1,0 +1,122 @@
+<!-- <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView>
+                        <form name="createProjectForm" #createProjectForm="ngForm" novalidate>
+                            <div class="form-group">
+                              <div class="col-sm-4">
+                                <label class="control-label">Client Name<sup class="text-danger">*</sup></label>
+                                <select class="form-control"
+                                        name="clientName">
+                                        <option  [ngValue]="undefined">Select</option>
+                                        <option *ngFor=" let option of SubledgerList"  [ngValue]="option.Sub_Ledger_ID">{{option.Sub_Ledger_Name}}</option>
+                                 </select>
+
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label">Consultant Name<sup class="text-danger">*</sup></label>
+                                <select class="form-control"
+                                        name="ConsultantName">
+                                        <option  [ngValue]="undefined">Select</option>
+                                        <option *ngFor=" let option of SubledgerList"  [ngValue]="option.Sub_Ledger_ID">{{option.Sub_Ledger_Name}}</option>
+                                 </select>
+                              </div>
+                              <div class="col-sm-4">
+                                <label class="control-label">Engagment Letter<sup class="text-danger">*</sup></label>
+                                <select class="form-control"
+                                        name="Engagment"
+                                        #Engagment="ngModel"
+                                        [(ngModel)]="EngagmentLetter"
+                                        (change)="changeEngagment()" >
+                                        <option  [ngValue]="undefined">Select</option>
+                                        <option  [ngValue]="'Y'">YES</option>
+                                        <option  [ngValue]="'N'">NO</option>
+                                 </select>
+                              </div>
+                              <div class="col-sm-4" *ngIf="EngagmentLetter == 'Y'" >
+                                <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                <ejs-datepicker  [(value)]="EngagmentDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
+                              </div>
+                              <div class="col-sm-4" >
+                                <label class="control-label">Project Detalis<sup class="text-danger">*</sup></label>
+                                <select class="form-control"
+                                        name="Project"
+                                        #Project="ngModel"
+                                        [(ngModel)]="selectProject"
+                                        (change)="changeProject(selectProject)"  >
+                                        <option  [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of projectList" [ngValue]="option" >{{option}}</option>
+                                 </select>
+                              </div>
+                              <div class="col-sm-4" >
+                                <label class="control-label">Purpose<sup class="text-danger">*</sup></label>
+                                <select class="form-control"
+                                        name="Purpose"
+                                        #Purpose="ngModel"
+                                        [(ngModel)]="selectPurpose"
+                                        (change)="changePurpose(selectPurpose)" 
+                                         [disabled]="!purposeList.length" >
+                                        <option  [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of purposeList" [ngValue]="option" > {{option}}</option>
+                                 </select>
+                              </div>
+                              <div class="col-sm-4" >
+                                <label class="control-label">Act<sup class="text-danger">*</sup></label>
+                                <select class="form-control"
+                                        name="Act"
+                                        #Act="ngModel"
+                                        [(ngModel)]="selectAct"
+                                        [disabled]="!purposeList.length" >
+                                        <option  [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of ActList" [ngValue]="option" > {{option}}</option>
+                                 </select>
+                              </div>
+                              <div class="col-sm-4" >
+                                <label class="control-label">Valuation Date<sup class="text-danger">*</sup></label>
+                                <ejs-datepicker  [(value)]="ValuationDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
+                              </div>
+                              <div class="col-sm-4" >
+                                <label class="control-label">Bill To<sup class="text-danger">*</sup></label>
+                                <select class="form-control"
+                                        name="Bill" >
+                                        <option  [ngValue]="undefined">Select</option>
+                                        <option  [ngValue]="Client">Client</option>
+                                        <option  [ngValue]="Consultant">Consultant</option>
+                                 </select>
+                              </div>
+                            </div>
+                        </form>
+                        <div class="box-footer">
+                            <button class="btn btn-primary pull-right"
+                                    id="load"
+                                    [disabled]="Spinner">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                            </button>
+                        </div>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->

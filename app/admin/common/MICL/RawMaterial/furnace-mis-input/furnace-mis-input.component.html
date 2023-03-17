@@ -631,7 +631,7 @@
                                             <td>{{obj.Qty}}</td>
                                             <td>{{obj.UOM}}</td>
                                             <!-- <td>{{obj.Purpose ? obj.Purpose : '-'}}</td> -->
-                                            <td><button (click)="Productiondelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                            <td><button [disabled]="(obj.delete_status == 'Cant') && ($CompacctAPI.CompacctCookies.User_ID != 95)" (click)="Productiondelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -777,7 +777,7 @@
                                             <td>{{obj.Qty}}</td>
                                             <td>{{obj.UOM}}</td>
                                             <!-- <td>{{obj.Purpose ? obj.Purpose : '-'}}</td> -->
-                                            <td><button (click)="WasteSlagdelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                            <td><button [disabled]="(obj.delete_status == 'Cant') && ($CompacctAPI.CompacctCookies.User_ID != 95)" (click)="WasteSlagdelete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                         </tr>
                                     </tbody>
                                 </table>

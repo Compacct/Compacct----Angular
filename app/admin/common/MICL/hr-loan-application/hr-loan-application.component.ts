@@ -101,7 +101,7 @@ export class HrLoanApplicationComponent implements OnInit {
     this.ToDatevalue = new Date();
     this.employeeData();
     // this.GetBrowseData();
-    this.hrYearList();
+    this.Finyear();
     this.ToDatevalue = new Date();
     // this.initDate = [new Date(),new Date()]
   }
@@ -145,20 +145,15 @@ export class HrLoanApplicationComponent implements OnInit {
       console.log("employee==",this.empDataList);
       });
   }
-  hrYearList(){
-    const obj = {
-      "SP_String":"SP_Leave_Application",
-      "Report_Name_String":"Get_HR_Year_List"
-   }
-   this.GlobalAPI.getData(obj)
-     .subscribe((data:any)=>{
-      this.hrYeatList = data;
-      console.log("Hr Year==",this.hrYeatList);
-      this.ObjHrLoanAppl.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined;
-
-       // if(this.ObjHrLoanAppl.HR_Year_ID){
-        // this.getMaxMindate()
-     // }
+  Finyear() {
+    this.http
+      .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
+      .subscribe((res: any) => {
+      let data = JSON.parse(res)
+      // this.vouchermaxDate = new Date(data[0].Fin_Year_End);
+      // this.voucherminDate = new Date(data[0].Fin_Year_Start);
+      // this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
+     this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
       });
   }
   getEMIstartDate() {

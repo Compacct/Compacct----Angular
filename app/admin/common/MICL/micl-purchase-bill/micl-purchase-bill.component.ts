@@ -154,6 +154,7 @@ export class MiclPurchaseBillComponent implements OnInit {
   editDocNo : any;
   TCSTaxRequiredValidation = false;
   TCSdataList:any = [];
+  validationflag = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -507,8 +508,9 @@ export class MiclPurchaseBillComponent implements OnInit {
       //  this.ChangePurchaseOrder();
     //  }
   }
-GetGRNNoProductdetails(){
+  GetGRNNoProductdetails(){
   this.GRNNoProlist = [];
+  this.TCSTaxRequiredValidation = false;
   if (this.ObjProductInfo.GRN_No) {
   const obj = {
     "SP_String": "SP_MICL_Purchase_Bill_New",
@@ -532,7 +534,7 @@ GetGRNNoProductdetails(){
   })
 }
 
-}
+  }
   CalCulateTotalAmt(){
     this.ObjProductInfo.Amount = 0;
     if (this.ObjProductInfo.Qty && this.ObjProductInfo.Rate) {
@@ -558,6 +560,28 @@ GetGRNNoProductdetails(){
    }
    
   
+  }
+  calculateamount(col){
+    if(col.Qty){
+      col.Amount = Number(col.Qty * col.Rate).toFixed(2);
+      col.Taxable_Amount = Number(col.Amount - col.Discount).toFixed(2);
+      this.AfterDiscCalChange(col);
+      this.calculategstamt();
+      this.CalculateCessAmt();
+      this.calculatenetamt();
+      this.ListofTotalAmount();
+      this.TcsAmtCalculation();
+      this.validationqty(col);
+    }
+    else {
+      this.AfterDiscCalChange(col);
+      this.calculategstamt();
+      this.CalculateCessAmt();
+      this.calculatenetamt();
+      this.ListofTotalAmount();
+      this.TcsAmtCalculation();
+      this.validationqty(col);
+    }
   }
   DiscChange(col){
     if(!col.Discount_Type){
@@ -1159,6 +1183,12 @@ GetGRNNoProductdetails(){
       });
     }
   }
+  validationqty(col){
+    this.validationflag = true;
+    if(col.Qty) {
+      this.validationflag = false;
+    }
+  }
   SavePurchaseBill(valid){
     this.DocNo = undefined;
     this.Save = false;
@@ -1166,7 +1196,8 @@ GetGRNNoProductdetails(){
     this.PurchaseBillFormSubmitted = true;
     this.TCSTaxRequiredValidation = true;
     this.validatation.required = true
-    if(valid && this.ObjPurChaseBill.TCS_Y_N){
+    if(valid){
+      if(this.GRNNoProlist.length && this.ObjPurChaseBill.TCS_Y_N && !this.validationflag) {
       this.Save = true;
       this.Del = false;
       this.Spinner = true;
@@ -1181,7 +1212,8 @@ GetGRNNoProductdetails(){
        detail: "Confirm to proceed"
      });
     }
-   }
+    }
+  }
   async onConfirmSave(){
     // this.PurchaseBillFormSubmitted = true;
     // this.validatation.required = true
@@ -1259,7 +1291,7 @@ GetGRNNoProductdetails(){
        this.clearProject();
        this.GetSerarchPurBill(true);
        this.GetPendingPO(true);
-       this.GetPendingGRN(true);
+      //  this.GetPendingGRN(true);
        if(this.editDocNo) {
         this.editDocNo = undefined;
         this.tabIndexToView = 0;
@@ -1370,6 +1402,7 @@ GetGRNNoProductdetails(){
   }
   EditPurchaseBill(col){
     this.editDocNo = undefined;
+    this.validationflag = false;
     if(col.Doc_No){
      this.editDocNo = col.Doc_No
      this.tabIndexToView = 1;
@@ -1558,7 +1591,8 @@ GetGRNNoProductdetails(){
       const tempobj = {
        From_date : start,
        To_date : end,
-       Company_ID : this.ObjPendingGRN.Company_ID
+       Company_ID : this.ObjPendingGRN.Company_ID,
+       GRN_Type : this.ObjPendingGRN.GRN_Type
       //  Cost_Cen_ID : this.ObjPendingGRN.Cost_Cen_ID
       }
       if (valid) {
@@ -1585,9 +1619,19 @@ GetGRNNoProductdetails(){
   }
   PrintPGRN(DocNo) {
     if(DocNo) {
+      let spname = "";
+      let reportname = "";
+      if(this.ObjPendingGRN.GRN_Type === "Store") {
+        spname = "SP_BL_Txn_Purchase_Challan_GRN";
+        reportname = "GRN_Print";
+      }
+      else {
+        spname = "SP_BL_Txn_Production_Raw_Material_Receive";
+        reportname = "Raw_Material_Receive_Document_Print";
+      }
     const objtemp = {
-      "SP_String": "SP_BL_Txn_Purchase_Challan_GRN",
-      "Report_Name_String": "GRN_Print"
+      "SP_String": spname,
+      "Report_Name_String": reportname
       }
     this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
       var GRNprintlink = data[0].Column1;
@@ -1832,5 +1876,6 @@ class PendingGRN{
   start_date : Date;
   end_date : Date;
   Cost_Cen_ID : any;
+  GRN_Type : any;
 }
 

@@ -18,29 +18,29 @@ declare var $:any;
   encapsulation: ViewEncapsulation.None
 })
 export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
-  items = [];
+  items:any = [];
   tabIndexToView = 0;
   searchObj : search = new search();
   seachSpinner = false;
-  Searchedlist = [];
+  Searchedlist:any = [];
 
   addbillFormSubmitted = false;
   ObjaddbillForm : addbillForm  = new addbillForm();
   url = window["config"];
-  billdate = [];
+  billdate:any = [];
   //Billno = false;
-  selectitem = [];
-  selectitemView = [];
+  selectitem:any = [];
+  selectitemView:any = [];
   EditDoc_No = undefined;
   dateList: any;
   myDate: Date;
-  returnedID = [];
+  returnedID:any = [];
   buttonname = "Save & Print Bill";
   Spinner = false;
-  addbillForm = [];
-  tempArr = [];
-  data = [];
-  productSubmit = [];
+  addbillForm:any = [];
+  tempArr:any = [];
+  data:any = [];
+  productSubmit:any = [];
   Dis_Amount : any;
   Total:any;
   Amount:any;
@@ -73,10 +73,10 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
   Hold_Bill_Flag = false;
   AdvOderDetailList: any;
   godown_id: any;
-  Batch_NO = [];
+  Batch_NO:any = [];
   Adv_Order_No: any;
   IsAdvance = false;
-  ProductTypeFilterList = [];
+  ProductTypeFilterList:any = [];
   ProductTypeFilterSelected:any;
   FromCostCentId: any;
   checkSave = true;
@@ -94,7 +94,7 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
   IGST_Ledger_Id: any;
   ProductType = undefined;
   isservice = undefined;
-  Regeneratelist = [];
+  Regeneratelist:any = [];
   contactname = undefined;
 
   constructor(

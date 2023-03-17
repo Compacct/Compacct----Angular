@@ -571,7 +571,17 @@
                                             <!-- <td>{{obj.Batch_Number ? obj.Batch_Number : '-'}}</td>
                                             <td>{{obj.Serial_No ? obj.Serial_No : '-'}}</td>
                                             <td>{{obj.Expiry_Date ? obj.Expiry_Date : '-'}}</td> -->
-                                            <td>{{obj.Qty}}</td>
+                                            <!-- <td>{{obj.Qty}}</td> -->
+                                            <td>
+                                                <input type="text"
+                                                  class="form-control"
+                                                  name="obj.Qty"
+                                                  [(ngModel)]="obj.Qty"
+                                                  (ngModelChange)="calculateamount(obj)"
+                                                  CompacctDigitonly="true"
+                                                  [ngClass]="{'clearance': validationflag}"
+                                                  style="width: 71px;">
+                                            </td>
                                             <td>{{obj.UOM}}</td>
                                             <td>{{obj.Rate}}</td>
                                             <td>{{obj.Amount}}</td>
@@ -916,8 +926,21 @@
                                     </app-compacct-daterangepicker>
 
                                 </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">GRN Type<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" 
+                                    name="grntype" 
+                                    #grntype="ngModel" 
+                                    [(ngModel)]="ObjPendingGRN.GRN_Type"
+                                    [ngClass]="{'clearance': PendingGRNFormSubmitted && grntype?.errors?.required}"
+                                    required>
+                                    <option  [ngValue]="undefined">Select</option>
+                                    <option  value="Store">Store</option>
+                                    <option  value="Raw Material">Raw Material</option>
+                                  </select>
+                                </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPendingGRN(PendingGRNForm.form.valid)" id="load" [disabled]="seachSpinner">
                                       <p-progressSpinner
                                         *ngIf="seachSpinner"

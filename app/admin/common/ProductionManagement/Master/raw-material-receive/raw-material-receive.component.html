@@ -81,23 +81,33 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <!-- <th style="width:5em">Action</th> -->
+                                            <th style="width:5em">Action</th>
                                             <th nowrap="nowrap" *ngFor="let option of BrowseListHeader">{{option.replaceAll('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr>
     
-                                            <!-- <td>
+                                            <td>
                                                 <div class="dropdown">
                                                     <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                                     <i class="fa fa-fw fa-bars"></i>
                                                                     <span class="caret"></span>
                                                                 </button>
                                                     <ul class="dropdown-menu">
-                                                     </ul>
+                                                        <li>
+                                                            <a (click)="Print(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="Delete(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
                                                 </div>
-                                            </td> -->
+                                            </td>
                                             <ng-container *ngFor="let option of BrowseListHeader">
                                                 <td *ngIf="option != 'Work_Details'" >{{col[option]}}</td>
                                             </ng-container>
@@ -176,7 +186,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <label class="control-label">Material Name<sup class="text-danger">*</sup></label>
                                         <p-dropdown [options]="AllMaterialName" 
                                                 name="Product_ID"  
@@ -195,7 +205,33 @@
                                                 required>
                                         </p-dropdown>
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">PO QTY<sup class="text-danger">*</sup></label>                             
+                                        <input class="form-control" 
+                                        type="text" 
+                                        name="PO_Qty"  
+                                        #PO_Qty="ngModel"
+                                        [(ngModel)]="ObjRawMatRev.PO_Qty"
+                                        CompacctDigitonly="true"
+                                        placeholder="PO QTY"
+                                        disabled
+                                        [ngClass]="{'clearance': RawMatRevFormSubmitted && PO_Qty.errors?.required}"
+                                        required>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Pending PO QTY<sup class="text-danger">*</sup></label>                             
+                                        <input class="form-control" 
+                                        type="text" 
+                                        name="Pending_PO_Qty"  
+                                        #Pending_PO_Qty="ngModel"
+                                        [(ngModel)]="ObjRawMatRev.Pending_PO_Qty"
+                                        CompacctDigitonly="true"
+                                        placeholder="Pending PO QTY"
+                                        disabled
+                                        [ngClass]="{'clearance': RawMatRevFormSubmitted && Pending_PO_Qty.errors?.required}"
+                                        required>
+                                    </div>
+                                    <div class="col-sm-2">
                                         <label class="control-label">Receive QTY<sup class="text-danger">*</sup></label>                             
                                         <input class="form-control" 
                                         type="text" 
@@ -207,7 +243,7 @@
                                         [ngClass]="{'clearance': RawMatRevFormSubmitted && Receive_Qty.errors?.required}"
                                         required>
                                     </div>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-1">
                                         <label class="control-label">Unit<sup class="text-danger">*</sup></label>                             
                                         <input class="form-control" 
                                         type="text" 
@@ -217,7 +253,7 @@
                                         placeholder="Unit" 
                                         disabled>
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-2">
                                         <label class="control-label">Lot No<sup class="text-danger">*</sup></label>                                   
                                         <input class="form-control"
                                         type="text"
@@ -303,6 +339,8 @@
                                             <tr style="background-color:#3c8dbc;color:white">
                                                 <th>Sl. No.</th>
                                                 <th>Material Name</th>
+                                                <th>PO Qty</th>
+                                                <th>Pending PO Qty</th>
                                                 <th>Receive QTY</th>
                                                 <th>Unit</th>
                                                 <th>Lot No</th>
@@ -335,6 +373,8 @@
                                                         </tbody>
                                                     </table>
                                                 </td>
+                                                <td>{{col.PO_Qty}}</td>
+                                                <td>{{col.Pending_PO_Qty}}</td>
                                                 <td>{{col.Receive_Qty}}</td>
                                                 <td>{{col.UOM}}</td>
                                                 <td>{{col.Batch_Lot_No}}</td>

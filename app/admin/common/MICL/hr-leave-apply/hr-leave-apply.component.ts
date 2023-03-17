@@ -111,6 +111,7 @@ export class HrLeaveApplyComponent implements OnInit {
     this.hrYearList();
     this.leaveTypList();
     this.GetNumberOfdays();
+    this.GetNoOfDays();
     this.ToDatevalue = new Date();
     // this.initDate = [new Date(),new Date()]
   }
@@ -135,6 +136,7 @@ export class HrLeaveApplyComponent implements OnInit {
     this.applydays = undefined;
     this.showErrorMsg = false
     this.GetNumberOfdays();
+    this.GetNoOfDays();
     this.ObjHrleave.HR_Year_ID =  this.hrYeatList.length ? this.hrYeatList[0].HR_Year_ID : undefined;
     this.employeeData();
     this.FromDatevalue = new Date();
@@ -364,6 +366,7 @@ this.AllData = [...this.BackupAllData] ;
             this.FromDatevalue = new Date()
             this.ToDatevalue = new Date()
             this.GetNumberOfdays();
+            this.GetNoOfDays();
             }
             else {
               this.Spinner = false;
@@ -395,6 +398,28 @@ this.AllData = [...this.BackupAllData] ;
       //  this.ToDatevalue = new Date(this.ToDatevalue.setDate((this.FromDatevalue.getDate() + this.mndays) - 1 ))
        console.log("No_Of_Days_Apply",this.ObjHrleave.No_Of_Days_Apply);
        this.getShowBaln();
+    }
+  }
+  GetNoOfDays(){
+    this.ObjHrleave.Apply_From_Date = this.DateService.dateConvert(new Date(this.FromDatevalue));
+     this.ObjHrleave.Apply_To_Date = this.DateService.dateConvert(new Date(this.ToDatevalue));
+       const tempobj = {
+         Emp_ID : this.ObjHrleave.Emp_ID,
+         Issued_From_Date : this.ObjHrleave.Apply_From_Date,
+         Issued_To_Date : this.ObjHrleave.Apply_To_Date
+         }
+    if(this.ObjHrleave.Emp_ID && this.ObjHrleave.Apply_From_Date && this.ObjHrleave.Apply_To_Date){
+    const obj = {
+      "SP_String":"SP_Leave_Application",
+      "Report_Name_String":"Show_No_Of_Days",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+     this.GlobalAPI.getData(obj)
+     .subscribe((data:any)=>{
+      console.log("no of days ===",data)
+      this.ObjHrleave.No_Of_Days_Apply = data[0].Column1;
+      this.getShowBaln();
+      }); 
     }
   }
   getShowBaln(){

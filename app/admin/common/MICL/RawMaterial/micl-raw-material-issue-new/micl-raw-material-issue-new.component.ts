@@ -107,8 +107,8 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
       { label: "Delete", icon: "fa fa-fw fa-trash" }
     ];
     this.Header.pushHeader({
-      Header: this.issueType + " Issue",
-      Link: "Production Management -> Transaction ->" + this.issueType +  "Issue"
+      Header: this.issueType + " Consumption",
+      Link: "Production Management -> Transaction ->" + this.issueType +  "Consumption"
     });
     this.Finyear();
     // this.GetRequisitionNo();

@@ -742,6 +742,7 @@ export class SubLedgerComponent implements OnInit {
         this.objSubLedger.Pin = data[0].Pin;
         if (this.objSubLedger.Pin) {
         this.stateDistrictChange(this.objSubLedger.Pin)
+        this.objAddress.Pin = this.objSubLedger.Pin
         }
         this.AddressListAdd = data[0].Address_Details ? data[0].Address_Details : [];
         this.contactListAdd = data[0].Contact_Persons ? data[0].Contact_Persons : [];
