@@ -125,8 +125,7 @@
                             </div>
                             <div class="col-sm-3">
                                 <label class="control-label">Date<sup class="text-danger">*</sup></label>
-                                <ejs-datepicker  name="furdate" [(value)]="Doc_Date" [format]="'dd/MMM/yyyy'" [ngClass]="{'clearance': stockinterchangeSubmitted && furdate?.errors?.required}"
-                                required></ejs-datepicker>
+                                <ejs-datepicker  [(value)]="Doc_Date" [format]="'dd/MMM/yyyy'"></ejs-datepicker>
                             </div>
                             <div class="col-sm-2">
                                 <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getProductionData(stockinterchange.form.valid)" id="load" [disabled]="seachSpinner">
