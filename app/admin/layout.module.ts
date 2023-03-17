@@ -441,6 +441,7 @@ import { NepalSupTktCustomerAccountCreationComponent } from './common/TicketMana
 import { FinsCreateProjectComponent } from './common/Finshore/fins-create-project/fins-create-project.component';
 import { FinsBrowseProjectComponent } from './common/Finshore/fins-browse-project/fins-browse-project.component';
 import { StockInterchangeComponent } from './common/MICL/RawMaterial/stock-interchange/stock-interchange.component';
+import { SaleOrderComponent } from './common/MICL/sale-order/sale-order.component';
 
 @NgModule({
   declarations: [
@@ -798,7 +799,8 @@ import { StockInterchangeComponent } from './common/MICL/RawMaterial/stock-inter
     NepalSupTktCustomerAccountCreationComponent,
     FinsCreateProjectComponent,
     FinsBrowseProjectComponent,
-    StockInterchangeComponent
+    StockInterchangeComponent,
+    SaleOrderComponent
 
   ],
   imports: [
