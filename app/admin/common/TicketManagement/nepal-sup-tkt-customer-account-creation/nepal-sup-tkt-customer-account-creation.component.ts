@@ -50,6 +50,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
   objupdate:update = new update()
   UpdateSpinner:boolean = false
   UpdatecusacccreationFormsSubmitted:boolean = false
+  TicketStatus:string = ""
   @ViewChild("crcDoc", { static: false }) crcDoc!: FileUpload;
   @ViewChild("pvrcDoc", { static: false }) pvrcDoc!: FileUpload;
   @ViewChild("cwDoc", { static: false }) cwDoc!: FileUpload;
@@ -121,6 +122,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
   this.updateModal = false
   this.SupportTicketNo = undefined
   this.objupdate = new update()
+  this.TicketStatus = ""
   this.UpdateSpinner = false
   this.UpdatecusacccreationFormsSubmitted = false
   this.view = false
@@ -302,6 +304,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
       this.DocDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(data[0].Trn_Date),
       this.objcusacccre = data[0]
       this.objupdate = data[0]
+      this.TicketStatus = data[0].Ticket_Status
       console.log(this.objupdate)
       this.imageCitizenshipOwner = data[0].URL_Citizenship_Owner
       this.imageCompRegistration = data[0].URL_Comp_Registration
@@ -332,6 +335,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
       this.updateModal = true
       this.SupportTicketNo = col.Support_Ticket_No
       this.objupdate = new update()
+      this.TicketStatus = ""
       this.UpdateSpinner = false
       this.UpdatecusacccreationFormsSubmitted = false
       console.log(" update col",col)
@@ -355,6 +359,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
           this.updateModal = false
           this.SupportTicketNo = undefined
           this.objupdate = new update()
+          this.TicketStatus = ""
           this.UpdateSpinner = false
           this.UpdatecusacccreationFormsSubmitted = false
           this.compacctToast.clear();
