@@ -345,6 +345,8 @@ export class SaleBillComponent implements OnInit {
         this.GridList = data; 
          this.TotalCalculation();
          this.ngxService.stop();
+      } else {
+        this.ngxService.stop();
       }
      
     })  

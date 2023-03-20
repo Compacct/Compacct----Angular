@@ -122,6 +122,7 @@ export class OutwardChallanComponent implements OnInit {
   challanno:any;
   subledgerid:any;
   Choose_Address:any;
+  pindisabled:boolean = false;
   constructor(
     private Header: CompacctHeader,
     private router: Router,
@@ -173,6 +174,7 @@ export class OutwardChallanComponent implements OnInit {
     this.Choose_Address = undefined;
     this.ObjPurChaseBill.Vehicle_Type = "Regular";
     this.ObjPurChaseBill.Transportation_Distance = undefined;
+    this.Tax_Category = undefined;
   }
   clearData() { 
     this.PurchaseBillFormSubmitted = false;
@@ -339,6 +341,7 @@ export class OutwardChallanComponent implements OnInit {
   }
   StateDistrictChange(pin: any) {
     this.AllPinList = [];
+    this.pindisabled = false;
     if (pin.length === 6) {
       const obj = {
         "SP_String": "SP_MICL_Sale_Bill",
@@ -351,6 +354,7 @@ export class OutwardChallanComponent implements OnInit {
         this.ObjPurChaseBill.Sub_Ledger_State_2 = this.AllPinList.length ? this.AllPinList[0].StateName : undefined
         this.GetStateList();
         this.ObjPurChaseBill.Sub_Ledger_District_2 = this.AllPinList.length ? this.AllPinList[0].DistrictName : undefined
+        this.pindisabled = true;
            
       });
     }
@@ -369,19 +373,23 @@ export class OutwardChallanComponent implements OnInit {
   }
   GetGodown() {
     this.ObjProductInfo.godown_id = undefined;
+    this.ObjProductInfo.Batch_Number = undefined;
+    this.Tax_Category = undefined;
     this.Godownlist = [];
-    if (this.ObjProductInfo.Cost_Cen_ID) {
+    if (this.ObjProductInfo.Product_Specification && this.ObjProductInfo.Cost_Cen_ID) {
       const TempObj = {
         Cost_Cen_ID: this.ObjProductInfo.Cost_Cen_ID,
+        Product_ID: this.ObjProductInfo.Product_Specification
       }
       const obj = {
         "SP_String": "SP_MICL_Sale_Bill",
-        "Report_Name_String": "Get_Godown_list",
+        "Report_Name_String": "Get_Godown_list_For_Sale_Challan",
         "Json_Param_String": JSON.stringify([TempObj])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         console.log("GodownList  ===", data);
         this.Godownlist = data;
+        this.getUom();
       })
     }
    
@@ -514,11 +522,11 @@ export class OutwardChallanComponent implements OnInit {
   
   }
   GetLot() {
-    if (this.ObjProductInfo.Product_Specification) {
-     this.getUom(); 
-    }
+    // if (this.ObjProductInfo.Product_Specification) {
+    //  this.getUom(); 
+    // }
     this.LotNolist = []
-    this.ObjProductInfo.Batch_Number = undefined
+    this.ObjProductInfo.Batch_Number = undefined;
     if (this.ObjProductInfo.Cost_Cen_ID && this.ObjProductInfo.Product_Specification && this.ObjProductInfo.godown_id) {
       const TempObj = {
         Cost_Cen_ID: this.ObjProductInfo.Cost_Cen_ID,
@@ -533,14 +541,17 @@ export class OutwardChallanComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         console.log("LotNolist  ===", data);
         this.LotNolist = data;
+        this.ObjProductInfo.Batch_Number = this.LotNolist.length ? this.LotNolist[0].Batch_No : undefined;
       })
     }
   }
   getUom() {
-    this.UomList = ''
+    this.UomList = '';
+    this.Tax_Category = undefined;
     if (this.ObjProductInfo.Product_Specification) {
       const TempArry: any = this.ProductDetalist.filter((el: any) => Number(el.value) === Number(this.ObjProductInfo.Product_Specification))
       this.UomList = TempArry[0].UOM;
+      this.Tax_Category = TempArry.length ? TempArry[0].Cat_ID : undefined;
     }
   }
   GetTaxAmt() {
@@ -568,11 +579,11 @@ export class OutwardChallanComponent implements OnInit {
       this.ObjProductInfo.CGST_Rate = Number(gstper);
       this.ObjProductInfo.SGST_Rate = Number(gstper);
       this.ObjProductInfo.IGST_Rate = Number(TaxCatArry[0].GST_Tax_Per);
-      const SubLedgerState = this.ObjPurChaseBill.Cost_Cen_State
-        ? this.ObjPurChaseBill.Cost_Cen_State.toUpperCase()
+      const SubLedgerState = this.ObjPurChaseBill.Sub_Ledger_State_2
+        ? this.ObjPurChaseBill.Sub_Ledger_State_2.toUpperCase()
         : undefined;
-      const CostCenterState = this.ObjProductInfo.Cost_Cen_State
-        ? this.ObjProductInfo.Cost_Cen_State.toUpperCase()
+      const CostCenterState = this.ObjPurChaseBill.Cost_Cen_State
+        ? this.ObjPurChaseBill.Cost_Cen_State.toUpperCase()
         : undefined;
       if (SubLedgerState && CostCenterState) {
         if (SubLedgerState === CostCenterState) {
@@ -604,7 +615,7 @@ export class OutwardChallanComponent implements OnInit {
         HSN_No : ProductDArry[0].HSN_No,
         Product_Sub_Type: ProductSubArry[0].Product_Sub_Type,
         Product_Specification: ProductDArry[0].label,
-        Batch_No :this.ObjProductInfo.Batch_Number,
+        Batch_No : this.ObjProductInfo.Batch_Number,
         Batch_No_Show: LotNoArry[0].Batch_No_Show,
         Qty: this.ObjProductInfo.Qty,
         UOM: this.UomList,
@@ -788,6 +799,7 @@ export class OutwardChallanComponent implements OnInit {
             detail: "Confirm to proceed"
           });
       this.ObjPurChaseBill = new PurChaseBill();
+      this.Choose_Address = undefined;
       this.DocDate = new Date();
       this.SupplierBillDate = new Date();
       this.PurchaseBillFormSubmitted = false
@@ -804,6 +816,8 @@ export class OutwardChallanComponent implements OnInit {
       this.LotNolist = [];
       this.ObjPurChaseBill.Vehicle_Type = "Regular";
       this.ObjPurChaseBill.Transportation_Distance = undefined;
+      this.Tax_Category = undefined;
+      this.GetCosCenAddress();
      }
     }); 
      

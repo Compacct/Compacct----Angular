@@ -251,22 +251,25 @@
                                                         </div>
                                                         <div class="col-sm-12">
                                                             <label class="control-label">PIN<sup class="text-danger">*</sup> </label>
+                                                            <div class="pull-right"> 
+                                                                <button (click)="StateDistrictChange(ObjPurChaseBill.Sub_Ledger_Pin_2)" class="btn btn-primary  createPatient" required > Get Dist and state</button>
+                                                            </div>
+                                                            <!-- (ngModelChange)="StateDistrictChange(ObjPurChaseBill.Sub_Ledger_Pin_2)"  -->
                                                             <input class="form-control" name="shippin" #shippin="ngModel" [(ngModel)]="ObjPurChaseBill.Sub_Ledger_Pin_2"
                                                                 placeholder="PIN" [disabled]="DisableField"maxlength="6" minlength="6"
-                                                                (ngModelChange)="StateDistrictChange(ObjPurChaseBill.Sub_Ledger_Pin_2)" 
                                                                 [ngClass]="{'clearance':PurchaseBillFormSubmitted && (shippin?.errors?.required || shippin?.errors?.maxlength || shippin?.errors?.minlength)}" required>
                                                         </div>
                                                         <div class="col-sm-12">
                                                             <label class="control-label">District<sup class="text-danger">*</sup> </label>
                                                             <input class="form-control" name="shipdistrict" #shipdistrict="ngModel"
                                                                 [(ngModel)]="ObjPurChaseBill.Sub_Ledger_District_2" placeholder="District"
-                                                                [disabled]="DisableField"
+                                                                [disabled]="DisableField || pindisabled"
                                                                 [ngClass]="{'clearance':PurchaseBillFormSubmitted && shipdistrict?.errors?.required}" required>
                                                         </div>
                                                 <div class="col-sm-12">
                                                     <label class="control-label">State<sup class="text-danger">*</sup></label>
                                                     <select class="form-control" name="shipstate" #shipstate="ngModel" 
-                                                    [(ngModel)]="ObjPurChaseBill.Sub_Ledger_State_2"   [disabled]="DisableField"
+                                                    [(ngModel)]="ObjPurChaseBill.Sub_Ledger_State_2"   [disabled]="DisableField || pindisabled"
                                                      [ngClass]="{'clearance': PurchaseBillFormSubmitted && shipstate?.errors?.required}" required>
                                                         <option  [ngValue]="undefined">Select</option>
                                                             <option  *ngFor="let option of StateList" value="{{option.state}}">
@@ -518,6 +521,54 @@
                                 </option>
                                 </select>
                              </div>
+                             <div class="col-sm-4">
+                               <label>Product Type<sup class="text-danger">*</sup></label>
+                             <select class="form-control" name="ProducType" #ProducType="ngModel" 
+                             [(ngModel)]="ObjProductInfo.Product_Type_ID"
+                             (change)="ChangeProdoctTyp()" 
+                             [ngClass]="{clearance: TermFormSubmitted && ProducType?.errors?.required}"
+                             required>
+                                 <option [ngValue]="undefined">Select</option>
+                                 <option *ngFor="let option of ProductType" [value]="option.Product_Type_ID">
+                                     {{option.Product_Type}}
+                                 </option>
+                             </select>
+                             </div>
+                             <div class="col-sm-4">
+                                 <label>Product Sub Type<sup class="text-danger">*</sup></label>
+                                 <select class="form-control"  name="SubType" #SubType="ngModel" 
+                                     [(ngModel)]="ObjProductInfo.Product_Sub_Type_ID"
+                                      (change)="ProductDetal()"
+                                     [ngClass]="{clearance: TermFormSubmitted && SubType?.errors?.required}" 
+                                     required>
+                                     <option [ngValue]="undefined">Select</option>
+                                     <option *ngFor="let option of ProductSub" [value]="option.Product_Sub_Type_ID">
+                                     {{option.Product_Sub_Type}}
+                                 </option>
+                                 </select>
+                             </div>
+                             <div class="clearfix"></div>
+                             <div class="col-sm-4">
+                                 <label>Product Description<sup class="text-danger">*</sup></label>
+                                 <!-- <select class="form-control" name="Description" #Description="ngModel" 
+                                     [(ngModel)]="ObjProductInfo.Product_Specification"
+                                     (change)="GetLot()"
+                                     [ngClass]="{clearance: TermFormSubmitted && Description?.errors?.required}" 
+                                     required>
+                                     <option [ngValue]="undefined">Select</option>
+                                     <option *ngFor="let option of ProductDetalist" [value]="option.value">
+                                         {{option.label}}
+                                     </option>
+                                 </select> -->
+                                 <p-dropdown [options]="ProductDetalist" name="Description" #Description="ngModel"  
+                                     [(ngModel)]="ObjProductInfo.Product_Specification" 
+                                     [showClear]="true" [emptyFilterMessage]="' No Product Found'" 
+                                     (onChange)="GetGodown()" [filter]="true" filterBy="label,value.name"
+                                     [resetFilterOnHide]="true" [placeholder]="'Select Product'"
+                                     [virtualScroll]="true" itemSize="30" 
+                                     [ngClass]="{'clearance':TermFormSubmitted && Description?.errors?.required}" [required]="true">
+                                 </p-dropdown>
+                             </div>
                             <div class="col-sm-4">
                               <label>Stock Point<sup class="text-danger">*</sup></label>
                             <select class="form-control"name="Stock" #Stock="ngModel" 
@@ -532,67 +583,6 @@
                             </select>
                             </div>
                             <div class="col-sm-4">
-                              <label>Product Type<sup class="text-danger">*</sup></label>
-                            <select class="form-control" name="ProducType" #ProducType="ngModel" 
-                            [(ngModel)]="ObjProductInfo.Product_Type_ID"
-                            (change)="ChangeProdoctTyp()" 
-                            [ngClass]="{clearance: TermFormSubmitted && ProducType?.errors?.required}"
-                            required>
-                                <option [ngValue]="undefined">Select</option>
-                                <option *ngFor="let option of ProductType" [value]="option.Product_Type_ID">
-                                    {{option.Product_Type}}
-                                </option>
-                            </select>
-                            </div>
-                            <div class="clearfix"></div>
-                            <div class="col-sm-4">
-                                <label>Product Sub Type<sup class="text-danger">*</sup></label>
-                                <select class="form-control"  name="SubType" #SubType="ngModel" 
-                                    [(ngModel)]="ObjProductInfo.Product_Sub_Type_ID"
-                                     (change)="ProductDetal()"
-                                    [ngClass]="{clearance: TermFormSubmitted && SubType?.errors?.required}" 
-                                    required>
-                                    <option [ngValue]="undefined">Select</option>
-                                    <option *ngFor="let option of ProductSub" [value]="option.Product_Sub_Type_ID">
-                                    {{option.Product_Sub_Type}}
-                                </option>
-                                </select>
-                            </div>
-                            <div class="col-sm-4">
-                                <label>Product Description<sup class="text-danger">*</sup></label>
-                                <!-- <select class="form-control" name="Description" #Description="ngModel" 
-                                    [(ngModel)]="ObjProductInfo.Product_Specification"
-                                    (change)="GetLot()"
-                                    [ngClass]="{clearance: TermFormSubmitted && Description?.errors?.required}" 
-                                    required>
-                                    <option [ngValue]="undefined">Select</option>
-                                    <option *ngFor="let option of ProductDetalist" [value]="option.value">
-                                        {{option.label}}
-                                    </option>
-                                </select> -->
-                                <p-dropdown [options]="ProductDetalist" name="Description" #Description="ngModel"  
-                                    [(ngModel)]="ObjProductInfo.Product_Specification" 
-                                    [showClear]="true" [emptyFilterMessage]="' No Product Found'" 
-                                    (onChange)="GetLot()" [filter]="true" filterBy="label,value.name"
-                                    [resetFilterOnHide]="true" [placeholder]="'Select Product'"
-                                    [virtualScroll]="true" itemSize="30" 
-                                    [ngClass]="{'clearance':TermFormSubmitted && Description?.errors?.required}" [required]="true">
-                                </p-dropdown>
-                            </div>
-                            <div class="col-sm-4">
-                                <label>Tax Category<sup class="text-danger">*</sup></label>
-                                <select class="form-control" name="taxcat" #taxcat="ngModel" 
-                                    [(ngModel)]="Tax_Category"
-                                    [ngClass]="{clearance: TermFormSubmitted && taxcat?.errors?.required}" 
-                                    required>
-                                    <option [ngValue]="undefined">Select</option>
-                                    <option *ngFor="let option of TaxCategoryList" [value]="option.Cat_ID">
-                                        {{option.Cat_Name}}
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="clearfix"></div>
-                            <div class="col-sm-3">
                                 <label class="control-label">Lot No./Batch No. <sup class="text-danger">*</sup></label>
                                 <select class="form-control" name="BatchNo" #BatchNo="ngModel" 
                                 [(ngModel)]="ObjProductInfo.Batch_Number"
@@ -602,6 +592,19 @@
                                   <option *ngFor="let option of LotNolist" [value]="option.Batch_No">
                                     {{option.Batch_No_Show}}
                                 </option>
+                                </select>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="col-sm-3">
+                                <label>Tax Category<sup class="text-danger">*</sup></label>
+                                <select class="form-control" name="taxcat" #taxcat="ngModel" 
+                                    [(ngModel)]="Tax_Category"
+                                    [ngClass]="{clearance: TermFormSubmitted && taxcat?.errors?.required}" 
+                                    required>
+                                    <option [ngValue]="undefined">Select</option>
+                                    <option *ngFor="let option of TaxCategoryList" [value]="option.Cat_ID">
+                                        {{option.Cat_Name}}
+                                    </option>
                                 </select>
                             </div>
                             <div class="col-sm-2">
@@ -679,7 +682,7 @@
                               <td>{{ TermTableList.Product_Type }}</td>
                               <td>{{ TermTableList.Product_Sub_Type }}</td>
                               <td>{{ TermTableList.Product_Specification }}</td>
-                              <td>{{ TermTableList.Batch_No_Show }}</td>
+                              <td>{{ TermTableList.Batch_No }}</td>
                               <td>{{ TermTableList.Qty }}</td>
                               <td>{{ TermTableList.UOM }}</td>
                               <td>{{ TermTableList.Rate }}</td>

@@ -217,8 +217,8 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
       Daily_Weekly : this.ObjOTclosingwithbatch.Daily_Weekly
    }
     const obj = {
-      // "SP_String": "SP_K4C_Day_End_Process",
-      "SP_String": "SP_Outlet_Closing_Stock_With_Batch",
+      "SP_String": "SP_K4C_Day_End_Process",
+      // "SP_String": "SP_Outlet_Closing_Stock_With_Batch",
       "Report_Name_String": "Check_Closing_Stock_Status",
       "Json_Param_String": JSON.stringify([TempObj])
     }
@@ -274,6 +274,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
        console.log("Date===",this.productlist)
       }
       else {
+        this.ShowSpinner = false;
         this.compacctToast.clear();
         this.compacctToast.add({
         key: "d",

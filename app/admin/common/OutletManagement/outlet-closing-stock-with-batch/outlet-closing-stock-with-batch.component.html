@@ -245,7 +245,7 @@
                                                             </option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-sm-3">
+                                                    <div class="col-sm-4">
                                                         <label class="control-label">Cost center <sup class="text-danger">*</sup></label>
                                                         <select class="form-control" name="issuecostcenter" #issuecostcenter="ngModel" [(ngModel)]="ObjOTclosingwithbatch.Cost_Cen_ID" (change)="getGodown()" [attr.disabled]="costcentdisableflag ? true : null" [ngClass]="{'clearance':OTclosingstockwithbatchFormSubmitted && issuecostcenter?.errors?.required}"
                                                             required>
@@ -258,7 +258,7 @@
                                                             </option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-sm-3">
+                                                    <div class="col-sm-4">
                                                         <label class="control-label">Godown <sup class="text-danger">*</sup></label>
                                                         <select class="form-control" name="godown" #godown="ngModel" [(ngModel)]="ObjOTclosingwithbatch.godown_id" [attr.disabled]="godowndisableflag ? true : null" [ngClass]="{'clearance':OTclosingstockwithbatchFormSubmitted && godown?.errors?.required}" required>
                                                             <option  [ngValue]="undefined">Select</option>
@@ -268,15 +268,15 @@
                                                         </select>
 
                                                     </div>
-                                                    <div class="col-sm-2">
+                                                    <!-- <div class="col-sm-2">
                                                         <label class="control-label">Daily/Weekly<sup class="text-danger">*</sup></label>
                                                         <select class="form-control" name="dailyweekly" #dailyweekly="ngModel" [(ngModel)]="ObjOTclosingwithbatch.Daily_Weekly" [ngClass]="{'clearance': OTclosingstockwithbatchFormSubmitted && dailyweekly?.errors?.required}"  
-                                                        [disabled]="editList.length" required><!--[disabled]="Gdisableflag" [attr.disabled]="ProductList.length? true : null"-->
+                                                        [disabled]="editList.length" required>
                                                               <option  [ngValue]="undefined">Select</option>
                                                               <option  value="Daily">Daily</option>
                                                               <option  value="Weekly">Weekly</option>
                                                         </select>
-                                                    </div>
+                                                    </div> -->
                                                     <!-- <div class="col-sm-4">
                                   <label class="control-label"
                                           >Select Final Material <sup class="text-danger">*</sup> &nbsp;

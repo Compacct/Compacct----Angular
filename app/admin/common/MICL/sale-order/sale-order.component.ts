@@ -32,6 +32,7 @@ export class SaleOrderComponent implements OnInit {
   ProductDetails: any = [];
   SaleOrderFormSubmitted = false;
   ObjSaleOrder :SaleOrder = new SaleOrder();
+  Objcostcenter :costcenter = new costcenter();
   Supplierlist: any = [];
   Godownlist: any = [];
   POorderlist: any = [];
@@ -122,6 +123,7 @@ export class SaleOrderComponent implements OnInit {
   challanno:any;
   subledgerid:any;
   Choose_Address:any;
+  pindisabled:boolean = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -339,6 +341,7 @@ export class SaleOrderComponent implements OnInit {
   }
   StateDistrictChange(pin: any) {
     this.AllPinList = [];
+    this.pindisabled = false;
     if (pin.length === 6) {
       const obj = {
         "SP_String": "SP_BL_Txn_Sale_Order",
@@ -351,7 +354,7 @@ export class SaleOrderComponent implements OnInit {
         this.ObjSaleOrder.Sub_Ledger_State_2 = this.AllPinList.length ? this.AllPinList[0].StateName : undefined
         this.GetStateList();
         this.ObjSaleOrder.Sub_Ledger_District_2 = this.AllPinList.length ? this.AllPinList[0].DistrictName : undefined
-           
+        this.pindisabled = true;
       });
     }
   }
@@ -388,35 +391,35 @@ export class SaleOrderComponent implements OnInit {
   }
   GetCosCenAddress() {
     //this.ExpiredProductFLag = false;
-      this.ObjSaleOrder.Cost_Cen_Address1 = undefined;
-      this.ObjSaleOrder.Cost_Cen_Address2 = undefined;
-      this.ObjSaleOrder.Cost_Cen_State = undefined;
-      this.ObjSaleOrder.Cost_Cen_GST_No = undefined;
-      this.ObjSaleOrder.Cost_Cen_Location = undefined;
-      this.ObjSaleOrder.Cost_Cen_PIN = undefined;
-      this.ObjSaleOrder.Cost_Cen_District = undefined;
-      this.ObjSaleOrder.Cost_Cen_Country = undefined;
-      this.ObjSaleOrder.Cost_Cen_Mobile = undefined;
-      this.ObjSaleOrder.Cost_Cen_Phone = undefined;
-      this.ObjSaleOrder.Cost_Cen_Email = undefined;
-      this.ObjSaleOrder.Cost_Cen_Name = undefined;
+      this.Objcostcenter.Cost_Cen_Address1 = undefined;
+      this.Objcostcenter.Cost_Cen_Address2 = undefined;
+      this.Objcostcenter.Cost_Cen_State = undefined;
+      this.Objcostcenter.Cost_Cen_GST_No = undefined;
+      this.Objcostcenter.Cost_Cen_Location = undefined;
+      this.Objcostcenter.Cost_Cen_PIN = undefined;
+      this.Objcostcenter.Cost_Cen_District = undefined;
+      this.Objcostcenter.Cost_Cen_Country = undefined;
+      this.Objcostcenter.Cost_Cen_Mobile = undefined;
+      this.Objcostcenter.Cost_Cen_Phone = undefined;
+      this.Objcostcenter.Cost_Cen_Email = undefined;
+      this.Objcostcenter.Cost_Cen_Name = undefined;
     if (this.Cost_Cen_ID) {
       const ctrl = this;
       const costcenObj = $.grep(ctrl.CostCenterList, function (item: any) { return item.Cost_Cen_ID == ctrl.Cost_Cen_ID })[0];
       // console.log(costcenObj);
       // this.ObjPurChaseBill = costcenObj
-      this.ObjSaleOrder.Cost_Cen_Address1 = costcenObj.Cost_Cen_Address1;
-      this.ObjSaleOrder.Cost_Cen_Address2 = costcenObj.Cost_Cen_Address2;
-      this.ObjSaleOrder.Cost_Cen_State = costcenObj.Cost_Cen_State;
-      this.ObjSaleOrder.Cost_Cen_GST_No = costcenObj.Cost_Cen_GST_No;
-      this.ObjSaleOrder.Cost_Cen_Location = costcenObj.Cost_Cen_Location;
-      this.ObjSaleOrder.Cost_Cen_PIN = costcenObj.Cost_Cen_PIN;
-      this.ObjSaleOrder.Cost_Cen_District = costcenObj.Cost_Cen_District;
-      this.ObjSaleOrder.Cost_Cen_Country = costcenObj.Cost_Cen_Country;
-      this.ObjSaleOrder.Cost_Cen_Mobile = costcenObj.Cost_Cen_Mobile;
-      this.ObjSaleOrder.Cost_Cen_Phone = costcenObj.Cost_Cen_Phone;
-      this.ObjSaleOrder.Cost_Cen_Email = costcenObj.Cost_Cen_Email1;
-      this.ObjSaleOrder.Cost_Cen_Name = costcenObj.Cost_Cen_Name;
+      this.Objcostcenter.Cost_Cen_Address1 = costcenObj.Cost_Cen_Address1;
+      this.Objcostcenter.Cost_Cen_Address2 = costcenObj.Cost_Cen_Address2;
+      this.Objcostcenter.Cost_Cen_State = costcenObj.Cost_Cen_State;
+      this.Objcostcenter.Cost_Cen_GST_No = costcenObj.Cost_Cen_GST_No;
+      this.Objcostcenter.Cost_Cen_Location = costcenObj.Cost_Cen_Location;
+      this.Objcostcenter.Cost_Cen_PIN = costcenObj.Cost_Cen_PIN;
+      this.Objcostcenter.Cost_Cen_District = costcenObj.Cost_Cen_District;
+      this.Objcostcenter.Cost_Cen_Country = costcenObj.Cost_Cen_Country;
+      this.Objcostcenter.Cost_Cen_Mobile = costcenObj.Cost_Cen_Mobile;
+      this.Objcostcenter.Cost_Cen_Phone = costcenObj.Cost_Cen_Phone;
+      this.Objcostcenter.Cost_Cen_Email = costcenObj.Cost_Cen_Email1;
+      this.Objcostcenter.Cost_Cen_Name = costcenObj.Cost_Cen_Name;
     }
   }
   Costcenter() {
@@ -432,12 +435,12 @@ export class SaleOrderComponent implements OnInit {
   }
   // CALCULATE DISTANCE
   CalculateDistance(){
-    if (this.ObjSaleOrder.Sub_Ledger_Pin_2 && this.ObjSaleOrder.Cost_Cen_PIN) {
+    if (this.ObjSaleOrder.Sub_Ledger_Pin_2 && this.Objcostcenter.Cost_Cen_PIN) {
       const sendObj = {
         fromPincode : this.ObjSaleOrder.Sub_Ledger_Pin_2,
-        toPincode : this.ObjSaleOrder.Cost_Cen_PIN
+        toPincode : this.Objcostcenter.Cost_Cen_PIN
       }
-      this.$http.get("https://pro.mastersindia.co/distance?access_token=67de68c055600f7732171e73e14475bc53954950&fromPincode="+this.ObjSaleOrder.Sub_Ledger_Pin_2+"&toPincode="+this.ObjSaleOrder.Cost_Cen_PIN)
+      this.$http.get("https://pro.mastersindia.co/distance?access_token=67de68c055600f7732171e73e14475bc53954950&fromPincode="+this.ObjSaleOrder.Sub_Ledger_Pin_2+"&toPincode="+this.Objcostcenter.Cost_Cen_PIN)
      .subscribe((data:any)=>{
       console.log("data",data)
      })
@@ -533,10 +536,12 @@ export class SaleOrderComponent implements OnInit {
   //   }
   // }
   getUom() {
-    this.UomList = ''
+    this.UomList = '';
+    this.Tax_Category = undefined;
     if (this.ObjProductInfo.Product_Specification) {
       const TempArry: any = this.ProductDetalist.filter((el: any) => Number(el.value) === Number(this.ObjProductInfo.Product_Specification))
       this.UomList = TempArry[0].UOM;
+      this.Tax_Category = TempArry.length ? TempArry[0].Cat_ID : undefined;
     }
   }
   GetTaxAmt() {
@@ -564,11 +569,11 @@ export class SaleOrderComponent implements OnInit {
       this.ObjProductInfo.CGST_Rate = Number(gstper);
       this.ObjProductInfo.SGST_Rate = Number(gstper);
       this.ObjProductInfo.IGST_Rate = Number(TaxCatArry[0].GST_Tax_Per);
-      const SubLedgerState = this.ObjSaleOrder.Cost_Cen_State
-        ? this.ObjSaleOrder.Cost_Cen_State.toUpperCase()
+      const SubLedgerState = this.ObjSaleOrder.Sub_Ledger_State_2
+        ? this.ObjSaleOrder.Sub_Ledger_State_2.toUpperCase()
         : undefined;
-      const CostCenterState = this.ObjProductInfo.Cost_Cen_State
-        ? this.ObjProductInfo.Cost_Cen_State.toUpperCase()
+      const CostCenterState = this.Objcostcenter.Cost_Cen_State
+        ? this.Objcostcenter.Cost_Cen_State.toUpperCase()
         : undefined;
       if (SubLedgerState && CostCenterState) {
         if (SubLedgerState === CostCenterState) {
@@ -592,9 +597,9 @@ export class SaleOrderComponent implements OnInit {
       const ProductArry: any = this.ProductType.filter((el: any) => Number(el.Product_Type_ID) === Number(this.ObjProductInfo.Product_Type_ID));
       const ProductSubArry: any = this.ProductSub.filter((el: any) => Number(el.Product_Sub_Type_ID) === Number(this.ObjProductInfo.Product_Sub_Type_ID));
       const TemopArry = {
-        Cost_Cen_Name: CostMatch[0].Cost_Cen_Name,
-        godown_name: GdwonArry[0].godown_name,
-        godown_id: this.ObjProductInfo.godown_id,
+        // Cost_Cen_Name: CostMatch.length ? CostMatch[0].Cost_Cen_Name : undefined,
+        // godown_name: GdwonArry.legth ? GdwonArry[0].godown_name : undefined,
+        // godown_id: this.ObjProductInfo.godown_id,
         Product_ID :this.ObjProductInfo.Product_Specification,
         Product_Type: ProductArry[0].Product_Type,
         HSN_No : ProductDArry[0].HSN_No,
@@ -729,18 +734,18 @@ export class SaleOrderComponent implements OnInit {
         Consignee_GST_No: this.ObjSaleOrder.Sub_Ledger_GST_No_2,
           
         Cost_Cen_ID: this.Cost_Cen_ID,
-        Cost_Cen_Name: this.ObjSaleOrder.Cost_Cen_Name,
-        Cost_Cen_Address1: this.ObjSaleOrder.Cost_Cen_Address1,
-        Cost_Cen_Address2: this.ObjSaleOrder.Cost_Cen_Address2,
-        Cost_Cen_Location: this.ObjSaleOrder.Cost_Cen_Location,
-        Cost_Cen_District: this.ObjSaleOrder.Cost_Cen_District,
-        Cost_Cen_State: this.ObjSaleOrder.Cost_Cen_State,
-        Cost_Cen_Country: this.ObjSaleOrder.Cost_Cen_Country,
-        Cost_Cen_PIN: this.ObjSaleOrder.Cost_Cen_PIN,
-        Cost_Cen_Mobile: this.ObjSaleOrder.Cost_Cen_Mobile,
-        Cost_Cen_Phone: this.ObjSaleOrder.Cost_Cen_Phone,
-        Cost_Cen_Email: this.ObjSaleOrder.Cost_Cen_Email,
-        Cost_Cen_GST_No: this.ObjSaleOrder.Cost_Cen_GST_No,
+        Cost_Cen_Name: this.Objcostcenter.Cost_Cen_Name,
+        Cost_Cen_Address1: this.Objcostcenter.Cost_Cen_Address1,
+        Cost_Cen_Address2: this.Objcostcenter.Cost_Cen_Address2,
+        Cost_Cen_Location: this.Objcostcenter.Cost_Cen_Location,
+        Cost_Cen_District: this.Objcostcenter.Cost_Cen_District,
+        Cost_Cen_State: this.Objcostcenter.Cost_Cen_State,
+        Cost_Cen_Country: this.Objcostcenter.Cost_Cen_Country,
+        Cost_Cen_PIN: this.Objcostcenter.Cost_Cen_PIN,
+        Cost_Cen_Mobile: this.Objcostcenter.Cost_Cen_Mobile,
+        Cost_Cen_Phone: this.Objcostcenter.Cost_Cen_Phone,
+        Cost_Cen_Email: this.Objcostcenter.Cost_Cen_Email,
+        Cost_Cen_GST_No: this.Objcostcenter.Cost_Cen_GST_No,
           
         Bill_Net_Amt: this.NetAMT,
         User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
@@ -798,6 +803,7 @@ export class SaleOrderComponent implements OnInit {
       this.ProductDetalist = [];
       this.LotNolist = [];
       this.ObjSaleOrder.Vehicle_Type = "Regular";
+      this.Choose_Address = undefined;
      }
     }); 
      
@@ -943,6 +949,24 @@ class SaleOrder {
   Rounded_Off : number;
   User_ID : number;
   Fin_Year_ID : number;
+ }
+ class costcenter {
+  Cost_Cen_ID : any;
+  Cost_Cen_Name : any;
+  Cost_Cen_Address1 : any;
+  Cost_Cen_Address2 : any;
+  Cost_Cen_Location : any;
+  Cost_Cen_District : any;
+  Cost_Cen_State : any;
+  Cost_Cen_Country : any;
+  Cost_Cen_PIN : any;
+  Cost_Cen_Mobile : any;
+  Cost_Cen_Phone : any;
+  Cost_Cen_Email : any;
+  Cost_Cen_VAT_CST : any;
+  Cost_Cen_CST_NO : any;
+  Cost_Cen_SRV_TAX_NO : any;
+  Cost_Cen_GST_No : any;
  }
  class BrowsePurBill {
   start_date : Date;
