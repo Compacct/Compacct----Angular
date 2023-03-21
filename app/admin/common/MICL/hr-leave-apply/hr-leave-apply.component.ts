@@ -8,6 +8,7 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
 import * as moment from "moment";
 import * as XLSX from 'xlsx';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-hr-leave-apply',
   templateUrl: './hr-leave-apply.component.html',
@@ -84,6 +85,7 @@ export class HrLeaveApplyComponent implements OnInit {
   LeaveLedgerdataList:any = [];
   DynamicHeaderforLL:any = [];
 
+  Param_Flag:string
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -92,7 +94,13 @@ export class HrLeaveApplyComponent implements OnInit {
     private compacctToast:MessageService,
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
-  ) { }
+    private route: ActivatedRoute,
+  ) { 
+    this.route.queryParams.subscribe(params => {
+      console.log(params);
+     this.Param_Flag = params['show_create'];
+     })
+  }
   ngOnInit() {
     this.items = ["LEAVE SUMMARY", "LEAVE LEDGER", "BROWSE", "CREATE"];
     this.menuList = [

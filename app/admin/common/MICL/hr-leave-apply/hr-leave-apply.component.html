@@ -426,7 +426,7 @@
                                 </div>
 
                             </p-tabPanel>
-                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <p-tabPanel *ngIf="Param_Flag != 'N'" headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-floppy-save">
                             <form name="leaveForm" #leaveForm="ngForm" novalidate >
                             <div class="form-group">
                             <div class="col-sm-4">
