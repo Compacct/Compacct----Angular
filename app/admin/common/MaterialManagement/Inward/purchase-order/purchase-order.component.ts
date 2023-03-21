@@ -170,6 +170,14 @@ export class PurchaseOrderComponent implements OnInit {
   cookiesuserid:any;
   status:any;
 
+  ParamDetalisPopup = false;
+  ParameterList:any = [];
+  paramlist:any = [];
+  addparamlist:any = [];
+  paramarr:any = [];
+  objPoText:any = {}
+  potextFormSubmit:boolean = false
+
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
     private Header: CompacctHeader ,
@@ -532,6 +540,7 @@ GetProductSpecification(){
       this.objaddPurchacse.Rate = tempVal[0].Rate;
     }
     this.getProductDetalis()
+    this.GetParamDetailsforProduct();
    }
    else {
     this.objaddPurchacse.Unit = undefined;
@@ -761,10 +770,139 @@ getDis(){
 getTaxAble(){
  
 }
+
+// PARAMETER DETAILS
+GetParamDetailsforProduct(){
+  this.ParameterList = [];
+  if (this.objaddPurchacse.Product_ID) {
+  const obj = {
+    "SP_String": "Sp_Purchase_Order",
+    "Report_Name_String": "Get_Parameters_Against_Req_Product",
+    "Json_Param_String": JSON.stringify([{Doc_No : this.objaddPurchacse.Req_No, Product_ID : this.objaddPurchacse.Product_ID}])
+   }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.ParameterList = [...data];
+   console.log("ParameterList",this.ParameterList);
+   this.ParamDetalisPopup = this.ParameterList.length ? true : false;
+  //  this.ParameterList.forEach((xy:any) => {
+  //   xy['Max_Tolerance_Level'] = xy.Tolerance_Level
+  //   xy['Min_Tolerance_Level'] = xy.Tolerance_Level 
+  //  });
+   this.genPoText()
+    })
+  }
+
+}
+genPoText(ParameterID?:any){
+  const RequiredValue = (op:any)=>{
+    if((op.Min_Value && op.Max_Value && op.Min_Value != "0" && op.Max_Value != "0")){
+      if(Number(op.Min_Value) == Number(op.Max_Value)){
+        return `${op.Min_Value?op.Min_Value:""} ${op.UOM}`
+      }
+      else {
+        return `${op.Min_Value?op.Min_Value:''} to ${op.Max_Value?op.Max_Value:''} ${op.UOM}`
+      }
+     
+    }
+    if(op.Min_Value && op.Min_Value != "0"){
+      return `${op.Min_Value} ${op.UOM}`
+    }
+    if(op.Max_Value && op.Max_Value != "0"){
+      return `${op.Max_Value} ${op.UOM}`
+    }
+    return ''
+  }
+  const ToleranceLevel = (op:any)=>{
+    if(op.Max_Tolerance_Level || op.Min_Tolerance_Level){
+      if(op.Max_Tolerance_Level == op.Min_Tolerance_Level){
+        return ` ${op.Max_Tolerance_Level && op.Max_Tolerance_Level != '0'? '(+/-'+op.Max_Tolerance_Level+')' : ""} `
+       }
+       else {
+         return `(${op.Min_Tolerance_Level && op.Min_Tolerance_Level != '0'? '+'+op.Min_Tolerance_Level+'% ' : ''} ${op.Max_Tolerance_Level && op.Max_Tolerance_Level != '0' ? '-'+op.Max_Tolerance_Level+'% ': ''})`
+       }
+      
+    }
+    else {
+        return ""
+    }
+     
+    }
+    if(ParameterID){
+      this.ParameterList.forEach((xy:any) => {
+        if(ParameterID == xy.Parameter_ID){
+          xy['PO_Text'] = `${xy.Parameter_Name} - ${RequiredValue(xy)} ${ToleranceLevel(xy)}`
+        }
+       });
+    }
+    else{
+      this.ParameterList.forEach((xy:any) => {
+       xy['PO_Text'] = `${xy.Parameter_Name} - ${RequiredValue(xy)} ${ToleranceLevel(xy)}`
+      });
+    }
+  
+}
+editpotext(obj:any){
+ if(Object.keys(obj).length != 0){
+  this.objPoText = {...obj}
+  this.compacctToast.clear();
+  this.compacctToast.add({
+    key: "potext",
+    sticky: true,
+    severity: "info",
+    summary: "Are you sure?",
+    detail: "Confirm to proceed"
+  });
+ }
+}
+cancelpopUp(){
+ this.ParamDetalisPopup = false
+ this.compacctToast.clear("potext");
+}
+potextEdit(valid:any){
+  this.potextFormSubmit = true
+  if(valid){
+    this.ParameterList.forEach((yx:any) => {
+      if(Number(yx.Parameter_ID) == Number(this.objPoText.Parameter_ID)){
+        yx['PO_Text'] = this.objPoText.PO_Text
+      }
+   });
+   this.potextFormSubmit = false
+   this.compacctToast.clear("potext");
+  }
+
+}
+SaveParamDetalis(){
+  if(this.ParameterList.length){
+    this.paramlist = []
+    this.paramlist = this.ParameterList;
+    
+  }
+  this.ParamDetalisPopup = false;
+}
+
 AddPurchase(valid){
     this.purChaseAddFormSubmit = true
   if(valid && this.GetSameProWithInd() && this.GetSameReqMatType()){
      const productFilter:any = this.productDataList.filter((el:any)=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID))
+     this.paramarr = [];
+     this.paramlist.forEach(element => {
+      if((element.Min_Value || element.Min_Value > 0) && (element.Max_Value || element.Max_Value > 0)) {
+      const obj = {
+        Line_No : this.addPurchaseList.length + 1,
+        Product_ID : Number(this.objaddPurchacse.Product_ID),
+        Parameter_ID : element.Parameter_ID,
+        Parameter_Name : element.Parameter_Name,
+        UOM : element.UOM,
+        Max_Value : element.Max_Value,
+        Min_Value : element.Min_Value,
+        Tolerance_Level : element.Tolerance_Level,
+        Max_Tolerance_Level : element.Max_Tolerance_Level,
+        Min_Tolerance_Level : element.Min_Tolerance_Level,
+        PO_Text: element.PO_Text
+      }
+      this.paramarr.push(obj)
+      }
+     });
      let saveData = {
         Product_ID: Number(this.objaddPurchacse.Product_ID),
         Req_No: this.objaddPurchacse.Req_No ? this.objaddPurchacse.Req_No : "NA",
@@ -785,7 +923,8 @@ AddPurchase(valid){
         GST_Percentage: Number( this.objaddPurchacse.Gst),
         GST_Amount: Number(this.objaddPurchacse.GST_AMT),
         Requisiton_Type: this.Requisiton_Type,
-        Material_Type: this.Material_Type
+        Material_Type: this.Material_Type,
+        Parameter_Details: this.ParameterList.length ? this.paramarr : null
      }
      if(this.addPurchaseList.length && this.addPurchaseListInput){
       this.addPurchaseList.forEach((xz:any,i) => {
