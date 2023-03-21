@@ -7,6 +7,7 @@ import { CompacctHeader } from '../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
 import * as moment from "moment";
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-hr-leave-apply',
   templateUrl: './hr-leave-apply.component.html',
@@ -158,10 +159,12 @@ export class HrLeaveApplyComponent implements OnInit {
       }
        this.GlobalAPI.getData(obj)
        .subscribe((data:any)=>{
-        this.LeaveSummarydataList = data;
+        this.seachSpinnerForLS = false;
+      
         // this.BackupSearchedlist = data;
         // this.GetDistinct();
-        if(this.LeaveSummarydataList.length){
+        if(data.length){
+          this.LeaveSummarydataList = data;
           this.DynamicHeaderforLS = Object.keys(data[0]);
         }
         else {
@@ -249,37 +252,38 @@ export class HrLeaveApplyComponent implements OnInit {
     }
    }
     // DISTINCT & FILTER
- GetDistinct() {
-  let DEmpName = [];
-  this.DistEmpName =[];
-  this.SelectedDistEmpName =[];
-  this.SearchFields =[];
-  this.AllData.forEach((item) => {
- if (DEmpName.indexOf(item.Emp_ID) === -1) {
-  DEmpName.push(item.Emp_ID);
- this.DistEmpName.push({ label: item.Emp_Name, value: item.Emp_ID });
- }
-});
-   this.BackupAllData = [...this.AllData];
-}
-FilterDist() {
-  let DEmpName = [];
-  this.SearchFields =[];
-if (this.SelectedDistEmpName.length) {
-  this.SearchFields.push('Emp_ID');
-  DEmpName = this.SelectedDistEmpName;
-}
-this.AllData = [];
-if (this.SearchFields.length) {
-  let LeadArr = this.BackupAllData.filter(function (e) {
-    return (DEmpName.length ? DEmpName.includes(e['Emp_ID']) : true)
-  });
-this.AllData = LeadArr.length ? LeadArr : [];
-} else {
-this.AllData = [...this.BackupAllData] ;
-}
-}
+    GetDistinct() {
+      let DEmpName = [];
+      this.DistEmpName =[];
+      this.SelectedDistEmpName =[];
+      this.SearchFields =[];
+      this.AllData.forEach((item) => {
+    if (DEmpName.indexOf(item.Emp_ID) === -1) {
+      DEmpName.push(item.Emp_ID);
+    this.DistEmpName.push({ label: item.Emp_Name, value: item.Emp_ID });
+    }
+    });
+      this.BackupAllData = [...this.AllData];
+    }
+    FilterDist() {
+      let DEmpName = [];
+      this.SearchFields =[];
+    if (this.SelectedDistEmpName.length) {
+      this.SearchFields.push('Emp_ID');
+      DEmpName = this.SelectedDistEmpName;
+    }
+    this.AllData = [];
+    if (this.SearchFields.length) {
+      let LeadArr = this.BackupAllData.filter(function (e) {
+        return (DEmpName.length ? DEmpName.includes(e['Emp_ID']) : true)
+      });
+    this.AllData = LeadArr.length ? LeadArr : [];
+    } else {
+    this.AllData = [...this.BackupAllData] ;
+    }
+    }
    employeeData(){
+    this.empDataList = []
      const obj = {
        "SP_String":"SP_Leave_Application",
        "Report_Name_String": "Get_Employee_List",
@@ -287,11 +291,18 @@ this.AllData = [...this.BackupAllData] ;
      }
       this.GlobalAPI.getData(obj)
       .subscribe((data:any)=>{
-       this.empDataList = data;
+        if(data.length){
+          data.forEach((ele:any) => {
+            ele['label'] = ele.Emp_Name,
+            ele['value'] = ele.Emp_ID
+          });
+        this.empDataList = data;
        var empname = this.empDataList.filter(el=> Number(el.User_ID) === Number(this.$CompacctAPI.CompacctCookies.User_ID))
        console.log(empname)
        this.ObjHrleave.Emp_ID = empname.length ? empname[0].Emp_ID : undefined;
        console.log("employee==",this.empDataList);
+        }
+       
        });
    }
    hrYearList(){
@@ -480,86 +491,92 @@ this.AllData = [...this.BackupAllData] ;
     //this.getapplydayschange();
     this.getShowBaln();
   }
-}
- getMaxMindate(){
-    if(this.ObjHrleave.HR_Year_ID){
-      const HRFilterValue = this.hrYeatList.filter(el=> Number(el.HR_Year_ID) === Number(this.ObjHrleave.HR_Year_ID))[0];
-      console.log("HRFilterValue",HRFilterValue)
-      // this.maxDateFrom_Time = new Date(HRFilterValue.HR_Year_End);
-      // this.maxDateTo_Time = new Date(HRFilterValue.HR_Year_End);
-      // this.minDateFrom_Time = new Date(HRFilterValue.HR_Year_Start);
-      // console.log("this.maxDateFrom_Time",this.maxDateFrom_Time )
-      // console.log("this.maxDateTo_Time",this.maxDateTo_Time )
-      // console.log("this.maxDateFrom_Time",this.minDateFrom_Time )
-      this.initDate = [new Date(HRFilterValue.HR_Year_Start), new Date(HRFilterValue.HR_Year_End)];
-      
+  }
+  getMaxMindate(){
+      if(this.ObjHrleave.HR_Year_ID){
+        const HRFilterValue = this.hrYeatList.filter(el=> Number(el.HR_Year_ID) === Number(this.ObjHrleave.HR_Year_ID))[0];
+        console.log("HRFilterValue",HRFilterValue)
+        // this.maxDateFrom_Time = new Date(HRFilterValue.HR_Year_End);
+        // this.maxDateTo_Time = new Date(HRFilterValue.HR_Year_End);
+        // this.minDateFrom_Time = new Date(HRFilterValue.HR_Year_Start);
+        // console.log("this.maxDateFrom_Time",this.maxDateFrom_Time )
+        // console.log("this.maxDateTo_Time",this.maxDateTo_Time )
+        // console.log("this.maxDateFrom_Time",this.minDateFrom_Time )
+        this.initDate = [new Date(HRFilterValue.HR_Year_Start), new Date(HRFilterValue.HR_Year_End)];
+        
+      }
+    }
+  CancleLeave(data){
+    if(data.Emp_ID && data.Txn_App_ID){
+    this.deleteError = false;
+    this.empid = data.Emp_ID;
+    this.TxnAppID = data.Txn_App_ID;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+    key: "c",
+    sticky: true,
+    severity: "warn",
+    summary: "Are you sure?",
+    detail: "Confirm to proceed"
+    });
     }
   }
-CancleLeave(data){
-  if(data.Emp_ID && data.Txn_App_ID){
-  this.deleteError = false;
-  this.empid = data.Emp_ID;
-  this.TxnAppID = data.Txn_App_ID;
-  this.compacctToast.clear();
-  this.compacctToast.add({
-  key: "c",
-  sticky: true,
-  severity: "warn",
-  summary: "Are you sure?",
-  detail: "Confirm to proceed"
-  });
-  }
-}
-onConfirm() {
-  const Tempobj = {
-    Emp_ID : this.empid,
-    Txn_App_ID : this.TxnAppID,
-  }
-  const obj = {
-    "SP_String" : "SP_Leave_Application",
-    "Report_Name_String" : "UnApprove_Leave_Application",
-    "Json_Param_String" : JSON.stringify([Tempobj])
-  }
-  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-   // console.log(data);
-   var msg = data[0].Column1
-    if(data[0].Column1 === "Can not Cancel, Because already Approved this leave") {
-      this.onReject();
-      this.deleteError = true;
-      this.compacctToast.clear();
-      this.compacctToast.add({
-      key: "c",
-      sticky: true,
-      severity: "warn",
-      summary: msg,
-      // detail: "Confirm to proceed"
-      });
-      this.GetBrowseData(true);
+  onConfirm() {
+    const Tempobj = {
+      Emp_ID : this.empid,
+      Txn_App_ID : this.TxnAppID,
     }
-    else if (data[0].Column1 === "Successfully Cancel"){
-      this.deleteError = false;
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "compacct-toast",
-        severity: "success",
-        summary: "Emp_ID : " + this.empid,
-        detail:  msg
-      });
-      this.GetBrowseData(true);
+    const obj = {
+      "SP_String" : "SP_Leave_Application",
+      "Report_Name_String" : "UnApprove_Leave_Application",
+      "Json_Param_String" : JSON.stringify([Tempobj])
     }
-    else{
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "compacct-toast",
-        severity: "error",
-        summary: "Warn Message",
-        detail: "Error Occured "
-      });
-    }
-  })
-}
-onReject() {
-  this.compacctToast.clear("c");
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    // console.log(data);
+    var msg = data[0].Column1
+      if(data[0].Column1 === "Can not Cancel, Because already Approved this leave") {
+        this.onReject();
+        this.deleteError = true;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: msg,
+        // detail: "Confirm to proceed"
+        });
+        this.GetBrowseData(true);
+      }
+      else if (data[0].Column1 === "Successfully Cancel"){
+        this.deleteError = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Emp_ID : " + this.empid,
+          detail:  msg
+        });
+        this.GetBrowseData(true);
+      }
+      else{
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+    })
+  }
+  onReject() {
+    this.compacctToast.clear("c");
+  }
+  // EXPORT TO EXCEL
+exportexcel(Arr,fileName): void {
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, fileName+'.xlsx');
 }
 }
 
