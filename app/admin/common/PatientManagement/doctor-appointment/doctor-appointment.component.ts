@@ -53,6 +53,7 @@ export class DoctorAppointmentComponent implements OnInit {
   
   PTAmodal: boolean = false;
   testType: any = undefined;
+  RetvAppoid: any = undefined;
   DegreeLossLeft: any = [];
   DegreeLossRight: any = [];
   ConfigLossLeft:any =[];
@@ -63,6 +64,7 @@ export class DoctorAppointmentComponent implements OnInit {
   TinnitusList: any = [];
   SubTypList: any = [];
   ObjectionList: any = [];
+  TrailSuccessList: any = [];
   FinalStatusList: any = [];
   DisableTypL: boolean = false;
   DisableTypR: boolean = false;
@@ -70,6 +72,10 @@ export class DoctorAppointmentComponent implements OnInit {
   DisableL: boolean = false;
   SupportShow: boolean = false;
   SupportShow2nd: boolean = false;
+  RetriveDisable1St: boolean = false;
+  RetriveDisable2nd: boolean = false;
+  counte: number = 0;
+  PTAFinalSaveSummited: boolean = false;
   @ViewChild("consultancy", { static: false })
   UpdateConsultancy: UpdateConsultancyComponent;
   constructor(    
@@ -155,22 +161,32 @@ export class DoctorAppointmentComponent implements OnInit {
       required : true
     }
    switch (actype) {
-    case 'UpdateAppointment':
-        this.UpdateAppointmentModel = true
-        this.updateConsultancyInputObj = {
-          Appo_ID : col.Appo_ID,
-          required : true
-        }
-       break;
-    case 'PTA':
-       this.PTAmodal = true;
+    // case 'UpdateAppointment':
+    //     this.UpdateAppointmentModel = true
+    //     this.updateConsultancyInputObj = {
+    //       Appo_ID : col.Appo_ID,
+    //       required : true
+    //     }
+    //    break;
+     case 'PTA':
+       this.ObjPta = new Pta()
+       setTimeout(() => {
+        this.PTAmodal = true;
+       },200);
        this.testType = col.Consultancy_Descr;
-       this.ObjPta.Appo_ID = col.Appo_ID;
+       this.PTAFinalSaveSummited = false;
+       this.RetvAppoid = col.Appo_ID;
        this.SupportShow = true;
+       this.counte = 0;
        this.SupportShow2nd = true;
+       this.RetriveDisable1St = false;
+       this.RetriveDisable2nd = false;
        this.getDegreeloss(this.testType);
        this.getConfiloss();
        this.getTypeloss();
+       this.PtaRetrive(this.RetvAppoid);
+
+       
     break;
     case 'CreateReport':
       window.open(col.Controller_Name + col.Appo_ID, '_blank');
@@ -181,7 +197,7 @@ export class DoctorAppointmentComponent implements OnInit {
     case 'PrintReport' :
       window.open(col.Print_Aspx+ col.Appo_ID, 'Print Appointment', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
       break;
-      case 'DisplayModel':
+    case 'DisplayModel':
         this.therapyAttendance = true;
         this.GetAppoID = col.Appo_ID;
         this.getTherpyAttendance();
@@ -446,6 +462,56 @@ export class DoctorAppointmentComponent implements OnInit {
       this.ObjPta.PTA_Left = '';
     }
   }
+  PtaRetrive(RtvAppoId:any) {
+    this.RetriveDisable1St = false;
+    this.RetriveDisable2nd = false;
+    const FinalCount = this.counte;
+    if(RtvAppoId && FinalCount<=2) {
+     const obj = {
+      "SP_String": "sp_Hearing_Test",
+      "Report_Name_String": "Retrieve_PTA_Deatils",
+      "Json_Param_String": JSON.stringify([{Appo_ID: RtvAppoId}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+       console.log("EDitdata", data);
+      if (data.length) {
+        this.ObjPta = data[0];
+        this.RetriveDisable1St = true;
+        this.RetriveDisable2nd = true;
+        if (FinalCount === 1) {
+        this.ObjPta = data[0];
+        this.RetriveDisable1St = true;
+        this.RetriveDisable2nd = false;
+        this.getFinalStatus(this.ObjPta.Sub_Status_ID);
+        this.ObjectionType();
+        this.SupportCheck();
+        }
+       }
+      else {
+        this.Pta2nd(RtvAppoId)
+       }
+        })
+      } 
+  }
+  Pta2nd(RtvAppoId2nd:any) {
+   if(RtvAppoId2nd) {
+     const obj = {
+      "SP_String": "sp_Hearing_Test",
+      "Report_Name_String": "Get_Assessment_Type",
+      "Json_Param_String": JSON.stringify([{Appo_ID: RtvAppoId2nd}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+       console.log("EDitdata22nd", data);
+      if (data.length) {
+        this.ObjPta = data[0]
+        if (data[0].Assessment === "SUBSEQUENT") {
+          this.counte++;
+          this.PtaRetrive(data[0].Group_Appo_ID);        
+        }
+         }
+        })
+      } 
+  }
   getDegreeloss(type:any){
   this.DegreeLossLeft = [];
   this.DegreeLossRight = [];
@@ -558,12 +624,14 @@ export class DoctorAppointmentComponent implements OnInit {
       }
     });    
   }
-  getFinalStatus() {
-  this.ObjPta.Final_Status_ID = undefined;
-  this.ObjPta.Objection_ID = undefined;
+  getFinalStatus(Sub_status: any) {
+    if (this.counte !== 1) {
+       this.ObjPta.Final_Status_ID = undefined;
+       this.ObjPta.Objection_ID = undefined; 
+    }
   this.FinalStatusList = [];
     const tempobj = {
-     Sub_Status_ID: this.ObjPta.Sub_Status_ID
+      Sub_Status_ID: Sub_status,
     }
     const obj = {
       "SP_String": "sp_Hearing_Test",
@@ -582,9 +650,12 @@ export class DoctorAppointmentComponent implements OnInit {
     });    
   }
   ObjectionType() {
- this.ObjPta.Objection_ID = undefined;
-  this.ObjectionList = [];
-    const tempobj = {
+    if (this.ObjPta.Final_Status_ID !== 1 && this.ObjPta.Final_Status_ID !== 2) {
+      if (this.counte !== 1) {
+            this.ObjPta.Objection_ID = undefined; 
+      }
+     this.ObjectionList = [];
+     const tempobj = {
      Final_Status_ID: this.ObjPta.Final_Status_ID
     }
     const obj = {
@@ -600,6 +671,34 @@ export class DoctorAppointmentComponent implements OnInit {
         });
        this.ObjectionList = data;
          //console.log("Objection",data);
+      }
+    }); 
+    }
+    else {
+         this.TrailType(); 
+    } 
+  }
+  TrailType() {
+    if (this.counte !== 1) {
+          this.ObjPta.Trial_Success_ID = undefined;
+      }
+  this.TrailSuccessList = [];
+    const tempobj = {
+     Final_Status_ID: this.ObjPta.Final_Status_ID
+    }
+    const obj = {
+      "SP_String": "sp_Hearing_Test",
+      "Report_Name_String": "Get_Trial_Success_dropdown",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Trial_Success,
+          element['value'] = element.Trial_Success_ID
+        });
+       this.TrailSuccessList = data;
+         //console.log("trail",data);
       }
     });    
   }
@@ -647,8 +746,8 @@ export class DoctorAppointmentComponent implements OnInit {
        this.DisableTypR = true;
        this.Disable = false;
     }
-    else {
-       this.ObjPta.Type_Of_Loss_Right_ID = '';
+     else { 
+       this.ObjPta.Type_Of_Loss_Right_ID = '';;
        this.DisableTypR = false;
        this.Disable = false;
     }
@@ -667,8 +766,10 @@ export class DoctorAppointmentComponent implements OnInit {
      this.SupportShow2nd = false; 
     }
   }
-  SavePtaPop(valid?:any) {
-    if (this.ObjPta.Appo_ID) {
+  SavePtaPop(valid: any) {
+    this.PTAFinalSaveSummited = true;
+    if (valid && this.RetvAppoid) {
+      this.ObjPta.Appo_ID = this.RetvAppoid;
       const obj = {
         "SP_String": "sp_Hearing_Test",
         "Report_Name_String": 'Update_PTA_Deatils',
@@ -680,9 +781,10 @@ export class DoctorAppointmentComponent implements OnInit {
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "success",
-            summary: this.ObjPta.Appo_ID,
+            summary: this.ObjPta.Group_Appo_ID,
             detail: "Succesfully Update "
           });
+          this.PTAFinalSaveSummited = false;
           this.ObjPta = new Pta();
           this.PTAmodal = false;
           }
@@ -700,17 +802,31 @@ class TherapAttendance {
   // Foot_Fall_ID:any;
 }
 class Pta{
-  Appo_ID : any;                   
-  Degree_Of_Loss_ID : any;             
-  Hearing_Loss_ID : any;                
-  Type_Of_Loss_ID: any;  
-  Degree_Of_Loss_Right_ID: any;   
-  Hearing_Loss_Right_ID : any; 
-  Type_Of_Loss_Right_ID: any;  
-  Tinnitus_Status_ID : any;               
-  Sub_Status_ID : any;                   
-  Final_Status_ID : any;                 
-  Objection_ID: any;                   
+  Appo_ID: any;
+  Group_Appo_ID: any;
+  Assessment: any;
+  Degree_Of_Loss_ID: any; 
+  Degree_Of_Loss_Name: any;
+  Hearing_Loss_ID: any; 
+  Hearing_Loss: any;
+  Type_Of_Loss_ID: any; 
+  Type_Of_Loss: any;
+  Degree_Of_Loss_Right_ID: any;  
+  Degree_Of_Loss_Name1: any;
+  Hearing_Loss_Right_ID: any; 
+  Hearing_Loss1: any;
+  Type_Of_Loss_Right_ID: any;
+  Type_Of_Loss1: any;
+  Tinnitus_Status_ID: any; 
+  Tinnitus_Status: any;
+  Sub_Status_ID: any; 
+  Sub_Status: any;
+  Final_Status_ID: any;
+  Final_Status: any;
+  Trial_Success_ID: any;
+  Trial_Success: any;
+  Objection_ID: any;
+  Objection: any;
   PTA_Right_500: any;                   
   PTA_Right_250 : any;                   
   PTA_Right_1000: any;
