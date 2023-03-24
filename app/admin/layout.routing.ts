@@ -344,6 +344,9 @@ import { NepalSupTktCustomerAccountCreationComponent } from "./common/TicketMana
 import { FinsCreateProjectComponent } from "./common/Finshore/fins-create-project/fins-create-project.component";
 import { FinsBrowseProjectComponent } from "./common/Finshore/fins-browse-project/fins-browse-project.component";
 import { StockInterchangeComponent } from './common/MICL/RawMaterial/stock-interchange/stock-interchange.component';
+import { SaleOrderComponent } from './common/MICL/sale-order/sale-order.component';
+import { QcApprovalComponent } from './common/MICL/qc-approval/qc-approval.component';
+import { PatientCreateBrunchComponent } from './common/PatientManagement/patient-create-brunch/patient-create-brunch.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2607,6 +2610,27 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         title: 'Stock Interchange'
   }
   },
+  {
+    path: 'Sale_Order',
+      component: SaleOrderComponent,
+      data: {
+        title: 'Sale Order'
+  }
+  },
+  {
+    path: 'QC_APPROVAL',
+      component: QcApprovalComponent,
+      data: {
+        title: 'QC APPROVAL'
+  }
+  },
+  {
+    path: 'BL_Txn_Patient_Create_Brunch',
+    component: PatientCreateBrunchComponent,
+    data: {
+    title: 'Patient Create Branch'
+    }
+},
 
     /*{
 

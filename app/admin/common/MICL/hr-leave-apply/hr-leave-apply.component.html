@@ -351,8 +351,8 @@
                                                     <th>Apply To Date</th>
                                                     <th>No Of Days Issued</th>
                                                     <th>Remarks</th>
-                                                    <th>Business Manager Approve Status</th>
-                                                    <th>Reporting Manager Approve Status</th>
+                                                    <th>Approval 1 Status</th>
+                                                    <th>Approval 2 Status</th>
                                                     <th>Accepted Date From</th>
                                                     <th>Accepted Date To</th>
                                                     <th>Status</th>
@@ -410,8 +410,8 @@
                                                     <td>{{col.Apply_To_Date  | date : 'dd/MMM/yyyy'}}</td>
                                                     <td>{{col.No_Of_Days_Apply ? col.No_Of_Days_Apply:"-"}}</td>
                                                     <td>{{col.Remarks ? col.Remarks:"-"}}</td>
-                                                    <td>{{col.Approved_Status_Business_Manager ? col.Approved_Status_Business_Manager:"-"}}</td>
                                                     <td>{{col.Approved_Status_Reporting_Manager ? col.Approved_Status_Reporting_Manager:"-"}}</td>
+                                                    <td>{{col.Approved_Status_Business_Manager ? col.Approved_Status_Business_Manager:"-"}}</td>
                                                     <td>{{(col.Approved_Status_Business_Manager && col.Approved_Status_Reporting_Manager) ? (col.Issued_From_Date  | date : 'dd/MMM/yyyy') : "-"}}</td>
                                                     <td>{{(col.Approved_Status_Business_Manager && col.Approved_Status_Reporting_Manager) ? (col.Issued_To_Date  | date : 'dd/MMM/yyyy') : "-"}}</td>
                                                     <td *ngIf="col.Approved_Status_Business_Manager == 'Y' && col.Approved_Status_Reporting_Manager == 'Y'" style="color:green;">{{"APPROVED"}}</td>

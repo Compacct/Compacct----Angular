@@ -24,3 +24,9 @@ hr {
     border-radius: 3px!important;
     margin-top: 5px!important;
 }
+div.label-t {
+    padding: 6px 12px;
+    background: #e4dddd;
+    margin-top: 7px;
+    margin-right: 20px;
+}

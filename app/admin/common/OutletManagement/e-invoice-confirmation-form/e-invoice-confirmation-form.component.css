@@ -55,4 +55,71 @@ div.table-responsive.table-id > p-table > div > div {
     border-bottom: 1px solid #c1c1c1 !important;
     margin-bottom: 0px;
 }
+#ui-tabpanel-0>div>p-table>div>div.ui-table-wrapper.ng-star-inserted {
+  width: auto !important;
+}
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li a {
+  float: none;
+  display: inline-block;
+  /* color: #333333; 
+       padding: 0.571em 1em; 
+       font-weight: 700; */
+  margin-left: -25px;
+}
+body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+  margin-bottom: 0px;
+}
+.ui-tabview .ui-tabview-nav {
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+.ui-tabview .ui-tabview-nav li {
+  display: inline-block;
+  float: none;
+}
+.ui-tabview .ui-tabview-nav::-webkit-scrollbar {
+  width: 5px;
+  height: 10px;
+}
+.ui-tabview .ui-tabview-nav::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+.ui-tabview .ui-tabview-nav::-webkit-scrollbar-thumb {
+  background: #707b84;
+  border: 0px none #ffffff;
+  border-radius: 50px;
+}
+.ui-tabview .ui-tabview-nav::-webkit-scrollbar-thumb:hover {
+  background: #39729f;
+}
+.ui-tabview .ui-tabview-nav::-webkit-scrollbar-thumb:active {
+  background: #39729f;
+}
+.ui-tabview .ui-tabview-nav::-webkit-scrollbar-track {
+  background: #f2f5f8;
+  border: 1px none #ffffff;
+  border-radius: 17px;
+}
+.ui-tabview .ui-tabview-nav::-webkit-scrollbar-track:hover {
+  background: #666666;
+}
+.ui-tabview .ui-tabview-nav::-webkit-scrollbar-track:active {
+  background: #333333;
+}
+.ui-tabview .ui-tabview-nav::-webkit-scrollbar-corner {
+  background: transparent;
+}
+.txt {
+  cursor: pointer;
+  color: rgb(0 0 255);
+}
+.txt:hover {
+  text-decoration: underline;
+}
+
+p-tabview > div > ul{
+  padding : 1px !important
+}
   

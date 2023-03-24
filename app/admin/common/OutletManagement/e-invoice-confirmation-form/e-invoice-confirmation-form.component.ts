@@ -45,6 +45,10 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   ObjSuccessInvoice : SuccessInvoice = new SuccessInvoice ();
   SuccessInvoicelist:any = [];
   successinvoiceSpinner = false;
+  ObjCancelInvoice : CancelInvoice = new CancelInvoice ();
+  CancelInvoicelist:any = [];
+  cancelinvoiceSpinner = false;
+  invoice_no:any = undefined;
 
   pencrnoteSpinner = false;
   ObjPenCrNote : PenCrNote = new PenCrNote ();
@@ -78,7 +82,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   ngOnInit() {
     $(".content-header").removeClass("collapse-pos");
     $(".content").removeClass("collapse-pos");
-    this.items = ["PENDING INV", "FAILED / QUEUE INV", "SUCCESS INV", "PENDING CR NOTES", "FAILED / QUEUE CR NOTES", "SUCCESS CR NOTES"];
+    this.items = ["PENDING INV", "FAILED / QUEUE INV", "SUCCESS INV", "CANCEL INV", "PENDING CR NOTES", "FAILED / QUEUE CR NOTES", "SUCCESS CR NOTES"];
     this.Header.pushHeader({
       Header: "E-Invoice Confirmation",
       Link: " E-Invoice Confirmation "
@@ -93,11 +97,12 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   TabClick(e){
     //console.log(e)
     this.tabIndexToView = e.index;
-    this.items = ["PENDING INV", "FAILED / QUEUE INV", "SUCCESS INV", "PENDING CR NOTES", "FAILED / QUEUE CR NOTES", "SUCCESS CR NOTES"];
+    this.items = ["PENDING INV", "FAILED / QUEUE INV", "SUCCESS INV", "CANCEL INV", "PENDING CR NOTES", "FAILED / QUEUE CR NOTES", "SUCCESS CR NOTES"];
     this.buttonname = "Save";
     // this.productaddSubmit =[];
     // this.clearData();
   }
+  onConfirm(){}
   getDatabase(){
     this.$http
         .get("/Common/Get_Database_Name",
@@ -107,8 +112,6 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
           console.log(data)
         });
   }
-  onReject(){}
-  onConfirm(){}
   // PENDING INV
   PengetDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
@@ -490,6 +493,114 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      this.SuccessInvoicelist = data;
      //console.log('Invoice list=====',this.SuccessInvoicelist)
      this.successinvoiceSpinner = false;
+     this.seachSpinner = false;
+   })
+   }
+  }
+  PrintChallan(DocNo){
+    if (DocNo) {
+      const objtemp = {
+        "SP_String": "SP_MICL_Sale_Bill",
+        "Report_Name_String": "Sale_Challan_Print"
+      }
+      this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
+        var printlink = data[0].Column1;
+        window.open(printlink + "?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      })
+    }
+  }
+  Cancel(docno){
+    this.invoice_no = undefined;
+    if (docno) {
+      this.invoice_no = docno;
+    this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "cancel",
+       sticky: true,
+       closable: false,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+      });
+    }
+  }
+  onConfirmcancel(){
+    if(this.invoice_no) {
+      this.ngxService.start();
+    this.$http.get("https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&invoice_no="+this.invoice_no)
+   .subscribe((data:any)=>{
+    console.log("cancel",data)
+    // this.ngxService.stop();
+    if(data[0].status === "success"){
+      this.invoice_no = undefined;
+      this.GetCancelInvoicelist();
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Invoice ",
+        detail: "Cancel Successfully"
+      });
+      }
+      else{
+        this.ngxService.stop();
+        this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Something Wrong"
+            });
+      }
+   })
+  }
+  else{
+    this.ngxService.stop();
+    this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Something Wrong"
+        });
+  }
+  }
+  onReject(){
+    this.compacctToast.clear("c");
+    this.compacctToast.clear("cancel");
+  }
+  // CANCEL INV
+  CancelgetDateRange(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjCancelInvoice.start_date = dateRangeObj[0];
+      this.ObjCancelInvoice.end_date = dateRangeObj[1];
+    }
+  }
+  GetCancelInvoicelist() {
+    this.CancelInvoicelist = [];
+    this.cancelinvoiceSpinner = true;
+    this.seachSpinner = true;
+    const start = this.ObjSuccessInvoice.start_date
+    ? this.DateService.dateConvert(new Date(this.ObjSuccessInvoice.start_date))
+    : this.DateService.dateConvert(new Date());
+  const end = this.ObjSuccessInvoice.end_date
+    ? this.DateService.dateConvert(new Date(this.ObjSuccessInvoice.end_date))
+    : this.DateService.dateConvert(new Date());
+    if(start && end){
+  const tempobj = {
+    From_Date : start,
+    To_Date : end,
+  }
+  const obj = {
+    "SP_String": "SP_E_Invoice_For_Confirmation_Form",
+    "Report_Name_String": "Browse Cancelled Franchise Sale Challan And B2B Bill",
+    "Json_Param_String": JSON.stringify([tempobj])
+  }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.CancelInvoicelist = data;
+     //console.log('Invoice list=====',this.SuccessInvoicelist)
+     this.cancelinvoiceSpinner = false;
      this.seachSpinner = false;
    })
    }
@@ -893,6 +1004,10 @@ class FailednInvoice {
   end_date : Date;
 }
 class SuccessInvoice {
+  start_date : Date;
+  end_date : Date;
+}
+class CancelInvoice {
   start_date : Date;
   end_date : Date;
 }

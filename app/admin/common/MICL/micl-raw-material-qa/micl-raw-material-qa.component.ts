@@ -5,6 +5,7 @@ import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-micl-raw-material-qa',
@@ -37,19 +38,23 @@ export class MICLRawMaterialQAComponent implements OnInit {
   SelectedDistSubledgerName:any = [];
   SearchFields:any = [];
   initDate:any = [];
+
+  RecDetalis:any = [];
+  RecDetalisHeader:any = [];
   constructor(
     private $http: HttpClient,
     private GlobalAPI:CompacctGlobalApiService,
     private compacctToast:MessageService,
     private DateService: DateTimeConvertService,
     private Header: CompacctHeader,
-    public $CompacctAPI: CompacctCommonApi
+    public $CompacctAPI: CompacctCommonApi,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
     this.Header.pushHeader({
-      Header: "Quality Check",
-      Link: "MICL -> Quality Check"
+      Header: "Quality Check Lab Entry",
+      Link: "MICL -> Quality Check Lab Entry"
     });
     this.items = ["BROWSE", "CREATE"];
     this.Finyear();
@@ -190,9 +195,56 @@ export class MICLRawMaterialQAComponent implements OnInit {
         if (this.allDetalis.length) {
           this.allDetalisHeader = Object.keys(data[0]);
         }
+        this.getRecDetails();
       });  
   }
 
+  getRecDetails(){
+    this.RecDetalis=[];
+    this.RecDetalisHeader=[];
+    this.ngxService.start();
+    const obj = {
+      "SP_String": "SP_BL_Txn_Raw_Material_QA",
+      "Report_Name_String":"Get_Receive_Doc_Details",
+      "Json_Param_String": JSON.stringify([{ Product_ID : this.ObjRaw.SelectProduct, Doc_No : this.ObjRaw.RecvDoc}]) 
+      }
+
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        // console.log("getParameterDetails",data);
+
+        this.RecDetalis = data;
+        this.ngxService.stop();
+        if (this.RecDetalis.length) {
+          this.RecDetalisHeader = Object.keys(data[0]);
+        }
+        this.RecDetalis.forEach(ele=>{
+          ele["Confirm_Rec_No"]= false;
+        })
+      });  
+  }
+
+  getRecNo(){
+    let Rarr:any =[]
+    if(this.RecDetalis.length) {
+      this.RecDetalis.forEach(el => {
+        if(el.Confirm_Rec_No){
+          const Dobj = {
+            Doc_No : el.Doc_No
+            }
+            Rarr.push(Dobj)
+        }
+
+    });
+    }
+    else {
+      const Dobj = {
+        Doc_No : 'NA'
+        }
+        Rarr.push(Dobj)
+    }
+    console.log("Table Data ===", Rarr)
+    return Rarr.length ? JSON.stringify(Rarr) : '';
+  }
   SaveDoc(valid:any){
     this.newAllDetails=[];
     // console.log("S_AllDetails",this.allDetalis);
@@ -210,7 +262,8 @@ export class MICLRawMaterialQAComponent implements OnInit {
         // Tolerance_Level: element.Tolerance_Level,
         Min_Tolerance_Level: element.Min_Tolerance_Level,
         Max_Tolerance_Level: element.Max_Tolerance_Level,
-        QA_Value: Number(element.QA_Value)
+        QA_Value: Number(element.QA_Value),
+        Remarks: element.Remarks
       }
       this.newAllDetails.push(TempObj);
     });
@@ -228,7 +281,8 @@ export class MICLRawMaterialQAComponent implements OnInit {
       Cost_Cen_ID: this.Cost_Cen_ID,
       Product_ID: this.ObjRaw.SelectProduct,
       UOM: this.ObjRaw.UOM,
-      Parameter_Details: this.newAllDetails 
+      Parameter_Details: this.newAllDetails ,
+      Remarks: this.ObjRaw.Remarks
     }
     // console.log("SaveObj",SaveObj);
 
@@ -239,7 +293,8 @@ export class MICLRawMaterialQAComponent implements OnInit {
       const obj = {
       "SP_String": "SP_BL_Txn_Raw_Material_QA",
       "Report_Name_String": "Create_BL_Txn_Raw_Material_QA",
-      "Json_Param_String": JSON.stringify(SaveObj)
+      "Json_Param_String": JSON.stringify(SaveObj),
+      "Json_1_String" : this.getRecNo()
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
         // console.log("save data",data);
@@ -256,6 +311,7 @@ export class MICLRawMaterialQAComponent implements OnInit {
           this.ObjRaw = new RawMaterial();
           this.tabIndexToView = 0;
           this.items = ["BROWSE", "CREATE"];
+          this.RecDetalis=[];
           this.allDetalis=[];
           this.allDetalisHeader=[];
           this.SelectProductList=[];
@@ -376,4 +432,5 @@ class RawMaterial{
   UOM: any;
   From_Date: any;
   To_Date: any;
+  Remarks: any;
 }

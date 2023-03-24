@@ -106,6 +106,13 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
   ViewMetTypeModal = false;
   EXCELSpinner:boolean = false;
   DescriptionCheck:any;
+
+  ParameterNameList:any = [];
+  ParameterFormSubmitted = false;
+  AddParamDetails:any = [];
+  Parameter_ID: any;
+  Tolerance_Level: any;
+  SpinnerParam = false;
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -139,6 +146,7 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
     this.getgradeTyp();
     this.getUOM();
     this.getAllUOM();
+    this.GetParam();
     this.header.pushHeader({
       Header: this.headerData,
       Link: " MICL -> "+this.headerData
@@ -150,7 +158,10 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Create";
     this.clearData();
-    
+    this.AddParamDetails = [];
+    this.Parameter_ID = undefined;
+    this.Tolerance_Level = undefined;
+    this.ParameterFormSubmitted = false;
    
   }
   destroyChild() {
@@ -1017,7 +1028,8 @@ saveData(valid:any){
        const obj = {
            "SP_String": "SP_General_Consumables",
            "Report_Name_String": this.productCode ? 'Master_Product_General_Consumables_Update' : 'Master_Product_General_Consumables_Create',
-           "Json_Param_String": JSON.stringify([this.Objproduct]) 
+           "Json_Param_String": JSON.stringify([this.Objproduct]),
+           "Json_1_String": JSON.stringify(this.AddParamDetails)
           }
          this.GlobalAPI.getData(obj)
          .subscribe((data:any)=>{
@@ -1039,6 +1051,9 @@ saveData(valid:any){
             this.GstAndCustomFormSubmit = false;
             this.ProductFormSubmitted = false;
             this.Objproduct = new product();
+            this.AddParamDetails = [];
+            this.Parameter_ID = undefined;
+            this.Tolerance_Level = undefined;
            });
       }
       else {
@@ -1102,7 +1117,7 @@ saveData(valid:any){
   EditProduct(product:any){
     this.productCode = undefined;
     if (product.Product_ID) {
-      this.productCode = undefined;
+      // this.productCode = undefined;
       this.tabIndexToView = 1;
       this.items = ["BROWSE", "UPDATE"];
       this.buttonname = "Update";
@@ -1116,6 +1131,7 @@ saveData(valid:any){
       this.getgradeTyp();
       this.productCode = product.Product_ID
       this.GetEditMasterProduct(product.Product_ID)
+      this.GetParamEdit();
      }  
   }
   GetEditMasterProduct(uid){
@@ -1147,6 +1163,28 @@ saveData(valid:any){
        
        });
    }
+   GetParamEdit(){
+    // this.parameditList = [];
+    const temobj = {
+      Product_ID  : this.productCode,   
+    }
+    const obj = {
+      "SP_String": "SP_Production_Management_Master_Raw_Material",
+      "Report_Name_String": "Get_Master_Raw_Material_Parameter",
+      "Json_Param_String": JSON.stringify(temobj)
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // this.parameditList = data;
+      data.forEach(element => {
+        this.AddParamDetails.push({
+          Parameter_ID : element.Parameter_ID,
+          Parameter_Name : element.Parameter_Name,
+          Tolerance_Level : element.Tolerance_Level
+        })
+      });
+      //console.log("this.editList  ===",this.editList);
+      })
+  }
   //Delete
   DeleteProduct(masterProduct){
     this.is_Active = false; 
@@ -1462,6 +1500,59 @@ exportexcel(Arr): void {
   const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
   XLSX.writeFile(workbook, 'master_product_general_consumables.xlsx');
   this.EXCELSpinner = false
+}
+// ADD PARAMETER DETAILS
+GetParam(){
+  const obj = {
+    "SP_String": "SP_Production_Management_Master_Raw_Material",
+    "Report_Name_String": "Get_Parameters"
+
+ }
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     if(data.length){
+      data.forEach(element => {
+        element['value'] = element.Parameter_ID
+        element['label'] = element.Parameter_Name
+      });
+     this.ParameterNameList = data;
+     }
+     else {
+      this.ParameterNameList = [];
+     }
+  // console.log("SubLedger list======",this.SubLedgerList);
+ });
+}
+gettolerance(){
+  this.Tolerance_Level = undefined;
+  if(this.Parameter_ID){
+  const tolerance = this.ParameterNameList.filter(el=>Number(el.Parameter_ID) === Number(this.Parameter_ID));
+  this.Tolerance_Level = tolerance[0].Tolerance_Level;
+  }
+}
+AddParam(valid){
+  this.ParameterFormSubmitted = true;
+  this.SpinnerParam = true;
+    if (valid) {
+      var Paramname = this.ParameterNameList.filter(el=>Number(el.Parameter_ID) === Number(this.Parameter_ID))
+      var paramobj = {
+      Parameter_ID : this.Parameter_ID,
+      Parameter_Name : Paramname[0].Parameter_Name,
+      Tolerance_Level : this.Tolerance_Level
+      }
+      this.AddParamDetails.push(paramobj);
+     console.log('this.AddParamDetails===',this.AddParamDetails)
+      this.ParameterFormSubmitted = false;
+      this.SpinnerParam = false;
+      this.Parameter_ID = undefined;
+      this.Tolerance_Level = undefined;
+
+    }
+    else {
+      this.SpinnerParam = false;
+    }
+}
+Paramdelete(index) {
+  this.AddParamDetails.splice(index,1)
 }
 }
 
