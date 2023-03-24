@@ -346,6 +346,7 @@ import { FinsBrowseProjectComponent } from "./common/Finshore/fins-browse-projec
 import { StockInterchangeComponent } from './common/MICL/RawMaterial/stock-interchange/stock-interchange.component';
 import { SaleOrderComponent } from './common/MICL/sale-order/sale-order.component';
 import { QcApprovalComponent } from './common/MICL/qc-approval/qc-approval.component';
+import { PatientCreateBrunchComponent } from './common/PatientManagement/patient-create-brunch/patient-create-brunch.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2623,6 +2624,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         title: 'QC APPROVAL'
   }
   },
+  {
+    path: 'BL_Txn_Patient_Create_Brunch',
+    component: PatientCreateBrunchComponent,
+    data: {
+    title: 'Patient Create Branch'
+    }
+},
 
     /*{
 

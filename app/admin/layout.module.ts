@@ -443,6 +443,7 @@ import { FinsBrowseProjectComponent } from './common/Finshore/fins-browse-projec
 import { StockInterchangeComponent } from './common/MICL/RawMaterial/stock-interchange/stock-interchange.component';
 import { SaleOrderComponent } from './common/MICL/sale-order/sale-order.component';
 import { QcApprovalComponent } from './common/MICL/qc-approval/qc-approval.component';
+import { PatientCreateBrunchComponent } from './common/PatientManagement/patient-create-brunch/patient-create-brunch.component';
 
 @NgModule({
   declarations: [
@@ -802,7 +803,8 @@ import { QcApprovalComponent } from './common/MICL/qc-approval/qc-approval.compo
     FinsBrowseProjectComponent,
     StockInterchangeComponent,
     SaleOrderComponent,
-    QcApprovalComponent
+    QcApprovalComponent,
+    PatientCreateBrunchComponent
 
   ],
   imports: [

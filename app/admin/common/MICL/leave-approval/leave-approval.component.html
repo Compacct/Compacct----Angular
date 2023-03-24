@@ -56,10 +56,10 @@
                                     <th nowrap="nowrap">Reason</th>
                                     <th nowrap="nowrap">Approved From Date</th>
                                     <th nowrap="nowrap">Approved To Date</th>
-                                    <th nowrap="nowrap">Business Manager</th>
-                                    <th nowrap="nowrap">Remarks of Business Manager</th>
-                                    <th nowrap="nowrap">Reporting Manager</th>
-                                    <th nowrap="nowrap">Remarks of Reporting Manager</th>
+                                    <th nowrap="nowrap">Approval 1</th>
+                                    <th nowrap="nowrap">Remarks of Approval 1</th>
+                                    <th nowrap="nowrap">Approval 2</th>
+                                    <th nowrap="nowrap">Remarks of Approval 2</th>
                                     <!-- <th nowrap="nowrap">Action</th> -->
                                 </tr>
                             </ng-template>
@@ -95,8 +95,8 @@
                                     <td>
                                         <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='col.Issued_To_Date'></ejs-datepicker>
                                     </td> -->
-                                    <td>{{col.Approved_Status_Business_Manager ? col.Approved_Status_Business_Manager : "-"}}</td>
-                                    <td>{{col.Approved_Note_Business_Manager ? col.Approved_Note_Business_Manager : "-"}}</td>
+                                    <td>{{col.Approved_Status_Reporting_Manager ? col.Approved_Status_Reporting_Manager : "-"}}</td>
+                                    <td>{{col.Approved_Note_Reporting_Manager ? col.Approved_Note_Reporting_Manager : "-"}}</td>
                                     <!-- <td nowrap="nowrap">
                                         <select class="form-control" name="col.Emp_ID" [(ngModel)]="col.Approved_Status_Business_Manager" [disabled]="Bussidisabled">
                                             <option  [ngValue]="undefined">Select</option>
@@ -107,8 +107,8 @@
                                     <td>
                                         <input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Approved_Note_Business_Manager' class="form-control" [disabled]="Bussidisabled"/>
                                     </td> -->
-                                    <td>{{col.Approved_Status_Reporting_Manager ? col.Approved_Status_Reporting_Manager : "-"}}</td>
-                                    <td>{{col.Approved_Note_Reporting_Manager ? col.Approved_Note_Reporting_Manager : "-"}}</td>
+                                    <td>{{col.Approved_Status_Business_Manager ? col.Approved_Status_Business_Manager : "-"}}</td>
+                                    <td>{{col.Approved_Note_Business_Manager ? col.Approved_Note_Business_Manager : "-"}}</td>
                                     <!-- <td nowrap="nowrap">
                                         <select class="form-control" name="col.Emp_ID" [(ngModel)]="col.Approved_Status_Reporting_Manager" [disabled]="Reportdisabled">
                                             <option  [ngValue]="undefined">Select</option>
@@ -340,8 +340,8 @@
             <th>From</th>
             <th>To</th>
             <th>Reason</th>
-            <th>Approved Status of Business_Manager</th>
-            <th>Approved Status of Reporting_Manager</th>
+            <th>Approved Status of Approval 1</th>
+            <th>Approved Status of Approval 2</th>
         </tr>
    </thead>
    <tbody>
@@ -351,8 +351,8 @@
             <td>{{col.Apply_From_Date | date : 'dd/MMM/yyyy'}}</td>
             <td>{{col.Apply_To_Date | date : 'dd/MMM/yyyy'}}</td>
             <td>{{col.Remarks ? col.Remarks : '-'}}</td>
-            <td>{{col.Approved_Status_Business_Manager}}</td>
             <td>{{col.Approved_Status_Reporting_Manager}}</td>
+            <td>{{col.Approved_Status_Business_Manager}}</td>
         </tr>
    </tbody>
  </table>
@@ -371,8 +371,8 @@
                 <th>From</th>
                 <th>To</th>
                 <th>Reason</th>
-                <th>Approved Status of Business_Manager</th>
-                <th>Approved Status of Reporting_Manager</th>
+                <th>Approved Status of Approval 1</th>
+                <th>Approved Status of Approval 2</th>
             </tr>
        </thead>
        <tbody>
@@ -383,8 +383,8 @@
                 <td>{{col.Apply_From_Date | date : 'dd/MMM/yyyy'}}</td>
                 <td>{{col.Apply_To_Date | date : 'dd/MMM/yyyy'}}</td>
                 <td>{{col.Remarks ? col.Remarks : '-'}}</td>
-                <td>{{col.Approved_Status_Business_Manager}}</td>
                 <td>{{col.Approved_Status_Reporting_Manager}}</td>
+                <td>{{col.Approved_Status_Business_Manager}}</td>
             </tr>
        </tbody>
      </table>
@@ -402,12 +402,12 @@
         <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Apply_To_Date'></ejs-datepicker>
     </div> 
     <div class="col-sm-4" *ngIf="Bussidisabled && !Reportdisabled">
-        <label class="control-label">Remarks of Business Manager  <sup class="text-danger">*</sup></label>
+        <label class="control-label">Remarks of Approval 2  <sup class="text-danger">*</sup></label>
         <input type="text" name="BMremarks" #BMremarks="ngModel"  [(ngModel)]='Approved_Note_Business_Manager' class="form-control" 
         [ngClass]="{'clearance': ApproveFormSubmit && BMremarks?.errors?.required}" required/>
     </div>
     <div class="col-sm-4" *ngIf="Reportdisabled && !Bussidisabled">
-        <label class="control-label">Remarks of Reporting Manager  <sup class="text-danger">*</sup></label>
+        <label class="control-label">Remarks of Approval 1  <sup class="text-danger">*</sup></label>
         <input type="text" name="RMremarks" #RMremarks="ngModel" [(ngModel)]='Approved_Note_Reporting_Manager' class="form-control" 
         [ngClass]="{'clearance': ApproveFormSubmit && RMremarks?.errors?.required}" required/>
     </div>

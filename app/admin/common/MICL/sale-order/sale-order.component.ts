@@ -124,6 +124,8 @@ export class SaleOrderComponent implements OnInit {
   subledgerid:any;
   Choose_Address:any;
   pindisabled:boolean = false;
+  Customer_PO_No:any;
+  Customer_PO_Date:Date;
 
   constructor(
     private Header: CompacctHeader,
@@ -175,6 +177,8 @@ export class SaleOrderComponent implements OnInit {
     this.clearData();
     this.Choose_Address = undefined;
     this.ObjSaleOrder.Vehicle_Type = "Regular";
+    this.Customer_PO_No = undefined;
+    this.Customer_PO_Date = new Date();
   }
   clearData() { 
     this.SaleOrderFormSubmitted = false;
@@ -751,6 +755,8 @@ export class SaleOrderComponent implements OnInit {
         User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
         Fin_Year_ID: this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
           
+        Customer_PO_No: this.Customer_PO_No,
+        Customer_PO_Date: this.DateService.dateConvert(new Date(this.Customer_PO_Date)),
         Mode_Of_Delivery: this.ObjSaleOrder.Mode_Of_Delivery,
         Vehicle_Type:this.ObjSaleOrder.Vehicle_Type,
         Transportation_Distance : this.ObjSaleOrder.Transportation_Distance,
@@ -790,6 +796,8 @@ export class SaleOrderComponent implements OnInit {
       this.ObjSaleOrder = new SaleOrder();
       this.DocDate = new Date();
       this.SupplierBillDate = new Date();
+      this.Customer_PO_No = undefined;
+      this.Customer_PO_Date = new Date();
       this.SaleOrderFormSubmitted = false
       // this.tabIndexToView = 0;
       this.items = ["BROWSE", "CREATE"];
@@ -839,9 +847,9 @@ export class SaleOrderComponent implements OnInit {
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
-            severity: terd === "Can not delete ! Bill Already generated" ? "error" :"success" ,
+            severity: terd === "Can not delete ! Chanllan Already generated" ? "error" :"success" ,
             summary: terd,
-            detail: terd === "Can not delete ! Bill Already generated" ? "" :  "Succesfully Delete",
+            detail: terd === "Can not delete ! Chanllan Already generated" ? "" :  "Succesfully Delete",
           });
           this.DocNo = undefined;
           this.GetSerarchBrowse(true);

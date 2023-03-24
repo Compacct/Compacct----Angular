@@ -123,6 +123,7 @@ export class OutwardChallanComponent implements OnInit {
   subledgerid:any;
   Choose_Address:any;
   pindisabled:boolean = false;
+  SalesOrderNoList:any = [];
   constructor(
     private Header: CompacctHeader,
     private router: Router,
@@ -175,6 +176,8 @@ export class OutwardChallanComponent implements OnInit {
     this.ObjPurChaseBill.Vehicle_Type = "Regular";
     this.ObjPurChaseBill.Transportation_Distance = undefined;
     this.Tax_Category = undefined;
+    this.ObjProductInfo.Sale_Order_No = undefined;
+    this.SalesOrderNoList = [];
   }
   clearData() { 
     this.PurchaseBillFormSubmitted = false;
@@ -278,6 +281,8 @@ export class OutwardChallanComponent implements OnInit {
   }
   VenderNameChange() {
     this.ObjPurChaseBill.Sub_Ledger_Billing_Name = '';
+    this.ObjProductInfo.Sale_Order_No = undefined;
+    this.SalesOrderNoList = [];
     this.SaveAddress = [];
     this.SaveAddress1 = [];
     if (this.ObjPurChaseBill.Sub_Ledger_ID) {
@@ -286,8 +291,10 @@ export class OutwardChallanComponent implements OnInit {
       this.ObjPurChaseBill.Sub_Ledger_Billing_Name = vendorObj.Sub_Ledger_Billing_Name;
       this.ObjPurChaseBill.Sub_Ledger_Name = vendorObj.label;
       this.GetChooseAddress();
+      this.GetSaleOrderNo();
     } else {
     this.ObjPurChaseBill.Sub_Ledger_Billing_Name = '';
+    this.ObjProductInfo.Sale_Order_No = undefined;
     }
   }
   GetChooseAddress() {
@@ -487,11 +494,50 @@ export class OutwardChallanComponent implements OnInit {
     }
     
   }
+  GetSaleOrderNo(){
+    this.SalesOrderNoList = [];
+    const Obj = {
+      Sub_Ledger_ID: this.ObjPurChaseBill.Sub_Ledger_ID,
+    }
+      const obj = {
+        "SP_String": "SP_MICL_Sale_Bill",
+        "Report_Name_String": "Get_Sale_Order_NOs",
+        "Json_Param_String": JSON.stringify([Obj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("SalesOrderNoList  ===", data);
+        if(data.length) {
+            data.forEach(element => {
+              element['label'] = element.Doc_No,
+              element['value'] = element.Doc_No
+            });
+            this.SalesOrderNoList = data;
+          } else {
+            this.SalesOrderNoList = [];
+    
+          }
+      })
+  }
   ProductDetal() {
     this.ProductDetalist = [];
     this.ObjProductInfo.Product_Specification = undefined;
     this.UomList = '';
     this.ObjProductInfo.Batch_Number = undefined
+    this.ObjProductInfo.Qty = undefined
+    if (this.ObjProductInfo.Sale_Order_No) {
+      const TempObj = {
+        Doc_No: this.ObjProductInfo.Sale_Order_No
+      }
+      const obj = {
+        "SP_String": "SP_MICL_Sale_Bill",
+        "Report_Name_String": "Get_Products_Against_Sale_Order",
+        "Json_Param_String": JSON.stringify([TempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("ProductDetalist  ===", data);
+        this.ProductDetalist = data;
+      })
+    }
     if (this.ObjProductInfo.Product_Type_ID && this.ObjProductInfo.Product_Sub_Type_ID) {
       const TempObj = {
         Product_Type_ID: this.ObjProductInfo.Product_Type_ID,
@@ -552,6 +598,7 @@ export class OutwardChallanComponent implements OnInit {
       const TempArry: any = this.ProductDetalist.filter((el: any) => Number(el.value) === Number(this.ObjProductInfo.Product_Specification))
       this.UomList = TempArry[0].UOM;
       this.Tax_Category = TempArry.length ? TempArry[0].Cat_ID : undefined;
+      this.ObjProductInfo.Qty = this.ObjProductInfo.Sale_Order_No ? TempArry.length ? TempArry[0].Qty : undefined : undefined;
     }
   }
   GetTaxAmt() {
@@ -607,16 +654,17 @@ export class OutwardChallanComponent implements OnInit {
       const ProductArry: any = this.ProductType.filter((el: any) => Number(el.Product_Type_ID) === Number(this.ObjProductInfo.Product_Type_ID));
       const ProductSubArry: any = this.ProductSub.filter((el: any) => Number(el.Product_Sub_Type_ID) === Number(this.ObjProductInfo.Product_Sub_Type_ID));
       const TemopArry = {
-        Cost_Cen_Name: CostMatch[0].Cost_Cen_Name,
-        godown_name: GdwonArry[0].godown_name,
+        Sale_Order_No: this.ObjProductInfo.Sale_Order_No,
+        Cost_Cen_Name: CostMatch.length ? CostMatch[0].Cost_Cen_Name : undefined,
+        godown_name: GdwonArry.length ? GdwonArry[0].godown_name : undefined,
         godown_id: this.ObjProductInfo.godown_id,
         Product_ID :this.ObjProductInfo.Product_Specification,
-        Product_Type: ProductArry[0].Product_Type,
-        HSN_No : ProductDArry[0].HSN_No,
-        Product_Sub_Type: ProductSubArry[0].Product_Sub_Type,
-        Product_Specification: ProductDArry[0].label,
+        Product_Type: ProductArry.length ? ProductArry[0].Product_Type : undefined,
+        HSN_No : ProductDArry.length ? ProductDArry[0].HSN_No : undefined,
+        Product_Sub_Type: ProductSubArry.length ? ProductSubArry[0].Product_Sub_Type : undefined,
+        Product_Specification: ProductDArry.length ? ProductDArry[0].label : undefined,
         Batch_No : this.ObjProductInfo.Batch_Number,
-        Batch_No_Show: LotNoArry[0].Batch_No_Show,
+        Batch_No_Show: LotNoArry.length ? LotNoArry[0].Batch_No_Show : undefined,
         Qty: this.ObjProductInfo.Qty,
         UOM: this.UomList,
         Rate: this.ObjProductInfo.Rate,
@@ -721,7 +769,8 @@ export class OutwardChallanComponent implements OnInit {
           IGST_Rate: element.IGST_Rate,
           IGST_Amount: element.IGST_Amt,
           Line_Total_Amount: element.Line_Total_Amount,
-          Cat_ID : element.Cat_ID
+          Cat_ID : element.Cat_ID,
+          Sale_Order_No : element.Sale_Order_No
         })
       });
       const T_Elemnts = {
@@ -818,6 +867,8 @@ export class OutwardChallanComponent implements OnInit {
       this.ObjPurChaseBill.Transportation_Distance = undefined;
       this.Tax_Category = undefined;
       this.GetCosCenAddress();
+      this.ObjProductInfo.Sale_Order_No = undefined;
+      this.SalesOrderNoList = [];
      }
     }); 
      
@@ -997,4 +1048,5 @@ class ProductInfo {
   CGST_Input_Ledger_ID: number;
   SGST_Input_Ledger_Id: number;
   IGST_Input_Ledger_ID: number;
+  Sale_Order_No:any;
 }
