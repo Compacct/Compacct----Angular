@@ -347,6 +347,7 @@ import { StockInterchangeComponent } from './common/MICL/RawMaterial/stock-inter
 import { SaleOrderComponent } from './common/MICL/sale-order/sale-order.component';
 import { QcApprovalComponent } from './common/MICL/qc-approval/qc-approval.component';
 import { PatientCreateBrunchComponent } from './common/PatientManagement/patient-create-brunch/patient-create-brunch.component';
+import { HrLoanApprovalComponent } from './common/MICL/hr-loan-approval/hr-loan-approval.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2630,7 +2631,14 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
     data: {
     title: 'Patient Create Branch'
     }
-},
+  },
+  {
+    path: 'HR_Loan_Approval',
+    component: HrLoanApprovalComponent,
+    data: {
+    title: 'Loan Approval'
+    }
+  },
 
     /*{
 
