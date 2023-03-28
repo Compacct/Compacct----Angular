@@ -17,36 +17,36 @@ import * as XLSX from 'xlsx';
 })
 export class NonSaleableClosingStockComponent implements OnInit {
   Remarks:any;
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
   buttonname = "Save"
   ObjNsOTclosingStock : NsOTclosingStock = new NsOTclosingStock ();
-  BrandList = [];
-  CostCenter = [];
+  BrandList:any = [];
+  CostCenter:any = [];
   costcentdisableflag = false;
-  GodownId = [];
+  GodownId:any = [];
   godowndisableflag = false;
-  productlist = [];
+  productlist:any = [];
   flag = false;
   BillDate : Date;
   dateList: any;
   NsOTclosingstockFormSubmitted = false;
   ObjBrowse : Browse  = new Browse();
-  Searchedlist = [];
+  Searchedlist:any = [];
   nsSearchFormSubmitted = false;
   checkSave = false;
   BrandDisable = false;
   Doc_No = undefined;
-  ViewList = [];
+  ViewList:any = [];
   ViewPoppup = false;
   Doc_date = undefined;
   Cost_Cent_ID = undefined;
   Godown_ID = undefined;
   BrandId = undefined;
   remarks = undefined;
-  editList = [];
+  editList:any = [];
   del_doc_no: any;
   minDate:Date;
   maxDate:Date;
@@ -356,7 +356,7 @@ const obj = {
                Product_Description : element.Product_Description,
                UOM : element.UOM,
                Batch_No : element.Batch_No,
-               batch_Qty : element.batch_Qty,
+               Batch_Qty : element.batch_Qty ?  element.batch_Qty : element.Batch_Qty,
                Closing_Qty : element.Closing_Qty,
                Varience_Qty : element.Varience_Qty,
                Remarks : element.Remarks

@@ -525,7 +525,7 @@
                                     <i class="glyphicon glyphicon-user">
                                 </i> &nbsp;<strong>Managers</strong></h5>
                                 <div class="col-sm-6">
-                                    <label class="control-label">Reporting Managers</label>
+                                    <label class="control-label">Approval 1</label>
                                     <div class="pull-right" *ngIf="!userdisabled">
                                         <span (click)="RefreshReporting()" class="btn-vk  createPatient" style="cursor: pointer;"><i class="fa fa-refresh"></i> Refresh</span>
                                     </div>
@@ -540,7 +540,7 @@
                                     <div class="pull-right" *ngIf="!userdisabled">
                                         <span (click)="RefreshReporting()" class="btn-vk  createPatient" style="cursor: pointer;"><i class="fa fa-refresh"></i> Refresh</span>
                                     </div>
-                                    <label class="control-label">Business Managers</label>
+                                    <label class="control-label">Approval 2</label>
                                     <select class="form-control" name="Business" #Business="ngModel" [(ngModel)]="objemployee.Business_Manager" [disabled]="userdisabled">
                                         <option  [ngValue]="undefined">Select</option>
                                     <option  *ngFor="let option of ReportingList" value="{{option.Emp_ID}}">

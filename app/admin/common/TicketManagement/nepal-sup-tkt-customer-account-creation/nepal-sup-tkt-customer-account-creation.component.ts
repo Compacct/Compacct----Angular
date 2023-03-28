@@ -46,6 +46,11 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
   updateModal:boolean = false
   SearchedBrowselistHeader:any = []
   view:boolean = false
+  SubDeptID:any= undefined
+  objupdate:update = new update()
+  UpdateSpinner:boolean = false
+  UpdatecusacccreationFormsSubmitted:boolean = false
+  TicketStatus:string = ""
   @ViewChild("crcDoc", { static: false }) crcDoc!: FileUpload;
   @ViewChild("pvrcDoc", { static: false }) pvrcDoc!: FileUpload;
   @ViewChild("cwDoc", { static: false }) cwDoc!: FileUpload;
@@ -62,6 +67,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
 
   ngOnInit() {
     this.items = ["BROWSE", "CREATE"];
+    this.SubDeptID = this.$CompacctAPI.CompacctCookies.Sub_Dept_ID
     this.Header.pushHeader({
       Header: " Customer Account Creation",
       Link: " Ticket Management -> Customer Account Creation"
@@ -113,13 +119,20 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
   this.imageCitizenshipOwner = undefined
   this.imageCompRegistration = undefined
   this.imagePANVATRegistration = undefined
-    if(!this.imageCompRegistration){
+  this.updateModal = false
+  this.SupportTicketNo = undefined
+  this.objupdate = new update()
+  this.TicketStatus = ""
+  this.UpdateSpinner = false
+  this.UpdatecusacccreationFormsSubmitted = false
+  this.view = false
+    if(!this.imageCompRegistration || this.crcDoc){
       this.crcDoc.clear();
     }
-    if(!this.imagePANVATRegistration){
+    if(!this.imagePANVATRegistration || this.pvrcDoc){
       this.pvrcDoc.clear();
     }
-    if(!this.imageCitizenshipOwner){
+    if(!this.imageCitizenshipOwner || this.cwDoc){
       this.cwDoc.clear();
     }
    
@@ -268,10 +281,16 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
    if(col.Support_Ticket_No){
     this.clearData()
     this.SupportTicketNo = col.Support_Ticket_No
-    this.items = ["BROWSE", "UPDATE"];
+    
     this.buttonname = "Update";
     this.tabIndexToView = 1
     this.view = perpo =='view'? true : false
+    if(perpo =='view'){
+      this.items = ["BROWSE", "VIEW"];
+    }
+    else{
+      this.items = ["BROWSE", "UPDATE"];
+    }
     this.getEditData(col.Support_Ticket_No)
    }
   }
@@ -284,6 +303,9 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       this.DocDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(data[0].Trn_Date),
       this.objcusacccre = data[0]
+      this.objupdate = data[0]
+      this.TicketStatus = data[0].Ticket_Status
+      console.log(this.objupdate)
       this.imageCitizenshipOwner = data[0].URL_Citizenship_Owner
       this.imageCompRegistration = data[0].URL_Comp_Registration
       this.imagePANVATRegistration = data[0].URL_PAN_VAT_Registration
@@ -311,8 +333,47 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
     this.SupportTicketNo = undefined
     if(col.Support_Ticket_No){
       this.updateModal = true
+      this.SupportTicketNo = col.Support_Ticket_No
+      this.objupdate = new update()
+      this.TicketStatus = ""
+      this.UpdateSpinner = false
+      this.UpdatecusacccreationFormsSubmitted = false
       console.log(" update col",col)
     }
+  }
+  Updatecusacccre(valid:any){
+    this.UpdatecusacccreationFormsSubmitted = true
+   if(valid){
+    this.UpdateSpinner = true
+      this.objupdate.Support_Ticket_No = this.SupportTicketNo
+      this.objupdate.User_ID_Update = this.$CompacctAPI.CompacctCookies.User_ID
+      const obj = {
+        "SP_String": "SP_Np_Sup_Tkt_Customer_Creation",
+        "Report_Name_String": "Update_Internal_Purpose",
+        "Json_Param_String": JSON.stringify([this.objupdate])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("data",data)
+        if(data[0].Column1 == 'Done'){
+          this.getbrowseData(true)
+          this.updateModal = false
+          this.SupportTicketNo = undefined
+          this.objupdate = new update()
+          this.TicketStatus = ""
+          this.UpdateSpinner = false
+          this.UpdatecusacccreationFormsSubmitted = false
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "INTERNAL PURPOSE",
+            detail: "Succesfully Update",
+          });
+          
+        }
+      })
+
+   }
   }
 }
 
@@ -362,4 +423,19 @@ class cusacccre{
   URL_PAN_VAT_Registration:any
   URL_Citizenship_Owner:any	
   User_ID_Create:any		
+}
+class update {
+  Support_Ticket_No:any					
+  Internal_P_VAT:any
+  Internal_P_Bank:any	
+  Internal_P_Income_Tax:any	
+  Internal_P_Property:any
+  Internal_P_Agreement_Contract:any
+  Internal_P_House_Owners_Name:any
+  Internal_P_House_Owners_Contact_No:any
+  Internal_P_Citizenship_No:any
+  Internal_P_Credit_Period:any
+  Internal_P_Credit_Limit:any
+  Internal_P_Area:any
+  User_ID_Update:any
 }

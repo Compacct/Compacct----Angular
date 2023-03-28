@@ -18,6 +18,24 @@
         </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" key="cancel" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirmcancel()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 
 <div class="row">
     <div class="col-xs-12">
@@ -384,13 +402,13 @@
                                             <th>Doc No</th>
                                             <th>Date</th>
                                             <th>Reverse Charge</th>
-                                            <th>Cr Note Type</th>
+                                            <th>Invoice Type</th>
                                             <th>ECOMM GSTN</th>
                                             <th>Taxable Amount</th>
                                             <th>CGST Amount</th>
                                             <th>SGST Amount</th>
                                             <th>IGST Amount</th>
-                                            <th>Cr Note Value</th>
+                                            <th>Invoice Value</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col let-i = "rowIndex">
@@ -407,9 +425,24 @@
                                                                 <i class="fa fa-fw fa-print" aria-hidden="true"></i> Print Bill
                                                             </a>
                                                         </li>
-                                                         <li > <!-- *ngIf="col.E_Invoice_PDF_Link" -->
+                                                        <li >
+                                                            <a (click)="PrintChallan(col.Challan_No)">
+                                                                <i class="fa fa-fw fa-print" aria-hidden="true"></i> Print Challan
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.E_Invoice_Ewb_PDF_Link"> <!-- *ngIf="col.E_Invoice_Ewb_PDF_Link" -->
+                                                            <a (click)="DownloadEINV(col.E_Invoice_Ewb_PDF_Link)">
+                                                                <i class="fa fa-fw fa-download"></i> Download E Way Bill
+                                                            </a>
+                                                        </li>
+                                                         <li *ngIf="col.E_Invoice_PDF_Link"> <!-- *ngIf="col.E_Invoice_PDF_Link" -->
                                                             <a (click)="DownloadEINV(col.E_Invoice_PDF_Link)">
                                                                 <i class="fa fa-fw fa-download"></i> Download E-INV
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="Cancel(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-times"></i> Cancel
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -446,9 +479,143 @@
 
 
                         </p-tabPanel>
+                        <!-- CANCEL INV -->
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="fa fa-ban">
+                            <form name="CancelInvoiceForm" #CancelInvoiceForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+
+                                        <app-compacct-daterangepicker (DaterangeObj)="CancelgetDateRange($event)"  required>
+                                        </app-compacct-daterangepicker>
+
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary pull-right1" data-toggle="modal" (click)="GetCancelInvoicelist()" id="load" [disabled]="cancelinvoiceSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="cancelinvoiceSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!cancelinvoiceSpinner"
+                                        class="glyphicon glyphicon-search"
+                                      ></span
+                                      >&nbsp;Search
+                                    </button>
+                                    </div>
+                                    <div class="col-sm-3" *ngIf="CancelInvoicelist.length">
+                                        <button class="btn btn-success pull-right1" data-toggle="modal" (click)="exportoexcel(CancelInvoicelist,'Success_Invoice')" id="load" [disabled]="exportSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="exportSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!exportSpinner"
+                                        class="glyphicon glyphicon-download"
+                                      ></span
+                                      >&nbsp;Export to Excel
+                                    </button>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h5><strong></strong></h5>
+                                </div>
+                            </div>
+                            <div class="table-responsive table-id">
+                                <p-table [value]="CancelInvoicelist" #dt2 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" 
+                                [globalFilterFields]='["Sub_Ledger_GST","Billing_Name","STATE","POS","Doc_No","Doc_Date","Reverse_Charge","Invoice_Type","ECOMM_GSTN","Taxable_Amount","CGST_Amount","SGST_Amount","IGST_Amount","Invoice_Value"]'>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <!-- <th>Confirmation for E-INV</th> -->
+                                            <!-- <th>Action</th> -->
+                                            <!-- <th>Sl No</th> -->
+                                            <th>Sub Ledger GST</th>
+                                            <th>Billing Name</th>
+                                            <th>STATE</th>
+                                            <th>POS</th>
+                                            <th>Doc No</th>
+                                            <th>Date</th>
+                                            <th>Reverse Charge</th>
+                                            <th>Invoice Type</th>
+                                            <th>ECOMM GSTN</th>
+                                            <th>Taxable Amount</th>
+                                            <th>CGST Amount</th>
+                                            <th>SGST Amount</th>
+                                            <th>IGST Amount</th>
+                                            <th>Invoice Value</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col let-i = "rowIndex">
+                                        <tr>
+                                            <!-- <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="ViewInvoice(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-print" aria-hidden="true"></i> Print Bill
+                                                            </a>
+                                                        </li>
+                                                            <a (click)="DownloadEINV(col.E_Invoice_PDF_Link)">
+                                                                <i class="fa fa-fw fa-download"></i> Download E-INV
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td> -->
+                                            <!-- <td align="center">{{ i + 1 }}</td> -->
+                                            <!-- <td style="text-align:center">
+                                                <button class="btn btn-primary custombtn" (click)='ViewInvoice(col.Doc_No)' type="button" [id]="col.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                                    View
+                                                </button>
+                                            </td> -->
+                                            <td>{{col.Sub_Ledger_GST}}</td>
+                                            <td>{{col.Billing_Name}}</td>
+                                            <td>{{col.STATE}}</td>
+                                            <td>{{col.POS}}</td>
+                                            <td>{{col.Doc_No}}</td>
+                                            <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{col.Reverse_Charge}}</td>
+                                            <td>{{col.Invoice_Type}}</td>
+                                            <td>{{col.ECOMM_GSTN ? col.ECOMM_GSTN : '-'}}</td>
+                                            <td>{{col.Taxable_Amount}}</td>
+                                            <td>{{col.CGST_Amount}}</td>
+                                            <td>{{col.SGST_Amount}}</td>
+                                            <td>{{col.IGST_Amount}}</td>
+                                            <td>{{col.Invoice_Value}}</td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+
+                            </div>
+
+
+                        </p-tabPanel>
 
                         <!-- PENDING Cr NOTE -->
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="fa fa-pause">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[4]" leftIcon="fa fa-pause">
                             <form name="PenCreditNoteForm" #PenCreditNoteForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-3">
@@ -582,7 +749,7 @@
                             </div>
                         </p-tabPanel>
                         <!-- FAILED Cr NOTE -->
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[4]" leftIcon="fa fa-exclamation-triangle">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[5]" leftIcon="fa fa-exclamation-triangle">
                             <form name="FailedCreditNoteForm" #FailedCreditNoteForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-3">
@@ -719,7 +886,7 @@
                             </div>
                         </p-tabPanel>
                         <!-- SUCCESS Cr NOTE -->
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[5]" leftIcon="fa fa-check-square-o">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[6]" leftIcon="fa fa-check-square-o">
                             <form name="SuccessCreditNoteForm" #SuccessCreditNoteForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-3">

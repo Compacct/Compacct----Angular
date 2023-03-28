@@ -1,4 +1,4 @@
-<!-- <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
 <p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
@@ -100,8 +100,8 @@
                                 <select class="form-control"
                                         name="Bill" >
                                         <option  [ngValue]="undefined">Select</option>
-                                        <option  [ngValue]="Client">Client</option>
-                                        <option  [ngValue]="Consultant">Consultant</option>
+                                        <option  [ngValue]="'Client'">Client</option>
+                                        <option  [ngValue]="'Consultant'">Consultant</option>
                                  </select>
                               </div>
                             </div>
@@ -119,4 +119,4 @@
             </div>
         </div>
     </div>
-</div> -->
+</div>

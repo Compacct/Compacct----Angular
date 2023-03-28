@@ -114,6 +114,14 @@ export class MiclRequisitionComponent implements OnInit {
   DistStockPoint:any =[];
   SelectedDistStockPoint:any = [];
 
+  ParamDetalisPopup = false;
+  ParameterList:any = [];
+  paramlist:any = [];
+  addparamlist:any = [];
+  paramarr:any = [];
+  objPoText:any = {}
+  potextFormSubmit:boolean = false
+
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -208,7 +216,115 @@ export class MiclRequisitionComponent implements OnInit {
       this.Material_Type_ID = undefined;
       this.mrodisabled = false;
      }
+  }
+   // PARAMETER DETAILS
+  GetParamDetailsforProduct(){
+    this.ParameterList = [];
+    if (this.objmaterial.Product_ID) {
+    const obj = {
+      "SP_String": "Sp_BL_Txn_Purchase_Order_Raw_Material",
+      "Report_Name_String": "Get_Parameters",
+      "Json_Param_String": JSON.stringify([{Product_ID : this.objmaterial.Product_ID}])
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.ParameterList = [...data];
+     console.log("ParameterList",this.ParameterList);
+     this.ParamDetalisPopup = this.ParameterList.length ? true : false;
+     this.ParameterList.forEach((xy:any) => {
+      xy['Max_Tolerance_Level'] = xy.Tolerance_Level
+      xy['Min_Tolerance_Level'] = xy.Tolerance_Level 
+     });
+     this.genPoText()
+      })
+    }
+  
+  }
+  genPoText(ParameterID?:any){
+    const RequiredValue = (op:any)=>{
+      if((op.Min_Value && op.Max_Value && op.Min_Value != "0" && op.Max_Value != "0")){
+        if(Number(op.Min_Value) == Number(op.Max_Value)){
+          return `${op.Min_Value?op.Min_Value:""} ${op.UOM}`
+        }
+        else {
+          return `${op.Min_Value?op.Min_Value:''} to ${op.Max_Value?op.Max_Value:''} ${op.UOM}`
+        }
+       
+      }
+      if(op.Min_Value && op.Min_Value != "0"){
+        return `${op.Min_Value} ${op.UOM}`
+      }
+      if(op.Max_Value && op.Max_Value != "0"){
+        return `${op.Max_Value} ${op.UOM}`
+      }
+      return ''
+    }
+    const ToleranceLevel = (op:any)=>{
+      if(op.Max_Tolerance_Level || op.Min_Tolerance_Level){
+        if(op.Max_Tolerance_Level == op.Min_Tolerance_Level){
+          return ` ${op.Max_Tolerance_Level && op.Max_Tolerance_Level != '0'? '(+/-'+op.Max_Tolerance_Level+')' : ""} `
+         }
+         else {
+           return `(${op.Min_Tolerance_Level && op.Min_Tolerance_Level != '0'? '+'+op.Min_Tolerance_Level+'% ' : ''} ${op.Max_Tolerance_Level && op.Max_Tolerance_Level != '0' ? '-'+op.Max_Tolerance_Level+'% ': ''})`
+         }
+        
+      }
+      else {
+          return ""
+      }
+       
+      }
+      if(ParameterID){
+        this.ParameterList.forEach((xy:any) => {
+          if(ParameterID == xy.Parameter_ID){
+            xy['PO_Text'] = `${xy.Parameter_Name} - ${RequiredValue(xy)} ${ToleranceLevel(xy)}`
+          }
+         });
+      }
+      else{
+        this.ParameterList.forEach((xy:any) => {
+         xy['PO_Text'] = `${xy.Parameter_Name} - ${RequiredValue(xy)} ${ToleranceLevel(xy)}`
+        });
+      }
+    
+  }
+  editpotext(obj:any){
+   if(Object.keys(obj).length != 0){
+    this.objPoText = {...obj}
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "potext",
+      sticky: true,
+      severity: "info",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+    });
    }
+  }
+  cancelpopUp(){
+   this.ParamDetalisPopup = false
+   this.compacctToast.clear("potext");
+  }
+  potextEdit(valid:any){
+    this.potextFormSubmit = true
+    if(valid){
+      this.ParameterList.forEach((yx:any) => {
+        if(Number(yx.Parameter_ID) == Number(this.objPoText.Parameter_ID)){
+          yx['PO_Text'] = this.objPoText.PO_Text
+        }
+     });
+     this.potextFormSubmit = false
+     this.compacctToast.clear("potext");
+    }
+  
+  }
+  SaveParamDetalis(){
+    if(this.ParameterList.length){
+      this.paramlist = []
+      this.paramlist = this.ParameterList;
+      
+    }
+    this.ParamDetalisPopup = false;
+  }
   addMaterials(valid){
   //console.log("valid",valid);
   this.requisitionmaterialFormSubmit = true;
@@ -226,6 +342,25 @@ export class MiclRequisitionComponent implements OnInit {
     const productFilter:any = this.productListview.filter((el:any)=>Number(el.Product_ID) === Number(this.objmaterial.Product_ID));
     const productTypeFilter:any = this.productTypeList.filter((el:any)=> Number(el.Product_Type_ID) === Number(this.objmaterial.Product_Type_ID));
      //console.log("productFilter",productFilter);
+     this.paramarr = [];
+     this.paramlist.forEach(element => {
+      if((element.Min_Value || element.Min_Value > 0) && (element.Max_Value || element.Max_Value > 0)) {
+      const obj = {
+        Line_No : this.AddMaterialsList.length + 1,
+        Product_ID : Number(this.objmaterial.Product_ID),
+        Parameter_ID : element.Parameter_ID,
+        Parameter_Name : element.Parameter_Name,
+        UOM : element.UOM,
+        Max_Value : element.Max_Value,
+        Min_Value : element.Min_Value,
+        Tolerance_Level : element.Tolerance_Level,
+        Max_Tolerance_Level : element.Max_Tolerance_Level,
+        Min_Tolerance_Level : element.Min_Tolerance_Level,
+        PO_Text: element.PO_Text
+      }
+      this.paramarr.push(obj)
+      }
+     });
     if(productFilter.length){
       this.AddMaterialsList.push({
         Product_ID: this.objmaterial.Product_ID,
@@ -238,7 +373,8 @@ export class MiclRequisitionComponent implements OnInit {
         Product_Type_ID : this.objmaterial.Product_Type_ID,
         Product_Type : productTypeFilter[0].Product_Type,
         Product_Category : this.objmaterial.Product_Category,
-        Challan_No : null
+        Challan_No : null,
+        Parameter_Details: this.ParameterList.length ? this.paramarr : null
       })
       this.requisitionmaterialFormSubmit = false;
       this.objmaterial = new material();
@@ -266,7 +402,7 @@ export class MiclRequisitionComponent implements OnInit {
     } else {
       return true;
     }
-    }
+  }
   SaveRequi(valid){ 
    //console.log("valid",valid);
    this.reqiFormSubmitted = true;
@@ -366,6 +502,8 @@ export class MiclRequisitionComponent implements OnInit {
     //   }
      }
      else{
+      this.Spinner = false;
+      this.ngxService.stop();
       this.compacctToast.add({
         key: "compacct-toast",
         severity: "error",
@@ -377,6 +515,7 @@ export class MiclRequisitionComponent implements OnInit {
   }
   onConfirmSave(){
       let saveData:any = [];
+      let paramlist:any = [];
       // let mgs = "";
       // if(this.ReqNo){
  
@@ -404,15 +543,23 @@ export class MiclRequisitionComponent implements OnInit {
          Remarks : this.objreqi.Remarks,
          Requisiton_Type : this.Requisition_ID,
          Material_Type : this.Material_Type_ID,
-         Challan_No : el.Challan_No
+         Challan_No : el.Challan_No,
+         Parameter_Details : el.Parameter_Details
         }
         saveData.push(save)
         })
+        // this.AddMaterialsList.forEach((el:any)=>{
+        //   let paramdetails = {
+        //    Parameter_Details : el.Parameter_Details
+        //   }
+        //   paramlist.push(paramdetails.Parameter_Details)
+        //   })
         //console.log("Save Data",saveData);
         const obj = {
          "SP_String": "SP_Txn_Requisition",
          "Report_Name_String": "Create_Requisition",
-         "Json_Param_String": JSON.stringify(saveData)
+         "Json_Param_String": JSON.stringify(saveData),
+        //  "Json_1_String": JSON.stringify(paramlist)
    
        }
        this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
@@ -730,6 +877,7 @@ export class MiclRequisitionComponent implements OnInit {
       this.productFilterObj = ProductFilter[0];
        this.objmaterial.UOM = ProductFilter[0].UOM
        this.GetCurrentStock();
+       this.GetParamDetailsforProduct();
     }
     else {
       this.productFilterObj = {}
@@ -982,8 +1130,8 @@ export class MiclRequisitionComponent implements OnInit {
       "Report_Name_String": "Get_Requistion_Details_For_Edit",
       "Json_Param_String": JSON.stringify([{Req_No : Dno}])
    }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      // let data = JSON.parse(res[0].Column1)
+    this.GlobalAPI.getData(obj).subscribe((res:any)=>{
+      let data = JSON.parse(res[0].Column1)
       //console.log("Edit data",data);
       this.requi_Date = new Date(data[0].Req_Date);
       this.objreqi = data[0];
@@ -1013,7 +1161,8 @@ export class MiclRequisitionComponent implements OnInit {
            Req_Qty : Number(element.Req_Qty),
            UOM :  element.UOM,
            Purpose : element.Purpose,
-           Challan_No : element.Challan_No
+           Challan_No : element.Challan_No,
+           Parameter_Details : element.Parameter_Details
          };
           this.AddMaterialsList.push(productObj);
         });

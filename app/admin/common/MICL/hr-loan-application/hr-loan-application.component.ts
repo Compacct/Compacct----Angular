@@ -73,6 +73,8 @@ export class HrLoanApplicationComponent implements OnInit {
   DistEmpName:any = [];
   SelectedDistEmpName:any = [];
   SearchFields:any = [];
+  ViewPoppup:boolean = false;
+  ApplicantList:any=[];
 
   constructor(
     private http: HttpClient,
@@ -97,6 +99,8 @@ export class HrLoanApplicationComponent implements OnInit {
       Link: " HR -> Transaction -> Loan Application"
     })
   // this.minDateTo_Time = this.From_Time
+    this.Application_Date = new Date();
+    this.ObjHrLoanAppl.Application_Date = new Date();
     this.FromDatevalue = new Date(this.currentdate);
     this.ToDatevalue = new Date();
     this.employeeData();
@@ -111,6 +115,8 @@ export class HrLoanApplicationComponent implements OnInit {
     this.buttonname = "Apply For Loan";
     this.clearData();
     this.Editdisable = false;
+    this.Application_Date = new Date();
+    this.ObjHrLoanAppl.Application_Date = new Date();
     // this.hrYearList();
   }
   clearData(){
@@ -230,6 +236,7 @@ export class HrLoanApplicationComponent implements OnInit {
             this.LoanApplFormSubmitted = false;
             this.ObjHrLoanAppl =new HrLoanAppl();
             this.Application_Date = new Date();
+            this.ObjHrLoanAppl.Application_Date = new Date();
             this.EMI_Start_From_Date_Month = undefined;
             this.EMI_Start_Date = undefined;
             }
@@ -276,7 +283,8 @@ export class HrLoanApplicationComponent implements OnInit {
      const tempobj = {
        From_Date : From_date,
        To_Date : To_date,
-       Emp_ID : this.ObjBrowse.Emp_ID ? this.ObjBrowse.Emp_ID : 0
+       Emp_ID : this.ObjBrowse.Emp_ID ? this.ObjBrowse.Emp_ID : 0,
+       User_ID : this.$CompacctAPI.CompacctCookies.User_ID
        }
   if(valid){
   const obj = {
@@ -293,6 +301,21 @@ export class HrLoanApplicationComponent implements OnInit {
     console.log("Browse data==",this.AllData);
     }); 
   }
+  }
+  ViewDetails(loanid){
+    if(loanid){
+      const obj = {
+        "SP_String":"SP_HR_Txn_Loan",
+        "Report_Name_String":"EMI_Paid_Details",
+        "Json_Param_String": JSON.stringify([{Loan_ID:loanid}])
+      }
+       this.GlobalAPI.getData(obj)
+       .subscribe((data:any)=>{
+        this.ApplicantList = data;
+        // console.log("Browse data==",this.AllData);
+        }); 
+        this.ViewPoppup = true;
+      }
   }
 
 }
