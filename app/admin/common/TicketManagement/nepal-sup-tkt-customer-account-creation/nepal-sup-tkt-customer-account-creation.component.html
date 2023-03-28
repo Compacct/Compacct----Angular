@@ -143,14 +143,22 @@
                                 <div class="form-group">
                                     <div class="col-sm-6" >
                                         <label class="control-label">Executive Name<sup class="text-danger">*</sup></label>
-                                        <input class="form-control"
-                                        name="Executive_Name"
-                                        #Executive_Name="ngModel"
-                                        [(ngModel)]="objcusacccre.Executive_Name"
-                                        placeholder="Executive Name"
-                                        [ngClass]="{'clearance': cusacccreationFormsSubmitted && Executive_Name.errors?.required}"
-                                        required
-                                        [disabled]="view" >
+                                        <p-dropdown [options]="ExecutiveList" 
+                                                    [showClear]="true" 
+                                                    name="Executive_Name" 
+                                                    #Executive_Name="ngModel"
+                                                    [(ngModel)]="objcusacccre.Sales_Man_ID" 
+                                                    [emptyFilterMessage]="' No Executive Name Found'" 
+                                                    [filter]="true"
+                                                    filterBy="label,value.name" 
+                                                    [resetFilterOnHide]="true" 
+                                                    [placeholder]="'Select Executive Name'" 
+                                                    [virtualScroll]="true"
+                                                    itemSize="30" 
+                                                    [ngClass]="{'clearance': cusacccreationFormsSubmitted && Executive_Name.errors?.required}"
+                                                     required
+                                                     [disabled]="view" >
+                                                    </p-dropdown>
                                     </div>
                                     <div class="col-sm-6" >
                                         <label class="control-label">Date<sup class="text-danger">*</sup></label>
@@ -173,7 +181,7 @@
                                             Company information:-
                                         </p>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <label class="control-label">Registered Company Name<sup class="text-danger">*</sup></label>
                                         <input class="form-control"
                                         name="Registered_Company_Name"
@@ -184,7 +192,7 @@
                                         required
                                         [disabled]="view">
                                     </div>
-                                    <div class="col-sm-4" >
+                                    <div class="col-sm-3" >
                                         <label class="control-label">Type of company<sup class="text-danger">*</sup></label>
                                         <select
                                           class="form-control"
@@ -199,7 +207,7 @@
                                           <option *ngFor="let option of companyTypeList" [ngValue]='option'>{{option}}</option>
                                          </select>
                                     </div>
-                                    <div class="col-sm-4" >
+                                    <div class="col-sm-3" >
                                         <label class="control-label">Nature of Company<sup class="text-danger">*</sup></label>
                                         <select
                                           class="form-control"
@@ -213,6 +221,13 @@
                                           <option [ngValue]="undefined">Select</option>
                                           <option *ngFor="let option of companyNatureList" [ngValue]='option.Sub_Ledger_Cat_Name' >{{option.Sub_Ledger_Cat_Name}}</option>
                                          </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Alias Name<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="Alias" #Alias="ngModel"
+                                            [(ngModel)]="objcusacccre.Alias_Name" placeholder="Alias Name"
+                                            [ngClass]="{'clearance': cusacccreationFormsSubmitted && Alias.errors?.required}" required
+                                            [disabled]="view">
                                     </div>
                                  </div>
                                  <div class="form-group">
