@@ -50,7 +50,8 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
   objupdate:update = new update()
   UpdateSpinner:boolean = false
   UpdatecusacccreationFormsSubmitted:boolean = false
-  TicketStatus:string = ""
+  TicketStatus: string = ""
+  ExecutiveList: any = [];
   @ViewChild("crcDoc", { static: false }) crcDoc!: FileUpload;
   @ViewChild("pvrcDoc", { static: false }) pvrcDoc!: FileUpload;
   @ViewChild("cwDoc", { static: false }) cwDoc!: FileUpload;
@@ -77,10 +78,23 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
     this.BrowseEndDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
     this.companyTypeList = ['Proprietorship','Partnership','PVT. LTD.','LTD.','Others']
     this.GetcompanyNature()
+    this.getExecutive();
   }
   onReject() {
     this.compacctToast.clear("c");
     this.ngxService.stop();
+  }
+   getExecutive(){
+     this.$http.get("/BL_CRM_Master_SalesTeam/Get_Sales_Man_for_napal").subscribe((data: any) => {
+       if (data.length) {
+        data.forEach((xy: any) => {
+          xy['label'] = xy.Member_Name
+          xy['value'] = xy.Member_ID
+        });
+        this.ExecutiveList = data
+        //console.log("VendorList==",this.ExecutiveList)
+      }
+     });
   }
   onConfirm(){
    if(this.SupportTicketNo){
@@ -152,10 +166,12 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
    this.cusacccreationFormsSubmitted =true
    
    if(valid){
-    this.Spinner = true
+     this.Spinner = true
+     const FillterData = this.ExecutiveList.filter((el:any)=> Number(el.Member_ID) === Number(this.objcusacccre.Sales_Man_ID))
       this.objcusacccre.Trn_Date = this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.DocDate))
       this.objcusacccre.Support_Ticket_No = this.SupportTicketNo ? this.SupportTicketNo : 'A'
-      this.objcusacccre.User_ID_Create = this.$CompacctAPI.CompacctCookies.User_ID
+      this.objcusacccre.User_ID_Create = this.$CompacctAPI.CompacctCookies.User_ID,
+      this.objcusacccre.Executive_Name = FillterData[0].Member_Name
       if (this.Productcrc['size']) {
         var res:any = await this.upload(this.Productcrc);
          const data = JSON.parse(res)
@@ -380,7 +396,9 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
 class cusacccre{
   Support_Ticket_No:any
   Executive_Name:any		
-  Trn_Date:any	 
+  Trn_Date: any	
+  Alias_Name: any;
+  Sales_Man_ID: any;
   Registered_Company_Name:any	    	
   Type_of_company:any	 	
   Nature_of_Company	:any
