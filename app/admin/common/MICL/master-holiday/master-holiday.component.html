@@ -29,8 +29,9 @@
                             <form name="BrowseForm" #BrowseForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-4">
-                                        <label class="control-label">Holiday List</label>
-                                        <select class="form-control" name="HR_Year" #HR_Year="ngModel" [(ngModel)]="objBrowse.HR_Year_ID">
+                                        <label class="control-label">Holiday List<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="HRYear" #HRYear="ngModel" [(ngModel)]="objBrowse.HR_Year_ID"
+                                        [ngClass]="{'clearance ': BrowseFormSubmitted && HRYear.errors?.required}" required>
                                     <option  [ngValue]="undefined">Select</option>
                                 <option  *ngFor="let option of HrYearList" value="{{option.HR_Year_ID}}">
                                   {{option.HR_Year_Name}}
@@ -38,7 +39,7 @@
                                </select>
                                     </div>
                                     <div class="col-sm-4">
-                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetBrowseList()" id="load2" [disabled]="seachSpinner">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetBrowseList(BrowseForm.form.valid)" id="load2" [disabled]="seachSpinner">
                                         <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                         <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                             </button>
@@ -126,12 +127,15 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Location<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Location" #Location="ngModel" [(ngModel)]="objHoliday.Location_ID" [ngClass]="{'clearance ': HolidayFormSubmitted && Location.errors?.required}" required>
+                                        <!-- <select class="form-control" name="Location" #Location="ngModel" [(ngModel)]="objHoliday.Location_ID" [ngClass]="{'clearance ': HolidayFormSubmitted && Location.errors?.required}" required>
                                         <option  [ngValue]="undefined">Select</option>
                                     <option  *ngFor="let option of LocationList" value="{{option.Location_ID}}">
                                       {{option.Location}}
                                     </option>
-                                   </select>
+                                   </select> -->
+                                   <p-multiSelect itemSize="30" [options]="LocationList" [styleClass]="'compacct-multiselect'" name="Location" #Location="ngModel" [(ngModel)]="SelectedLocation" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                   [styleClass]="HolidayFormSubmitted && Location.errors?.required ? 'clearance' : ''">
+                                </p-multiSelect>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Purpose<sup class="text-danger">*</sup></label>
