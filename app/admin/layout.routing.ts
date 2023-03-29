@@ -348,6 +348,7 @@ import { SaleOrderComponent } from './common/MICL/sale-order/sale-order.componen
 import { QcApprovalComponent } from './common/MICL/qc-approval/qc-approval.component';
 import { PatientCreateBrunchComponent } from './common/PatientManagement/patient-create-brunch/patient-create-brunch.component';
 import { HrLoanApprovalComponent } from './common/MICL/hr-loan-approval/hr-loan-approval.component';
+import { MICLCouponIssueComponent } from "./common/MICL/micl-coupon-issue/micl-coupon-issue.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2638,7 +2639,14 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
     data: {
     title: 'Loan Approval'
     }
-  },
+    },
+  {
+    path: 'MICL_Coupon_Issue',
+    component: MICLCouponIssueComponent,
+    data: {
+    title: 'Coupon Issue'
+    }
+    },
 
     /*{
 
