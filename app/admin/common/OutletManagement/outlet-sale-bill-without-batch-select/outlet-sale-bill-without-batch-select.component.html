@@ -25,6 +25,64 @@
         </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" key="OrderNo" styleClass="custom-orderno-toast" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div class="row" style="text-align: center">
+            <i class="pi pi-id-card" style="font-size: 3em"></i>
+            <!-- <h3>{{ message.summary }}</h3>
+      <p>{{ message.detail }}</p> -->
+            <form>
+                <div class="form-group">
+                    <div class='col-sm-12'>
+                        <label class="control-label">Order No</label>
+                        <input class="form-control" name="oRDER_nO" #oRDER_nO="ngModel" id='OrderNoCheck' oninput="event.target.value = event.target.value.replace(/[^0-9]/g, '');" maxlength="12" (keypress)="onKeypressEvent($event)" ngModelChange="pastefunction()" (keydown)="onKeydownMain3($event, 'OrderNoCheck')" [(ngModel)]="Order_No" placeholder="Order No">
+                    </div>
+                    <div class='col-sm-12' *ngIf="keypressmsg && !Order_No">
+                    <p style="color:red">{{keypressmsg}}</p>
+                    </div>
+                    <div class='col-sm-12'>
+                        <label class="control-label">Order Date</label>
+                        <ejs-datepicker [format]="'dd/MMM/yyyy'" id='OrderDate' name="OrderDate" #OrderDate="ngModel" [(ngModel)]="Order_Date" placeholder="dd/MMM/yyyy">
+                        </ejs-datepicker>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="row text-center" style="margin-top: 2em;">
+            <button type="button" pButton (click)="onConfirmSwiggyZomato('SWIGGY')" label="Yes" class="ui-button-success"></button>
+            <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="OrderNoZ" styleClass="custom-orderno-toast" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div class="row" style="text-align: center">
+            <i class="pi pi-id-card" style="font-size: 3em"></i>
+            <!-- <h3>{{ message.summary }}</h3>
+      <p>{{ message.detail }}</p> -->
+            <form>
+                <div class="form-group">
+                    <div class='col-sm-12'>
+                        <label class="control-label">Order No</label>
+                        <input class="form-control" name="oRDER_nO" #oRDER_nO="ngModel" id='OrderNoCheck' oninput="event.target.value = event.target.value.replace(/[^0-9]/g, '');" maxlength="10" (keypress)="onKeypressEvent($event)" (keydown)="onKeydownMain3($event, 'OrderNoCheck')" [(ngModel)]="Order_No" placeholder="Order No">
+                    </div>
+                    <div class='col-sm-12' *ngIf="keypressmsg && !Order_No">
+                        <p style="color:red">{{keypressmsg}}</p>
+                    </div>
+                    <div class='col-sm-12'>
+                        <label class="control-label">Order Date</label>
+                        <ejs-datepicker [format]="'dd/MMM/yyyy'" id='OrderDate' name="OrderDate" #OrderDate="ngModel" [(ngModel)]="Order_Date" placeholder="dd/MMM/yyyy">
+                        </ejs-datepicker>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="row text-center" style="margin-top: 2em;">
+            <button type="button" pButton (click)="onConfirmSwiggyZomato('ZOMATO')" label="Yes" class="ui-button-success"></button>
+            <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+        </div>
+    </ng-template>
+</p-toast>
 
 <div class="row">
     <div class="col-xs-12">
@@ -202,13 +260,17 @@
                                   </option>
                             </select>
                                         </div>
-                                        <div class="col-sm-3">
+                                        <div class="col-sm-3" *ngIf="!Order_No">
                                             <label class="control-label">{{ QueryStringObj?.Txn_ID ? QueryStringObj?.Ledger_Name +' Order No' : 'Advance'}}</label>
                                             <select class="form-control" name="Advance" id='advance' #Advance="ngModel" *ngIf='QueryStringObj?.Foot_Fall_ID' [disabled]='QueryStringObj?.Foot_Fall_ID' [(ngModel)]="ObjaddbillForm.Advance" (keydown)="onKeydownMain($event,'Qty')">
                                     <option [ngValue]="undefined">Select</option>
                                     <option></option>
                                 </select>
                                             <input class="form-control" name="Advance" [disabled]="true" #Advance="ngModel" id="Advance" *ngIf='QueryStringObj?.Txn_ID' [(ngModel)]="ObjaddbillForm.Advance" (keydown)="onKeydownMain($event,'Qty')">
+                                        </div>
+                                        <div class="col-sm-3" *ngIf="Order_No">
+                                            <label class="control-label">Order No</label>
+                                            <input class="form-control" name="Advance" [disabled]="true" #Advance="ngModel" id="Advance" [(ngModel)]="ObjaddbillForm.Advance" (keydown)="onKeydownMain($event,'Qty')">
                                         </div>
                                     </div>
                                     <div class="form-group" *ngIf='ProductTypeFilterList.length' style="padding: 0 15px;margin-top: 10px;">
@@ -225,7 +287,7 @@
 
                                             <p-dropdown [options]="selectitemView" name="Product" #Product2 [(ngModel)]="ObjaddbillForm.Product_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="ProductChange()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                                 [placeholder]="'Select Product'" [virtualScroll]="true" (onHide)="enableButton($event)" [disabled]="selectitem.length === 0" itemSize="30" #Product="ngModel" [required]="true" [ngClass]="{'clearance':addbillFormSubmitted && Product?.errors?.required}"
-                                                required>
+                                                required >
                                             </p-dropdown>
                                         </div>
                                         <div class="col-sm-1">
@@ -551,7 +613,7 @@
                                                     </div>
                                                     <div class='col-sm-12'>
                                                         <label class="control-label">Cash Amount:</label>
-                                                        <input class="form-control" type="text" style="text-align: center" name="cash" #cash="ngModel" [disabled]='QueryStringObj?.Txn_ID' [(ngModel)]="ObjcashForm.Cash_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true">
+                                                        <input class="form-control" type="text" style="text-align: center" name="cash" #cash="ngModel" [disabled]='QueryStringObj?.Txn_ID || Order_No' [(ngModel)]="ObjcashForm.Cash_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true">
                                                     </div>
                                                     <div class='col-sm-12'>
                                                         <label class="control-label">Other Payment Mode: </label>
@@ -571,7 +633,7 @@
 
                                                     <div class='col-sm-12'>
                                                         <label class="control-label">Card Amount: </label>
-                                                        <input class="form-control" type="text" style="text-align: center" name="card" #card="ngModel" [disabled]='QueryStringObj?.Txn_ID' [(ngModel)]="ObjcashForm.Card_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true">
+                                                        <input class="form-control" type="text" style="text-align: center" name="card" #card="ngModel" [disabled]='QueryStringObj?.Txn_ID || Order_No' [(ngModel)]="ObjcashForm.Card_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true">
                                                     </div>
                                                     <!-- <div class='col-sm-12'>
                                                         <label class="control-label">Coupon Percentage: </label>
@@ -649,6 +711,102 @@
         </div>
     </div>
 </div>
+
+<!-- After Save Popup -->
+<p-dialog header="" [appendTo]="'body'" [(visible)]="AfterSavePoppup" [modal]="true" [responsive]="true" [minY]="50"  [style]="{width: '40%', minWidth: '50px'}">
+
+        <div class="form-group">
+            <div class="col-sm-4">
+                <button type="button" (click)="TakeAway('bill')" class="btn btn-warning btn-lg">
+                    <i class="fa fa-shopping-bag"></i>&nbsp;  TAKE AWAY
+                </button>
+            </div>
+            <div class="col-sm-4">
+                <button type="button" (click)="SwiggyZomato('SWIGGY')" class="btn btn-info btn-lg">
+                    <i class="fa fa-comments-o"></i>&nbsp;  SWIGGY
+                </button>
+            </div>
+            <div class="col-sm-4">
+                <button type="button" (click)="SwiggyZomato('ZOMATO')" class="btn btn-info btn-lg">
+                    <i class="fa fa-comments-o"></i>&nbsp;  ZOMATO
+                </button>
+            </div>
+        </div>
+
+    <p-footer>
+        <!-- <button type="button" (click)="Yes()" class="btn btn-success">
+       <i class="fa fa-check"></i>&nbsp;  Yes
+     </button> -->
+        <button type="button" (click)="Cancelpopup()" class="btn btn-default">
+        <i class="fa fa-times"></i>&nbsp;  Cancel
+      </button>
+    </p-footer>
+</p-dialog>
+
+<!-- Customer Details For Take Away-->
+<p-dialog header="Customer Details" [appendTo]="'body'" [(visible)]="CustomerDetailsPopUpFlag" [modal]="true" [responsive]="true" [closeOnEscape]="true" [style]="{ width: '36%', minWidth: '200px' }">
+
+    <form name="CustomerDetailsForm" #CustomerDetailsForm="ngForm" novalidate>
+        <div>
+            <div class="form-group">
+                <div class='col-sm-12'>
+                    <label class="control-label">Customer Mobile <sup class="text-danger">*</sup></label>
+                    <input class="form-control" autofocus type="text" name="CostomerMobile" #CustMob #CostomerMobile="ngModel" [(ngModel)]="ObjPopupCustDetails.Mobile" (change)='GetCustomerDetails()' maxlength="10" id='Customer' (keydown)="onKeydownMainsb($event, 'CustomerNamesb')"
+                        CompacctDigitonly="true" [disabled]="NoPhonedisable" [ngClass]="{
+                   clearance:
+                     (CustomerDetailsFormSubmitted && CostomerMobile.errors?.required) ||
+                     (CostomerMobile.errors?.minlength && CostomerMobile.touched)
+                 }" required placeholder="Customer Mobile">
+                </div>
+                <div class='col-sm-12'>
+                    <label class="control-label">Customer Name <sup class="text-danger">*</sup></label>
+                    <input class="form-control" name="CustomerNameSBill" id='CustomerNamesb' #Customer_Name="ngModel" (keydown)="onKeydownMain2($event, 'CustomerNamesb')" [(ngModel)]="ObjPopupCustDetails.Contact_Name" [disabled]="namedisabledsalebill" [ngClass]="{'clearance':CustomerDetailsFormSubmitted && CustomerNameSBill.errors?.required}"
+                        placeholder="Customer Name" required>
+                </div>
+                <div class='col-sm-12'>
+                    <label class="control-label">Address</label>
+                    <input class="form-control" #location Compacct-Place (setAddress)="getAddressOnChange($event)" name="Location" placeholder="Address" />
+                </div>
+                <div class='col-sm-12'>
+                    <label class="control-label">Date of Birth</label>
+                    <p-inputMask [(ngModel)]="ObjPopupCustDetails.DOB" slotChar='__/__/1900' placeholder="01/01/1900" (onBlur)='checkDOB()' name='MaskDOB' mask="99/99/9999"></p-inputMask>
+                </div>
+
+                <div class='col-sm-12'>
+                    <label class="control-label">Anniversary</label>
+                    <p-inputMask [(ngModel)]="ObjPopupCustDetails.DOA" slotChar='__/__/1900' placeholder="01/01/1900" (onBlur)='checkAnniversary()' name='MaskAnniversary' mask="99/99/9999"></p-inputMask>
+
+                </div>
+                <div class='col-sm-12'>
+                    <label class="control-label">Customer GST </label>
+                    <input class="form-control" #CustomerGSTsb name="CustomerGSTsb" placeholder="Customer GST" #CustomerGSTsb="ngModel" id='CustomerGSTsb' (change)='checkGSTvalidcustPopup(ObjPopupCustDetails.GST_No)' [(ngModel)]="ObjPopupCustDetails.GST_No" minlength="15" maxlength="15"
+                        [ngClass]="{
+                   clearance:
+                     (GSTvalidFlagcustpopup) ||
+                     (CustomerGSTsb.errors?.minlength && CustomerGSTsb.touched)
+                 }">
+
+                </div>
+                <div class='col-sm-12'>
+                    <label class="control-label">Remarks</label>
+                    <textarea class="form-control" name="BillRemarkssb" #BillRemarkssb="ngModel" id='BillRemarkssb' [(ngModel)]="ObjPopupCustDetails.Remarks" placeholder="Remarks"></textarea>
+                    <!-- <textarea
+        [rows]="3" [cols]="20" pInputTextarea autoResize="autoResize"
+        ></textarea> -->
+                </div>
+            </div>
+        </div>
+    </form>
+    <p-footer>
+        <button type="button" (click)="CustomerDetailsPopUpFlag = false" class="btn btn-default">
+      <i class="fa fa-fw fa-close" ></i>&nbsp;  Close
+    </button>
+        <button type="button" class="btn btn-primary" (click)="OnCustomerDetailsSubmit(CustomerDetailsForm.form.valid)">
+      <i class="pi pi-check" ></i>&nbsp; OK
+    </button>
+    </p-footer>
+</p-dialog>
+
 <!-- Cancle Remarks Popup -->
 <!-- <p-dialog header="Remarks Details" [appendTo]="'body'" [(visible)]="CanRemarksPoppup" [modal]="true" [responsive]="true" [minY]="50" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '30%', minWidth: '50px'}">
     <form name="canRemarksd" #SearchForm="ngForm" novalidate>
