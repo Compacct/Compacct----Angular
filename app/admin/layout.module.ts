@@ -444,6 +444,7 @@ import { StockInterchangeComponent } from './common/MICL/RawMaterial/stock-inter
 import { SaleOrderComponent } from './common/MICL/sale-order/sale-order.component';
 import { QcApprovalComponent } from './common/MICL/qc-approval/qc-approval.component';
 import { PatientCreateBrunchComponent } from './common/PatientManagement/patient-create-brunch/patient-create-brunch.component';
+import { HrLoanApprovalComponent } from './common/MICL/hr-loan-approval/hr-loan-approval.component';
 
 @NgModule({
   declarations: [
@@ -804,7 +805,8 @@ import { PatientCreateBrunchComponent } from './common/PatientManagement/patient
     StockInterchangeComponent,
     SaleOrderComponent,
     QcApprovalComponent,
-    PatientCreateBrunchComponent
+    PatientCreateBrunchComponent,
+    HrLoanApprovalComponent
 
   ],
   imports: [
