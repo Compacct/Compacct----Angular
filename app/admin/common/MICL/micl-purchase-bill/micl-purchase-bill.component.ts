@@ -519,6 +519,7 @@ export class MiclPurchaseBillComponent implements OnInit {
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=> {
     this.GRNNoProlist = data;
+    this.ObjPurChaseBill.Supp_Ref_No = this.GRNNoProlist[0].Inv_No_Date ? this.GRNNoProlist[0].Inv_No_Date : undefined;
     this.GRNNoProlist.forEach(item=>{
       item.Product_ID = item.value;
       item.Product_Name = item.label;

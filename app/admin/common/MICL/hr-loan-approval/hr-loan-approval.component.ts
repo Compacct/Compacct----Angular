@@ -10,6 +10,8 @@ import * as XLSX from 'xlsx';
 import { formatDate } from '@angular/common';
 import { format } from 'url';
 declare var $:any;
+import { FileUpload } from "primeng/primeng";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 
 @Component({
@@ -81,6 +83,9 @@ export class HrLoanApprovalComponent implements OnInit {
   EMI_Start_From_Date_Month: Date;
   Ac_Voucher_No: any;
   Remarks: any;
+  ProductPDFFile:any = {}
+  @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
+  documenturllink: any;
 
   constructor(
     private route : ActivatedRoute,
@@ -90,6 +95,7 @@ export class HrLoanApprovalComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -174,6 +180,11 @@ export class HrLoanApprovalComponent implements OnInit {
       // //this.AuthorizedList[i].Vendor_Name = this.AuthorizedList[i].Sub_Ledger_ID;
       // }
     })
+  }
+  ShowDocument(obj){
+    if(obj.Document_Link) {
+      window.open(obj.Document_Link);
+    }
   }
   // DISTINCT & FILTER
   GetDistinct() {
@@ -325,14 +336,17 @@ this.ApprovalList = [...this.BackupApprovalList] ;
     this.EMI_Amount = 0;
     this.EMI_Start_From_Date_Month = undefined;
     this.Ac_Voucher_No = undefined;
+    this.documenturllink = undefined;
     if (col) {
-    this.ShowObj = col;
-    this.loanid = col.Loan_ID;
-    this.txnid = col.Txn_App_ID;
-    this.pendingempid = col.Emp_ID;
-    this.attntypeid = col.Atten_Type_ID;
-    this.BusinessManager = col.Business_Manager;
-    this.ReportManager = col.Report_Manager;
+      this.ProductPDFFile = {}
+      this.fileInput.clear();
+      this.ShowObj = col;
+      this.loanid = col.Loan_ID;
+      this.txnid = col.Txn_App_ID;
+      this.pendingempid = col.Emp_ID;
+      this.attntypeid = col.Atten_Type_ID;
+      this.BusinessManager = col.Business_Manager;
+      this.ReportManager = col.Report_Manager;
     // this.Issued_From_Date = new Date(col.Issued_From_Date);
     // this.Issued_To_Date = new Date(col.Issued_To_Date);
     // this.Apply_From_Date = new Date(col.Issued_From_Date);
@@ -346,6 +360,7 @@ this.ApprovalList = [...this.BackupApprovalList] ;
     this.Sanction_EMI = Number(col.No_Of_EMI);
     this.EMI_Amount = Number(this.Sanction_Loan_Amount / this.Sanction_EMI).toFixed(2);
     this.Remarks = col.Remarks;
+    this.documenturllink = col.Document_Link;
     // var month = new Date(col.EMI_Start_Month).toLocaleString('default', { month: 'long' });
     // console.log(month)
     // var year = new Date(col.EMI_Start_Month).getFullYear()
@@ -399,9 +414,67 @@ this.ApprovalList = [...this.BackupApprovalList] ;
       //  console.log("OngoingLoanlist ===", this.OngoingLoanlist);
     })
   }
-  ApprovedLoans(valid){
+  handleFileSelect(event:any) {
+    this.ProductPDFFile = {};
+    if (event) {
+      console.log(event)
+      this.ProductPDFFile = event.files[0];
+   }
+  }
+  approve(valid:any){
     this.ApproveFormSubmit = true;
-    if (valid){
+    this.ngxService.start();
+   if (valid){
+    if(this.ProductPDFFile['size']){
+      this.UploadDocApprove();
+    }
+    else{
+      this.ApprovedLoans();
+    }
+   }
+   else{
+    this.ngxService.stop();
+   }
+
+  }
+  UploadDocApprove(){
+    // this.ApproveFormSubmit = true;
+  //  if (valid){
+    if(this.ProductPDFFile['size']){
+    this.GlobalAPI.CommonFileUpload(this.ProductPDFFile)
+    .subscribe((data : any)=>
+    {
+      this.documenturllink = data.file_url;
+      if(this.documenturllink){
+        this.ApprovedLoans()
+      }
+      else {
+        this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error",
+        detail: "Fail to upload"
+      });
+      }
+    }) 
+    }
+    else {
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Error",
+      detail: "No File Found"
+    });
+    }
+  //  }
+  }
+  ApprovedLoans(){
+    // this.ApproveFormSubmit = true;
+    // if (valid){
     // if(this.txnid && this.pendingempid) {
       if (((Number(this.BusinessManager) === Number(this.empid)) && (this.Approved_Note_Business_Manager)) || 
          ((Number(this.ReportManager) === Number(this.empid)) && (this.Approved_Note_Reporting_Manager))){
@@ -420,7 +493,8 @@ this.ApprovalList = [...this.BackupApprovalList] ;
         Approved_Status_Business_Manager : this.Approved_Note_Business_Manager ? "Y" : this.Approved_Status_Business_Manager,
         Approved_Status_Reporting_Manager : this.Approved_Note_Reporting_Manager ? "Y" : this.Approved_Status_Reporting_Manager,
         Approved_Note_Business_Manager : this.Approved_Note_Business_Manager ? this.Approved_Note_Business_Manager : this.NoteBusinessManager,
-        Approved_Note_Reporting_Manager : this.Approved_Note_Reporting_Manager ? this.Approved_Note_Reporting_Manager : this.NoteReportingManager
+        Approved_Note_Reporting_Manager : this.Approved_Note_Reporting_Manager ? this.Approved_Note_Reporting_Manager : this.NoteReportingManager,
+        Document_Link:this.documenturllink ? this.documenturllink : null
         // Approval_ID : obj.Approval_ID,
         // HR_Remarks : obj.HR_Remarks
        }
@@ -439,6 +513,7 @@ this.ApprovalList = [...this.BackupApprovalList] ;
                 summary: 'Emp ID : ' + this.pendingempid,
                 detail: "Succesfully Approved."
               });
+              this.ngxService.stop();
               this.ApproveFormSubmit = false;
               this.DetailsModal = false;
               this.Ac_Voucher_No = undefined;
@@ -450,6 +525,7 @@ this.ApprovalList = [...this.BackupApprovalList] ;
             }
             else if(data[0].Column1 === "Something Wrong") {
               this.onReject();
+              this.ngxService.stop();
               this.compacctToast.clear();
               this.compacctToast.add({
                 key: "c", 
@@ -461,6 +537,7 @@ this.ApprovalList = [...this.BackupApprovalList] ;
               });
             }
             else {
+              this.ngxService.stop();
               this.compacctToast.clear();
               this.compacctToast.add({
                 key: "compacct-toast",
@@ -473,6 +550,7 @@ this.ApprovalList = [...this.BackupApprovalList] ;
       console.log('Update ===', TObj)
     }
     else {
+      this.ngxService.stop();
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "compacct-toast",
@@ -491,11 +569,63 @@ this.ApprovalList = [...this.BackupApprovalList] ;
   //     detail: "Something Wrong"
   //   });
   // }
-    }
+    // }
   }
-  DisapprovedLoans(valid){
+  disapprove(valid:any){
     this.ApproveFormSubmit = true;
-    if (valid){
+    this.ngxService.start();
+   if (valid){
+    if(this.ProductPDFFile['size']){
+      this.UploadDocDisapprove();
+    }
+    else{
+      this.DisapprovedLoans();
+    }
+   }
+   else {
+    this.ngxService.stop();
+   }
+
+  }
+  UploadDocDisapprove(){
+    // this.ApproveFormSubmit = true;
+    // if (valid){
+      this.documenturllink = undefined;
+    if(this.ProductPDFFile['size']){
+     this.GlobalAPI.CommonFileUpload(this.ProductPDFFile)
+     .subscribe((data : any)=>
+     {
+      this.documenturllink = data.file_url;
+       if(this.documenturllink){
+         this.DisapprovedLoans()
+       }
+       else {
+        this.ngxService.stop();
+         this.compacctToast.clear();
+         this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Error",
+         detail: "Fail to upload"
+       });
+       }
+     }) 
+    }
+    else {
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Error",
+      detail: "No File Found"
+    });
+    }
+    // }
+   }
+  DisapprovedLoans(){
+    // this.ApproveFormSubmit = true;
+    // if (valid){
     // if(this.txnid && this.pendingempid) {
       if (((Number(this.BusinessManager) === Number(this.empid)) && (this.Approved_Note_Business_Manager)) || 
          ((Number(this.ReportManager) === Number(this.empid)) && (this.Approved_Note_Reporting_Manager))){
@@ -514,7 +644,8 @@ this.ApprovalList = [...this.BackupApprovalList] ;
         Approved_Status_Business_Manager : this.Approved_Note_Business_Manager ? "N" : this.Approved_Status_Business_Manager,
         Approved_Status_Reporting_Manager : this.Approved_Note_Reporting_Manager ? "N" : this.Approved_Status_Reporting_Manager,
         Approved_Note_Business_Manager : this.Approved_Note_Business_Manager ? this.Approved_Note_Business_Manager : this.NoteBusinessManager,
-        Approved_Note_Reporting_Manager : this.Approved_Note_Reporting_Manager ? this.Approved_Note_Reporting_Manager : this.NoteReportingManager
+        Approved_Note_Reporting_Manager : this.Approved_Note_Reporting_Manager ? this.Approved_Note_Reporting_Manager : this.NoteReportingManager,
+        Document_Link: this.documenturllink ? this.documenturllink : null
         // Approval_ID : obj.Approval_ID,
         // HR_Remarks : obj.HR_Remarks
        }
@@ -533,6 +664,7 @@ this.ApprovalList = [...this.BackupApprovalList] ;
                 summary: 'Emp ID : ' + this.pendingempid,
                 detail: "Leave Disapproved."
               });
+              this.ngxService.stop();
               this.ApproveFormSubmit = false;
               this.DetailsModal = false;
               this.Ac_Voucher_No = undefined;
@@ -544,6 +676,7 @@ this.ApprovalList = [...this.BackupApprovalList] ;
             }
             else if(data[0].Column1 === "Something Wrong") {
               this.onReject();
+              this.ngxService.stop();
               this.compacctToast.clear();
               this.compacctToast.add({
                 key: "c", 
@@ -555,6 +688,7 @@ this.ApprovalList = [...this.BackupApprovalList] ;
               });
             }
             else {
+              this.ngxService.stop();
               this.compacctToast.clear();
               this.compacctToast.add({
                 key: "compacct-toast",
@@ -567,6 +701,7 @@ this.ApprovalList = [...this.BackupApprovalList] ;
       console.log('Update ===', TObj)
     }
     else {
+      this.ngxService.stop();
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "compacct-toast",
@@ -585,7 +720,7 @@ this.ApprovalList = [...this.BackupApprovalList] ;
   //     detail: "Something Wrong"
   //   });
   // }
-    }
+    // }
   }
   // showApproved(col:any){
   // this.ViewPopList = [];
