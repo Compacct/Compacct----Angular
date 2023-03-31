@@ -81,10 +81,8 @@ export class DoctorAppointmentComponent implements OnInit {
   TagFillterList: any = undefined;
   FillterSubL: any = undefined;
   FillterSubR: any = undefined;
-  //Tinnitus Pop
-  TinnitusModal: boolean = false;
-  ObjTinnitus: Tinnitus = new Tinnitus();
-  TinnitusFinalSaveSummited: boolean = false;
+  TitleHeder: any = "";
+  TitleMiddle: any = "";
   constructor(    
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -178,12 +176,17 @@ export class DoctorAppointmentComponent implements OnInit {
      case 'PTA':
        this.ObjPta = new Pta()
        setTimeout(() => {
-        this.PTAmodal = true;
+         this.PTAmodal = true;
+         this.TitleHeder = "PTA";
+         this.TitleMiddle = "PTA RECOMMENDATION";
+         this.TypeLossLeft = [];
+         this.TypeLossRight = [];
        },1000);
        this.testType = col.Consultancy_Descr;
        this.PTAFinalSaveSummited = false;
        this.RetvAppoid = col.Appo_ID;
        this.counte = 0;
+       
        this.RetriveDisable1St = false;
        this.RetriveDisable2nd = false;
        this.getDegreeloss(this.testType);
@@ -191,7 +194,24 @@ export class DoctorAppointmentComponent implements OnInit {
        this.PtaRetrive(this.RetvAppoid);      
        break;
      case 'Tinnitus':
-       this.TinnitusModal = true;
+       this.ObjPta = new Pta()
+       setTimeout(() => {
+         this.PTAmodal = true;
+         this.TitleHeder = "TINNITUS ASSESSMENT AND COUNSELLING ";
+         this.TitleMiddle = "TINNITUS ASSESSMENT AND COUNSELLING RECOMMENDATION";
+         this.TypeLossLeft = [];
+       this.TypeLossRight = [];
+       },1000);
+       this.testType = col.Consultancy_Descr;
+       this.PTAFinalSaveSummited = false;
+       this.RetvAppoid = col.Appo_ID;
+       this.counte = 0;
+       
+       this.RetriveDisable1St = false;
+       this.RetriveDisable2nd = false;
+       this.getDegreeloss(this.testType);
+       this.getConfiloss();
+       this.PtaRetrive(this.RetvAppoid); 
        break;
     case 'CreateReport':
       window.open(col.Controller_Name + col.Appo_ID, '_blank');
@@ -446,7 +466,7 @@ export class DoctorAppointmentComponent implements OnInit {
        }
      })
   }
-  // PtA Pop  all function 
+  // PtA Pop  all function // Tinnitus Pop  all function
   TotalPta() {
     if (this.ObjPta.PTA_Right_500 && this.ObjPta.PTA_Right_1000 && this.ObjPta.PTA_Right_2000) {
       let totalR =0
@@ -748,7 +768,7 @@ export class DoctorAppointmentComponent implements OnInit {
           element['value'] = element.Sub_Status_ID
         });
         this.SubTypList = data;
-        console.log("Sub2222",data);
+        //console.log("Sub2222",data);
       }
     }); 
     } 
@@ -863,8 +883,6 @@ export class DoctorAppointmentComponent implements OnInit {
         });
    } 
   }
-
-  //Tinnitus Pop  all function 
 }
 class TherapAttendance {
   Therapy_Goal:any;
@@ -918,46 +936,4 @@ class Pta{
   PTA_Remarks : any;                     
   PTA_Support_Convert : any;             
 }
-class Tinnitus{
-  Appo_ID: any;
-  Group_Appo_ID: any;
-  Assessment: any;
-  Degree_Of_Loss_ID: any; 
-  Degree_Of_Loss_Name: any;
-  Hearing_Loss_ID: any; 
-  Hearing_Loss: any;
-  Type_Of_Loss_ID: any; 
-  Type_Of_Loss: any;
-  Degree_Of_Loss_Right_ID: any;  
-  Degree_Of_Loss_Name1: any;
-  Hearing_Loss_Right_ID: any; 
-  Hearing_Loss1: any;
-  Type_Of_Loss_Right_ID: any;
-  Type_Of_Loss1: any;
-  Tinnitus_Status_ID: any; 
-  Tinnitus_Status: any;
-  Sub_Status_ID: any; 
-  Sub_Status: any;
-  Final_Status_ID: any;
-  Final_Status: any;
-  Trial_Success_ID: any;
-  Trial_Success: any;
-  Objection_ID: any;
-  Objection: any;
-  PTA_Right_500: any;                   
-  PTA_Right_250 : any;                   
-  PTA_Right_1000: any;
-  PTA_Right_2000: any;
-  PTA_Right_4000: any;
-  PTA_Right_8000 : any;                  
-  PTA_Right : any;                       
-  PTA_Left_250 : any;                    
-  PTA_Left_500 : any;                    
-  PTA_Left_1000: any; 
-  PTA_Left_2000: any;
-  PTA_Left_4000 : any;                   
-  PTA_Left_8000 : any;                   
-  PTA_Left : any;                        
-  PTA_Remarks : any;                     
-  PTA_Support_Convert : any;
-}
+
