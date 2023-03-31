@@ -1,0 +1,897 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" baseZIndex="99999" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt"></p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="salereturnForms" #salereturnForms="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Sales Executive<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="ExecutiveList" 
+                                                    [showClear]="true" 
+                                                    name="Executive_Name" 
+                                                    #Executive_Name="ngModel"
+                                                    [(ngModel)]="objsaleReturn.Sales_Man_ID" 
+                                                    [emptyFilterMessage]="' No Executive Name Found'" 
+                                                    [filter]="true"
+                                                    filterBy="label,value.name" 
+                                                    [resetFilterOnHide]="true" 
+                                                    [placeholder]="'Select Executive Name'" 
+                                                    [virtualScroll]="true"
+                                                    itemSize="30" 
+                                                    [ngClass]="{'clearance': salereturnFormsSubmitted && Executive_Name.errors?.required}"
+                                                    required >
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4" >
+                                        <label class="control-label">Date Of Return<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input CompacctNepaliDatepicker id="Docdate" name="Docdate" #Docdate="ngModel" Class="form-control"
+                                                (ngModelChange)="DocDate= $event" [(ngModel)]="DocDate"
+                                                [ngClass]="{'clearance': salereturnFormsSubmitted && Docdate?.errors?.required}" 
+                                                required 
+                                           >                                      
+                                        </div> 
+                                    </div>
+                                    <div class="col-sm-4" >
+                                        <label class="control-label">Customar Name<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="customarList" 
+                                                    [showClear]="true" 
+                                                    name="Customar" 
+                                                    #Customar="ngModel"
+                                                    [(ngModel)]="objsaleReturn.Sub_Ledger_ID" 
+                                                    [emptyFilterMessage]="' No Customar Name Found'" 
+                                                    [filter]="true"
+                                                    filterBy="label,value.name" 
+                                                    [resetFilterOnHide]="true" 
+                                                    [placeholder]="'Select Customar Name'" 
+                                                    [virtualScroll]="true"
+                                                    itemSize="30" 
+                                                    [ngClass]="{'clearance': salereturnFormsSubmitted && Customar.errors?.required}"
+                                                     required
+                                                      >
+                                                    </p-dropdown>
+                                    </div>
+                                    </div>
+                                </form>
+                                <hr class="box boxboxDivide-primary" />
+                                <form name="addSalereturnForms" #addSalereturnForms="ngForm" novalidate>
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                            <p-dropdown [options]="ProductList" 
+                                                        [showClear]="true" 
+                                                        name="Product" 
+                                                        #Customar="ngModel"
+                                                        [(ngModel)]="ObjaddSaleReturn.Product_ID" 
+                                                        [emptyFilterMessage]="'No Product Found'" 
+                                                        [filter]="true"
+                                                        filterBy="label,value.name" 
+                                                        [resetFilterOnHide]="true" 
+                                                        [placeholder]="'Select Product'" 
+                                                        [virtualScroll]="true"
+                                                        itemSize="30" 
+                                                        [ngClass]="{'clearance': addSalereturnFormsSubmitted && Product.errors?.required}"
+                                                         required >
+                                                     </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                            name="Qty"
+                                            #Qty="ngModel"
+                                            [(ngModel)]="ObjaddSaleReturn.Qty"
+                                            placeholder="Qty"
+                                            [CompacctDigitonly]="true"
+                                            [ngClass]="{'clearance': addSalereturnFormsSubmitted && Qty.errors?.required}"
+                                            required >
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                            <select
+                                            class="form-control"
+                                            name="Reason_Of_Return"
+                                            #Reason_Of_Return="ngModel"
+                                            [(ngModel)]="ObjaddSaleReturn.Reason_Of_Return"
+                                            [ngClass]="{'clearance': addSalereturnFormsSubmitted && Reason_Of_Return.errors?.required}"
+                                            required>
+                                            <option [ngValue]="undefined">Select</option>
+                                           </select>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                            <select
+                                            class="form-control"
+                                            name="Condition_Of_Goods"
+                                            #Condition_Of_Goods="ngModel"
+                                            [(ngModel)]="ObjaddSaleReturn.Condition_Of_Goods"
+                                            [ngClass]="{'clearance': addSalereturnFormsSubmitted && Condition_Of_Goods.errors?.required}"
+                                            required>
+                                            <option [ngValue]="undefined">Select</option>
+                                           </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                            <select
+                                            class="form-control"
+                                            name="Type_Of_Return"
+                                            #Type_Of_Return="ngModel"
+                                            [(ngModel)]="ObjaddSaleReturn.Type_Of_Return"
+                                            [ngClass]="{'clearance': addSalereturnFormsSubmitted && Type_Of_Return.errors?.required}"
+                                            required>
+                                            <option [ngValue]="undefined">Select</option>
+                                           </select>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                            <select
+                                            class="form-control"
+                                            name="Return_Text"
+                                            #Return_Text="ngModel"
+                                            [(ngModel)]="ObjaddSaleReturn.Return_Text"
+                                            [ngClass]="{'clearance': addSalereturnFormsSubmitted && Return_Text.errors?.required}"
+                                            required>
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option [ngValue]="'Full'">Full</option>
+                                            <option [ngValue]="'Partial'">Partial</option>
+                                           </select>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                            name="Against_Challan_No"
+                                            #Against_Challan_No="ngModel"
+                                            [(ngModel)]="ObjaddSaleReturn.Against_Challan_No"
+                                            placeholder="Against Challan No"
+                                            [ngClass]="{'clearance': addSalereturnFormsSubmitted && Against_Challan_No.errors?.required}"
+                                            required >
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                            name="Tax_Invoice_No"
+                                            #Tax_Invoice_No="ngModel"
+                                            [(ngModel)]="ObjaddSaleReturn.Tax_Invoice_No"
+                                            placeholder="Tax Invoice No"
+                                            [ngClass]="{'clearance': addSalereturnFormsSubmitted && Tax_Invoice_No.errors?.required}"
+                                            required >
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <button class="btn btn-primary custombutton"
+                                            (click)="addSalereturn(addSalereturnForms.form.valid)" >
+                                         <span  class="	glyphicon glyphicon-plus"></span> Add
+                                    </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                     
+                                <div class="container-fluid" style="margin-top: 5px;padding-right: 0px; padding-left: 0px;" >
+                                    <div class="panel panel-primary">
+                                      <div class="panel-heading"></div>
+                                      <div class="panel-body" style="overflow-y: auto; height: 500px;" >
+                                        <div class="card" style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;" >
+                                            <div class="card-header" style="text-align: end;">
+                                                <span style="color: red; cursor: pointer;"  class="glyphicon glyphicon-remove"></span>
+                                              </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                                            <div class="label-t" >ProductProduct ProductPr oductProduct ProductProd uctProduct</div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >133 </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card" style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;" >
+                                            <div class="card-header" style="text-align: end;">
+                                                <span style="color: red; cursor: pointer;"  class="glyphicon glyphicon-remove"></span>
+                                              </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                                            <div class="label-t" >ProductProduct ProductPr oductProduct ProductProd uctProduct</div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >133 </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card" style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;" >
+                                            <div class="card-header" style="text-align: end;">
+                                                <span style="color: red; cursor: pointer;"  class="glyphicon glyphicon-remove"></span>
+                                              </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                                            <div class="label-t" >ProductProduct ProductPr oductProduct ProductProd uctProduct</div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >133 </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card" style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;" >
+                                            <div class="card-header" style="text-align: end;">
+                                                <span style="color: red; cursor: pointer;"  class="glyphicon glyphicon-remove"></span>
+                                              </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                                            <div class="label-t" >ProductProduct ProductPr oductProduct ProductProd uctProduct</div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >133 </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card" style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;" >
+                                            <div class="card-header" style="text-align: end;">
+                                                <span style="color: red; cursor: pointer;"  class="glyphicon glyphicon-remove"></span>
+                                              </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                                            <div class="label-t" >ProductProduct ProductPr oductProduct ProductProd uctProduct</div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >133 </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card" style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;" >
+                                            <div class="card-header" style="text-align: end;">
+                                                <span style="color: red; cursor: pointer;"  class="glyphicon glyphicon-remove"></span>
+                                              </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                                            <div class="label-t" >ProductProduct ProductPr oductProduct ProductProd uctProduct</div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >133 </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card" style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;" >
+                                            <div class="card-header" style="text-align: end;">
+                                                <span style="color: red; cursor: pointer;"  class="glyphicon glyphicon-remove"></span>
+                                              </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                                            <div class="label-t" >ProductProduct ProductPr oductProduct ProductProd uctProduct</div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >133 </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card" style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;" >
+                                            <div class="card-header" style="text-align: end;">
+                                                <span style="color: red; cursor: pointer;"  class="glyphicon glyphicon-remove"></span>
+                                              </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                                            <div class="label-t" >ProductProduct ProductPr oductProduct ProductProd uctProduct</div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >133 </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card" style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;" >
+                                            <div class="card-header" style="text-align: end;">
+                                                <span style="color: red; cursor: pointer;"  class="glyphicon glyphicon-remove"></span>
+                                              </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                                            <div class="label-t" >ProductProduct ProductPr oductProduct ProductProd uctProduct</div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >133 </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card" style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;" >
+                                            <div class="card-header" style="text-align: end;">
+                                                <span style="color: red; cursor: pointer;"  class="glyphicon glyphicon-remove"></span>
+                                              </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                                            <div class="label-t" >ProductProduct ProductPr oductProduct ProductProd uctProduct</div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >133 </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card" style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;" >
+                                            <div class="card-header" style="text-align: end;">
+                                                <span style="color: red; cursor: pointer;"  class="glyphicon glyphicon-remove"></span>
+                                              </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                                            <div class="label-t" >ProductProduct ProductPr oductProduct ProductProd uctProduct</div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >133 </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card" style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;" >
+                                            <div class="card-header" style="text-align: end;">
+                                                <span style="color: red; cursor: pointer;"  class="glyphicon glyphicon-remove"></span>
+                                              </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                                            <div class="label-t" >ProductProduct ProductPr oductProduct ProductProd uctProduct</div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >133 </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card" style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;" >
+                                            <div class="card-header" style="text-align: end;">
+                                                <span style="color: red; cursor: pointer;"  class="glyphicon glyphicon-remove"></span>
+                                              </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                                            <div class="label-t" >ProductProduct ProductPr oductProduct ProductProd uctProduct</div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >133 </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card" style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;" >
+                                            <div class="card-header" style="text-align: end;">
+                                                <span style="color: red; cursor: pointer;"  class="glyphicon glyphicon-remove"></span>
+                                              </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                                            <div class="label-t" >ProductProduct ProductPr oductProduct ProductProd uctProduct</div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >133 </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card" style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;" >
+                                            <div class="card-header" style="text-align: end;">
+                                                <span style="color: red; cursor: pointer;"  class="glyphicon glyphicon-remove"></span>
+                                              </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                                            <div class="label-t" >ProductProduct ProductPr oductProduct ProductProd uctProduct</div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >133 </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card" style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;" >
+                                            <div class="card-header" style="text-align: end;">
+                                                <span style="color: red; cursor: pointer;"  class="glyphicon glyphicon-remove"></span>
+                                              </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="col-sm-4">
+                                                        <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                                            <div class="label-t" >ProductProduct ProductPr oductProduct ProductProd uctProduct</div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >133 </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                                        <div class="label-t" >Product </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                      </div>
+                                    </div>
+                                  </div>
+                          </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
