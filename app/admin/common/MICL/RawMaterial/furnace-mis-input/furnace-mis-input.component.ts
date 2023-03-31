@@ -367,7 +367,7 @@ export class FurnaceMisInputComponent implements OnInit {
         Product_ID : this.ObjFurMISinputPro.Product_ID,
         Product_Description: this.ObjFurMISinputPro.Product_Description,
         Batch_No: this.ObjFurMISinputPro.Batch_No,
-        Qty: Number(this.ObjFurMISinputPro.Qty),
+        Qty: Number(this.ObjFurMISinputPro.Qty).toFixed(3),
         UOM : this.ObjFurMISinputPro.UOM
       })
       this.Productionvalid = false;
@@ -488,7 +488,7 @@ GetSlagProduction() {
           Product_ID : this.ObjFurMISinputWaste.Product_ID,
           Product_Description: this.ObjFurMISinputWaste.Product_Description,
           Batch_No: this.ObjFurMISinputWaste.Batch_No,
-          Qty: Number(this.ObjFurMISinputWaste.Qty),
+          Qty: Number(this.ObjFurMISinputWaste.Qty).toFixed(3),
           UOM : this.ObjFurMISinputWaste.UOM
         })
         this.wasteslagvalid = false;
@@ -827,8 +827,43 @@ GetSlagProduction() {
              this.ObjFurnaceMISinput.Critical_Issue = data ? data[0].Critical_Issue : undefined;
              this.ObjDailyPerformancet = data? data[0].Daily_Performance[0] : new DailyPerformance();
              console.log("this.ObjDailyPerformancet ===", this.ObjDailyPerformancet)
-             this.AddProductionList = data ? data[0].Production ? data[0].Production : [] : [];
-             this.AddWasteSlagList = data ? data[0].Waste_Slag ? data[0].Waste_Slag : [] : [];
+             data[0].Production.forEach(el=>{
+              const proobj={
+                Cost_Cent_ID : el.Cost_Cent_ID,
+                Godown_ID : Number(el.Godown_ID),
+                Godown_Name : el.Godown_Name,
+                Product_Type_ID : Number(el.Product_Type_ID),
+                Product_Type : el.Product_Type,
+                Product_Sub_Type_ID : Number(el.Product_Sub_Type_ID),
+                Product_Sub_Type : el.Product_Sub_Type,
+                Product_ID : el.Product_ID,
+                Product_Description: el.Product_Description,
+                Batch_No: el.Batch_No,
+                Qty: Number(el.Qty).toFixed(3),
+                UOM : el.UOM
+              }
+              this.AddProductionList.push(proobj);
+             })
+            //  this.AddProductionList = data ? data[0].Production ? data[0].Production : [] : [];
+            //  console.log("Production====",data[0].Production)
+             data[0].Waste_Slag.forEach(ele=>{
+              const slagobj={
+                Cost_Cent_ID : ele.Cost_Cent_ID,
+                Godown_ID : Number(ele.Godown_ID),
+                Godown_Name : ele.Godown_Name,
+                Product_Type_ID : Number(ele.Product_Type_ID),
+                Product_Type : ele.Product_Type,
+                Product_Sub_Type_ID : Number(ele.Product_Sub_Type_ID),
+                Product_Sub_Type : ele.Product_Sub_Type,
+                Product_ID : ele.Product_ID,
+                Product_Description: ele.Product_Description,
+                Batch_No: ele.Batch_No,
+                Qty: Number(ele.Qty).toFixed(3),
+                UOM : ele.UOM
+              }
+              this.AddWasteSlagList.push(slagobj);
+             })
+            //  this.AddWasteSlagList = data ? data[0].Waste_Slag ? data[0].Waste_Slag : [] : [];
              this.AddShutdownList = data ? data[0].Shut_Down ? data[0].Shut_Down : [] : [];
              if(this.AddShutdownList.length){
              this.AddShutdownList.forEach((zx:any) => {

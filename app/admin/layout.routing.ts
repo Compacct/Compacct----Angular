@@ -348,6 +348,8 @@ import { SaleOrderComponent } from './common/MICL/sale-order/sale-order.componen
 import { QcApprovalComponent } from './common/MICL/qc-approval/qc-approval.component';
 import { PatientCreateBrunchComponent } from './common/PatientManagement/patient-create-brunch/patient-create-brunch.component';
 import { HrLoanApprovalComponent } from './common/MICL/hr-loan-approval/hr-loan-approval.component';
+import { CreateCookieComponent } from "./common/UserManagement/Createt_Desktop_Cookies/create-cookie/create-cookie.component";
+import { NPSupTktSalesReturnRequestComponent } from "./common/TicketManagement/np-sup-tkt-sales-return-request/np-sup-tkt-sales-return-request.component";
 import { MICLCouponIssueComponent } from "./common/MICL/micl-coupon-issue/micl-coupon-issue.component";
 
 const layoutRoutes: Routes = [{
@@ -2639,7 +2641,21 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
     data: {
     title: 'Loan Approval'
     }
-    },
+  },
+  {
+    path: 'Createt_Desktop_Cookies',
+    component: CreateCookieComponent,
+    data: {
+    title: 'Createt Desktop Cookies'
+    }
+  },
+  {
+    path: 'NP_Sup_Tkt_Sales_Return_Request',
+    component: NPSupTktSalesReturnRequestComponent,
+    data: {
+    title: 'Sales Return Request'
+    }
+  },
   {
     path: 'MICL_Coupon_Issue',
     component: MICLCouponIssueComponent,

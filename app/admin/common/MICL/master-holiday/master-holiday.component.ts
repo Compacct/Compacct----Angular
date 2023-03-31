@@ -34,6 +34,8 @@ export class MasterHolidayComponent implements OnInit {
   seachSpinner : any = false;
   LeaveUrl : any;
   frequency : any = 0;
+  BrowseFormSubmitted:boolean = false;
+  SelectedLocation:any = [];
   
 
   constructor(
@@ -70,6 +72,7 @@ export class MasterHolidayComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Create";
     this.clearData();
+    this.BrowseFormSubmitted = false;
   }
 
   getHRYear(){
@@ -93,15 +96,27 @@ export class MasterHolidayComponent implements OnInit {
       
     }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-       this.LocationList = data;
-       console.log("LocationList=", this.LocationList);
+      //  this.LocationList = data;
+      //  console.log("LocationList=", this.LocationList);
+       if(data.length){
+        data.forEach(element => {
+          element['label'] = element.Location
+          element['value'] = element.Location_ID
+        });
+        this.LocationList = data;
+       }
+       else {
+        this.LocationList = [];
+       }
        
      })
   
   }
 
-  GetBrowseList(){
+  GetBrowseList(valid){
     this.seachSpinner = true;
+    this.BrowseFormSubmitted = true;
+    if(valid) {
     const tempobj = {
       HR_Year_ID : this.objBrowse.HR_Year_ID
     }
@@ -112,12 +127,16 @@ export class MasterHolidayComponent implements OnInit {
     }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.Browselist = data;
-      
+       this.seachSpinner = false;
+       this.BrowseFormSubmitted = false;
        
        console.log('Browselist=====',this.Browselist)
        this.seachSpinner = false;
        
      })
+    } else {
+      this.seachSpinner = false;
+    }
 
   }
 
@@ -126,34 +145,43 @@ export class MasterHolidayComponent implements OnInit {
     if(valid){
       this.objHoliday.Holiday_Date = this.DateService.dateConvert(this.Holiday_Date);
       this.objHoliday.Atten_Type_ID = this.LeaveUrl;
-      const LocationFilter = this.LocationList.filter((el:any)=>Number(el.Location_ID) === Number(this.objHoliday.Location_ID));
+      // const LocationFilter = this.LocationList.filter((el:any)=>Number(el.Location_ID) === Number(this.objHoliday.Location_ID));
       const HrYearFilter = this.HrYearList.filter((el:any)=>Number(el.HR_Year_ID) === Number(this.objHoliday.HR_Year_ID));
       
       console.log("objHoliday",this.objHoliday);
-      for(let i = 0; i < this.HolidayListAdd.length; i++)
-      {
-        if((this.DateService.dateConvert(new Date(this.HolidayListAdd[i].Holiday_Date)) === this.objHoliday.Holiday_Date ) && (Number(this.HolidayListAdd[i].HR_Year_ID) === Number(this.objHoliday.HR_Year_ID)) && (Number(this.HolidayListAdd[i].Location_ID) === Number(this.objHoliday.Location_ID)))
+      if(this.SelectedLocation.length) {
+        this.SelectedLocation.forEach(el => {
+      for(let i = 0; i < this.HolidayListAdd.length; i++) {
+        if((this.DateService.dateConvert(new Date(this.HolidayListAdd[i].Holiday_Date)) === this.objHoliday.Holiday_Date ) && (Number(this.HolidayListAdd[i].HR_Year_ID) === Number(this.objHoliday.HR_Year_ID)) && (Number(this.HolidayListAdd[i].Location_ID) === Number(el)))
         {
           this.frequency++;
           console.log('HolidayListAdd',this.HolidayListAdd[i].Holiday_Date);
         }
       }
+      })
+      }
       console.log('objHoliday',this.objHoliday.Holiday_Date);
       console.log(this.frequency);
-      if(this.frequency == 0)
-      {
+      if(this.frequency == 0){
+        if(this.SelectedLocation.length) {
+        this.SelectedLocation.forEach(el => {
+          const LocationFilter = this.LocationList.filter((ele:any)=>Number(ele.Location_ID) === Number(el));
       this.HolidayListAdd.push({
         HR_Year_ID : this.objHoliday.HR_Year_ID,
         Leave_Type : this.objHoliday.Leave_Type,
         Location : LocationFilter.length? LocationFilter[0].Location : "-",
         HR_Year_Name : HrYearFilter.length? HrYearFilter[0].HR_Year_Name : "-",
         Purpose : this.objHoliday.Purpose,
-        Location_ID : this.objHoliday.Location_ID,
+        Location_ID : el,
         Holiday_Date : this.objHoliday.Holiday_Date,
         Atten_Type_ID : this.objHoliday.Atten_Type_ID
       });
+      
+    });
+    }
       this.objHoliday = new Holiday();
-        this.Holiday_Date = new Date();
+      this.Holiday_Date = new Date();
+      this.SelectedLocation = [];
     }
     else{
       this.compacctToast.clear();
