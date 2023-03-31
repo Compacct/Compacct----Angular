@@ -446,6 +446,7 @@ import { QcApprovalComponent } from './common/MICL/qc-approval/qc-approval.compo
 import { PatientCreateBrunchComponent } from './common/PatientManagement/patient-create-brunch/patient-create-brunch.component';
 import { HrLoanApprovalComponent } from './common/MICL/hr-loan-approval/hr-loan-approval.component';
 import { CreateCookieComponent } from './common/UserManagement/Createt_Desktop_Cookies/create-cookie/create-cookie.component';
+import { NPSupTktSalesReturnRequestComponent } from './common/TicketManagement/np-sup-tkt-sales-return-request/np-sup-tkt-sales-return-request.component';
 
 @NgModule({
   declarations: [
@@ -808,7 +809,8 @@ import { CreateCookieComponent } from './common/UserManagement/Createt_Desktop_C
     QcApprovalComponent,
     PatientCreateBrunchComponent,
     HrLoanApprovalComponent,
-    CreateCookieComponent
+    CreateCookieComponent,
+    NPSupTktSalesReturnRequestComponent
 
   ],
   imports: [

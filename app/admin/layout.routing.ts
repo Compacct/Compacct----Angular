@@ -349,6 +349,7 @@ import { QcApprovalComponent } from './common/MICL/qc-approval/qc-approval.compo
 import { PatientCreateBrunchComponent } from './common/PatientManagement/patient-create-brunch/patient-create-brunch.component';
 import { HrLoanApprovalComponent } from './common/MICL/hr-loan-approval/hr-loan-approval.component';
 import { CreateCookieComponent } from "./common/UserManagement/Createt_Desktop_Cookies/create-cookie/create-cookie.component";
+import { NPSupTktSalesReturnRequestComponent } from "./common/TicketManagement/np-sup-tkt-sales-return-request/np-sup-tkt-sales-return-request.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2647,7 +2648,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
     title: 'Createt Desktop Cookies'
     }
   },
-
+  {
+    path: 'NP_Sup_Tkt_Sales_Return_Request',
+    component: NPSupTktSalesReturnRequestComponent,
+    data: {
+    title: 'Sales Return Request'
+    }
+  },
 
     /*{
 
