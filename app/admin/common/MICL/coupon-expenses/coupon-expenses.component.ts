@@ -48,14 +48,14 @@ export class CouponExpensesComponent implements OnInit {
     console.log('close up works');
     this.clearData();
   }
-
+  
   calTotal(){
    console.log('cal Total working');
    if(Number(this.objExpenses.Vegetables) && Number(this.objExpenses.Grocery) && Number(this.objExpenses.Misc_Other_NV_Item) && Number(this.objExpenses.Fuel)){
     this.objExpenses.Total_Amount = Number(this.objExpenses.Vegetables) + Number(this.objExpenses.Grocery) + Number(this.objExpenses.Misc_Other_NV_Item) + Number(this.objExpenses.Fuel)
    }
   }
-
+  onReject(){}
   getBrowseData() {
     const obj = {
       "SP_String": "SP_Master_Coupon_Receive",

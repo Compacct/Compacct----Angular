@@ -45,7 +45,7 @@ export class CouponUtilizationComponent implements OnInit {
     console.log('pop up works');
     this.displayPopup = true;
   }
-
+  onReject(){}
   closePopup() {
     console.log('close up works');
     this.clearData();

@@ -54,7 +54,9 @@ export class CouponCreationComponent implements OnInit {
     console.log('close up works');
     this.clearData();
   }
-
+  onReject(){
+    
+  }
   getCouponTypes() {
     const obj = {
       "SP_String": "SP_Master_Coupon_Receive",
