@@ -1,0 +1,232 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <div class="form-group">
+                                <div class="col-sm-2">
+                                    <ejs-datepicker [(value)]="CouponDateBrowseFirst" [format]="'dd/MMM/yyyy'"></ejs-datepicker>
+                                </div>
+                                <div class="col-sm-2">
+                                    <ejs-datepicker [(value)]="CouponDateBrowseEnd" [format]="'dd/MMM/yyyy'"></ejs-datepicker>
+                                </div>
+                                <div class="col-sm-2">
+                                <button class="btn btn-primary" data-toggle="modal" (click)="SearchData()">
+                                    <span class="fa fa-search"></span>Search
+                                </button>
+                                </div>
+                                <div class="col-sm-4 pull-right" *ngIf="BrowseData.length">
+                                    <button class="btn btn-success" data-toggle="modal" (click)="exportExcelbrowse(BrowseData,'Coupon Issue List')">
+                                        <span class="fa fa-file-excel-o"></span>&nbsp;Export to excel
+                                    </button>
+                                </div>
+                            </div>
+                            <span *ngIf="NoDataFound == true" style="font-size: 20px;">No Data Found</span>
+                            <div class="table-responsive no-padding">
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="BrowseData" [paginator]="BrowseData.length ? true : false" [rows]="100"
+                                        [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                        [rowsPerPageOptions]="[100,200,300]" *ngIf="NoDataFound == false"
+                                        [globalFilterFields]="['Emp_Name','Visitor_Name','Date','Lunch_No_Of_Coupon','Lunch_Total_Amount','BF_No_Of_Coupon','BF_Total_Amount','Dinner_No_Of_Coupon','Dinner_Total_Amount']"
+                                        [rowHover]="true" #dt>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                        class="searchInput form-control">
+                                                </div>
+                                            </div>
+
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th>Date</th>
+                                                <th>Employee Name</th>
+                                                <th>Visitor Name</th>
+                                                <th>Lunch Qty</th>
+                                                <th>Lunch Qty Amount</th>
+                                                <th>Breakfast Qty</th>
+                                                <th>Breakfast Qty Amount</th>
+                                                <th>Dinner Qty</th>
+                                                <th>Dinner Qty Amount</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button
+                                                            class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                            type="button" data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <a (click)="EditCoupon(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="DeleteCoupon(col)">
+                                                                    <i class="fa fa-trash"></i> Delete
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                <td>{{col.Date ? (col.Date|date:"dd/MMM/yyyy") : '-'}}</td>
+                                                <td>{{col.Emp_Name ? col.Emp_Name : '-'}}</td>
+                                                <td>{{col.Visitor_Name ? col.Visitor_Name : '-'}}</td>
+                                                <td>{{col.Lunch_No_Of_Coupon ? col.Lunch_No_Of_Coupon : '-'}}</td>
+                                                <td>{{col.Lunch_Total_Amount ? col.Lunch_Total_Amount :'-'}}</td>
+                                                <td>{{col.BF_No_Of_Coupon ? col.BF_No_Of_Coupon : '-'}}</td>
+                                                <td>{{col.BF_Total_Amount ? col.BF_Total_Amount: '-'}}</td>
+                                                <td>{{col.Dinner_No_Of_Coupon ? col.Dinner_No_Of_Coupon : '-'}}</td>
+                                                <td>{{col.Dinner_Total_Amount ? col.Dinner_Total_Amount : '-'}}</td>
+                                                <td>{{col.Total_Amount ? col.Total_Amount : '-'}}</td>
+                                            </tr>                                     
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                        </p-tabPanel>
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="CouponForm" #CouponForm="ngForm" novalidate>
+                                <div class="form-group" >
+                                    <div class="col-sm-4">
+                                    <p-checkbox name="Email" [(ngModel)]="if_Visitor" label="Visitor"(onChange)="changeField()" binary="true" [disabled]="AddList.length"></p-checkbox>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4" *ngIf="if_Visitor">
+                                        <label class="control-label">Visitor Name<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="VisitorName" #VisitorName="ngModel"
+                                            [(ngModel)]="ObjCouponIssue.Visitor_Name" placeholder="Type Visitor Name"
+                                            [ngClass]="{'clearance': CouponFormsSubmitted && VisitorName.errors?.required}" required [disabled]="AddList.length" >
+                                    </div>
+                                    <div class="col-sm-4" *ngIf="!if_Visitor">
+                                        <label class="control-label">Employee Name<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="EmployeeList" [showClear]="true" name="EmployeeName" #EmployeeName="ngModel"
+                                            [(ngModel)]="ObjCouponIssue.Emp_ID" [emptyFilterMessage]="' No Employee Name Found'" [filter]="true"
+                                            filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Employee Name'"
+                                            [virtualScroll]="true" itemSize="30"
+                                            [ngClass]="{'clearance': CouponFormsSubmitted && EmployeeName.errors?.required}" required [disabled]="AddList.length">
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker [(value)]="CouponDate" [format]="'dd/MMM/yyyy'"></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Coupon Type<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="CouponTyp" #CouponTyp="ngModel" [(ngModel)]="ObjCouponIssue.Coupon_Type"
+                                           (change)='AmountCalcutaion()' [ngClass]="{clearance: CouponFormsSubmitted && CouponTyp.errors?.required}" required>
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of CouponList" value="{{ option.Coupon_Type}}">
+                                                {{ option.Coupon_Type }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3" >
+                                        <label class="control-label">Start Coupon No<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="StartCouponNo" #StartCouponNo="ngModel" [(ngModel)]="ObjCouponIssue.Start_No"
+                                            placeholder="Start Coupon No"  (ngModelChange)="calucation()"  CompacctDigitonly="true"
+                                            [ngClass]="{'clearance': CouponFormsSubmitted && StartCouponNo.errors?.required}" required>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label"> End Coupon No<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="EndCouponNo" #EndCouponNo="ngModel" [(ngModel)]="ObjCouponIssue.End_No"
+                                            placeholder="End Coupon No"  (ngModelChange)="calucation()"  CompacctDigitonly="true"
+                                            [ngClass]="{'clearance': (CouponFormsSubmitted && EndCouponNo.errors?.required ) || reqCheck}"
+                                            required>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">No of Coupon<sup class="text-danger">*</sup></label>
+                                        <div class="label-t">{{TotalCoupon}}</div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Amount<sup class="text-danger">*</sup></label>
+                                        <div class="label-t">{{this.TotalAmount ? this.TotalAmount : "-" }}</div>
+                                    </div>
+                                    <div class="col-sm-1">
+                                   <button class="btn btn-primary custombutton" (click)="AddData(CouponForm.form.valid)"> 
+                                    <span class="glyphicon glyphicon-plus"></span>Add</button>   
+                                    </div>
+                                </div>                               
+                               <br><br>
+                                <div class="table-responsive no-padding" >
+                                    <table class="table table-bordered">
+                                        <thead style="background-color:#3c8dbc;color:white;">
+                                            <tr style="background-color:#3c8dbc;color:white;">
+                                                <th>Sl No</th>
+                                                <th>Coupon Type</th>
+                                                <th>Coupon Start No</th>
+                                                <th>Coupon End No</th>
+                                                <th>No Of Coupon</th>
+                                                <th>Amount</th>
+                                                <th>Delete</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let col of AddList let i = index">
+                                                <td>{{i+1}}</td>
+                                                <td>{{col.Coupon_Type}}</td>
+                                                <td>{{col.Start_No}}</td>
+                                                <td>{{col.End_No}}</td>
+                                                <td>{{col.No_Of_Coupon}}</td>
+                                                <td>{{col.Total_Amount}}</td> 
+                                                <td>
+                                                    <span (click)="deleteRaw(i)"> <i class="fa fa-fw fa-trash" id="red"> </i></span>
+                                                </td>            
+                                            </tr>
+                                            <tr *ngIf="AddList.length">
+                                                <td colspan="5"></td>
+                                                <td nowrap colspan="1" style="text-align: left; font-weight: 600;"><span>Total Amount :</span>{{QtyTotal}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                             <div class="box-footer">
+                                    <button class="btn btn-primary pull-right"
+                                        (click)="FinalSave()">
+                                        <span class="glyphicon glyphicon-save"></span> {{buttonname}}
+                                    </button>
+                                </div>
+                            </form>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
