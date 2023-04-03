@@ -320,6 +320,8 @@ export class MiclPurchaseBillComponent implements OnInit {
     // this.GetProductdetails();
     // this.ProductDetails = [];
     this.ObjProductInfo.Product_Specification = undefined;
+    this.ObjPurChaseBill.Supp_Ref_No = undefined;
+    this.ObjProductInfo.Pur_Order_No = undefined;
     this.GRNNoProlist = [];
     this.clearlistamount();
     this.ObjPurChaseBill.TCS_Y_N = this.GRNNoProlist.length == 0 ? undefined : this.ObjPurChaseBill.TCS_Y_N;
@@ -519,6 +521,7 @@ export class MiclPurchaseBillComponent implements OnInit {
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=> {
     this.GRNNoProlist = data;
+    this.ObjPurChaseBill.Supp_Ref_No = this.GRNNoProlist[0].Inv_No_Date ? this.GRNNoProlist[0].Inv_No_Date : undefined;
     this.GRNNoProlist.forEach(item=>{
       item.Product_ID = item.value;
       item.Product_Name = item.label;
@@ -1783,7 +1786,7 @@ class PurChaseBill {
 }
 
 class ProductInfo {
-  Pur_Order_No: string;
+  Pur_Order_No: any;
   Pur_Order_Date: string;
   Product_ID: any;
   Product_Name: string;

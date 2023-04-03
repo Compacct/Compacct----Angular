@@ -60,7 +60,8 @@
                                         [autoLayout]="true" 
                                         sortMode="multiple" 
                                         [rowsPerPageOptions]="[10,20,30]"
-                                        [globalFilterFields]="['Emp_Name','HR_Year_Name','LEAVE_TYPE','Tran_Type','DR_Leave','CR_Leave','Remarks']"[rowHover]="true" #dt>
+                                        [globalFilterFields]="['Loan_ID','Emp_Name','Application_Date','Loan_Amount','No_Of_EMI','EMI_Start_Month','Sanction_Loan_Amount',
+                                        'Sanction_Date','No_Of_EMI_Sanctioned','EMI_Amount_Sanctioned','EMI_Start_Month','Approval_Status_1','Approval_Status_2']"[rowHover]="true" #dt>
 
                                         <ng-template pTemplate="caption">
                                             <div class="row">
@@ -72,6 +73,7 @@
                                         </ng-template>
                                         <ng-template pTemplate="header">
                                             <tr>
+                                                <th rowspan="2" style="width:5em">Action</th>
                                                 <th colspan="6" style="text-align:center;">Application Data</th>
                                                 <th colspan="5" style="text-align:center;">Sanction Data</th>
                                                 <th rowspan="2">Approval Status 1</th>
@@ -96,7 +98,27 @@
                                         </ng-template> 
                                         <ng-template pTemplate="body" let-col>
                                             <tr>
-                                                <td><a (click)="ViewDetails(col.Loan_ID)">{{col.Loan_ID ? col.Loan_ID:"-"}}</a></td>
+                                                <td>
+                                                    <div class="dropdown">
+                                                       <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                       <i class="fa fa-fw fa-bars"></i>
+                                                                       <span class="caret"></span>
+                                                                   </button>
+                                                       <ul class="dropdown-menu">
+                                                           <li>
+                                                               <a (click)="ViewDetails(col.Loan_ID)">
+                                                                   <i class="fa fa-file-text-o"></i> EMI Paid Details
+                                                               </a>
+                                                           </li>
+                                                           <li *ngIf="col.Document_Link">
+                                                               <a (click)="ShowDocument(col)">
+                                                                   <i class="fa fa-file-text-o"></i> Show Document
+                                                               </a>
+                                                           </li>
+                                                       </ul>
+                                                   </div> 
+                                               </td>
+                                                <td>{{col.Loan_ID ? col.Loan_ID:"-"}}</td>
                                                 <td>{{col.Emp_Name ? col.Emp_Name:"-"}}</td> 
                                                 <td>{{col.Application_Date  | date : 'dd/MMM/yyyy'}}</td>
                                                 <td>{{col.Loan_Amount}}</td>
@@ -203,11 +225,11 @@
                                         name="Apply_From_Date"
                                     required></ejs-datepicker> -->
                             </div>
-                        <!-- <div class="col-sm-4">
+                        <div class="col-sm-4">
                             <label class="control-label">Remarks</label>
                             <textarea class="form-control"name="Remarks"
                             #Remarks ="ngModel"[(ngModel)]="ObjHrLoanAppl.Remarks"></textarea>
-                        </div> -->
+                        </div>
                         </div>
                             <div class="box-footer">
                             <button class="btn btn-primary pull-right"  

@@ -282,7 +282,11 @@ export class OutwardChallanComponent implements OnInit {
   VenderNameChange() {
     this.ObjPurChaseBill.Sub_Ledger_Billing_Name = '';
     this.ObjProductInfo.Sale_Order_No = undefined;
+    this.Tax_Category = undefined;
+    this.ObjProductInfo.Qty = undefined;
+    this.ObjProductInfo.Rate = undefined;
     this.SalesOrderNoList = [];
+    this.ProductDetalist = [];
     this.SaveAddress = [];
     this.SaveAddress1 = [];
     if (this.ObjPurChaseBill.Sub_Ledger_ID) {
@@ -382,6 +386,8 @@ export class OutwardChallanComponent implements OnInit {
     this.ObjProductInfo.godown_id = undefined;
     this.ObjProductInfo.Batch_Number = undefined;
     this.Tax_Category = undefined;
+    this.ObjProductInfo.Qty = undefined;
+    this.ObjProductInfo.Rate = undefined;
     this.Godownlist = [];
     if (this.ObjProductInfo.Product_Specification && this.ObjProductInfo.Cost_Cen_ID) {
       const TempObj = {
@@ -523,7 +529,9 @@ export class OutwardChallanComponent implements OnInit {
     this.ObjProductInfo.Product_Specification = undefined;
     this.UomList = '';
     this.ObjProductInfo.Batch_Number = undefined
-    this.ObjProductInfo.Qty = undefined
+    this.Tax_Category = undefined;
+    this.ObjProductInfo.Qty = undefined;
+    this.ObjProductInfo.Rate = undefined;
     if (this.ObjProductInfo.Sale_Order_No) {
       const TempObj = {
         Doc_No: this.ObjProductInfo.Sale_Order_No
@@ -599,6 +607,8 @@ export class OutwardChallanComponent implements OnInit {
       this.UomList = TempArry[0].UOM;
       this.Tax_Category = TempArry.length ? TempArry[0].Cat_ID : undefined;
       this.ObjProductInfo.Qty = this.ObjProductInfo.Sale_Order_No ? TempArry.length ? TempArry[0].Qty : undefined : undefined;
+      this.ObjProductInfo.Rate = this.ObjProductInfo.Sale_Order_No ? TempArry.length ? TempArry[0].Rate : undefined : undefined;
+      this.GetTaxAmt();
     }
   }
   GetTaxAmt() {

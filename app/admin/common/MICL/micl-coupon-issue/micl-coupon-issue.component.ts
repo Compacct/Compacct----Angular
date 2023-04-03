@@ -106,7 +106,7 @@ export class MICLCouponIssueComponent implements OnInit {
     });
   }
   calucation() {
-    if ((Number(this.ObjCouponIssue.End_No) && Number(this.ObjCouponIssue.Start_No)) && Number(this.ObjCouponIssue.End_No) > Number(this.ObjCouponIssue.Start_No)) {
+    if ((Number(this.ObjCouponIssue.End_No) && Number(this.ObjCouponIssue.Start_No)) && Number(this.ObjCouponIssue.End_No) >= Number(this.ObjCouponIssue.Start_No)) {
       this.TotalCoupon = Number(this.ObjCouponIssue.End_No - this.ObjCouponIssue.Start_No) + 1
       this.reqCheck = false;
       this.AmountCalcutaion(); 
@@ -131,10 +131,10 @@ export class MICLCouponIssueComponent implements OnInit {
       this.TotalAmount = undefined; 
     }
   }
-  AddData(valid:any) {
-    this.CouponFormsSubmitted = true;
-    this.Validation_Of_Coupon();
-    if (valid && Number(this.ObjCouponIssue.End_No) > Number(this.ObjCouponIssue.Start_No)) {
+  AddData() {
+    // this.CouponFormsSubmitted = true;
+    // if (this.ValidationOfCoupon() !== null) {}
+    // if (valid && Number(this.ObjCouponIssue.End_No) >= Number(this.ObjCouponIssue.Start_No)) {
      this.ObjCouponIssue.Created_By = this.compact.CompacctCookies.User_ID; 
       this.ObjCouponIssue.Date = this.DateService.dateConvert(this.CouponDate);
       this.AddList.push({
@@ -156,10 +156,12 @@ export class MICLCouponIssueComponent implements OnInit {
       this.ObjCouponIssue.Coupon_Type = undefined;
       this.ObjCouponIssue.Start_No = undefined;
       this.ObjCouponIssue.End_No = undefined;
-    }
+    // }
   }
-  Validation_Of_Coupon() {
-    if (this.ObjCouponIssue.Start_No && this.ObjCouponIssue.Start_No) {
+  ValidationOfCoupon(valid:any) {
+    this.CouponFormsSubmitted = true;
+    if (this.ObjCouponIssue.Start_No && this.ObjCouponIssue.End_No) {
+      if (valid && Number(this.ObjCouponIssue.End_No) >= Number(this.ObjCouponIssue.Start_No)) {
       const Value = {
         Start_No: this.ObjCouponIssue.Start_No,
         End_No: this.ObjCouponIssue.End_No 
@@ -171,7 +173,7 @@ export class MICLCouponIssueComponent implements OnInit {
     }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
        console.log("Get_Coupon_Receive==",data)
-        if (!data.length) {
+        if (data[0].Column1 === "Invalid Coupon") {
          this.compacctToast.clear();
           this.compacctToast.add({
           key: "compacct-toast",
@@ -179,8 +181,12 @@ export class MICLCouponIssueComponent implements OnInit {
           summary:"This coupon has already been used",
           detail: "Not Ablavlable"
         });
-      }
+       }
+       else {
+        this.AddData();
+       }
     }); 
+    }
     }
    
   }
