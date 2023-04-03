@@ -234,11 +234,12 @@ export class HrLoanApplicationComponent implements OnInit {
             this.txnId = undefined;
             this.Editdisable = false;
             this.LoanApplFormSubmitted = false;
-            this.ObjHrLoanAppl =new HrLoanAppl();
+            this.ObjHrLoanAppl = new HrLoanAppl();
             this.Application_Date = new Date();
             this.ObjHrLoanAppl.Application_Date = new Date();
             this.EMI_Start_From_Date_Month = undefined;
             this.EMI_Start_Date = undefined;
+            this.employeeData();
             }
             else {
               this.Spinner = false;
@@ -316,6 +317,11 @@ export class HrLoanApplicationComponent implements OnInit {
         }); 
         this.ViewPoppup = true;
       }
+  }
+  ShowDocument(obj){
+    if(obj.Document_Link) {
+      window.open(obj.Document_Link);
+    }
   }
 
 }

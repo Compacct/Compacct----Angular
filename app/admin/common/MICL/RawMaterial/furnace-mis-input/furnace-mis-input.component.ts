@@ -827,7 +827,9 @@ GetSlagProduction() {
              this.ObjFurnaceMISinput.Critical_Issue = data ? data[0].Critical_Issue : undefined;
              this.ObjDailyPerformancet = data? data[0].Daily_Performance[0] : new DailyPerformance();
              console.log("this.ObjDailyPerformancet ===", this.ObjDailyPerformancet)
-             data[0].Production.forEach(el=>{
+             var productionlist:any = [];
+             productionlist = data ? data[0].Production ? data[0].Production : [] : [];
+             productionlist.forEach(el=>{
               const proobj={
                 Cost_Cent_ID : el.Cost_Cent_ID,
                 Godown_ID : Number(el.Godown_ID),
@@ -846,7 +848,9 @@ GetSlagProduction() {
              })
             //  this.AddProductionList = data ? data[0].Production ? data[0].Production : [] : [];
             //  console.log("Production====",data[0].Production)
-             data[0].Waste_Slag.forEach(ele=>{
+            var wasteslaglist:any=[];
+            wasteslaglist = data ? data[0].Waste_Slag ? data[0].Waste_Slag : [] : [];
+            wasteslaglist.forEach(ele=>{
               const slagobj={
                 Cost_Cent_ID : ele.Cost_Cent_ID,
                 Godown_ID : Number(ele.Godown_ID),

@@ -447,6 +447,10 @@ import { PatientCreateBrunchComponent } from './common/PatientManagement/patient
 import { HrLoanApprovalComponent } from './common/MICL/hr-loan-approval/hr-loan-approval.component';
 import { CreateCookieComponent } from './common/UserManagement/Createt_Desktop_Cookies/create-cookie/create-cookie.component';
 import { NPSupTktSalesReturnRequestComponent } from './common/TicketManagement/np-sup-tkt-sales-return-request/np-sup-tkt-sales-return-request.component';
+import { MICLCouponIssueComponent } from './common/MICL/micl-coupon-issue/micl-coupon-issue.component';
+import { CouponCreationComponent } from './common/MICL/coupon-creation/coupon-creation.component';
+import { CouponExpensesComponent } from './common/MICL/coupon-expenses/coupon-expenses.component';
+import { CouponUtilizationComponent } from './common/MICL/coupon-utilization/coupon-utilization.component';
 
 @NgModule({
   declarations: [
@@ -810,7 +814,12 @@ import { NPSupTktSalesReturnRequestComponent } from './common/TicketManagement/n
     PatientCreateBrunchComponent,
     HrLoanApprovalComponent,
     CreateCookieComponent,
-    NPSupTktSalesReturnRequestComponent
+    NPSupTktSalesReturnRequestComponent,
+    MICLCouponIssueComponent,
+    CouponCreationComponent,
+    CouponExpensesComponent,
+    CouponUtilizationComponent
+
 
   ],
   imports: [

@@ -70,9 +70,14 @@
                                                             <span class="caret"></span>
                                                         </button>
                                             <ul class="dropdown-menu">
-                                                 <li >
+                                                 <li>
                                                     <a (click)="ApprovedPopup(col)">
                                                         <i class="glyphicon glyphicon-ok"></i> Approved / Disapproved
+                                                    </a>
+                                                </li>
+                                                <li *ngIf="col.Document_Link">
+                                                    <a (click)="ShowDocument(col)">
+                                                        <i class="fa fa-file-text-o"></i> Show Document
                                                     </a>
                                                 </li>
                                                
@@ -127,33 +132,28 @@
                             </ng-template>
                             <ng-template pTemplate="header">
                                 <tr>
-                                    <!-- <th style="width:5em">Action</th> -->
+                                    <th style="width:5em">Action</th>
                                     <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforTabSecond | slice:2">{{option.replaceAll('_',' ')}}</th> 
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-col>
                                 <tr>
 
-                                    <!--<td>
+                                    <td>
                                          <div class="dropdown">
                                             <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                             <i class="fa fa-fw fa-bars"></i>
                                                             <span class="caret"></span>
                                                         </button>
                                             <ul class="dropdown-menu">
-                                                <li>
-                                                    <a (click)="CreateGRN(col)">
-                                                            <i class="fa fa-fw fa-pencil"></i> Create GRN 
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a (click)="PrintPRDB(col.RDB_No)">
-                                                        <i class="fa fa-fw fa-print"></i> Print
+                                                <li *ngIf="col.Document_Link">
+                                                    <a (click)="ShowDocument(col)">
+                                                        <i class="fa fa-file-text-o"></i> Show Document
                                                     </a>
                                                 </li>
                                             </ul>
                                         </div> 
-                                    </td>-->
+                                    </td>
                                     <ng-container *ngFor="let option of DynamicHeaderforTabSecond | slice:2">
                                         <td nowrap="nowrap">{{col[option]}}</td>
                                     </ng-container>
@@ -298,6 +298,7 @@
             <th>Loan Amount</th>
             <th>No of EMI Applied</th>
             <th>From Month & Date</th>
+            <th>Remarks</th>
         </tr>
    </thead>
    <tbody>
@@ -308,6 +309,7 @@
             <td>{{col.Loan_Amount}}</td>
             <td>{{col.No_Of_EMI ? col.No_Of_EMI : '-'}}</td>
             <td>{{col.EMI_Start_Month | date : 'dd/MMM/yyyy'}}</td>
+            <td>{{col.Remarks ? col.Remarks : '-'}}</td>
         </tr>
    </tbody>
  </table>
@@ -327,6 +329,7 @@
                 <th>Sanction EMI Nos.</th>
                 <th>Sanction EMI Amount</th>
                 <th>Pending EMI</th>
+                <th>Remarks</th>
             </tr>
        </thead>
        <tbody>
@@ -338,6 +341,7 @@
                 <td>{{col.No_Of_EMI_Sanctioned ? col.No_Of_EMI_Sanctioned : '-'}}</td>
                 <td>{{col.EMI_Amount_Sanctioned}}</td>
                 <td>{{col.Pending_EMI}}</td>
+                <td>{{col.Remarks ? col.Remarks : '-'}}</td>
             </tr>
        </tbody>
      </table>
@@ -373,12 +377,12 @@
         <ejs-datepicker name="emistartdate" #emistartdate="ngModel" [format]="'dd/MMM/yyyy'" [(ngModel)]='EMI_Start_From_Date_Month'
         [ngClass]="{'clearance': ApproveFormSubmit && emistartdate?.errors?.required}" [required]="true"></ejs-datepicker>
     </div>
-    <div class="col-sm-4" *ngIf="Bussidisabled && !Reportdisabled">
+    <div class="col-sm-3" *ngIf="Bussidisabled && !Reportdisabled">
         <label class="control-label">Remarks of Approval 2  <sup class="text-danger">*</sup></label>
         <input type="text" name="BMremarks" #BMremarks="ngModel"  [(ngModel)]='Approved_Note_Business_Manager' class="form-control" 
         [ngClass]="{'clearance': ApproveFormSubmit && BMremarks?.errors?.required}" required/>
     </div>
-    <div class="col-sm-4" *ngIf="Reportdisabled && !Bussidisabled">
+    <div class="col-sm-3" *ngIf="Reportdisabled && !Bussidisabled">
         <label class="control-label">Remarks of Approval 1  <sup class="text-danger">*</sup></label>
         <input type="text" name="RMremarks" #RMremarks="ngModel" [(ngModel)]='Approved_Note_Reporting_Manager' class="form-control" 
         [ngClass]="{'clearance': ApproveFormSubmit && RMremarks?.errors?.required}" required/>
@@ -388,11 +392,23 @@
         <input name="acvouno" #acvouno="ngModel" [(ngModel)]='Ac_Voucher_No' class="form-control" 
         [ngClass]="{'clearance': ApproveFormSubmit && acvouno?.errors?.required}" />
     </div> 
+    <div class="col-sm-4" >
+        <label class="control-label">Upload Document</label>
+        <p-fileUpload #fileInput 
+                    name="aFile566" 
+                    accept=".pdf, .png, .jpg, .jpeg, .xls, .xlsx" 
+                    [customUpload]="true" 
+                    [chooseLabel]="'Browse'" 
+                    [showUploadButton]="false" 
+                    [disabled]="documenturllink ? true : false"
+                    (onSelect)="handleFileSelect($event)">
+        </p-fileUpload>
     </div>
+</div>
 </form>
     <p-footer> 
-        <button type="button" (click)="DisapprovedLoans(ApproveForm.form.valid)" class="btn btn-danger"><i class="pi pi-times"></i>DisApproved</button>
-        <button type="button"  (click)="ApprovedLoans(ApproveForm.form.valid)" class="btn btn-success"><i class=" pi pi-check"></i>Approved</button>    
+        <button type="button" (click)="disapprove(ApproveForm.form.valid)" class="btn btn-danger"><i class="pi pi-times"></i>DisApproved</button>
+        <button type="button"  (click)="approve(ApproveForm.form.valid)" class="btn btn-success"><i class=" pi pi-check"></i>Approved</button>    
     </p-footer>
 </p-dialog>
 

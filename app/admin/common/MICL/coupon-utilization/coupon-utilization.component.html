@@ -1,0 +1,115 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+   <ng-template let-message pTemplate="message">
+      <div style="text-align: center">
+         <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+         <h3>{{message.summary}}</h3>
+         <p>{{message.detail}}</p>
+      </div>
+      <div class="ui-g ui-fluid">
+         <div class="ui-g-6">
+            <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+         </div>
+         <div class="ui-g-6">
+            <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+         </div>
+      </div>
+   </ng-template>
+</p-toast>
+<div class="row">
+   <div class="col-xs-12">
+      <div class="box box-primary">
+         <div class="form-horizontal">
+            <div class="box-body">
+               <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                  <div class="row">
+                     <button style="margin-right: 10px;" class="btn btn-primary pull-right" (click)="showPopup()"
+                        id="load"><span class="glyphicon glyphicon-save"></span>Create</button>
+                  </div>
+                  <br>
+                  <p-table *ngIf="allDataList.length" [value]="allDataList" [paginator]="true" [rows]="50" [rowHover]="true" [autoLayout]="true"
+                     sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100,200,300]"
+                     [globalFilterFields]="DynamicHeader" [rowHover]="true" #dt>
+                     <ng-template pTemplate="caption">
+                        <div class="row">
+                           <div class="col-sm-3 pull-right" style="text-align: right">
+                              <input type="text" pInputText size="50" placeholder="Search"
+                                 (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                 class="searchInput form-control">
+                           </div>
+                        </div>
+                     </ng-template>
+                     <ng-template pTemplate="header">
+                        <tr style="width: 100%;">
+                           <th style="text-align: center ;" nowrap *ngFor="let option of DynamicHeader |  slice:1">{{option.replaceAll('_',' ')}}</th>
+                           
+                        </tr>
+                     </ng-template>
+                     <ng-template pTemplate="body" let-col>
+                        <tr>
+
+                           <ng-container *ngFor="let option of DynamicHeader | slice:1">
+                              <td nowrap="nowrap" style="text-align: center;">{{col[option] ? col[option] : "-"}}</td>
+                            </ng-container>
+                           
+                        </tr>
+                     </ng-template>
+                     <ng-template pTemplate="paginatorright" let-state>
+                        Showing {{state.first+1}} of {{(state.first) + state.rows}} of {{state.totalRecords}}
+                     </ng-template>
+                  </p-table>
+               </p-tabView>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+<p-dialog header="Coupon Utilization" [draggable]="true" (onHide)="closePopup()" [(visible)]="displayPopup" [modal]="true" [responsive]="true"
+   [style]="{width: '800px', minWidth: '300px'}" [minY]="70" [baseZIndex]="10000">
+   <form name="CouponUtilized" #CouponUtilized="ngForm" novalidate>
+      <div class="row">
+         <div class="col-sm-4">
+            <label class="control-label">Date<sup class="text-danger">*</sup></label>
+            <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='couponDate' name="Issue_Date">
+            </ejs-datepicker>
+         </div>
+         <div class="col-sm-4">
+                <label class="control-label">Total Breakfast<sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" placeholder="Total Breakfast" name="Total_Breakfast" #Total_Breakfast="ngModel"
+                   [(ngModel)]="objUtilization.Total_Breakfast" CompacctDigitonly="true"
+                   [ngClass]="{clearance: (couponUtilizationFormSubmit && Total_Breakfast?.errors?.required) }" required>
+         </div>
+         <div class="col-sm-4">
+            <label class="control-label">Total Lunch<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" placeholder="Total Lunch" name="Total_Lunch" #Total_Lunch="ngModel"
+               [(ngModel)]="objUtilization.Total_Lunch" CompacctDigitonly="true"
+               [ngClass]="{clearance: (couponUtilizationFormSubmit && Total_Lunch?.errors?.required) }" required>
+         </div>
+         
+      </div>
+      <br>
+      <div class="row">
+                <div class="col-sm-4">
+                                <label class="control-label">Total Dinner<sup class="text-danger">*</sup></label>
+                                <input type="text" class="form-control" placeholder="Total Dinner" name="Total_Dinner" #Total_Dinner="ngModel"
+                                   [(ngModel)]="objUtilization.Total_Dinner" CompacctDigitonly="true"
+                                   [ngClass]="{clearance: (couponUtilizationFormSubmit && Total_Dinner?.errors?.required) }" required>
+                </div>
+         <div class="col-sm-4">
+         </div>
+         <div class="col-sm-4"></div>
+      </div>
+      <br>
+      <div class="row"></div>
+   </form>
+   <p-footer>
+      <button class="btn btn-primary pull-right" (click)="SaveCoupon(CouponUtilized.form.valid)" id="load">
+         <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
+            animationDuration=".5s"></p-progressSpinner>
+         <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>Save
+      </button>
+      <button class="btn btn-primary" (click)="closePopup()" id="load">
+         <span *ngIf="!Spinner" class="glyphicon glyphicon-remove"></span>Close
+      </button>
+   </p-footer>
+</p-dialog>

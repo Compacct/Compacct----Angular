@@ -286,7 +286,7 @@
                                     </label>
 
                                             <p-dropdown [options]="selectitemView" name="Product" #Product2 [(ngModel)]="ObjaddbillForm.Product_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="ProductChange()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
-                                                [placeholder]="'Select Product'" [virtualScroll]="true" (onHide)="enableButton($event)" [disabled]="selectitem.length === 0" itemSize="30" #Product="ngModel" [required]="true" [ngClass]="{'clearance':addbillFormSubmitted && Product?.errors?.required}"
+                                                [style]="{'z-index':'1'}" [placeholder]="'Select Product'" [virtualScroll]="true" (onHide)="enableButton($event)" [disabled]="selectitem.length === 0" itemSize="30" #Product="ngModel" [required]="true" [ngClass]="{'clearance':addbillFormSubmitted && Product?.errors?.required}"
                                                 required >
                                             </p-dropdown>
                                         </div>
@@ -713,7 +713,7 @@
 </div>
 
 <!-- After Save Popup -->
-<p-dialog header="" [appendTo]="'body'" [(visible)]="AfterSavePoppup" [modal]="true" [responsive]="true" [minY]="50"  [style]="{width: '40%', minWidth: '50px'}">
+<p-dialog header="" [appendTo]="'body'" [(visible)]="AfterSavePoppup" [modal]="true" [closable]="false" [closeOnEscape]="false" [responsive]="true" [minY]="50"  [style]="{width: '40%', minWidth: '50px'}">
 
         <div class="form-group">
             <div class="col-sm-4">
@@ -752,7 +752,7 @@
                 <div class='col-sm-12'>
                     <label class="control-label">Customer Mobile <sup class="text-danger">*</sup></label>
                     <input class="form-control" autofocus type="text" name="CostomerMobile" #CustMob #CostomerMobile="ngModel" [(ngModel)]="ObjPopupCustDetails.Mobile" (change)='GetCustomerDetails()' maxlength="10" id='Customer' (keydown)="onKeydownMainsb($event, 'CustomerNamesb')"
-                        CompacctDigitonly="true" [disabled]="NoPhonedisable" [ngClass]="{
+                        CompacctDigitonly="true" [ngClass]="{
                    clearance:
                      (CustomerDetailsFormSubmitted && CostomerMobile.errors?.required) ||
                      (CostomerMobile.errors?.minlength && CostomerMobile.touched)
@@ -760,7 +760,7 @@
                 </div>
                 <div class='col-sm-12'>
                     <label class="control-label">Customer Name <sup class="text-danger">*</sup></label>
-                    <input class="form-control" name="CustomerNameSBill" id='CustomerNamesb' #Customer_Name="ngModel" (keydown)="onKeydownMain2($event, 'CustomerNamesb')" [(ngModel)]="ObjPopupCustDetails.Contact_Name" [disabled]="namedisabledsalebill" [ngClass]="{'clearance':CustomerDetailsFormSubmitted && CustomerNameSBill.errors?.required}"
+                    <input class="form-control" name="CustomerNameSBill" id='CustomerNamesb' #CustomerNameSBill="ngModel" (keydown)="onKeydownMain2sb($event, 'CustomerNamesb')" [(ngModel)]="ObjPopupCustDetails.Contact_Name" [disabled]="namedisabledsalebill" [ngClass]="{'clearance':CustomerDetailsFormSubmitted && CustomerNameSBill.errors?.required}"
                         placeholder="Customer Name" required>
                 </div>
                 <div class='col-sm-12'>

@@ -480,23 +480,12 @@ autoaFranchiseBill() {
  
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      //  if(data.length) {
-      //    data.forEach(element => {
-      //      element['label'] = element.Product_Description,
-      //      element['value'] = element.Product_ID,
-      //      element['Product_Type_ID'] = element.Product_Type_ID
-      //    });
          this.selectitem = data;
          this.selectitemView = data;
          if (!this.productSubmit.length) {
           this.Product2.applyFocus()
           this.Product2.containerViewChild.nativeElement.click();
           }
-      //  } else {
-      //    this.selectitem = [];
-      //    this.selectitemView = [];
- 
-      // }
      // console.log("this.selectitem======",this.selectitem);
  
  
@@ -1845,6 +1834,11 @@ checkGSTvalidcustPopup(g){
   }
 
 }
+onKeydownMain2sb(event,nextElemID): void {
+  if (event.key === "Enter" &&  this.ObjPopupCustDetails.Mobile && this.ObjPopupCustDetails.Contact_Name ){
+        this.OnCustomerDetailsSubmit(true)
+      }
+}
 OnCustomerDetailsSubmit(valid) {
   this.CustomerDetailsFormSubmitted = true;
   this.ngxService.start();
@@ -1891,8 +1885,6 @@ OnCustomerDetailsSubmit(valid) {
         // data[0].Sub_Ledger_State = this.ObjPopupCustDetails.Sub_Ledger_State;
         // this.ObjPopupCustDetails = new PopupCustDetails();
         // this.getselectitem();
-        this.Product2.applyFocus()
-        this.Product2.containerViewChild.nativeElement.click();
         this.getwalletamount();
         this.UpdateCustomerDetails(data[0]);
         this.GSTvalidFlagcustpopup = false;

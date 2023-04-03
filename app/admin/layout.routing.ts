@@ -350,6 +350,10 @@ import { PatientCreateBrunchComponent } from './common/PatientManagement/patient
 import { HrLoanApprovalComponent } from './common/MICL/hr-loan-approval/hr-loan-approval.component';
 import { CreateCookieComponent } from "./common/UserManagement/Createt_Desktop_Cookies/create-cookie/create-cookie.component";
 import { NPSupTktSalesReturnRequestComponent } from "./common/TicketManagement/np-sup-tkt-sales-return-request/np-sup-tkt-sales-return-request.component";
+import { MICLCouponIssueComponent } from "./common/MICL/micl-coupon-issue/micl-coupon-issue.component";
+import { CouponCreationComponent } from './common/MICL/coupon-creation/coupon-creation.component';
+import { CouponExpensesComponent } from './common/MICL/coupon-expenses/coupon-expenses.component';
+import { CouponUtilizationComponent } from './common/MICL/coupon-utilization/coupon-utilization.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2655,6 +2659,34 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
     title: 'Sales Return Request'
     }
   },
+  {
+    path: 'MICL_Coupon_Issue',
+    component: MICLCouponIssueComponent,
+    data: {
+    title: 'Coupon Issue'
+    }
+    },
+    {
+      path: 'MICL_Coupon_Creation',
+        component: CouponCreationComponent,
+        data: {
+          title: 'Coupon Creation'
+    }
+    },
+    {
+      path: 'MICL_Coupon_Expenses',
+        component: CouponExpensesComponent,
+        data: {
+          title: 'Coupon Expenses'
+    }
+    },
+    {
+      path: 'MICL_Coupon_Utilization',
+        component: CouponUtilizationComponent,
+        data: {
+          title: 'Coupon Utilization'
+    }
+    },
 
     /*{
 
