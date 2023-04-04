@@ -138,14 +138,20 @@
                                                             </li>
                                                           </ul> -->
                                                          <ul class="dropdown-menu">
-                                                             <!-- <li *ngIf="col.Consultancy_Done == 'N' && col.Controller_Name == 'NA' " >
-                                                                <a (click)="actionClick(col ,'UpdateAppointment')" >
-                                                                    <i class="fa fa-repeat"></i>
+                                                             <li *ngIf="col.Consultancy_Descr == 'ASSR'">
+                                                                <a (click)="actionClick(col ,'ASSR')" >
+                                                                    <i class="fa fa-arrow-right"></i>
                                                                    Update Appointment
                                                                 </a>
-                                                            </li> -->
-                                                            <li *ngIf="col.Consultancy_Descr == 'PTA' ||col.Consultancy_Descr == 'PTA +Tympanometry +Speech Audiometry' ||col.Consultancy_Descr == 'PTA+ Tympanometry' || col.Consultancy_Descr == 'Hearing Aid Trial'">
+                                                            </li>
+                                                            <li *ngIf="col.Consultancy_Descr == 'PTA' ||col.Consultancy_Descr == 'PTA +Tympanometry +Speech Audiometry' ||col.Consultancy_Descr == 'PTA+ Tympanometry'">
                                                                 <a (click)="actionClick(col ,'PTA')">
+                                                                    <i class="fa fa-arrow-right"></i>
+                                                                    Update Outcome
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Consultancy_Descr == 'Hearing Aid Trial'">
+                                                                <a (click)="actionClick(col ,'Hearing Aid Trial')">
                                                                     <i class="fa fa-arrow-right"></i>
                                                                     Update Outcome
                                                                 </a>
@@ -787,6 +793,514 @@ style="text-align: center;"
         </button>
         <button type="button" (click)="PTAmodal = false" class="btn btn-secondary">
             <span  class="glyphicon glyphicon-remove"></span>Close
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!-- ASSR / BERA POP -->
+<p-dialog [header]="TitleHeder" [appendTo]="'body'" [visible]=" AssrModal" [closeOnEscape]="true" [autoZIndex]="true"
+    [closable]="false" [modal]="true" [responsive]="true"
+    [style]="{ width: '82%', minWidth: '200px', minHeight: '700px' }" style="text-align: center;" [minY]="70"
+    [maximizable]="false" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="AssrFilll" #AssrFill="ngForm" novalidate>
+            <h5 style="background: #c1c1c185;
+                    border-top: 5px solid #3c8dbc;
+                    border-bottom: 1px solid #c6c6c6;
+                    margin-left: -8px;margin-right: -8px;">
+                <strong>HEARING THRESHOLDS</strong>
+            </h5>
+            <div class="row">
+                <table style="margin-top: -15px; width: 100%;">
+                    <thead class="table-header">
+                        <tr>
+                            <th><i class="fas fa-ear"></i></th>
+                            <th>250Hz</th>
+                            <th>500Hz</th>
+                            <th>1000Hz</th>
+                            <th>2000Hz</th>
+                            <th>4000Hz</th>
+                            <th>8000Hz</th>
+                            <th>PTA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <b>RIGHT</b>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" CompacctDigitonly="true" name="Right250"
+                                        *ngIf=" RetriveDisable1St == false" #Right250="ngModel"
+                                        [(ngModel)]=" ObjAssr.PTA_Right_250" placeholder="Write Here..."
+                                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Right250?.errors?.required}"
+                                        required>
+                                    <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.PTA_Right_250 ?
+                                         ObjAssr.PTA_Right_250 :'-'}}</div>
+                                    <div class="input-group-addon">
+                                        <strong>dB</strong>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" CompacctDigitonly="true" name="Right500"
+                                        *ngIf=" RetriveDisable1St == false" #Right500="ngModel"
+                                        [(ngModel)]=" ObjAssr.PTA_Right_500" (change)="TotalAssr()"
+                                        placeholder="Write Here..."
+                                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Right500?.errors?.required}"
+                                        required>
+                                    <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.PTA_Right_500 ?
+                                         ObjAssr.PTA_Right_500 : '-'}}</div>
+                                    <div class="input-group-addon">
+                                        <strong>dB</strong>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" CompacctDigitonly="true" name="Right1000"
+                                        *ngIf=" RetriveDisable1St == false" #Right1000="ngModel"
+                                        [(ngModel)]=" ObjAssr.PTA_Right_1000" (change)="TotalAssr()"
+                                        placeholder="Write Here..."
+                                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Right1000?.errors?.required}"
+                                        required>
+                                    <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.PTA_Right_1000 ? ObjAssr.PTA_Right_1000 : '-'}}</div>
+                                    <div class="input-group-addon">
+                                        <strong>dB</strong>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" CompacctDigitonly="true" name="Right2000"
+                                        *ngIf=" RetriveDisable1St == false" #Right2000="ngModel"
+                                        [(ngModel)]=" ObjAssr.PTA_Right_2000" (change)="TotalAssr()"
+                                        placeholder="Write Here..."
+                                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Right2000?.errors?.required}"
+                                        required>
+                                    <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.PTA_Right_2000 ? ObjAssr.PTA_Right_2000 : '-'}}</div>
+                                    <div class="input-group-addon">
+                                        <strong>dB</strong>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" CompacctDigitonly="true" name="Right4000"
+                                        *ngIf=" RetriveDisable1St == false" #Right4000="ngModel"
+                                        [(ngModel)]=" ObjAssr.PTA_Right_4000" placeholder="Write Here..."
+                                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Right4000?.errors?.required}"
+                                        required>
+                                    <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.PTA_Right_4000 ?
+                                         ObjAssr.PTA_Right_4000 : '-'}}</div>
+                                    <div class="input-group-addon">
+                                        <strong>dB</strong>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" CompacctDigitonly="true" name="Right8000"
+                                        *ngIf=" RetriveDisable1St == false" #Right8000="ngModel"
+                                        [(ngModel)]=" ObjAssr.PTA_Right_8000" placeholder="Write Here..."
+                                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Right8000?.errors?.required}"
+                                        required>
+                                    <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.PTA_Right_8000 ?
+                                         ObjAssr.PTA_Right_8000 :'-'}}</div>
+                                    <div class="input-group-addon">
+                                        <strong>dB</strong>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <div class="label-t">{{ ObjAssr.PTA_Right ? ObjAssr.PTA_Right : 0}}</div>
+                                    <div class="input-group-addon">
+                                        <strong>dB</strong>
+                                    </div>
+                                </div>
+                            </td>
+
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <b>LEFT</b>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" CompacctDigitonly="true" name="Left250"
+                                        *ngIf=" RetriveDisable1St == false" #Left250="ngModel"
+                                        [(ngModel)]=" ObjAssr.PTA_Left_250" placeholder="Write Here..."
+                                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Left250?.errors?.required}"
+                                        required>
+                                    <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.PTA_Left_250 ?
+                                         ObjAssr.PTA_Left_250 : '-'}}</div>
+                                    <div class="input-group-addon">
+                                        <strong>dB</strong>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" CompacctDigitonly="true" name="Left500"
+                                        *ngIf=" RetriveDisable1St == false" #Left500="ngModel"
+                                        [(ngModel)]=" ObjAssr.PTA_Left_500" (change)="TotalAssr()"
+                                        placeholder="Write Here..."
+                                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Left500?.errors?.required}"
+                                        required>
+                                    <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.PTA_Left_500 ?
+                                         ObjAssr.PTA_Left_500 : '-'}}</div>
+                                    <div class="input-group-addon">
+                                        <strong>dB</strong>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" CompacctDigitonly="true" name="Left1000"
+                                        *ngIf=" RetriveDisable1St == false" #Left1000="ngModel"
+                                        [(ngModel)]=" ObjAssr.PTA_Left_1000" (change)="TotalAssr()"
+                                        placeholder="Write Here..."
+                                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Left1000?.errors?.required}"
+                                        required>
+                                    <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.PTA_Left_1000 ?
+                                         ObjAssr.PTA_Left_1000 : '-'}}</div>
+                                    <div class="input-group-addon">
+                                        <strong>dB</strong>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" CompacctDigitonly="true" name="Left2000"
+                                        *ngIf=" RetriveDisable1St == false" #Left2000="ngModel"
+                                        [(ngModel)]=" ObjAssr.PTA_Left_2000" (change)="TotalAssr()"
+                                        placeholder="Write Here..."
+                                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Left2000?.errors?.required}"
+                                        required>
+                                    <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.PTA_Left_2000 ?
+                                         ObjAssr.PTA_Left_2000 : '-'}}</div>
+                                    <div class="input-group-addon">
+                                        <strong>dB</strong>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" CompacctDigitonly="true" name="Left4000"
+                                        *ngIf=" RetriveDisable1St == false" #Left4000="ngModel"
+                                        [(ngModel)]=" ObjAssr.PTA_Left_4000" placeholder="Write Here..."
+                                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Left4000?.errors?.required}"
+                                        required>
+                                    <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.PTA_Left_4000 ?
+                                         ObjAssr.PTA_Left_4000 : '-'}}</div>
+                                    <div class="input-group-addon">
+                                        <strong>dB</strong>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" CompacctDigitonly="true" name="Left8000"
+                                        *ngIf=" RetriveDisable1St == false" #Left8000="ngModel"
+                                        [(ngModel)]=" ObjAssr.PTA_Left_8000" placeholder="Write Here..."
+                                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Left8000?.errors?.required}"
+                                        required>
+                                    <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.PTA_Left_8000 ?
+                                         ObjAssr.PTA_Left_8000 : '-'}}</div>
+                                    <div class="input-group-addon">
+                                        <strong>dB</strong>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <div class="label-t">{{ ObjAssr.PTA_Left ?  ObjAssr.PTA_Left : 0}}</div>
+                                    <div class="input-group-addon">
+                                        <strong>dB</strong>
+                                    </div>
+                                </div>
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h5 style="background: #c1c1c185;
+                            border-top: 5px solid #3c8dbc;
+                            border-bottom: 1px solid #c6c6c6;">
+                <strong>PROVISIONAL DIAGNOSIS</strong>
+            </h5>
+            <div class="row">
+                <div class="col-sm-6">
+                    <h5 style="margin-top: 0px;font-size: 16px;"><strong>Degree Of Loss</strong> </h5>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <strong>Left</strong>
+                        </div>
+                        <p-dropdown [options]="AssrDegreeLossLeft" name="DLeft" #DLeft="ngModel"
+                            [(ngModel)]=" ObjAssr.Degree_Of_Loss_ID" *ngIf=" RetriveDisable1St == false"
+                            [showClear]="true" [emptyFilterMessage]="'No Item Found'" [filter]="true"
+                            filterBy="label,value.name" [resetFilterOnHide]="true"
+                            (onChange)="AssrTinnitus(ObjAssr.Degree_Of_Loss_ID)" [placeholder]="'Choose Left'"
+                            [virtualScroll]="true" itemSize="30"
+                            [ngClass]="{'clearance':  AssrFinalSaveSummited&& DLeft.errors?.required}" required>
+                        </p-dropdown>
+                        <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.Degree_Of_Loss_Name ?
+                             ObjAssr.Degree_Of_Loss_Name : '-'}}</div>
+                    </div>
+                </div>
+                <div class="col-sm-6" style="margin-top: 26px;">
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <strong>Right</strong>
+                        </div>
+                        <p-dropdown [options]="AssrDegreeLossRight" name="DRight" #DRight="ngModel"
+                            [(ngModel)]=" ObjAssr.Degree_Of_Loss_Right_ID" *ngIf=" RetriveDisable1St == false" [showClear]="true"
+                            [emptyFilterMessage]="'No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                            (onChange)="AssrTinnitus(ObjAssr.Degree_Of_Loss_Right_ID)" [placeholder]="'Choose Right'" [virtualScroll]="true"
+                            itemSize="30" [ngClass]="{'clearance':  AssrFinalSaveSummited&& DRight.errors?.required}" required>
+                        </p-dropdown>
+                        <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.Degree_Of_Loss_Name1 ?
+                            ObjAssr.Degree_Of_Loss_Name1 : '-'}}</div>
+                    </div>
+                </div>
+                <!-- <div class="col-sm-4">
+                    <h5 style="padding: 0.5em 1em;
+                            background: #c1c1c185;
+                            border-top: 5px solid #3c8dbc;
+                            border-bottom: 1px solid #c6c6c6;
+                            margin-top: -4px;"><strong>Configuration of Hearing Loss</strong> </h5>
+                    <div class="input-group" style="padding-bottom: 10px;">
+                        <div class="input-group-addon">
+                            <strong>Left</strong>
+                        </div>
+                        <p-dropdown [options]="ConfigLossLeft" [showClear]="true" [emptyFilterMessage]="'No Item Found'"
+                            [filter]="true" *ngIf=" RetriveDisable1St == false" name="LeftCon" #LeftCon="ngModel"
+                            [(ngModel)]=" ObjAssr.Hearing_Loss_ID" [disabled]="  DisableL " filterBy="label,value.name"
+                            [resetFilterOnHide]="true" [placeholder]="'Choose'" [virtualScroll]="true" itemSize="30"
+                            [ngClass]="{'clearance':  AssrFinalSaveSummited&& LeftCon.errors?.required}" required>
+                        </p-dropdown>
+                        <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.Hearing_Loss ?
+                             ObjAssr.Hearing_Loss : '-'}}</div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <strong>Right</strong>
+                        </div>
+                        <p-dropdown [options]="ConfigLossRight" [showClear]="true"
+                            [emptyFilterMessage]="'No Item Found'" [filter]="true" *ngIf=" RetriveDisable1St == false"
+                            name="RightConf" #RightConf="ngModel" [(ngModel)]=" ObjAssr.Hearing_Loss_Right_ID"
+                            [disabled]=" Disable " filterBy="label,value.name" [resetFilterOnHide]="true"
+                            [placeholder]="'Choose'" [virtualScroll]="true" itemSize="30"
+                            [ngClass]="{'clearance':  AssrFinalSaveSummited&& RightConf.errors?.required}" required>
+                        </p-dropdown>
+                        <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.Hearing_Loss1 ?
+                             ObjAssr.Hearing_Loss1 :'-'}}</div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <h5 style="padding: 0.5em 1em;
+                    background: #c1c1c185;
+                    border-top: 5px solid #3c8dbc;
+                    border-bottom: 1px solid #c6c6c6;
+                    margin-top: -4px;"><strong>Types Of Loss</strong> </h5>
+                    <div class="input-group" style="padding-bottom: 10px;">
+                        <div class="input-group-addon">
+                            <strong>Left</strong>
+                        </div>
+                        <p-dropdown [options]="TypeLossLeft" [showClear]="true" [emptyFilterMessage]="'No Item Found'"
+                            [filter]="true" *ngIf=" RetriveDisable1St == false" name="TYpeLeft" #TYpeLeft="ngModel"
+                            [(ngModel)]=" ObjAssr.Type_Of_Loss_ID" [disabled]="DisableTypL" filterBy="label,value.name"
+                            [resetFilterOnHide]="true" [placeholder]="'Choose'" [virtualScroll]="true" itemSize="30"
+                            [ngClass]="{'clearance':  AssrFinalSaveSummited&& TYpeLeft.errors?.required}" required>
+                        </p-dropdown>
+                        <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.Type_Of_Loss ?
+                             ObjAssr.Type_Of_Loss :'-'}}</div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <strong>Right</strong>
+                        </div>
+                        <p-dropdown [options]="TypeLossRight" [showClear]="true" [emptyFilterMessage]="'No Item Found'"
+                            [filter]="true" *ngIf=" RetriveDisable1St == false" name="TYpeRight" #TYpeRight="ngModel"
+                            [(ngModel)]=" ObjAssr.Type_Of_Loss_Right_ID" [disabled]="DisableTypR"
+                            filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'"
+                            [virtualScroll]="true" itemSize="30"
+                            [ngClass]="{'clearance':  AssrFinalSaveSummited&& TYpeRight.errors?.required}" required>
+                        </p-dropdown>
+                        <div class="label-t" *ngIf=" RetriveDisable1St == true">{{ ObjAssr.Type_Of_Loss1 ?
+                             ObjAssr.Type_Of_Loss1 : '-'}}</div>
+                    </div>
+                </div> -->
+            </div>
+
+            <h5
+                style="background: #c1c1c185; 
+                            border-top: 5px solid #3c8dbc;
+                            border-bottom: 1px solid #c6c6c6;margin-bottom: -3px;">
+                <strong>{{TitleMiddle}}</strong>
+            </h5>
+
+            <div class="row">
+                <div class="col-sm-3"
+                    *ngIf="( ObjAssr.Degree_Of_Loss_ID  ||  ObjAssr.Degree_Of_Loss_Right_ID) && RetriveDisable1St == false">
+                    <h5 style="padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;"><strong>Tinnitus Status</strong> </h5>
+                    <p-dropdown [options]="AssrTinnitusList" name="Tinnitus" #Tinnitus="ngModel"
+                        [(ngModel)]=" ObjAssr.Tinnitus_Status_ID" [showClear]="true"
+                        [emptyFilterMessage]="'No Item Found'" [filter]="true" (onChange)="AssrSubType()"
+                        filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'"
+                        [virtualScroll]="true" itemSize="30"
+                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Tinnitus.errors?.required}" required>
+                    </p-dropdown>
+                </div>
+                <div class="col-sm-3" *ngIf="RetriveDisable1St == true">
+                    <h5 style="padding: 0.5em 1em;
+                                                    background: #c1c1c185;
+                                                    border-top: 5px solid #3c8dbc;
+                                                    border-bottom: 1px solid #c6c6c6;"><strong>Tinnitus Status</strong>
+                    </h5>
+                    <div class="label-t">{{ ObjAssr.Tinnitus_Status ?  ObjAssr.Tinnitus_Status :'-'}}</div>
+                </div>
+
+                <div class="col-sm-3" *ngIf=" ObjAssr.Tinnitus_Status_ID && RetriveDisable1St == false">
+                    <h5 style="padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;"><strong>Sub Status</strong> </h5>
+                    <p-dropdown [options]="AssrSubTypList" name="Sub_Status_ID" #Sub_Status_ID="ngModel"
+                        [(ngModel)]=" ObjAssr.Sub_Status_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'"
+                        [filter]="true" (onChange)="AssrFinalStatus( ObjAssr.Sub_Status_ID)" filterBy="label,value.name"
+                        [resetFilterOnHide]="true" [placeholder]="'Choose'" [virtualScroll]="true" itemSize="30"
+                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Sub_Status_ID.errors?.required}" required>
+                    </p-dropdown>
+                </div>
+                <div class="col-sm-3" *ngIf="RetriveDisable1St == true">
+                    <h5 style="padding: 0.5em 1em;
+                                                    background: #c1c1c185;
+                                                    border-top: 5px solid #3c8dbc;
+                                                    border-bottom: 1px solid #c6c6c6;"><strong>Sub Status</strong>
+                    </h5>
+                    <div class="label-t">{{ ObjAssr.Sub_Status ?  ObjAssr.Sub_Status : '-'}}</div>
+                </div>
+
+                <div class="col-sm-3" *ngIf=" ObjAssr.Sub_Status_ID && RetriveDisable2nd == false">
+                    <h5 style="padding: 0.5em 1em;
+                            background: #c1c1c185;
+                            border-top: 5px solid #3c8dbc;
+                            border-bottom: 1px solid #c6c6c6;"><strong>Final Status</strong> </h5>
+                    <p-dropdown [options]="AssrFinalStatusList" name="Final_Status_ID" #Final_Status_ID="ngModel"
+                        [(ngModel)]=" ObjAssr.Final_Status_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'"
+                        [filter]="true" (onChange)="ObjectionTypeAssr()" filterBy="label,value.name"
+                        [resetFilterOnHide]="true" [placeholder]="'Choose'" [virtualScroll]="true" itemSize="30"
+                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Final_Status_ID.errors?.required}" required>
+                    </p-dropdown>
+                </div>
+                <div class="col-sm-3" *ngIf="RetriveDisable2nd == true">
+                    <h5 style="padding: 0.5em 1em;
+                                            background: #c1c1c185;
+                                            border-top: 5px solid #3c8dbc;
+                                            border-bottom: 1px solid #c6c6c6;"><strong>Final Status</strong> </h5>
+                    <div class="label-t">{{ ObjAssr.Final_Status ?  ObjAssr.Final_Status : '-'}}</div>
+                </div>
+
+                <div class="col-sm-3" *ngIf="( ObjAssr.Final_Status_ID &&  ObjAssr.Final_Status !=='Prescribed HA - Binaural' &&  ObjAssr.Final_Status == 'Prescribed HA - Monaural '|| ObjAssr.Final_Status === 'Patient Deferred '||  ObjAssr.Final_Status === 'HAT Pending' ||  ObjAssr.Final_Status === 'Prescribed HA - Monaural Tinnitus therapy program scheduled') && RetriveDisable2nd == false">
+                    <h5 style="padding: 0.5em 1em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;"><strong>Objection</strong> </h5>
+                    <p-dropdown [options]="AssrObjectionList" name="Objection" #Objection="ngModel"
+                        [(ngModel)]=" ObjAssr.Objection_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'"
+                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'"
+                        [virtualScroll]="true" itemSize="30"
+                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Objection.errors?.required}" required>
+                    </p-dropdown>
+                </div>
+                <div class="col-sm-3"*ngIf=" ( ObjAssr.Final_Status_ID &&  ObjAssr.Final_Status !== 'Prescribed HA - Binaural' &&  ObjAssr.Final_Status == 'Prescribed HA - Monaural '||  ObjAssr.Final_Status === 'Patient Deferred '||  ObjAssr.Final_Status === 'HAT Pending' ||   ObjAssr.Final_Status === 'Prescribed HA - Monaural Tinnitus therapy program scheduled') && RetriveDisable2nd == true">
+                    <h5 style="padding: 0.5em 1em;
+                                                        background: #c1c1c185;
+                                                        border-top: 5px solid #3c8dbc;
+                                                        border-bottom: 1px solid #c6c6c6;"><strong>Objection</strong>
+                    </h5>
+                    <div class="label-t">{{ ObjAssr.Objection ?  ObjAssr.Objection : '-'}}</div>
+                </div>
+
+                <div class="col-sm-3"
+                    *ngIf="( ObjAssr.Final_Status_ID &&  ObjAssr.Final_Status === 'Prescribed HA - Binaural' ||  ObjAssr.Final_Status === 'Prescribed HA - Binaural Tinnitus therapy program scheduled' ||  ObjAssr.Final_Status === 'Prescribed HA - Monaural '||  ObjAssr.Final_Status === 'Prescribed HA - Monaural Tinnitus therapy program scheduled') && RetriveDisable2nd == false">
+                    <h5 style="padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;"><strong>Trial Success</strong> </h5>
+                    <p-dropdown [options]="AssrTrailSuccessList" name="Trial_Success" #Trial_Success="ngModel"
+                        [(ngModel)]=" ObjAssr.Trial_Success_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'"
+                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'"
+                        [virtualScroll]="true" itemSize="30"
+                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Trial_Success.errors?.required}" required>
+                    </p-dropdown>
+                </div>
+                <div class="col-sm-3"
+                    *ngIf="( ObjAssr.Final_Status_ID &&  ObjAssr.Final_Status === 'Prescribed HA - Binaural' ||  ObjAssr.Final_Status === 'Prescribed HA - Binaural Tinnitus therapy program scheduled' ||  ObjAssr.Final_Status === 'Prescribed HA - Monaural '||   ObjAssr.Final_Status === 'Prescribed HA - Monaural Tinnitus therapy program scheduled') && RetriveDisable2nd == true">
+                    <h5 style="padding: 0.5em 1em;
+                                                    background: #c1c1c185;
+                                                    border-top: 5px solid #3c8dbc;
+                                                    border-bottom: 1px solid #c6c6c6;"><strong>Trial Success</strong>
+                    </h5>
+                    <div class="label-t">{{ ObjAssr.Trial_Success ?  ObjAssr.Trial_Success :'-'}}</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <label class="control-label">Remarks</label>
+                    <textarea class="form-control" *ngIf="RetriveDisable2nd == false" name="Remarks" #Remarks="ngModel"
+                        [(ngModel)]=" ObjAssr.PTA_Remarks" placeholder="Remarks"
+                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Remarks.errors?.required}" required>
+
+                  </textarea>
+                    <textarea class="form-control" *ngIf="RetriveDisable2nd == true" id="textArea"
+                        disabled>{{ ObjAssr.PTA_Remarks ?  ObjAssr.PTA_Remarks : '-'}}</textarea>
+                </div>
+
+                <div class="col-sm-6">
+                    <label class="control-label">Support required To Convert</label>
+                    <input type="text" class="form-control" *ngIf="RetriveDisable2nd == false" name="Support"
+                        #Support="ngModel" [(ngModel)]=" ObjAssr.PTA_Support_Convert"
+                        placeholder="Support required To Convert"
+                        [ngClass]="{'clearance':  AssrFinalSaveSummited&& Support.errors?.required}" required>
+                    <div class="label-t" *ngIf="RetriveDisable2nd == true">{{ ObjAssr.PTA_Support_Convert ?
+                         ObjAssr.PTA_Support_Convert : '-'}}</div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button class="btn btn-primary pull-right" (click)="SaveAssrPop(AssrFill.form.valid)" *ngIf="!RetriveDisable2nd">
+            <span class="glyphicon glyphicon-refresh"></span> Update
+        </button>
+        <button type="button" (click)=" AssrModal = false" class="btn btn-info">
+            <span class="glyphicon glyphicon-remove"></span>Close
         </button>
     </p-footer>
 </p-dialog>
