@@ -822,7 +822,7 @@ import { BSHPLAudiologistAppoComponent } from "./common/PatientManagement/bshpl-
     CouponExpensesComponent,
     CouponUtilizationComponent,
     NepalSupTktSalesReturnApproveComponent,
-    BSHPLAudiologistAppoComponent
+    BSHPLAudiologistAppoComponent 
 
 
   ],
