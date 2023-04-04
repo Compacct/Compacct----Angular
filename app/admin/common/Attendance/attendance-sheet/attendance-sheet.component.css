@@ -228,6 +228,11 @@ div.table-responsive.table-id>p-table>div>div {
     color: #ffff;
     text-align: center;
   }
+  .OD {
+    background-color:#adef12 !important;
+    color: #ffff;
+    text-align: center;
+  }
   
   #picker {
     background-image: none !important;

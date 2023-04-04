@@ -26,6 +26,7 @@ export class EmployeeSalaryMasterMiclComponent implements OnInit {
   buttonname = "Save";
   myDate = new Date();
   EmpSalaryListMICL:any = [];
+  flag:boolean = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -68,9 +69,10 @@ export class EmployeeSalaryMasterMiclComponent implements OnInit {
     UpdateMaster(Obj){
       // console.log(this.DateService.dateConvert(new Date(this.myDate)))
       //  this.ObjProClosingStock.Doc_Date = this.DateService.dateConvert(new Date(this.todayDate));
-      if(Obj.Emp_ID) {
+      if(Obj.Emp_ID && Obj.Effective_From) {
        const TempObj = {
               Emp_ID: Obj.Emp_ID,
+              Effective_From: this.DateService.dateConvert(new Date(Obj.Effective_From)),
               Basic_Salary : Obj.Basic_Salary,
               HRA	: Obj.HRA,
               Conveyance_Allowance : Obj.Conveyance_Allowance,

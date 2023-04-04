@@ -46,13 +46,14 @@
                                         <tr>
                                             <th>Employee Code</th>
                                             <th>Employee Name</th>
+                                            <th width="12%">Effected From</th>
                                             <th>Basic Salary</th>
                                             <th>HRA</th>
                                             <th>Conveyance Allowance</th>
-                                            <th>Children Education Allowance</th>
+                                            <th>Children Education <br> Allowance</th>
                                             <th>Medical Allownce</th>
                                             <th>Washing Allowance</th>
-                                            <th>Other_Allowance</th>
+                                            <th>Other Allowance</th>
                                             <th>Action</th>
                                         </tr>
                                     </ng-template>
@@ -60,13 +61,14 @@
                                         <tr>
                                             <td>{{col.Emp_Code}}</td>
                                             <td>{{col.Emp_Name}}</td>
-                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Basic_Salary' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 100px;" /></td>
-                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.HRA' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 100px;" /></td>
-                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Conveyance_Allowance' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 100px;" /></td>
-                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Children_Education_Allowance' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 100px;" /></td>
-                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Medical_Allownce' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 100px;" /></td>
-                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Washing_Allowance' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 100px;" /></td>
-                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Other_Allowance' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 100px;" /></td>
+                                            <td width="12%"><ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='col.Effective_From' [ngClass]="{'clearance' : flag}"></ejs-datepicker></td>
+                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Basic_Salary' CompacctDigitonly="true" class="form-control" style="width: 95px;" /></td>
+                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.HRA' CompacctDigitonly="true" class="form-control" style="width: 95px;" /></td>
+                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Conveyance_Allowance' CompacctDigitonly="true" class="form-control" style="width: 95px;" /></td>
+                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Children_Education_Allowance'  CompacctDigitonly="true" class="form-control" style="width: 95px;" /></td>
+                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Medical_Allownce' CompacctDigitonly="true" class="form-control" style="width: 95px;" /></td>
+                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Washing_Allowance' CompacctDigitonly="true" class="form-control" style="width: 95px;" /></td>
+                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Other_Allowance' CompacctDigitonly="true" class="form-control" style="width: 95px;" /></td>
                                             <td>
                                                 <button class="btn btn-primary custombutton" (click)='UpdateMaster(col)' type="button" [id]="col.Emp_ID"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
                                                    Update
