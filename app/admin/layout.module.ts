@@ -452,6 +452,7 @@ import { CouponCreationComponent } from './common/MICL/coupon-creation/coupon-cr
 import { CouponExpensesComponent } from './common/MICL/coupon-expenses/coupon-expenses.component';
 import { CouponUtilizationComponent } from './common/MICL/coupon-utilization/coupon-utilization.component';
 import { NepalSupTktSalesReturnApproveComponent } from './common/TicketManagement/nepal-sup-tkt-sales-return-approve/nepal-sup-tkt-sales-return-approve.component';
+import { BSHPLAudiologistAppoComponent } from "./common/PatientManagement/bshpl-audiologist-appo/bshpl-audiologist-appo.component";
 
 @NgModule({
   declarations: [
@@ -820,7 +821,8 @@ import { NepalSupTktSalesReturnApproveComponent } from './common/TicketManagemen
     CouponCreationComponent,
     CouponExpensesComponent,
     CouponUtilizationComponent,
-    NepalSupTktSalesReturnApproveComponent
+    NepalSupTktSalesReturnApproveComponent,
+    BSHPLAudiologistAppoComponent
 
 
   ],
