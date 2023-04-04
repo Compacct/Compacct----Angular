@@ -451,6 +451,7 @@ import { MICLCouponIssueComponent } from './common/MICL/micl-coupon-issue/micl-c
 import { CouponCreationComponent } from './common/MICL/coupon-creation/coupon-creation.component';
 import { CouponExpensesComponent } from './common/MICL/coupon-expenses/coupon-expenses.component';
 import { CouponUtilizationComponent } from './common/MICL/coupon-utilization/coupon-utilization.component';
+import { NepalSupTktSalesReturnApproveComponent } from './common/TicketManagement/nepal-sup-tkt-sales-return-approve/nepal-sup-tkt-sales-return-approve.component';
 
 @NgModule({
   declarations: [
@@ -818,7 +819,8 @@ import { CouponUtilizationComponent } from './common/MICL/coupon-utilization/cou
     MICLCouponIssueComponent,
     CouponCreationComponent,
     CouponExpensesComponent,
-    CouponUtilizationComponent
+    CouponUtilizationComponent,
+    NepalSupTktSalesReturnApproveComponent
 
 
   ],
