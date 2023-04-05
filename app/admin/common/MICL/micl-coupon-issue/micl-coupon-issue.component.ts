@@ -38,6 +38,10 @@ export class MICLCouponIssueComponent implements OnInit {
   EmpNmae: any = undefined;
   visitorName: any = undefined;
   Date_Delete: any = undefined;
+  initDate:any = [];
+  From_date : Date;
+  To_date : Date;
+  EditList:any = [];
   
   constructor(
     private http: HttpClient,
@@ -46,6 +50,7 @@ export class MICLCouponIssueComponent implements OnInit {
     private GlobalAPI: CompacctGlobalApiService,
     private compacctToast:MessageService,
     private DateService: DateTimeConvertService,
+    public $CompacctAPI: CompacctCommonApi,
   ) {}
 
   ngOnInit() {
@@ -54,6 +59,7 @@ export class MICLCouponIssueComponent implements OnInit {
       Header: "Coupon Issue",
       Link: " HR -> Coupon Issue"
     })
+    this.Finyear();
     this.getEmpList();
     this.getCoupontype();
   }
@@ -61,7 +67,18 @@ export class MICLCouponIssueComponent implements OnInit {
     this.tabIndexToView = e.index;
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
-    this.clearData();
+    // this.clearData();
+  }
+  Finyear() {
+    this.http
+      .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
+      .subscribe((res: any) => {
+      let data = JSON.parse(res)
+      // this.vouchermaxDate = new Date(data[0].Fin_Year_End);
+      // this.voucherminDate = new Date(data[0].Fin_Year_Start);
+      // this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
+     this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
+      });
   }
   clearData() {
     this.CouponFormsSubmitted = false;
@@ -152,7 +169,7 @@ export class MICLCouponIssueComponent implements OnInit {
       this.CouponFormsSubmitted = false;
       this.TotalCoupon = 0;
       this.TotalAmount = undefined;
-      this.CouponDate = new Date();
+      // this.CouponDate = new Date();
       this.ObjCouponIssue.Coupon_Type = undefined;
       this.ObjCouponIssue.Start_No = undefined;
       this.ObjCouponIssue.End_No = undefined;
@@ -172,7 +189,6 @@ export class MICLCouponIssueComponent implements OnInit {
       "Json_Param_String": JSON.stringify([Value])
     }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-       console.log("Get_Coupon_Receive==",data)
         if (data[0].Column1 === "Invalid Coupon") {
          this.compacctToast.clear();
           this.compacctToast.add({
@@ -183,15 +199,52 @@ export class MICLCouponIssueComponent implements OnInit {
         });
        }
        else {
-        this.AddData();
+        this.SaveJournal();
        }
     }); 
     }
     }
-   
   }
+  SaveJournal(){
+    if (this.ObjCouponIssue.Start_No && this.ObjCouponIssue.End_No) {
+      const Value = {
+        Start_No: this.ObjCouponIssue.Start_No,
+        End_No: this.ObjCouponIssue.End_No 
+      }
+      const obj = {
+      "SP_String": "SP_Master_Coupon_Receive",
+      "Report_Name_String": "Save_Issue_Coupon_journal",
+      "Json_Param_String": JSON.stringify([Value])
+    }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+       console.log("Get_Coupon_Receive==",data)
+        if (data[0].Column1) {
+        this.AddData();
+       }
+    }); 
+    }
+  }
+
   deleteRaw(ind:any) {
     this.AddList.splice(ind,1)
+  }
+  DeleteFromJournal(dataobj,ind:any){
+    if (dataobj.Start_No && dataobj.End_No) {
+      const Value = {
+        Start_No: dataobj.Start_No,
+        End_No: dataobj.End_No 
+      }
+      const obj = {
+      "SP_String": "SP_Master_Coupon_Receive",
+      "Report_Name_String": "Delete_Issue_Coupon_journal",
+      "Json_Param_String": JSON.stringify([Value])
+    }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        if (data[0].Column1) {
+          this.AddList.splice(ind,1)
+       }
+    }); 
+    }
   }
   GetTotalAmount(){
   let flg:Number = 0
@@ -239,6 +292,7 @@ export class MICLCouponIssueComponent implements OnInit {
           });
           this.AddList = [];
           this.SaveFinal = [];
+          this.clearData();
           this.tabIndexToView = 0;
           this.items = ["BROWSE", "CREATE"];
           this.SearchData();
@@ -246,12 +300,18 @@ export class MICLCouponIssueComponent implements OnInit {
       })
     }
   }
+  getDateRange(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.From_date = dateRangeObj[0];
+      this.To_date = dateRangeObj[1];
+    }
+  }
   SearchData() {
     this.BrowseData = [];
-    if (this.CouponDateBrowseFirst && this.CouponDateBrowseEnd) {
+    if (this.From_date && this.To_date) {
       const Date = {
-        From_Date: this.DateService.dateConvert(this.CouponDateBrowseFirst) ,
-        To_Date: this.DateService.dateConvert(this.CouponDateBrowseEnd) 
+        From_Date: this.DateService.dateConvert(this.From_date) ,
+        To_Date: this.DateService.dateConvert(this.To_date) 
       }
       const obj = {
         "SP_String": "SP_Master_Coupon_Receive",
@@ -275,7 +335,51 @@ export class MICLCouponIssueComponent implements OnInit {
     const workbook: XLSX.WorkBook = {Sheets: {[fileName]: worksheet}, SheetNames: [fileName]};
     XLSX.writeFile(workbook, fileName+'.xlsx');
   }
-  EditCoupon() { }
+  EditCoupon(col) {
+    this.EditList = [];
+    if (col.Emp_ID || col.Visitor_Name) {
+      const Tempobj = {
+        Emp_ID: col.Emp_ID,
+        Emp_Name: col.Emp_Name,
+        Visitor_Name: col.Visitor_Name,
+        Date: this.DateService.dateConvert(new Date(col.Date))
+      }
+      const obj = {
+        "SP_String": "SP_Master_Coupon_Receive",
+        "Report_Name_String": "Get_Coupon_Issue_Data_For_Edit",
+        "Json_Param_String": JSON.stringify([Tempobj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.EditList = data;
+        if(this.EditList.length){
+          this.tabIndexToView = 1;
+          this.items = ["BROWSE", "UPDATE"];
+          this.buttonname = "Update";
+          this.ObjCouponIssue.Visitor_Name = data[0].Visitor_Name ? data[0].Visitor_Name : undefined;
+          this.if_Visitor = this.ObjCouponIssue.Visitor_Name ? true : false;
+          this.ObjCouponIssue.Emp_ID = data[0].Emp_ID;
+          this.CouponDate = new Date(data[0].Date);
+          this.EditList.forEach(element => {
+            const editobj = {
+              Emp_ID: element.Emp_ID,
+              Emp_Name: element.Emp_Name ? element.Emp_Name : "",
+              Visitor_Name: element.Visitor_Name ? element.Visitor_Name : "",
+              Date: element.Date ? this.DateService.dateConvert(element.Date) : null,
+              Coupon_Type: element.Coupon_Type,
+              Start_No: element.Start_No,
+              End_No: element.End_No,
+              No_Of_Coupon: element.No_Of_Coupon,
+              Total_Amount: element.Total_Amount,
+              Created_By: element.Created_By
+            }
+            this.AddList.push(editobj);
+          });
+          this.GetTotalAmount();
+
+        }
+      })
+    }
+   }
   onReject(){
   this.compacctToast.clear("c");
   }

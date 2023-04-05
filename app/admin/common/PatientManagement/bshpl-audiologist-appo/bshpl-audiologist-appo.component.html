@@ -1,0 +1,730 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-exclamation-sign" >
+
+                            <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date Range</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary custombutton" (click)="getAlldata()" [disabled]="seachSpinner">
+                                            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <p-table [value]="allDetalis" [paginator]="allDetalis.length ? true : false"
+                                        [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                        [rowsPerPageOptions]="[100,200,300]"
+                                        [globalFilterFields]="allDetalisHeader" [rowHover]="true" #dt>
+                                        <ng-template pTemplate="caption"  >
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                        class="searchInput form-control">
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th>Date</th>
+                                                <th>Patient Name</th>
+                                                <th>Mobile</th>
+                                                <th>Age</th>
+                                                <th>Sex</th>
+                                                <th>CostCentre Name</th>
+                                                <th>Consultancy Name</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button
+                                                            class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                            type="button" data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                         <ul class="dropdown-menu">
+                                                             <li>
+                                                                <a (click)="actionClick_PatientDetails(col)" >
+                                                                   <i class="fa fa-fw fa-user"></i>
+                                                                   People Details
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="actionClick_UpdateAppo(col)">
+                                                                    <i class="fa fa-repeat"></i>
+                                                                    Update Appointment
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="actionClick_Shift(col)">
+                                                                    <i class="fa fa-edit"></i>
+                                                                    Shift to other Audiologist 
+                                                                </a>
+                                                            </li>
+                                                         </ul>
+                                                    </div>
+                                                </td>
+                                                <td nowrap>{{col.Appo_Start | date: "dd/MMM/yyyy"}}</td>
+                                                <td nowrap>{{col.Patient ? col.Patient : '-'}}</td>
+                                                <td nowrap>{{col.Mobile ? col.Mobile : '-'}}</td>
+                                                <td nowrap>{{col.Age ? col.Age : '-'}}</td>
+                                                <td nowrap>{{col.Sex ? col.Sex : '-'}}</td>
+                                                <td nowrap>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
+                                                <td nowrap>{{col.Consultancy ? col.Consultancy : '-'}}</td>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                                            {{state.totalRecords}}
+                                        </ng-template>
+                            </p-table>
+                                
+                        </p-tabPanel>
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-ok">
+
+                        </p-tabPanel>
+
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<p-dialog
+   [header]="'Update Audiologist'"
+   [appendTo]="'body'"
+   [visible]="displayPopup"
+   [closeOnEscape]="true"
+   [closable]="false"
+   [modal]="true"
+   [responsive]="true"
+   [style]="{ width: '60%', minWidth: '200px', height: '50%' }"
+   style="text-align: center;"
+   [minY]="70"
+   [maximizable]="true"
+   [baseZIndex]="10000"
+   [autoZIndex]="true"
+>   
+   <form name="Audiologist" #Audiologist="ngForm" novalidate>
+      <div class="row">
+         <div class="col-sm-6">
+            <label class="control-label">Audiologist Name<sup class="text-danger">*</sup></label>
+            <p-dropdown [options]="AudiologistList"
+            name="Doctor_ID" 
+            #Doctor_ID="ngModel" 
+            [(ngModel)]="objAudiologist.Doctor_ID"
+            [showClear]="true" 
+            [emptyFilterMessage]="' No Audiologist Found'" 
+            [filter]="true" filterBy="label,value.name" 
+            [resetFilterOnHide]="true" 
+            [placeholder]="'Select Audiologist'" 
+            [virtualScroll]="true"
+            itemSize="30"
+            [styleClass]="AudiologistFormSubmitted &&  Doctor_ID.errors?.required ? 'clearance' :''"
+            [required]="true"> 
+            </p-dropdown>
+         </div>
+      </div>
+   </form>
+   <p-footer>
+      <button class="btn btn-primary pull-right" (click)="SaveAudiologist(Audiologist.form.valid)" [disabled]="Spinner">
+        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>Save
+      </button>
+      <button class="btn btn-primary" (click)="closePopup()" >
+        <span class="glyphicon glyphicon-remove"></span>Close
+      </button>
+   </p-footer>
+</p-dialog>
+
+<p-dialog
+   [header]="'Update Appointment'"
+   [appendTo]="'body'"
+   [visible]="displayPopupAppo"
+   [closeOnEscape]="true"
+   [closable]="false"
+   [modal]="true"
+   [responsive]="true"
+   [style]="{ width: '82%', minWidth: '200px', minHeight: '700px' }"
+   style="text-align: center;"
+   [minY]="70"
+   [maximizable]="true"
+   [baseZIndex]="10000"
+   [autoZIndex]="true"
+ >   
+   <form name="Appointment" #Appointment="ngForm" novalidate>
+
+        <div class="row">
+            <h5 style="background: #c1c1c185;
+            border-top: 5px solid #3c8dbc;
+            border-bottom: 1px solid #c6c6c6;
+            height: 33px">
+            <strong style="font-size: 20px; margin-left: 7px;">Details</strong>
+            </h5>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-3">
+                <label class="control-label">Patient Name</label>
+                <div class="label-t">{{P_Name ? P_Name : '-'}}</div>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Mobile</label>
+                <div class="label-t">{{Phone ? Phone : '-'}}</div>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Age</label>
+                <div class="label-t">{{Age ? Age : '-'}}</div>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Sex</label>
+                <div class="label-t">{{Sex ? Sex : '-'}}</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-3">
+                <label class="control-label">Date</label>
+                <div class="label-t">{{App_Date | date: "dd/MMM/yyyy"}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Cost Centre Name</label>
+                <div class="label-t">{{CostCen_Name ? CostCen_Name : '-'}}</div>
+            </div>
+            <div class="col-sm-5">
+                <label class="control-label">Consultancy Name</label>
+                <div class="label-t">{{Cons_Name ? Cons_Name : '-'}}</div>
+            </div>
+        </div>
+
+        <hr class="box boxboxDivide-primary">
+
+        <div class="row">
+            <h5 style="background: #c1c1c185;
+            border-top: 5px solid #3c8dbc;
+            border-bottom: 1px solid #c6c6c6;
+            height: 33px">
+            <strong style="font-size: 20px; margin-left: 7px;">PTA Findings</strong>
+            </h5>
+        </div>
+
+        <div class="row">
+
+            <div class="col-sm-4">
+                <h5 style="padding: 0.5em 1em;
+                    background: #c1c1c185;
+                    border-top: 5px solid #3c8dbc;
+                    border-bottom: 1px solid #c6c6c6;
+                    margin-top: -4px;">
+                    <strong>Degree Of Loss</strong> 
+                    </h5>
+                    <div class="input-group" style="padding-bottom: 10px;">
+                        <div class="input-group-addon">
+                            <strong>Left</strong>
+                        </div>
+                        <p-dropdown [options]="DegreeLossList"
+                                name="Degree_Of_Loss_L" 
+                                #Degree_Of_Loss_L="ngModel" 
+                                [(ngModel)]="objAppointment.Degree_Of_Loss_L"
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Degree Of Loss List Found'" 
+                                [filter]="true" filterBy="label,value.name" 
+                                [resetFilterOnHide]="true" 
+                                [placeholder]="'Select Degree of Loss'" 
+                                [virtualScroll]="true"
+                                [itemSize]="30"
+                                [styleClass]="AppointmentFormSubmitted &&  Degree_Of_Loss_L.errors?.required ? 'clearance' :''"
+                                [required]="true" >
+                        </p-dropdown>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <strong>Right</strong>
+                        </div>
+                        <p-dropdown [options]="DegreeLossList"
+                                name="Degree_Of_Loss_R" 
+                                #Degree_Of_Loss_R="ngModel" 
+                                [(ngModel)]="objAppointment.Degree_Of_Loss_R"
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Degree Of Loss List Found'" 
+                                [filter]="true" filterBy="label,value.name" 
+                                [resetFilterOnHide]="true" 
+                                [placeholder]="'Select Degree of Loss'" 
+                                [virtualScroll]="true"
+                                [itemSize]="30"
+                                [styleClass]="AppointmentFormSubmitted &&  Degree_Of_Loss_R.errors?.required ? 'clearance' :''"
+                                [required]="true" >
+                        </p-dropdown>
+                    </div>    
+            </div>
+
+            <div class="col-sm-4">
+                <h5 style="padding: 0.5em 1em;
+                    background: #c1c1c185;
+                    border-top: 5px solid #3c8dbc;
+                    border-bottom: 1px solid #c6c6c6;
+                    margin-top: -4px;">
+                    <strong>Types Of Loss</strong> 
+                </h5>
+                    <div class="input-group" style="padding-bottom: 10px;">
+                        <div class="input-group-addon">
+                            <strong>Left</strong>
+                        </div>
+                        <select class="form-control"
+                            [ngClass]="{clearance: AppointmentFormSubmitted && Type_Of_Loss_L?.errors?.required }" 
+                            required
+                            (change)="HAYesNoL()"
+                            name="Type_Of_Loss_L"
+                            #Type_Of_Loss_L="ngModel" 
+                            [(ngModel)]="objAppointment.Type_Of_Loss_L"
+                            >
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  *ngFor="let option of TypeLossList" value="{{option}}">
+                                {{option}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <strong>Right</strong>
+                        </div>
+                        <select class="form-control"
+                            [ngClass]="{clearance: AppointmentFormSubmitted && Type_Of_Loss_R?.errors?.required }" 
+                            required
+                            (change)="HAYesNoR()"
+                            name="Type_Of_Loss_R"
+                            #Type_Of_Loss_R="ngModel" 
+                            [(ngModel)]="objAppointment.Type_Of_Loss_R"
+                            >
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  *ngFor="let option of TypeLossList" value="{{option}}">
+                                {{option}}
+                            </option>
+                        </select>
+                    </div>    
+            </div>
+
+            <div class="col-sm-4">
+                <h5 style="padding: 0.5em 1em;
+                    background: #c1c1c185;
+                    border-top: 5px solid #3c8dbc;
+                    border-bottom: 1px solid #c6c6c6;
+                    margin-top: -4px;">
+                    <strong>HA Required</strong> 
+                </h5>
+                    <div class="input-group" style="padding-bottom: 10px;">
+                        <div class="input-group-addon">
+                            <strong>Left</strong>
+                        </div>
+                        <select class="form-control"
+                            [ngClass]="{clearance: AppointmentFormSubmitted && HA_Req_L?.errors?.required }" 
+                            required
+                            (change)="TrialDoneOnOFF()"
+                            name="HA_Req_L"
+                            #HA_Req_L="ngModel" 
+                            [(ngModel)]="objAppointment.HA_Req_L"
+                            >
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  *ngFor="let option of HAYesNoListL" value="{{option}}">
+                                {{option}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <strong>Right</strong>
+                        </div>
+                        <select class="form-control"
+                            [ngClass]="{clearance: AppointmentFormSubmitted && HA_Req_R?.errors?.required }" 
+                            required
+                            (change)="TrialDoneOnOFF()"
+                            name="HA_Req_R"
+                            #HA_Req_R="ngModel" 
+                            [(ngModel)]="objAppointment.HA_Req_R"
+                            >
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  *ngFor="let option of HAYesNoListR" value="{{option}}">
+                                {{option}}
+                            </option>
+                        </select>
+                    </div>    
+            </div>
+
+        </div>
+
+        <div class="row" style="margin-top: 12px;" *ngIf="TrialDoneOpen">
+            <div class="col-sm-4">
+                <label class="control-label">TRIAL DONE</label>
+                <select class="form-control"
+                    name="Trial_Done"
+                    #Trial_Done="ngModel"
+                    [(ngModel)]="objAppointment.Trial_Done"
+                    (change)="TrialUpdateOnOFF()"
+                    [ngClass]="{clearance: AppointmentFormSubmitted && Trial_Done?.errors?.required }" 
+                    required
+                >
+                 <option  [ngValue]="undefined">Select</option>
+                 <option  *ngFor="let option of YesNoList" value="{{option}}">
+                     {{option}}
+                 </option>
+                </select>
+            </div>
+        </div>
+
+        <hr class="box boxboxDivide-primary">
+
+        <div *ngIf="TrialUpdateOpen">
+            <div class="row">
+                <h5 style="background: #c1c1c185;
+                border-top: 5px solid #3c8dbc;
+                border-bottom: 1px solid #c6c6c6;
+                height: 33px">
+                <strong style="font-size: 20px; margin-left: 7px;">TRIAL UPDATE</strong>
+                </h5>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <label class="control-label">EXPERIENCE USER</label>
+                    <select class="form-control"
+                        name="EXPERIENCE_USER"
+                        #EXPERIENCE_USER="ngModel"
+                        [(ngModel)]="objAppointment.EXPERIENCE_USER"
+                        [ngClass]="{clearance: AppointmentFormSubmitted && EXPERIENCE_USER?.errors?.required }" 
+                        required
+                    >
+                     <option  [ngValue]="undefined">Select</option>
+                     <option  *ngFor="let option of YesNoList" value="{{option}}">
+                         {{option}}
+                     </option>
+                    </select>
+                </div>
+
+                <div class="col-sm-4">
+                    <label class="control-label">Binaural/Monorual</label>
+                    <select class="form-control"
+                        name="Trial_For"
+                        #Trial_For="ngModel"
+                        (change)="MonorualOnOFF()"
+                        [(ngModel)]="objAppointment.Trial_For"
+                        [ngClass]="{clearance: AppointmentFormSubmitted && Trial_For?.errors?.required }" 
+                        required
+                    >
+                     <option  [ngValue]="undefined">Select</option>
+                     <option  *ngFor="let option of Trial_ForList" value="{{option}}">
+                         {{option}}
+                     </option>
+                    </select>
+                </div>
+
+                <div class="col-sm-4" *ngIf="MonorualOpen">
+                    <label class="control-label">If Monorual</label>
+                    <input class="form-control"
+                        name="Trial_For_Mono_Reason"
+                        #Trial_For_Mono_Reason="ngModel"
+                        [(ngModel)]="objAppointment.Trial_For_Mono_Reason" 
+                        [ngClass]="{clearance: AppointmentFormSubmitted && Trial_For_Mono_Reason?.errors?.required }"
+                        required
+                        placeholder="Type reason" > 
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 12px;">
+                <div class="col-sm-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <form name="LeftProductTrial" #LeftProductTrial="ngForm" novalidate>
+                                <div class="col-sm-8">
+                                    <label class="control-label">Product Trial (Left)</label>
+                                    <p-dropdown [options]="ProductList"
+                                        name="ProTrialLeft" 
+                                        #ProTrialLeft="ngModel" 
+                                        [(ngModel)]="ProductTrialLeft"
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Product Found'" 
+                                        [filter]="true" filterBy="label,value.name" 
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select Product'" 
+                                        [virtualScroll]="true"
+                                        [itemSize]="30"
+                                        [styleClass]="PTLFormSubmitted &&  ProTrialLeft.errors?.required ? 'clearance' :''"
+                                        [required]="true" >
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-sm-2" style="margin-top: 26px;">
+                                    <button class="btn btn-primary" (click)="addProductTrialLeft(LeftProductTrial.form.valid)">
+                                    Add
+                                    </button>        
+                                </div>
+                            </form>    
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <form name="RightProductTrial" #RightProductTrial="ngForm" novalidate>
+                                <div class="col-sm-8">
+                                    <label class="control-label">Product Trial (Right)</label>
+                                    <p-dropdown [options]="ProductList"
+                                        name="ProTrialRight" 
+                                        #ProTrialRight="ngModel" 
+                                        [(ngModel)]="ProductTrialRight"
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Product Found'" 
+                                        [filter]="true" filterBy="label,value.name" 
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select Product'" 
+                                        [virtualScroll]="true"
+                                        [itemSize]="30"
+                                        [styleClass]="PTRFormSubmitted &&  ProTrialRight.errors?.required ? 'clearance' :''"
+                                        [required]="true" >
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-sm-2" style="margin-top: 26px;">
+                                    <button class="btn btn-primary" (click)="addProductTrialRight(RightProductTrial.form.valid)">
+                                    Add
+                                    </button>        
+                                </div>
+                            </form>    
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="table-responsive no-padding">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr style="background-color:#3c8dbc;color:white;">
+                                    <th>SL No.</th>
+                                    <th>Product Trial (Left)</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let obj of PTLList ;let ind = index;">
+                                    <td>{{ ind + 1 }}</td>
+                                    <td>{{obj.Product_Description ? obj.Product_Description : '-'}}</td>
+                                    <td><button (click)="deleteProductTrialLeft(ind)" class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="table-responsive no-padding">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr style="background-color:#3c8dbc;color:white;">
+                                    <th>SL No.</th>
+                                    <th>Product Trial (Right)</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let obj of PTRList ;let ind = index;">
+                                    <td>{{ ind + 1 }}</td>
+                                    <td>{{obj.Product_Description ? obj.Product_Description : '-'}}</td>
+                                    <td><button (click)="deleteProductTrialRight(ind)" class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 12px;">
+                <div class="col-sm-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <form name="LeftProductSelect" #LeftProductSelect="ngForm" novalidate>
+                                <div class="col-sm-8">
+                                    <label class="control-label">Product Select (Left)</label>
+                                    <p-dropdown [options]="ProductList"
+                                        name="ProSelectLeft" 
+                                        #ProSelectLeft="ngModel" 
+                                        [(ngModel)]="ProductSelectLeft"
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Product Found'" 
+                                        [filter]="true" filterBy="label,value.name" 
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select Product'" 
+                                        [virtualScroll]="true"
+                                        [itemSize]="30"
+                                        [styleClass]="PSLFormSubmitted &&  ProSelectLeft.errors?.required ? 'clearance' :''"
+                                        [required]="true" >
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-sm-2" style="margin-top: 26px;">
+                                    <button class="btn btn-primary" (click)="addProductSelectLeft(LeftProductSelect.form.valid)">
+                                    Add
+                                    </button>        
+                                </div>
+                            </form>    
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <form name="RightProductSelect" #RightProductSelect="ngForm" novalidate>
+                                <div class="col-sm-8">
+                                    <label class="control-label">Product Select (Right)</label>
+                                    <p-dropdown [options]="ProductList"
+                                        name="ProSelectRight" 
+                                        #ProSelectRight="ngModel" 
+                                        [(ngModel)]="ProductSelectRight"
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Product Found'" 
+                                        [filter]="true" filterBy="label,value.name" 
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select Product'" 
+                                        [virtualScroll]="true"
+                                        [itemSize]="30"
+                                        [styleClass]="PSRFormSubmitted &&  ProSelectRight.errors?.required ? 'clearance' :''"
+                                        [required]="true" >
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-sm-2" style="margin-top: 26px;">
+                                    <button class="btn btn-primary" (click)="addProductSelectRight(RightProductSelect.form.valid)">
+                                    Add
+                                    </button>        
+                                </div>
+                            </form>    
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="table-responsive no-padding">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr style="background-color:#3c8dbc;color:white;">
+                                    <th>SL No.</th>
+                                    <th>Product Select (Left)</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let obj of PSLList ;let ind = index;">
+                                    <td>{{ ind + 1 }}</td>
+                                    <td>{{obj.Product_Description ? obj.Product_Description : '-'}}</td>
+                                    <td><button (click)="deleteProductSelectLeft(ind)" class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="table-responsive no-padding">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr style="background-color:#3c8dbc;color:white;">
+                                    <th>SL No.</th>
+                                    <th>Product Select (Right)</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let obj of PSRList ;let ind = index;">
+                                    <td>{{ ind + 1 }}</td>
+                                    <td>{{obj.Product_Description ? obj.Product_Description : '-'}}</td>
+                                    <td><button (click)="deleteProductSelectRight(ind)" class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 2px;">
+                <div class="col-sm-4">
+                    <label class="control-label">Restult</label>
+                    <select class="form-control"
+                        name="Trial_Restult"
+                        #Trial_Restult="ngModel"
+                        [(ngModel)]="objAppointment.Trial_Restult"
+                        (change)="MISSEDOnOFF()"
+                        [ngClass]="{clearance: AppointmentFormSubmitted && Trial_Restult?.errors?.required }" 
+                        required
+                    >
+                     <option  [ngValue]="undefined">Select</option>
+                     <option  *ngFor="let option of TrialRestultList" value="{{option}}">
+                         {{option}}
+                     </option>
+                    </select>
+                </div>
+
+                <div class="col-sm-4" *ngIf="MISSEDOpen">
+                    <label class="control-label">Reason</label>
+                    <p-multiSelect 
+                        [options]="MissedReasonList"
+                        defaultLabel="Select Reason"
+                        [filter]="true" filterBy="label,value.name" 
+                        name="Trail_Missed_Reason" 
+                        #Trail_Missed_Reason="ngModel" 
+                        [(ngModel)]="objAppointment.Trail_Missed_Reason"
+                        [ngClass]="{clearance: AppointmentFormSubmitted && Trail_Missed_Reason?.errors?.required }" 
+                        required
+                        [styleClass]="'compacct-multiselect'" >
+                    </p-multiSelect>    
+                </div>
+            </div>
+        </div>
+   </form>
+   <p-footer>
+      <button class="btn btn-primary pull-right" (click)="SaveAppointment(Appointment.form.valid)" [disabled]="AppoSpinner">
+        <p-progressSpinner *ngIf="AppoSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!AppoSpinner" class="glyphicon glyphicon-save"></span>Save
+      </button>
+      <button class="btn btn-primary" (click)="closePopupAppo()" >
+        <span class="glyphicon glyphicon-remove"></span>Close
+      </button>
+   </p-footer>
+</p-dialog>

@@ -39,3 +39,7 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav {
     border-bottom: 1px solid #c1c1c1 !important;
     margin-bottom: 0px;
 }
+.custombutton {
+    margin-top: 1px;
+    margin-left: 15px;
+}

@@ -354,6 +354,8 @@ import { MICLCouponIssueComponent } from "./common/MICL/micl-coupon-issue/micl-c
 import { CouponCreationComponent } from './common/MICL/coupon-creation/coupon-creation.component';
 import { CouponExpensesComponent } from './common/MICL/coupon-expenses/coupon-expenses.component';
 import { CouponUtilizationComponent } from './common/MICL/coupon-utilization/coupon-utilization.component';
+import { NepalSupTktSalesReturnApproveComponent } from "./common/TicketManagement/nepal-sup-tkt-sales-return-approve/nepal-sup-tkt-sales-return-approve.component";
+import { BSHPLAudiologistAppoComponent } from "./common/PatientManagement/bshpl-audiologist-appo/bshpl-audiologist-appo.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2686,6 +2688,20 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         data: {
           title: 'Coupon Utilization'
     }
+    },
+    {
+      path: 'NP_Sup_Tkt_Sales_Return_Approve',
+        component: NepalSupTktSalesReturnApproveComponent,
+        data: {
+          title: 'Sales Return Approve'
+    }
+    },
+    {
+      path: 'BSHPL_Audiologist_Appo',
+      component: BSHPLAudiologistAppoComponent,
+      data: {
+          title: 'BSHPL Audiologist Appointment'
+      } 
     },
 
     /*{

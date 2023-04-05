@@ -126,7 +126,8 @@ export class StockInterchangeComponent implements OnInit {
         // console.log("getProductDetails",data);
          this.ProductionList = data;
          this.ProductionList.forEach(el=>{
-          el['Changed_Qty'] = el.Qty
+          el.Qty = Number(el.Qty).toFixed(3);
+          el['Changed_Qty'] = Number(el.Qty).toFixed(3);
          })
          this.seachSpinner = false;
          this.stockinterchangeSubmitted = false;
@@ -152,6 +153,14 @@ export class StockInterchangeComponent implements OnInit {
     this.Qty = qty ? (qty).toFixed(2) : '-';
     this.Changes_Qty = changesqty ? (changesqty).toFixed(2) : '-';
     // return TotalAmt ? TotalAmt.toFixed(2) : '-';
+  }
+  validqty(dataobj){
+    if(dataobj.Changed_Qty) {
+      return false;
+    }
+    else {
+      return true;
+    }
   }
   SaveDoc(){
     if (Number(this.Qty) == Number(this.Changes_Qty)) {
@@ -179,7 +188,7 @@ export class StockInterchangeComponent implements OnInit {
     // console.log("S_AllDetails",this.allDetalis);
 
     this.ProductionList.forEach(element => {
-    if(Number(element.Changed_Qty)) {
+    // if(Number(element.Changed_Qty) || Number(element.Changed_Qty) == 0) {
       const TempObj = {
         Doc_No: "A",
         Furnace_ID: this.Objstockinterc.Furnace_ID,
@@ -188,13 +197,13 @@ export class StockInterchangeComponent implements OnInit {
         Godown_ID: element.Godown_ID,
         Product_ID: element.Product_ID,
         Batch_No: element.Batch_No,
-        Qty: element.Qty,
-        Changed_Qty: Number(element.Changed_Qty),
+        Qty: Number(element.Qty).toFixed(3),
+        Changed_Qty: element.Changed_Qty ? Number(element.Changed_Qty).toFixed(3) : 0,
         UOM:element.UOM,
         Created_By: this.$CompacctAPI.CompacctCookies.User_ID
       }
       this.newAllDetails.push(TempObj);
-    }
+    // }
     });
     // console.log("SaveObj",SaveObj);
 
@@ -222,10 +231,12 @@ export class StockInterchangeComponent implements OnInit {
           // this.tabIndexToView = 0;
           // this.items = ["BROWSE", "CREATE"];
           this.ProductionList=[];
+          this.newAllDetails = [];
           this.allDetalisHeader=[];
           this.getAlldata();
         }
         else {
+          this.newAllDetails = [];
           this.Spinner = false;
           this.compacctToast.clear();
           this.compacctToast.add({
