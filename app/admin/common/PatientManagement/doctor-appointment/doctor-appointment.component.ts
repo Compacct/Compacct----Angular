@@ -95,6 +95,7 @@ export class DoctorAppointmentComponent implements OnInit {
   AssrFinalStatusList: any = [];
   AssrObjectionList: any = [];
   AssrTrailSuccessList: any = [];
+  TopTableAddRemove: boolean = false;
   constructor(    
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -254,6 +255,26 @@ export class DoctorAppointmentComponent implements OnInit {
          this.AssrModal = true;
          this.TitleHeder = "ASSR ";
          this.TitleMiddle = "ASSR RECOMMENDATION";
+         this.TopTableAddRemove = false;
+       },1000);
+       this.testType = col.Consultancy_Descr;
+       this.AssrFinalSaveSummited = false;
+       this.RetvAppoid = col.Appo_ID;
+       this.counte = 0;
+      
+       this.RetriveDisable1St = false;
+       this.RetriveDisable2nd = false;
+       this.DegreelossAssr(this.testType);
+       this.RetriveAssr(this.RetvAppoid); 
+       break;
+     
+     case 'BERA':
+       this.ObjAssr = new Assr()
+       setTimeout(() => {
+         this.AssrModal = true;
+         this.TitleHeder = "BERA ";
+         this.TitleMiddle = "BERA RECOMMENDATION";
+         this.TopTableAddRemove = true;
        },1000);
        this.testType = col.Consultancy_Descr;
        this.AssrFinalSaveSummited = false;
@@ -562,7 +583,9 @@ export class DoctorAppointmentComponent implements OnInit {
         this.RetriveDisable1St = true;
         this.RetriveDisable2nd = false;
         this.getFinalStatus(this.ObjPta.Sub_Status_ID);
-        this.ObjectionType();
+          setTimeout(() => {
+         this.ObjectionType(); 
+        }, 1000);
         }
        }
       else {
@@ -858,7 +881,7 @@ export class DoctorAppointmentComponent implements OnInit {
   ObjectionType() {
     if (this.ObjPta.Final_Status_ID) {
       this.ObjPta.Final_Status = '';
-     const filterFinalStatus = this.FinalStatusList.filter((el: any) => el.Final_Status_ID === this.ObjPta.Final_Status_ID);
+     const filterFinalStatus = this.FinalStatusList.filter((el: any) => Number(el.Final_Status_ID) === Number(this.ObjPta.Final_Status_ID));
     this.ObjPta.Final_Status = filterFinalStatus[0].Final_Status; 
     }
     if (this.ObjPta.Final_Status !== 'Prescribed HA - Binaural' && this.ObjPta.Final_Status !== 'Prescribed HA - Binaural Tinnitus therapy program scheduled') {
@@ -978,7 +1001,7 @@ export class DoctorAppointmentComponent implements OnInit {
         });
        this.AssrDegreeLossLeft = data;
        this.AssrDegreeLossRight = data;
-         //console.log("degri",data);
+        //console.table(data)
       }
     }); 
   }
@@ -1175,7 +1198,9 @@ export class DoctorAppointmentComponent implements OnInit {
         this.RetriveDisable1St = true;
         this.RetriveDisable2nd = false;
         this.AssrFinalStatus(this.ObjAssr.Sub_Status_ID);
-        this.ObjectionTypeAssr();
+        setTimeout(() => {
+         this.ObjectionTypeAssr();
+        }, 1000);
         }
        }
       else {
