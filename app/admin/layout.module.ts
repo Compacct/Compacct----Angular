@@ -453,6 +453,7 @@ import { CouponExpensesComponent } from './common/MICL/coupon-expenses/coupon-ex
 import { CouponUtilizationComponent } from './common/MICL/coupon-utilization/coupon-utilization.component';
 import { NepalSupTktSalesReturnApproveComponent } from './common/TicketManagement/nepal-sup-tkt-sales-return-approve/nepal-sup-tkt-sales-return-approve.component';
 import { BSHPLAudiologistAppoComponent } from "./common/PatientManagement/bshpl-audiologist-appo/bshpl-audiologist-appo.component";
+import { LetterOfIntentComponent } from './common/MICL/letter-of-intent/letter-of-intent.component';
 
 @NgModule({
   declarations: [
@@ -822,7 +823,8 @@ import { BSHPLAudiologistAppoComponent } from "./common/PatientManagement/bshpl-
     CouponExpensesComponent,
     CouponUtilizationComponent,
     NepalSupTktSalesReturnApproveComponent,
-    BSHPLAudiologistAppoComponent 
+    BSHPLAudiologistAppoComponent,
+    LetterOfIntentComponent 
 
 
   ],
