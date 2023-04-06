@@ -140,13 +140,16 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
   this.UpdateSpinner = false
   this.UpdatecusacccreationFormsSubmitted = false
   this.view = false
-    if(!this.imageCompRegistration || this.crcDoc){
+  this.Productcrc = {};
+  this.Productpvrc = {};
+  this.Productcw = {};
+    if(this.crcDoc){
       this.crcDoc.clear();
     }
-    if(!this.imagePANVATRegistration || this.pvrcDoc){
+    if(this.pvrcDoc){
       this.pvrcDoc.clear();
     }
-    if(!this.imageCitizenshipOwner || this.cwDoc){
+    if(this.cwDoc){
       this.cwDoc.clear();
     }
    
@@ -172,21 +175,10 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
       this.objcusacccre.Support_Ticket_No = this.SupportTicketNo ? this.SupportTicketNo : 'A'
       this.objcusacccre.User_ID_Create = this.$CompacctAPI.CompacctCookies.User_ID,
       this.objcusacccre.Executive_Name = FillterData[0].Member_Name
-      if (this.Productcrc['size']) {
-        var res:any = await this.upload(this.Productcrc);
-         const data = JSON.parse(res)
-         this.objcusacccre.URL_Comp_Registration = data.file_url
-      }
-      if (this.Productpvrc['size']) {
-        var res:any = await this.upload(this.Productpvrc);
-        const data = JSON.parse(res)
-        this.objcusacccre.URL_PAN_VAT_Registration = data.file_url
-      }
-      if (this.Productcw['size']) {
-        var res:any = await this.upload(this.Productcw);
-        const data = JSON.parse(res)
-        this.objcusacccre.URL_Citizenship_Owner = data.file_url
-      }
+      this.objcusacccre.URL_Comp_Registration = await this.handlecrcSelectUpload()
+      this.objcusacccre.URL_PAN_VAT_Registration = await this.handlepvrcSelectUpload()
+      this.objcusacccre.URL_Citizenship_Owner = await this.handlecwSelectUpload()
+     
       const obj = {
         "SP_String": "SP_Np_Sup_Tkt_Customer_Creation",
         "Report_Name_String": "Create_Customer_Account",
@@ -203,6 +195,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
           detail: "Succesfully "+this.buttonname,
         });
         this.clearData()
+        this.items = ["BROWSE", "CREATE"];
         this.getbrowseData(true)
         this.tabIndexToView = 0
          }
@@ -226,6 +219,51 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
     if (event) {
       this.Productcw = event.files[0];
    }
+  }
+
+ async handlecrcSelectUpload(){
+    if (this.Productcrc['size']) {
+      
+      const file = this.Productcrc;
+      const formData: FormData = new FormData();
+      formData.append("frontfile", file);
+      const httpOptions = { headers: new HttpHeaders({ 'x-functions-key':'9WkvVXtG259qhyTIQ9iB81FGEOJ4IV2fRza7i9A3KxM7AzFu5LiQZQ=='}) };
+      const data:any = await this.$http.post(`https://sgnepalemailaz.azurewebsites.net/api/Common_File_Upload?`, formData, httpOptions).toPromise()
+      console.log("1")
+      return await data.file_url
+  }
+  else {
+    return this.objcusacccre.URL_Comp_Registration
+  }
+  }
+  async handlepvrcSelectUpload(){
+    if (this.Productpvrc['size']) {
+      const file = this.Productpvrc;
+       const formData: FormData = new FormData();
+       formData.append("frontfile", file);
+       const httpOptions = { headers: new HttpHeaders({ 'x-functions-key':'9WkvVXtG259qhyTIQ9iB81FGEOJ4IV2fRza7i9A3KxM7AzFu5LiQZQ=='}) };
+      const data1:any = await this.$http.post(`https://sgnepalemailaz.azurewebsites.net/api/Common_File_Upload?`, formData, httpOptions).toPromise()
+      console.log("2")
+      return await data1.file_url
+
+    }
+    else {
+      return this.objcusacccre.URL_PAN_VAT_Registration
+    }
+  }
+  async handlecwSelectUpload(){
+    if (this.Productcw['size']) {
+      const file = this.Productcw;
+       const formData: FormData = new FormData();
+       formData.append("frontfile", file);
+       const httpOptions = { headers: new HttpHeaders({ 'x-functions-key':'9WkvVXtG259qhyTIQ9iB81FGEOJ4IV2fRza7i9A3KxM7AzFu5LiQZQ=='}) };
+      const data2:any = await this.$http.post(`https://sgnepalemailaz.azurewebsites.net/api/Common_File_Upload?`, formData, httpOptions).toPromise()
+     console.log("3")
+      return await data2.file_url
+    }
+    else {
+      return this.objcusacccre.URL_Citizenship_Owner
+    }
   }
   async upload(event:any){
     const file = event;
@@ -329,6 +367,15 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
   }
   closeBtn(field:any){
    this[field] = undefined
+   if('imageCompRegistration'){
+    this.objcusacccre.URL_Comp_Registration = undefined
+   }
+   if('imagePANVATRegistration'){
+    this.objcusacccre.URL_PAN_VAT_Registration = undefined
+   }
+   if('imageCitizenshipOwner'){
+    this.objcusacccre.URL_Citizenship_Owner = undefined
+   }
   }
   DeleteCustomar(col:any){
     this.SupportTicketNo = undefined
