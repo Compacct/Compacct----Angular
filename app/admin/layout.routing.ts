@@ -356,6 +356,7 @@ import { CouponExpensesComponent } from './common/MICL/coupon-expenses/coupon-ex
 import { CouponUtilizationComponent } from './common/MICL/coupon-utilization/coupon-utilization.component';
 import { NepalSupTktSalesReturnApproveComponent } from "./common/TicketManagement/nepal-sup-tkt-sales-return-approve/nepal-sup-tkt-sales-return-approve.component";
 import { BSHPLAudiologistAppoComponent } from "./common/PatientManagement/bshpl-audiologist-appo/bshpl-audiologist-appo.component";
+import { EmployeeMasterContractorComponent } from './common/MICL/employee-master-contractor/employee-master-contractor.component';
 import { LetterOfIntentComponent } from './common/MICL/letter-of-intent/letter-of-intent.component';
 
 const layoutRoutes: Routes = [{
@@ -2703,6 +2704,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       data: {
           title: 'BSHPL Audiologist Appointment'
       } 
+    },
+    {
+      path: 'Employee_Master_Contractor',
+        component: EmployeeMasterContractorComponent,
+        data: {
+          title: 'Employee Master Contractor'
+    }
     },
     {
       path: 'Letter_of_Intent',

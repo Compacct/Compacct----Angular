@@ -82,7 +82,7 @@
                                                              <li>
                                                                 <a (click)="actionClick_PatientDetails(col)" >
                                                                    <i class="fa fa-fw fa-user"></i>
-                                                                   People Details
+                                                                   Patient Details
                                                                 </a>
                                                             </li>
                                                             <li>
@@ -117,6 +117,87 @@
                         </p-tabPanel>
 
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-ok">
+
+                            <form name="CompletedSearchForm" #CompletedSearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date Range</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRangeComplete($event)">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary custombutton" (click)="getAllCompletedData()" [disabled]="CompletedSeachSpinner">
+                                            <p-progressSpinner *ngIf="CompletedSeachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!CompletedSeachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <p-table [value]="CompletedAllDetalis" [paginator]="CompletedAllDetalis.length ? true : false"
+                                        [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                        [rowsPerPageOptions]="[100,200,300]"
+                                        [globalFilterFields]="CompletedAllDetalisHeader" [rowHover]="true" #dt1>
+                                        <ng-template pTemplate="caption"  >
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                                        class="searchInput form-control">
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th>Date</th>
+                                                <th>Patient Name</th>
+                                                <th>Mobile</th>
+                                                <th>Age</th>
+                                                <th>Sex</th>
+                                                <th>CostCentre Name</th>
+                                                <th>Consultancy Name</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button
+                                                            class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                            type="button" data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                         <ul class="dropdown-menu">
+                                                             <li>
+                                                                <a (click)="actionClick_PatientDetails(col)" >
+                                                                   <i class="fa fa-fw fa-user"></i>
+                                                                   Patient Details
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="actionClick_ViewAppo(col)">
+                                                                    <i class="fa fa-eye"></i>
+                                                                    View Update Appointment 
+                                                                </a>
+                                                            </li>
+                                                         </ul>
+                                                    </div>
+                                                </td>
+                                                <td nowrap>{{col.Appo_Start | date: "dd/MMM/yyyy"}}</td>
+                                                <td nowrap>{{col.Patient ? col.Patient : '-'}}</td>
+                                                <td nowrap>{{col.Mobile ? col.Mobile : '-'}}</td>
+                                                <td nowrap>{{col.Age ? col.Age : '-'}}</td>
+                                                <td nowrap>{{col.Sex ? col.Sex : '-'}}</td>
+                                                <td nowrap>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
+                                                <td nowrap>{{col.Consultancy ? col.Consultancy : '-'}}</td>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                                            {{state.totalRecords}}
+                                        </ng-template>
+                            </p-table>
 
                         </p-tabPanel>
 
@@ -727,4 +808,282 @@
         <span class="glyphicon glyphicon-remove"></span>Close
       </button>
    </p-footer>
+</p-dialog>
+
+<p-dialog
+   [header]="'View Appointment'"
+   [appendTo]="'body'"
+   [visible]="displayPopupAppoView"
+   [closeOnEscape]="true"
+   [closable]="false"
+   [modal]="true"
+   [responsive]="true"
+   [style]="{ width: '82%', minWidth: '200px', minHeight: '700px' }"
+   style="text-align: center;"
+   [minY]="70"
+   [maximizable]="true"
+   [baseZIndex]="10000"
+   [autoZIndex]="true"
+ >  
+
+    <div>
+
+        <div class="row">
+            <h5 style="background: #c1c1c185;
+            border-top: 5px solid #3c8dbc;
+            border-bottom: 1px solid #c6c6c6;
+            height: 33px">
+            <strong style="font-size: 20px; margin-left: 7px;">Details</strong>
+            </h5>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-3">
+                <label class="control-label">Patient Name</label>
+                <div class="label-t">{{P_Name ? P_Name : '-'}}</div>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Mobile</label>
+                <div class="label-t">{{Phone ? Phone : '-'}}</div>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Age</label>
+                <div class="label-t">{{Age ? Age : '-'}}</div>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Sex</label>
+                <div class="label-t">{{Sex ? Sex : '-'}}</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-3">
+                <label class="control-label">Date</label>
+                <div class="label-t">{{App_Date ? (App_Date | date: "dd/MMM/yyyy") : '-'}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Cost Centre Name</label>
+                <div class="label-t">{{CostCen_Name ? CostCen_Name : '-'}}</div>
+            </div>
+            <div class="col-sm-5">
+                <label class="control-label">Consultancy Name</label>
+                <div class="label-t">{{Cons_Name ? Cons_Name : '-'}}</div>
+            </div>
+        </div>
+
+        <hr class="box boxboxDivide-primary">
+
+        <div class="row">
+            <h5 style="background: #c1c1c185;
+            border-top: 5px solid #3c8dbc;
+            border-bottom: 1px solid #c6c6c6;
+            height: 33px">
+            <strong style="font-size: 20px; margin-left: 7px;">PTA Findings</strong>
+            </h5>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                    <h5 style="padding: 0.5em 1em;
+                    background: #c1c1c185;
+                    border-top: 5px solid #3c8dbc;
+                    border-bottom: 1px solid #c6c6c6;
+                    margin-top: -4px;">
+                    <strong>Degree Of Loss</strong> 
+                    </h5>
+                    <div class="input-group" style="padding-bottom: 10px;">
+                        <div class="input-group-addon">
+                            <strong>Left</strong>
+                        </div>
+                        <div class="label-t">{{objAppointment.Degree_Of_Loss_L ? objAppointment.Degree_Of_Loss_L : '-'}}</div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <strong>Right</strong>
+                        </div>
+                        <div class="label-t">{{objAppointment.Degree_Of_Loss_R ? objAppointment.Degree_Of_Loss_R : '-'}}</div>
+                    </div>    
+            </div>
+
+            <div class="col-sm-4">
+                    <h5 style="padding: 0.5em 1em;
+                        background: #c1c1c185;
+                        border-top: 5px solid #3c8dbc;
+                        border-bottom: 1px solid #c6c6c6;
+                        margin-top: -4px;">
+                        <strong>Types Of Loss</strong> 
+                    </h5>
+                    <div class="input-group" style="padding-bottom: 10px;">
+                        <div class="input-group-addon">
+                            <strong>Left</strong>
+                        </div>
+                        <div class="label-t">{{objAppointment.Type_Of_Loss_L ? objAppointment.Type_Of_Loss_L : '-'}}</div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <strong>Right</strong>
+                        </div>
+                        <div class="label-t">{{objAppointment.Type_Of_Loss_R ? objAppointment.Type_Of_Loss_R : '-'}}</div>
+                    </div>    
+            </div>
+
+            <div class="col-sm-4">
+                    <h5 style="padding: 0.5em 1em;
+                        background: #c1c1c185;
+                        border-top: 5px solid #3c8dbc;
+                        border-bottom: 1px solid #c6c6c6;
+                        margin-top: -4px;">
+                        <strong>HA Required</strong> 
+                    </h5>
+                    <div class="input-group" style="padding-bottom: 10px;">
+                        <div class="input-group-addon">
+                            <strong>Left</strong>
+                        </div>
+                        <div class="label-t">{{objAppointment.HA_Req_L ? objAppointment.HA_Req_L : '-'}}</div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <strong>Right</strong>
+                        </div>
+                        <div class="label-t">{{objAppointment.HA_Req_R ? objAppointment.HA_Req_R : '-'}}</div>
+                    </div>    
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 12px;" *ngIf="TrialDoneOpen">
+            <div class="col-sm-4">
+                <label class="control-label">TRIAL DONE</label>
+                <div class="label-t">{{objAppointment.Trial_Done ? objAppointment.Trial_Done : '-'}}</div>
+            </div>
+        </div>
+
+        <hr class="box boxboxDivide-primary">
+
+        <div *ngIf="TrialUpdateOpen">
+            <div class="row">
+                <h5 style="background: #c1c1c185;
+                border-top: 5px solid #3c8dbc;
+                border-bottom: 1px solid #c6c6c6;
+                height: 33px">
+                <strong style="font-size: 20px; margin-left: 7px;">TRIAL UPDATE</strong>
+                </h5>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <label class="control-label">EXPERIENCE USER</label>
+                    <div class="label-t">{{objAppointment.EXPERIENCE_USER ? objAppointment.EXPERIENCE_USER : '-'}}</div>
+                </div>
+               
+                <div class="col-sm-4">
+                    <label class="control-label">Binaural/Monorual</label>
+                    <div class="label-t">{{objAppointment.Trial_For ? objAppointment.Trial_For : '-'}}</div>
+                </div>
+
+                <div class="col-sm-4" *ngIf="MonorualOpen">
+                    <label class="control-label">If Monorual</label>
+                    <div class="label-t">{{objAppointment.Trial_For_Mono_Reason ? objAppointment.Trial_For_Mono_Reason : '-'}}</div>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-sm-6">
+                    <div class="table-responsive no-padding">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr style="background-color:#3c8dbc;color:white;">
+                                    <th>SL No.</th>
+                                    <th>Product Trial (Left)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let obj of PTLList ;let ind = index;">
+                                    <td>{{ ind + 1 }}</td>
+                                    <td>{{obj.Product_Description ? obj.Product_Description : '-'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="table-responsive no-padding">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr style="background-color:#3c8dbc;color:white;">
+                                    <th>SL No.</th>
+                                    <th>Product Trial (Right)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let obj of PTRList ;let ind = index;">
+                                    <td>{{ ind + 1 }}</td>
+                                    <td>{{obj.Product_Description ? obj.Product_Description : '-'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 5px;">
+                <div class="col-sm-6">
+                    <div class="table-responsive no-padding">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr style="background-color:#3c8dbc;color:white;">
+                                    <th>SL No.</th>
+                                    <th>Product Select (Left)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let obj of PSLList ;let ind = index;">
+                                    <td>{{ ind + 1 }}</td>
+                                    <td>{{obj.Product_Description ? obj.Product_Description : '-'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="table-responsive no-padding">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr style="background-color:#3c8dbc;color:white;">
+                                    <th>SL No.</th>
+                                    <th>Product Select (Right)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let obj of PSRList ;let ind = index;">
+                                    <td>{{ ind + 1 }}</td>
+                                    <td>{{obj.Product_Description ? obj.Product_Description : '-'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 2px;">
+                <div class="col-sm-4">
+                    <label class="control-label">Restult</label>
+                    <div class="label-t">{{objAppointment.Trial_Restult ? objAppointment.Trial_Restult : '-'}}</div>
+                </div>
+
+                <div class="col-sm-4" *ngIf="MISSEDOpen">
+                    <label class="control-label">Reason</label>
+                    <div class="label-t">{{objAppointment.Trail_Missed_Reason ? objAppointment.Trail_Missed_Reason : '-'}}</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <p-footer>
+        <button class="btn btn-primary" (click)="closePopupAppoView()" >
+        <span class="glyphicon glyphicon-remove"></span>Close
+        </button>
+    </p-footer>
 </p-dialog>
