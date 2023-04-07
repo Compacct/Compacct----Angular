@@ -796,7 +796,7 @@
                                         <ng-template pTemplate="header">
                                             <tr>
                                                 <th style="width:5em">Action</th>
-                                                <th *ngFor="let option of PendingSalesOrderListHeader">{{option.replaceAll('_',' ')}}</th>
+                                                <th *ngFor="let option of PendingSalesOrderListHeader |  slice:1">{{option.replaceAll('_',' ')}}</th>
                                             </tr>
                                         </ng-template>
                                         <ng-template pTemplate="body" let-col>
@@ -809,19 +809,14 @@
                                                                     </button>
                                                         <ul class="dropdown-menu">
                                                                 <li>
-                                                                    <a (click)="Print(col.Doc_No)">
+                                                                    <a (click)="PrintOrder(col.Doc_No)">
                                                                         <i class="fa fa-fw fa-print"></i> Print
                                                                     </a>
                                                                 </li>
-                                                            <li>
-                                                                <a (click)="Delete(col)">
-                                                                    <i class="fa fa-fw fa-trash"></i> Delete
-                                                                </a>
-                                                            </li>
                                                         </ul>
                                                     </div>
                                                 </td>
-                                                    <ng-container *ngFor="let option of PendingSalesOrderListHeader">
+                                                    <ng-container *ngFor="let option of PendingSalesOrderListHeader |  slice:1">
                                                         <td nowrap="nowrap">{{col[option]}}</td>
                                                     </ng-container>
                                                 

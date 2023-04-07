@@ -516,29 +516,6 @@ export class LetterOfIntentComponent implements OnInit {
       })
   
   }
-  // GetLot() {
-  //   if (this.ObjProductInfo.Product_Specification) {
-  //    this.getUom(); 
-  //   }
-  //   this.LotNolist = []
-  //   this.ObjProductInfo.Batch_Number = undefined
-  //   if (this.ObjProductInfo.Cost_Cen_ID && this.ObjProductInfo.Product_Specification && this.ObjProductInfo.godown_id) {
-  //     const TempObj = {
-  //       Cost_Cen_ID: this.ObjProductInfo.Cost_Cen_ID,
-  //       Product_ID: this.ObjProductInfo.Product_Specification,
-  //       Godown_ID: this.ObjProductInfo.godown_id,
-  //     }
-  //     const obj = {
-  //       "SP_String": "SP_BL_Txn_Sale_Order",
-  //       "Report_Name_String": "Get_Batch_NO",
-  //       "Json_Param_String": JSON.stringify([TempObj])
-  //     }
-  //     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-  //       console.log("LotNolist  ===", data);
-  //       this.LotNolist = data;
-  //     })
-  //   }
-  // }
   getUom() {
     this.UomList = '';
     this.Tax_Category = undefined;
@@ -678,7 +655,7 @@ export class LetterOfIntentComponent implements OnInit {
     this.IGST = count4.toFixed(2);
     this.NetAMT = count5.toFixed(2);
   }
-  SaveOutward(valid: any){
+  SaveLI(valid: any){
     this.SaveLowerData = [];
     this.LetterOfIntentFormSubmitted = true;
     if (valid && this.AddProdList.length) {
@@ -730,13 +707,6 @@ export class LetterOfIntentComponent implements OnInit {
         Sub_Ledger_District: this.ObjLetterOfIntent.Sub_Ledger_District,
         Sub_Ledger_State: this.ObjLetterOfIntent.Sub_Ledger_State,
         Sub_Ledger_GST_No: this.ObjLetterOfIntent.Sub_Ledger_GST_No,
-          
-        // Consignee__Billing_Name: this.ObjLetterOfIntent.Sub_Ledger_Billing_Name,
-        // Consignee_Address_1: this.ObjLetterOfIntent.Sub_Ledger_Address_2,
-        // Consignee_Pin: this.ObjLetterOfIntent.Sub_Ledger_Pin_2,
-        // Consignee_District: this.ObjLetterOfIntent.Sub_Ledger_District_2,
-        // Consignee_State: this.ObjLetterOfIntent.Sub_Ledger_State_2,
-        // Consignee_GST_No: this.ObjLetterOfIntent.Sub_Ledger_GST_No_2,
           
         Cost_Cen_ID: this.Cost_Cen_ID,
         Cost_Cen_Name: this.Objcostcenter.Cost_Cen_Name,

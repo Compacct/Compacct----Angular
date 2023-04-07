@@ -979,12 +979,12 @@ export class OutwardChallanComponent implements OnInit {
     const tempobj = {
       From_Date: start,
       To_Date: end,
-      Sub_Ledger_ID: this.Pending_Sub_Ledger_ID ? this.Pending_Sub_Ledger_ID : 0,
+      // Sub_Ledger_ID: this.Pending_Sub_Ledger_ID ? this.Pending_Sub_Ledger_ID : 0,
     }
     if (Valid) {
       const obj = {
         "SP_String": "SP_MICL_Sale_Bill",
-        "Report_Name_String": "browse_Sale_Challan",
+        "Report_Name_String": "Pending_Sale_Order_For_MIS_Report",
         "Json_Param_String": JSON.stringify([tempobj])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
@@ -992,6 +992,18 @@ export class OutwardChallanComponent implements OnInit {
         this.PendingSalesOrderList = data;
         this.PendingSalesOrderListHeader = data.length ? Object.keys(data[0]): []
       });
+    }
+  }
+  PrintOrder(DocNo){
+    if (DocNo) {
+      const objtemp = {
+        "SP_String": "SP_BL_Txn_Sale_Order",
+        "Report_Name_String": "Sale_Order_Print"
+      }
+      this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
+        var printlink = data[0].Column1;
+        window.open(printlink + "?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      })
     }
   }
 }
