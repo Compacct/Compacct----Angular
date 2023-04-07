@@ -455,6 +455,7 @@ import { NepalSupTktSalesReturnApproveComponent } from './common/TicketManagemen
 import { BSHPLAudiologistAppoComponent } from "./common/PatientManagement/bshpl-audiologist-appo/bshpl-audiologist-appo.component";
 import { EmployeeMasterContractorComponent } from './common/MICL/employee-master-contractor/employee-master-contractor.component';
 import { LetterOfIntentComponent } from './common/MICL/letter-of-intent/letter-of-intent.component';
+import { ProformaInvoiceComponent } from './common/MICL/proforma-invoice/proforma-invoice.component';
 
 @NgModule({
   declarations: [
@@ -826,7 +827,8 @@ import { LetterOfIntentComponent } from './common/MICL/letter-of-intent/letter-o
     NepalSupTktSalesReturnApproveComponent,
     BSHPLAudiologistAppoComponent,
     EmployeeMasterContractorComponent,
-    LetterOfIntentComponent 
+    LetterOfIntentComponent,
+    ProformaInvoiceComponent 
 
 
   ],

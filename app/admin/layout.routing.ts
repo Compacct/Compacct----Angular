@@ -358,6 +358,7 @@ import { NepalSupTktSalesReturnApproveComponent } from "./common/TicketManagemen
 import { BSHPLAudiologistAppoComponent } from "./common/PatientManagement/bshpl-audiologist-appo/bshpl-audiologist-appo.component";
 import { EmployeeMasterContractorComponent } from './common/MICL/employee-master-contractor/employee-master-contractor.component';
 import { LetterOfIntentComponent } from './common/MICL/letter-of-intent/letter-of-intent.component';
+import { ProformaInvoiceComponent } from './common/MICL/proforma-invoice/proforma-invoice.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2717,6 +2718,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: LetterOfIntentComponent,
       data: {
           title: 'Letter of Intent'
+      } 
+    },
+    {
+      path: 'Proforma_Invoice',
+      component: ProformaInvoiceComponent,
+      data: {
+          title: 'Proforma Invoice'
       } 
     },
 

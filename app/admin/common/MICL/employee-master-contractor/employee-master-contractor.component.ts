@@ -14,7 +14,7 @@ import * as XLSX from 'xlsx';
   encapsulation: ViewEncapsulation.None
 })
 export class EmployeeMasterContractorComponent implements OnInit {
-
+  tabIndexToView = 0;
   contractorList: any = [];
   employeeList: any = [];
   allEmployeeData: any = [];

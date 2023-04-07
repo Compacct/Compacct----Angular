@@ -124,6 +124,11 @@ export class OutwardChallanComponent implements OnInit {
   Choose_Address:any;
   pindisabled:boolean = false;
   SalesOrderNoList:any = [];
+  Pending_start_date:Date;
+  Pending_end_date:Date;
+  Pending_Sub_Ledger_ID:any;
+  PendingSalesOrderList:any = [];
+  PendingSalesOrderListHeader:any = [];
   constructor(
     private Header: CompacctHeader,
     private router: Router,
@@ -138,7 +143,7 @@ export class OutwardChallanComponent implements OnInit {
 
   ngOnInit() {
     $(document).prop('title', this.headerData ? this.headerData : $('title').text());
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "PENDING SALES ORDER"];
     this.menuList = [
       { label: 'Edit', icon: 'pi pi-fw pi-user-edit' },
       { label: 'Delete', icon: 'fa fa-fw fa-trash' }
@@ -158,7 +163,7 @@ export class OutwardChallanComponent implements OnInit {
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "PENDING SALES ORDER"];
     this.buttonname = "Create";
     this.Spinner = false;
     this.Same_as_Bill = true;
@@ -678,14 +683,14 @@ export class OutwardChallanComponent implements OnInit {
         Qty: this.ObjProductInfo.Qty,
         UOM: this.UomList,
         Rate: this.ObjProductInfo.Rate,
-        Taxable_unt: this.ObjProductInfo.Taxable_Amount,
+        Taxable_unt: Number(this.ObjProductInfo.Taxable_Amount).toFixed(2),
         CGST_Rate: this.ObjProductInfo.CGST_Rate,
         SGST_Rate: this.ObjProductInfo.SGST_Rate,
         IGST_Rate: this.ObjProductInfo.IGST_Rate,
-        CGST_Amt: this.ObjProductInfo.CGST_Amount,
-        SGST_Amt: this.ObjProductInfo.SGST_Amount,
-        IGST_Amt: this.ObjProductInfo.IGST_Amount,
-        Line_Total_Amount: this.ObjProductInfo.Net_Amt,
+        CGST_Amt: Number(this.ObjProductInfo.CGST_Amount).toFixed(2),
+        SGST_Amt: Number(this.ObjProductInfo.SGST_Amount).toFixed(2),
+        IGST_Amt: Number(this.ObjProductInfo.IGST_Amount).toFixed(2),
+        Line_Total_Amount: Number(this.ObjProductInfo.Net_Amt).toFixed(2),
         Cat_ID : this.Tax_Category
       };
       this.AddProdList.push(TemopArry)
@@ -715,7 +720,8 @@ export class OutwardChallanComponent implements OnInit {
     }
   }
   Deteteaddlist(index){
-    this.AddProdList.splice(index,1)
+    this.AddProdList.splice(index,1);
+    this.TotalCalculation();
   }
   TotalCalculation() {
     this.Tax = undefined;
@@ -863,7 +869,7 @@ export class OutwardChallanComponent implements OnInit {
       this.SupplierBillDate = new Date();
       this.PurchaseBillFormSubmitted = false
       // this.tabIndexToView = 0;
-      this.items = ["BROWSE", "CREATE"];
+      this.items = ["BROWSE", "CREATE", "PENDING SALES ORDER"];
       this.Tax = undefined;
       this.CGST = undefined;
       this.SGST = undefined;
@@ -937,7 +943,7 @@ export class OutwardChallanComponent implements OnInit {
        detail: "Confirm to proceed"
      });
     }
-   }
+  }
    DynamicRedirectTo (obj){
     const navigationExtras: NavigationExtras = {
       queryParams: obj,
@@ -956,6 +962,37 @@ export class OutwardChallanComponent implements OnInit {
       this.DynamicRedirectTo(TempObj); 
     }// CHALLAN TO BILL
 
+  }
+  getPendingDateRange(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.Pending_start_date = dateRangeObj[0];
+      this.Pending_end_date = dateRangeObj[1];
+    }
+  }
+  GetPendingSalesOrder(Valid: any) {
+    const start = this.Pending_start_date
+      ? this.DateService.dateConvert(new Date(this.Pending_start_date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.Pending_end_date
+      ? this.DateService.dateConvert(new Date(this.Pending_end_date))
+      : this.DateService.dateConvert(new Date());
+    const tempobj = {
+      From_Date: start,
+      To_Date: end,
+      Sub_Ledger_ID: this.Pending_Sub_Ledger_ID ? this.Pending_Sub_Ledger_ID : 0,
+    }
+    if (Valid) {
+      const obj = {
+        "SP_String": "SP_MICL_Sale_Bill",
+        "Report_Name_String": "browse_Sale_Challan",
+        "Json_Param_String": JSON.stringify([tempobj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("PendingSalesOrderList", data)
+        this.PendingSalesOrderList = data;
+        this.PendingSalesOrderListHeader = data.length ? Object.keys(data[0]): []
+      });
+    }
   }
 }
 class PurChaseBill {
