@@ -286,6 +286,12 @@ export class K4cRsnsClosingStockComponent implements OnInit {
     this.GetProductType();
     this.Gdisableflag = true;
    console.log("this.ProductList======",this.ProductList);
+   if (this.ProductList.length && this.buttonname == "Update"){
+    const ctrl = this;
+   setTimeout(function () {
+     ctrl.GetdataforEdit(this.Doc_No);
+   }, 600)
+   }
    })
   }
   }
@@ -545,8 +551,11 @@ const obj = {
    this.RSNSSearchFormSubmitted = false; 
  })
 }
+else {
+  this.seachSpinner = false;
 }
- Edit(DocNo){  // async
+}
+Edit(DocNo){  // async
   //console.log("View ==",DocNo);
 this.clearData();
 //this.editList = [];
@@ -571,10 +580,12 @@ this.Date = new Date(DocNo.Doc_Date);
  this.todayDate = this.Date;
 // console.log("VIew ==", this.Objproduction.Doc_No);
  this.GetProductList(true); // await
- const ctrl = this;
-setTimeout(function () {
-  ctrl.GetdataforEdit(this.Doc_No);
-}, 600)
+// if (await this.ProductList.length){
+//  const ctrl = this;
+// setTimeout(function () {
+//   ctrl.GetdataforEdit(this.Doc_No);
+// }, 600)
+// }
 //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
 }
 }
@@ -616,7 +627,7 @@ GetdataforEdit(Doc_No){
       setTimeout(function () {
         ctrl.BackupProList.forEach(ele => {
         const ARR = ctrl.Editlist.filter(item => (Number(item.Product_ID) == Number(ele.Product_ID) && (item.Batch_No == ele.Batch_No)))
-        console.log("ARR",ARR)
+        // console.log("ARR",ARR)
         if (ARR.length) {
           ele['Closing_Qty']= ARR[0].Closing_Qty,
           // el.Product_Type_ID = aRR[0].Product_Type_ID,
