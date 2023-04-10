@@ -749,6 +749,82 @@
                               </button>
                             </div>                           
                         </p-tabPanel>
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="PendingSalesOrderForm" #PendingSalesOrderForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+                                         <app-compacct-daterangepicker (DaterangeObj)="getPendingDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <!-- <div class="col-sm-3">
+                                        <label class="control-label">Customer</label>
+                                        <select class="form-control" name="PendingCustomer" #PendingCustomer="ngModel" [(ngModel)]="Pending_Sub_Ledger_ID">
+                                              <option  [ngValue]="undefined">Select</option>
+                                              <option  *ngFor="let option of VendorListbrowse" value="{{option.value}}">
+                                                {{option.Sub_Ledger_Billing_Name}}
+                                              </option>
+                                        </select>
+                                    </div> -->
+                                    <div class="col-sm-3">
+                                            <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPendingSalesOrder(PendingSalesOrderForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                          <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                          <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                       </button>
+                                    </div>
+                                </div>
+                                </form>
+                               
+                                <div class="table-id">
+                                    <p-table [value]="PendingSalesOrderList"
+                                    *ngIf = "PendingSalesOrderList.length"
+                                    [paginator]="true" [rows]="100" 
+                                    [loading]="seachSpinner" [rowHover]="true" 
+                                    [autoLayout]="true" sortMode="multiple" 
+                                    [rowsPerPageOptions]="[100, 300, 500]"  
+                                    [globalFilterFields]='PendingSalesOrderListHeader'
+                                        [rowHover]="true" #dt2>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+        
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th *ngFor="let option of PendingSalesOrderListHeader |  slice:1">{{option.replaceAll('_',' ')}}</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                 <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                        <i class="fa fa-fw fa-bars"></i>
+                                                                        <span class="caret"></span>
+                                                                    </button>
+                                                        <ul class="dropdown-menu">
+                                                                <li>
+                                                                    <a (click)="PrintOrder(col.Doc_No)">
+                                                                        <i class="fa fa-fw fa-print"></i> Print
+                                                                    </a>
+                                                                </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                    <ng-container *ngFor="let option of PendingSalesOrderListHeader |  slice:1">
+                                                        <td nowrap="nowrap">{{col[option]}}</td>
+                                                    </ng-container>
+                                                
+                                            </tr>
+                                        </ng-template>                                      
+                                    </p-table>
+                                </div>
+                         </p-tabPanel>
                     </p-tabView>
                 </div>
             </div>

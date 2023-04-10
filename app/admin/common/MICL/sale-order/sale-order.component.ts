@@ -614,14 +614,14 @@ export class SaleOrderComponent implements OnInit {
         Qty: this.ObjProductInfo.Qty,
         UOM: this.UomList,
         Rate: this.ObjProductInfo.Rate,
-        Taxable_unt: this.ObjProductInfo.Taxable_Amount,
+        Taxable_unt: Number(this.ObjProductInfo.Taxable_Amount).toFixed(2),
         CGST_Rate: this.ObjProductInfo.CGST_Rate,
         SGST_Rate: this.ObjProductInfo.SGST_Rate,
         IGST_Rate: this.ObjProductInfo.IGST_Rate,
-        CGST_Amt: this.ObjProductInfo.CGST_Amount,
-        SGST_Amt: this.ObjProductInfo.SGST_Amount,
-        IGST_Amt: this.ObjProductInfo.IGST_Amount,
-        Line_Total_Amount: this.ObjProductInfo.Net_Amt,
+        CGST_Amt: Number(this.ObjProductInfo.CGST_Amount).toFixed(2),
+        SGST_Amt: Number(this.ObjProductInfo.SGST_Amount).toFixed(2),
+        IGST_Amt: Number(this.ObjProductInfo.IGST_Amount).toFixed(2),
+        Line_Total_Amount: Number(this.ObjProductInfo.Net_Amt).toFixed(2),
         Cat_ID : this.Tax_Category
       };
       this.AddProdList.push(TemopArry)
@@ -651,7 +651,8 @@ export class SaleOrderComponent implements OnInit {
     }
   }
   Deteteaddlist(index){
-    this.AddProdList.splice(index,1)
+    this.AddProdList.splice(index,1);
+    this.TotalCalculation();
   }
   TotalCalculation() {
     this.Tax = undefined;
