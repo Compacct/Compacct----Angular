@@ -283,7 +283,7 @@ export class DoctorAppointmentComponent implements OnInit {
       
        this.RetriveDisable1St = false;
        this.RetriveDisable2nd = false;
-       this.DegreelossAssr(this.testType);
+       this.DegreelossBera(this.testType);
        this.RetriveAssr(this.RetvAppoid); 
        break;
      
@@ -1005,6 +1005,30 @@ export class DoctorAppointmentComponent implements OnInit {
       }
     }); 
   }
+   //Bera Degree loss
+  DegreelossBera(typeBera:any){
+  this.AssrDegreeLossLeft = [];
+  this.AssrDegreeLossRight = [];
+    const tempobj = {
+     Test_Type: typeBera
+    }
+    const obj = {
+      "SP_String": "sp_Hearing_Test",
+      "Report_Name_String": "Get_Degree_Of_Loss_Bera_Dropdown",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Degree_Of_Loss_Name,
+          element['value'] = element.Degree_Of_Loss_ID
+        });
+       this.AssrDegreeLossLeft = data;
+       this.AssrDegreeLossRight = data;
+        //console.table(data)
+      }
+    }); 
+  }
   AssrTinnitus(Deg_los: any) {
   this.ObjAssr.Tinnitus_Status_ID = undefined;
   this.ObjAssr.Sub_Status_ID = undefined;
@@ -1037,7 +1061,11 @@ export class DoctorAppointmentComponent implements OnInit {
     this.ObjAssr.Objection_ID = undefined;
     this.ObjAssr.Final_Status = '';
     this.AssrSubTypList = [];
-    if (this.ObjAssr.Tinnitus_Status_ID !== 1) {
+    if (this.TitleHeder === "BERA ") {
+      this.BeraSubType();
+    }
+    else {
+     if (this.ObjAssr.Tinnitus_Status_ID !== 1) {
     const tempobj = {
      Tinnitus_Status_ID: this.ObjAssr.Tinnitus_Status_ID
     }
@@ -1059,6 +1087,39 @@ export class DoctorAppointmentComponent implements OnInit {
     }
     else {
       this.AssrSubType2() 
+    }   
+    }
+    
+  }
+  //Bera Sub Status 1
+  BeraSubType() {
+  this.ObjAssr.Sub_Status_ID = undefined;
+    this.ObjAssr.Final_Status_ID = undefined;
+    this.ObjAssr.Objection_ID = undefined;
+    this.ObjAssr.Final_Status = '';
+    this.AssrSubTypList = [];
+    if (this.ObjAssr.Tinnitus_Status_ID !== 1) {
+    const tempobj = {
+     Tinnitus_Status_ID: this.ObjAssr.Tinnitus_Status_ID
+    }
+    const obj = {
+      "SP_String": "sp_Hearing_Test",
+      "Report_Name_String": "Get_Sub_Status_Bera_dropdown",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Sub_Status,
+          element['value'] = element.Sub_Status_ID
+        });
+       this.AssrSubTypList = data;
+         //.log("Tinnitus",data);
+      }
+    });  
+    }
+    else {
+      this.BeraSubType2() 
     }  
   }
   AssrSubType2() {
@@ -1092,6 +1153,38 @@ export class DoctorAppointmentComponent implements OnInit {
     }); 
     }  
   }
+  //Bera Sub Status 2
+  BeraSubType2() {
+    const degirFillterForSubTypeL = this.AssrDegreeLossLeft.filter((el: any) => el.Degree_Of_Loss_ID === this.ObjAssr.Degree_Of_Loss_ID);
+     const degirFillterForSubTypeR = this.AssrDegreeLossRight.filter((el: any) => el.Degree_Of_Loss_ID === this.ObjAssr.Degree_Of_Loss_Right_ID);
+    if (this.ObjAssr.Degree_Of_Loss_ID) {  
+    this.FillterSubL = degirFillterForSubTypeL[0].Tag_2; 
+    }
+    if (this.ObjAssr.Degree_Of_Loss_Right_ID) {
+     this.FillterSubR = degirFillterForSubTypeR[0].Tag_2; 
+    }
+    if (this.ObjAssr.Tinnitus_Status_ID && this.FillterSubL && this.FillterSubR) {
+     const tempobj = {
+     Left_Tag_2: this.FillterSubL,
+     Right_Tag_2: this.FillterSubR
+    }
+    const obj = {
+      "SP_String": "sp_Hearing_Test",
+      "Report_Name_String": "Get_Sub_Status_For_No_Tinnitus_Bera",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Sub_Status,
+          element['value'] = element.Sub_Status_ID
+        });
+        this.AssrSubTypList = data;
+        //console.log("AssrSubTypList", this.AssrSubTypList);     
+      }
+    }); 
+    }  
+  }
   AssrFinalStatus(SubStatusss:any) {
      if (this.counte !== 1) {
        this.ObjAssr.Final_Status_ID = undefined;
@@ -1113,8 +1206,14 @@ export class DoctorAppointmentComponent implements OnInit {
           element['label'] = element.Final_Status,
           element['value'] = element.Final_Status_ID
         });
-       this.AssrFinalStatusList = data;
-         //console.log("FinalStatus",data);
+        if (SubStatusss === 3 && this.ObjAssr.Tinnitus_Status_ID === 1) {
+          let temp: [] = data.slice(6); 
+          this.AssrFinalStatusList = temp; 
+        }
+        else {
+         this.AssrFinalStatusList = data; 
+        }     
+        // console.log("FinalStatus",this.AssrFinalStatusList);
       }
     });   
   }
