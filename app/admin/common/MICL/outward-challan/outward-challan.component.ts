@@ -288,12 +288,29 @@ export class OutwardChallanComponent implements OnInit {
     this.ObjPurChaseBill.Sub_Ledger_Billing_Name = '';
     this.ObjProductInfo.Sale_Order_No = undefined;
     this.Tax_Category = undefined;
+    this.ObjProductInfo.godown_id = undefined;
+    this.ObjProductInfo.Batch_Number = undefined;
+    this.LotNolist = [];
     this.ObjProductInfo.Qty = undefined;
     this.ObjProductInfo.Rate = undefined;
+    this.ObjProductInfo.Taxable_Amount = undefined
     this.SalesOrderNoList = [];
     this.ProductDetalist = [];
     this.SaveAddress = [];
+    this.Choose_Address = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_Address_1 = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_District = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_State = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_Pin = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_GST_No = undefined;
     this.SaveAddress1 = [];
+    this.ObjPurChaseBill.Choose_Address2 = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_Billing_Name = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_Address_2 = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_Pin_2 = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_District_2 = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_State_2 = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_GST_No_2 = undefined;
     if (this.ObjPurChaseBill.Sub_Ledger_ID) {
       const ctrl = this;
       const vendorObj = $.grep(ctrl.VendorList, function (item: any) { return item.value == ctrl.ObjPurChaseBill.Sub_Ledger_ID })[0];
@@ -533,24 +550,27 @@ export class OutwardChallanComponent implements OnInit {
     this.ProductDetalist = [];
     this.ObjProductInfo.Product_Specification = undefined;
     this.UomList = '';
-    this.ObjProductInfo.Batch_Number = undefined
+    this.ObjProductInfo.Batch_Number = undefined;
+    // this.ObjProductInfo.Product_Type_ID = undefined;
+    // this.ObjProductInfo.Product_Sub_Type_ID = undefined;
+    // this.ProductSub = [];
     this.Tax_Category = undefined;
     this.ObjProductInfo.Qty = undefined;
     this.ObjProductInfo.Rate = undefined;
-    if (this.ObjProductInfo.Sale_Order_No) {
-      const TempObj = {
-        Doc_No: this.ObjProductInfo.Sale_Order_No
-      }
-      const obj = {
-        "SP_String": "SP_MICL_Sale_Bill",
-        "Report_Name_String": "Get_Products_Against_Sale_Order",
-        "Json_Param_String": JSON.stringify([TempObj])
-      }
-      this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        console.log("ProductDetalist  ===", data);
-        this.ProductDetalist = data;
-      })
-    }
+    // if (this.ObjProductInfo.Sale_Order_No) {
+    //   const TempObj = {
+    //     Doc_No: this.ObjProductInfo.Sale_Order_No
+    //   }
+    //   const obj = {
+    //     "SP_String": "SP_MICL_Sale_Bill",
+    //     "Report_Name_String": "Get_Products_Against_Sale_Order",
+    //     "Json_Param_String": JSON.stringify([TempObj])
+    //   }
+    //   this.GlobalAPI.getData(obj).subscribe((data: any) => {
+    //     console.log("ProductDetalist  ===", data);
+    //     this.ProductDetalist = data;
+    //   })
+    // }
     if (this.ObjProductInfo.Product_Type_ID && this.ObjProductInfo.Product_Sub_Type_ID) {
       const TempObj = {
         Product_Type_ID: this.ObjProductInfo.Product_Type_ID,
@@ -559,6 +579,36 @@ export class OutwardChallanComponent implements OnInit {
       const obj = {
         "SP_String": "SP_MICL_Sale_Bill",
         "Report_Name_String": "Get_Products",
+        "Json_Param_String": JSON.stringify([TempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("ProductDetalist  ===", data);
+        this.ProductDetalist = data;
+      })
+    }
+  
+  }
+  ProductDetalforOrder() {
+    this.ProductDetalist = [];
+    this.ObjProductInfo.Product_Specification = undefined;
+    this.UomList = '';
+    this.ObjProductInfo.Batch_Number = undefined;
+    this.ObjProductInfo.Product_Type_ID = undefined;
+    this.ObjProductInfo.Product_Sub_Type_ID = undefined;
+    this.ProductSub = [];
+    this.Tax_Category = undefined;
+    this.ObjProductInfo.godown_id = undefined;
+    this.LotNolist = [];
+    this.ObjProductInfo.Qty = undefined;
+    this.ObjProductInfo.Rate = undefined;
+    this.ObjProductInfo.Taxable_Amount = undefined
+    if (this.ObjProductInfo.Sale_Order_No) {
+      const TempObj = {
+        Doc_No: this.ObjProductInfo.Sale_Order_No
+      }
+      const obj = {
+        "SP_String": "SP_MICL_Sale_Bill",
+        "Report_Name_String": "Get_Products_Against_Sale_Order",
         "Json_Param_String": JSON.stringify([TempObj])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
@@ -624,9 +674,25 @@ export class OutwardChallanComponent implements OnInit {
       this.ObjProductInfo.Taxable_Amount = undefined;
     }
   }
+  checksamebatch () {
+    const sameproductwithsameorderno = this.AddProdList.filter(item=> item.Batch_No === this.ObjProductInfo.Batch_Number && item.Product_ID === this.ObjProductInfo.Product_Specification );
+    if(sameproductwithsameorderno.length) {
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Can't add Same Product with same batch"
+          });
+      return false;
+    }
+    else {
+      return true;
+    }
+    }
   AddProduct(valid: any) {
     this.TermFormSubmitted = true;
-    if (valid) {
+    if (valid && this.checksamebatch()) {
       const LotNoArry: any = this.LotNolist.filter((el: any) => el.Batch_No == this.ObjProductInfo.Batch_Number);
       this.BatchQtyCheck = LotNoArry[0].Batch_Qty;
       if(this.BatchQtyCheck >= this.ObjProductInfo.Qty) {
@@ -697,6 +763,7 @@ export class OutwardChallanComponent implements OnInit {
       this.TotalCalculation();
       console.log("this.AddProdList", this.AddProdList)
       this.TermFormSubmitted = false;
+      this.ObjProductInfo.Sale_Order_No = undefined;
       this.ObjProductInfo.godown_id = undefined;
       this.ObjProductInfo.Product_Type_ID = undefined;
       this.ProductSub = [];
@@ -1015,15 +1082,15 @@ class PurChaseBill {
   Company_ID: any;
   Sub_Ledger_Pin_2: any;
   Sub_Ledger_ID : any;
-  Sub_Ledger_Name : string;
-  Sub_Ledger_Billing_Name : string;
-  Sub_Ledger_Address_1 : string;
-  Sub_Ledger_Address_2 : string;
+  Sub_Ledger_Name : any;
+  Sub_Ledger_Billing_Name : any;
+  Sub_Ledger_Address_1 : any;
+  Sub_Ledger_Address_2 : any;
   Sub_Ledger_Address_3 : string;
   Sub_Ledger_Land_Mark : string;
   Sub_Ledger_Pin : any;
-  Sub_Ledger_District: string;
-  Sub_Ledger_District_2: string;
+  Sub_Ledger_District: any;
+  Sub_Ledger_District_2: any;
   Sub_Ledger_State: any; 
   Sub_Ledger_State_2: any;
   Sub_Ledger_GST_No_2: any;

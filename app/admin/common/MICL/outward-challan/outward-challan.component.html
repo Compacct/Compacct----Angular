@@ -514,7 +514,7 @@
                                 <p-dropdown [options]="SalesOrderNoList" name="salesorderno" #salesorderno="ngModel"  
                                     [(ngModel)]="ObjProductInfo.Sale_Order_No" 
                                     [showClear]="true" [emptyFilterMessage]="' No Product Found'" 
-                                    (onChange)="ProductDetal()" [filter]="true" filterBy="label,value.name"
+                                    (onChange)="ProductDetalforOrder()" [filter]="true" filterBy="label,value.name"
                                     [resetFilterOnHide]="true" [placeholder]="'Select Order No'"
                                     [virtualScroll]="true" itemSize="30" 
                                     [ngClass]="{'clearance':TermFormSubmitted && salesorderno?.errors?.required}" >
