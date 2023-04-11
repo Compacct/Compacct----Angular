@@ -456,6 +456,7 @@ import { BSHPLAudiologistAppoComponent } from "./common/PatientManagement/bshpl-
 import { EmployeeMasterContractorComponent } from './common/MICL/employee-master-contractor/employee-master-contractor.component';
 import { LetterOfIntentComponent } from './common/MICL/letter-of-intent/letter-of-intent.component';
 import { ProformaInvoiceComponent } from './common/MICL/proforma-invoice/proforma-invoice.component';
+import { SalesMisComponent } from './common/MICL/sales-mis/sales-mis.component';
 
 @NgModule({
   declarations: [
@@ -828,7 +829,8 @@ import { ProformaInvoiceComponent } from './common/MICL/proforma-invoice/proform
     BSHPLAudiologistAppoComponent,
     EmployeeMasterContractorComponent,
     LetterOfIntentComponent,
-    ProformaInvoiceComponent 
+    ProformaInvoiceComponent,
+    SalesMisComponent 
 
 
   ],
