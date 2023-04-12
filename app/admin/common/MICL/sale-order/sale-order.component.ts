@@ -126,6 +126,11 @@ export class SaleOrderComponent implements OnInit {
   pindisabled:boolean = false;
   Customer_PO_No:any;
   Customer_PO_Date:Date;
+  LI_Doc_No: any;
+  LI_Doc_Date = new Date();
+  Reference_Doc_No: any;
+  Reference_Doc_Date: any;
+  LiDocNoList:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -156,7 +161,7 @@ export class SaleOrderComponent implements OnInit {
     this.GetStateList();
     this.GetCostcenter();
     this.Costcenter();
-    this.getProduct();
+    this.getProductType();
     this.GetTaxCategory();
   }
   TabClick(e) {
@@ -282,14 +287,39 @@ export class SaleOrderComponent implements OnInit {
   }
   VenderNameChange() {
     this.ObjSaleOrder.Sub_Ledger_Billing_Name = '';
+    this.LI_Doc_No = undefined;
+    this.Tax_Category = undefined;
+    this.ObjProductInfo.godown_id = undefined;
+    this.ObjProductInfo.Batch_Number = undefined;
+    this.LotNolist = [];
+    this.ObjProductInfo.LI_Qty = undefined;
+    this.ObjProductInfo.Qty = undefined;
+    this.ObjProductInfo.Rate = undefined;
+    this.ObjProductInfo.Taxable_Amount = undefined
+    this.LiDocNoList = [];
+    this.ProductDetalist = [];
     this.SaveAddress = [];
+    this.Choose_Address = undefined;
+    this.ObjSaleOrder.Sub_Ledger_Address_1 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_District = undefined;
+    this.ObjSaleOrder.Sub_Ledger_State = undefined;
+    this.ObjSaleOrder.Sub_Ledger_Pin = undefined;
+    this.ObjSaleOrder.Sub_Ledger_GST_No = undefined;
     this.SaveAddress1 = [];
+    this.ObjSaleOrder.Choose_Address2 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_Billing_Name = undefined;
+    this.ObjSaleOrder.Sub_Ledger_Address_2 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_Pin_2 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_District_2 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_State_2 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_GST_No_2 = undefined;
     if (this.ObjSaleOrder.Sub_Ledger_ID) {
       const ctrl = this;
       const vendorObj = $.grep(ctrl.VendorList, function (item: any) { return item.value == ctrl.ObjSaleOrder.Sub_Ledger_ID })[0];
       this.ObjSaleOrder.Sub_Ledger_Billing_Name = vendorObj.Sub_Ledger_Billing_Name;
       this.ObjSaleOrder.Sub_Ledger_Name = vendorObj.label;
       this.GetChooseAddress();
+      this.GetLiDocNo();
     } else {
     this.ObjSaleOrder.Sub_Ledger_Billing_Name = '';
     }
@@ -450,7 +480,61 @@ export class SaleOrderComponent implements OnInit {
      })
     }
   }
-  getProduct() {
+  GetLiDocNo() {
+    this.LiDocNoList = [];
+    this.LI_Doc_No = undefined;
+    this.LI_Doc_Date = new Date();
+    this.Reference_Doc_No = undefined;
+    this.Reference_Doc_Date = undefined;
+    if (this.ObjSaleOrder.Sub_Ledger_ID) {
+      const TempObj = {
+        Sub_Ledger_ID: this.ObjSaleOrder.Sub_Ledger_ID,
+      }
+      const obj = {
+        "SP_String": "SP_BL_Txn_Sale_Order",
+        "Report_Name_String": "Get_Letter_Of_Intent_NOs",
+        "Json_Param_String": JSON.stringify([TempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("LiDocNoList  ===", data);
+        if(data.length){
+          data.forEach(element => {
+            element['value'] = element.Doc_No
+            element['label'] = element.Doc_No
+          });
+          this.LiDocNoList = data;
+        }
+        else {
+          this.LiDocNoList = [];
+        }
+      })
+    }
+  
+  }
+  getLiDataChange(){
+    this.LI_Doc_Date = new Date();
+    this.Reference_Doc_No = undefined;
+    this.Reference_Doc_Date = undefined;
+    this.UomList = '';
+    this.ObjProductInfo.Product_Type_ID = undefined;
+    this.ObjProductInfo.Product_Sub_Type_ID = undefined;
+    this.ProductSub = [];
+    this.ObjProductInfo.Product_Specification = undefined;
+    this.ProductDetalist = [];
+    this.Tax_Category = undefined;
+    this.ObjProductInfo.LI_Qty = undefined;
+    this.ObjProductInfo.Qty = undefined;
+    this.ObjProductInfo.Rate = undefined;
+    this.ObjProductInfo.Taxable_Amount = undefined;
+    if (this.LI_Doc_No) {
+      const LiObj = this.LiDocNoList.filter(el=> el.Doc_No == this.LI_Doc_No);
+      this.LI_Doc_Date = LiObj.length ? new Date(LiObj[0].Doc_Date) : new Date();
+      this.Reference_Doc_No = LiObj.length ? LiObj[0].Ref_Doc_No : undefined;
+      this.Reference_Doc_Date = LiObj.length ? this.DateService.dateConvert(new Date(LiObj[0].Ref_Doc_Date)) : undefined;
+      this.ProductDetalforLi();
+    }
+  }
+  getProductType() {
     const obj = {
       "SP_String": "SP_BL_Txn_Sale_Order",
       "Report_Name_String": "Get_Master_Product_Type_For_Production",
@@ -460,12 +544,11 @@ export class SaleOrderComponent implements OnInit {
       console.log("this.ProductType", this.ProductType)
     })
   }
-  ChangeProdoctTyp() {
+  getProdoctSubType() {
     this.ProductSub = [];
     this.ObjProductInfo.Product_Sub_Type_ID = undefined;
     this.ObjProductInfo.Product_Specification = undefined;
     this.UomList = ''
-    this.ObjProductInfo.Batch_Number = undefined
     if (this.ObjProductInfo.Product_Type_ID) {
       const TempObj = {
         Product_Type_ID: this.ObjProductInfo.Product_Type_ID,
@@ -482,11 +565,13 @@ export class SaleOrderComponent implements OnInit {
     }
     
   }
-  ProductDetal() {
+  getProductDetal() {
     this.ProductDetalist = [];
     this.ObjProductInfo.Product_Specification = undefined;
     this.UomList = '';
-    this.ObjProductInfo.Batch_Number = undefined
+    this.Tax_Category = undefined;
+    this.ObjProductInfo.Qty = undefined;
+    this.ObjProductInfo.Rate = undefined;
     if (this.ObjProductInfo.Product_Type_ID && this.ObjProductInfo.Product_Sub_Type_ID) {
       const TempObj = {
         Product_Type_ID: this.ObjProductInfo.Product_Type_ID,
@@ -495,6 +580,33 @@ export class SaleOrderComponent implements OnInit {
       const obj = {
         "SP_String": "SP_BL_Txn_Sale_Order",
         "Report_Name_String": "Get_Products",
+        "Json_Param_String": JSON.stringify([TempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("ProductDetalist  ===", data);
+        this.ProductDetalist = data;
+      })
+    }
+  
+  }
+  ProductDetalforLi() {
+    this.ProductDetalist = [];
+    this.ObjProductInfo.Product_Specification = undefined;
+    this.UomList = '';
+    this.ObjProductInfo.Product_Type_ID = undefined;
+    this.ObjProductInfo.Product_Sub_Type_ID = undefined;
+    this.ProductSub = [];
+    this.Tax_Category = undefined;
+    this.ObjProductInfo.Qty = undefined;
+    this.ObjProductInfo.Rate = undefined;
+    this.ObjProductInfo.Taxable_Amount = undefined
+    if (this.LI_Doc_No) {
+      const TempObj = {
+        Doc_No: this.LI_Doc_No
+      }
+      const obj = {
+        "SP_String": "SP_BL_Txn_Sale_Order",
+        "Report_Name_String": "Get_Products_Against_Letter_Of_Intent",
         "Json_Param_String": JSON.stringify([TempObj])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
@@ -546,6 +658,10 @@ export class SaleOrderComponent implements OnInit {
       const TempArry: any = this.ProductDetalist.filter((el: any) => Number(el.value) === Number(this.ObjProductInfo.Product_Specification))
       this.UomList = TempArry[0].UOM;
       this.Tax_Category = TempArry.length ? TempArry[0].Cat_ID : undefined;
+      this.ObjProductInfo.LI_Qty = TempArry.length ? TempArry[0].LI_Qty : undefined;
+      this.ObjProductInfo.Qty = TempArry.length ? TempArry[0].Qty : undefined;
+      this.ObjProductInfo.Rate = TempArry.length ? TempArry[0].Rate : undefined;
+      this.GetTaxAmt();
     }
   }
   GetTaxAmt() {
@@ -556,10 +672,25 @@ export class SaleOrderComponent implements OnInit {
       this.ObjProductInfo.Taxable_Amount = undefined;
     }
   }
+  checksameLiNo () {
+    const sameproductwithsamelino = this.AddProdList.filter(item=> item.LI_Doc_No === this.LI_Doc_No && item.Product_ID === this.ObjProductInfo.Product_Specification );
+    if(sameproductwithsamelino.length) {
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Can't add Same Product with same LI Doc No."
+          });
+      return false;
+    }
+    else {
+      return true;
+    }
+    }
   AddProduct(valid: any) {
     this.TermFormSubmitted = true;
-    if (valid) {
-      // const LotNoArry: any = this.LotNolist.filter((el: any) => el.Batch_No == this.ObjProductInfo.Batch_Number);
+    if (valid && this.checksameLiNo()) {
       // this.BatchQtyCheck = LotNoArry[0].Batch_Qty;
       // if(this.BatchQtyCheck >= this.ObjProductInfo.Qty) {
         const CostMatch: any = this.CenterList.filter((el: any) => Number(el.Cost_Cen_ID) === Number(this.ObjProductInfo.Cost_Cen_ID));
@@ -605,12 +736,16 @@ export class SaleOrderComponent implements OnInit {
         // godown_name: GdwonArry.legth ? GdwonArry[0].godown_name : undefined,
         // godown_id: this.ObjProductInfo.godown_id,
         Product_ID :this.ObjProductInfo.Product_Specification,
-        Product_Type: ProductArry[0].Product_Type,
-        HSN_No : ProductDArry[0].HSN_No,
-        Product_Sub_Type: ProductSubArry[0].Product_Sub_Type,
-        Product_Specification: ProductDArry[0].label,
-        // Batch_No :this.ObjProductInfo.Batch_Number,
+        Product_Type: ProductArry.length ? ProductArry[0].Product_Type : undefined,
+        HSN_No : ProductDArry.length ? ProductDArry[0].HSN_No : undefined,
+        LI_Doc_No : this.LI_Doc_No,
+        LI_Doc_Date : this.LI_Doc_No ? this.DateService.dateConvert(new Date(this.LI_Doc_Date)) : undefined,
+        Reference_Doc_No : this.Reference_Doc_No,
+        Reference_Doc_Date : this.Reference_Doc_Date ? this.DateService.dateConvert(new Date(this.Reference_Doc_Date)) : undefined,
+        Product_Sub_Type: ProductSubArry.length ? ProductSubArry[0].Product_Sub_Type : undefined,
+        Product_Specification: ProductDArry.length ? ProductDArry[0].label : undefined,
         // Batch_No_Show: LotNoArry[0].Batch_No_Show,
+        LI_Qty: this.ObjProductInfo.LI_Qty,
         Qty: this.ObjProductInfo.Qty,
         UOM: this.UomList,
         Rate: this.ObjProductInfo.Rate,
@@ -628,12 +763,17 @@ export class SaleOrderComponent implements OnInit {
       this.TotalCalculation();
       console.log("this.AddProdList", this.AddProdList)
       this.TermFormSubmitted = false;
+      this.LI_Doc_No = undefined;
+      this.LI_Doc_Date = new Date();
+      this.Reference_Doc_No = undefined;
+      this.Reference_Doc_Date = undefined;
       this.ObjProductInfo.godown_id = undefined;
       this.ObjProductInfo.Product_Type_ID = undefined;
       this.ProductSub = [];
       this.ProductDetalist = [];
       this.LotNolist = [];
       this.ObjProductInfo.Product_Specification = undefined;
+      this.ObjProductInfo.LI_Qty = undefined;
       this.ObjProductInfo.Qty = undefined;
       this.UomList = '';
       this.ObjProductInfo.Rate = undefined;
@@ -698,12 +838,17 @@ export class SaleOrderComponent implements OnInit {
     // if (valid && this.AddProdList.length) {
       this.AddProdList.forEach(element => {
         this.SaveLowerData.push({
+          LI_Doc_No: element.LI_Doc_No,
+          LI_Doc_Date: element.LI_Doc_Date,
+          Ref_Doc_No: element.Reference_Doc_No,
+          Ref_Doc_Date: element.Reference_Doc_Date,
           Product_ID: element.Product_ID,
           Product_Name: element.Product_Specification,
           godown_id: element.godown_id,
           HSL_No: element.HSN_No,
           Batch_Number: element.Batch_No,
           UOM: element.UOM,
+          LI_Qty: element.LI_Qty,
           Qty: element.Qty,
           MRP: element.Rate,
           Rate: element.Rate,
@@ -900,15 +1045,15 @@ class SaleOrder {
   Company_ID: any;
   Sub_Ledger_Pin_2: any;
   Sub_Ledger_ID : any;
-  Sub_Ledger_Name : string;
-  Sub_Ledger_Billing_Name : string;
-  Sub_Ledger_Address_1 : string;
-  Sub_Ledger_Address_2 : string;
+  Sub_Ledger_Name : any;
+  Sub_Ledger_Billing_Name : any;
+  Sub_Ledger_Address_1 : any;
+  Sub_Ledger_Address_2 : any;
   Sub_Ledger_Address_3 : string;
   Sub_Ledger_Land_Mark : string;
   Sub_Ledger_Pin : any;
-  Sub_Ledger_District: string;
-  Sub_Ledger_District_2: string;
+  Sub_Ledger_District: any;
+  Sub_Ledger_District_2: any;
   Sub_Ledger_State: any; 
   Sub_Ledger_State_2: any;
   Sub_Ledger_GST_No_2: any;
@@ -996,6 +1141,7 @@ class ProductInfo {
   Product_Specification: any;
   Batch_Number: any;
   Taxable_Amount: any;
+  LI_Qty: any;
   Qty: any;
   UOM: any;
   Rate: any;

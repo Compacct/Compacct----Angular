@@ -100,6 +100,11 @@ export class MICLCouponIssueComponent implements OnInit {
       this.ObjCouponIssue.Contractor_Emp_ID = undefined;
       this.contractorEmpList = [];
       this.ObjCouponIssue.Visitor_Name = '';
+      this.ObjCouponIssue.Coupon_Type = undefined;
+      this.ObjCouponIssue.Start_No = undefined;
+      this.ObjCouponIssue.End_No = undefined;
+      this.TotalCoupon = 0;
+      this.TotalAmount = 0;
       this.AddList = [];
   }
   getEmpList() {
@@ -190,10 +195,18 @@ export class MICLCouponIssueComponent implements OnInit {
         filterAmt = this.CouponList.filter((Elee: any) => Elee.Coupon_Type === this.ObjCouponIssue.Coupon_Type); 
     }
     if (filterAmt.length === 1&& this.TotalCoupon) {
+      if(this.Issue_To === "Employee") {
       this.TotalAmount = Number(filterAmt[0].Amount) * Number(this.TotalCoupon)
+      }
+      if(this.Issue_To === "Contractor") {
+        this.TotalAmount = Number(filterAmt[0].Contractor_Amount) * Number(this.TotalCoupon)
+      }
+      if(this.Issue_To === "Visitor") {
+        this.TotalAmount = Number(filterAmt[0].Visitor_Amount) * Number(this.TotalCoupon)
+      }
     }
     else {
-      this.TotalAmount = undefined; 
+      this.TotalAmount = 0; 
     }
   }
   AddData() {

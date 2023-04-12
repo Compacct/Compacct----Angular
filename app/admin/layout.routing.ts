@@ -359,6 +359,8 @@ import { BSHPLAudiologistAppoComponent } from "./common/PatientManagement/bshpl-
 import { EmployeeMasterContractorComponent } from './common/MICL/employee-master-contractor/employee-master-contractor.component';
 import { LetterOfIntentComponent } from './common/MICL/letter-of-intent/letter-of-intent.component';
 import { ProformaInvoiceComponent } from './common/MICL/proforma-invoice/proforma-invoice.component';
+import { SalesMisComponent } from './common/MICL/sales-mis/sales-mis.component';
+import { ViewOutcomesComponent } from "./common/PatientManagement/view-outcomes/view-outcomes.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2725,6 +2727,20 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: ProformaInvoiceComponent,
       data: {
           title: 'Proforma Invoice'
+      } 
+    },
+    {
+      path: 'Sales_MIS',
+      component: SalesMisComponent,
+      data: {
+          title: 'Sales MIS'
+      } 
+    },
+    {
+      path: 'View_Outcomes_',
+      component: ViewOutcomesComponent,
+      data: {
+          title: 'View Outcomes'
       } 
     },
 

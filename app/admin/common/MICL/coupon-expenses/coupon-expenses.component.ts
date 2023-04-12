@@ -33,8 +33,8 @@ export class CouponExpensesComponent implements OnInit {
   ngOnInit() {
 
     this.Header.pushHeader({
-      Header: "Coupon Expenses",
-      Link: "MICL --> Coupon Expenses"
+      Header: "Canteen Expenses",
+      Link: "MICL --> Canteen Expenses"
     });
     this.getBrowseData()
   }
@@ -51,8 +51,15 @@ export class CouponExpensesComponent implements OnInit {
   
   calTotal(){
    console.log('cal Total working');
-   if(Number(this.objExpenses.Vegetables) && Number(this.objExpenses.Grocery) && Number(this.objExpenses.Misc_Other_NV_Item) && Number(this.objExpenses.Fuel)){
-    this.objExpenses.Total_Amount = Number(this.objExpenses.Vegetables) + Number(this.objExpenses.Grocery) + Number(this.objExpenses.Misc_Other_NV_Item) + Number(this.objExpenses.Fuel)
+   var Total_Amount = 0;
+   this.objExpenses.Total_Amount = 0;
+   this.objExpenses.Vegetables = this.objExpenses.Vegetables ? Number(this.objExpenses.Vegetables) : 0;
+   this.objExpenses.Grocery = this.objExpenses.Grocery ? Number(this.objExpenses.Grocery) : 0;
+   this.objExpenses.Misc_Other_NV_Item = this.objExpenses.Misc_Other_NV_Item ? Number(this.objExpenses.Misc_Other_NV_Item) : 0;
+   this.objExpenses.Fuel = this.objExpenses.Fuel ? Number(this.objExpenses.Fuel) : 0;
+   if(Number(this.objExpenses.Vegetables) || Number(this.objExpenses.Grocery) || Number(this.objExpenses.Misc_Other_NV_Item) || Number(this.objExpenses.Fuel)){
+    Total_Amount = Number(this.objExpenses.Vegetables) + Number(this.objExpenses.Grocery) + Number(this.objExpenses.Misc_Other_NV_Item) + Number(this.objExpenses.Fuel)
+    this.objExpenses.Total_Amount = Number(Total_Amount).toFixed(2);
    }
   }
   onReject(){}

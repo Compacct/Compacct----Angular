@@ -400,12 +400,12 @@
                                 <i class="fa fa-product-hunt">
                                 </i> &nbsp;<strong>PRODUCTION</strong>
                             </h5>
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <label class="control-label">Customer PO No </label>
                                 <input class="form-control"  name="custpono" #custpono="ngModel" 
                                [(ngModel)]="Customer_PO_No">
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <label class="control-label">Customer PO Date </label>
                                 <div class="input-group date">
                                     <div class="input-group-addon">
@@ -414,7 +414,7 @@
                                 <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Customer_PO_Date'></ejs-datepicker>
                                 </div>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <label class="control-label">Order Date <sup class="text-danger">*</sup></label>
                                 <div class="input-group date">
                                     <div class="input-group-addon">
@@ -423,11 +423,47 @@
                                 <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='DocDate'></ejs-datepicker>
                                 </div>
                             </div>
+                            <div class="clearfix"></div>
+                            <div class="col-sm-3">
+                                <label class="control-label">LI Doc No </label>
+                               <p-dropdown [options]="LiDocNoList" name="lidocno" #lidocno="ngModel"  
+                                    [(ngModel)]="LI_Doc_No" 
+                                    [showClear]="true" [emptyFilterMessage]="' No LI No Found'" 
+                                    [filter]="true" filterBy="label,value.name"
+                                    [resetFilterOnHide]="true" [placeholder]="'Select LI No'"
+                                    [virtualScroll]="true" itemSize="30" 
+                                    (onChange)="getLiDataChange()"
+                                    [ngClass]="{'clearance':TermFormSubmitted && lidocno?.errors?.required}">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">LI Doc Date </label>
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                     <i class="fa fa-calendar"></i>
+                                </div>
+                                <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='LI_Doc_Date'></ejs-datepicker>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                              <label>Reference No<sup class="text-danger">*</sup></label>
+                              <input class="form-control" name="refno" #refno="ngModel"
+                              [(ngModel)]="Reference_Doc_No" placeholder="Reference No"
+                              [disabled]="true">
+                            </div>
+                            <div class="col-sm-3">
+                                <label>Reference Date<sup class="text-danger">*</sup></label>
+                                <input class="form-control" name="refdate" #refdate="ngModel"
+                                [(ngModel)]="Reference_Doc_Date" placeholder="Reference Date"
+                                [disabled]="true">
+                            </div>
+                            <div class="clearfix"></div>
                             <div class="col-sm-3">
                               <label>Product Type<sup class="text-danger">*</sup></label>
                             <select class="form-control" name="ProducType" #ProducType="ngModel" 
                             [(ngModel)]="ObjProductInfo.Product_Type_ID"
-                            (change)="ChangeProdoctTyp()" 
+                            (change)="getProdoctSubType()" 
+                            [disabled]="LI_Doc_No"
                             [ngClass]="{clearance: TermFormSubmitted && ProducType?.errors?.required}"
                             required>
                                 <option [ngValue]="undefined">Select</option>
@@ -436,12 +472,12 @@
                                 </option>
                             </select>
                             </div>
-                            <div class="clearfix"></div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 <label>Product Sub Type<sup class="text-danger">*</sup></label>
                                 <select class="form-control"  name="SubType" #SubType="ngModel" 
                                     [(ngModel)]="ObjProductInfo.Product_Sub_Type_ID"
-                                     (change)="ProductDetal()"
+                                    (change)="getProductDetal()"
+                                    [disabled]="LI_Doc_No"
                                     [ngClass]="{clearance: TermFormSubmitted && SubType?.errors?.required}" 
                                     required>
                                     <option [ngValue]="undefined">Select</option>
@@ -452,16 +488,6 @@
                             </div>
                             <div class="col-sm-4">
                                 <label>Product Description<sup class="text-danger">*</sup></label>
-                                <!-- <select class="form-control" name="Description" #Description="ngModel" 
-                                    [(ngModel)]="ObjProductInfo.Product_Specification"
-                                    (change)="GetLot()"
-                                    [ngClass]="{clearance: TermFormSubmitted && Description?.errors?.required}" 
-                                    required>
-                                    <option [ngValue]="undefined">Select</option>
-                                    <option *ngFor="let option of ProductDetalist" [value]="option.value">
-                                        {{option.label}}
-                                    </option>
-                                </select> -->
                                 <p-dropdown [options]="ProductDetalist" name="Description" #Description="ngModel"  
                                     [(ngModel)]="ObjProductInfo.Product_Specification" 
                                     [showClear]="true" [emptyFilterMessage]="' No Product Found'" 
@@ -472,7 +498,7 @@
                                 </p-dropdown>
                             </div>
                             
-                            <div class="col-sm-4">
+                            <div class="col-sm-2">
                                 <label>Tax Category<sup class="text-danger">*</sup></label>
                                 <select class="form-control" name="taxcat" #taxcat="ngModel" 
                                     [(ngModel)]="Tax_Category"
@@ -484,20 +510,18 @@
                                     </option>
                                 </select>
                             </div>
-                            <!-- <div class="col-sm-3">
-                                <label class="control-label">Lot No./Batch No. <sup class="text-danger">*</sup></label>
-                                <select class="form-control" name="BatchNo" #BatchNo="ngModel" 
-                                [(ngModel)]="ObjProductInfo.Batch_Number"
-                                [ngClass]="{clearance: TermFormSubmitted && BatchNo?.errors?.required}"
-                                   required>
-                                    <option [ngValue]="undefined">Select</option>
-                                  <option *ngFor="let option of LotNolist" [value]="option.Batch_No">
-                                    {{option.Batch_No_Show}}
-                                </option>
-                                </select>
-                            </div> -->
-                            
                             <div class="clearfix"></div>
+                            <div class="col-sm-2">
+                                <label class="control-label">LI Qty </label>
+                                <div class="input-group">                                  
+                                <input class="form-control"  name="liQty" #liQty="ngModel" 
+                                [(ngModel)]="ObjProductInfo.LI_Qty"
+                                placeholder="LI Qty"
+                                CompacctDigitonly="true"
+                                [disabled]="true"
+                                [ngClass]="{clearance: TermFormSubmitted && liQty?.errors?.required}">  
+                                </div>
+                            </div>
                             <div class="col-sm-2">
                                 <label class="control-label">Qty <sup class="text-danger">*</sup></label>
                                 <div class="input-group">                                  
@@ -517,9 +541,9 @@
                                 <label class="control-label">Rate<sup class="text-danger">*</sup></label>
                                 <input class="form-control"name="Rate" #Rate="ngModel" 
                                 [(ngModel)]="ObjProductInfo.Rate"
-                                 placeholder="Rate"
-                                 (ngModelChange)="GetTaxAmt()"
-                                  CompacctDigitonly="true"
+                                placeholder="Rate"
+                                (ngModelChange)="GetTaxAmt()"
+                                CompacctDigitonly="true"
                                 [ngClass]="{clearance: TermFormSubmitted && Rate?.errors?.required}" required>
                             </div>
                             <div class="col-sm-2">
@@ -542,10 +566,15 @@
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Sl. No.</th>
                               <!-- <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Cost Center</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Stock Point</th> -->
+                              <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">LI Doc No</th>
+                              <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">LI Doc Date</th>
+                              <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Ref Doc No</th>
+                              <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Ref Doc Date</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Type</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Sub Type</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Description</th>
                               <!-- <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Lot No./Batch No.</th> -->
+                              <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">LI QTY</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">QTY</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">UOM</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Rate</th>
@@ -570,10 +599,15 @@
                               <td>{{ ind + 1  }}</td>
                               <!-- <td>{{ TermTableList.Cost_Cen_Name }}</td>
                               <td>{{ TermTableList.godown_name }}</td> -->
-                              <td>{{ TermTableList.Product_Type }}</td>
-                              <td>{{ TermTableList.Product_Sub_Type }}</td>
+                              <td>{{ TermTableList.LI_Doc_No ? TermTableList.LI_Doc_No : '-' }}</td>
+                              <td>{{ TermTableList.LI_Doc_Date ? TermTableList.LI_Doc_Date : '-' }}</td>
+                              <td>{{ TermTableList.Reference_Doc_No ? TermTableList.Reference_Doc_No : '-' }}</td>
+                              <td>{{ TermTableList.Reference_Doc_Date ? TermTableList.Reference_Doc_Date : '-' }}</td>
+                              <td>{{ TermTableList.Product_Type ? TermTableList.Product_Type : '-' }}</td>
+                              <td>{{ TermTableList.Product_Sub_Type ? TermTableList.Product_Sub_Type : '-' }}</td>
                               <td>{{ TermTableList.Product_Specification }}</td>
                               <!-- <td>{{ TermTableList.Batch_No_Show }}</td> -->
+                              <td>{{ TermTableList.LI_Qty ? TermTableList.LI_Qty : '-' }}</td>
                               <td>{{ TermTableList.Qty }}</td>
                               <td>{{ TermTableList.UOM }}</td>
                               <td>{{ TermTableList.Rate }}</td>
