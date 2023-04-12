@@ -988,6 +988,30 @@
                                             >
                                         </div>
                                       </div>
+                                      <div class="form-group">
+                                        <div class="col-sm-3" >
+                                            <label class="control-label">SWS GL Code<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                            name="SWS_GL_Code"
+                                            placeholder="SWS GL Code"
+                                            #SWS_GL_Code="ngModel"
+                                           [(ngModel)]="objupdate.SWS_GL_Code"
+                                           [ngClass]="{'clearance': UpdatecusacccreationFormsSubmitted && SWS_GL_Code.errors?.required}"
+                                           required
+                                            >
+                                        </div>
+                                        <div class="col-sm-3" >
+                                            <label class="control-label">SWS GL Short Name<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                            name="SWS_GL_ShortName"
+                                            placeholder="SWS GL Short Name"
+                                            #SWS_GL_ShortName="ngModel"
+                                           [(ngModel)]="objupdate.SWS_GL_ShortName"
+                                           [ngClass]="{'clearance': UpdatecusacccreationFormsSubmitted && SWS_GL_ShortName.errors?.required}"
+                                           required
+                                            >
+                                        </div>
+                                        </div>
                                 </form>
                                 <div class="box-footer" >
                                     <button class="btn btn-primary pull-right"
