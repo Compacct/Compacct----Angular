@@ -1,0 +1,148 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+   <ng-template let-message pTemplate="message">
+      <div style="text-align: center">
+         <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+         <h3>{{message.summary}}</h3>
+         <p>{{message.detail}}</p>
+      </div>
+      <div class="ui-g ui-fluid">
+         <div class="ui-g-6">
+            <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+         </div>
+         <div class="ui-g-6">
+            <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+         </div>
+      </div>
+   </ng-template>
+</p-toast>
+<div class="row">
+   <div class="col-xs-12">
+      <div class="box box-primary">
+         <div class="form-horizontal">
+            <div class="box-body">
+               <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                  <div class="row">
+                     <button style="margin-right: 10px;" class="btn btn-primary pull-right" id="load"
+                        [disabled]="!((User_Type=='A') && (Del_Right=='Y'))" (click)="createEmp()"><span
+                           class="glyphicon glyphicon-plus"></span>New Employee
+                     </button>
+                     <button style="margin-right: 10px;" class="btn btn-success pull-right" id="load"
+                        [disabled]="!allEmployeeData.length" (click)="exportexcel()"><span
+                           class="fa fa-fw fa-file-excel-o"></span>Export To Excel
+                     </button>
+                  </div>
+                  <form name="MasterForm" #MasterForm="ngForm" novalidate>
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <label class="control-label">Under Contractor<sup class="text-danger">*</sup></label>
+                           <p-dropdown [options]="contractorList" name="contractorList" #contractor="ngModel"
+                              [(ngModel)]="Sub_Ledger_ID" (onChange)="getEmpList(Sub_Ledger_ID)" [showClear]="true"
+                              [emptyFilterMessage]="'No Item Found'" [filter]="true" filterBy="label,value"
+                              [resetFilterOnHide]="true" [placeholder]="'Select Contractor'" [virtualScroll]="true"
+                              itemSize="30"
+                              [styleClass]="employeeMasterFormSubmit &&  contractor.errors?.required ? 'clearance' :''"
+                              [required]="true">
+                           </p-dropdown>
+                        </div>
+                        <div class="col-sm-4">
+                           <label class="control-label">Employee<sup class="text-danger"
+                                 *ngIf="!emp_creation">*</sup></label>
+                           <p-dropdown [options]="employeeList" name="EmployeeList" #EmployeeList="ngModel"
+                              [(ngModel)]="Employee_Id" (onChange)="getEmpData(Employee_Id)" [showClear]="true"
+                              [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value"
+                              [resetFilterOnHide]="true" [placeholder]="'Select Patient '" [virtualScroll]="true"
+                              itemSize="30" [disabled]="emp_creation"
+                              [styleClass]="employeeMasterFormSubmit &&  EmployeeList.errors?.required ? 'clearance' :''"
+                              [required]="!emp_creation">
+                           </p-dropdown>
+                        </div>
+                        <div class="col-sm-4">
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <label class="control-label">Emp ID</label>
+                           <input type="text" class="form-control" placeholder="Emp ID" name="emp_id" #emp_id="ngModel"
+                              [ngModel]="objEmployee.Emp_ID" CompacctDigitonly="true" disabled>
+                        </div>
+                        <div class="col-sm-4">
+                           <label class="control-label">Emp Code<sup class="text-danger">*</sup></label>
+                           <input type="text" class="form-control" placeholder="Emp Code" name="emp_code"
+                              #emp_code="ngModel" [(ngModel)]="objEmployee.Emp_Code" CompacctDigitonly="true"
+                              [ngClass]="{clearance: (employeeMasterFormSubmit && emp_code?.errors?.required) }"
+                              required>
+                        </div>
+                        <div class="col-sm-4">
+                           <label class="control-label">Emp Name<sup class="text-danger">*</sup></label>
+                           <input type="text" class="form-control" placeholder="Emp Name" name="emp_name"
+                              #emp_name="ngModel" [(ngModel)]="objEmployee.Emp_Name"
+                              [ngClass]="{clearance: (employeeMasterFormSubmit && emp_name?.errors?.required) }"
+                              required>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <label class="control-label">Aadhar No<sup class="text-danger">*</sup></label>
+                           <input type="text" class="form-control" placeholder="Aadhar No" name="aadhar_no"
+                              pattern="[0-9]{12}" #aadhar_no="ngModel" [(ngModel)]="objEmployee.Adhar_No"
+                              CompacctDigitonly="true" maxlength="12"
+                              [ngClass]="{clearance: (employeeMasterFormSubmit && aadhar_no?.errors?.required) || aadhar_no?.errors?.pattern}"
+                              required>
+                        </div>
+                        <div class="col-sm-4">
+                           <label class="control-label">Pan No<sup class="text-danger">*</sup></label>
+                           <input type="text" class="form-control" placeholder="Pan No" name="pan_no" #pan_no="ngModel"
+                              [(ngModel)]="objEmployee.PAN_No" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" maxlength="10"
+                              (input)="objEmployee.PAN_No = objEmployee.PAN_No.toUpperCase()"
+                              [ngClass]="{clearance: (employeeMasterFormSubmit && pan_no?.errors?.required) || pan_no?.errors?.pattern }"
+                              required>
+                        </div>
+                        <div class="col-sm-4">
+                           <label class="control-label">Mobile No<sup class="text-danger">*</sup></label>
+                           <input type="text" class="form-control" placeholder="Mobile No" name="mobile_no"
+                              #mobile_no="ngModel" [(ngModel)]="objEmployee.Mobile" maxlength="10"
+                              pattern="[6-9]{1}[0-9]{9}" CompacctDigitonly="true"
+                              [ngClass]="{clearance: (employeeMasterFormSubmit && mobile_no?.errors?.required) || mobile_no?.errors?.pattern}"
+                              required>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <label class="control-label">Emergency Contact No<sup class="text-danger">*</sup></label>
+                           <input type="text" class="form-control" placeholder="Emergency Mobile No"
+                              name="eme_mobile_no" #eme_mobile_no="ngModel"
+                              [(ngModel)]="objEmployee.Emergency_Contact_Mobile" maxlength="10" CompacctDigitonly="true"
+                              pattern="[6-9]{1}[0-9]{9}"
+                              [ngClass]="{clearance: (employeeMasterFormSubmit && eme_mobile_no?.errors?.required) || eme_mobile_no?.errors?.pattern }"
+                              required>
+                        </div>
+                        <div class="col-sm-4">
+                           <label class="control-label">Emergency Contact Person<sup class="text-danger">*</sup></label>
+                           <input type="text" class="form-control" placeholder="Emergency Contact Person"
+                              name="eme_contact_per" #eme_contact_per="ngModel"
+                              [(ngModel)]="objEmployee.Emergency_Contact_Person"
+                              [ngClass]="{clearance: (employeeMasterFormSubmit && eme_contact_per?.errors?.required) }"
+                              required>
+                        </div>
+                        <div class="col-sm-4" style="margin-top: 28px;">
+                           <p-checkbox [(ngModel)]="is_Biometric" [binary]="true" name="is Biometric"
+                              label="Is Biometric"></p-checkbox>
+                        </div>
+                     </div>
+                     <br>
+                     <div class="row">
+                        <button class="btn btn-primary pull-right" (click)="SaveEmployee(MasterForm.form.valid)"
+                           id="load" [disabled]="!((User_Type=='A') && (Del_Right=='Y')) || Spinner">
+                           <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
+                              animationDuration=".5s"></p-progressSpinner>
+                           <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                        </button>
+                     </div>
+                  </form>
+               </p-tabView>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>

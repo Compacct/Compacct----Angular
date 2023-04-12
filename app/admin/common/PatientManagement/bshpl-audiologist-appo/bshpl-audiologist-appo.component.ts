@@ -62,9 +62,16 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   CostCen_Name:any = undefined;
   Cons_Name:any =undefined;
 
+  displayPopupAppoView:boolean = false;
+
+  CompletedSeachSpinner:boolean=false;
+  CompletedAllDetalis:any = [];
+  CompletedAllDetalisHeader:any = [];
+
   objAppointment: Appointment = new Appointment();
   objAudiologist: Audiologist = new Audiologist();
   objSearch: Search =new Search();
+  objCompletedSearch: CompletedSearch = new CompletedSearch();
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -89,6 +96,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.HAYesNoListR=['YES','NO'];
     this.Trial_ForList=['Binaural','Monorual'];
     this.TrialRestultList=['ADVANCE PAID','FITTED','MISSED'];
+    this.getAlldata();
     this.GetDegreeLossList();
     this.GetProductList();
     this.GetMissedReasonList();
@@ -112,11 +120,11 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.ngxService.start();
 
     const start = this.objSearch.From_Date
-    ? this.DateService.dateTimeConvert(new Date(this.objSearch.From_Date))
-    : this.DateService.dateTimeConvert(new Date());
+    ? this.DateService.dateConvert(new Date(this.objSearch.From_Date))
+    : this.DateService.dateConvert(new Date());
     const end = this.objSearch.To_Date
-    ? this.DateService.dateTimeConvert(new Date(this.objSearch.To_Date))
-    : this.DateService.dateTimeConvert(new Date());
+    ? this.DateService.dateConvert(new Date(this.objSearch.To_Date))
+    : this.DateService.dateConvert(new Date());
     this.objSearch.User_Id = Number(this.UserID);
 
     const tempobj = {
@@ -125,7 +133,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       User_ID : this.objSearch.User_Id ? this.objSearch.User_Id : 0,
     
     }
-    console.log("tempobj",tempobj);
+    // console.log("tempobj",tempobj);
 
     const obj = {
       "SP_String": "sp_BSHPL_Audiologist_Appo",
@@ -133,15 +141,15 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       "Json_Param_String": JSON.stringify([tempobj])
     }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log("getAlldata",data);
+      // console.log("getAlldata",data);
       this.ngxService.stop();
       this.seachSpinner = false;
 
       this.allDetalis = data;
-      console.log('allDetalis=====',this.allDetalis);
+      // console.log('allDetalis=====',this.allDetalis);
       if (this.allDetalis.length) {
         this.allDetalisHeader = Object.keys(data[0]);
-        console.log('allDetalisHeader=====',this.allDetalisHeader);
+        // console.log('allDetalisHeader=====',this.allDetalisHeader);
       }
     })
   }
@@ -189,15 +197,19 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.Sex = undefined;
     this.CostCen_Name = undefined;
     this.Cons_Name =undefined;
+
+    this.displayPopupAppoView=false;
+    this.CompletedSeachSpinner=false;
   }
 
   actionClick_PatientDetails(col:any){
-    // window.open(col.Controller_Name + col.Appo_ID+'&ed=y', '_blank');
-    // window.open('Hearing_CRM_Lead_Search?recordid='+ col.foot_fall_id,'_blank');
+    if(col){
+      window.open('/Hearing_CRM_Lead_Search?recordid=' + window.btoa(col.foot_fall_id));
+    }
   }
 
   actionClick_UpdateAppo(col:any){
-    console.log("actionClick_UpdateAppo");
+    // console.log("actionClick_UpdateAppo");
     if(col){
       this.objAppointment.Foot_Fall_ID=Number(col.foot_fall_id);
       this.objAppointment.Trial_Date= this.DateService.dateTimeConvert(new Date(col.Appo_Start));
@@ -214,7 +226,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   }
  
   closePopupAppo(){
-    console.log('close up works Appo');
+    // console.log('close up works Appo');
     this.displayPopupAppo = false;
 
     this.TrialDoneOpen=false;
@@ -246,13 +258,20 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   }
 
   SaveAppointment(valid:any){
-    console.log("SaveAppointment in progress");
+    // console.log("SaveAppointment in progress");
     this.AppointmentFormSubmitted = true;
     if(valid){
       this.AppoSpinner = true;
 
       this.objAppointment.Trial_ID=0;
       this.objAppointment.Created_On=this.DateService.dateTimeConvert(new Date());
+
+      this.objAppointment.Trial_Done= this.objAppointment.Trial_Done ? this.objAppointment.Trial_Done : 'NA';
+      this.objAppointment.EXPERIENCE_USER= this.objAppointment.EXPERIENCE_USER ? this.objAppointment.EXPERIENCE_USER : 'NA';
+      this.objAppointment.Trial_For= this.objAppointment.Trial_For ? this.objAppointment.Trial_For : 'NA';
+      this.objAppointment.Trial_For_Mono_Reason= this.objAppointment.Trial_For_Mono_Reason ? this.objAppointment.Trial_For_Mono_Reason : 'NA';
+      this.objAppointment.Trial_Restult= this.objAppointment.Trial_Restult ? this.objAppointment.Trial_Restult : 'NA';
+      this.objAppointment.Trail_Missed_Reason= this.objAppointment.Trail_Missed_Reason ? this.objAppointment.Trail_Missed_Reason : 'NA';
 
       let TrialList:any =[];
       for(let item of this.PTLList){
@@ -271,7 +290,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
           Ear_Side: item.Ear_Side
         })
       }
-      console.log('TrialList',TrialList);
+      // console.log('TrialList',TrialList);
 
       let SelectList:any =[];
       for(let item of this.PSLList){
@@ -290,12 +309,12 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
           Ear_Side: item.Ear_Side
         })
       }
-      console.log('SelectList',SelectList);
+      // console.log('SelectList',SelectList);
 
       this.objAppointment.Update_Trial_Details=TrialList;
       this.objAppointment.Update_Select_Details=SelectList;
 
-      console.log('this.objAppointment',this.objAppointment);
+      // console.log('this.objAppointment',this.objAppointment);
       
   
       const SaveAppObj = {
@@ -306,7 +325,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.ngxService.start();
       this.GlobalAPI.postData(SaveAppObj).subscribe((data: any) => {
         this.ngxService.stop();
-        console.log("save data",data);
+        // console.log("save data",data);
 
         if (data[0].Column1){
           this.getAlldata();
@@ -316,7 +335,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
             key: "compacct-toast",
             severity: "success",
             summary: "Appointment ",
-            detail: "Updated "
+            detail: "Save "
           });
         }
         else {
@@ -434,7 +453,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
 
   addProductTrialLeft(valid:any){
     this.PTLFormSubmitted = true;
-    console.log("addProductTrialLeft",valid);
+    // console.log("addProductTrialLeft",valid);
     if(valid){
       const GetProduct_Description = this.ProductList.filter((el:any)=> Number(el.Product_ID) === Number(this.ProductTrialLeft))
 
@@ -447,12 +466,12 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.ProductTrialLeft=undefined;
       this.PTLFormSubmitted = false;
     }
-    console.log("PTLList",this.PTLList);
+    // console.log("PTLList",this.PTLList);
   }
 
   addProductTrialRight(valid:any){
     this.PTRFormSubmitted = true;
-    console.log("addProductTrialRight",valid);
+  //  console.log("addProductTrialRight",valid);
     if(valid){
       const GetProduct_Description = this.ProductList.filter((el:any)=> Number(el.Product_ID) === Number(this.ProductTrialRight))
 
@@ -465,12 +484,12 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.ProductTrialRight=undefined;
       this.PTRFormSubmitted = false;
     }
-    console.log("PTRList",this.PTRList);
+  //  console.log("PTRList",this.PTRList);
   }
 
   addProductSelectLeft(valid:any){
     this.PSLFormSubmitted = true;
-    console.log("addProductSelectLeft",valid);
+  //  console.log("addProductSelectLeft",valid);
     if(valid){
       const GetProduct_Description = this.ProductList.filter((el:any)=> Number(el.Product_ID) === Number(this.ProductSelectLeft))
 
@@ -483,12 +502,12 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.ProductSelectLeft=undefined;
       this.PSLFormSubmitted = false;
     }
-    console.log("PSLList",this.PSLList);
+  //  console.log("PSLList",this.PSLList);
   }
 
   addProductSelectRight(valid:any){
     this.PSRFormSubmitted = true;
-    console.log("addProductSelectRight",valid);
+  //  console.log("addProductSelectRight",valid);
     if(valid){
       const GetProduct_Description = this.ProductList.filter((el:any)=> Number(el.Product_ID) === Number(this.ProductSelectRight))
 
@@ -501,7 +520,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.ProductSelectRight=undefined;
       this.PSRFormSubmitted = false;
     }
-    console.log("PSRList",this.PSRList);
+  //  console.log("PSRList",this.PSRList);
   }
 
   deleteProductTrialLeft(index:any) {
@@ -527,7 +546,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       "Report_Name_String": "Get_Degree_of_Loss_Dropdown"
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-    console.log("Get DegreeLossList",data);
+  //  console.log("Get DegreeLossList",data);
       if(data.length) {
           data.forEach(element => {
             element['label'] = element.Degree_of_Loss,
@@ -548,7 +567,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       "Report_Name_String": "Get_Product_Dropdown"
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-    console.log("Get ProductList",data);
+   // console.log("Get ProductList",data);
       if(data.length) {
           data.forEach(element => {
             element['label'] = element.Product_Description,
@@ -569,7 +588,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       "Report_Name_String": "Get_Missed_Reason_Dropdown"
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-    console.log("Get MissedReasonList",data);
+  //  console.log("Get MissedReasonList",data);
       if(data.length) {
           data.forEach(element => {
             element['label'] = element.Missed_Reason,
@@ -591,7 +610,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         Appo_Dt : this.DateService.dateTimeConvert(new Date(col.Appo_Start)),
         Cost_Cen_ID : Number(col.Cost_Cen_ID)
       }
-      console.log("getTempObj",getTempObj);
+    //  console.log("getTempObj",getTempObj);
 
       const getObj = {
         "SP_String": "sp_BSHPL_Audiologist_Appo",
@@ -600,7 +619,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       }
       this.GlobalAPI.getData(getObj).subscribe((data:any)=>{
         this.ngxService.stop();
-        console.log("get audiologist data",data);
+     //   console.log("get audiologist data",data);
         this.objAudiologist.Foot_Fall_ID= Number(col.foot_fall_id);
         this.objAudiologist.Appo_Dt= this.DateService.dateTimeConvert(new Date(col.Appo_Start));
 
@@ -621,19 +640,19 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   }
 
   showPopup() {
-    console.log('pop up works');
+   // console.log('pop up works');
     this.displayPopup = true;
   }
 
   closePopup() {
-    console.log('close up works');
+   // console.log('close up works');
     this.displayPopup = false;
     this.AudiologistList = [];
     this.objAudiologist = new Audiologist();
   }
 
   SaveAudiologist(valid:any){
-    console.log("save in progress");
+  //  console.log("save in progress");
     this.AudiologistFormSubmitted = true;
     if(valid){
       this.Spinner = true;
@@ -642,7 +661,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         Foot_Fall_ID : Number(this.objAudiologist.Foot_Fall_ID),
         Doctor_ID : this.objAudiologist.Doctor_ID
       }
-      console.log("SaveTempObj",SaveTempObj);
+     // console.log("SaveTempObj",SaveTempObj);
   
       const SaveObj = {
         "SP_String": "sp_BSHPL_Audiologist_Appo",
@@ -652,7 +671,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.ngxService.start();
       this.GlobalAPI.postData(SaveObj).subscribe((data: any) => {
         this.ngxService.stop();
-        console.log("save data",data);
+       // console.log("save data",data);
 
         if (data[0].Column1){
           this.getAlldata();
@@ -679,6 +698,209 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     }
   }
 
+  getDateRangeComplete(dateRangeObj:any){
+    if(dateRangeObj.length){
+      this.objCompletedSearch.From_Date = dateRangeObj[0];
+      this.objCompletedSearch.To_Date = dateRangeObj[1];
+    }
+  }
+
+  getAllCompletedData(){
+    this.CompletedSeachSpinner = true
+    this.ngxService.start();
+
+    const start = this.objCompletedSearch.From_Date
+    ? this.DateService.dateConvert(new Date(this.objCompletedSearch.From_Date))
+    : this.DateService.dateConvert(new Date());
+    const end = this.objCompletedSearch.To_Date
+    ? this.DateService.dateConvert(new Date(this.objCompletedSearch.To_Date))
+    : this.DateService.dateConvert(new Date());
+    this.objCompletedSearch.User_Id = Number(this.UserID);
+
+    const Ctempobj = {
+      start_Time : start,
+      to_time : end,
+      User_ID : this.objCompletedSearch.User_Id ? this.objCompletedSearch.User_Id : 0,
+    
+    }
+   // console.log("Ctempobj",Ctempobj);
+
+    const obj = {
+      "SP_String": "sp_BSHPL_Audiologist_Appo",
+      "Report_Name_String": "Get_All_Completed",
+      "Json_Param_String": JSON.stringify(Ctempobj)
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+   //   console.log("getAllCompletedData",data);
+      this.ngxService.stop();
+      this.CompletedSeachSpinner = false;
+
+      this.CompletedAllDetalis = data;
+    //  console.log('CompletedAllDetalis=====',this.CompletedAllDetalis);
+      if (this.CompletedAllDetalis.length) {
+        this.CompletedAllDetalisHeader = Object.keys(data[0]);
+    //    console.log('CompletedAllDetalisHeader=====',this.CompletedAllDetalisHeader);
+      }
+    })
+  }
+
+  actionClick_ViewAppo(col:any){
+    this.PTLList=[];
+    this.PTRList=[];
+    this.PSLList=[];
+    this.PSRList=[];
+    if(col.Trial_ID){
+      this.displayPopupAppoView = true;
+      const getComTempObj = {
+        Trial_ID : Number(col.Trial_ID)
+      }
+    //  console.log("getComTempObj",getComTempObj);
+
+      const getComObj = {
+        "SP_String": "sp_BSHPL_Audiologist_Appo",
+        "Report_Name_String": "Retrieve_BSHPL_Audiologist",
+        "Json_Param_String": JSON.stringify([getComTempObj])
+      }
+      this.GlobalAPI.getData(getComObj).subscribe((data:any)=>{
+     //   console.log("get appointment data",data);
+        let EditJSON = JSON.parse(data[0].update_audiologist_details);
+     //   console.log("EditJSON",EditJSON);
+        let EditList = EditJSON[0];
+     //   console.log("EditList",EditList);
+
+        this.P_Name=col.Patient;
+        this.Phone=Number(col.Mobile);
+        this.Age=Number(col.Age);
+        this.Sex=col.Sex;
+        this.App_Date=this.DateService.dateTimeConvert(new Date(col.Appo_Start));
+        this.CostCen_Name=col.Cost_Cen_Name;
+        this.Cons_Name=col.Consultancy;
+
+        this.objAppointment=EditList;
+
+        if(this.objAppointment.HA_Req_L || this.objAppointment.HA_Req_R){
+          if(this.objAppointment.HA_Req_L === 'YES' || this.objAppointment.HA_Req_R === 'YES'){
+            this.TrialDoneOpen=true;
+          }
+          else{
+            this.TrialDoneOpen=false;
+            this.TrialUpdateOpen=false;
+          }
+        }
+        
+        if(this.objAppointment.Trial_Done){
+          if(this.objAppointment.Trial_Done === 'YES'){
+            this.TrialUpdateOpen=true;
+          }
+          else{
+            this.TrialUpdateOpen=false;
+            this.MonorualOpen=false;
+            this.MISSEDOpen=false;
+          }      
+        }
+
+        if(this.objAppointment.Trial_For){
+          if(this.objAppointment.Trial_For == 'Monorual'){
+            this.MonorualOpen=true;
+          }
+          else{
+            this.MonorualOpen=false;
+          }      
+        }
+
+        if(this.objAppointment.Trial_Restult){
+          if(this.objAppointment.Trial_Restult == 'MISSED'){
+            this.MISSEDOpen=true;
+          }
+          else{
+            this.MISSEDOpen=false;
+          }      
+        }
+
+        if(EditList.Update_Trial_Details.length){
+          if(EditList.Update_Trial_Details.length > 0){
+            for(let item of EditList.Update_Trial_Details){
+              if(item.Ear_Side == "L"){
+                this.PTLList.push({
+                  Product_ID: item.Product_ID,
+                  Product_Description: item.Product_Description,
+                  Ear_Side: item.Ear_Side
+                })
+              }
+              if(item.Ear_Side == "R"){
+                this.PTRList.push({
+                  Product_ID: item.Product_ID,
+                  Product_Description: item.Product_Description,
+                  Ear_Side: item.Ear_Side
+                })
+              }
+            }
+          //  console.log(" PTLList", this.PTLList);
+          //  console.log(" PTRList", this.PTRList);
+          }
+          else{
+            this.PTLList=[];
+            this.PTRList=[];
+          }
+        }
+
+        if(EditList.Update_Select_Details.length){
+          if(EditList.Update_Select_Details.length > 0){
+            for(let item of EditList.Update_Select_Details){
+              if(item.Ear_Side == "L"){
+                this.PSLList.push({
+                  Product_ID: item.Product_ID,
+                  Product_Description: item.Product_Description,
+                  Ear_Side: item.Ear_Side
+                })
+              }
+              if(item.Ear_Side == "R"){
+                this.PSRList.push({
+                  Product_ID: item.Product_ID,
+                  Product_Description: item.Product_Description,
+                  Ear_Side: item.Ear_Side
+                })
+              }
+            }
+          //  console.log(" PSLList", this.PSLList);
+          //  console.log(" PSRList", this.PSRList);
+          }
+          else{
+            this.PSLList=[];
+            this.PSRList=[];
+          }
+        }
+
+
+      });
+    }      
+  }
+
+  closePopupAppoView(){
+   // console.log('close up works');
+    this.displayPopupAppoView = false;
+
+    this.PTLList=[];
+    this.PTRList=[];
+    this.PSLList=[];
+    this.PSRList=[];
+
+    this.objAppointment=new Appointment();
+
+    this.App_Date = undefined;
+    this.P_Name = undefined;
+    this.Phone = undefined;
+    this.Age = undefined;
+    this.Sex = undefined;
+    this.CostCen_Name = undefined;
+    this.Cons_Name =undefined;
+
+    this.TrialDoneOpen=false;
+    this.TrialUpdateOpen=false;
+    this.MonorualOpen=false;
+    this.MISSEDOpen=false;
+  }
+
   onConfirm() { 
 
   }
@@ -697,6 +919,12 @@ class Audiologist{
 
 
 class Search{
+  From_Date : any;
+  To_Date : any;
+  User_Id : any;
+}
+
+class CompletedSearch{
   From_Date : any;
   To_Date : any;
   User_Id : any;

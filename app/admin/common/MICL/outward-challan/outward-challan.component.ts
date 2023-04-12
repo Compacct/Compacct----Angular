@@ -124,6 +124,11 @@ export class OutwardChallanComponent implements OnInit {
   Choose_Address:any;
   pindisabled:boolean = false;
   SalesOrderNoList:any = [];
+  Pending_start_date:Date;
+  Pending_end_date:Date;
+  Pending_Sub_Ledger_ID:any;
+  PendingSalesOrderList:any = [];
+  PendingSalesOrderListHeader:any = [];
   constructor(
     private Header: CompacctHeader,
     private router: Router,
@@ -138,7 +143,7 @@ export class OutwardChallanComponent implements OnInit {
 
   ngOnInit() {
     $(document).prop('title', this.headerData ? this.headerData : $('title').text());
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "PENDING SALES ORDER"];
     this.menuList = [
       { label: 'Edit', icon: 'pi pi-fw pi-user-edit' },
       { label: 'Delete', icon: 'fa fa-fw fa-trash' }
@@ -158,7 +163,7 @@ export class OutwardChallanComponent implements OnInit {
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "PENDING SALES ORDER"];
     this.buttonname = "Create";
     this.Spinner = false;
     this.Same_as_Bill = true;
@@ -283,12 +288,29 @@ export class OutwardChallanComponent implements OnInit {
     this.ObjPurChaseBill.Sub_Ledger_Billing_Name = '';
     this.ObjProductInfo.Sale_Order_No = undefined;
     this.Tax_Category = undefined;
+    this.ObjProductInfo.godown_id = undefined;
+    this.ObjProductInfo.Batch_Number = undefined;
+    this.LotNolist = [];
     this.ObjProductInfo.Qty = undefined;
     this.ObjProductInfo.Rate = undefined;
+    this.ObjProductInfo.Taxable_Amount = undefined
     this.SalesOrderNoList = [];
     this.ProductDetalist = [];
     this.SaveAddress = [];
+    this.Choose_Address = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_Address_1 = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_District = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_State = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_Pin = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_GST_No = undefined;
     this.SaveAddress1 = [];
+    this.ObjPurChaseBill.Choose_Address2 = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_Billing_Name = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_Address_2 = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_Pin_2 = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_District_2 = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_State_2 = undefined;
+    this.ObjPurChaseBill.Sub_Ledger_GST_No_2 = undefined;
     if (this.ObjPurChaseBill.Sub_Ledger_ID) {
       const ctrl = this;
       const vendorObj = $.grep(ctrl.VendorList, function (item: any) { return item.value == ctrl.ObjPurChaseBill.Sub_Ledger_ID })[0];
@@ -528,24 +550,27 @@ export class OutwardChallanComponent implements OnInit {
     this.ProductDetalist = [];
     this.ObjProductInfo.Product_Specification = undefined;
     this.UomList = '';
-    this.ObjProductInfo.Batch_Number = undefined
+    this.ObjProductInfo.Batch_Number = undefined;
+    // this.ObjProductInfo.Product_Type_ID = undefined;
+    // this.ObjProductInfo.Product_Sub_Type_ID = undefined;
+    // this.ProductSub = [];
     this.Tax_Category = undefined;
     this.ObjProductInfo.Qty = undefined;
     this.ObjProductInfo.Rate = undefined;
-    if (this.ObjProductInfo.Sale_Order_No) {
-      const TempObj = {
-        Doc_No: this.ObjProductInfo.Sale_Order_No
-      }
-      const obj = {
-        "SP_String": "SP_MICL_Sale_Bill",
-        "Report_Name_String": "Get_Products_Against_Sale_Order",
-        "Json_Param_String": JSON.stringify([TempObj])
-      }
-      this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        console.log("ProductDetalist  ===", data);
-        this.ProductDetalist = data;
-      })
-    }
+    // if (this.ObjProductInfo.Sale_Order_No) {
+    //   const TempObj = {
+    //     Doc_No: this.ObjProductInfo.Sale_Order_No
+    //   }
+    //   const obj = {
+    //     "SP_String": "SP_MICL_Sale_Bill",
+    //     "Report_Name_String": "Get_Products_Against_Sale_Order",
+    //     "Json_Param_String": JSON.stringify([TempObj])
+    //   }
+    //   this.GlobalAPI.getData(obj).subscribe((data: any) => {
+    //     console.log("ProductDetalist  ===", data);
+    //     this.ProductDetalist = data;
+    //   })
+    // }
     if (this.ObjProductInfo.Product_Type_ID && this.ObjProductInfo.Product_Sub_Type_ID) {
       const TempObj = {
         Product_Type_ID: this.ObjProductInfo.Product_Type_ID,
@@ -554,6 +579,36 @@ export class OutwardChallanComponent implements OnInit {
       const obj = {
         "SP_String": "SP_MICL_Sale_Bill",
         "Report_Name_String": "Get_Products",
+        "Json_Param_String": JSON.stringify([TempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("ProductDetalist  ===", data);
+        this.ProductDetalist = data;
+      })
+    }
+  
+  }
+  ProductDetalforOrder() {
+    this.ProductDetalist = [];
+    this.ObjProductInfo.Product_Specification = undefined;
+    this.UomList = '';
+    this.ObjProductInfo.Batch_Number = undefined;
+    this.ObjProductInfo.Product_Type_ID = undefined;
+    this.ObjProductInfo.Product_Sub_Type_ID = undefined;
+    this.ProductSub = [];
+    this.Tax_Category = undefined;
+    this.ObjProductInfo.godown_id = undefined;
+    this.LotNolist = [];
+    this.ObjProductInfo.Qty = undefined;
+    this.ObjProductInfo.Rate = undefined;
+    this.ObjProductInfo.Taxable_Amount = undefined
+    if (this.ObjProductInfo.Sale_Order_No) {
+      const TempObj = {
+        Doc_No: this.ObjProductInfo.Sale_Order_No
+      }
+      const obj = {
+        "SP_String": "SP_MICL_Sale_Bill",
+        "Report_Name_String": "Get_Products_Against_Sale_Order",
         "Json_Param_String": JSON.stringify([TempObj])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
@@ -619,9 +674,25 @@ export class OutwardChallanComponent implements OnInit {
       this.ObjProductInfo.Taxable_Amount = undefined;
     }
   }
+  checksamebatch () {
+    const sameproductwithsameorderno = this.AddProdList.filter(item=> item.Batch_No === this.ObjProductInfo.Batch_Number && item.Product_ID === this.ObjProductInfo.Product_Specification );
+    if(sameproductwithsameorderno.length) {
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Can't add Same Product with same batch"
+          });
+      return false;
+    }
+    else {
+      return true;
+    }
+    }
   AddProduct(valid: any) {
     this.TermFormSubmitted = true;
-    if (valid) {
+    if (valid && this.checksamebatch()) {
       const LotNoArry: any = this.LotNolist.filter((el: any) => el.Batch_No == this.ObjProductInfo.Batch_Number);
       this.BatchQtyCheck = LotNoArry[0].Batch_Qty;
       if(this.BatchQtyCheck >= this.ObjProductInfo.Qty) {
@@ -678,20 +749,21 @@ export class OutwardChallanComponent implements OnInit {
         Qty: this.ObjProductInfo.Qty,
         UOM: this.UomList,
         Rate: this.ObjProductInfo.Rate,
-        Taxable_unt: this.ObjProductInfo.Taxable_Amount,
+        Taxable_unt: Number(this.ObjProductInfo.Taxable_Amount).toFixed(2),
         CGST_Rate: this.ObjProductInfo.CGST_Rate,
         SGST_Rate: this.ObjProductInfo.SGST_Rate,
         IGST_Rate: this.ObjProductInfo.IGST_Rate,
-        CGST_Amt: this.ObjProductInfo.CGST_Amount,
-        SGST_Amt: this.ObjProductInfo.SGST_Amount,
-        IGST_Amt: this.ObjProductInfo.IGST_Amount,
-        Line_Total_Amount: this.ObjProductInfo.Net_Amt,
+        CGST_Amt: Number(this.ObjProductInfo.CGST_Amount).toFixed(2),
+        SGST_Amt: Number(this.ObjProductInfo.SGST_Amount).toFixed(2),
+        IGST_Amt: Number(this.ObjProductInfo.IGST_Amount).toFixed(2),
+        Line_Total_Amount: Number(this.ObjProductInfo.Net_Amt).toFixed(2),
         Cat_ID : this.Tax_Category
       };
       this.AddProdList.push(TemopArry)
       this.TotalCalculation();
       console.log("this.AddProdList", this.AddProdList)
       this.TermFormSubmitted = false;
+      this.ObjProductInfo.Sale_Order_No = undefined;
       this.ObjProductInfo.godown_id = undefined;
       this.ObjProductInfo.Product_Type_ID = undefined;
       this.ProductSub = [];
@@ -715,7 +787,8 @@ export class OutwardChallanComponent implements OnInit {
     }
   }
   Deteteaddlist(index){
-    this.AddProdList.splice(index,1)
+    this.AddProdList.splice(index,1);
+    this.TotalCalculation();
   }
   TotalCalculation() {
     this.Tax = undefined;
@@ -863,7 +936,7 @@ export class OutwardChallanComponent implements OnInit {
       this.SupplierBillDate = new Date();
       this.PurchaseBillFormSubmitted = false
       // this.tabIndexToView = 0;
-      this.items = ["BROWSE", "CREATE"];
+      this.items = ["BROWSE", "CREATE", "PENDING SALES ORDER"];
       this.Tax = undefined;
       this.CGST = undefined;
       this.SGST = undefined;
@@ -937,7 +1010,7 @@ export class OutwardChallanComponent implements OnInit {
        detail: "Confirm to proceed"
      });
     }
-   }
+  }
    DynamicRedirectTo (obj){
     const navigationExtras: NavigationExtras = {
       queryParams: obj,
@@ -957,6 +1030,49 @@ export class OutwardChallanComponent implements OnInit {
     }// CHALLAN TO BILL
 
   }
+  getPendingDateRange(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.Pending_start_date = dateRangeObj[0];
+      this.Pending_end_date = dateRangeObj[1];
+    }
+  }
+  GetPendingSalesOrder(Valid: any) {
+    const start = this.Pending_start_date
+      ? this.DateService.dateConvert(new Date(this.Pending_start_date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.Pending_end_date
+      ? this.DateService.dateConvert(new Date(this.Pending_end_date))
+      : this.DateService.dateConvert(new Date());
+    const tempobj = {
+      From_Date: start,
+      To_Date: end,
+      // Sub_Ledger_ID: this.Pending_Sub_Ledger_ID ? this.Pending_Sub_Ledger_ID : 0,
+    }
+    if (Valid) {
+      const obj = {
+        "SP_String": "SP_MICL_Sale_Bill",
+        "Report_Name_String": "Pending_Sale_Order_For_MIS_Report",
+        "Json_Param_String": JSON.stringify([tempobj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("PendingSalesOrderList", data)
+        this.PendingSalesOrderList = data;
+        this.PendingSalesOrderListHeader = data.length ? Object.keys(data[0]): []
+      });
+    }
+  }
+  PrintOrder(DocNo){
+    if (DocNo) {
+      const objtemp = {
+        "SP_String": "SP_BL_Txn_Sale_Order",
+        "Report_Name_String": "Sale_Order_Print"
+      }
+      this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
+        var printlink = data[0].Column1;
+        window.open(printlink + "?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      })
+    }
+  }
 }
 class PurChaseBill {
   Receiver_Name: any;
@@ -966,15 +1082,15 @@ class PurChaseBill {
   Company_ID: any;
   Sub_Ledger_Pin_2: any;
   Sub_Ledger_ID : any;
-  Sub_Ledger_Name : string;
-  Sub_Ledger_Billing_Name : string;
-  Sub_Ledger_Address_1 : string;
-  Sub_Ledger_Address_2 : string;
+  Sub_Ledger_Name : any;
+  Sub_Ledger_Billing_Name : any;
+  Sub_Ledger_Address_1 : any;
+  Sub_Ledger_Address_2 : any;
   Sub_Ledger_Address_3 : string;
   Sub_Ledger_Land_Mark : string;
   Sub_Ledger_Pin : any;
-  Sub_Ledger_District: string;
-  Sub_Ledger_District_2: string;
+  Sub_Ledger_District: any;
+  Sub_Ledger_District_2: any;
   Sub_Ledger_State: any; 
   Sub_Ledger_State_2: any;
   Sub_Ledger_GST_No_2: any;

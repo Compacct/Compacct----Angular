@@ -42,6 +42,9 @@ export class MICLCouponIssueComponent implements OnInit {
   From_date : Date;
   To_date : Date;
   EditList:any = [];
+  Issue_To: any;
+  contractorList:any = [];
+  contractorEmpList:any = [];
   
   constructor(
     private http: HttpClient,
@@ -61,7 +64,10 @@ export class MICLCouponIssueComponent implements OnInit {
     })
     this.Finyear();
     this.getEmpList();
+    this.getContractor();
+    this.getContractorEmp();
     this.getCoupontype();
+    this.Issue_To = "Employee";
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -89,8 +95,17 @@ export class MICLCouponIssueComponent implements OnInit {
     this.ObjCouponIssue = new CouponIssue();
   }
   changeField() {
-    this.ObjCouponIssue.Visitor_Name = '';
-    this.ObjCouponIssue.Emp_ID = undefined;
+      this.ObjCouponIssue.Emp_ID = undefined;
+      this.ObjCouponIssue.Sub_Ledger_ID = undefined;
+      this.ObjCouponIssue.Contractor_Emp_ID = undefined;
+      this.contractorEmpList = [];
+      this.ObjCouponIssue.Visitor_Name = '';
+      this.ObjCouponIssue.Coupon_Type = undefined;
+      this.ObjCouponIssue.Start_No = undefined;
+      this.ObjCouponIssue.End_No = undefined;
+      this.TotalCoupon = 0;
+      this.TotalAmount = 0;
+      this.AddList = [];
   }
   getEmpList() {
     this.EmployeeList = []
@@ -108,6 +123,44 @@ export class MICLCouponIssueComponent implements OnInit {
          //console.log("EmployeeList==",this.EmployeeList)
       }
     });
+  }
+  getContractor() {
+    this.contractorList = []
+    const obj = {
+      "SP_String": "SP_Master_Coupon_Receive",
+      "Report_Name_String": "Get_Contractor_List",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      if (data.length) {
+        data.forEach((xy: any) => {
+          xy['label'] = xy.Sub_Ledger_Name
+          xy['value'] = xy.Sub_Ledger_ID
+        });
+        this.contractorList = data
+        //  console.log("contractorList==",this.contractorList)
+      }
+    });
+  }
+  getContractorEmp() {
+    this.contractorEmpList = []
+    this.ObjCouponIssue.Contractor_Emp_ID = undefined;
+    if (this.ObjCouponIssue.Sub_Ledger_ID) {
+    const obj = {
+      "SP_String": "SP_Master_Coupon_Receive",
+      "Report_Name_String": "Get_Contractor_Employee",
+      "Json_Param_String": JSON.stringify({Sub_Ledger_ID:this.ObjCouponIssue.Sub_Ledger_ID})
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      if (data.length) {
+        data.forEach((xy: any) => {
+          xy['label'] = xy.Emp_Name
+          xy['value'] = xy.Emp_ID
+        });
+        this.contractorEmpList = data
+        //  console.log("contractorEmpList==",this.contractorEmpList)
+      }
+    });
+    }
   }
   getCoupontype() {
     this.CouponList = []
@@ -142,10 +195,18 @@ export class MICLCouponIssueComponent implements OnInit {
         filterAmt = this.CouponList.filter((Elee: any) => Elee.Coupon_Type === this.ObjCouponIssue.Coupon_Type); 
     }
     if (filterAmt.length === 1&& this.TotalCoupon) {
+      if(this.Issue_To === "Employee") {
       this.TotalAmount = Number(filterAmt[0].Amount) * Number(this.TotalCoupon)
+      }
+      if(this.Issue_To === "Contractor") {
+        this.TotalAmount = Number(filterAmt[0].Contractor_Amount) * Number(this.TotalCoupon)
+      }
+      if(this.Issue_To === "Visitor") {
+        this.TotalAmount = Number(filterAmt[0].Visitor_Amount) * Number(this.TotalCoupon)
+      }
     }
     else {
-      this.TotalAmount = undefined; 
+      this.TotalAmount = 0; 
     }
   }
   AddData() {
@@ -242,6 +303,7 @@ export class MICLCouponIssueComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         if (data[0].Column1) {
           this.AddList.splice(ind,1)
+          this.GetTotalAmount();
        }
     }); 
     }
@@ -264,8 +326,11 @@ export class MICLCouponIssueComponent implements OnInit {
       }
       this.AddList.forEach(el => {
         this.SaveFinal.push({
+          Issue_Type: this.Issue_To,
           Emp_ID: this.ObjCouponIssue.Emp_ID ? this.ObjCouponIssue.Emp_ID : 0,
           Emp_Name: EmpName ? EmpName : "",
+          Sub_Ledger_ID: this.ObjCouponIssue.Sub_Ledger_ID ? this.ObjCouponIssue.Sub_Ledger_ID : 0,
+          Contractor_Emp_ID:this.ObjCouponIssue.Contractor_Emp_ID ? this.ObjCouponIssue.Contractor_Emp_ID : 0,
           Visitor_Name: this.ObjCouponIssue.Visitor_Name ? this.ObjCouponIssue.Visitor_Name : "",
           Date: el.Date ? this.DateService.dateConvert(el.Date) : null,
           Coupon_Type: el.Coupon_Type,
@@ -336,12 +401,15 @@ export class MICLCouponIssueComponent implements OnInit {
     XLSX.writeFile(workbook, fileName+'.xlsx');
   }
   EditCoupon(col) {
+    this.clearData();
+    this.AddList = [];
     this.EditList = [];
-    if (col.Emp_ID || col.Visitor_Name) {
+    if (col) {
       const Tempobj = {
         Emp_ID: col.Emp_ID,
         Emp_Name: col.Emp_Name,
         Visitor_Name: col.Visitor_Name,
+        Contractor_Emp_ID: col.Contractor_Emp_ID,
         Date: this.DateService.dateConvert(new Date(col.Date))
       }
       const obj = {
@@ -355,15 +423,21 @@ export class MICLCouponIssueComponent implements OnInit {
           this.tabIndexToView = 1;
           this.items = ["BROWSE", "UPDATE"];
           this.buttonname = "Update";
-          this.ObjCouponIssue.Visitor_Name = data[0].Visitor_Name ? data[0].Visitor_Name : undefined;
           this.if_Visitor = this.ObjCouponIssue.Visitor_Name ? true : false;
+          this.Issue_To = data[0].Issue_Type ? data[0].Issue_Type : col.Issue_Type;
+          this.changeField();
           this.ObjCouponIssue.Emp_ID = data[0].Emp_ID;
+          this.ObjCouponIssue.Sub_Ledger_ID = data[0].Sub_Ledger_ID ? data[0].Sub_Ledger_ID : col.Sub_Ledger_ID;
+          this.getContractorEmp();
+          this.ObjCouponIssue.Contractor_Emp_ID = data[0].Contractor_Emp_ID ? data[0].Contractor_Emp_ID : col.Contractor_Emp_ID;
+          // console.log("this.ObjCouponIssue.Contractor_Emp_ID===",this.ObjCouponIssue.Contractor_Emp_ID)
           this.CouponDate = new Date(data[0].Date);
+          this.ObjCouponIssue.Visitor_Name = data[0].Visitor_Name ? data[0].Visitor_Name : undefined;
           this.EditList.forEach(element => {
             const editobj = {
-              Emp_ID: element.Emp_ID,
-              Emp_Name: element.Emp_Name ? element.Emp_Name : "",
-              Visitor_Name: element.Visitor_Name ? element.Visitor_Name : "",
+              // Emp_ID: element.Emp_ID,
+              // Emp_Name: element.Emp_Name ? element.Emp_Name : "",
+              // Visitor_Name: element.Visitor_Name ? element.Visitor_Name : "",
               Date: element.Date ? this.DateService.dateConvert(element.Date) : null,
               Coupon_Type: element.Coupon_Type,
               Start_No: element.Start_No,
@@ -441,4 +515,6 @@ class CouponIssue{
 	No_Of_Coupon:any;
 	Total_Amount:any;
 	Created_By:any;
+  Sub_Ledger_ID:any;
+  Contractor_Emp_ID:any;
 }

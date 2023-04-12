@@ -1,5 +1,5 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
-<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+<p-toast position="center" key="d" (onClose)="onReject()" [modal]="true" [autoZIndex]="true" baseZIndex="9999999">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
             <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
@@ -8,14 +8,15 @@
         </div>
         <div class="ui-g ui-fluid">
             <div class="ui-g-6">
-                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+                <button type="button" pButton (click)="onCnfStatusDel()" label="Yes" class="ui-button-danger"></button>
             </div>
             <div class="ui-g-6">
-                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-primary"></button>
             </div>
         </div>
     </ng-template>
 </p-toast>
+
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -27,7 +28,10 @@
                               <div class="col-sm-4">
                                 <label class="control-label">Client Name<sup class="text-danger">*</sup></label>
                                 <select class="form-control"
-                                        name="clientName">
+                                        name="clientName"
+                                         #clientName="ngModel"
+                                        [(ngModel)]="Objproject.Sub_Ledger_ID_Client"
+                                        [ngClass]="{'clearance': ProjectMainForm && clientName?.errors?.required}" required>
                                         <option  [ngValue]="undefined">Select</option>
                                         <option *ngFor=" let option of SubledgerList"  [ngValue]="option.Sub_Ledger_ID">{{option.Sub_Ledger_Name}}</option>
                                  </select>
@@ -36,9 +40,12 @@
                               <div class="col-sm-4">
                                 <label class="control-label">Consultant Name<sup class="text-danger">*</sup></label>
                                 <select class="form-control"
-                                        name="ConsultantName">
+                                        name="ConsultantName"
+                                        #ConsultantName="ngModel"
+                                        [(ngModel)]="Objproject.Sub_Ledger_ID_Consultant"
+                                        [ngClass]="{'clearance': ProjectMainForm && ConsultantName?.errors?.required}" required>
                                         <option  [ngValue]="undefined">Select</option>
-                                        <option *ngFor=" let option of SubledgerList"  [ngValue]="option.Sub_Ledger_ID">{{option.Sub_Ledger_Name}}</option>
+                                        <option *ngFor=" let opt of ConsultantList"  [ngValue]="opt.Sub_Ledger_ID">{{opt.Sub_Ledger_Name}}</option>
                                  </select>
                               </div>
                               <div class="col-sm-4">
@@ -46,14 +53,15 @@
                                 <select class="form-control"
                                         name="Engagment"
                                         #Engagment="ngModel"
-                                        [(ngModel)]="EngagmentLetter"
-                                        (change)="changeEngagment()" >
+                                        [(ngModel)]="Objproject.Engagement_Letter"
+                                        (change)="changeEngagment()" 
+                                         [ngClass]="{'clearance': ProjectMainForm && Engagment?.errors?.required}" required>
                                         <option  [ngValue]="undefined">Select</option>
                                         <option  [ngValue]="'Y'">YES</option>
                                         <option  [ngValue]="'N'">NO</option>
                                  </select>
                               </div>
-                              <div class="col-sm-4" *ngIf="EngagmentLetter == 'Y'" >
+                              <div class="col-sm-4" *ngIf="Objproject.Engagement_Letter == 'Y'" >
                                 <label class="control-label">Date<sup class="text-danger">*</sup></label>
                                 <ejs-datepicker  [(value)]="EngagmentDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
                               </div>
@@ -62,8 +70,9 @@
                                 <select class="form-control"
                                         name="Project"
                                         #Project="ngModel"
-                                        [(ngModel)]="selectProject"
-                                        (change)="changeProject(selectProject)"  >
+                                        [(ngModel)]="Objproject.Project_Detalis"
+                                        (change)="changeProject(Objproject.Project_Detalis)" 
+                                        [ngClass]="{'clearance': ProjectMainForm && Project?.errors?.required}" required>
                                         <option  [ngValue]="undefined">Select</option>
                                         <option *ngFor="let option of projectList" [ngValue]="option" >{{option}}</option>
                                  </select>
@@ -73,9 +82,10 @@
                                 <select class="form-control"
                                         name="Purpose"
                                         #Purpose="ngModel"
-                                        [(ngModel)]="selectPurpose"
-                                        (change)="changePurpose(selectPurpose)" 
-                                         [disabled]="!purposeList.length" >
+                                        [(ngModel)]="Objproject.Project_Purpose"
+                                        (change)="changePurpose(Objproject.Project_Purpose)"
+                                        [ngClass]="{'clearance': ProjectMainForm && Purpose?.errors?.required}" required 
+                                        [disabled]="!purposeList.length" >
                                         <option  [ngValue]="undefined">Select</option>
                                         <option *ngFor="let option of purposeList" [ngValue]="option" > {{option}}</option>
                                  </select>
@@ -85,8 +95,9 @@
                                 <select class="form-control"
                                         name="Act"
                                         #Act="ngModel"
-                                        [(ngModel)]="selectAct"
-                                        [disabled]="!purposeList.length" >
+                                        [(ngModel)]="Objproject.Project_Act"
+                                        [ngClass]="{'clearance': ProjectMainForm && Act?.errors?.required}" required 
+                                        [disabled]="!ActList.length" >
                                         <option  [ngValue]="undefined">Select</option>
                                         <option *ngFor="let option of ActList" [ngValue]="option" > {{option}}</option>
                                  </select>
@@ -98,25 +109,112 @@
                               <div class="col-sm-4" >
                                 <label class="control-label">Bill To<sup class="text-danger">*</sup></label>
                                 <select class="form-control"
-                                        name="Bill" >
+                                        name="Bill"
+                                         #Bill="ngModel"
+                                        [(ngModel)]="Objproject.Bill_To"
+                                        [ngClass]="{'clearance': ProjectMainForm && Bill?.errors?.required}" required >
                                         <option  [ngValue]="undefined">Select</option>
                                         <option  [ngValue]="'Client'">Client</option>
                                         <option  [ngValue]="'Consultant'">Consultant</option>
                                  </select>
                               </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Assigned To<sup class="text-danger">*</sup></label>
+                                <select class="form-control" 
+                                        name="Assigned"
+                                        #Assigned="ngModel"
+                                        [(ngModel)]="Objproject.Assigned_To"
+                                        [ngClass]="{'clearance': ProjectMainForm && Assigned?.errors?.required}" required >
+                                    <option [ngValue]="undefined">Select</option>
+                                    <option *ngFor="let User of UserList" [ngValue]="User.User_ID"> {{User.User_Name}}</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Status<sup class="text-danger">*</sup></label>
+                                <div class="pull-right">
+                                    <button (click)="ViewStatus()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i>
+                                        View</button>
+                                    &nbsp;
+                                    <button (click)="StatusCreatPopup()" class="btn btn-primary  createPatient"><i
+                                            class="fa fa-fw  fa-plus"></i>Create</button>
+                                </div>
+                                <select class="form-control" name="Status"
+                                        #Status="ngModel"
+                                        [(ngModel)]="Objproject.Status_ID"
+                                        [ngClass]="{'clearance': ProjectMainForm && Status?.errors?.required}" required >
+                                    <option [ngValue]="undefined">Select</option>
+                                    <option *ngFor="let status of StatusList" [ngValue]="status.Status_ID"> {{status.Status_Name}}</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Remarks</label>
+                                <textarea class="form-control" name='Remarks' #Remarks='ngModel'
+                                 [(ngModel)]="Objproject.Remarks">
+                                </textarea>
+                            </div>
                             </div>
                         </form>
-                        <div class="box-footer">
-                            <button class="btn btn-primary pull-right"
-                                    id="load"
-                                    [disabled]="Spinner">
-                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
-                            </button>
-                        </div>
+                            <div class="box-footer">
+                                <button class="btn btn-primary pull-right custombutton" (click)="SaveProject(createProjectForm.form.valid)">
+                                    <span class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                </button>
+                            </div>
                     </p-tabView>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- VIEWS -->
+<p-dialog [header]="'Status'" [appendTo]="'body'" [visible]="ViewStatusModal" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="StatusList" [rowHover]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 65px;">SL No.</th>
+                    <th>Status</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                    <td>{{i+1}}</td>
+                    <td>{{col.Status_Name}}</td>
+                    <td align="center"><span (click)="deleteStatusLst(col)"><i class="fa fa-trash" id="red"></i></span></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewStatusModal = false" class="btn btn-info">
+            Cancel
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!-- CREATE -->
+<p-dialog [header]="'Create Status'" [appendTo]="'body'" [visible]="CreateStatusModal" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="StatusForm" #StatusForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Status<sup class="text-danger">*</sup></label>
+                    <input type="text" class="form-control" name="Status_Creat" #Status_Creat="ngModel" [(ngModel)]="Create_Status"
+                        placeholder="Type Status"
+                        [ngClass]="{clearance: StatusFormSubmitted && Status_Creat?.errors?.required}" required />
+                </div>
+            </div>
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="CreateStatusModal = false" class="btn btn-info">Cancel</button>
+        <button type="submit" class="btn btn-primary pull-right custombutton"
+            (click)="CreateStatus(StatusForm.form.valid)">
+            <span class="glyphicon glyphicon-save"></span>&nbsp;Create
+        </button>
+    </p-footer>
+</p-dialog>

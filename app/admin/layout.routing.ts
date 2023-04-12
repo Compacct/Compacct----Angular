@@ -356,6 +356,11 @@ import { CouponExpensesComponent } from './common/MICL/coupon-expenses/coupon-ex
 import { CouponUtilizationComponent } from './common/MICL/coupon-utilization/coupon-utilization.component';
 import { NepalSupTktSalesReturnApproveComponent } from "./common/TicketManagement/nepal-sup-tkt-sales-return-approve/nepal-sup-tkt-sales-return-approve.component";
 import { BSHPLAudiologistAppoComponent } from "./common/PatientManagement/bshpl-audiologist-appo/bshpl-audiologist-appo.component";
+import { EmployeeMasterContractorComponent } from './common/MICL/employee-master-contractor/employee-master-contractor.component';
+import { LetterOfIntentComponent } from './common/MICL/letter-of-intent/letter-of-intent.component';
+import { ProformaInvoiceComponent } from './common/MICL/proforma-invoice/proforma-invoice.component';
+import { SalesMisComponent } from './common/MICL/sales-mis/sales-mis.component';
+import { ViewOutcomesComponent } from "./common/PatientManagement/view-outcomes/view-outcomes.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2701,6 +2706,41 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: BSHPLAudiologistAppoComponent,
       data: {
           title: 'BSHPL Audiologist Appointment'
+      } 
+    },
+    {
+      path: 'Employee_Master_Contractor',
+        component: EmployeeMasterContractorComponent,
+        data: {
+          title: 'Employee Master Contractor'
+    }
+    },
+    {
+      path: 'Letter_of_Intent',
+      component: LetterOfIntentComponent,
+      data: {
+          title: 'Letter of Intent'
+      } 
+    },
+    {
+      path: 'Proforma_Invoice',
+      component: ProformaInvoiceComponent,
+      data: {
+          title: 'Proforma Invoice'
+      } 
+    },
+    {
+      path: 'Sales_MIS',
+      component: SalesMisComponent,
+      data: {
+          title: 'Sales MIS'
+      } 
+    },
+    {
+      path: 'View_Outcomes_',
+      component: ViewOutcomesComponent,
+      data: {
+          title: 'View Outcomes'
       } 
     },
 
