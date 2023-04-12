@@ -1,11 +1,11 @@
 fieldset {
-    border: 1px solid #ddd !important;
+    border: 1px solid #bed8e747 !important;
     margin: 0;
     min-width: 0;
     padding: 10px;
     position: relative;
     border-radius: 4px;
-    background-color: #f5f5f5;
+    background-color: #bed8e747;
     padding-left: 10px!important;
   }
   
@@ -14,9 +14,13 @@ fieldset {
     font-weight: bold;
     margin-bottom: 0px;
     width: fit-content;
-    border: 1px solid #ddd;
+    border: 1px solid #55627ca1;
     border-radius: 4px;
     padding: 0px 10px 0px 10px;
-    background-color: #ffffff;
+    background-color: #55627ca1;
+  }
+  div.label-t {
+      padding: 6px 12px;
+      background: rgb(206 216 216 / 51%);
   }
   
