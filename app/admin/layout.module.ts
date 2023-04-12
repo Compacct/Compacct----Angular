@@ -457,6 +457,7 @@ import { EmployeeMasterContractorComponent } from './common/MICL/employee-master
 import { LetterOfIntentComponent } from './common/MICL/letter-of-intent/letter-of-intent.component';
 import { ProformaInvoiceComponent } from './common/MICL/proforma-invoice/proforma-invoice.component';
 import { SalesMisComponent } from './common/MICL/sales-mis/sales-mis.component';
+import { ViewOutcomesComponent } from "./common/PatientManagement/view-outcomes/view-outcomes.component";
 
 @NgModule({
   declarations: [
@@ -830,7 +831,8 @@ import { SalesMisComponent } from './common/MICL/sales-mis/sales-mis.component';
     EmployeeMasterContractorComponent,
     LetterOfIntentComponent,
     ProformaInvoiceComponent,
-    SalesMisComponent 
+    SalesMisComponent,
+    ViewOutcomesComponent 
 
 
   ],
