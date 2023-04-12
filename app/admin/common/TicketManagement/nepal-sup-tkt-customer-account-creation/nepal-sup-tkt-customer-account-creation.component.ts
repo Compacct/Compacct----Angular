@@ -503,4 +503,6 @@ class update {
   Internal_P_Credit_Limit:any
   Internal_P_Area:any
   User_ID_Update:any
+  SWS_GL_Code:any
+  SWS_GL_ShortName:any
 }
