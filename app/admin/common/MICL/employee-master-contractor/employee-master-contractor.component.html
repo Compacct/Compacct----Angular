@@ -51,7 +51,7 @@
                            <p-dropdown [options]="employeeList" name="EmployeeList" #EmployeeList="ngModel"
                               [(ngModel)]="Employee_Id" (onChange)="getEmpData(Employee_Id)" [showClear]="true"
                               [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value"
-                              [resetFilterOnHide]="true" [placeholder]="'Select Patient '" [virtualScroll]="true"
+                              [resetFilterOnHide]="true" [placeholder]="'Select Employee '" [virtualScroll]="true"
                               itemSize="30" [disabled]="emp_creation"
                               [styleClass]="employeeMasterFormSubmit &&  EmployeeList.errors?.required ? 'clearance' :''"
                               [required]="!emp_creation">
@@ -67,11 +67,13 @@
                               [ngModel]="objEmployee.Emp_ID" CompacctDigitonly="true" disabled>
                         </div>
                         <div class="col-sm-4">
-                           <label class="control-label">Emp Code<sup class="text-danger">*</sup></label>
+                           <label class="control-label">Emp Code<sup class="text-danger"
+                              *ngIf="is_Biometric">*</sup></label>
                            <input type="text" class="form-control" placeholder="Emp Code" name="emp_code"
                               #emp_code="ngModel" [(ngModel)]="objEmployee.Emp_Code" CompacctDigitonly="true"
-                              [ngClass]="{clearance: (employeeMasterFormSubmit && emp_code?.errors?.required) }"
-                              required>
+                              (ngModelChange)="onCheckCode(objEmployee.Emp_Code)"
+                              [ngClass]="{clearance: (flag || employeeMasterFormSubmit && emp_code?.errors?.required) }"
+                              [required]="is_Biometric">
                         </div>
                         <div class="col-sm-4">
                            <label class="control-label">Emp Name<sup class="text-danger">*</sup></label>
@@ -83,20 +85,20 @@
                      </div>
                      <div class="row">
                         <div class="col-sm-4">
-                           <label class="control-label">Aadhar No<sup class="text-danger">*</sup></label>
+                           <label class="control-label">Aadhar No</label>
                            <input type="text" class="form-control" placeholder="Aadhar No" name="aadhar_no"
                               pattern="[0-9]{12}" #aadhar_no="ngModel" [(ngModel)]="objEmployee.Adhar_No"
                               CompacctDigitonly="true" maxlength="12"
                               [ngClass]="{clearance: (employeeMasterFormSubmit && aadhar_no?.errors?.required) || aadhar_no?.errors?.pattern}"
-                              required>
+                              >
                         </div>
                         <div class="col-sm-4">
-                           <label class="control-label">Pan No<sup class="text-danger">*</sup></label>
+                           <label class="control-label">Pan No</label>
                            <input type="text" class="form-control" placeholder="Pan No" name="pan_no" #pan_no="ngModel"
                               [(ngModel)]="objEmployee.PAN_No" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" maxlength="10"
                               (input)="objEmployee.PAN_No = objEmployee.PAN_No.toUpperCase()"
                               [ngClass]="{clearance: (employeeMasterFormSubmit && pan_no?.errors?.required) || pan_no?.errors?.pattern }"
-                              required>
+                              >
                         </div>
                         <div class="col-sm-4">
                            <label class="control-label">Mobile No<sup class="text-danger">*</sup></label>
@@ -109,21 +111,21 @@
                      </div>
                      <div class="row">
                         <div class="col-sm-4">
-                           <label class="control-label">Emergency Contact No<sup class="text-danger">*</sup></label>
+                           <label class="control-label">Emergency Contact No</label>
                            <input type="text" class="form-control" placeholder="Emergency Mobile No"
                               name="eme_mobile_no" #eme_mobile_no="ngModel"
                               [(ngModel)]="objEmployee.Emergency_Contact_Mobile" maxlength="10" CompacctDigitonly="true"
                               pattern="[6-9]{1}[0-9]{9}"
                               [ngClass]="{clearance: (employeeMasterFormSubmit && eme_mobile_no?.errors?.required) || eme_mobile_no?.errors?.pattern }"
-                              required>
+                              >
                         </div>
                         <div class="col-sm-4">
-                           <label class="control-label">Emergency Contact Person<sup class="text-danger">*</sup></label>
+                           <label class="control-label">Emergency Contact Person</label>
                            <input type="text" class="form-control" placeholder="Emergency Contact Person"
                               name="eme_contact_per" #eme_contact_per="ngModel"
                               [(ngModel)]="objEmployee.Emergency_Contact_Person"
                               [ngClass]="{clearance: (employeeMasterFormSubmit && eme_contact_per?.errors?.required) }"
-                              required>
+                              >
                         </div>
                         <div class="col-sm-4" style="margin-top: 28px;">
                            <p-checkbox [(ngModel)]="is_Biometric" [binary]="true" name="is Biometric"

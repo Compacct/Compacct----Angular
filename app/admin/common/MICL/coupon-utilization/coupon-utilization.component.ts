@@ -128,6 +128,7 @@ export class CouponUtilizationComponent implements OnInit {
 }
 
 class Utilization {
+  Issue_To: any;
   Date: any;
   Total_Breakfast: any;
   Total_Lunch: any;
