@@ -71,7 +71,12 @@
                                                 </div>
                                             </td>
                                             <ng-container *ngFor="let option of SearchedBrowselistHeader ">
-                                                <td >{{col[option]}}</td>
+                                                <td *ngIf="option != 'Status'" >{{col[option]}}</td>
+                                                <td *ngIf="option == 'Status'">
+                                                    <ng-container *ngFor=" let statusdata of col[option].split(',')" >
+                                                        <span [ngClass]="'badge bg-'+ getStatusWiseColor(statusdata)" >{{statusdata}}</span>
+                                                    </ng-container>
+                                                 </td>
                                             </ng-container>
                                         </tr>
                                     </ng-template>                                 
@@ -421,7 +426,7 @@
                                                         <label class="control-label">Qty<sup class="text-danger">*</sup></label>
                                                         <div class="input-group">
                                                            <div class="label-t" >{{objsale.Qty ? objsale.Qty : 0}}</div>
-                                                            <span class="input-group-addon">{{ObjaddSaleReturn.UOM ? objsale.UOM: "UOM"}}</span>
+                                                            <span class="input-group-addon">{{objsale.UOM ? objsale.UOM: "UOM"}}</span>
                                                          </div>
                                                     </div>
                                                     <div class="col-sm-2">

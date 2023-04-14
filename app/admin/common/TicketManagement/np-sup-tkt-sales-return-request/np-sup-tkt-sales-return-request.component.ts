@@ -175,7 +175,7 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
     this.calculatAmount()
   }
   calculatAmount(){
-    if(this.ObjaddSaleReturn.Product_ID){
+    if(this.ObjaddSaleReturn.Product_ID && this.ObjaddSaleReturn.Qty && this.ObjaddSaleReturn.Rate){
       let convert = (v) =>{
         return v? v : 0
       }
@@ -324,7 +324,25 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
     this.SalereturnList = data
      }) 
  }
-
+ getStatusWiseColor(Status:any) {
+  switch (Status) {
+           case 'CREATED':
+               return 'red';
+               break;
+           case 'APPROVED':
+               return 'blue';
+               break;
+           case 'MATERIAL PICKED':
+               return 'orange';
+               break;
+           case 'ACCOUNTS ENTRY DONE':
+             return 'green';
+             break;
+          default:
+       }
+   
+   return
+ }
 
 }
 
