@@ -286,7 +286,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.objAppointment.Trial_For= this.objAppointment.Trial_For ? this.objAppointment.Trial_For : 'NA';
       this.objAppointment.Trial_For_Mono_Reason= this.objAppointment.Trial_For_Mono_Reason ? this.objAppointment.Trial_For_Mono_Reason : 'NA';
       this.objAppointment.Trial_Restult= this.objAppointment.Trial_Restult ? this.objAppointment.Trial_Restult : 'NA';
-      this.objAppointment.Trail_Missed_Reason= this.objAppointment.Trail_Missed_Reason.toString() ? this.objAppointment.Trail_Missed_Reason.toString() : 'NA';
+      this.objAppointment.Trail_Missed_Reason= this.objAppointment.Trail_Missed_Reason ? this.objAppointment.Trail_Missed_Reason.toString() : 'NA';
 
       let TrialList:any =[];
       for(let item of this.PTLList){
