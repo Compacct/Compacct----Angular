@@ -78,20 +78,21 @@
                                 </ng-template>
                                 <ng-template pTemplate="header">
                                     <tr>
+                                        <th rowspan="2" style="width:5em">Action</th>
                                         <th rowspan="2">EMP Assigned To</th>
                                         <th rowspan="2">Status</th>
                                         <th rowspan="2">Customer</th>
                                         <th rowspan="2">Consultant</th>
                                         <th rowspan="2">Engagment Letter</th>
                                         <th rowspan="2">Valuation Date</th>
-                                        <th rowspan="2">Type of Valuation </th>
+                                        <th rowspan="2">Project type</th>
                                         <th rowspan="2">Purpose</th>
                                         <th rowspan="2">Act</th>
                                         <th rowspan="2">Final Doc</th>
                                         <th rowspan="2">Signing Date</th>
                                         <th rowspan="2">Report Shared</th>
                                         <th colspan="2">Courier Detalis</th>
-                                        <th rowspan="2">Comment</th>
+                                        <th rowspan="2">Remarks</th>
                                         <th colspan="3">Bill To</th>
                                     </tr>
                                     <tr>
@@ -104,21 +105,37 @@
                                 </ng-template>
                                 <ng-template pTemplate="body" let-col>
                                     <tr>
-                                     <td (click)="openDialog(col,'Assign To Name')"><span style="color: #3c8dbc; cursor: pointer;"  >{{col.Assign_To_Name ? col.Assign_To_Name :'-'}}</span></td>
-                                     <td (click)="openDialog(col,'Status Name')"><span style="color: #3c8dbc; cursor: pointer;"  >{{col.Status_Name ? col.Status_Name :'-'}}</span></td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown"
+                                                    style="height:27px">
+                                                    <i class="fa fa-fw fa-bars"></i>
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <a (click)="GetView(col)">
+                                                            <i class="fa fa-eye"></i> View Log
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                    </td>
+                                     <td (click)="openDialog(col,'EMP Assigned To')"><span style="color: #3c8dbc; cursor: pointer;"  >{{col.Assign_To_Name ? col.Assign_To_Name :'-'}}</span></td>
+                                     <td (click)="openDialog(col,'Status')"><span style="color: #3c8dbc; cursor: pointer;"  >{{col.Status_Name ? col.Status_Name :'-'}}</span></td>
                                      <td>{{col.Sub_Ledger_Client}}</td>
                                      <td>{{col.Sub_Ledger_Consultant}}</td>
-                                     <td (click)="openDialog(col,'Engagement Letter')"><span style="color: #3c8dbc; cursor: pointer;"  >{{col.Engagement_Letter ? "YES" : "NO"}}</span></td>
+                                     <td (click)="openDialog(col,'Engagment Letter')"><span style="color: #3c8dbc; cursor: pointer;"  >{{col.Engagement_Letter === 'Y' ? "YES" : "NO"}}</span></td>
                                      <td>{{col.Valuation_Date | date: 'dd/MM/yyyy'}}</td>
-                                     <td>{{"-"}}</td>
+                                     <td>{{col.Project_Detalis ? col.Project_Detalis :'-'}}</td>
                                      <td>{{col.Project_Purpose}}</td>
                                      <td>{{col.Project_Act}}</td>
-                                     <td (click)="openDialog(col,'Final Doc')"><span style="color: #3c8dbc; cursor: pointer;"  >{{col.Final_Doc ?col.Final_Doc :'-'}}</span></td>
-                                     <td (click)="openDialog(col,'Signning Date')"><span style="color: #3c8dbc; cursor: pointer;"  >{{col.Signning_Date ? (col.Signning_Date| date: 'dd/MM/yyyy')  :'-' }}</span></td>
+                                     <td (click)="openDialog(col,'Final Doc')"><span style="color: #3c8dbc; cursor: pointer;"  >{{col.Final_Doc ==='Y' ? "YES" :'NO'}}</span></td>
+                                     <td (click)="openDialog(col,'Signing Date')"><span style="color: #3c8dbc; cursor: pointer;"  >{{col.Signning_Date ? (col.Signning_Date| date: 'dd/MM/yyyy')  :'-' }}</span></td>
                                      <td (click)="openDialog(col,'Report Shared')"><span style="color: #3c8dbc; cursor: pointer;"  >{{col.Report_Shared ? col.Report_Shared :'-'}}</span></td>
                                      <td (click)="openDialog(col,'Courier Detalis To')"><span style="color: #3c8dbc; cursor: pointer;"  >{{col.Courier_Details_To ? col.Courier_Details_To :'-'}}</span></td>
                                      <td (click)="openDialog(col,'Courier Detalis Date')"><span style="color: #3c8dbc; cursor: pointer;"  >{{col.Courier_Details_Date ? (col.Courier_Details_Date| date: 'dd/MM/yyyy') :'-'}}</span></td>
-                                     <td>{{'-'}}</td>
+                                     <td>{{col.Remarks ? col.Remarks :'-'}}</td>
                                      <td>{{col.Bill_To_PI_No ? col.Bill_To_PI_No :'-'}}</td>
                                      <td>{{col.Bill_To_PI_Date ? (col.Bill_To_PI_Date| date: 'dd/MM/yyyy') :'-' }}</td>
                                      <td>{{ col.Bill_To_PI_Amount ? col.Bill_To_PI_Amount :'-'}}</td>
@@ -148,79 +165,104 @@ style="text-align: center;"
 [baseZIndex]="10000"
 >
 <div class="form-horizontal">
+    <form name="AllPop" #AllPop="ngForm" novalidate>
     <div class="form-group" *ngIf="dialogheader == 'EMP Assigned To'">
-        <div class="col-sm-8" >
-            <label class="control-label">Employee<sup class="text-danger"></sup></label>
-            <select class="form-control"
-                    name="Employee" >
+        <div class="col-sm-5" >
+            <label class="control-label">Employee<sup class="text-danger">*</sup></label>
+            <select class="form-control"name="Employee" #Employee="ngModel"
+            [(ngModel)]="SelectEmp"
+            [ngClass]="{'clearance': AllPopForm && Employee?.errors?.required}" required>
                     <option  [ngValue]="undefined">Select</option>
-                    <option *ngFor=" let option of userlist "  [ngValue]="option.Name">{{option.Name}}</option>
+                    <option *ngFor=" let option of userlist "  [ngValue]="option.User_ID">{{option.User_Name}}</option>
             </select>
+        </div>
+        <div class="col-sm-5">
+            <label class="control-label">Remarks</label>
+            <input type="text" class="form-control" name="Remarks" #Remarks="ngModel" [(ngModel)]=" SelectRemarksEmp" placeholder="Write Here...">
         </div>
     </div>
     <div class="form-group" *ngIf="dialogheader == 'Status'">
-        <div class="col-sm-8" >
-            <label class="control-label">Status<sup class="text-danger"></sup></label>
-            <select class="form-control"
-                    name="Employee" >
+        <div class="col-sm-5" >
+            <label class="control-label">Status<sup class="text-danger">*</sup></label>
+            <select class="form-control" name="Status"#Status="ngModel"
+            [(ngModel)]="SelectStatus"
+            [ngClass]="{'clearance': AllPopForm && Status?.errors?.required}" required>
                     <option  [ngValue]="undefined">Select</option>
-                    <option  [ngValue]="'Working Approved Internal'">Working Approved Internal</option>
-                    <option  [ngValue]="'Working Approved Client'">Working Approved Client</option>
+                    <option *ngFor=" let State of StatusList " [ngValue]="State.Status_ID">{{State.Status_Name}}</option>                  
             </select>
+        </div>
+        <div class="col-sm-5">
+            <label class="control-label">Remarks</label>
+            <input type="text" class="form-control" name="Remarks" #Remarks="ngModel" [(ngModel)]=" SelectRemarkstatus"
+                placeholder="Write Here...">
         </div>
     </div>
     <div class="form-group" *ngIf="dialogheader == 'Engagment Letter'">
-        <div class="col-sm-6" >
-            <label class="control-label">Engagment Letter<sup class="text-danger"></sup></label>
+        <div class="col-sm-3" >
+            <label class="control-label">Engagment Letter<sup class="text-danger">*</sup></label>
             <select class="form-control"
                     name="Engagment"
                     #Engagment="ngModel"
-                    [(ngModel)]="EngagmentLetter" >
+                    [(ngModel)]="EngagmentLetter"
+                    [ngClass]="{'clearance': AllPopForm && Engagment?.errors?.required}" required >
                     <option  [ngValue]="undefined">Select</option>
                     <option  [ngValue]="'Y'">YES</option>
                     <option  [ngValue]="'N'">No</option>
             </select>
         </div>
-        <div class="col-sm-6" *ngIf="EngagmentLetter == 'Y'" >
-            <label class="control-label">Type<sup class="text-danger"></sup></label>
-            <select class="form-control"
-                    name="ForYES" >
+        <div class="col-sm-4" *ngIf="EngagmentLetter == 'Y'" >
+            <label class="control-label">Type<sup class="text-danger">*</sup></label>
+            <select class="form-control"name="ForYES" #ForYES="ngModel"
+                    [(ngModel)]="Type_of_eng"
+                    [ngClass]="{'clearance': AllPopForm && ForYES?.errors?.required}" required >
                     <option  [ngValue]="undefined">Select</option>
-                    <option  [ngValue]="'Y'">EL</option>
-                    <option  [ngValue]="'N'">FS</option>
-                    <option  [ngValue]="'Y'">Proj</option>
-                    <option  [ngValue]="'N'">Other</option>
+                    <option  [ngValue]="'EL'">EL</option>
+                    <option  [ngValue]="'FS'">FS</option>
+                    <option  [ngValue]="'Proj'">Proj</option>
+                    <option  [ngValue]="'Other'">Other</option>
              </select>
         </div>
-        <div class="col-sm-6" *ngIf="EngagmentLetter == 'N'" >
-            <label class="control-label">Detalis<sup class="text-danger"></sup></label>
+        <div class="col-sm-4" *ngIf="EngagmentLetter == 'N'" >
+            <label class="control-label">Detalis<sup class="text-danger">*</sup></label>
             <input class="form-control"
-            name="Detalis"
-            placeholder="Detalis" >
+            name="Detalis"#Detalis="ngModel" [(ngModel)]="Eng_letter_details"
+            placeholder="Write Here..." 
+             [ngClass]="{'clearance': AllPopForm && Detalis?.errors?.required}" required >
         </div>
-
+        <div class="col-sm-5">
+            <label class="control-label">Remarks</label>
+            <input type="text" class="form-control" name="Remarks" #Remarks="ngModel" [(ngModel)]=" SelectRemarksE_letter"
+                placeholder="Write Here...">
+        </div>
       
     </div>
     <div class="form-group" *ngIf="dialogheader == 'Final Doc'">
         <div class="col-sm-6" >
-            <label class="control-label">Final Doc<sup class="text-danger"></sup></label>
+            <label class="control-label">Final Doc<sup class="text-danger">*</sup></label>
             <select class="form-control"
-                    name="Final" >
+                    name="Final" #Final="ngModel"
+                    [(ngModel)]="SelectFinalDoc"
+                    [ngClass]="{'clearance': AllPopForm && Final?.errors?.required}" required  >
                     <option  [ngValue]="undefined">Select</option>
                     <option  [ngValue]="'Y'">YES</option>
                     <option  [ngValue]="'N'">No</option>
             </select>
         </div>
+        <div class="col-sm-5">
+            <label class="control-label">Remarks</label>
+            <input type="text" class="form-control" name="Remarks" #Remarks="ngModel" [(ngModel)]=" SelectRemarksFinal_Doc"
+                placeholder="Write Here...">
+        </div>
     </div>
     <div class="form-group" *ngIf="dialogheader == 'Signing Date'">
         <div class="col-sm-8" >
-            <label class="control-label">Signing Date<sup class="text-danger"></sup></label>
+            <label class="control-label">Signing Date<sup class="text-danger">*</sup></label>
             <ejs-datepicker  [(value)]="SigningDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
         </div>
      </div>
      <div class="form-group" *ngIf="dialogheader == 'Report Shared'">
         <div class="col-sm-6" >
-            <label class="control-label">Report Shared<sup class="text-danger"></sup></label>
+            <label class="control-label">Report Shared<sup class="text-danger">*</sup></label>
             <select class="form-control"
                     name="Report" >
                     <option  [ngValue]="undefined">Select</option>
@@ -249,20 +291,54 @@ style="text-align: center;"
     </div>
     <div class="form-group" *ngIf="dialogheader == 'Courier Detalis Date'">
         <div class="col-sm-8" >
-            <label class="control-label">Courier Detalis Date<sup class="text-danger"></sup></label>
+            <label class="control-label">Courier Detalis Date<sup class="text-danger">*</sup></label>
             <ejs-datepicker  [(value)]="CourierDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
         </div>
        
-        </div>
+   </div>
+</form>
  </div>
 <p-footer>
-    <button
-    type="button"
-    (click)="dialogModel = false"
-    class="btn btn-default"
-    ><span class="glyphicon glyphicon-remove"></span>
-    CLOSE
+    <button type="button" (click)="dialogModel = false"class="btn btn-info"><span class="glyphicon glyphicon-remove"></span>CLOSE</button>
+    <button class="btn btn-primary pull-right" (click)="UpdateAllPop(AllPop.form.valid)">
+    <span class="glyphicon glyphicon-refresh"></span> Update
     </button>
-
 </p-footer>
+</p-dialog>
+
+<!-- view -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewModel" [closeOnEscape]="true" [closable]="false"
+    [modal]="true" [responsive]="true" [style]="{ width: '75%', minWidth: '200px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+<div class="table-responsive no-padding">
+    <p-table [value]="viewList" [rowHover]="true">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 65px;">SL No.</th>
+                <th>Log Trace ID</th>
+                <th>Log Trace Date</th>
+                <th>Transaction Type</th>
+                <th>User Name</th>
+                <th>Remarks</th>
+                <th>Previous Data Text</th>
+                <th>Changed To Text</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-col let-i="rowIndex">
+            <tr>
+                <td>{{i+1}}</td>
+                <td>{{col.Log_Trace_ID ? col.Log_Trace_ID :'-'}}</td>
+                <td>{{col.Log_Trace_Date| date: 'dd/MM/yyyy'}}</td>
+                <td>{{col.Transaction_Type ? col.Transaction_Type :"-"}}</td>
+                <td>{{col.User_Name ? col.User_Name : "-"}}</td>
+                <td>{{col.Remarks ? col.Remarks : "-"}}</td>
+                <td>{{col.Previous_Data_Text ? col.Previous_Data_Text : "-"}}</td>
+                <td>{{col.Changed_To_Text ? col.Changed_To_Text : "-"}}</td>
+        </ng-template>
+    </p-table>
+</div>
+    <p-footer>
+        <button type="button" (click)="ViewModel = false" class="btn btn-info"><span
+                class="glyphicon glyphicon-remove"></span>CLOSE</button>
+    </p-footer>
 </p-dialog>

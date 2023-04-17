@@ -477,12 +477,38 @@
                                         </h5>
                                         <div class="form-group">
                                             <div class="col-sm-3">
+                                                <label class="control-label">Purchase Order No.&nbsp;<span class="text-danger"></span></label>
+                                                <!--<input
+                                                        class="form-control"
+                                                        name="purorder"
+                                                        #purorder="ngModel"
+                                                        [(ngModel)]="ObjProductInfo.Pur_Order_No"
+                                                        [disabled]="true"
+                                                        placeholder="PO No."/> -->
+                                                    <p-dropdown [options]="PurOrderList" name="purorder" [(ngModel)]="ObjProductInfo.Pur_Order_No"
+                                                        [showClear]="true" [emptyFilterMessage]="' No Purchase Order Found'" (onChange)="ChangePO()"
+                                                        [filter]="true" filterBy="label,value.name" [placeholder]="'Select Purchase Order'" itemSize="30" #purorder="ngModel"
+                                                        [styleClass]="ProductInfoSubmitted && purorder.errors?.required? 'clearance' : ''">
+                                                    </p-dropdown>
+                                            </div>
+                                            <div class="col-sm-3">
+                                              <label class="control-label">PO Date</label>
+                                              <div class="input-group date">
+                                                <div class="input-group-addon">
+                                                  <i class="fa fa-calendar"></i>
+                                                </div>
+                                                <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='PODate' placeholder="dd/MMM/yyyy" [enabled]="false"></ejs-datepicker>
+                                              </div>
+                                            </div>
+                                            <div class="col-sm-3">
                                                 <label class="control-label">GRN No.&nbsp;<span class="text-danger"></span></label>
-                                                    <p-dropdown [options]="GRNList" name="grnno" [(ngModel)]="ObjProductInfo.GRN_No"
+                                                <p-multiSelect itemSize="30" [options]="GRNList" [styleClass]="'compacct-multiselect'" name="grnno" [(ngModel)]="SelectedGRNno" [filter]="true" filterBy="label,value.name" (onChange)="filterIndentList()" [resetFilterOnHide]="true">
+                                                </p-multiSelect>
+                                                    <!-- <p-dropdown [options]="GRNList" name="grnno" [(ngModel)]="ObjProductInfo.GRN_No"
                                                         [showClear]="true" [emptyFilterMessage]="' No GRN No Found'" (onChange)="ChangeGRN()"
                                                         [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select GRN No'" itemSize="30" #grnno="ngModel"
                                                         [styleClass]="ProductInfoSubmitted && grnno.errors?.required? 'clearance' : ''">
-                                                    </p-dropdown>
+                                                    </p-dropdown> -->
                                             </div>
                                             <div class="col-sm-3">
                                                 <label class="control-label">GRN Date</label>
@@ -493,7 +519,7 @@
                                                 <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='GRNDate' placeholder="dd/MMM/yyyy"></ejs-datepicker>
                                                 </div>
                                             </div>
-                                        <div class="col-sm-3">
+                                        <!-- <div class="col-sm-3">
                                             <label class="control-label">Purchase Order No.&nbsp;<span class="text-danger"></span></label>
                                             <input
                                                     class="form-control"
@@ -502,21 +528,7 @@
                                                     [(ngModel)]="ObjProductInfo.Pur_Order_No"
                                                     [disabled]="true"
                                                     placeholder="PO No."/>
-                                                <!-- <p-dropdown [options]="PurOrderList" name="purorder" [(ngModel)]="ObjProductInfo.Pur_Order_No"
-                                                    [showClear]="true" [emptyFilterMessage]="' No Purchase Order Found'" (onChange)="ChangePurchaseOrder()"
-                                                    [filter]="true" filterBy="label,value.name" [placeholder]="'Select Purchase Order'" itemSize="30" #purorder="ngModel"
-                                                    [styleClass]="ProductInfoSubmitted && purorder.errors?.required? 'clearance' : ''">
-                                                </p-dropdown> -->
-                                                </div>
-                                                <div class="col-sm-3">
-                                                  <label class="control-label">PO Date</label>
-                                                  <div class="input-group date">
-                                                    <div class="input-group-addon">
-                                                      <i class="fa fa-calendar"></i>
-                                                    </div>
-                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='PODate' placeholder="dd/MMM/yyyy" [enabled]="false"></ejs-datepicker>
-                                                  </div>
-                                                </div>
+                                        </div> -->
                                                 
                                               </div>
                                             </div>
@@ -529,6 +541,7 @@
                                     <thead style="background-color:#3c8dbc;color:white;">
                                         <tr>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Sl.No.</th>
+                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Pur Order No</th>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Details</th>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">HSN No</th>
                                             <!-- <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Batch No</th>
@@ -566,6 +579,7 @@
                                     <tbody>
                                         <tr *ngFor="let obj of GRNNoProlist ; let ind = index;">
                                             <td>{{ ind + 1 }}</td>
+                                            <td>{{obj.Pur_Order_No ? obj.Pur_Order_No : '-'}}</td>
                                             <td>{{obj.Product_Name}}</td>
                                             <td>{{obj.HSN_NO ? obj.HSN_NO : '-'}}</td>
                                             <!-- <td>{{obj.Batch_Number ? obj.Batch_Number : '-'}}</td>

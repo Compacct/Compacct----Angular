@@ -155,6 +155,9 @@ export class MiclPurchaseBillComponent implements OnInit {
   TCSTaxRequiredValidation = false;
   TCSdataList:any = [];
   validationflag = false;
+  SelectedGRNno:any = [];
+  TPOnoList:any = [];
+  BackUpGRNNoProlist:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -214,6 +217,7 @@ export class MiclPurchaseBillComponent implements OnInit {
     //  this.GetProductdetails();
      this.ObjProductInfo = new ProductInfo();
      this.editDocNo = undefined;
+     this.SelectedGRNno = [];
    }
    clearData(){
      this.ObjPurChaseBill = new PurChaseBill();
@@ -302,6 +306,7 @@ export class MiclPurchaseBillComponent implements OnInit {
   }
    VenderNameChange(){
      //this.ExpiredProductFLag = false;
+     this.ObjProductInfo.Pur_Order_No = undefined;
    if(this.ObjPurChaseBill.Sub_Ledger_ID) {
     const ctrl = this;
     const vendorObj = $.grep(ctrl.VendorList,function(item: any) {return item.value == ctrl.ObjPurChaseBill.Sub_Ledger_ID})[0];
@@ -310,7 +315,8 @@ export class MiclPurchaseBillComponent implements OnInit {
     this.ObjPurChaseBill.Sub_Ledger_Name = vendorObj.label;
     this.GetChooseAddress();
     // this.GetPurOrderNoList();
-    this.GetGRNno();
+    this.GetPurOrderNo();
+    // this.GetGRNno();
    } else{
     this.PurOrderList = [];
     this.POList = [];
@@ -333,8 +339,11 @@ export class MiclPurchaseBillComponent implements OnInit {
   // if(this.ObjPurChaseBill.Sub_Ledger_ID) {
     // this.GetProductdetails();
     this.PODate = undefined;
+    this.SelectedGRNno = [];
     this.GRNList = [];
     this.GRNDate = undefined;
+    this.GRNNoProlist = [];
+    this.BackUpGRNNoProlist = [];
     this.ObjProductInfo.Product_Specification = undefined;
     if(this.ObjPurChaseBill.Choose_Address) {
    const ctrl = this;
@@ -455,79 +464,179 @@ export class MiclPurchaseBillComponent implements OnInit {
       // this.GetCosCenAddress();
       })
   }
-  GetGRNno(){
-    this.GRNList = [];
-    this.ObjProductInfo.GRN_No = undefined;
+  GetPurOrderNo(){
+    this.PurOrderList = [];
+    // this.ObjProductInfo.GRN_No = undefined;
     const tempobj = {
       // PO_Doc_No : this.ObjProductInfo.Pur_Order_No,
       Sub_Ledger_ID : this.ObjPurChaseBill.Sub_Ledger_ID
       }
     const obj = {
      "SP_String": "SP_MICL_Purchase_Bill_New",
-     "Report_Name_String" : "Get_GRN_list_For_Dropdown",
+     "Report_Name_String" : "Get_PO_list_For_Dropdown",
     "Json_Param_String": JSON.stringify([tempobj])
 
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      //  if(data.length) {
-      //     data.forEach(element => {
-      //       element['label'] = element.GRN_No,
-      //       element['value'] = element.GRN_No
-      //     });
-          this.GRNList = data;
-        // } else {
-        //   this.GRNList = [];
-        // }
+       if(data.length) {
+          data.forEach(element => {
+            element['label'] = element.PO_Doc_No,
+            element['value'] = element.PO_Doc_No
+          });
+          this.PurOrderList = data;
+        } else {
+          this.PurOrderList = [];
+        }
     // this.GetGRNno();
    })
    }
-   ChangeGRN(){
+   ChangePO(){
     this.GRNDate = undefined;
     // this.podatedisabled = true;
     this.PODate = undefined;
-    this.ObjProductInfo.Pur_Order_No = undefined;
+    this.GRNList = [];
+    this.SelectedGRNno = [];
+    this.GRNNoProlist = [];
+    this.BackUpGRNNoProlist = [];
+    // this.clearlistamount();
+    // this.ObjPurChaseBill.TCS_Y_N = this.GRNNoProlist.length == 0 ? undefined : this.ObjPurChaseBill.TCS_Y_N;
+    // this.ObjPurChaseBill.TCS_Per = this.GRNNoProlist.length == 0 ? undefined : this.ObjPurChaseBill.TCS_Per;
+    if(this.ObjProductInfo.Pur_Order_No) {
+      const ctrl = this;
+      const PODateObj = $.grep(ctrl.PurOrderList,function(item: any) {return item.value == ctrl.ObjProductInfo.Pur_Order_No})[0];
+     // console.log(PODateObj);
+      this.PODate = new Date(PODateObj.PO_Doc_Date);
+      // this.podatedisabled = false;
+      this.GetGRNno();
+     }
+  }
+  GetGRNno(){
+    this.GRNList = [];
+    // this.ObjProductInfo.Pur_Order_No = undefined;
+    const tempobj = {
+      Doc_No : this.ObjProductInfo.Pur_Order_No,
+      }
+    const obj = {
+     "SP_String": "SP_MICL_Purchase_Bill_New",
+     "Report_Name_String" : "Get_GRN_list_For_Dropdown",
+     "Json_Param_String": JSON.stringify([tempobj])
+
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          this.GRNList = data;
+   })
+   }
+   filterIndentList() {
+    //console.log("SelectedTimeRange", this.SelectedTimeRange);
+    let DPOno = [];
+    this.TPOnoList = [];
+    //const temparr = this.ProductionlList.filter((item)=> item.Qty);
+    // if (!this.EditList.length){
+     this.BackUpGRNNoProlist =[];
+     this.GRNNoProlist = [];
+     this.ChangeGRN();
+    //  }
+    if (this.SelectedGRNno.length) {
+      this.TPOnoList.push('Req_No');
+      DPOno = this.SelectedGRNno;
+    }
+  //   if(this.EditList.length) {
+  //    this.productDetails = [];
+  //    if (this.TIndentList.length) {
+  //      let LeadArr = this.BackUpproductDetails.filter(function (e) {
+  //        return (DIndent.length ? DIndent.includes(e['Req_No']) : true)
+  //      });
+  //      this.productDetails = LeadArr.length ? LeadArr : [];
+  //    } else {
+  //      this.productDetails = [...this.BackUpproductDetails];
+  //      console.log("else Get indent list", this.IndentNoList)
+  //    }
+  //  }
+
+  }
+  ChangeGRN(){
+    this.GRNDate = undefined;
     this.GRNNoProlist = [];
     this.clearlistamount();
     this.ObjPurChaseBill.TCS_Y_N = this.GRNNoProlist.length == 0 ? undefined : this.ObjPurChaseBill.TCS_Y_N;
     this.ObjPurChaseBill.TCS_Per = this.GRNNoProlist.length == 0 ? undefined : this.ObjPurChaseBill.TCS_Per;
-    if(this.ObjProductInfo.GRN_No) {
-      const ctrl = this;
-      const GRNDateObj = $.grep(ctrl.GRNList,function(item: any) {return item.value == ctrl.ObjProductInfo.GRN_No})[0];
-     // console.log(GRNDateObj);
-      this.GRNDate = new Date(GRNDateObj.GRN_Date);
-      this.ObjProductInfo.Pur_Order_No = GRNDateObj.PO_Doc_No;
-      this.PODate = new Date(GRNDateObj.PO_Doc_Date);
-      // this.podatedisabled = false;
+    if(this.SelectedGRNno.length) {
+      this.SelectedGRNno.forEach(element => {
+        const ctrl = this;
+            const GRNDateObj = $.grep(ctrl.GRNList,function(item: any) {return item.value == element})[0];
+           // console.log(GRNDateObj);
+            this.GRNDate = new Date(GRNDateObj.GRN_Date);
+      });
       this.GetGRNNoProductdetails();
      }
-    //  else {
-    //    this.GRNDate = undefined;
-    //    this.ObjProductInfo.Product_ID = undefined;
-    //    this.PODate = undefined;
-    //    this.ObjProductInfo.Product_Specification = undefined;
-      //  this.GetProductdetails();
-      //  this.podatedisabled = true;
-      //  this.ChangePurchaseOrder();
-    //  }
+  }
+  //  ChangeGRN(){
+  //   this.GRNDate = undefined;
+  //   // this.podatedisabled = true;
+  //   // this.PODate = undefined;
+  //   // this.ObjProductInfo.Pur_Order_No = undefined;
+  //   this.GRNNoProlist = [];
+  //   this.clearlistamount();
+  //   this.ObjPurChaseBill.TCS_Y_N = this.GRNNoProlist.length == 0 ? undefined : this.ObjPurChaseBill.TCS_Y_N;
+  //   this.ObjPurChaseBill.TCS_Per = this.GRNNoProlist.length == 0 ? undefined : this.ObjPurChaseBill.TCS_Per;
+  //   if(this.ObjProductInfo.GRN_No) {
+  //     const ctrl = this;
+  //     const GRNDateObj = $.grep(ctrl.GRNList,function(item: any) {return item.value == ctrl.ObjProductInfo.GRN_No})[0];
+  //    // console.log(GRNDateObj);
+  //     this.GRNDate = new Date(GRNDateObj.GRN_Date);
+  //     // this.ObjProductInfo.Pur_Order_No = GRNDateObj.PO_Doc_No;
+  //     // this.PODate = new Date(GRNDateObj.PO_Doc_Date);
+  //     // this.podatedisabled = false;
+  //     this.GetGRNNoProductdetails();
+  //    }
+  //   //  else {
+  //   //    this.GRNDate = undefined;
+  //   //    this.ObjProductInfo.Product_ID = undefined;
+  //   //    this.PODate = undefined;
+  //   //    this.ObjProductInfo.Product_Specification = undefined;
+  //     //  this.GetProductdetails();
+  //     //  this.podatedisabled = true;
+  //     //  this.ChangePurchaseOrder();
+  //   //  }
+  // }
+  dataforproduct(){
+    if(this.SelectedGRNno.length) {
+      let Arr:any =[]
+      this.SelectedGRNno.forEach(el => {
+        if(el){
+          const Dobj = {
+            GRN_No : el
+            }
+           Arr.push(Dobj)
+        }
+
+    });
+      console.log("Table Data ===", Arr)
+      return Arr.length ? JSON.stringify(Arr) : '';
+    }
   }
   GetGRNNoProductdetails(){
-  this.GRNNoProlist = [];
+  // this.GRNNoProlist = [];
   this.TCSTaxRequiredValidation = false;
-  if (this.ObjProductInfo.GRN_No) {
+  if (this.SelectedGRNno.length) {
   const obj = {
     "SP_String": "SP_MICL_Purchase_Bill_New",
     "Report_Name_String": "Get_GRN_Product_list",
-    "Json_Param_String": JSON.stringify([{GRN_No : this.ObjProductInfo.GRN_No}])
+    // "Json_Param_String": JSON.stringify([{GRN_No : this.SelectedGRNno[0]}])
+    "Json_Param_String": this.dataforproduct()
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=> {
     this.GRNNoProlist = data;
-    this.ObjPurChaseBill.Supp_Ref_No = this.GRNNoProlist[0].Inv_No_Date ? this.GRNNoProlist[0].Inv_No_Date : undefined;
-    this.GRNNoProlist.forEach(item=>{
+    this.BackUpGRNNoProlist = [...this.GRNNoProlist];
+    this.ObjPurChaseBill.Supp_Ref_No = this.BackUpGRNNoProlist[0].Inv_No_Date ? this.BackUpGRNNoProlist[0].Inv_No_Date : undefined;
+    this.BackUpGRNNoProlist.forEach(item=>{
       item.Product_ID = item.value;
       item.Product_Name = item.label;
       item.Discount_Type = item.Discount_Type ? item.Discount_Type : undefined;
       item.Discount_Type_Amount = item.Discount_Type_Amount ? item.Discount_Type_Amount : 0;
       item.Discount = item.Discount_Amount ? item.Discount_Amount : 0;
+      item.Pur_Order_No = this.ObjProductInfo.Pur_Order_No,
+      item.Pur_Order_Date = this.DateService.dateConvert(new Date(this.PODate))
     })
     this.CalculateCessAmt();
     this.calculategstamt();
@@ -1426,7 +1535,8 @@ export class MiclPurchaseBillComponent implements OnInit {
       this.ObjPurChaseBill = data[0],
       this.GetTCSdat();
       this.ObjPurChaseBill.TCS_Per = data[0].TCS_Persentage;
-      this.GetGRNno();
+      // this.GetGRNno();
+      this.GetPurOrderNo();
       this.maindisabled = true;
       this.ObjPurChaseBill.Choose_Address = "MAIN";
       // this.getreq();

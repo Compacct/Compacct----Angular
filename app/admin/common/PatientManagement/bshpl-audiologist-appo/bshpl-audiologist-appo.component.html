@@ -97,6 +97,12 @@
                                                                     Shift to other Audiologist 
                                                                 </a>
                                                             </li>
+                                                            <li>
+                                                                <a (click)="actionClick_Programming(col)">
+                                                                    <i class="fa fa-exchange"></i>
+                                                                    Reprogramming Update 
+                                                                </a>
+                                                            </li>
                                                          </ul>
                                                     </div>
                                                 </td>
@@ -176,10 +182,16 @@
                                                                    Patient Details
                                                                 </a>
                                                             </li>
-                                                            <li>
+                                                            <li *ngIf="col.Appo_Type == 'PTA'">
                                                                 <a (click)="actionClick_ViewAppo(col)">
                                                                     <i class="fa fa-eye"></i>
                                                                     View Update Appointment 
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Appo_Type == 'Reprogramming'">
+                                                                <a (click)="actionClick_ViewProgramming(col)">
+                                                                    <i class="fa fa-eye"></i>
+                                                                    View Reprogramming Update 
                                                                 </a>
                                                             </li>
                                                          </ul>
@@ -216,8 +228,8 @@
    [closeOnEscape]="true"
    [closable]="false"
    [modal]="true"
-   [responsive]="true"
-   [style]="{ width: '60%', minWidth: '200px', height: '50%' }"
+   [responsive]="false"
+   [style]="{ width: '60%', minWidth: '200px', height: '800px', minHeight: '600px' }"
    style="text-align: center;"
    [minY]="70"
    [maximizable]="true"
@@ -264,7 +276,7 @@
    [closable]="false"
    [modal]="true"
    [responsive]="true"
-   [style]="{ width: '82%', minWidth: '200px', minHeight: '700px' }"
+   [style]="{ width: '100%', minWidth: '200px', minHeight: '700px' }"
    style="text-align: center;"
    [minY]="70"
    [maximizable]="true"
@@ -818,7 +830,7 @@
    [closable]="false"
    [modal]="true"
    [responsive]="true"
-   [style]="{ width: '82%', minWidth: '200px', minHeight: '700px' }"
+   [style]="{ width: '100%', minWidth: '200px', minHeight: '700px' }"
    style="text-align: center;"
    [minY]="70"
    [maximizable]="true"
@@ -1087,3 +1099,72 @@
         </button>
     </p-footer>
 </p-dialog>
+
+<p-dialog
+   [header]="'Reprogramming Update'"
+   [appendTo]="'body'"
+   [visible]="displayPopupPro"
+   [closeOnEscape]="true"
+   [closable]="false"
+   [modal]="true"
+   [responsive]="false"
+   [style]="{ width: '60%', minWidth: '200px', height: '600px', minHeight: '400px' }"
+   style="text-align: center;"
+   [minY]="70"
+   [maximizable]="true"
+   [baseZIndex]="10000"
+   [autoZIndex]="true"
+>   
+   <form name="Programming" #Programming="ngForm" novalidate>
+      <div class="row">
+         <div class="col-sm-6">
+            <label class="control-label">Comment<sup class="text-danger">*</sup></label>
+            <input class="form-control"
+                name="Audio_Note"
+                #Audio_Note="ngModel"
+                [(ngModel)]="objProgramming.Audio_Note" 
+                [ngClass]="{clearance: ProgrammingFormSubmitted && Audio_Note?.errors?.required }"
+                required
+            placeholder="Comment Here" > 
+         </div>
+      </div>
+   </form>
+   <p-footer>
+      <button class="btn btn-primary pull-right" (click)="SaveUpdateProgramming(Programming.form.valid)" [disabled]="ProSpinner">
+        <p-progressSpinner *ngIf="ProSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!ProSpinner" class="glyphicon glyphicon-save"></span>Save
+      </button>
+      <button class="btn btn-primary" (click)="closePopupPro()" >
+        <span class="glyphicon glyphicon-remove"></span>Close
+      </button>
+   </p-footer>
+</p-dialog>
+
+<p-dialog
+   [header]="'View Reprogramming'"
+   [appendTo]="'body'"
+   [visible]="displayPopupProView"
+   [closeOnEscape]="true"
+   [closable]="false"
+   [modal]="true"
+   [responsive]="false"
+   [style]="{ width: '60%', minWidth: '200px', height: '600px', minHeight: '400px' }"
+   style="text-align: center;"
+   [minY]="70"
+   [maximizable]="true"
+   [baseZIndex]="10000"
+   [autoZIndex]="true"
+>   
+    <div>
+        <div class="col-sm-6">
+            <label class="control-label">Comment</label>
+            <div class="label-t">{{objProgramming.Audio_Note ? objProgramming.Audio_Note : '-'}}</div>
+        </div>
+    </div>
+    <p-footer>
+      <button class="btn btn-primary" (click)="closePopupProView()" >
+        <span class="glyphicon glyphicon-remove"></span>Close
+      </button>
+    </p-footer>
+</p-dialog>
+

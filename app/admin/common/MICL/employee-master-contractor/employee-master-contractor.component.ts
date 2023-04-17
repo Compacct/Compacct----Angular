@@ -31,6 +31,9 @@ export class EmployeeMasterContractorComponent implements OnInit {
 
   objEmployee = new Employee();
 
+  flag:boolean = false;
+  checkcode:any;
+
   constructor(
     private Header: CompacctHeader,
     private CompacctToast: MessageService,
@@ -265,6 +268,82 @@ export class EmployeeMasterContractorComponent implements OnInit {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.allEmployeeData);
     const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
     XLSX.writeFile(workbook, 'Employee_Report.xlsx');
+  }
+  onCheckCode(Emp_Code){
+    this.flag = false;
+    if (this.buttonname != "Update") {
+      const tempobj ={
+        Emp_Code : Emp_Code
+      }
+      const obj = {
+        "SP_String": "Sp_HR_Employee_Master_Contractor",
+         "Report_Name_String":"Check_Emp_Code_Available",
+         "Json_Param_String": JSON.stringify([tempobj]) 
+          }
+          
+            this.GlobalAPI.getData(obj)
+            .subscribe((data)=>
+            {
+             console.log("data=",data[0].Column1);
+             this.checkcode = data[0].Column1;
+             
+              //this.objSubLedger.State=this.AllStateList.StateName;
+              if(data[0].Column1 === "Already Exists This Emp Code")
+              {
+                this.flag = true;
+                
+              this.CompacctToast.clear();
+              this.CompacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Error",
+              detail: "Employee Code Already Exits"
+              });
+              }
+              else{
+                this.flag = false;
+              }
+              
+              
+            });
+    } else {
+    const tempobj ={
+      Emp_Code : Emp_Code,
+      Emp_ID : this.Employee_Id
+    }
+    const obj = {
+      "SP_String": "Sp_HR_Employee_Master_Contractor",
+       "Report_Name_String":"Check_Emp_Code_Available_IN_Update",
+       "Json_Param_String": JSON.stringify([tempobj]) 
+        }
+        
+          this.GlobalAPI.getData(obj)
+          .subscribe((data)=>
+          {
+           console.log("data=",data[0].Column1);
+           this.checkcode = data[0].Column1;
+           
+            //this.objSubLedger.State=this.AllStateList.StateName;
+            if(data[0].Column1 === "Already Exists This Emp Code")
+            {
+              this.flag = true;
+              
+            this.CompacctToast.clear();
+            this.CompacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error",
+            detail: "Employee Code Already Exits"
+            });
+            }
+            else{
+              this.flag = false;
+            }
+            
+            
+          });
+        }
+  
   }
 
   TabClick(e: any) {

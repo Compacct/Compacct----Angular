@@ -69,6 +69,16 @@
    <form name="CouponUtilized" #CouponUtilized="ngForm" novalidate>
       <div class="row">
          <div class="col-sm-4">
+            <label class="control-label">Issue To<sup class="text-danger">*</sup></label>
+            <select class="form-control" name="issueto" #issueto="ngModel" [(ngModel)]="objUtilization.Issue_To"
+               [ngClass]="{clearance: couponUtilizationFormSubmit && issueto.errors?.required}" required>
+                <option [ngValue]="undefined">Select</option>
+                <option value="Employee">Employee</option>
+                <option value="Contractor">Contractor</option>
+                <option value="Visitor">Visitor</option>
+            </select>
+        </div>
+         <div class="col-sm-4">
             <label class="control-label">Date<sup class="text-danger">*</sup></label>
             <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='couponDate' name="Issue_Date">
             </ejs-datepicker>
@@ -79,22 +89,22 @@
                    [(ngModel)]="objUtilization.Total_Breakfast" CompacctDigitonly="true"
                    [ngClass]="{clearance: (couponUtilizationFormSubmit && Total_Breakfast?.errors?.required) }" required>
          </div>
+         
+      </div>
+      <br>
+      <div class="row">
          <div class="col-sm-4">
             <label class="control-label">Total Lunch<sup class="text-danger">*</sup></label>
             <input type="text" class="form-control" placeholder="Total Lunch" name="Total_Lunch" #Total_Lunch="ngModel"
                [(ngModel)]="objUtilization.Total_Lunch" CompacctDigitonly="true"
                [ngClass]="{clearance: (couponUtilizationFormSubmit && Total_Lunch?.errors?.required) }" required>
          </div>
-         
-      </div>
-      <br>
-      <div class="row">
-                <div class="col-sm-4">
-                                <label class="control-label">Total Dinner<sup class="text-danger">*</sup></label>
-                                <input type="text" class="form-control" placeholder="Total Dinner" name="Total_Dinner" #Total_Dinner="ngModel"
-                                   [(ngModel)]="objUtilization.Total_Dinner" CompacctDigitonly="true"
-                                   [ngClass]="{clearance: (couponUtilizationFormSubmit && Total_Dinner?.errors?.required) }" required>
-                </div>
+         <div class="col-sm-4">
+            <label class="control-label">Total Dinner<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" placeholder="Total Dinner" name="Total_Dinner" #Total_Dinner="ngModel"
+               [(ngModel)]="objUtilization.Total_Dinner" CompacctDigitonly="true"
+               [ngClass]="{clearance: (couponUtilizationFormSubmit && Total_Dinner?.errors?.required) }" required>
+         </div>
          <div class="col-sm-4">
          </div>
          <div class="col-sm-4"></div>
