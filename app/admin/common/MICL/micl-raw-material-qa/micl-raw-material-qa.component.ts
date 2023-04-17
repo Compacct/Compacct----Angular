@@ -41,6 +41,7 @@ export class MICLRawMaterialQAComponent implements OnInit {
 
   RecDetalis:any = [];
   RecDetalisHeader:any = [];
+  DocNo:any = undefined;
   constructor(
     private $http: HttpClient,
     private GlobalAPI:CompacctGlobalApiService,
@@ -72,6 +73,7 @@ export class MICLRawMaterialQAComponent implements OnInit {
     this.allDetalisHeader=[];
     this.SelectProductList=[];
     this.newAllDetails=[];
+    this.RecDetalis = [];
   }
   Finyear() {
     this.$http
@@ -115,6 +117,7 @@ export class MICLRawMaterialQAComponent implements OnInit {
     this.ObjRaw.SelectProduct = undefined;
     this.allDetalis = [];
     this.allDetalisHeader = [];
+    this.RecDetalis = [];
     if(DocNO && this.RecvDocList){
       for(let item of this.RecvDocList){
         if(item.Doc_No == DocNO){
@@ -407,13 +410,76 @@ GetDistinct() {
   this.Searchedlist = [...this.BackupSearchedlist] ;
   }
   }
+  Print(DocNo) {
+    if(DocNo) {
+    const objtemp = {
+      "SP_String": "SP_BL_Txn_Raw_Material_QA",
+      "Report_Name_String": "QA_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
+  }
+  Delete(col){
+     this.DocNo = undefined;
+     if(col.Doc_No){
+      this.DocNo = col.Doc_No
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "d",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+     }
+    }
 
-  onConfirm(){
+  onConfirmdel(){
+    if(this.DocNo){
+     const obj = {
+       "SP_String": "SP_BL_Txn_Raw_Material_QA",
+       "Report_Name_String":"Delete_QC_Data",
+       "Json_Param_String": JSON.stringify([{Doc_No : this.DocNo}]) 
+       }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // console.log("data ==",data[0].Column1);
+       if (data[0].Column1 === "Done"){
+         this.compacctToast.clear();
+         this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "success",
+           summary: "Purchase Bill ",
+           detail: "Succesfully Delete"
+         });
+         this.DocNo = undefined;
+         this.getAlldata();
+         }
+          
+        else {
+          this.onReject();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "c", 
+            sticky: true,
+            closable: false,
+            severity: "warn", // "info",
+            summary: data[0].Column1
+            // detail: data[0].Column1
+          });
+          this.DocNo = undefined;
+          this.getAlldata();
+        }
+        });
+    }
 
   }
 
   onReject(){
     this.compacctToast.clear("c");
+    this.compacctToast.clear("d");
   }
 
 }

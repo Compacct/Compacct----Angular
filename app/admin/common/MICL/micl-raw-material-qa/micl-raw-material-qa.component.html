@@ -8,8 +8,22 @@
             <p>{{message.detail}}</p>
         </div>
         <div class="ui-g ui-fluid">
+            <div class="ui-g-12">
+                <button type="button" pButton (click)="onReject()" label="ok" class="ui-button-danger" style="font-size: 20px;"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="d" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
             <div class="ui-g-6">
-                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+                <button type="button" pButton (click)="onConfirmdel()" label="Yes" class="ui-button-success"></button>
             </div>
            <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
@@ -66,6 +80,7 @@
     
                                         <ng-template pTemplate="header">
                                             <tr>
+                                                <th style="width:5em">Action</th>
                                                 <th>QC Doc No</th>
                                                 <th>QA Doc Date</th>
                                                 <th>Vendor</th>
@@ -78,6 +93,26 @@
     
                                         <ng-template pTemplate="body" let-col>
                                             <tr> 
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                        <i class="fa fa-fw fa-bars"></i>
+                                                                        <span class="caret"></span>
+                                                                    </button>
+                                                        <ul class="dropdown-menu">
+                                                                <li>
+                                                                    <a (click)="Print(col.Doc_No)">
+                                                                        <i class="fa fa-fw fa-print"></i> Print
+                                                                    </a>
+                                                                </li>
+                                                            <li>
+                                                                <a (click)="Delete(col)">
+                                                                    <i class="fa fa-fw fa-trash"></i> Delete
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
                                                 <td>{{col.Doc_No}}</td>
                                                 <td>{{ (col.Doc_Date | date: "dd/MMM/yyyy") }}</td>
                                                 <td>{{col.Sub_Ledger_Name}}</td>
