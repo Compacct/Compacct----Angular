@@ -458,6 +458,7 @@ import { LetterOfIntentComponent } from './common/MICL/letter-of-intent/letter-o
 import { ProformaInvoiceComponent } from './common/MICL/proforma-invoice/proforma-invoice.component';
 import { SalesMisComponent } from './common/MICL/sales-mis/sales-mis.component';
 import { ViewOutcomesComponent } from "./common/PatientManagement/view-outcomes/view-outcomes.component";
+import { TransferTransectionComponent } from './common/Patna/transfer-transection/transfer-transection.component';
 
 @NgModule({
   declarations: [
@@ -832,7 +833,8 @@ import { ViewOutcomesComponent } from "./common/PatientManagement/view-outcomes/
     LetterOfIntentComponent,
     ProformaInvoiceComponent,
     SalesMisComponent,
-    ViewOutcomesComponent 
+    ViewOutcomesComponent,
+    TransferTransectionComponent
 
 
   ],

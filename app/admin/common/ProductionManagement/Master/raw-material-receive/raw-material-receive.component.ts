@@ -165,6 +165,9 @@ getReference(){
    })
 } 
 GetMaterialName(RefNO:any){
+  this.ObjRawMatRev = new RawMatRev();
+  // this.ObjRawMatRev.PO_Qty = undefined;
+  // this.ObjRawMatRev.Pending_PO_Qty = undefined;
   if(RefNO){
      const FilterReferenceDataList = this.ReferenceDataList.find((el:any)=> el.Production_Ref_NO == RefNO)
      this.minFromDate = FilterReferenceDataList ?  new Date(FilterReferenceDataList.Doc_Date) : new Date('01/01/1990')

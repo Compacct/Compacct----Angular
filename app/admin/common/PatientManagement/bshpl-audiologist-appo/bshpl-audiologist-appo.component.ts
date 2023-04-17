@@ -68,6 +68,14 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   CompletedAllDetalis:any = [];
   CompletedAllDetalisHeader:any = [];
 
+  displayPopupPro:boolean= false;
+  ProgrammingFormSubmitted:boolean= false;
+  ProSpinner:boolean= false;
+
+  displayPopupProView:boolean= false;
+
+
+  objProgramming: Programming = new Programming();
   objAppointment: Appointment = new Appointment();
   objAudiologist: Audiologist = new Audiologist();
   objSearch: Search =new Search();
@@ -200,6 +208,13 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
 
     this.displayPopupAppoView=false;
     this.CompletedSeachSpinner=false;
+
+    this.displayPopupPro=false;
+    this.objProgramming= new Programming();
+    this.ProSpinner=false;
+    this.ProgrammingFormSubmitted=false;
+
+    this.displayPopupProView=false;
   }
 
   actionClick_PatientDetails(col:any){
@@ -258,7 +273,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   }
 
   SaveAppointment(valid:any){
-    // console.log("SaveAppointment in progress");
+    // console.log("this.objAppointment.Trail_Missed_Reason",this.objAppointment.Trail_Missed_Reason);
     this.AppointmentFormSubmitted = true;
     if(valid){
       this.AppoSpinner = true;
@@ -271,7 +286,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.objAppointment.Trial_For= this.objAppointment.Trial_For ? this.objAppointment.Trial_For : 'NA';
       this.objAppointment.Trial_For_Mono_Reason= this.objAppointment.Trial_For_Mono_Reason ? this.objAppointment.Trial_For_Mono_Reason : 'NA';
       this.objAppointment.Trial_Restult= this.objAppointment.Trial_Restult ? this.objAppointment.Trial_Restult : 'NA';
-      this.objAppointment.Trail_Missed_Reason= this.objAppointment.Trail_Missed_Reason ? this.objAppointment.Trail_Missed_Reason : 'NA';
+      this.objAppointment.Trail_Missed_Reason= this.objAppointment.Trail_Missed_Reason.toString() ? this.objAppointment.Trail_Missed_Reason.toString() : 'NA';
 
       let TrialList:any =[];
       for(let item of this.PTLList){
@@ -319,7 +334,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   
       const SaveAppObj = {
         "SP_String": "sp_BSHPL_Audiologist_Appo",
-        "Report_Name_String": "Update_Audiologist_Name",
+        "Report_Name_String": "Add_BSHPL_Audiologist",
         "Json_Param_String": JSON.stringify([this.objAppointment])
       }
       this.ngxService.start();
@@ -698,6 +713,63 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     }
   }
 
+  actionClick_Programming(col:any){
+    if(col){
+      this.displayPopupPro=true;
+      this.objProgramming.Appo_Dt=this.DateService.dateTimeConvert(new Date(col.Appo_Start));
+    }
+  }
+
+  closePopupPro(){
+    this.displayPopupPro=false;
+    this.objProgramming= new Programming();
+  }
+
+  SaveUpdateProgramming(valid:any){
+    this.ProgrammingFormSubmitted = true;
+    if(valid){
+      this.ProSpinner = true;
+      const SaveTempObjPro = {
+        Appo_Dt : this.DateService.dateTimeConvert(new Date(this.objProgramming.Appo_Dt)),
+        Audio_Note : this.objProgramming.Audio_Note
+      }
+    //  console.log("SaveTempObjPro",SaveTempObjPro);
+  
+      const SaveObjPro = {
+        "SP_String": "sp_BSHPL_Audiologist_Appo",
+        "Report_Name_String": "Update_Reprogramming",
+        "Json_Param_String": JSON.stringify([SaveTempObjPro])
+      }
+      this.ngxService.start();
+      this.GlobalAPI.postData(SaveObjPro).subscribe((data: any) => {
+        this.ngxService.stop();
+      //  console.log("save data",data);
+
+        if (data[0].Column1){
+          this.getAlldata();
+          this.clearData();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Reprogramming ",
+            detail: "Updated "
+          });
+        }
+        else {
+          this.Spinner = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message ",
+            detail:"Error occured "
+          });
+        }
+      });
+    }
+  }
+
   getDateRangeComplete(dateRangeObj:any){
     if(dateRangeObj.length){
       this.objCompletedSearch.From_Date = dateRangeObj[0];
@@ -723,7 +795,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       User_ID : this.objCompletedSearch.User_Id ? this.objCompletedSearch.User_Id : 0,
     
     }
-   // console.log("Ctempobj",Ctempobj);
+  //  console.log("Ctempobj",Ctempobj);
 
     const obj = {
       "SP_String": "sp_BSHPL_Audiologist_Appo",
@@ -731,7 +803,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       "Json_Param_String": JSON.stringify(Ctempobj)
     }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-   //   console.log("getAllCompletedData",data);
+    //  console.log("getAllCompletedData",data);
       this.ngxService.stop();
       this.CompletedSeachSpinner = false;
 
@@ -761,12 +833,14 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         "Report_Name_String": "Retrieve_BSHPL_Audiologist",
         "Json_Param_String": JSON.stringify([getComTempObj])
       }
+      this.ngxService.start();
       this.GlobalAPI.getData(getComObj).subscribe((data:any)=>{
-     //   console.log("get appointment data",data);
+        this.ngxService.stop();
+      //  console.log("get appointment data",data);
         let EditJSON = JSON.parse(data[0].update_audiologist_details);
-     //   console.log("EditJSON",EditJSON);
+      //  console.log("EditJSON",EditJSON);
         let EditList = EditJSON[0];
-     //   console.log("EditList",EditList);
+      //  console.log("EditList",EditList);
 
         this.P_Name=col.Patient;
         this.Phone=Number(col.Mobile);
@@ -901,6 +975,35 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.MISSEDOpen=false;
   }
 
+  actionClick_ViewProgramming(col:any){
+    if(col.foot_fall_id){
+      this.displayPopupProView = true;
+      const getProTempObj = {
+        Appo_Dt: this.DateService.dateTimeConvert(new Date(col.Appo_Start)),
+        Foot_Fall_ID : Number(col.foot_fall_id)
+      }
+    //  console.log("getProTempObj",getProTempObj);
+
+      const getComObj = {
+        "SP_String": "sp_BSHPL_Audiologist_Appo",
+        "Report_Name_String": "Retrieve_Reprogramming",
+        "Json_Param_String": JSON.stringify([getProTempObj])
+      }
+      this.GlobalAPI.getData(getComObj).subscribe((data:any)=>{
+        // console.log("get Retrieve_Reprogramming",data);
+        let EditViewList = data[0];
+        // console.log("EditViewList",EditViewList);
+
+        this.objProgramming=EditViewList;
+      })
+    }
+  }
+
+  closePopupProView(){
+    this.displayPopupProView=false;
+    this.objProgramming= new Programming();
+  }
+
   onConfirm() { 
 
   }
@@ -909,6 +1012,11 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.compacctToast.clear("c");
   }
 
+}
+
+class Programming{
+  Audio_Note: any;
+  Appo_Dt: any;
 }
 
 class Audiologist{
