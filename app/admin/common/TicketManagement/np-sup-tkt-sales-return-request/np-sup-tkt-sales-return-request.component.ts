@@ -166,6 +166,29 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
       this.dropdownIcon = "pi pi-chevron-down"
     })
   }
+  getProductDetalis(ProductID:any){
+    const FindProductRow = this.ProductList.filter((el:any)=> Number(el.Product_ID) == Number(ProductID))
+    if(FindProductRow.length){
+      this.ObjaddSaleReturn.UOM = FindProductRow[0].UOM
+      this.ObjaddSaleReturn.Rate = FindProductRow[0].Master_Rate
+    }
+    this.calculatAmount()
+  }
+  calculatAmount(){
+    if(this.ObjaddSaleReturn.Product_ID && this.ObjaddSaleReturn.Qty && this.ObjaddSaleReturn.Rate){
+      let convert = (v) =>{
+        return v? v : 0
+      }
+      this.ObjaddSaleReturn.Amount = ((Number(convert(this.ObjaddSaleReturn.Qty)) * Number(convert(this.ObjaddSaleReturn.Rate))) + Number(convert(this.ObjaddSaleReturn.Tax_Amount))).toFixed(2) 
+    }
+    else {
+      this.ObjaddSaleReturn.Amount = 0;
+      this.ObjaddSaleReturn.Qty = undefined;
+      this.ObjaddSaleReturn.Rate = undefined;
+      this.ObjaddSaleReturn.Tax_Amount = undefined
+    }
+   
+  }
   getReasonOfReturnList(){
     this.ReasonReturnList = []
    const obj = {
@@ -204,6 +227,8 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
       if(this.TicketNo){
         this.SalereturnList.forEach((ele:any) => {
           ele.Ticket_No = this.TicketNo
+          ele.Rate = Number(ele.Rate)
+          ele.Tax_Amount = Number(ele.Tax_Amount)
         });
       }
      const obj = {
@@ -297,9 +322,27 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
     this.DocDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(data[0].Request_Date);
     this.getProduct(data[0].Sub_Ledger_ID)
     this.SalereturnList = data
-  }) 
+     }) 
  }
-
+ getStatusWiseColor(Status:any) {
+  switch (Status) {
+           case 'CREATED':
+               return 'red';
+               break;
+           case 'APPROVED':
+               return 'blue';
+               break;
+           case 'MATERIAL PICKED':
+               return 'orange';
+               break;
+           case 'ACCOUNTS ENTRY DONE':
+             return 'green';
+             break;
+          default:
+       }
+   
+   return
+ }
 
 }
 
@@ -321,4 +364,8 @@ class addSaleReturn {
   Against_Challan_No:any
   Tax_Invoice_No:any
   Product_Description:any
+  UOM:any
+  Rate:any
+  Tax_Amount:any
+  Amount:any
  }
