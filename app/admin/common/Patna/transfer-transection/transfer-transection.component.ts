@@ -153,6 +153,7 @@ export class TransferTransectionComponent implements OnInit {
 
   TabClick(e: any) {
   }
+  onReject(){}
 
 }
 
