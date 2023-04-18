@@ -363,6 +363,7 @@ import { SalesMisComponent } from './common/MICL/sales-mis/sales-mis.component';
 import { ViewOutcomesComponent } from "./common/PatientManagement/view-outcomes/view-outcomes.component";
 import { TransferTransectionComponent } from './common/Patna/transfer-transection/transfer-transection.component';
 import { HarbTxnRequisitionComponent } from "./common/Harbauer/harb-txn-requisition/harb-txn-requisition.component";
+import { PurchaseOrderHarbauerTermsComponent } from './common/Harbauer/purchase-order-harbauer-terms/purchase-order-harbauer-terms.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2757,6 +2758,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: HarbTxnRequisitionComponent,
         data: {
           title: 'Requisition'
+    }
+    },
+    {
+      path: 'Purchase_Order_Harbauer_Terms',
+        component: PurchaseOrderHarbauerTermsComponent,
+        data: {
+          title: 'Purchase Order Harbauer Terms'
     }
     },
     /*{
