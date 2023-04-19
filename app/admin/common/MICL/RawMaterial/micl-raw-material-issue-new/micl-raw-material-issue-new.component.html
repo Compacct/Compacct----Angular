@@ -275,7 +275,7 @@
                                                 [ngClass]="{'clearance':AddProDetailsFormSubmitted && Batch_No?.errors?.required}"
                                                 required>
                                         <option  [ngValue]="undefined">Select</option>
-                                         <option *ngFor = "let option of BatchNoList" value="{{option.Batch_No}}">
+                                         <option *ngFor = "let option of BatchNoList" value="{{option.SLNO}}">
                                             {{option.Batch_No}} / {{option.Batch_Qty}}
                                           </option>
                                     </select>

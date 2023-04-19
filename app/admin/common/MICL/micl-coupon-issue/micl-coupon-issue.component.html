@@ -166,10 +166,10 @@
                                         </p-dropdown>
                                     </div>
                                     <div class="col-sm-3" *ngIf="Issue_To==='Contractor'">
-                                        <label class="control-label">Select Contractor<sup class="text-danger">*</sup></label>
+                                        <label class="control-label">Select Employee<sup class="text-danger">*</sup></label>
                                         <p-dropdown [options]="contractorEmpList" [showClear]="true" name="contractor" #contractor="ngModel"
-                                            [(ngModel)]="ObjCouponIssue.Contractor_Emp_ID" [emptyFilterMessage]="' No contractor Name Found'" [filter]="true"
-                                            filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select contractor Name'"
+                                            [(ngModel)]="ObjCouponIssue.Contractor_Emp_ID" [emptyFilterMessage]="' No employee Name Found'" [filter]="true"
+                                            filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select employee Name'"
                                             [virtualScroll]="true" itemSize="30"
                                             [ngClass]="{'clearance': CouponFormsSubmitted && contractor.errors?.required}" required [disabled]="AddList.length">
                                         </p-dropdown>

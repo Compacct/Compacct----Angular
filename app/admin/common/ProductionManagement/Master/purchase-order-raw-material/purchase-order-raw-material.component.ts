@@ -249,6 +249,7 @@ export class PurchaseOrderRawMaterialComponent implements OnInit {
     this.ObjWorkOrder.Type_ID = this.OrderTypeList.length ? this.OrderTypeList[0].Type_ID : undefined;
     this.seachPendingReqSpinner = false;
     this.AddTermList = []
+    this.TermFormSubmitted = false;
     this.GrTermAmount = 0
     this.GrGstTermAmt = 0
     this.grNetTerm = 0
