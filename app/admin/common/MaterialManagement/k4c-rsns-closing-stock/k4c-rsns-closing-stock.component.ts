@@ -7,6 +7,7 @@ import { CompacctGlobalApiService } from "../../../shared/compacct.services/comp
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service"
 import { ActivatedRoute, Router } from "@angular/router";
 import { NgxUiLoaderService } from "ngx-ui-loader";
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-k4c-rsns-closing-stock',
@@ -479,6 +480,9 @@ Save(){
       var tempID = data[0].Column1;
      // this.Objproduction.Doc_No = data[0].Column1;
       if(data[0].Column1){
+        if (this.buttonname === "Save") {
+        this.exportoexcelaftersave(data[0].Column1,this.todayDate);
+        }
         this.compacctToast.clear();
         const mgs = this.buttonname === "Save" ? "Saved" : "Updated";
         this.compacctToast.add({
@@ -513,6 +517,30 @@ Save(){
       }
     })
   //}
+}
+exportoexcelaftersave(docno,docdate): void {
+  const obj = {
+    "SP_String": "SP_K4C_RSNS_Closing_Stock",
+    "Report_Name_String": "Download_K4C_RSNS_Closing_Stock_Data",
+    "Json_Param_String": JSON.stringify([{Doc_No : docno}])
+
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    if (data[0].Success === "False") {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+    else {
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      XLSX.writeFile(workbook, this.MaterialType_Flag + " Closing Stock "+'('+this.DateService.dateConvert(new Date(docdate))+')'+'.xlsx');
+    }
+  })
 }
 getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
