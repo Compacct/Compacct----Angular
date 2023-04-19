@@ -246,7 +246,7 @@
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Confirm_Qty' (ngModelChange)='confirmamountcalculate(rowIndex)' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <!-- <td>{{col.Confirm_Rate}}</td> -->
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Confirm_Rate' (ngModelChange)='confirmamountcalculate(rowIndex)' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
-                                            <td>{{col.Confirm_Amount ? col.Confirm_Amount : '-'}}</td>
+                                            <td>{{col.Confirm_Amount ? getTofix(col.Confirm_Amount) : '-'}}</td>
                                             <td>{{col.Confirm_Amount_With_GST}}</td>
                                             <!-- <td>{{col.Vendor_Name}}</td> -->
                                             <td>
@@ -263,7 +263,7 @@
 
                                         </tr>
                                         <tr *ngIf='rowIndex === (AuthorizedList.length - 1)'>
-                                            <td colspan="14" class="text-right">Total</td>
+                                            <td colspan="10" class="text-right">Total</td>
                                             <td>{{getTotalValue('Amount')}}</td>
                                             <!-- <td>{{getTotalValue('Total_Amount_With_GST')}}</td> -->
                                             <td colspan="3" class="text-center">-</td>
@@ -373,7 +373,7 @@
                                             <!-- <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Confirm_Qty' (ngModelChange)='confirmamountcalculate(rowIndex)' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td> -->
                                             <td>{{col.Confirm_Rate}}</td>
                                             <!-- <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Confirm_Rate' (ngModelChange)='confirmamountcalculate(rowIndex)' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td> -->
-                                            <td>{{col.Confirm_Amount ? col.Confirm_Amount : '-'}}</td>
+                                            <td>{{col.Confirm_Amount ? getTofix(col.Confirm_Amount) : '-'}}</td>
                                             <td>{{col.Confirm_Amount_With_GST}}</td>
                                             <td>{{col.Vendor_Name}}</td>
                                             <td>{{col.Remarks}}</td>
@@ -656,7 +656,7 @@
                                             <td>{{obj.Due_Payment}}</td>
                                             <td>{{obj.Order_Qty}} {{obj.Alt_UOM}}</td>
                                             <td>{{obj.Sale_rate}}</td>
-                                            <td>{{obj.Order_Value}}</td>
+                                            <td>{{getTofix(obj.Order_Value)}}</td>
                                             <td>{{obj.Stock_Qty}} {{obj.Stock_UOM}}</td>
                                             <td>{{obj.Estimated_Time_Of_Delivery}}</td>
                                             <td>{{obj.Remarks}}</td>

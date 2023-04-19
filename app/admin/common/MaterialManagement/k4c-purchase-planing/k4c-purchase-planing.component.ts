@@ -525,11 +525,11 @@ export class K4cPurchasePlaningComponent implements OnInit {
      }
   }
   OrderValueChange(){
-    var ordervalue = 0;
-    var stockoty = 0;
-    ordervalue = Number(this.ObjPurchasePlan.Sale_rate * this.ObjPurchasePlan.Order_Qty);
+    var ordervalue:any = 0;
+    var stockoty:any = 0;
+    ordervalue = Number(this.ObjPurchasePlan.Sale_rate * this.ObjPurchasePlan.Order_Qty).toFixed(2);
     this.ObjPurchasePlan.Order_Value = ordervalue;
-    stockoty = Number(this.ObjPurchasePlan.Order_Qty * this.ObjPurchasePlan.UOM_Qty);
+    stockoty = Number(this.ObjPurchasePlan.Order_Qty * this.ObjPurchasePlan.UOM_Qty).toFixed(2);
     this.ObjPurchasePlan.Stock_Qty = stockoty;
     this.ovaldisabled = true;
     this.stockqtydisabled = true;
@@ -565,7 +565,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
       Sale_rate : this.ObjPurchasePlan.Sale_rate,
       // Order_Qty :  this.ObjPurchasePlan.Stock_Qty,
       // Current_Rate : this.ObjPurchasePlan.Sale_rate,
-      Order_Value : Number(Amount),
+      Order_Value : Number(Amount).toFixed(2),
       Stock_Qty : this.ObjPurchasePlan.Stock_Qty,
       Stock_UOM : this.ObjPurchasePlan.Stock_UOM,
       Estimated_Time_Of_Delivery : this.ObjPurchasePlan.Estimated_Time_Of_Delivery,
@@ -1011,6 +1011,9 @@ export class K4cPurchasePlaningComponent implements OnInit {
       this.AuthorizedList[indx]['Confirm_Amount'] = Number(this.AuthorizedList[indx]['Confirm_Qty'] * this.AuthorizedList[indx]['Confirm_Rate']).toFixed(2);
       this.AuthorizedList[indx]['Confirm_Amount_With_GST'] = Number(((this.AuthorizedList[indx]['Confirm_Qty'] * this.AuthorizedList[indx]['Confirm_Rate']) * this.AuthorizedList[indx]['GST_PER']) / 100).toFixed(2);
     }
+   }
+   getTofix(key){
+    return Number(Number(key).toFixed(2))
    }
    dataforApproved(){
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))

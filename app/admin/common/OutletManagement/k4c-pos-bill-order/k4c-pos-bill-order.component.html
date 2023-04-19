@@ -572,14 +572,14 @@
     <form name="CustomerDetailsForm" #CustomerDetailsForm="ngForm" novalidate>
         <div>
             <div class="form-group">
-                <div class='col-sm-12' *ngIf="$CompacctAPI.CompacctCookies.Cost_Cen_ID == '89' || $CompacctAPI.CompacctCookies.Cost_Cen_ID == '90'">
+                <div class='col-sm-12' *ngIf="$CompacctAPI.CompacctCookies.Cost_Cen_ID == '89' || $CompacctAPI.CompacctCookies.Cost_Cen_ID == '90' || $CompacctAPI.CompacctCookies.User_Type == 'A'">
                     <label class="control-label">Customer<span class="text-danger">*</span></label>
                     <p-dropdown [options]="SubledgerList" name="subledger" [(ngModel)]="Objcustomerdetail.Sub_Ledger_ID" (onChange)='GetSubLedgerDetails()' [showClear]="true" [emptyFilterMessage]="' No Customer Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
-                        [placeholder]="'Select Customer'" [virtualScroll]="true" itemSize="30" #subledger="ngModel" [required]="true" [ngClass]="{
+                        [placeholder]="'Select Customer'" [virtualScroll]="true" itemSize="30" #subledger="ngModel" [required]="$CompacctAPI.CompacctCookies.User_Type == 'A' ? false : true" [ngClass]="{
                             clearance:
                               (CustomerDetailsFormSubmitted && subledger.errors?.required) ||
                               (subledger.errors?.minlength && subledger.touched)
-                          }" required>
+                          }" >
                     </p-dropdown>
                 </div>
                 <div class='col-sm-12'>
