@@ -85,7 +85,7 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
     this.addSalereturnFormsSubmitted = false
     this.SalereturnList = []
     this.Spinner = false
-    this.TicketNo
+    this.TicketNo = undefined
     this.DocDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
    
   }
@@ -167,12 +167,21 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
     })
   }
   getProductDetalis(ProductID:any){
-    const FindProductRow = this.ProductList.filter((el:any)=> Number(el.Product_ID) == Number(ProductID))
-    if(FindProductRow.length){
-      this.ObjaddSaleReturn.UOM = FindProductRow[0].UOM
-      this.ObjaddSaleReturn.Rate = FindProductRow[0].Master_Rate
+    if(ProductID){
+      const FindProductRow = this.ProductList.filter((el:any)=> Number(el.Product_ID) == Number(ProductID))
+      if(FindProductRow.length){
+        this.ObjaddSaleReturn.UOM = FindProductRow[0].UOM
+        this.ObjaddSaleReturn.Rate = FindProductRow[0].Master_Rate
+      }
+      this.calculatAmount()
     }
-    this.calculatAmount()
+    else {
+      this.ObjaddSaleReturn.Amount = 0;
+      this.ObjaddSaleReturn.Qty = undefined;
+      this.ObjaddSaleReturn.Rate = undefined;
+      this.ObjaddSaleReturn.Tax_Amount = undefined
+    }
+  
   }
   calculatAmount(){
     if(this.ObjaddSaleReturn.Product_ID && this.ObjaddSaleReturn.Qty && this.ObjaddSaleReturn.Rate){
@@ -183,9 +192,6 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
     }
     else {
       this.ObjaddSaleReturn.Amount = 0;
-      this.ObjaddSaleReturn.Qty = undefined;
-      this.ObjaddSaleReturn.Rate = undefined;
-      this.ObjaddSaleReturn.Tax_Amount = undefined
     }
    
   }
@@ -343,7 +349,10 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
    
    return
  }
-
+ changeConditionOfGoods(){
+  this.ObjaddSaleReturn.Type_Of_Return = undefined
+  this.ObjaddSaleReturn.Return_Text = undefined
+ }
 }
 
 class saleReturn{
