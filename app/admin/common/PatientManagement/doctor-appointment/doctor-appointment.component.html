@@ -138,31 +138,37 @@
                                                             </li>
                                                           </ul> -->
                                                          <ul class="dropdown-menu">
-                                                             <li *ngIf="col.Consultancy_Descr == 'ASSR'">
+                                                            <li *ngIf="col.Consultancy_Type == 'Speech' && col.Status == 'Billed'">
+                                                                <a (click)="actionClick(col ,'Speech Evaluation')">
+                                                                    <i class="fa fa-refresh"></i>
+                                                                     Speech Evaluation Outcome Update
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Consultancy_Descr == 'ASSR' && col.Status == 'Billed'">
                                                                 <a (click)="actionClick(col ,'ASSR')" >
                                                                     <i class="fa fa-arrow-right"></i>
                                                                     Update Outcome
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="col.Consultancy_Descr == 'BERA'">
+                                                            <li *ngIf="col.Consultancy_Descr == 'BERA' && col.Status == 'Billed'">
                                                                 <a (click)="actionClick(col ,'BERA')">
                                                                     <i class="fa fa-arrow-right"></i>
                                                                     Update Outcome
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="col.Consultancy_Descr == 'PTA' ||col.Consultancy_Descr == 'PTA +Tympanometry +Speech Audiometry' ||col.Consultancy_Descr == 'PTA+ Tympanometry'">
+                                                            <li *ngIf="(col.Consultancy_Descr == 'PTA' ||col.Consultancy_Descr == 'PTA +Tympanometry +Speech Audiometry' ||col.Consultancy_Descr == 'PTA+ Tympanometry') && col.Status == 'Billed'">
                                                                 <a (click)="actionClick(col ,'PTA')">
                                                                     <i class="fa fa-arrow-right"></i>
                                                                     Update Outcome
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="col.Consultancy_Descr == 'Hearing Aid Trial'">
+                                                            <li *ngIf="col.Consultancy_Descr == 'Hearing Aid Trial' && col.Status == 'Billed'">
                                                                 <a (click)="actionClick(col ,'Hearing Aid Trial')">
                                                                     <i class="fa fa-arrow-right"></i>
                                                                     Update Outcome
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="col.Consultancy_Descr == 'Tinnitus Assessment & Counselling'">
+                                                            <li *ngIf="col.Consultancy_Descr == 'Tinnitus Assessment & Counselling' && col.Status == 'Billed'">
                                                                 <a (click)="actionClick(col ,'Tinnitus')">
                                                                     <i class="fa fa-arrow-right"></i>
                                                                     Update Outcome
@@ -199,10 +205,7 @@
                                                 <td nowrap><span [ngClass]="'badge bg-'+ getStatusWiseColor(col)" >{{col.Status }}</span></td>
                                                 <td>{{col.Patient}}</td>
                                                 <td style="font-weight: 800; width: 10%;"><a
-                                                        href="{{ 'tel:+91' + col.Mobile }}" ><i
-                                                            class="fa fa-fw fa-phone-square"></i> &nbsp;{{
-                                                        col.Mobile
-                                                        }}
+                                                        href="{{ 'tel:+91' + col.Mobile }}" ><i class="fa fa-fw fa-phone-square"></i> &nbsp;{{col.Mobile}}
                                                     </a></td>
                                                 <td>{{col.Cost_Cen_Name}}</td>
                                                 <td>{{col.Consultancy_Type}}</td>
@@ -1306,6 +1309,122 @@ style="text-align: center;"
             <span class="glyphicon glyphicon-refresh"></span> Update
         </button>
         <button type="button" (click)=" AssrModal = false" class="btn btn-info">
+            <span class="glyphicon glyphicon-remove"></span>Close
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!-- Speech Evaluation Outcome POP -->
+<p-dialog [header]="TitleHeder" [appendTo]="'body'" [visible]=" EvaluationModal" [closeOnEscape]="true" [autoZIndex]="true"
+    [closable]="false" [modal]="true" [responsive]="true"[minY]="70"  [style]="{ width: '75%', minWidth: '200px',minHeight: '500px'}"
+    [maximizable]="false" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="EvaluationFill" #EvaluationFill="ngForm" novalidate>
+            <h5 style="background: #c1c1c185; 
+                    border-top: 5px solid #3c8dbc;
+                    border-bottom: 1px solid #c6c6c6;
+                    margin-left: -8px;margin-right: -8px;">
+                <strong>PROVISIONAL DIAGNOSIS</strong>
+            </h5>
+            <div class="row">
+                <div class="col-sm-6">
+                    <h5 style="margin-top: 0px;font-size: 16px;"><strong>Speech and Language</strong> </h5>
+                        <p-dropdown [options]="Language_dropdownList" name="Speech" #Speech="ngModel"
+                            [(ngModel)]=" ObjEvaluation.Speech_And_Language_Id" *ngIf="RetriveEvlotion1st == false"
+                            [showClear]="true" [emptyFilterMessage]="'No List Found'" [filter]="true"
+                            filterBy="label,value.name" [resetFilterOnHide]="true"
+                            (onChange)="FinalStatus()" [placeholder]="'Choose List'"
+                            [virtualScroll]="true" itemSize="30"
+                            [ngClass]="{'clearance':  EvaluationSummited&& Speech.errors?.required}" required>
+                        </p-dropdown>
+                        <div class="label-t" *ngIf="RetriveEvlotion1st == true">{{ ObjEvaluation.Speech_And_Language ? ObjEvaluation.Speech_And_Language :'-'}}</div>
+                </div>            
+            </div>
+
+            <h5 style="background: #c1c1c185; 
+                            border-top: 5px solid #3c8dbc;
+                            border-bottom: 1px solid #c6c6c6;margin-bottom: -3px;">
+                <strong>{{TitleMiddle}}</strong>
+            </h5>
+
+            <div class="row">
+                <div class="col-sm-3" *ngIf="FinalList.length && RetriveEvlotion1st == false">
+                    <label class="control-label">Final Status</label>                  
+                    <p-dropdown [options]="FinalList" name="Final_Status" #Final_Status="ngModel"
+                        [(ngModel)]=" ObjEvaluation.Speech_Final_Status_Id" [showClear]="true" [emptyFilterMessage]="'No List Found'"
+                        [filter]="true" (onChange)="getAssessment()" filterBy="label,value.name"
+                        [resetFilterOnHide]="true" [placeholder]="'Choose List'" [virtualScroll]="true" itemSize="30"
+                        [ngClass]="{'clearance':  EvaluationSummited&& Final_Status.errors?.required}" required>
+                    </p-dropdown>
+                </div>
+                <div class="col-sm-3" *ngIf="RetriveEvlotion1st == true">
+                    <label class="control-label">Final Status</label>
+                    <div class="label-t">{{ ObjEvaluation.Final_Status ? ObjEvaluation.Final_Status :'-'}}</div>
+                </div>
+
+                <div class="col-sm-3" *ngIf="AssesmentList.length && RetriveEvlotion1st == false">
+                    <label class="control-label">Assessment Success</label>
+                    <p-dropdown [options]="AssesmentList" name="Assessment" #Assessment="ngModel"
+                        [(ngModel)]=" ObjEvaluation.Speech_Assessment_Success_ID" [showClear]="true" [emptyFilterMessage]="'No List Found'" [filter]="true"
+                        (onChange)="getpackeg()" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose List'"
+                        [virtualScroll]="true" itemSize="30"
+                        [ngClass]="{'clearance':  EvaluationSummited&& Assessment.errors?.required}" required>
+                    </p-dropdown>
+                </div>
+                <div class="col-sm-3" *ngIf="RetriveEvlotion1st == true">
+                    <label class="control-label">Assessment Success</label>
+                    <div class="label-t">{{ ObjEvaluation.Assessment_Success ? ObjEvaluation.Assessment_Success :'-'}}</div>
+                </div>
+
+                <div class="col-sm-3" *ngIf="PackegList.length && RetriveEvlotion1st == false">
+                    <label class="control-label">Package/Per Session</label>
+                    <p-dropdown [options]="PackegList" name="Package" #Package="ngModel"
+                        [(ngModel)]=" ObjEvaluation.Speech_Package_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'" [filter]="true"
+                        (onChange)="getObjection(ObjEvaluation.Speech_Package_ID)" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'"
+                        [virtualScroll]="true" itemSize="30"
+                        [ngClass]="{'clearance':  EvaluationSummited&& Package.errors?.required}" required>
+                    </p-dropdown>
+                </div>
+                <div class="col-sm-3" *ngIf="RetriveEvlotion1st == true">
+                    <label class="control-label">Package/Per Session</label>
+                    <div class="label-t">{{ ObjEvaluation.Package_Or_Per_Session ? ObjEvaluation.Package_Or_Per_Session :'-'}}</div>
+                </div>
+
+                <div class="col-sm-3" *ngIf="ObjectList.length && RetriveEvlotion2nd == false">
+                    <label class="control-label">Objection</label>
+                    <p-dropdown [options]="ObjectList" name="Objection" #Objection="ngModel"
+                        [(ngModel)]=" ObjEvaluation.Speech_Objection_ID" [showClear]="true" [emptyFilterMessage]="'No Item Found'"
+                        [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Choose'"
+                        [virtualScroll]="true" itemSize="30"
+                        [ngClass]="{'clearance':  EvaluationSummited&& Objection.errors?.required}" required>
+                    </p-dropdown>
+                </div>
+                <div class="col-sm-3" *ngIf="RetriveEvlotion2nd == true">
+                    <label class="control-label">Objection</label>
+                    <div class="label-t" >{{ ObjEvaluation.Objection ? ObjEvaluation.Objection :'-'}}</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <label class="control-label">Remarks</label>
+                    <textarea class="form-control" name="Remarks" #Remarks="ngModel"
+                        [(ngModel)]=" ObjEvaluation.Speech_Remarks" placeholder="Remarks" *ngIf="RetriveEvlotion2nd == false"
+                        [ngClass]="{'clearance':  EvaluationSummited&& Remarks.errors?.required}" required>
+                  </textarea>
+                <textarea class="form-control" *ngIf="RetriveEvlotion2nd == true" id="textArea"disabled>
+                    {{ObjEvaluation.Speech_Remarks ? ObjEvaluation.Speech_Remarks : '-'}}
+                </textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <p-footer>
+        <button class="btn btn-primary pull-right" (click)="UpdateEvaluation(EvaluationFill.form.valid)"
+            *ngIf="!RetriveEvlotion2nd">
+            <span class="glyphicon glyphicon-refresh"></span> Update
+        </button>
+        <button type="button" (click)=" EvaluationModal = false" class="btn btn-info">
             <span class="glyphicon glyphicon-remove"></span>Close
         </button>
     </p-footer>
