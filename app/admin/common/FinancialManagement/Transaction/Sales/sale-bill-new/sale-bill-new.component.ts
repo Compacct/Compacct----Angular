@@ -240,6 +240,9 @@ export class SaleBillNewComponent implements OnInit {
      this.AddTermList = [];
      this.ObjTerm = new Term();
     //  this.cleartotaltermamount();
+    this.ObjProductInfo = new ProductInfo();
+    this.ObjProductInfo.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.BatchNoList = [];
   
    }
    GetCustomer(){
@@ -273,6 +276,9 @@ export class SaleBillNewComponent implements OnInit {
      this.ObjSaleBillNew.Sub_Ledger_District = undefined;
      this.ObjSaleBillNew.Sub_Ledger_Country = undefined;
      this.Acceptance_Order_Date = new Date();
+     this.ObjProductInfo = new ProductInfo();
+     this.ObjProductInfo.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+     this.BatchNoList = [];
     if(this.ObjSaleBillNew.Sub_Ledger_ID) {
      const customerObj = this.CustomerList.filter(item=> item.value == this.ObjSaleBillNew.Sub_Ledger_ID);
     // console.log(vendorObj);
@@ -297,6 +303,8 @@ export class SaleBillNewComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.ChooseAddressList = data;
          // console.log('ChooseAddressList',this.ChooseAddressList)
+         this.ObjSaleBillNew.Choose_Address = data[0].Address_Caption;
+         this.ChooseAddressChange();
          if (this.buttonname != "Update") {
          this.GetAcceptanceOrderNo();
          }
@@ -587,7 +595,8 @@ export class SaleBillNewComponent implements OnInit {
   // FOR TABLE CALCULATION
   calculateamount(col){
     if(col.Qty){
-      col.Amount = Number(col.Qty * col.Rate).toFixed(2);
+      var wip = col.Weight_in_Pound ? col.Weight_in_Pound : 1;
+      col.Amount = Number((col.Qty * col.Rate * Number(wip)) + Number(col.Acompanish)).toFixed(2);
       col.Taxable_Amount = Number(col.Amount - col.Discount).toFixed(2);
       this.AfterDiscCalChangeForTable(col);
       this.calculategstamt();
@@ -838,6 +847,7 @@ export class SaleBillNewComponent implements OnInit {
     }
    }
    GetBatchNo() {
+    this.ObjProductInfo.Batch_Number = undefined;
     this.BatchNoList = [];
     const ProObj = {
       Product_ID : this.ObjProductInfo.Product_ID,
@@ -1138,6 +1148,7 @@ export class SaleBillNewComponent implements OnInit {
     // else {
      // console.log('this.AddProductDetails===',this.AddProductDetails)
       this.ObjProductInfo = new ProductInfo();
+      this.BatchNoList = [];
       this.ObjProductInfo.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       // this.ObjProductInfo.Godown_Id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
       // this.GetProductdetails();
@@ -1738,6 +1749,9 @@ export class SaleBillNewComponent implements OnInit {
       this.maindisabled = true;
       //this.ObjSaleBillNew.Choose_Address = "MAIN";
       // this.getreq();
+      this.ObjProductInfo.Product_ID = undefined;
+      this.ObjProductInfo.Product_Specification = undefined;
+      this.GetAllProductdetails();
       this.GetChooseAddress();
       this.ObjSaleBillNew.Choose_Address = "MAIN";
       this.DocDate = new Date(data[0].Doc_Date);
@@ -1969,7 +1983,7 @@ class ProductInfo {
   Product_ID: any;
   Product_Name: string;
   Product_Specification: any;
-  Batch_Number: string;
+  Batch_Number: any;
   Serial_No: any;
   HSN_No: any;
   No_Of_Bag: number;
