@@ -306,6 +306,10 @@ export class DoctorAppointmentComponent implements OnInit {
           this.EvaluationModal = true;
           this.TitleHeder = "SPEECH EVALUATION OUTCOME";
           this.TitleMiddle = "SPEECH & LANGUAGE ASSESSMENT RECOMMENDATION";
+          this.FinalList = [];
+          this.AssesmentList = [];
+          this.PackegList = [];
+          this.ObjectList = [];
         }, 300);
        this.EvaluationSummited = false;
        this.RetvAppoid = col.Appo_ID;
@@ -1405,10 +1409,12 @@ export class DoctorAppointmentComponent implements OnInit {
     this.AssesmentList = [];
     this.PackegList = [];
     this.ObjectList = [];
-    this.ObjEvaluation.Speech_Final_Status_Id = undefined;
+     if (this.counte !== 1) {
+       this.ObjEvaluation.Speech_Final_Status_Id = undefined;
     this.ObjEvaluation.Speech_Assessment_Success_ID = undefined;
     this.ObjEvaluation.Speech_Package_ID = undefined;
     this.ObjEvaluation.Speech_Objection_ID = undefined;
+      }  
     if (this.ObjEvaluation.Speech_And_Language_Id) {
      const obj = {
       "SP_String": "sp_Speech_Test",
@@ -1432,9 +1438,11 @@ export class DoctorAppointmentComponent implements OnInit {
     this.AssesmentList = [];
     this.PackegList = [];
     this.ObjectList = [];
+    if (this.counte !== 1) {
     this.ObjEvaluation.Speech_Assessment_Success_ID = undefined;
     this.ObjEvaluation.Speech_Package_ID = undefined;
     this.ObjEvaluation.Speech_Objection_ID = undefined;
+      }
     if (this.ObjEvaluation.Speech_Final_Status_Id ) {
      const obj = {
       "SP_String": "sp_Speech_Test",
@@ -1457,8 +1465,10 @@ export class DoctorAppointmentComponent implements OnInit {
   getpackeg() {
     this.PackegList = [];
     this.ObjectList = [];
-    this.ObjEvaluation.Speech_Package_ID = undefined;
-    this.ObjEvaluation.Speech_Objection_ID = undefined;
+     if (this.counte !== 1) {
+     this.ObjEvaluation.Speech_Package_ID = undefined;
+     this.ObjEvaluation.Speech_Objection_ID = undefined;
+      }
     if (this.ObjEvaluation.Speech_Assessment_Success_ID) {
      const obj = {
       "SP_String": "sp_Speech_Test",
@@ -1477,16 +1487,16 @@ export class DoctorAppointmentComponent implements OnInit {
     });  
   }
   }
-  getObjection(SpeechPackageID:any) {
+  getObjection() {
     this.ObjectList = [];
     if (this.counte !== 1) {
        this.ObjEvaluation.Speech_Objection_ID = undefined;
       }
-    if (SpeechPackageID) {
+    if (this.ObjEvaluation.Speech_Package_ID) {
      const obj = {
       "SP_String": "sp_Speech_Test",
       "Report_Name_String": "Get_Objection_dropdown",
-      "Json_Param_String": JSON.stringify([{Speech_Package_ID : SpeechPackageID}])
+      "Json_Param_String": JSON.stringify([{Speech_Package_ID : this.ObjEvaluation.Speech_Package_ID}])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
       if(data.length) {
@@ -1520,7 +1530,10 @@ export class DoctorAppointmentComponent implements OnInit {
             this.RetriveEvlotion1st = true;
             this.RetriveEvlotion2nd = false;
             this.ObjEvaluation = data[0];
-            this.getObjection(this.ObjEvaluation.Speech_Package_ID)
+            this.FinalStatus();
+            this.getAssessment();
+            this.getpackeg();
+            this.getObjection()
           }
         }
           else {
