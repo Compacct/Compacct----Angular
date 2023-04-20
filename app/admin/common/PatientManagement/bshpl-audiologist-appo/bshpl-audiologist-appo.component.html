@@ -100,7 +100,7 @@
                                                             <li>
                                                                 <a (click)="actionClick_Programming(col)">
                                                                     <i class="fa fa-exchange"></i>
-                                                                    Reprogramming Update 
+                                                                    Reprogramming & Other HL not known Tests 
                                                                 </a>
                                                             </li>
                                                          </ul>
@@ -191,7 +191,7 @@
                                                             <li *ngIf="col.Appo_Type == 'Reprogramming'">
                                                                 <a (click)="actionClick_ViewProgramming(col)">
                                                                     <i class="fa fa-eye"></i>
-                                                                    View Reprogramming Update 
+                                                                    View Reprogramming & Other HL not known Tests 
                                                                 </a>
                                                             </li>
                                                          </ul>
@@ -1101,7 +1101,7 @@
 </p-dialog>
 
 <p-dialog
-   [header]="'Reprogramming Update'"
+   [header]="'Reprogramming & Other test'"
    [appendTo]="'body'"
    [visible]="displayPopupPro"
    [closeOnEscape]="true"
@@ -1117,8 +1117,8 @@
 >   
    <form name="Programming" #Programming="ngForm" novalidate>
       <div class="row">
-         <div class="col-sm-6">
-            <label class="control-label">Comment<sup class="text-danger">*</sup></label>
+         <div class="col-sm-8">
+            <label class="control-label">Reprogramming or if any other test where type and degree of HL not known<sup class="text-danger">*</sup></label>
             <input class="form-control"
                 name="Audio_Note"
                 #Audio_Note="ngModel"
@@ -1141,7 +1141,7 @@
 </p-dialog>
 
 <p-dialog
-   [header]="'View Reprogramming'"
+   [header]="'Reprogramming & Other test'"
    [appendTo]="'body'"
    [visible]="displayPopupProView"
    [closeOnEscape]="true"
@@ -1156,8 +1156,8 @@
    [autoZIndex]="true"
 >   
     <div>
-        <div class="col-sm-6">
-            <label class="control-label">Comment</label>
+        <div class="col-sm-8">
+            <label class="control-label">Reprogramming or if any other test where type and degree of HL not known</label>
             <div class="label-t">{{objProgramming.Audio_Note ? objProgramming.Audio_Note : '-'}}</div>
         </div>
     </div>
