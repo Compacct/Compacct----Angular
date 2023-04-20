@@ -425,7 +425,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.BatchNoList = data;
-     this.ObjproductAdd.Batch_No = this.BatchNoList.length ? this.BatchNoList[0].Batch_No : undefined;
+     this.ObjproductAdd.Batch_No = this.BatchNoList.length ? this.BatchNoList[0].SLNO : undefined;
      this.GetLotNoteDesc();
      //console.log('Batch No ==', data)
     //  this.RMissueFormSubmit = false;
@@ -436,7 +436,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
     this.ObjproductAdd.Note_Description = undefined;
   if(this.ObjproductAdd.Batch_No) {
     const ctrl = this;
-    const lotObj = $.grep(ctrl.BatchNoList,function(item) {return item.Batch_No == ctrl.ObjproductAdd.Batch_No})[0];
+    const lotObj = $.grep(ctrl.BatchNoList,function(item) {return item.SLNO == ctrl.ObjproductAdd.Batch_No})[0];
     console.log(lotObj);
     //this.ObjproductAdd.ID = productObj.ID;
     this.ObjproductAdd.Note_Description = lotObj.Note_Description;
@@ -449,7 +449,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
     // console.log(this.ObjproductAdd.Batch_No)
     // var ProDes = this.ProductionlList.filter(item => item.Product_ID == this.ObjproductAdd.Product_ID);
     var yard = this.FGodownList.filter(el => Number(el.Godown_ID) === Number(this.objRMissue.F_Godown_ID));
-    var batch = this.BatchNoList.filter(el => el.Batch_No == this.ObjproductAdd.Batch_No);
+    var batch = this.BatchNoList.filter(el => el.SLNO == this.ObjproductAdd.Batch_No);
   var productObj = {
     //ID : this.ObjproductAdd.ID,
     Doc_No : this.AddProDetails.length ? this.AddProDetails[0].Doc_No : "A",
@@ -460,7 +460,8 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
     F_Cost_Cen_ID : this.objRMissue.F_Cost_Cen_ID,
     F_Godown_ID : this.objRMissue.F_Godown_ID,
     F_Godown_Name : yard[0].godown_name,
-    Batch_No : this.ObjproductAdd.Batch_No,
+    Batch_Sl_No : this.ObjproductAdd.Batch_No,
+    Batch_No : batch[0].Batch_No,
     Batch_Qty : batch[0].Batch_Qty,
     Qty :  this.ObjproductAdd.Qty,
     UOM : this.ObjproductAdd.UOM,
@@ -475,7 +476,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
    //console.log(item.Product_ID);
    //console.log(this.ObjaddbillForm.Product_ID);
    //console.log(item.Product_ID == this.ObjaddbillForm.Product_ID);
-   if(item.Product_ID == this.ObjproductAdd.Product_ID && item.Batch_No == this.ObjproductAdd.Batch_No) {
+   if(item.Product_ID == this.ObjproductAdd.Product_ID && item.Batch_Sl_No == this.ObjproductAdd.Batch_No) {
      //console.log('select item true');
      item.Qty = Number(item.Qty) + Number( productObj.Qty);
 
@@ -529,7 +530,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
   //       });
   //   return false;
   // }
-  const baychqtyarr = this.BatchNoList.filter(item=> item.Batch_No === this.ObjproductAdd.Batch_No);
+  const baychqtyarr = this.BatchNoList.filter(item=> item.SLNO === this.ObjproductAdd.Batch_No);
     if(baychqtyarr.length) {
       if(this.ObjproductAdd.Qty <=  baychqtyarr[0].Batch_Qty) {
         return true;
@@ -705,6 +706,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
           this.saveData.push({
             Doc_No: el.Doc_No,
             Product_ID: el.Product_ID,
+            Batch_Sl_No: el.Batch_Sl_No,
             Batch_No: el.Batch_No,
             Qty: el.Qty,
             UOM: el.UOM,

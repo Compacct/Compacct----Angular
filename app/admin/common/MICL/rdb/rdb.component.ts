@@ -673,9 +673,9 @@ export class RdbComponent implements OnInit {
 addClear(){
       this.ObjRdb1 = new RDB1();
       this.RDBFormSubmit = false;
-      if(this.buttonname === "Update") {
-      this.ProductList = [];
-      }
+      // if(this.buttonname === "Update") {
+      // this.ProductList = [];
+      // }
       this.addPurchaseListInput = false
       // this.addPurchaseListInputField = {}
       // console.log("addPurchaseList",this.addPurchaseList);
@@ -992,6 +992,7 @@ addClear(){
        this.PoOrderList = data;
       }
       this.ObjRdb.PO_Doc_No = data[0].PO_Doc_No;
+      this.getProductDetails(data[0].PO_Doc_No);
       this.PO_Doc_Date = new Date(data[0].PO_Doc_Date);
       this.dateDis = false;
       data.forEach(element => {
@@ -1243,7 +1244,7 @@ addClear(){
       this.getPoOrder(data[0].Sub_Ledger_ID);
       this.ObjRdb.PO_Doc_No = data[0].Doc_No;
       this.getProductDetails(data[0].Doc_No)
-      this.PO_Doc_Date = new Date(data[0].Doc_Date);
+      // this.PO_Doc_Date = new Date(data[0].Doc_Date);
       this.ObjRdb.Cost_Cen_ID = data[0].Cost_Cen_ID;
       this.getStockPoint(data[0].Cost_Cen_ID);
       this.ObjRdb.godown_id = this.StockList.length === 1 ? this.StockList[0].godown_id : undefined;

@@ -165,9 +165,23 @@ getReference(){
    })
 } 
 GetMaterialName(RefNO:any){
-  this.ObjRawMatRev = new RawMatRev();
+  // this.ObjRawMatRev = new RawMatRev();
   // this.ObjRawMatRev.PO_Qty = undefined;
   // this.ObjRawMatRev.Pending_PO_Qty = undefined;
+  this.ObjRawMatRev.SE_No_Date = undefined;
+  this.ObjRawMatRev.Batch_Lot_No = undefined;
+  this.ObjRawMatRev.Mode_Of_transport = undefined;
+  this.ObjRawMatRev.LR_No_Date = undefined;
+  this.ObjRawMatRev.Vehicle_No = undefined;
+  this.ObjRawMatRev.PO_Qty = undefined;
+  this.ObjRawMatRev.Pending_PO_Qty = undefined;
+  this.ObjRawMatRev.UOM = undefined;
+  this.ObjRawMatRev.Receive_Qty = undefined;
+  this.ObjRawMatRev.Batch_Lot_No = undefined;
+  this.ObjRawMatRev.Note_Description = undefined;
+  this.ObjRawMatRev.Godown_ID = undefined;
+  this.ObjRawMatRev.Purpose = undefined;
+  console.log('RefNO===',RefNO)
   if(RefNO){
      const FilterReferenceDataList = this.ReferenceDataList.find((el:any)=> el.Production_Ref_NO == RefNO)
      this.minFromDate = FilterReferenceDataList ?  new Date(FilterReferenceDataList.Doc_Date) : new Date('01/01/1990')
@@ -201,6 +215,14 @@ GetMaterialName(RefNO:any){
 
 }
 changeMaterialName(ProductID:any){
+  this.ObjRawMatRev.PO_Qty = undefined;
+  this.ObjRawMatRev.Pending_PO_Qty = undefined;
+  this.ObjRawMatRev.UOM = undefined;
+  this.ObjRawMatRev.Receive_Qty = undefined;
+  this.ObjRawMatRev.Batch_Lot_No = undefined;
+  this.ObjRawMatRev.Note_Description = undefined;
+  this.ObjRawMatRev.Godown_ID = undefined;
+  this.ObjRawMatRev.Purpose = undefined;
  if(ProductID){
     const FilterAllMaterialName = this.AllMaterialName.find((el:any) => Number(el.Product_ID) == Number(ProductID))
     console.log("FilterAllMaterialName",FilterAllMaterialName)
@@ -214,6 +236,7 @@ changeMaterialName(ProductID:any){
 // PARAMETER DETAILS
 GetParamDetailsforProduct(){
   this.ParameterList = [];
+  console.log("Refrence No====",this.ObjRawMatRev.Production_Ref_NO)
   if (this.ObjRawMatRev.Product_ID) {
     const FilterReferenceDataList = this.ReferenceDataList.find((el:any)=> el.Production_Ref_NO == this.ObjRawMatRev.Production_Ref_NO)
   const obj = {
@@ -276,6 +299,7 @@ AddRawMatRev(valid:any){
   console.log("valid",valid)
   this.RawMatRevFormSubmitted = true 
  if(valid && this.Getsameproduct()){
+  console.log("Refrence No add====",this.ObjRawMatRev.Production_Ref_NO)
   // if (Number(this.ObjRawMatRev.Receive_Qty)  <= Number(this.ObjRawMatRev.Pending_PO_Qty)) {
   const FilterReferenceDataList = this.ReferenceDataList.find((el:any)=> el.Production_Ref_NO == this.ObjRawMatRev.Production_Ref_NO)
   const FilterAllMaterialName = this.AllMaterialName.find((el:any) => Number(el.Product_ID) == Number(this.ObjRawMatRev.Product_ID) )
@@ -579,6 +603,7 @@ onReject() {
 }
 ConfirmSave(){
   this.ngxService.start();
+  console.log("Refrence No save====",this.ObjRawMatRev.Production_Ref_NO)
   const FilterReferenceDataList = this.ReferenceDataList.find((el:any)=> el.Production_Ref_NO == this.ObjRawMatRev.Production_Ref_NO)
     this.ObjRawMatRev.Doc_No = "A";
     this.ObjRawMatRev.Doc_Date = this.DateService.dateConvert(this.DocDate);

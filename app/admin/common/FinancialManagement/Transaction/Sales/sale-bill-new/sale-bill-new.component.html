@@ -37,6 +37,27 @@
       </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" key="se" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <table class="table table-bordered">
+            <tbody>
+            <tr *ngFor='let data of withoutbatchpro'>
+                <td nowrap>{{data}}</td>
+             </tr>
+            </tbody>
+        </table>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12">
+                <button type="button" pButton (click)="onReject()" label="ok" class="ui-button-danger" style="font-size: 20px;"></button>
+            </div>
+      </div>
+    </ng-template>
+</p-toast>
 
 <div class="row">
     <div class="col-xs-12">
@@ -529,13 +550,7 @@
                                                   [virtualScroll]="true"
                                                   itemSize="30"
                                                   #product="ngModel"
-                                                  [styleClass]="
-                                                  ProductInfoSubmitted && product.errors?.required
-                                                      ? 'clearance'
-                                                      : ''
-                                                  "
-                                                  [required]="true"
-                                                >
+                                                  [styleClass]="ProductInfoSubmitted && product.errors?.required ? 'clearance': ''"[required]="true">
                                                 </p-dropdown>
                                               </div>
                                               <div class="col-sm-2">
@@ -796,16 +811,65 @@
                                             <td *ngIf="databaseName =='K4C' || databaseName =='K4C_Demo'">Wt. In lb : {{obj.Weight_in_Pound}} <br> Accompanies : {{obj.Acompanish}}</td>
                                             <td>{{obj.Batch_Number ? obj.Batch_Number : '-'}}</td>
                                             <td>{{obj.Serial_No ? obj.Serial_No : '-'}}</td>
-                                            <td>{{obj.Qty}}</td>
+                                            <!-- <td>{{obj.Qty}}</td> -->
+                                            <td>
+                                                <input type="text"
+                                                  class="form-control"
+                                                  name="obj.Qty"
+                                                  [(ngModel)]="obj.Qty"
+                                                  (ngModelChange)="calculateamount(obj)"
+                                                  CompacctDigitonly="true"
+                                                  style="width: 71px;">
+                                            </td>
                                             <td>{{obj.UOM}}</td>
-                                            <td>{{obj.Rate}}</td>
+                                            <!-- <td>{{obj.Rate}}</td> -->
+                                            <td>
+                                                <input type="text"
+                                                  class="form-control"
+                                                  name="obj.Rate"
+                                                  [(ngModel)]="obj.Rate"
+                                                  (ngModelChange)="calculateamount(obj)"
+                                                  CompacctDigitonly="true"
+                                                  style="width: 71px;">
+                                            </td>
                                             <td>{{obj.Weight_in_Pound ? obj.Weight_in_Pound : '-'}}</td>
                                             <td>{{obj.Acompanish ? obj.Acompanish : '-'}}</td>
                                             <!--<td>{{obj.Expiry_Date ? obj.Expiry_Date : '-'}}</td> -->
                                             <td>{{obj.Amount}}</td>
-                                            <td>{{obj.Discount_Type ? obj.Discount_Type : '-'}}</td>
+                                            <!-- <td>{{obj.Discount_Type ? obj.Discount_Type : '-'}}</td>
                                             <td>{{obj.Discount_Type_Amount}}</td>
-                                            <td>{{obj.Discount}}</td>
+                                            <td>{{obj.Discount}}</td> -->
+                                            <td>
+                                                <select style="width: 71px;" class="form-control" 
+                                                 name="obj.DiscountType" 
+                                                 [(ngModel)]="obj.Discount_Type"
+                                                 (ngModelChange)="DiscChangeFortable(obj)">
+                                                   <option  [ngValue]="undefined">Select</option>
+                                                   <option value ="%">%</option>
+                                                   <option value ="AMT">AMT</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="text"
+                                                    class="form-control"
+                                                    name="obj.DiscountTypeAmt"
+                                                    [(ngModel)]="obj.Discount_Type_Amount"
+                                                    (ngModelChange)="AfterDiscCalChangeForTable(obj)"
+                                                    [disabled]="!obj.Discount_Type"
+                                                    placeholder="Discount"
+                                                    CompacctDigitonly="true"
+                                                    style="width: 71px;">
+                                            </td>
+                                            <td>
+                                                <input type="text"
+                                                  class="form-control"
+                                                  name="obj.DiscountAmt"
+                                                  [(ngModel)]="obj.Discount"
+                                                  placeholder="Discount AMT"
+                                                  CompacctDigitonly="true"
+                                                  style="width: 71px;"
+                                                  disabled>
+                                            </td>
                                             <td>{{obj.Taxable_Amount}}</td>
                                             <td>{{obj.CGST_Rate}}</td>
                                             <td>{{obj.CGST_Amount}}</td>

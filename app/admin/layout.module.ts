@@ -459,6 +459,8 @@ import { ProformaInvoiceComponent } from './common/MICL/proforma-invoice/proform
 import { SalesMisComponent } from './common/MICL/sales-mis/sales-mis.component';
 import { ViewOutcomesComponent } from "./common/PatientManagement/view-outcomes/view-outcomes.component";
 import { TransferTransectionComponent } from './common/Patna/transfer-transection/transfer-transection.component';
+import { HarbTxnRequisitionComponent } from './common/Harbauer/harb-txn-requisition/harb-txn-requisition.component';
+import { PurchaseOrderHarbauerTermsComponent } from './common/Harbauer/purchase-order-harbauer-terms/purchase-order-harbauer-terms.component';
 
 @NgModule({
   declarations: [
@@ -834,7 +836,9 @@ import { TransferTransectionComponent } from './common/Patna/transfer-transectio
     ProformaInvoiceComponent,
     SalesMisComponent,
     ViewOutcomesComponent,
-    TransferTransectionComponent
+    TransferTransectionComponent,
+    HarbTxnRequisitionComponent,
+    PurchaseOrderHarbauerTermsComponent
 
 
   ],

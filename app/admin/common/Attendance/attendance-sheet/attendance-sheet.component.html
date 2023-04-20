@@ -173,7 +173,7 @@
                             <button  class="btn btn-primary" (click)="getAttendanceDataforExistingmonth()" >Add Employee in Attendance Sheet</button>
                         </div> -->
                         <div class="col-sm-3" *ngIf="AllAttendanceData.length">
-                            <button  class="btn btn-warning"  (click)="ChekMonthlyProcAS()">Process Monthly Attendance Sheet</button>
+                            <button  class="btn btn-warning"  (click)="ChekMonthlyProcAS()" [disabled]="PMAttnSheet">Process Monthly Attendance Sheet</button>
                         </div>
                         <div class="col-sm-2" *ngIf="AllAttendanceData.length">
                             <button  class="btn btn-success"  (click)="exportoexcelattnsht('Attendance_Sheet')">Export To Excel</button>

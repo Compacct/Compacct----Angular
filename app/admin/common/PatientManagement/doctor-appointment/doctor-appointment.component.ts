@@ -96,6 +96,19 @@ export class DoctorAppointmentComponent implements OnInit {
   AssrObjectionList: any = [];
   AssrTrailSuccessList: any = [];
   TopTableAddRemove: boolean = false;
+
+  //Speech Evaluation Outcome Pop
+  EvaluationModal: boolean = false;
+  EvaluationSummited: boolean = false;
+  Language_dropdownList: any = [];
+  ObjEvaluation: Evaluation = new Evaluation();
+  FinalList: any = [];
+  AssesmentList: any = [];
+  PackegList: any = [];
+  ObjectList: any = [];
+  RetriveEvlotion1st:boolean =false;
+  RetriveEvlotion2nd: boolean = false;
+  GropAssementId: any = {};
   constructor(    
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -194,7 +207,7 @@ export class DoctorAppointmentComponent implements OnInit {
          this.TitleMiddle = "PTA RECOMMENDATION";
          this.TypeLossLeft = [];
          this.TypeLossRight = [];
-       },1000);
+       },300);
        this.testType = col.Consultancy_Descr;
        this.PTAFinalSaveSummited = false;
        this.RetvAppoid = col.Appo_ID;
@@ -215,7 +228,7 @@ export class DoctorAppointmentComponent implements OnInit {
          this.TitleMiddle = "HEARING AID TRIAL RECOMMENDATION";
          this.TypeLossLeft = [];
          this.TypeLossRight = [];
-       },1000);
+       },300);
        this.testType = col.Consultancy_Descr;
        this.PTAFinalSaveSummited = false;
        this.RetvAppoid = col.Appo_ID;
@@ -236,7 +249,7 @@ export class DoctorAppointmentComponent implements OnInit {
          this.TitleMiddle = "TINNITUS ASSESSMENT AND COUNSELLING RECOMMENDATION";
          this.TypeLossLeft = [];
        this.TypeLossRight = [];
-       },1000);
+       },300);
        this.testType = col.Consultancy_Descr;
        this.PTAFinalSaveSummited = false;
        this.RetvAppoid = col.Appo_ID;
@@ -256,7 +269,7 @@ export class DoctorAppointmentComponent implements OnInit {
          this.TitleHeder = "ASSR ";
          this.TitleMiddle = "ASSR RECOMMENDATION";
          this.TopTableAddRemove = false;
-       },1000);
+       },300);
        this.testType = col.Consultancy_Descr;
        this.AssrFinalSaveSummited = false;
        this.RetvAppoid = col.Appo_ID;
@@ -275,7 +288,7 @@ export class DoctorAppointmentComponent implements OnInit {
          this.TitleHeder = "BERA ";
          this.TitleMiddle = "BERA RECOMMENDATION";
          this.TopTableAddRemove = true;
-       },1000);
+       },300);
        this.testType = col.Consultancy_Descr;
        this.AssrFinalSaveSummited = false;
        this.RetvAppoid = col.Appo_ID;
@@ -285,6 +298,27 @@ export class DoctorAppointmentComponent implements OnInit {
        this.RetriveDisable2nd = false;
        this.DegreelossBera(this.testType);
        this.RetriveAssr(this.RetvAppoid); 
+       break;
+     
+     case 'Speech Evaluation':
+       this.ObjEvaluation = new Evaluation();
+        setTimeout(() => {
+          this.EvaluationModal = true;
+          this.TitleHeder = "SPEECH EVALUATION OUTCOME";
+          this.TitleMiddle = "SPEECH & LANGUAGE ASSESSMENT RECOMMENDATION";
+          this.FinalList = [];
+          this.AssesmentList = [];
+          this.PackegList = [];
+          this.ObjectList = [];
+        }, 300);
+       this.EvaluationSummited = false;
+       this.RetvAppoid = col.Appo_ID;
+       this.counte = 0;
+       this.RetriveEvlotion1st =false;
+       this.RetriveEvlotion2nd = false;
+       this.GropAssementId = {};
+       this.getPDiganosis();
+       this.RetriveEvlation(this.RetvAppoid)
        break;
      
      case 'CreateReport':
@@ -952,7 +986,7 @@ export class DoctorAppointmentComponent implements OnInit {
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "success",
-            summary: this.ObjPta.Group_Appo_ID,
+            summary: this.TitleHeder,
             detail: "Succesfully Update "
           });
           this.PTAFinalSaveSummited = false;
@@ -1342,7 +1376,7 @@ export class DoctorAppointmentComponent implements OnInit {
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "success",
-            summary: this.ObjAssr.Group_Appo_ID,
+            summary: this.TitleHeder,
             detail: "Succesfully Update "
           });
           this.AssrFinalSaveSummited = false;
@@ -1352,6 +1386,212 @@ export class DoctorAppointmentComponent implements OnInit {
         });
    } 
   }
+  //Speech Evaluation Outcome all function
+  getPDiganosis(){
+    this.Language_dropdownList = [];
+     const obj = {
+      "SP_String": "sp_Speech_Test",
+      "Report_Name_String": "Get_Speech_and_Language_dropdown",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Speech_And_Language,
+          element['value'] = element.Speech_And_Language_Id
+        });
+       this.Language_dropdownList = data;
+         //console.log("degri",data);
+      }
+    });     
+  }
+  FinalStatus() {
+    this.FinalList = [];
+    this.AssesmentList = [];
+    this.PackegList = [];
+    this.ObjectList = [];
+     if (this.counte !== 1) {
+       this.ObjEvaluation.Speech_Final_Status_Id = undefined;
+    this.ObjEvaluation.Speech_Assessment_Success_ID = undefined;
+    this.ObjEvaluation.Speech_Package_ID = undefined;
+    this.ObjEvaluation.Speech_Objection_ID = undefined;
+      }  
+    if (this.ObjEvaluation.Speech_And_Language_Id) {
+     const obj = {
+      "SP_String": "sp_Speech_Test",
+      "Report_Name_String": "Get_Speech_Final_Status_dropdown",
+      "Json_Param_String": JSON.stringify([{Speech_And_Language_Id : this.ObjEvaluation.Speech_And_Language_Id}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Final_Status,
+          element['value'] = element.Speech_Final_Status_Id
+
+        });
+       this.FinalList = data;
+        //console.table(data)
+      }
+    });  
+  }
+  }
+  getAssessment() {
+    this.AssesmentList = [];
+    this.PackegList = [];
+    this.ObjectList = [];
+    if (this.counte !== 1) {
+    this.ObjEvaluation.Speech_Assessment_Success_ID = undefined;
+    this.ObjEvaluation.Speech_Package_ID = undefined;
+    this.ObjEvaluation.Speech_Objection_ID = undefined;
+      }
+    if (this.ObjEvaluation.Speech_Final_Status_Id ) {
+     const obj = {
+      "SP_String": "sp_Speech_Test",
+      "Report_Name_String": "Get_Assessment_Success_dropdown",
+      "Json_Param_String": JSON.stringify([{Speech_Final_Status_Id  : this.ObjEvaluation.Speech_Final_Status_Id }])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Assessment_Success,
+          element['value'] = element.Speech_Assessment_Success_ID
+
+        });
+       this.AssesmentList = data;
+        //console.table(data)
+      }
+    });  
+  }
+  }
+  getpackeg() {
+    this.PackegList = [];
+    this.ObjectList = [];
+     if (this.counte !== 1) {
+     this.ObjEvaluation.Speech_Package_ID = undefined;
+     this.ObjEvaluation.Speech_Objection_ID = undefined;
+      }
+    if (this.ObjEvaluation.Speech_Assessment_Success_ID) {
+     const obj = {
+      "SP_String": "sp_Speech_Test",
+      "Report_Name_String": "Get_Package_Or_Session_dropdown",
+      "Json_Param_String": JSON.stringify([{Speech_Assessment_Success_ID : this.ObjEvaluation.Speech_Assessment_Success_ID}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Package_Or_Per_Session,
+          element['value'] = element.Speech_Package_ID
+        });
+       this.PackegList = data;
+        //console.table(data)
+      }
+    });  
+  }
+  }
+  getObjection() {
+    this.ObjectList = [];
+    if (this.counte !== 1) {
+       this.ObjEvaluation.Speech_Objection_ID = undefined;
+      }
+    if (this.ObjEvaluation.Speech_Package_ID) {
+     const obj = {
+      "SP_String": "sp_Speech_Test",
+      "Report_Name_String": "Get_Objection_dropdown",
+      "Json_Param_String": JSON.stringify([{Speech_Package_ID : this.ObjEvaluation.Speech_Package_ID}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Objection,
+          element['value'] = element.Speech_Objection_ID
+        });
+       this.ObjectList = data;
+        //console.table(data)
+      }
+    });  
+  }
+  }
+  RetriveEvlation(RtvAppoId: any) {
+    this.RetriveEvlotion1st =false;
+    this.RetriveEvlotion2nd =false;
+    const FinalCount = this.counte;
+    if(RtvAppoId && FinalCount<=2) {
+     const obj = {
+      "SP_String": "sp_Speech_Test",
+      "Report_Name_String": "Retrieve_Speech_Deatils",
+      "Json_Param_String": JSON.stringify([{Appo_ID: RtvAppoId}])
+    }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        // console.log("EDitdata", data);
+        if (data.length) {
+          this.ObjEvaluation = data[0];
+          this.RetriveEvlotion1st = true;
+          this.RetriveEvlotion2nd = true;
+          if (FinalCount === 1) {
+            this.RetriveEvlotion1st = true;
+            this.RetriveEvlotion2nd = false;
+            this.ObjEvaluation = data[0];
+            this.FinalStatus();
+            this.getAssessment();
+            this.getpackeg();
+            this.getObjection()
+          }
+        }
+          else {
+            this.Evolation2nd(RtvAppoId)
+          }
+      })
+      } 
+  }
+  Evolation2nd(RtvAppoId2nd:any) {
+   if(RtvAppoId2nd) {
+     const obj = {
+      "SP_String": "sp_Speech_Test",
+      "Report_Name_String": "Get_Sppech_Assessment_Type",
+      "Json_Param_String": JSON.stringify([{Appo_ID: RtvAppoId2nd}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+       //console.log("EDitdata22nd", data);
+      if (data.length) {
+        this.GropAssementId = data[0]
+        if (data[0].Assessment === "SUBSEQUENT") {
+          this.counte++;
+          this.RetriveEvlation(data[0].Group_Appo_ID);        
+        }
+         }
+        })
+      } 
+  }
+  UpdateEvaluation(valid:any) {
+    this.EvaluationSummited = true
+    if (!valid) {
+     return
+    }
+    else {
+      this.ObjEvaluation.Appo_ID = this.RetvAppoid;
+      this.ObjEvaluation.Assessment = this.GropAssementId.Assessment;
+      this.ObjEvaluation.Group_Appo_ID = this.GropAssementId.Group_Appo_ID;
+      const obj = {
+        "SP_String": "sp_Speech_Test",
+        "Report_Name_String": 'Update_Speech_And_Language_Deatils',
+        "Json_Param_String": JSON.stringify([this.ObjEvaluation]) 
+       }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        if (data[0].Column1){
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: 'Speech Evaluation Outcome',
+            detail: "Succesfully Update "
+          });
+          this.EvaluationSummited = false;
+          this.ObjEvaluation = new Evaluation();
+          this.EvaluationModal = false;
+          }
+        }); 
+   } 
+  }
+   
 }
 class TherapAttendance {
   Therapy_Goal:any;
@@ -1405,7 +1645,6 @@ class Pta{
   PTA_Remarks : any;                     
   PTA_Support_Convert : any;             
 }
-
 class Assr{
   Appo_ID: any;
   Group_Appo_ID: any;
@@ -1448,5 +1687,16 @@ class Assr{
   PTA_Left : any;                        
   PTA_Remarks : any;                     
   PTA_Support_Convert : any;
+}
+class Evaluation{
+  Appo_ID: any;
+  Speech_And_Language_Id: any;
+  Speech_Objection_ID: any;
+  Speech_Final_Status_Id :any;           
+  Speech_Assessment_Success_ID :any;    
+  Speech_Package_ID :any;                         
+  Speech_Remarks :any;                  
+  Assessment :any;         
+  Group_Appo_ID  :any;                
 }
 

@@ -299,7 +299,7 @@ export class CompacctHearingThresholdChartComponent implements AfterViewInit {
           ctrl.context.setLineDash([0, 0]);
           ctrl.context.lineWidth = 1;
           ctrl.context.moveTo(elemX, elemY);
-          ctrl.context.strokeStyle = "red";
+          ctrl.context.strokeStyle = "green";
           ctrl.context.lineTo(x - 7, y - 7);
           ctrl.context.stroke();
           ctrl.context.closePath();
@@ -307,9 +307,9 @@ export class CompacctHearingThresholdChartComponent implements AfterViewInit {
           ctrl.context.beginPath();
           ctrl.context.setLineDash([0, 0]);
           ctrl.context.lineWidth = 1;
-          ctrl.context.moveTo(elemX, elemY);
+          ctrl.context.moveTo(elemX , elemY - 4);
           ctrl.context.strokeStyle = "red";
-          ctrl.context.lineTo(x - 2, y + 2);
+          ctrl.context.lineTo(x, y - 4 );
           ctrl.context.stroke();
           ctrl.context.closePath();
         }
@@ -320,14 +320,14 @@ export class CompacctHearingThresholdChartComponent implements AfterViewInit {
           ctrl.context.beginPath();
           ctrl.context.setLineDash([1, 3]);
           ctrl.context.moveTo(elemX, elemY);
-          ctrl.context.strokeStyle = "red";
+          ctrl.context.strokeStyle = "blue";
           ctrl.context.lineTo(x - 7, y - 7);
           ctrl.context.stroke();
           ctrl.context.closePath();
         } else {
           ctrl.context.beginPath();
           ctrl.context.setLineDash([1, 3]);
-          ctrl.context.strokeStyle = "red";
+          ctrl.context.strokeStyle = "black";
           ctrl.context.moveTo(elemX, elemY);
           ctrl.context.lineTo(x - 2, y + 2);
           ctrl.context.stroke();
