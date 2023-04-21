@@ -126,8 +126,8 @@ export class HREmployeeMasterComponent implements OnInit {
     this.BloodGroupList = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
     this.SalaryPaidList = ["Bank", "Cheque", "Cash"];
     this.physicallyChallanged = ["YES", "NO"];
-    this.weakofflist = ["MONDAY", "TUESDAY", "WEDNESDAY", "THRUSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
-    this.weakofflist2 = ["MONDAY", "TUESDAY", "WEDNESDAY", "THRUSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+    this.weakofflist = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+    this.weakofflist2 = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
     // this.Statuslist = ["WORKING-REJOIN", "WORKING-PROVISION", "WORKING-CASUAL", "WORKING-CONFIRMED", "WORKING-PARTTIME", "RETIRED", "LEFT", "SUSPENDED", "ABSCONDED", "PROBATION"];
     this.Statuslist = ["TRAINEE", "PROBATION", "PERMANENT", "RESIGNED", "SUSPENDED", "ABSCONDED"];
     this.getDatabase();

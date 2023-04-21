@@ -201,164 +201,121 @@
 [maximizable]="true"
 [baseZIndex]="10000"
 >
-    <!-- <div class="no-padding">
-        <p-table [value]="LIviewList" #dt1
-        [paginator]="true" 
-        [rows]="100" 
-        [rowHover]="true" 
-        [autoLayout]="true" 
-        sortMode="multiple" 
-        [rowsPerPageOptions]="[100,200,300]" 
-        [rowHover]="true" 
-        [globalFilterFields]='DynamicLIviewList'>
-        <ng-template pTemplate="caption">
-            <div class="row">
-                <div class="col-sm-6 pull-right" style="text-align: right">
-                    <div class="col-sm-6">  
-                   </div>
-                    <div class="col-sm-6">
-                       <input type="text" 
-                       pInputText 
-                       size="50"
-                       style="margin-top:25px;"
-                       placeholder="Search" 
-                       (input)="dt1.filterGlobal($event.target.value, 'contains')" 
-                       class="searchInput form-control">
-                    </div>
-                  
-               </div>
+        <h3>Buyer's Details/Challan to:</h3>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Buyer's</label>
+                <div class="label-t">{{LIviewData?.Sub_Ledger_Name ? LIviewData?.Sub_Ledger_Name : '-' }}</div>
             </div>
+            <!-- <div class="col-sm-4">
+                <label class="control-label">Choose Address</label>
+                <div class="label-t">{{LIviewData?.Choose_Address}}</div>
+            </div> -->
 
-        </ng-template>
-            <ng-template pTemplate="header">
-                <tr >
-                    <th *ngFor="let option of DynamicLIviewList" nowrap="nowrap">{{option.replaceAll('_',' ')}}</th>
-                 </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-col>
-                <tr>
-                    <ng-container *ngFor="let option of DynamicLIviewList">
-                        <td >{{col[option]}}</td>
-                    </ng-container>
-                </tr>
-                
-            </ng-template>
-            <ng-template pTemplate="paginatorright" let-state>
-                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
-            </ng-template>
-        </p-table>
-    </div> -->
-    <h3>Buyer's Details/Challan to:</h3>
+            <div class="col-sm-4">
+                <label class="control-label">Address </label>
+                <div class="label-t">{{LIviewData?.Sub_Ledger_Address_1 ? LIviewData?.Sub_Ledger_Address_1 : '-' }}</div>
+
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">District </label>
+                <div class="label-t">{{LIviewData?.Sub_Ledger_District ? LIviewData?.Sub_Ledger_District : '-' }}</div>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">State </label>
+                <div class="label-t">{{LIviewData?.Sub_Ledger_State ? LIviewData?.Sub_Ledger_State : '-' }}</div>
+
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">PIN </label>
+                <div class="label-t">{{LIviewData?.Sub_Ledger_Pin ? LIviewData?.Sub_Ledger_Pin : '-' }}</div>
+
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">GST No </label>
+                <div class="label-t">{{LIviewData?.Sub_Ledger_GST_No ? LIviewData?.Sub_Ledger_GST_No : '-' }}</div>
+
+            </div>
+        </div>
+        <div class="clearfix"></div>
+<br>
+        <h3>CostCente Details :</h3>
             <div class="form-group">
-                <div class="col-sm-4">
-                    <label class="control-label">Buyer's</label>
-                    <div class="label-t">{{LIviewData?.Sub_Ledger_Name ? LIviewData?.Sub_Ledger_Name : '-' }}</div>
-                </div>
-                <!-- <div class="col-sm-4">
-                    <label class="control-label">Choose Address</label>
-                    <div class="label-t">{{LIviewData?.Choose_Address}}</div>
-                </div> -->
-
-                <div class="col-sm-4">
-                    <label class="control-label">Address </label>
-                    <div class="label-t">{{LIviewData?.Sub_Ledger_Address_1 ? LIviewData?.Sub_Ledger_Address_1 : '-' }}</div>
+                <div class="col-sm-6">
+                    <label class="control-label">CostCenter </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_Name ? LIviewData?.Cost_Cen_Name : '-' }}</div>
 
                 </div>
-                <div class="col-sm-4">
-                    <label class="control-label">District </label>
-                    <div class="label-t">{{LIviewData?.Sub_Ledger_District ? LIviewData?.Sub_Ledger_District : '-' }}</div>
+                <div class="col-sm-6">
+                    <label class="control-label">Address1 </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_Address1 ? LIviewData?.Cost_Cen_Address1 : '-' }}</div>
 
                 </div>
             </div>
             <div class="form-group">
-                <div class="col-sm-4">
+                <div class="col-sm-6">
+                    <label class="control-label">Address2 </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_Address2 ? LIviewData?.Cost_Cen_Address2 : '-' }}</div>
+
+                </div>
+                <div class="col-sm-6">
                     <label class="control-label">State </label>
-                    <div class="label-t">{{LIviewData?.Sub_Ledger_State ? LIviewData?.Sub_Ledger_State : '-' }}</div>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_State ? LIviewData?.Cost_Cen_State : '-' }}</div>
 
                 </div>
-                <div class="col-sm-4">
-                    <label class="control-label">PIN </label>
-                    <div class="label-t">{{LIviewData?.Sub_Ledger_Pin ? LIviewData?.Sub_Ledger_Pin : '-' }}</div>
-
-                </div>
-                <div class="col-sm-4">
-                    <label class="control-label">GST No </label>
-                    <div class="label-t">{{LIviewData?.Sub_Ledger_GST_No ? LIviewData?.Sub_Ledger_GST_No : '-' }}</div>
-
-                </div>
-            </div> 
-            <div class="clearfix"></div>
-    <br>
-            <h3>CostCente Details :</h3>
-                <div class="form-group">
-                    <div class="col-sm-4">
-                        <label class="control-label">CostCenter </label>
-                        <div class="label-t">{{LIviewData?.Cost_Cen_Name ? LIviewData?.Cost_Cen_Name : '-' }}</div>
-    
-                    </div>
-                    <div class="col-sm-4">
-                        <label class="control-label">Address1 </label>
-                        <div class="label-t">{{LIviewData?.Cost_Cen_Address1 ? LIviewData?.Cost_Cen_Address1 : '-' }}</div>
-    
-                    </div>
-                    <div class="col-sm-4">
-                        <label class="control-label">Address2 </label>
-                        <div class="label-t">{{LIviewData?.Cost_Cen_Address2 ? LIviewData?.Cost_Cen_Address2 : '-' }}</div>
-    
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-3">
-                        <label class="control-label">State </label>
-                        <div class="label-t">{{LIviewData?.Cost_Cen_State ? LIviewData?.Cost_Cen_State : '-' }}</div>
-    
-                    </div>
-                    <div class="col-sm-3">
-                        <label class="control-label">GST No </label>
-                        <div class="label-t">{{LIviewData?.Cost_Cen_GST_No ? LIviewData?.Cost_Cen_GST_No : '-' }}</div>
-    
-                    </div>
-                    <div class="col-sm-3">
-                        <label class="control-label">Location </label>
-                        <div class="label-t">{{LIviewData?.Cost_Cen_Location ? LIviewData?.Cost_Cen_Location : '-' }}</div>
-    
-                    </div>
-                    <div class="col-sm-3">
-                        <label class="control-label">PIN </label>
-                        <div class="label-t">{{LIviewData?.Cost_Cen_PIN ? LIviewData?.Cost_Cen_PIN : '-' }}</div>
-    
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-3">
-                        <label class="control-label">District </label>
-                        <div class="label-t">{{LIviewData?.Cost_Cen_District ? LIviewData?.Cost_Cen_District : '-' }}</div>
-    
-                    </div>
-                    <div class="col-sm-3">
-                        <label class="control-label">Country </label>
-                        <div class="label-t">{{LIviewData?.Cost_Cen_Country ? LIviewData?.Cost_Cen_Country : '-' }}</div>
-    
-                    </div>
-                    <div class="col-sm-3">
-                        <label class="control-label">Mobile </label>
-                        <div class="label-t">{{LIviewData?.Cost_Cen_Phone ? LIviewData?.Cost_Cen_Phone : '-' }}</div>
-    
-                    </div>
-                    <div class="col-sm-3">
-                        <label class="control-label">Phone </label>
-                        <div class="label-t">{{LIviewData?.Cost_Cen_Phone ? LIviewData?.Cost_Cen_Phone : '-' }}</div>
-    
-                    </div>
-                </div>
+            </div>
             <div class="form-group">
-                <div class="col-sm-3">
+                <div class="col-sm-6">
+                    <label class="control-label">GST No </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_GST_No ? LIviewData?.Cost_Cen_GST_No : '-' }}</div>
+
+                </div>
+                <div class="col-sm-6">
+                    <label class="control-label">Location </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_Location ? LIviewData?.Cost_Cen_Location : '-' }}</div>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="control-label">PIN </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_PIN ? LIviewData?.Cost_Cen_PIN : '-' }}</div>
+
+                </div>
+                <div class="col-sm-6">
+                    <label class="control-label">District </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_District ? LIviewData?.Cost_Cen_District : '-' }}</div>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="control-label">Country </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_Country ? LIviewData?.Cost_Cen_Country : '-' }}</div>
+
+                </div>
+                <div class="col-sm-6">
+                    <label class="control-label">Mobile </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_Phone ? LIviewData?.Cost_Cen_Phone : '-' }}</div>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="control-label">Phone </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_Phone ? LIviewData?.Cost_Cen_Phone : '-' }}</div>
+
+                </div>
+                <div class="col-sm-6">
                     <label class="control-label">Email </label>
                     <div class="label-t">{{LIviewData?.Cost_Cen_Email ? LIviewData?.Cost_Cen_Email : '-' }}</div>
-
+    
                 </div>
             </div>
-        <br>
+    <br>
     <div class="clearfix"></div>
     <br>
 <div class="table-responsive no-padding">

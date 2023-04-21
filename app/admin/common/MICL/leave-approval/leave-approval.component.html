@@ -395,11 +395,11 @@
     <div class="form-group">
     <div class="col-sm-4"> 
         <label class="control-label">Approved From Date  <sup class="text-danger">*</sup></label>
-        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Apply_From_Date'></ejs-datepicker>
+        <ejs-datepicker [zIndex]="99999" [format]="'dd/MMM/yyyy'" [(value)]='Issued_From_Date'></ejs-datepicker>
     </div>
     <div class="col-sm-4">
         <label class="control-label">Approved To Date  <sup class="text-danger">*</sup></label>
-        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Apply_To_Date'></ejs-datepicker>
+        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Issued_To_Date'></ejs-datepicker>
     </div> 
     <div class="col-sm-4" *ngIf="Bussidisabled && !Reportdisabled">
         <label class="control-label">Remarks of Approval 2  <sup class="text-danger">*</sup></label>

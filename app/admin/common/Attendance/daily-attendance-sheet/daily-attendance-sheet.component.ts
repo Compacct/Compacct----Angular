@@ -57,6 +57,8 @@ export class DailyAttendanceSheetComponent implements OnInit {
   databaseName:any;
   recaptureSpinner = false;
   Recapture:any;
+  CheckFinalizedOrNot:any;
+  SaveButtonDisabled:boolean = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -102,6 +104,27 @@ export class DailyAttendanceSheetComponent implements OnInit {
       //  })
     })
   }
+  getdataforbuttondisabled(){
+    this.CheckFinalizedOrNot = undefined;
+    // this.SaveButtonDisabled = false;
+    var date = new Date(this.Daily_Atten_Date);
+    var month = date.getMonth() + 1;
+    // console.log('month>>>',month)
+    var year = date.getFullYear();
+    // console.log('year>>>',year)
+    var firstDate = year+"-"+month+"-"+"01";
+    // console.log('firstdate>>>',this.DateService.dateConvert(new Date(firstdate)))
+    const obj = {
+      "SP_String": "SP_Process_Monthly_Attendance_Sheet",
+      "Report_Name_String": "Check Finalized Or Not",
+      "Json_Param_String": JSON.stringify([{StartDate : this.DateService.dateConvert(new Date(firstDate))}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.CheckFinalizedOrNot = data ? data[0].Column1 : undefined;
+      this.SaveButtonDisabled = this.CheckFinalizedOrNot === "Finalized" ? true : false;
+    })
+  }
    GetEmpData(){
     this.seachSpinner = true;
     this.checkbuttonname = undefined;
@@ -142,6 +165,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
         }
       })
       this.TotalLeaveType();
+      this.getdataforbuttondisabled();
      })
   }
   GetReCaptureData(){
@@ -185,6 +209,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
         }
       })
       this.TotalLeaveType();
+      this.getdataforbuttondisabled();
      })
   }
   // DISTINCT & FILTER
@@ -222,59 +247,59 @@ export class DailyAttendanceSheetComponent implements OnInit {
   TotalLeaveType(){
     var present = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "P")
     this.Total_Present = present.length ? present.length : undefined;
-    console.log("this.Total_Present===",this.Total_Present);
+    // console.log("this.Total_Present===",this.Total_Present);
 
-    var pwoff = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "PWO")
+    var pwoff = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "PWO" || item.Atten_Type_ID === "PW")
     this.Total_Present_in_Weekly_Off = pwoff.length ? pwoff.length : undefined;
-    console.log("this.Total_Present_in_Weekly_Off===",this.Total_Present_in_Weekly_Off);
+    // console.log("this.Total_Present_in_Weekly_Off===",this.Total_Present_in_Weekly_Off);
 
     var pph = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "PPH")
     this.Total_Present_in_Public_Holiday = pph.length ? pph.length : undefined;
-    console.log("this.Total_Present_in_Public_Holiday===",this.Total_Present_in_Public_Holiday);
+    // console.log("this.Total_Present_in_Public_Holiday===",this.Total_Present_in_Public_Holiday);
 
     var holiday = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "HL")
     this.Total_Holiday = holiday.length ? holiday.length : undefined;
-    console.log("this.Total_Holiday===",this.Total_Holiday);
+    // console.log("this.Total_Holiday===",this.Total_Holiday);
 
     var pholiday = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "PH")
     this.Total_Public_Holiday = pholiday.length ? pholiday.length : undefined;
-    console.log("this.Total_Public_Holiday===",this.Total_Public_Holiday);
+    // console.log("this.Total_Public_Holiday===",this.Total_Public_Holiday);
 
     var woff = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "WO")
     this.Total_Weekly_Off = woff.length ? woff.length : undefined;
-    console.log("this.Total_Weekly_Off===",this.Total_Weekly_Off);
+    // console.log("this.Total_Weekly_Off===",this.Total_Weekly_Off);
     
     var sickle = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "SL")
     this.Total_Sick_Leave = sickle.length ? sickle.length : undefined;
-    console.log("this.Total_Sick_Leave===",this.Total_Sick_Leave);
+    // console.log("this.Total_Sick_Leave===",this.Total_Sick_Leave);
 
     var casualle = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "CL")
     this.Total_Casual_Leave = casualle.length ? casualle.length : undefined;
-    console.log("this.Total_Casual_Leave===",this.Total_Casual_Leave);
+    // console.log("this.Total_Casual_Leave===",this.Total_Casual_Leave);
 
     var prle = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "PL")
     this.Total_Prevlage_Leave = prle.length ? prle.length : undefined;
-    console.log("this.Total_Prevlage_Leave===",this.Total_Prevlage_Leave);
+    // console.log("this.Total_Prevlage_Leave===",this.Total_Prevlage_Leave);
 
     var comoff = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "CO")
     this.Total_Compensatory_Off = comoff.length ? comoff.length : undefined;
-    console.log("this.Total_Compensatory_Off===",this.Total_Compensatory_Off);
+    // console.log("this.Total_Compensatory_Off===",this.Total_Compensatory_Off);
 
     var absent = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "A")
     this.Total_Absent = absent.length ? absent.length : undefined;
-    console.log("this.Total_Absent===",this.Total_Absent);
+    // console.log("this.Total_Absent===",this.Total_Absent);
 
     var leavewthoutpay = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "LWP")
     this.Leave_Without_Pay = leavewthoutpay.length ? leavewthoutpay.length : undefined;
-    console.log("this.Leave_Without_Pay===",this.Leave_Without_Pay);
+    // console.log("this.Leave_Without_Pay===",this.Leave_Without_Pay);
 
     var left = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "L")
     this.Total_Left = left.length ? left.length : undefined;
-    console.log("this.Total_Left===",this.Total_Left);
+    // console.log("this.Total_Left===",this.Total_Left);
 
     var late = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "LT")
     this.Total_Late = late.length ? late.length : undefined;
-    console.log("this.Total_Late===",this.Total_Late);
+    // console.log("this.Total_Late===",this.Total_Late);
   }
   getAttenTypedropdown(atnid){
     const obj = {
@@ -323,7 +348,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
         });
         this.AttendanceTypeList = atdata;
       }
-      else if (atnid == "PWO" || atnid == "PPH") {
+      else if (atnid == "PWO" || atnid == "PW" || atnid == "PPH") {
         this.AttendanceTypeList = attntypelist;
       }
       else {
