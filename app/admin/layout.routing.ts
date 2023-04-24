@@ -365,6 +365,7 @@ import { TransferTransectionComponent } from './common/Patna/transfer-transectio
 import { HarbTxnRequisitionComponent } from "./common/Harbauer/harb-txn-requisition/harb-txn-requisition.component";
 import { PurchaseOrderHarbauerTermsComponent } from './common/Harbauer/purchase-order-harbauer-terms/purchase-order-harbauer-terms.component';
 import { AudiologistTargetComponent } from './common/PatientManagement/Audiologist/audiologist-target/audiologist-target.component';
+import { CommonPurchaseBillGstComponent } from './common/FinancialManagement/Transaction/Purchase/common-purchase-bill-gst/common-purchase-bill-gst.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2773,6 +2774,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: AudiologistTargetComponent,
         data: {
           title: 'Audiologist Target'
+    }
+    },
+    {
+      path: 'Common_Purchase_Bill_GST',
+        component: CommonPurchaseBillGstComponent,
+        data: {
+          title: 'Purchase Bill GST'
     }
     },
     /*{
