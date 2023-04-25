@@ -68,10 +68,10 @@
                                                 <th nowrap colspan="5" style="text-align: center; color: black !important;
                                                 background-color: #9ab8cb !important; border: 1px solid black !important;">AS PER LETTER OF INTENT
                                                 </th>
-                                                <th nowrap colspan="2" style="text-align: center; color: black !important;
+                                                <th nowrap colspan="3" style="text-align: center; color: black !important;
                                                 background-color: #e5b694 !important; border: 1px solid black !important;">AS PER PROFORMA INVOICE
                                                 </th>
-                                                <th nowrap colspan="2" style="text-align: center; color: black !important;
+                                                <th nowrap colspan="3" style="text-align: center; color: black !important;
                                                 background-color: #f6d889 !important; border: 1px solid black !important;">AS PER SALES ORDER
                                                 </th>
                                                 <th nowrap colspan="2" style="text-align: center; color: black !important;
@@ -100,11 +100,15 @@
                                                 background-color: #e5b694 !important; border: 1px solid black !important;">Qty</th>
                                                 <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #e5b694 !important; border: 1px solid black !important;">Amount</th>
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #e5b694 !important; border: 1px solid black !important;">Pending Qty</th>
 
                                                 <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #f6d889 !important; border: 1px solid black !important;">Qty</th>
                                                 <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #f6d889 !important; border: 1px solid black !important;">Amount</th>
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #f6d889 !important; border: 1px solid black !important;">Pending Qty</th>
 
                                                 <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #9ec990 !important; border: 1px solid black !important;">Qty</th>
@@ -161,8 +165,10 @@
                                                 <td nowrap style="text-align: center;">{{col.LI_Amount}}</td>
                                                 <td nowrap style="text-align: center;"><p (click)="GetPI(col)">{{col.PI_Qty}}</p></td>
                                                 <td nowrap style="text-align: center;"><p (click)="GetPI(col)">{{col.PI_Total_Amount}}</p></td>
+                                                <td nowrap style="text-align: center;">{{col.Pending_PI_Qty}}</td>
                                                 <td nowrap style="text-align: center;"><p (click)="GetSO(col)">{{col.SO_Qty}}</p></td>
                                                 <td nowrap style="text-align: center;"><p (click)="GetSO(col)">{{col.SO_Total_Amount}}</p></td>
+                                                <td nowrap style="text-align: center;">{{col.Pending_SO_Qty}}</td>
                                                 <td nowrap style="text-align: center;"><p (click)="GetOC(col)">{{col.SC_Qty}}</p></td>
                                                 <td nowrap style="text-align: center;"><p (click)="GetOC(col)">{{col.SC_Total_Amount}}</p></td>
                                                 <td nowrap style="text-align: center;"><p (click)="GetSB(col)">{{col.SB_Qty}}</p></td>

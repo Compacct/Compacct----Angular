@@ -1244,7 +1244,7 @@ addClear(){
       this.getPoOrder(data[0].Sub_Ledger_ID);
       this.ObjRdb.PO_Doc_No = data[0].Doc_No;
       this.getProductDetails(data[0].Doc_No)
-      // this.PO_Doc_Date = new Date(data[0].Doc_Date);
+      this.PO_Doc_Date = new Date(data[0].Doc_Date);
       this.ObjRdb.Cost_Cen_ID = data[0].Cost_Cen_ID;
       this.getStockPoint(data[0].Cost_Cen_ID);
       this.ObjRdb.godown_id = this.StockList.length === 1 ? this.StockList[0].godown_id : undefined;
