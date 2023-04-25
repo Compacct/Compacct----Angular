@@ -128,6 +128,7 @@ export class HarbTxnRequisitionComponent implements OnInit {
   subGorupList = [];
   workList = [];
   ObjCol:any = {}
+  overlayPanelText:string = ""
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -223,6 +224,7 @@ export class HarbTxnRequisitionComponent implements OnInit {
      this.groupList = [];
      this.subGorupList = [];
      this.workList = [];
+     this.overlayPanelText = ""
   }
   
  
@@ -806,12 +808,12 @@ export class HarbTxnRequisitionComponent implements OnInit {
     this.can_popup = false;
     this.Del = false;
     this.Save = false;
-     if(col.Req_No){
+     if(col.Document_No){
       this.act_popup = true;
       this.ReqNo = undefined;
       this.Del = true;
       this.Save = false;
-       this.ReqNo = col.Req_No;
+       this.ReqNo = col.Document_No;
        this.compacctToast.clear();
        this.compacctToast.add({
          key: "c",
@@ -919,14 +921,14 @@ export class HarbTxnRequisitionComponent implements OnInit {
   Edit(col){
     this.clearData();
     this.reqDocNo = undefined;
-    if(col.Req_No){
-      this.reqDocNo = col.Req_No;
+    if(col.Document_No){
+      this.reqDocNo = col.Document_No;
       this.tabIndexToView = 1;
       this.items = ["BROWSE", "UPDATE", "STOCK", "STATUS", "MIS"];
       this.buttonname = "Update";
-      this.geteditmaster(col.Req_No);
+      this.geteditmaster(col.Document_No);
       if(this.openProject === "Y"){
-        this.getEditProject(col.Req_No);
+        this.getEditProject(col.Document_No);
       }
      
      }
@@ -1254,24 +1256,13 @@ if(!this.SelectedDistDepartmentmis.length && !this.SelectedDistCostCen.length &&
 }
 }
 GetDistinctMis() {
-  //let department:any = [];
-  let costcen:any = [];
+ let costcen:any = [];
   let stockpoint:any = [];
-  // this.DistDepartmentmis =[];
-  // this.SelectedDistDepartmentmis =[];
-  // this.DistCostCen =[];
-  // this.SelectedDistCostCen =[];
+ 
   this.DistStockPoint =[];
   this.SelectedDistStockPoint = [];
   this.MISList.forEach((item) => {
-// if (department.indexOf(item.Dept_Name) === -1) {
-//   department.push(item.Dept_Name);
-//   this.DistDepartmentmis.push({ label: item.Dept_Name, value: item.Dept_Name });
-//   }
-//  if (costcen.indexOf(item.Cost_Cen_Name) === -1) {
-//   costcen.push(item.Cost_Cen_Name);
-//  this.DistCostCen.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
-//  }
+
  if (stockpoint.indexOf(item.Stock_Point) === -1) {
   stockpoint.push(item.Stock_Point);
  this.DistStockPoint.push({ label: item.Stock_Point, value: item.Stock_Point });
@@ -1474,11 +1465,15 @@ stringShort(str,wh) {
   }
 return wh == "css" ? retuObj.cssClass : retuObj.field
 }
-selectWork(event,col, overlaypanel) {
+selectWork(event,text, overlaypanel) {
   //console.log("col",col)
-  this.ObjCol = {}
-  this.ObjCol = col
-  overlaypanel.toggle(event); 
+  if (text.length > 30) {
+    this.ObjCol = {}
+    this.overlayPanelText= ""
+   this.overlayPanelText = text
+   overlaypanel.toggle(event); 
+  }
+ 
   }
 }
 class reqi{
