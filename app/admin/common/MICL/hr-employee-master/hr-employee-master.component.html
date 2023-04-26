@@ -416,7 +416,11 @@
                            </select>
                                     </div>
                                     <div class="col-sm-12">
-                                        <label class="control-label">Left On</label>
+                                        <label class="control-label">Resign On</label>
+                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Resign_On' name="resign_on"></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <label class="control-label">Release On</label>
                                         <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Leave_Dt' name="left_on" [enabled]="leftdisabled"></ejs-datepicker>
                                     </div>
                                 </div>

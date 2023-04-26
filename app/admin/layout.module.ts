@@ -463,6 +463,7 @@ import { HarbTxnRequisitionComponent } from './common/Harbauer/harb-txn-requisit
 import { PurchaseOrderHarbauerTermsComponent } from './common/Harbauer/purchase-order-harbauer-terms/purchase-order-harbauer-terms.component';
 import { AudiologistTargetComponent } from './common/PatientManagement/Audiologist/audiologist-target/audiologist-target.component';
 import { CommonPurchaseBillGstComponent } from './common/FinancialManagement/Transaction/Purchase/common-purchase-bill-gst/common-purchase-bill-gst.component';
+import { FullAndFinalSettlementComponent } from './common/MICL/full-and-final-settlement/full-and-final-settlement.component';
 
 @NgModule({
   declarations: [
@@ -842,7 +843,8 @@ import { CommonPurchaseBillGstComponent } from './common/FinancialManagement/Tra
     HarbTxnRequisitionComponent,
     PurchaseOrderHarbauerTermsComponent,
     AudiologistTargetComponent,
-    CommonPurchaseBillGstComponent
+    CommonPurchaseBillGstComponent,
+    FullAndFinalSettlementComponent
 
 
   ],

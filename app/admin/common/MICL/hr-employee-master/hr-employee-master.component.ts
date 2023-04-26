@@ -64,6 +64,7 @@ export class HREmployeeMasterComponent implements OnInit {
   ischeckaddress : boolean = false;
   Employeeid: any;
   Joining_Dt = new Date();
+  Resign_On = new Date();
   Leave_Dt:any = new Date();
   DOB = new Date();
   checkcode : any;
@@ -447,6 +448,7 @@ getEmployeeDetails(Emp_ID){
          this.objemployee.Late_Ded_Tag = data[0].Late_Ded_Tag == "Y"? true : false; 
          this.objemployee.Is_HOD = data[0].Is_HOD == "Y"? true : false;
          this.Joining_Dt = new Date(data[0].Emp_Joining_Dt);
+         this.Resign_On = new Date(data[0].Resign_On);
          this.Leave_Dt = new Date(data[0].Emp_Leave_Dt) ;
          this.objemployee.Present_Status = data[0].Present_Status;
          this.leftdisabled = this.objemployee.Present_Status === "RESIGNED" || 
@@ -575,6 +577,7 @@ saveEmp(){
   if(this.checkcode != 1){
     if(this.objemployee.Off_Day != this.objemployee.Second_Off_Day ){
     this.objemployee.Emp_Joining_Dt = this.DateService.dateConvert(new Date(this.Joining_Dt));
+    this.objemployee.Resign_On = this.DateService.dateConvert(new Date(this.Resign_On));
     this.objemployee.Emp_Leave_Dt = this.DateService.dateConvert(new Date(this.Leave_Dt));
     this.objemployee.D_O_B = this.DateService.dateConvert(new Date(this.DOB));
     this.objemployee.User_ID = this.commonApi.CompacctCookies.User_ID;
@@ -737,6 +740,7 @@ GetNewEmployee(){
   this.objemployee.Present_Country = "India";
   this.objemployee.Perm_Country = "India";
   this.Joining_Dt = new Date();
+  this.Resign_On = new Date();
   // this.Leave_Dt = new Date();
   this.objemployee.Present_Status = undefined;
   this.objemployee.Personal_Area = (this.databaseName === 'MICL_Demo' || this.databaseName === 'MICL') ? "HALDIA" : undefined;
@@ -1191,6 +1195,7 @@ clearData(){
   this.objemployee = new Employee();
   this.objselect = new Select();
   this.Joining_Dt = new Date();
+  this.Resign_On = new Date();
   // this.Leave_Dt = new Date();
   this.leftdatechange();
   this.DOB = new Date();
@@ -1287,6 +1292,7 @@ class Employee{
   PTax_Avail : any;
   Is_HOD : any;
   Emp_Leave_Dt : any;
+  Resign_On : any;
   Emp_Joining_Dt : any;
   D_O_B : any;
   PF_Avail : any= false;
