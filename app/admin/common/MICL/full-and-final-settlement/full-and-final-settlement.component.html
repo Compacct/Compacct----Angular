@@ -1,1 +1,425 @@
-<p>full-and-final-settlement works!</p>
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <form name="PasswordForm" #PasswordForm="ngForm" novalidate>
+            <div style="text-align: center">
+                <!-- <label class="control-label">Password <sup class="text-danger">*</sup></label> -->
+                <input class="form-control" type="password" name="password" #password="ngModel" [(ngModel)]="Password" [ngClass]="{'clearance':PasswordFormSubmitted && password?.errors?.required}" required>
+            </div>
+        </form>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="CheckPasswordStatus(PasswordForm.form.valid)" label="Save" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="Close" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="dayendSearchForm" #dayendSearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Period</label>
+
+                                        <app-compacct-daterangepicker (DaterangeObj)="getConfirmDateRange($event)">
+                                        </app-compacct-daterangepicker>
+
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label"> Outlet&nbsp;<span class="text-danger">*</span></label>
+                                        <select class="form-control" name=" Cost_Cen" #Cost_Cen='ngModel' [(ngModel)]="Cost_Cen_ID_B" [attr.disabled]="outletdisableflag? true : null"> 
+                                              <option [ngValue]="undefined">Select</option>
+                                              <option *ngFor='let option of costCenterList' [ngValue]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetBrowse(dayendSearchForm.form.valid)" id="load" [disabled]="Spinner">
+                                      <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!Spinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                   </button>
+                                    </div>
+                                    <div class="col-sm-2"></div>
+
+                                </div>
+                            </form>
+                            <div class="table-responsive no-padding">
+                                <p-table [value]="allDataList" [paginator]="allDataList.length ? true : false" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Date','Location','Manual_Amount','System_Amount']"
+                                    [rowHover]="true" #dt>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th>Date</th>
+                                            <th>Outlet</th>
+                                            <th>Manual Amount</th>
+                                            <th>System Amount</th>
+                                            <th>Transaction Date & Time</th>
+                                            <th>Created By</th>
+
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="View(col)">
+                                                                <i class="fa fa-fw fa-eye" aria-hidden="true"></i> View
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf='$CompacctAPI.CompacctCookies.User_Type === "A"'>
+                                                            <a (click)="Edit(col)">
+                                                                <i class="fa fa-fw fa-pencil" aria-hidden="true"></i> Edit
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td>{{col.Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td>{{col.Location}}</td>
+                                            <td>{{col.Manual_Amount}}</td>
+                                            <td>{{col.System_Amount}}</td>
+                                            <td>{{col.Transaction_Date_Time}}</td>
+                                            <td>{{col.User_Name}}</td>
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel> -->
+                        <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save"> -->
+                            <form name="FullAndFinalSettlementForm" #FullAndFinalSettlementForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4" style=" height: 77px;">
+                                        <label class="control-label">Employee</label>
+                                        <p-dropdown [options]="EmployeeList" name="Employee" #Employee="ngModel" [(ngModel)]="Emp_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Employee'"
+                                            [virtualScroll]="true" itemSize="30" (onChange)="getEmployeeDetails()" 
+                                            [styleClass]="FullAndFinalSettlementFormSubmitted && Employee.errors?.required ? 'clearance' : ''" [required]="true">
+                                        </p-dropdown>
+                                    </div>
+
+                                </div>
+
+                            <!-- </form> -->
+                            <div class="clearfix"></div>
+                            <br>
+                            <div class="table-responsive no-padding" style="overflow-x: hidden !important; ">
+                                <table class="table table-bordered">
+
+                                    <thead>
+                                        <tr style="background-color:#347499;color:white;">
+                                            <th class="text-center" style="vertical-align:middle">
+                                                SL NO
+                                            </th>
+                                            <th colspan="3" class="text-center" style="vertical-align:middle">
+                                                FULL & FINAL SETTLEMENT
+                                            </th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">1</td>
+                                            <td>NAME</td>
+                                            <td></td>
+                                            <td><input type="text" name="empname" #empname="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Emp_Name' class="form-control" 
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && empname.errors?.required}" required/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">2</td>
+                                            <td>EMP ID</td>
+                                            <td></td>
+                                            <td><input type="text" name="empid" #empid="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Emp_ID' class="form-control"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && empid.errors?.required}" required/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">3</td>
+                                            <td>EMP CODE</td>
+                                            <td></td>
+                                            <td><input type="text" name="empcode" #empcode="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Emp_Code' class="form-control" 
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && empcode.errors?.required}" required/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">4</td>
+                                            <td>DESIGNATION</td>
+                                            <td></td>
+                                            <td><input type="text" name="designation" #designation="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Designation' class="form-control"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && designation.errors?.required}" required/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">5</td>
+                                            <td>DOJ</td>
+                                            <td></td>
+                                            <!-- <td><input type="text" name="doj" #doj="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Emp_Joining_Dt' class="form-control" style="width: 71px;" /></td> -->
+                                            <td><ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Joining_Dt' name="doj"></ejs-datepicker></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">6</td>
+                                            <td>DOR</td>
+                                            <td></td>
+                                            <!-- <td><input type="text" name="doj" #doj="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Emp_Joining_Dt' class="form-control" style="width: 71px;" /></td> -->
+                                            <td><ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Resign_On' name="dor"></ejs-datepicker></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">7</td>
+                                            <td>DOL</td>
+                                            <td></td>
+                                            <!-- <td><input type="text" name="doj" #doj="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Emp_Joining_Dt' class="form-control" style="width: 71px;" /></td> -->
+                                            <td><ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Leave_Dt' name="dol"></ejs-datepicker></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">8</td>
+                                            <td>NO OF DAYS WORKED</td>
+                                            <td></td>
+                                            <td><input type="text" name="noofdayswork" #noofdayswork="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.No_of_Days_Worked' CompacctDigitonly="true" class="form-control"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && noofdayswork.errors?.required}" required/></td>
+                                        </tr>
+
+                                        <!-- BASIC -->
+                                        <tr style="background-color:#64889d;color:white;">
+                                            <th></th>
+                                            <th class="text-center" style="vertical-align:middle">SALARY DETAILS</th>
+                                            <th class="text-center" style="vertical-align:middle">DAYS</th>
+                                            <th class="text-center" style="vertical-align:middle">AMOUNT</th>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">1</td>
+                                            <td>BASIC</td>
+                                            <td class="text-center" style="vertical-align:middle">{{ObjFullAndFinalSettlement.Total_Days}}</td>
+                                            <td><input type="text" name="basicamt" #basicamt="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Total_Basic_Amount' class="form-control" CompacctDigitonly="true"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basicamt.errors?.required}" required/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">2</td>
+                                            <td>HRA</td>
+                                            <td></td>
+                                            <td><input type="text" name="basichra" #basichra="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Total_HRA_Amount' class="form-control" CompacctDigitonly="true"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basichra.errors?.required}" required/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">3</td>
+                                            <td>CON.ALLOWANCE</td>
+                                            <td></td>
+                                            <td><input type="text" name="basiccon" #basiccon="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Total_Conv_Allowance' CompacctDigitonly="true" class="form-control" 
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basiccon.errors?.required}" required/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">4</td>
+                                            <td>CHILDREN ALLOWANCE</td>
+                                            <td></td>
+                                            <td><input type="text" name="basicchildren" #basicchildren="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Total_Children_Allowance' CompacctDigitonly="true" class="form-control"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basicchildren.errors?.required}" required/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">5</td>
+                                            <td>MEDICAL ALLOWANCE</td>
+                                            <td></td>
+                                            <td><input type="text" name="basicmedical" #basicmedical="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Total_Medical_Allowance' CompacctDigitonly="true" class="form-control"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basicmedical.errors?.required}" required/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">6</td>
+                                            <td>WASHING ALLOWANCE</td>
+                                            <td></td>
+                                            <td><input type="text" name="basicwashing" #basicwashing="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Total_Washing_Allowance' CompacctDigitonly="true" class="form-control"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basicwashing.errors?.required}" required/></td>
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <th class="text-right">GROSS</th>
+                                            <th></th>
+                                            <th class="text-center" style="vertical-align:middle">{{getTofix(ObjFullAndFinalSettlement.Total_Gross_Amount)}}</th>
+                                        </tr>
+
+                                        <!-- LAST MONTH BASIC -->
+                                        <tr style="background-color:#64889d;color:white;">
+                                            <th></th>
+                                            <th class="text-center" style="vertical-align:middle">SALARY OF LAST MONTH</th>
+                                            <th class="text-center" style="vertical-align:middle">DAYS</th>
+                                            <th class="text-center" style="vertical-align:middle">AMOUNT</th>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">1</td>
+                                            <td>BASIC</td>
+                                            <td class="text-center" style="vertical-align:middle">{{ObjFullAndFinalSettlement.Last_Month_Payable_Days}}</td>
+                                            <td><input type="text" name="basicamt" #basicamt="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_Basic_Amount' class="form-control" CompacctDigitonly="true"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basicamt.errors?.required}" required/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">2</td>
+                                            <td>HRA</td>
+                                            <td></td>
+                                            <td><input type="text" name="basichra" #basichra="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_HRA_Amount' class="form-control" CompacctDigitonly="true"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basichra.errors?.required}" required/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">3</td>
+                                            <td>CON.ALLOWANCE</td>
+                                            <td></td>
+                                            <td><input type="text" name="basiccon" #basiccon="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_Conv_Allowance' CompacctDigitonly="true" class="form-control" 
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basiccon.errors?.required}" required/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">4</td>
+                                            <td>CHILDREN ALLOWANCE</td>
+                                            <td></td>
+                                            <td><input type="text" name="basicchildren" #basicchildren="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_Children_Allowance' CompacctDigitonly="true" class="form-control"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basicchildren.errors?.required}" required/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">5</td>
+                                            <td>MEDICAL ALLOWANCE</td>
+                                            <td></td>
+                                            <td><input type="text" name="basicmedical" #basicmedical="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_Medical_Allowance' CompacctDigitonly="true" class="form-control"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basicmedical.errors?.required}" required/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">6</td>
+                                            <td>WASHING ALLOWANCE</td>
+                                            <td></td>
+                                            <td><input type="text" name="basicwashing" #basicwashing="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_Washing_Allowance' CompacctDigitonly="true" class="form-control"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basicwashing.errors?.required}" required/></td>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-center" style="vertical-align:middle"></th>
+                                            <th class="text-right">GROSS EARNING</th>
+                                            <th></th>
+                                            <th class="text-center" style="vertical-align:middle">{{getTofix(ObjFullAndFinalSettlement.Last_Gross_Amount)}}</th>
+                                        </tr>
+
+                                        <!-- STATUTORY EARNING-->
+                                        <tr style="background-color:#64889d;color:white;">
+                                            <th></th>
+                                            <th class="text-center" style="vertical-align:middle">STATUTORY EARNING</th>
+                                            <th class="text-center" style="vertical-align:middle">DAYS</th>
+                                            <th class="text-center" style="vertical-align:middle">AMOUNT</th>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">1</td>
+                                            <td>BONUS (8.33% of Basic)</td>
+                                            <td></td>
+                                            <td><input type="text" name="bonus" #bonus="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Bonus' class="form-control" CompacctDigitonly="true"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && bonus.errors?.required}" required/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">2</td>
+                                            <td>PL/EL ENCASHMENT (Balance as an date)</td>
+                                            <td class="text-center" style="vertical-align:middle">{{ObjFullAndFinalSettlement.Leave_Balance}}</td>
+                                            <td><input type="text" name="basichra" #basichra="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Leave_Encashment' class="form-control" CompacctDigitonly="true"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basichra.errors?.required}" required/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">3</td>
+                                            <td>GRATUITY</td>
+                                            <td></td>
+                                            <td><input type="text" name="basiccon" #basiccon="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Gratuity' CompacctDigitonly="true" class="form-control" 
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basiccon.errors?.required}" required/></td>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-center" style="vertical-align:middle"></th>
+                                            <th class="text-right">EARNING</th>
+                                            <th class="text-center" style="vertical-align:middle"></th>
+                                            <th class="text-center" style="vertical-align:middle">{{getTofix(ObjFullAndFinalSettlement.Total_Statutory_Earnings)}}</th>
+                                        </tr>
+                                        
+                                        <!-- STATUTORY DEDUCTION-->
+                                        <tr style="background-color:#64889d;color:white;">
+                                            <th></th>
+                                            <th class="text-center" style="vertical-align:middle">STATUTORY DEDUCTION</th>
+                                            <th class="text-center" style="vertical-align:middle">DAYS</th>
+                                            <th class="text-center" style="vertical-align:middle">AMOUNT</th>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">1</td>
+                                            <td>EPF</td>
+                                            <td></td>
+                                            <td><input type="text" name="epf" #epf="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.EPF_Deduction' class="form-control" CompacctDigitonly="true"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && epf.errors?.required}" required/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">2</td>
+                                            <td>ESI</td>
+                                            <td></td>
+                                            <td><input type="text" name="esi" #esi="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.ESI_Deduction' class="form-control" CompacctDigitonly="true"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && esi.errors?.required}" required/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">3</td>
+                                            <td>P.TAX</td>
+                                            <td></td>
+                                            <td><input type="text" name="ptax" #ptax="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.P_Tax_Deduction' CompacctDigitonly="true" class="form-control" 
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && ptax.errors?.required}" required/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">4</td>
+                                            <td>TDS</td>
+                                            <td></td>
+                                            <td><input type="text" name="tds" #tds="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.TDS_Deduction' CompacctDigitonly="true" class="form-control" 
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && tds.errors?.required}" required/></td>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-center" style="vertical-align:middle"></th>
+                                            <th class="text-right">NET DEDUCTION</th>
+                                            <th></th>
+                                            <th class="text-center" style="vertical-align:middle">{{getTofix(ObjFullAndFinalSettlement.Total_Deduction)}}</th>
+                                        </tr>
+                                        <tr>
+                                            <th></th>
+                                            <th class="text-right">NET PAYABLE</th>
+                                            <th></th>
+                                            <th class="text-center" style="vertical-align:middle">{{ObjFullAndFinalSettlement.Net_Payable}}</th>
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+                            </div>
+                            </form>
+                            <div class="box-footer">
+                                <button type="button" class="btn btn-primary pull-right" (click)="SaveFullAndFinalSettlement(FullAndFinalSettlementForm.form.valid)" id="load" [disabled]="Spinner">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
+                            </button>
+                            </div>
+                        <!-- </p-tabPanel> -->
+                    </p-tabView>
+                </div>
+            </div>
