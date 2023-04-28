@@ -77,3 +77,15 @@ fieldset
     padding: 0px 10px 0px 10px;
     background-color: #ffffff;
 		}
+    .txt {
+      cursor: pointer;
+      color: rgb(0 0 255);
+    }
+    .txt:hover {
+      text-decoration: underline;
+    }
+    .overpaneltext{
+      list-style-type: square;
+     }
+     .overpaneltext li { background: #EBEDEF; }
+     .overpaneltext li:nth-child(odd) { background: #f9f9f9; }
