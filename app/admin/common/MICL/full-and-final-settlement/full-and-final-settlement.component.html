@@ -29,96 +29,71 @@
             <div class="form-horizontal">
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
-                        <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
-                            <form name="dayendSearchForm" #dayendSearchForm="ngForm" novalidate>
-                                <div class="form-group">
-                                    <div class="col-sm-3">
-                                        <label class="control-label">Period</label>
-
-                                        <app-compacct-daterangepicker (DaterangeObj)="getConfirmDateRange($event)">
-                                        </app-compacct-daterangepicker>
-
-                                    </div>
-
-                                    <div class="col-sm-4">
-                                        <label class="control-label"> Outlet&nbsp;<span class="text-danger">*</span></label>
-                                        <select class="form-control" name=" Cost_Cen" #Cost_Cen='ngModel' [(ngModel)]="Cost_Cen_ID_B" [attr.disabled]="outletdisableflag? true : null"> 
-                                              <option [ngValue]="undefined">Select</option>
-                                              <option *ngFor='let option of costCenterList' [ngValue]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
-                                      </select>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetBrowse(dayendSearchForm.form.valid)" id="load" [disabled]="Spinner">
-                                      <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                      <span *ngIf="!Spinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
-                                   </button>
-                                    </div>
-                                    <div class="col-sm-2"></div>
-
-                                </div>
-                            </form>
-                            <div class="table-responsive no-padding">
-                                <p-table [value]="allDataList" [paginator]="allDataList.length ? true : false" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Date','Location','Manual_Amount','System_Amount']"
-                                    [rowHover]="true" #dt>
-                                    <ng-template pTemplate="caption">
-                                        <div class="row">
-                                            <div class="col-sm-3 pull-right" style="text-align: right">
-                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="FullFinalSettlementBrowseList" 
+                                    *ngIf='FullFinalSettlementBrowseList.length' #dt5
+                                     [paginator]="FullFinalSettlementBrowseList.length ? true : false"
+                                     [rows]="100"
+                                     [rowHover]="true" 
+                                     [autoLayout]="true" 
+                                     sortMode="multiple" 
+                                     [rowsPerPageOptions]="[100,200,300]" 
+                                     [rowHover]="true"
+                                     [columns]="cols"
+                                     [globalFilterFields]='DynamicHeaderforFullFinalBrowseList'>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt5.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
                                             </div>
-                                        </div>
-
-                                    </ng-template>
-                                    <ng-template pTemplate="header">
-                                        <tr>
-                                            <th style="width:5em">Action</th>
-                                            <th>Date</th>
-                                            <th>Outlet</th>
-                                            <th>Manual Amount</th>
-                                            <th>System Amount</th>
-                                            <th>Transaction Date & Time</th>
-                                            <th>Created By</th>
-
-
-                                        </tr>
-                                    </ng-template>
-                                    <ng-template pTemplate="body" let-col>
-                                        <tr>
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+        
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th *ngFor="let option of DynamicHeaderforFullFinalBrowseList | slice:1">{{option.replaceAll('_',' ')}}</th>
+                                               </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button"
+                                                            data-toggle="dropdown" style="height:27px">
                                                             <i class="fa fa-fw fa-bars"></i>
                                                             <span class="caret"></span>
                                                         </button>
-                                                    <ul class="dropdown-menu">
-                                                        <li>
-                                                            <a (click)="View(col)">
-                                                                <i class="fa fa-fw fa-eye" aria-hidden="true"></i> View
-                                                            </a>
-                                                        </li>
-                                                        <li *ngIf='$CompacctAPI.CompacctCookies.User_Type === "A"'>
-                                                            <a (click)="Edit(col)">
-                                                                <i class="fa fa-fw fa-pencil" aria-hidden="true"></i> Edit
-                                                            </a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </td>
-                                            <td>{{col.Date | date: "dd/MMM/yyyy"}}</td>
-                                            <td>{{col.Location}}</td>
-                                            <td>{{col.Manual_Amount}}</td>
-                                            <td>{{col.System_Amount}}</td>
-                                            <td>{{col.Transaction_Date_Time}}</td>
-                                            <td>{{col.User_Name}}</td>
-
-                                        </tr>
-                                    </ng-template>
-                                    <ng-template pTemplate="paginatorright" let-state>
-                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
-                                    </ng-template>
-                                </p-table>
-                            </div>
-                        </p-tabPanel> -->
-                        <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save"> -->
+                                                        <ul class="dropdown-menu">
+                                                            <!-- <li>
+                                                                <a (click)="PrintPRDB(col.RDB_No)">
+                                                                    <i class="fa fa-fw fa-print"></i> Print
+                                                                </a>
+                                                            </li> -->
+                                                            <li>
+                                                                <a (click)="Edit(col.Emp_ID)">
+                                                                  <i class="fa fa-fw fa-pencil"></i> Edit
+                                                              </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                <ng-container *ngFor="let option of DynamicHeaderforFullFinalBrowseList | slice:1">
+                                                    <td>{{col[option]}}</td>
+                                                </ng-container>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" *ngIf="FullFinalSettlementBrowseList.length" let-state>
+                                            Showing {{ state.first + 1 }} of
+                                            {{ state.first + 1 + state.rows }} of
+                                            {{ state.totalRecords }}
+                                        </ng-template>
+                                    </p-table>
+                                </div> 
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                             <form name="FullAndFinalSettlementForm" #FullAndFinalSettlementForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-4" style=" height: 77px;">
@@ -202,7 +177,7 @@
                                             <td class="text-center" style="vertical-align:middle">8</td>
                                             <td>NO OF DAYS WORKED</td>
                                             <td></td>
-                                            <td><input type="text" name="noofdayswork" #noofdayswork="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.No_of_Days_Worked' CompacctDigitonly="true" class="form-control"
+                                            <td><input type="text" name="noofdayswork" #noofdayswork="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.No_Of_Days_Worked' CompacctDigitonly="true" class="form-control"
                                                 [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && noofdayswork.errors?.required}" required/></td>
                                         </tr>
 
@@ -419,7 +394,7 @@
                                 <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
                             </button>
                             </div>
-                        <!-- </p-tabPanel> -->
+                        </p-tabPanel>
                     </p-tabView>
                 </div>
             </div>

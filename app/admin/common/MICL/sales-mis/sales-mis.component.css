@@ -45,9 +45,11 @@ p:link {
     color: black;
     background-color: transparent;
     text-decoration: none;
+    cursor: pointer;
   }
 p:hover {
     color: rgb(64, 110, 227);
     background-color: transparent;
     text-decoration: underline;
+    cursor: pointer;
   }

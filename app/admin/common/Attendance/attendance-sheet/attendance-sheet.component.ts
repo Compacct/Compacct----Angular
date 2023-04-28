@@ -51,6 +51,7 @@ export class AttendanceSheetComponent implements OnInit {
   // DynamicHeader = [];
 
   // ATTENDANCE NEW
+  seachSpinner:boolean = false;
   employeelist:any = [];
   MonthdayDatelist = [];
   AttenTypelist = [];
@@ -388,7 +389,7 @@ export class AttendanceSheetComponent implements OnInit {
    // this.Month_Name = new Date();
     // this.getmonthdaydate();
     this.callapi();
-    this.getAttendanceData();
+    // this.getAttendanceData();
   }
   getAttendanceType(){
     const obj = {
@@ -438,6 +439,7 @@ export class AttendanceSheetComponent implements OnInit {
   }
   getAttendanceData(){
     this.AllAttendanceData = [];
+    this.seachSpinner = true;
     this.callapi();
     var firstDate = this.Month_Name+'-'+'01'
     console.log('firstDate',firstDate)
@@ -457,6 +459,7 @@ export class AttendanceSheetComponent implements OnInit {
       // if (data[0].Column1 || !data.length) {
       if (!data.length) {
         this.showdata = "Attn. Data not found";
+        this.seachSpinner = false;
       }
       else {
       this.AllAttendanceData = data;
@@ -469,10 +472,11 @@ export class AttendanceSheetComponent implements OnInit {
            header: el
           })
         })
-
+        this.seachSpinner = false;
       }
       else {
         this.DynamicHeader = [];
+        this.seachSpinner = false;
       }
       console.log('this.AllAttendanceData',this.AllAttendanceData)
       }

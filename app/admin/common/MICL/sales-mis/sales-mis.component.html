@@ -158,7 +158,7 @@
 
                                                     </div>
                                                 </td> -->
-                                                <td nowrap style="text-align: center;"><a (click)="GetLIview(col)">{{col.LI_Doc_No}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetLIview(col)">{{col.LI_Doc_No}}</a></td>
                                                 <td nowrap style="text-align: center;">{{col.LI_Doc_Date | date:"dd/MMM/yy"}}</td>
                                                 <td nowrap style="text-align: center;">{{col.LI_Customer}}</td>
                                                 <td nowrap style="text-align: center;">{{col.LI_Qty}}</td>
@@ -406,7 +406,7 @@
 <p-footer>
     <button
     type="button"
-    (click)="LIviewPopup = false"
+    (click)="LIpopupCancle()"
     class="btn btn-default"
     ><span class="glyphicon glyphicon-remove"></span>
     CLOSE
@@ -451,7 +451,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
             <tr>
-                <td><a (click)="GetPIviewDetails(col)">{{col.PI_Doc_No}}</a></td>
+                <td><a class="btn btn-link" (click)="GetPIviewDetails(col)">{{col.PI_Doc_No}}</a></td>
                 <td>{{col.PI_Doc_Date | date : "dd/MMM/yy"}}</td>
                 <td>{{col.PI_Customer ? col.PI_Customer : '-'}}</td>
                 <td>{{col.PI_Qty ? col.PI_Qty : '-'}}</td>
@@ -731,7 +731,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
             <tr>
-                <td><a (click)="GetSOviewDetails(col.SO_Doc_No)">{{col.SO_Doc_No}}</a></td>
+                <td><a class="btn btn-link" (click)="GetSOviewDetails(col.SO_Doc_No)">{{col.SO_Doc_No}}</a></td>
                 <td>{{col.SO_Doc_Date | date : "dd/MMM/yy"}}</td>
                 <td>{{col.SO_Customer ? col.SO_Customer : '-'}}</td>
                 <td>{{col.SO_Qty ? col.SO_Qty : '-'}}</td>
@@ -788,7 +788,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
             <tr>
-                <td><a (click)="GetOCviewDetails(col.SC_Doc_No)">{{col.SC_Doc_No}}</a></td>
+                <td><a class="btn btn-link" (click)="GetOCviewDetails(col.SC_Doc_No)">{{col.SC_Doc_No}}</a></td>
                 <td>{{col.SC_Doc_Date | date : "dd/MMM/yy"}}</td>
                 <td>{{col.SC_Customer ? col.SC_Customer : '-'}}</td>
                 <td>{{col.SC_Qty ? col.SC_Qty : '-'}}</td>
@@ -845,7 +845,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
             <tr>
-                <td><a (click)="GetSBviewDetails(col.SB_Doc_No)">{{col.SB_Doc_No}}</a></td>
+                <td><a class="btn btn-link" (click)="GetSBviewDetails(col.SB_Doc_No)">{{col.SB_Doc_No}}</a></td>
                 <td>{{col.SB_Doc_Date | date : "dd/MMM/yy"}}</td>
                 <td>{{col.SB_Customer ? col.SB_Customer : '-'}}</td>
                 <td>{{col.SB_Qty ? col.SB_Qty : '-'}}</td>
@@ -902,7 +902,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
             <tr>
-                <td><a (click)="GetRAviewDetails(col.Voucher_No)">{{col.Voucher_No}}</a></td>
+                <td><a class="btn btn-link" (click)="GetRAviewDetails(col.Voucher_No)">{{col.Voucher_No}}</a></td>
                 <td>{{col.Voucher_Date | date : "dd/MMM/yy"}}</td>
                 <td>{{col.Voucher_Type ? col.Voucher_Type : '-'}}</td>
                 <td>{{col.Amount ? col.Amount : '-'}}</td>
