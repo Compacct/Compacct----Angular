@@ -58,6 +58,7 @@ export class MiclRequisitionComponent implements OnInit {
   docno : any;
   openProject = "N";
   minFromDate = new Date();
+  maxFromDate = new Date();
   projectDisable = false;
   projectMand = "N";
   toCostCenter:number
@@ -198,6 +199,7 @@ export class MiclRequisitionComponent implements OnInit {
     this.productListview = [];
     this.productList = [];
     this.requi_Date = new Date();
+    this.maxFromDate = new Date();
     this.validatation.required = false;
     this.projectDisable = false;
     this.reqValid = false;
@@ -511,6 +513,9 @@ export class MiclRequisitionComponent implements OnInit {
         detail: "Error Occured "
       });
      }
+   }
+   else {
+    this.ngxService.stop();
    }
   }
   onConfirmSave(){
@@ -1205,7 +1210,9 @@ export class MiclRequisitionComponent implements OnInit {
       let days = Number(data[0].Allowed_Entry_Day)
       //console.log("days",days)
      this.minFromDate = new Date(this.requi_Date.getTime()-(days*24*60*60*1000));
+     this.maxFromDate = new Date();
      //console.log("minFromDate",this.minFromDate)
+    //  console.log("maxFromDate currentdate",this.maxFromDate)
       
     })
   }

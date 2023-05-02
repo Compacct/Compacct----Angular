@@ -367,6 +367,8 @@ Edit(col){
     this.Leave_Dt = new Date(data[0].DOL);
   })
  }
+ onReject(){}
+ onConfirm(){}
 
 }
 class FullAndFinalSettlement{
