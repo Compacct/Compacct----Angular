@@ -51,6 +51,7 @@ export class AttendanceSheetComponent implements OnInit {
   // DynamicHeader = [];
 
   // ATTENDANCE NEW
+  seachSpinner:boolean = false;
   employeelist:any = [];
   MonthdayDatelist = [];
   AttenTypelist = [];
@@ -93,6 +94,8 @@ export class AttendanceSheetComponent implements OnInit {
   download = false;
   AllattendancestatusFormSubmitted = false;
   DetailsModal = false;
+  PMAttnSheet:boolean = false;
+  CheckFinalizedOrNot:any;
   constructor(
     private route : ActivatedRoute,
     private Header: CompacctHeader,
@@ -386,7 +389,7 @@ export class AttendanceSheetComponent implements OnInit {
    // this.Month_Name = new Date();
     // this.getmonthdaydate();
     this.callapi();
-    this.getAttendanceData();
+    // this.getAttendanceData();
   }
   getAttendanceType(){
     const obj = {
@@ -421,8 +424,22 @@ export class AttendanceSheetComponent implements OnInit {
      
   })
   }
+  CheckBackRegister(){
+    var firstDate = this.Month_Name+'-'+'01'
+    const obj = {
+      "SP_String": "SP_Process_Monthly_Attendance_Sheet",
+      "Report_Name_String": "Check Finalized Or Not",
+      "Json_Param_String": JSON.stringify([{StartDate : this.DateService.dateConvert(new Date(firstDate))}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.CheckFinalizedOrNot = data ? data[0].Column1 : undefined;
+      this.PMAttnSheet = this.CheckFinalizedOrNot === "Finalized" ? true : false;
+    })
+  }
   getAttendanceData(){
     this.AllAttendanceData = [];
+    this.seachSpinner = true;
     this.callapi();
     var firstDate = this.Month_Name+'-'+'01'
     console.log('firstDate',firstDate)
@@ -442,9 +459,11 @@ export class AttendanceSheetComponent implements OnInit {
       // if (data[0].Column1 || !data.length) {
       if (!data.length) {
         this.showdata = "Attn. Data not found";
+        this.seachSpinner = false;
       }
       else {
       this.AllAttendanceData = data;
+      this.CheckBackRegister();
       this.showdata = undefined;
       if(this.AllAttendanceData.length){
         this.DynamicHeader = Object.keys(data[0]);
@@ -453,10 +472,11 @@ export class AttendanceSheetComponent implements OnInit {
            header: el
           })
         })
-
+        this.seachSpinner = false;
       }
       else {
         this.DynamicHeader = [];
+        this.seachSpinner = false;
       }
       console.log('this.AllAttendanceData',this.AllAttendanceData)
       }
@@ -800,9 +820,9 @@ export class AttendanceSheetComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       if (data[0].Success != 'False'){
-      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
-      XLSX.writeFile(workbook, fileName+'.xlsx');
+      // const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      // const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      // XLSX.writeFile(workbook, fileName+'.xlsx');
       this.onReject();
       this.exportoexcel();
       }

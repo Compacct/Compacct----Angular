@@ -424,6 +424,7 @@ export class HrLeaveApplyComponent implements OnInit {
      this.ObjHrleave.Apply_To_Date = this.DateService.dateConvert(new Date(this.ToDatevalue));
        const tempobj = {
          Emp_ID : this.ObjHrleave.Emp_ID,
+         Atten_Type_ID : this.ObjHrleave.Leave_Type,
          Issued_From_Date : this.ObjHrleave.Apply_From_Date,
          Issued_To_Date : this.ObjHrleave.Apply_To_Date
          }
@@ -442,6 +443,7 @@ export class HrLeaveApplyComponent implements OnInit {
     }
   }
   getShowBaln(){
+    this.showBaln = undefined;
      this.ObjHrleave.Apply_From_Date = this.DateService.dateConvert(new Date(this.FromDatevalue));
      this.ObjHrleave.Apply_To_Date = this.DateService.dateConvert(new Date(this.ToDatevalue));
     if(this.ObjHrleave.Leave_Type && this.ObjHrleave.HR_Year_ID && this.ObjHrleave.Emp_ID && this.ObjHrleave.Apply_From_Date && this.ObjHrleave.Apply_To_Date){

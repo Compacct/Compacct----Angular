@@ -158,7 +158,8 @@
                                             <div class="form-group">
                                                 <div class="col-sm-4">
                                                     <label class="control-label">RDB Date<sup class="text-danger">*</sup></label>
-                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="RDB_Date" name="RDB_Date" required [enabled]= "!RDBListAdd.length"></ejs-datepicker>
+                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="RDB_Date" [min]='minFromDate' [max]='maxFromDate' [enabled]= "!RDBListAdd.length">
+                                                    </ejs-datepicker>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Company<sup class="text-danger">*</sup></label>

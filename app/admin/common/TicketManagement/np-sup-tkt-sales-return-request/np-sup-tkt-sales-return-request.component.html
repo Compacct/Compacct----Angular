@@ -232,33 +232,36 @@
                                             #Condition_Of_Goods="ngModel"
                                             [(ngModel)]="ObjaddSaleReturn.Condition_Of_Goods"
                                             [ngClass]="{'clearance': addSalereturnFormsSubmitted && Condition_Of_Goods.errors?.required}"
+                                            (change)="changeConditionOfGoods()"
                                             required>
                                             <option [ngValue]="undefined">Select</option>
                                             <option *ngFor="let option of ConditionOfGoodsList" [ngValue]="option.Condition" >{{option.Condition}}</option>
                                            </select>
                                         </div>
                                         <div class="col-sm-3">
-                                            <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                            <label class="control-label">Type of Return<sup *ngIf="ObjaddSaleReturn.Condition_Of_Goods =='Non-Saleable'" class="text-danger">*</sup></label>
                                             <select
                                             class="form-control"
                                             name="Type_Of_Return"
                                             #Type_Of_Return="ngModel"
                                             [(ngModel)]="ObjaddSaleReturn.Type_Of_Return"
                                             [ngClass]="{'clearance': addSalereturnFormsSubmitted && Type_Of_Return.errors?.required}"
-                                            required>
+                                            [required]="ObjaddSaleReturn.Condition_Of_Goods =='Non-Saleable'"
+                                            [disabled]="ObjaddSaleReturn.Condition_Of_Goods =='Saleable'" >
                                             <option [ngValue]="undefined">Select</option>
                                             <option *ngFor=" let option of TypeReturnList " [ngValue]="option.Return_Type" >{{option.Return_Type}}</option>
                                            </select>
                                         </div>
                                         <div class="col-sm-3">
-                                            <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                            <label class="control-label">Return<sup *ngIf="ObjaddSaleReturn.Condition_Of_Goods =='Saleable'" class="text-danger">*</sup></label>
                                             <select
                                             class="form-control"
                                             name="Return_Text"
                                             #Return_Text="ngModel"
                                             [(ngModel)]="ObjaddSaleReturn.Return_Text"
                                             [ngClass]="{'clearance': addSalereturnFormsSubmitted && Return_Text.errors?.required}"
-                                            required>
+                                            [required]="ObjaddSaleReturn.Condition_Of_Goods =='Non-Saleable'"
+                                            [disabled]="ObjaddSaleReturn.Condition_Of_Goods =='Non-Saleable'" >
                                             <option [ngValue]="undefined">Select</option>
                                             <option [ngValue]="'Full'">Full</option>
                                             <option [ngValue]="'Partial'">Partial</option>
@@ -307,22 +310,22 @@
                                                 <div class="card-body">
                                                     <div class="form-group">
                                                         <div class="col-sm-4">
-                                                            <label class="control-label">Product<sup class="text-danger">*</sup></label>
+                                                            <label class="control-label">Product<sup class="text-danger"></sup></label>
                                                                 <div class="label-t" >{{objsale.Product_Description ? objsale.Product_Description : '-'}}</div>
                                                         </div>
                                                         <div class="col-sm-2">
-                                                            <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                            <label class="control-label">Qty<sup class="text-danger"></sup></label>
                                                             <div class="input-group">
                                                                <div class="label-t" >{{objsale.Qty ? objsale.Qty : 0}}</div>
                                                                 <span class="input-group-addon">{{ObjaddSaleReturn.UOM ? objsale.UOM: "UOM"}}</span>
                                                              </div>
                                                         </div>
                                                         <div class="col-sm-2">
-                                                            <label class="control-label">Rate<sup class="text-danger">*</sup></label>
+                                                            <label class="control-label">Rate<sup class="text-danger"></sup></label>
                                                          <div class="label-t" >{{objsale.Rate ? objsale.Rate : 0}}</div>
                                                         </div>
                                                         <div class="col-sm-2">
-                                                            <label class="control-label">Tax Amount<sup class="text-danger">*</sup></label>
+                                                            <label class="control-label">Tax Amount<sup class="text-danger"></sup></label>
                                                             <div class="label-t" >{{objsale.Tax_Amount ? objsale.Tax_Amount : 0}}</div>
                                                         </div>
                                                         <div class="col-sm-2">
@@ -332,30 +335,30 @@
                                                     </div>
                                                     <div class="form-group" >
                                                         <div class="col-sm-3">
-                                                            <label class="control-label">Reason Of Return<sup class="text-danger">*</sup></label>
+                                                            <label class="control-label">Reason Of Return<sup class="text-danger"></sup></label>
                                                             <div class="label-t" >{{objsale.Reason_Of_Return ? objsale.Reason_Of_Return : '-'}} </div>
                                                         </div>
                                                         <div class="col-sm-3">
-                                                            <label class="control-label">Condition Of Goods<sup class="text-danger">*</sup></label>
+                                                            <label class="control-label">Condition Of Goods<sup class="text-danger"></sup></label>
                                                             <div class="label-t" >{{objsale.Condition_Of_Goods ? objsale.Condition_Of_Goods : '-'}} </div>
                                                         </div>
                                                         <div class="col-sm-3">
-                                                            <label class="control-label">Type of Return<sup class="text-danger">*</sup></label>
+                                                            <label class="control-label">Type of Return<sup class="text-danger"></sup></label>
                                                             <div class="label-t" >{{objsale.Type_Of_Return ? objsale.Type_Of_Return : '-'}} </div>
                                                         </div>
                                                         <div class="col-sm-3">
-                                                            <label class="control-label">Return<sup class="text-danger">*</sup></label>
+                                                            <label class="control-label">Return<sup class="text-danger"></sup></label>
                                                             <div class="label-t" >{{objsale.Return_Text ? objsale.Return_Text : '-'}} </div>
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
                                                         
                                                         <div class="col-sm-3">
-                                                            <label class="control-label">Against Challan No<sup class="text-danger">*</sup></label>
+                                                            <label class="control-label">Against Challan No<sup class="text-danger"></sup></label>
                                                             <div class="label-t" >{{objsale.Against_Challan_No ? objsale.Against_Challan_No : '-'}} </div>
                                                         </div>
                                                         <div class="col-sm-3">
-                                                            <label class="control-label">Tax Invoice No<sup class="text-danger">*</sup></label>
+                                                            <label class="control-label">Tax Invoice No<sup class="text-danger"></sup></label>
                                                             <div class="label-t" >{{objsale.Tax_Invoice_No ? objsale.Tax_Invoice_No : '-'}} </div>
                                                         </div>
                                                     </div>

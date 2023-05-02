@@ -22,6 +22,8 @@ export class K4cSwiggyZomatoFileUploadComponent implements OnInit {
   tableDataListHeader:any = []
   LeadListFromFile:any = [];
   tabIndexToView:any = 0
+  loading:boolean = false
+  Spinner:boolean = false
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
   constructor(
     private route : ActivatedRoute,
@@ -49,6 +51,7 @@ export class K4cSwiggyZomatoFileUploadComponent implements OnInit {
     this.tableDataListHeader = []
   }
   handleFileSelect(e:any){
+    this.loading = true
   var reader : any = new FileReader();
        const ctrl = this;
       reader.onload = function(e:any){
@@ -75,6 +78,7 @@ export class K4cSwiggyZomatoFileUploadComponent implements OnInit {
           ele['Order-delivery-time'] = this.DateService.dateTimeConvert(new Date(ele['Order-delivery-time']))
         });
         console.log('tableDataList',this.tableDataList)
+        this.loading = false
      }
      else {
       this.compacctToast.clear();
@@ -85,6 +89,8 @@ export class K4cSwiggyZomatoFileUploadComponent implements OnInit {
         summary: "failed to load CSV file ",
         detail: "The CSV File Was Not Properly Formatted"
         });
+        this.loading = false
+        this.fileInput.clear()
     }
   }
   if(this.seleteChoose === 'Zomato'){
@@ -95,8 +101,10 @@ export class K4cSwiggyZomatoFileUploadComponent implements OnInit {
          ele['Order Placed At'] = this.DateService.dateTimeConvert(new Date(ele['Order Placed At']))
        });
        console.log('tableDataList',this.tableDataList)
+       this.loading = false
     }
     else {
+      this.fileInput.clear()
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "c",
@@ -105,10 +113,18 @@ export class K4cSwiggyZomatoFileUploadComponent implements OnInit {
         summary: "failed to load CSV file ",
         detail: "The CSV File Was Not Properly Formatted"
         });
+        this.loading = false
     }
  }
  }
  onReject() {
   this.compacctToast.clear("c");
+}
+fileRemove(e:any){
+console.log(e)
+this.tableDataList = []
+}
+SaveFileData(){
+  console.log("tableDataList",this.tableDataList)
 }
 }

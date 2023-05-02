@@ -108,6 +108,10 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       // console.log(data);
+      data.forEach(el => {
+        el['label'] = el.Work_Details
+        el['value'] = el.Work_Details_ID
+      })
       this.WorkDetailsList = data;
      
       console.log("WorkDetailsList",this.WorkDetailsList);

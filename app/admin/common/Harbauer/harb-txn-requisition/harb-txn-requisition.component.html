@@ -159,7 +159,7 @@
                                                             </a>
                                                         </li>
                                                         <li>
-                                                            <a (click)="Print(col.Req_No)">
+                                                            <a (click)="Print(col.Document_No)">
                                                                 <i class="fa fa-fw fa-print"></i> Print
                                                             </a>
                                                         </li>
@@ -167,10 +167,11 @@
                                                 </div>
                                             </td>
                                             <ng-container *ngFor="let option of allRequDataListHeader">
-                                                <td nowrap *ngIf="option != 'Work_Details'" >{{col[option]}}</td>
-                                                <td *ngIf="option == 'Work_Details'">
-                                                    <div (click)="selectWork($event,col,op)" [ngClass]="stringShort(col[option],'css')">{{stringShort(col[option],'ff')}}</div>
+                                                <td nowrap *ngIf="option != 'Work_Details' && option != 'Site'" >{{col[option]}}</td>
+                                                <td nowrap *ngIf="option == 'Work_Details' || option == 'Site'">
+                                                    <div (click)="selectWork($event,col[option],op)" [ngClass]="stringShort(col[option],'css')">{{stringShort(col[option],'ff').replaceAll('#',',')}}</div>
                                                 </td>
+                                               
                                             </ng-container>
                                         </tr>
                                     </ng-template>
@@ -506,7 +507,7 @@
                                                     <td>{{obj.Site_Description ? obj.Site_Description : '-'}}</td>
                                                     <td>{{obj.Budget_Group_Name ? obj.Budget_Group_Name : '-'}}</td>
                                                     <td>{{obj.Budget_Sub_Group_Name ? obj.Budget_Sub_Group_Name : '-'}}</td>
-                                                    <td> <div (click)="selectWork($event,obj,op)" [ngClass]="stringShort(obj.Work_Details ,'css')">{{stringShort(obj.Work_Details ,'ff')}}</div></td>
+                                                    <td> <div (click)="selectWork($event,obj.Work_Details,op)" [ngClass]="stringShort(obj.Work_Details ,'css')">{{stringShort(obj.Work_Details ,'ff')}}</div></td>
                                                     <td *ngIf="buttonname === 'Update'">{{obj.Challan_No ? obj.Challan_No : '-'}}</td>
                                                     <td><button *ngIf="!obj.Challan_No" (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                                 </tr>
@@ -538,5 +539,11 @@
 
 
 <p-overlayPanel [dismissable]="true" [showCloseIcon]="true" [appendTo]="'body'" [baseZIndex]="9999999" #op>
-    <p style="width: 160px;">{{ObjCol.Work_Details}}</p>
+  <ul style="width: 215px; padding: 5px" class="overpaneltext" >
+            <li *ngFor="let ovtext of overlayPanelText.split('#')" >
+                {{ovtext}}
+            </li>
+        </ul>
+    
+
 </p-overlayPanel>

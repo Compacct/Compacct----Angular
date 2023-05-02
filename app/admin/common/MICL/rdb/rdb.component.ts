@@ -86,6 +86,9 @@ export class RdbComponent implements OnInit {
   DepartmentList:any = [];
   UsertList:any = [];
   addPurchaseListInput:boolean = false
+  Server_Date = new Date();
+  minFromDate = new Date();
+  maxFromDate = new Date();
 
    constructor(
     private $http: HttpClient,
@@ -109,6 +112,8 @@ export class RdbComponent implements OnInit {
       Link: " Material Management -> Inward -> RDB"
     });
     this.Finyear();
+    this.ServerDate();
+    this.AllowedEntryDays();
     this.getCostCenter();
     this.getSupplier();
     this.getcompany();
@@ -149,6 +154,8 @@ export class RdbComponent implements OnInit {
     this.deleteError = false;
     this.RegisterSpinner = false;
     this.PoOrderList = [];
+    this.Server_Date = new Date();
+    this.maxFromDate = new Date();
   }
   Finyear() {
     this.$http
@@ -160,6 +167,30 @@ export class RdbComponent implements OnInit {
       // this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
      this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
       });
+  }
+  ServerDate(){
+    this.$http
+    .get("/common/Get_Server_Date")
+    .subscribe((data: any) => {
+     //console.log("ServerDate",data)
+     this.Server_Date  = new Date(data)
+     
+    })
+  }
+  AllowedEntryDays(){
+    this.$http
+    .get("/Common/Get_Allowed_Entry_Days?User_ID=" + this.$CompacctAPI.CompacctCookies.User_ID)
+    .subscribe((rec: any) => {
+      //console.log("AllowedEntryDays",rec)
+     let data = JSON.parse(rec)
+      let days = Number(data[0].Allowed_Entry_Day)
+      //console.log("days",days)
+     this.minFromDate = new Date(this.Server_Date.getTime()-(days*24*60*60*1000));
+     this.maxFromDate = new Date();
+     //console.log("minFromDate",this.minFromDate)
+    //  console.log("maxFromDate currentdate",this.maxFromDate)
+      
+    })
   }
   GetAllData(valid){
     this.ngxService.start();
@@ -673,9 +704,9 @@ export class RdbComponent implements OnInit {
 addClear(){
       this.ObjRdb1 = new RDB1();
       this.RDBFormSubmit = false;
-      if(this.buttonname === "Update") {
-      this.ProductList = [];
-      }
+      // if(this.buttonname === "Update") {
+      // this.ProductList = [];
+      // }
       this.addPurchaseListInput = false
       // this.addPurchaseListInputField = {}
       // console.log("addPurchaseList",this.addPurchaseList);
@@ -923,6 +954,8 @@ addClear(){
               this.GetAllData(true);
               this.GetPendingPO(true);
               this.ngxService.stop();
+              this.Server_Date = new Date();
+              this.maxFromDate = new Date();
               
               this.ObjRdb.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
               this.ObjBrowse.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
@@ -992,6 +1025,7 @@ addClear(){
        this.PoOrderList = data;
       }
       this.ObjRdb.PO_Doc_No = data[0].PO_Doc_No;
+      this.getProductDetails(data[0].PO_Doc_No);
       this.PO_Doc_Date = new Date(data[0].PO_Doc_Date);
       this.dateDis = false;
       data.forEach(element => {

@@ -173,4 +173,8 @@ div.label-t {
   .text-red-active > td {
     color:red;
   }
-  
+  .overpaneltext{
+    list-style-type: square;
+   }
+   .overpaneltext li { background: #EBEDEF; }
+   .overpaneltext li:nth-child(odd) { background: #f9f9f9; }

@@ -364,6 +364,9 @@ import { ViewOutcomesComponent } from "./common/PatientManagement/view-outcomes/
 import { TransferTransectionComponent } from './common/Patna/transfer-transection/transfer-transection.component';
 import { HarbTxnRequisitionComponent } from "./common/Harbauer/harb-txn-requisition/harb-txn-requisition.component";
 import { PurchaseOrderHarbauerTermsComponent } from './common/Harbauer/purchase-order-harbauer-terms/purchase-order-harbauer-terms.component';
+import { AudiologistTargetComponent } from './common/PatientManagement/Audiologist/audiologist-target/audiologist-target.component';
+import { CommonPurchaseBillGstComponent } from './common/FinancialManagement/Transaction/Purchase/common-purchase-bill-gst/common-purchase-bill-gst.component';
+import { FullAndFinalSettlementComponent } from './common/MICL/full-and-final-settlement/full-and-final-settlement.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2765,6 +2768,27 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: PurchaseOrderHarbauerTermsComponent,
         data: {
           title: 'Purchase Order Harbauer Terms'
+    }
+    },
+    {
+      path: 'CR_Audiologist_Target',
+        component: AudiologistTargetComponent,
+        data: {
+          title: 'Audiologist Target'
+    }
+    },
+    {
+      path: 'Common_Purchase_Bill_GST',
+        component: CommonPurchaseBillGstComponent,
+        data: {
+          title: 'Purchase Bill GST'
+    }
+    },
+    {
+      path: 'Full_And_Final_Settlement',
+        component: FullAndFinalSettlementComponent,
+        data: {
+          title: 'Full And Final Settlement'
     }
     },
     /*{

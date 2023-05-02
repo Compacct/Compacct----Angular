@@ -23,6 +23,37 @@
 
     </ng-template>
 </p-toast>
+<p-toast position="center" key="disapprove" (onClose)="onReject()" [modal]="true" [autoZIndex]="true" baseZIndex="99999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <form name="disapproveafterapproveForm" #disapproveafterapproveForm="ngForm" novalidate>
+            <div style="text-align: center" *ngIf="Bussidisabled && !Reportdisabled">
+                <label class="control-label">Remarks of Approval 2  <sup class="text-danger">*</sup></label>
+                <input type="text" name="BMremarkspopup" #BMremarkspopup="ngModel"  [(ngModel)]='Approved_Note_Business_Manager' class="form-control" 
+                [ngClass]="{'clearance': disapproveafterapproveFormSubmit && BMremarkspopup?.errors?.required}" required/>
+            </div>
+            <div style="text-align: center" *ngIf="Reportdisabled && !Bussidisabled">
+                <label class="control-label">Remarks of Approval 1  <sup class="text-danger">*</sup></label>
+                <input type="text" name="RMremarkspopup" #RMremarkspopup="ngModel" [(ngModel)]='Approved_Note_Reporting_Manager' class="form-control" 
+                [ngClass]="{'clearance': disapproveafterapproveFormSubmit && RMremarkspopup?.errors?.required}" required/>
+            </div>
+        </form>
+
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="DisapprovedLeavesAfterApproval(disapproveafterapproveForm.form.valid)" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+
+    </ng-template>
+</p-toast>
 
 <div class="row">
     <div class="col-xs-12">
@@ -52,10 +83,10 @@
                                     <th nowrap="nowrap">Employee Name</th>
                                     <th nowrap="nowrap">Leave Type</th>
                                     <th nowrap="nowrap">Leave Apply From</th>
-                                    <th nowrap="nowrap">Leave Apply To</th>
+                                    <th nowrap="nowrap">Leave Apply Till</th>
                                     <th nowrap="nowrap">Reason</th>
                                     <th nowrap="nowrap">Approved From Date</th>
-                                    <th nowrap="nowrap">Approved To Date</th>
+                                    <th nowrap="nowrap">Approved Till Date</th>
                                     <th nowrap="nowrap">Approval 1</th>
                                     <th nowrap="nowrap">Remarks of Approval 1</th>
                                     <th nowrap="nowrap">Approval 2</th>
@@ -170,21 +201,21 @@
                             </ng-template>
                             <ng-template pTemplate="header">
                                 <tr>
-                                    <!-- <th style="width:5em">Action</th> -->
-                                    <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforTabSecond | slice:2">{{option.replaceAll('_',' ')}}</th> 
+                                    <th style="width:5em">Action</th>
+                                    <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforTabSecond | slice:4">{{option.replaceAll('_',' ')}}</th> 
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-col>
                                 <tr>
 
-                                    <!--<td>
+                                    <td>
                                          <div class="dropdown">
                                             <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                             <i class="fa fa-fw fa-bars"></i>
                                                             <span class="caret"></span>
                                                         </button>
                                             <ul class="dropdown-menu">
-                                                <li>
+                                                <!-- <li>
                                                     <a (click)="CreateGRN(col)">
                                                             <i class="fa fa-fw fa-pencil"></i> Create GRN 
                                                     </a>
@@ -193,11 +224,16 @@
                                                     <a (click)="PrintPRDB(col.RDB_No)">
                                                         <i class="fa fa-fw fa-print"></i> Print
                                                     </a>
+                                                </li> -->
+                                                <li >
+                                                    <a (click)="DisapprovedAfterApproval(col)">
+                                                        <i class="glyphicon glyphicon-ok"></i> Disapproved
+                                                    </a>
                                                 </li>
                                             </ul>
                                         </div> 
-                                    </td>-->
-                                    <ng-container *ngFor="let option of DynamicHeaderforTabSecond | slice:2">
+                                    </td>
+                                    <ng-container *ngFor="let option of DynamicHeaderforTabSecond | slice:4">
                                         <td nowrap="nowrap">{{col[option]}}</td>
                                     </ng-container>
                                     
@@ -307,7 +343,7 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-4">
-                        <label class="control-label">No. of Days</label>
+                        <label class="control-label">No. of Days applied</label>
                         <div class="label-t" >{{ShowObj.No_Of_Days_Apply ? ShowObj.No_Of_Days_Apply : "-"}}</div>
                     </div>
                     <div class="col-sm-4">
@@ -338,7 +374,7 @@
             <th>Leave Type</th>
             <th>No. of Days</th>
             <th>From</th>
-            <th>To</th>
+            <th>Till</th>
             <th>Reason</th>
             <th>Approved Status of Approval 1</th>
             <th>Approved Status of Approval 2</th>
@@ -369,7 +405,7 @@
                 <th>Leave Type</th>
                 <th>No. of Days</th>
                 <th>From</th>
-                <th>To</th>
+                <th>Till</th>
                 <th>Reason</th>
                 <th>Approved Status of Approval 1</th>
                 <th>Approved Status of Approval 2</th>
@@ -393,14 +429,22 @@
 <br>
 <form name="ApproveForm" #ApproveForm="ngForm" novalidate>
     <div class="form-group">
-    <div class="col-sm-4"> 
+    <div class="col-sm-3"> 
         <label class="control-label">Approved From Date  <sup class="text-danger">*</sup></label>
-        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Apply_From_Date'></ejs-datepicker>
+        <ejs-datepicker [zIndex]="99999" [format]="'dd/MMM/yyyy'" [(value)]='Issued_From_Date' (change)="GetNoOfDays()"></ejs-datepicker>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3">
         <label class="control-label">Approved To Date  <sup class="text-danger">*</sup></label>
-        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Apply_To_Date'></ejs-datepicker>
+        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Issued_To_Date' (change)="GetNoOfDays()"></ejs-datepicker>
     </div> 
+    <div class="col-sm-2">
+        <label class="control-label">No. Of Days issued</label>
+        <input  class="form-control" placeholder="Number Of Days"
+        name="NoOfDaysApply"
+        #NoOfDaysApply="ngModel"
+            [(ngModel)]="No_Of_Days_Apply" 
+            disabled>
+    </div>
     <div class="col-sm-4" *ngIf="Bussidisabled && !Reportdisabled">
         <label class="control-label">Remarks of Approval 2  <sup class="text-danger">*</sup></label>
         <input type="text" name="BMremarks" #BMremarks="ngModel"  [(ngModel)]='Approved_Note_Business_Manager' class="form-control" 

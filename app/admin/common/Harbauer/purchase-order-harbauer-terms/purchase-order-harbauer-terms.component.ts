@@ -36,8 +36,8 @@ export class PurchaseOrderHarbauerTermsComponent implements OnInit {
   ngOnInit() {
 
     this.Header.pushHeader({
-      Header: "Purchase Oreder Terms",
-      Link: "Harbaur --> Purchase Oreder Terms"
+      Header: "Purchase Order Terms",
+      Link: "Harbaur --> Purchase Order Terms"
     });
     this.getBrowseData();
   }
@@ -48,7 +48,7 @@ export class PurchaseOrderHarbauerTermsComponent implements OnInit {
       "Report_Name_String": "Get_Purchase_Order_Terms",
     }
     this.GlobalAPI.getData(obj).subscribe((data:any) => {
-      console.log('get browse data', data);
+      // console.log('get browse data', data);
         this.TableData = data;
     });
   }
@@ -69,10 +69,10 @@ export class PurchaseOrderHarbauerTermsComponent implements OnInit {
           "Report_Name_String": "Update_Purchase_Order_Terms",
           "Json_Param_String": JSON.stringify(this.objPurchaseOreder),
         }
-        console.log('Update Object', this.objPurchaseOreder);
+        // console.log('Update Object', this.objPurchaseOreder);
 
         this.GlobalAPI.postData(obj).subscribe((data: any) => {
-          console.log('update response', data);
+          // console.log('update response', data);
           if (data[0].Column1) {
             this.Spinner = false;
             this.CompacctToast.clear();
@@ -108,10 +108,10 @@ export class PurchaseOrderHarbauerTermsComponent implements OnInit {
           "Report_Name_String": "Create_Purchase_Order_Terms",
           "Json_Param_String": JSON.stringify(this.objPurchaseOreder),
         }
-        console.log('Creteing Object', this.objPurchaseOreder);
+        // console.log('Creteing Object', this.objPurchaseOreder);
 
         this.GlobalAPI.postData(obj).subscribe((data: any) => {
-          console.log('save response', data);
+          // console.log('save response', data);
           if (data[0].Column1) {
             this.Spinner = false;
             this.CompacctToast.clear();
@@ -142,7 +142,7 @@ export class PurchaseOrderHarbauerTermsComponent implements OnInit {
 
   editDoc(col:any) {
     if (col.Terms_ID) {
-      console.log('edit Works');
+      // console.log('edit Works');
       const obj = {
         "SP_String": "sp_Purchase_Order_Terms",
         "Report_Name_String": "Retrieve_Purchase_Order_Terms",
@@ -150,13 +150,13 @@ export class PurchaseOrderHarbauerTermsComponent implements OnInit {
       }
 
       this.GlobalAPI.getData(obj).subscribe((data:any) => {
-        console.log('get edit data', data);
+        // console.log('get edit data', data);
         if (data[0].Terms_ID) {
           this.editTermsId = data[0].Terms_ID;
           this.objPurchaseOreder = data[0];
           this.buttonName = "Update";
           window.scrollTo(0, 0);
-          console.log('edit terms id', this.editTermsId);
+          // console.log('edit terms id', this.editTermsId);
         }
       });
     }
@@ -165,7 +165,7 @@ export class PurchaseOrderHarbauerTermsComponent implements OnInit {
   deleteDoc(col: any) {
     if (col.Terms_ID) {
       this.deleteTermsId = col.Terms_ID;
-      console.log('delete Works');
+      // console.log('delete Works');
       this.CompacctToast.clear();
       this.CompacctToast.add({
         key: "c",
@@ -189,7 +189,7 @@ export class PurchaseOrderHarbauerTermsComponent implements OnInit {
     }
 
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      console.log('get delete res', data);
+      // console.log('get delete res', data);
       if (data[0].Column1 = 'Done') {
         this.CompacctToast.clear("c");
         this.CompacctToast.clear();

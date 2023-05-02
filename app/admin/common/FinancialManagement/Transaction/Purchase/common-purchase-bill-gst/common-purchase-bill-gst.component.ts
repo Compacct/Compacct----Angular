@@ -13,13 +13,13 @@ import { Console } from 'console';
 import { runInThisContext } from 'vm';
 
 @Component({
-  selector: 'app-purchase-bill',
-  templateUrl: './purchase-bill.component.html',
-  styleUrls: ['./purchase-bill.component.css'],
+  selector: 'app-common-purchase-bill-gst',
+  templateUrl: './common-purchase-bill-gst.component.html',
+  styleUrls: ['./common-purchase-bill-gst.component.css'],
   providers: [MessageService],
   encapsulation: ViewEncapsulation.None
 })
-export class PurchaseBillComponent implements OnInit {
+export class CommonPurchaseBillGstComponent implements OnInit {
   items:any = [];
   menuList:any = [];
   Spinner = false;
@@ -31,14 +31,14 @@ export class PurchaseBillComponent implements OnInit {
   CNDate : Date;
   SupplierBillDate= new Date();
 
-  VendorList:any = [];
+  CustomerList:any = [];
   maindisabled = false;
   StateList:any = [];
   CostCenterList:any = [];
   
   ProductDetails:any = [];
 
-  PurchaseBillFormSubmitted = false;
+  CommonPurchaseBillFormSubmitted = false;
   ObjPurChaseBill = new PurChaseBill();
   // ObjGRN : GRN = new GRN ();
   // GRNDate = new Date();
@@ -68,8 +68,6 @@ export class PurchaseBillComponent implements OnInit {
     projectMand : 'N'
   }
   projectEditData:any =[]
-  @ViewChild("project", { static: false })
-  ProjectInput: CompacctProjectComponent;
   CurrencyList:any = [];
   GodownList:any = [];
   PODate : Date;
@@ -151,14 +149,13 @@ export class PurchaseBillComponent implements OnInit {
   SelectedSubledger:any = []
   bckUpQty:any = undefined
   bckUpQtyValid:boolean = false
-  // Project
-  projectFromSubmit:boolean = false
-  ProjectList:any = []
-  SiteList = [];
-  groupList = [];
-  subGorupList = [];
-  workList = [];
-  overlayPanelText = ""
+  TCSTaxRequiredValidation:boolean = false;
+  Productbutton : any;
+  TCSTaxRequired: any;
+  TCSInputLedger: any;
+  TCS_Persentage: any;
+  TCS_Amount: any;
+
   constructor(
     private Header: CompacctHeader,
     private router : Router,
@@ -169,41 +166,28 @@ export class PurchaseBillComponent implements OnInit {
     private compacctToast: MessageService,
     private ngxService: NgxUiLoaderService,
     private route: ActivatedRoute,
-    ) {
-      this.route.queryParams.subscribe(params => {
-       // console.log(params);
-        this.headerData = params['header'];
-        this.openProject = params['proj'];
-        this.projectMand = params['mand'];
-        this.validatation.projectMand = params['mand']
-       })
-     }
-// 
+  ) { }
+
   ngOnInit() {
-    // console.log(this.$CompacctAPI.CompacctCookies.Fin_Year_Start)
-    $(document).prop('title', this.headerData ? this.headerData : $('title').text());
     this.items = ["BROWSE", "CREATE", "PENDING PURCHASE ORDER", "PENDING GRN"];
     this.menuList = [
       {label: 'Edit', icon: 'pi pi-fw pi-user-edit'},
       {label: 'Delete', icon: 'fa fa-fw fa-trash'}
     ];
     this.Header.pushHeader({
-      Header: this.headerData,
-      Link: " Financial Management -> Purchase -> " + this.headerData
+      Header: "Purchase Bill GST",
+      Link: " Financial Management -> Purchase -> Purchase Bill GST"
     });
     this.Finyear();
     this.GetVendor();
     this.GetStateList();
     this.GetCostcenter();
-    this.getcompany();
     this.GetCurrency();
     this.ObjPurChaseBill.RCM = "N";
     this.GetLedger();
     this.GetTerm();
-    // this.GetSearchedlist();
-    this.getProject()
-    this.GetProductdetails()
   }
+
   TabClick(e){
     // console.log(e)
      this.tabIndexToView = e.index;
@@ -211,7 +195,7 @@ export class PurchaseBillComponent implements OnInit {
      this.buttonname = "Create";
      this.Spinner = false;
      this.clearData();
-     this.clearProject();
+     
      this.productaddSubmit = [];
      this.Spinner = false;
     //  this.Godownlist = [];
@@ -220,11 +204,9 @@ export class PurchaseBillComponent implements OnInit {
      this.ObjProductInfo = new ProductInfo();
    }
    clearData(){
-    //djfidu
      this.ObjPurChaseBill = new PurChaseBill();
-     this.objproject = new project()
      this.ObjPurChaseBill.Choose_Address = "MAIN";
-     this.PurchaseBillFormSubmitted = false;
+     this.CommonPurchaseBillFormSubmitted = false;
      this.validatation.required = false;
      this.maindisabled = false;
      this.ObjPurChaseBill.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
@@ -233,14 +215,15 @@ export class PurchaseBillComponent implements OnInit {
      this.GetCosCenAddress();
      this.DocDate = new Date();
      this.SupplierBillDate = new Date();
-     this.CNDate = new Date();
+     this.CNDate = undefined;
      this.bckUpQtyValid = false
      this.PurOrderList = [];
      this.bckUpQty = undefined
      this.POList = [];
-     this.PODate = new Date();
+     this.PODate = undefined;
      this.GRNList = [];
-     this.GRNDate = new Date();
+     this.GRNDate = undefined;
+    //  this.GetProductdetails();
      this.PONoProList = [];
      this.GRNNoProlist = [];
      this.ObjPurChaseBill.Currency_ID = 1;
@@ -253,7 +236,6 @@ export class PurchaseBillComponent implements OnInit {
      this.ObjTerm = new Term();
     //  this.cleartotaltermamount();
     this.deleteError = false;
-    this.overlayPanelText = ""
   
    }
    Finyear() {
@@ -261,102 +243,61 @@ export class PurchaseBillComponent implements OnInit {
       .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
       .subscribe((res: any) => {
       let data = JSON.parse(res)
+      // this.vouchermaxDate = new Date(data[0].Fin_Year_End);
+      // this.voucherminDate = new Date(data[0].Fin_Year_Start);
+      // this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
      this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
       });
   }
-   getcompany(){
-    const obj = {
-      "SP_String": "sp_Comm_Controller",
-      "Report_Name_String": "Dropdown_Company",
-      }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     this.companyList = data
-    this.ObjBrowsePurBill.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
-     this.ObjPurChaseBill.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
-     this.ObjPendingPO.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
-     this.ObjPendingGRN.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;
-    })
-  }
    GetVendor(){
     const obj = {
-      "SP_String": "SP_Purchase_Bill",
+      "SP_String": "SP_Common_Purchase_Bill",
       "Report_Name_String": "Get_Subledger_SC",
      // "Json_Param_String": JSON.stringify([TempObj])
 
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-       this.VendorList = data;
-  
+       this.CustomerList = data;
+    // console.log("vendor list======",this.CustomerList);
    });
   }
-   VenderNameChange(){
-    this.ObjPurChaseBill.Sub_Ledger_State = undefined
-    this.ObjPurChaseBill.Sub_Ledger_GST_No = undefined
-    this.ObjPurChaseBill.Sub_Ledger_Address_1 = ""
-    this.ObjPurChaseBill.Sub_Ledger_Address_2 = ""
-    this.ObjPurChaseBill.Sub_Ledger_Address_3 = ""
-    this.ObjPurChaseBill.Sub_Ledger_Land_Mark = ""
-    this.ObjPurChaseBill.Sub_Ledger_Pin = undefined
-    this.ObjPurChaseBill.Sub_Ledger_District =""
-    this.ObjPurChaseBill.Sub_Ledger_Country = ""
-    this.ObjPurChaseBill.Sub_Ledger_Email = undefined
-    this.ObjPurChaseBill.Sub_Ledger_Mobile_No = undefined
-    this.ObjPurChaseBill.Sub_Ledger_PAN_No = undefined
-    this.ObjPurChaseBill.Sub_Ledger_CIN_No =undefined
-    this.ObjPurChaseBill.Sub_Ledger_TIN_No = undefined
-    this.ObjPurChaseBill.Sub_Ledger_CST_No = undefined
-    this.ObjPurChaseBill.Sub_Ledger_SERV_REG_NO = undefined
-    this.ObjPurChaseBill.Sub_Ledger_UID_NO = undefined
-    this.ObjPurChaseBill.Sub_Ledger_EXID_NO = undefined
-    this.ObjPurChaseBill.Sub_Ledger_Billing_Name = ""
-    this.ObjPurChaseBill.Sub_Ledger_Name = ""
+  CustomerNameChange(){
+     //this.ExpiredProductFLag = false;
    if(this.ObjPurChaseBill.Sub_Ledger_ID) {
     const ctrl = this;
-    const vendorObj = $.grep(ctrl.VendorList,function(item: any) {return item.value == ctrl.ObjPurChaseBill.Sub_Ledger_ID})[0];
-   this.ObjPurChaseBill.Sub_Ledger_Billing_Name = vendorObj.Sub_Ledger_Billing_Name;
+    const vendorObj = $.grep(ctrl.CustomerList,function(item: any) {return item.value == ctrl.ObjPurChaseBill.Sub_Ledger_ID})[0];
+   // console.log(vendorObj);
+    this.ObjPurChaseBill.Sub_Ledger_Billing_Name = vendorObj.Sub_Ledger_Billing_Name;
     this.ObjPurChaseBill.Sub_Ledger_Name = vendorObj.label;
     this.GetChooseAddress();
     this.GetPurOrderNoList();
    } else{
     this.PurOrderList = [];
     this.POList = [];
-    this.PODate = new Date();
+    this.PODate = undefined;
     this.GRNList = [];
-    this.GRNDate = new Date();
+    this.GRNDate = undefined;
+    // this.GetProductdetails();
+    // this.ProductDetails = [];
     this.ObjProductInfo.Product_Specification = undefined;
    }
    }
    GetChooseAddress(){
-   this.PODate = new Date();
+    //this.ExpiredProductFLag = false;
+  // if(this.ObjPurChaseBill.Sub_Ledger_ID) {
+    // this.GetProductdetails();
+    this.PODate = undefined;
     this.GRNList = [];
-    this.GRNDate = new Date();
+    this.GRNDate = undefined;
     this.ObjProductInfo.Product_Specification = undefined;
-
-    this.ObjPurChaseBill.Sub_Ledger_State = undefined
-    this.ObjPurChaseBill.Sub_Ledger_GST_No = undefined
-    this.ObjPurChaseBill.Sub_Ledger_Address_1 = ""
-    this.ObjPurChaseBill.Sub_Ledger_Address_2 = ""
-    this.ObjPurChaseBill.Sub_Ledger_Address_3 = ""
-    this.ObjPurChaseBill.Sub_Ledger_Land_Mark = ""
-    this.ObjPurChaseBill.Sub_Ledger_Pin = undefined
-    this.ObjPurChaseBill.Sub_Ledger_District =""
-    this.ObjPurChaseBill.Sub_Ledger_Country = ""
-    this.ObjPurChaseBill.Sub_Ledger_Email = undefined
-    this.ObjPurChaseBill.Sub_Ledger_Mobile_No = undefined
-    this.ObjPurChaseBill.Sub_Ledger_PAN_No = undefined
-    this.ObjPurChaseBill.Sub_Ledger_CIN_No =undefined
-    this.ObjPurChaseBill.Sub_Ledger_TIN_No = undefined
-    this.ObjPurChaseBill.Sub_Ledger_CST_No = undefined
-    this.ObjPurChaseBill.Sub_Ledger_SERV_REG_NO = undefined
-    this.ObjPurChaseBill.Sub_Ledger_UID_NO = undefined
-    this.ObjPurChaseBill.Sub_Ledger_EXID_NO = undefined
     if(this.ObjPurChaseBill.Choose_Address) {
    const ctrl = this;
-   const MainObj = $.grep(ctrl.VendorList,function(item: any) {return item.value == ctrl.ObjPurChaseBill.Sub_Ledger_ID})[0];
+   const MainObj = $.grep(ctrl.CustomerList,function(item: any) {return item.value == ctrl.ObjPurChaseBill.Sub_Ledger_ID})[0];
+  // console.log(MainObj);
    this.maindisabled = true;
    this.ObjPurChaseBill.Sub_Ledger_State = MainObj.Sub_Ledger_State;
    this.ObjPurChaseBill.Sub_Ledger_GST_No = MainObj.GST;
-   this.ObjPurChaseBill.Sub_Ledger_Address_1 = MainObj.Sub_Ledger_Address_1;
+   this.ObjPurChaseBill.Sub_Ledger_Address_1 = MainObj.Sub_Ledger_Address_1;//+','+ MainObj.Sub_Ledger_Address_2 +','+ MainObj.Sub_Ledger_Address_3;
    this.ObjPurChaseBill.Sub_Ledger_Address_2 = MainObj.Sub_Ledger_Address_2;
    this.ObjPurChaseBill.Sub_Ledger_Address_3 = MainObj.Sub_Ledger_Address_3;
    this.ObjPurChaseBill.Sub_Ledger_Land_Mark = MainObj.Sub_Ledger_Land_Mark;
@@ -376,70 +317,39 @@ export class PurchaseBillComponent implements OnInit {
   else {
     this.maindisabled = false;
   }
-
+  // }
   }
    GetStateList() {
     const obj = {
-      "SP_String": "SP_Purchase_Bill",
+      "SP_String": "SP_Common_Purchase_Bill",
       "Report_Name_String": "Get_State_List",
       }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
           this.StateList = data;
-         
+         // console.log('StateList',this.StateList)
     })
-
   }
   GetCostcenter(){
     const obj = {
-      "SP_String": "SP_Purchase_Bill",
+      "SP_String": "SP_Common_Purchase_Bill",
       "Report_Name_String": "Get_Cost_Center",
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-   console.log("costcenterList  ===",data);
+     // console.log("costcenterList  ===",data);
       this.CostCenterList = data;
-    
+      // this.ObjPurChaseBill.Cost_Cen_ID = this.CostCenterList.length === 1 ? this.CostCenterList[0].Cost_Cen_ID : undefined;
       this.ObjBrowsePurBill.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       this.ObjPurChaseBill.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       this.GetCosCenAddress();
       this.ObjPurChaseBill.Revenue_Cost_Cent_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       })
   }
-  GetGodown(){
-    const TempObj = {
-      Cost_Cen_ID : this.ObjPurChaseBill.Cost_Cen_ID,
-      }
-    const obj = {
-      "SP_String": "SP_Purchase_Bill",
-      "Report_Name_String": "Get_Godown_list",
-      "Json_Param_String": JSON.stringify([TempObj])
-    }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log("GodownList  ===",data);
-      this.GodownList = data;
-      this.ObjProductInfo.Godown_Id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
-      this.ObjProductInfo.Godown_Id = this.openProject == 'Y' ? 1 : undefined
-    })
-  }
   GetCosCenAddress(){
-    this.ObjPurChaseBill.Cost_Cen_Name = ""
-    this.ObjPurChaseBill.Cost_Cen_Address1 = ""
-    this.ObjPurChaseBill.Cost_Cen_Address2 = ""
-    this.ObjPurChaseBill.Cost_Cen_State = ""
-    this.ObjPurChaseBill.Cost_Cen_GST_No =undefined 
-    this.ObjPurChaseBill.Cost_Cen_Location =""
-    this.ObjPurChaseBill.Cost_Cen_PIN = undefined
-    this.ObjPurChaseBill.Cost_Cen_District = ""
-    this.ObjPurChaseBill.Cost_Cen_Country = ""
-    this.ObjPurChaseBill.Cost_Cen_Mobile = undefined
-    this.ObjPurChaseBill.Cost_Cen_Phone = undefined
-    this.ObjPurChaseBill.Cost_Cen_Email = undefined
-    this.ObjPurChaseBill.Cost_Cen_VAT_CST = undefined
-    this.ObjPurChaseBill.Cost_Cen_CST_NO = 
-    this.ObjPurChaseBill.Cost_Cen_SRV_TAX_NO = 
-    this.ObjPurChaseBill.Cost_Cen_GST_No = undefined
+    //this.ExpiredProductFLag = false;
     if(this.ObjPurChaseBill.Cost_Cen_ID) {
    const ctrl = this;
    const costcenObj = $.grep(ctrl.CostCenterList,function(item: any) {return item.Cost_Cen_ID == ctrl.ObjPurChaseBill.Cost_Cen_ID})[0];
+  // console.log(costcenObj);
    this.ObjPurChaseBill.Cost_Cen_Name = costcenObj.Cost_Cen_Name;
    this.ObjPurChaseBill.Cost_Cen_Address1 = costcenObj.Cost_Cen_Address1;
    this.ObjPurChaseBill.Cost_Cen_Address2 = costcenObj.Cost_Cen_Address2;
@@ -459,16 +369,39 @@ export class PurchaseBillComponent implements OnInit {
    this.GetGodown();
   }
   }
+  GetGodown(){
+    const TempObj = {
+      Cost_Cen_ID : this.ObjPurChaseBill.Cost_Cen_ID,
+      }
+    const obj = {
+      "SP_String": "SP_Common_Purchase_Bill",
+      "Report_Name_String": "Get_Godown_list",
+      "Json_Param_String": JSON.stringify([TempObj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("GodownList  ===",data);
+      this.GodownList = data;
+      this.ObjProductInfo.Godown_Id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
+      this.ObjProductInfo.Godown_Id = this.openProject == 'Y' ? 1 : undefined
+      // this.ObjPurChaseBill.Cost_Cen_ID = this.CostCenterList.length === 1 ? this.CostCenterList[0].Cost_Cen_ID : undefined;
+      // this.ObjPurChaseBill.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      // this.GetCosCenAddress();
+      })
+  }
+  
   GetCurrency(){
     const obj = {
-      "SP_String": "SP_Purchase_Bill",
+      "SP_String": "SP_Common_Purchase_Bill",
       "Report_Name_String": "Get_Currency_Details",
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-  
+     // console.log("costcenterList  ===",data);
       this.CurrencyList = data;
+      // console.log("CurrencyList===",this.CurrencyList)
+      // this.ObjPurChaseBill.Cost_Cen_ID = this.CostCenterList.length === 1 ? this.CostCenterList[0].Cost_Cen_ID : undefined;
       this.ObjPurChaseBill.Currency_ID = 1;
-       })
+      // this.GetCosCenAddress();
+      })
   }
   GetPurOrderNoList(){
     this.POList = [];
@@ -477,105 +410,130 @@ export class PurchaseBillComponent implements OnInit {
     if( this.ObjPurChaseBill.Sub_Ledger_ID){
       const TempObj = {
         Sub_Ledger_ID : this.ObjPurChaseBill.Sub_Ledger_ID,
-        Proj : this.openProject
        }
      const obj = {
-      "SP_String": "SP_Purchase_Bill",
-      "Report_Name_String" : "Get_PO_list_For_PBIll",
+      "SP_String": "SP_Common_Purchase_Bill",
+      "Report_Name_String" : "Get_PO_list",
      "Json_Param_String": JSON.stringify([TempObj])
  
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      this.POList = data;
-       if(data.length){
-       
-        let DOrderBy:any = [];
+      // this.POList = data;
+      if(data.length) {
+      data.forEach(element => {
+          element['label'] = element.label + " (" + "PO Date: " + this.DateService.dateConvert(new Date(element.Doc_Date)) + " )",
+          element['value'] = element.value
+        });
+        this.PurOrderList = data;
+      } else {
         this.PurOrderList = [];
         
-         data.forEach((item:any) => {
-          if (DOrderBy.indexOf(item.value) === -1) {
-            DOrderBy.push(item.value);
-            this.PurOrderList.push({ label: item.label, value: item.value });
-          }
-        });
-       }
+      }
       })
     }
    
    }
    ChangePurchaseOrder(){
     this.PODate = new Date();
-    this.ProductDetails = [];
-    this.ObjProductInfo.Product_ID = undefined;
-    this.ObjProductInfo.Product_Specification = undefined;
-    this.ProjectList = []
-    this.SiteList = []
-    this.groupList = []
-    this.subGorupList = []
-    this.workList = []
-    this.objproject = new project()
-  
-     if(this.ObjProductInfo.Pur_Order_No) {
+    // this.podatedisabled = true;
+    if(this.ObjProductInfo.Pur_Order_No) {
       const ctrl = this;
-      const DateObj = $.grep(ctrl.POList,function(item: any) {return item.value == ctrl.ObjProductInfo.Pur_Order_No})[0];
+      const DateObj = $.grep(ctrl.PurOrderList,function(item: any) {return item.value == ctrl.ObjProductInfo.Pur_Order_No})[0];
       console.log(DateObj);
+      // this.ObjGRN1.RDB_Date = new Date(DateObj.RDB_Date);
       this.PODate = new Date(DateObj.Doc_Date);
-      this.getProject()
-      this.GetProductdetails()
+      // this.podatedisabled = false;
+      // this.GetPurOrderProductdetails();
+      // setTimeout(() => {
+      // if (this.PONoProList.length) {
+      //  // console.log("this.PONoProList",this.PONoProList)
+        this.GetPurOrderProductdetails();
+      // } 
+      // else {
+      //   this.GetProductdetails();
+      // }
+      // }, 200);
      }
      else {
-      this.getProject()
        this.PODate = undefined;
        this.GetProductdetails();
-       this.ProductDetails = []
-      this.ObjProductInfo.Product_ID = undefined;
-    
+       this.ObjProductInfo.GRN_No = undefined;
+       this.ObjProductInfo.Product_ID = undefined;
+       this.ObjProductInfo.Product_Specification = undefined;
+      //  this.podatedisabled = true;
      }
   }
-  
+  ProductRefresh(){
+    if (this.Productbutton === "(Show PO Product)"){
+      this.GetPurOrderProductdetails();
+    }
+    else {
+      this.GetProductdetails();
+    }
+   }
    GetProductdetails(){
     this.ProductDetails = [];
     this.ObjProductInfo.Product_ID = undefined;
-    let TempObj = {
-      Project_ID:0,   
-			Site_ID:0,
-			Budget_Group_ID:0,
-			Budget_Sub_Group_ID:0,
-			Work_Details_ID:0,
-			Doc_No:this.ObjProductInfo.Pur_Order_No ? this.ObjProductInfo.Pur_Order_No :'0',
-    }
-      if(Object.keys(this.objproject).length == 5 && !this.ObjProductInfo.Pur_Order_No){
-         TempObj = {
-          Project_ID: this.objproject.PROJECT_ID,   
-          Site_ID: this.objproject.SITE_ID,
-          Budget_Group_ID: this.objproject.Budget_Group_ID,
-          Budget_Sub_Group_ID: this.objproject.Budget_Sub_Group_ID,
-          Work_Details_ID: this.objproject.Work_Details_ID,
-          Doc_No:'0',
-        }
-      }
-      if(Object.keys(this.objproject).length == 5 && this.ObjProductInfo.Pur_Order_No){
-        TempObj = {
-         Project_ID: this.objproject.PROJECT_ID,   
-         Site_ID: this.objproject.SITE_ID,
-         Budget_Group_ID: this.objproject.Budget_Group_ID,
-         Budget_Sub_Group_ID: this.objproject.Budget_Sub_Group_ID,
-         Work_Details_ID: this.objproject.Work_Details_ID,
-         Doc_No:this.ObjProductInfo.Pur_Order_No,
-       }
-     }
       const obj = {
-        "SP_String": "SP_Purchase_Bill",
-        "Report_Name_String": "Get_Products_For_PBill",
-        "Json_Param_String": JSON.stringify([TempObj])
+        "SP_String": "SP_Common_Purchase_Bill",
+        "Report_Name_String": "Get_All_Products"
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=> {
+        // data.forEach(element => {
+        //   element['label'] = element.Product_Description,
+        //   element['value'] = element.Product_ID
+        // });
         this.ProductDetails = data;
-       })
- 
+        this.Productbutton = "(Show PO Product)"
+      // } else {
+      //   this.ProductDetails = [];
+      // }
+        //this.SpinnerShow = false;
+       // console.log("this.ProductDetails",this.ProductDetails);
+      })
+    //  }
   
   }
+  GetPurOrderProductdetails(){
+    this.PONoProList = [];
+    const obj = {
+      "SP_String": "SP_Common_Purchase_Bill",
+      "Report_Name_String": "Get_PO_Products",
+      "Json_Param_String": JSON.stringify([{PO_Doc_No : this.ObjProductInfo.Pur_Order_No,}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=> {
+      // data.forEach(element => {
+      //   element['label'] = element.Product_Description,
+      //   element['value'] = element.Product_ID
+      // });
+      this.PONoProList = data;
+      this.ProductDetails = data;
+      this.Productbutton = "(Show All Product)"
+    // else {
+    //   this.PONoProList = [];
+    //   this.ProductDetails = [];
+    // }
+      //this.SpinnerShow = false;
+     // console.log("this.PONoProList",this.PONoProList);
+      // console.log("this.ProductDetails",this.ProductDetails);
+    })
+  // }
 
+}
+// GetPONoProdetails2(){
+//   this.ProductDetails = [];
+//   this.ObjProductInfo.Product_Specification = undefined;
+//   const obj = {
+//     "SP_String": "SP_Common_Purchase_Bill",
+//     "Report_Name_String": "Get_PO_Products",
+//     "Json_Param_String": JSON.stringify([{PO_Doc_No : this.ObjProductInfo.Pur_Order_No,}])
+//   }
+//   this.GlobalAPI.getData(obj).subscribe((data:any)=> {
+//     this.ProductDetails = data;
+//    // console.log("this.ProductDetails",this.ProductDetails);
+//   })
+
+// }
   ProductChange(){
     this.ObjProductInfo.Product_Specification = undefined;
     this.Is_Service = false;
@@ -603,7 +561,7 @@ export class PurchaseBillComponent implements OnInit {
       this.Batch_No = ProductObj.Batch_No
       this.ObjProductInfo.Batch_Number = ProductObj.Batch_No;
       this.ObjProductInfo.Product_Expiry = ProductObj.Product_Expiry;
-      if (this.ObjProductInfo.Product_Expiry === 'true') {
+      if (this.ObjProductInfo.Product_Expiry === true) {
         this.ProductExpirydisabled = true;
       } else {
         this.ProductExpirydisabled = false;
@@ -690,24 +648,21 @@ export class PurchaseBillComponent implements OnInit {
     }
   }
   
-  AddProductInfo(valid,valid2) {
+  AddProductInfo(valid) {
     //console.log(this.ObjaddbillForm.Product_ID)
-    console.log("valid2",valid2)
     this.ProductInfoSubmitted = true;
-    this.PurchaseBillFormSubmitted = true;
     if(valid && !this.chkqut()) {
-      const ProjectListFilter:any = this.ProjectList.filter((el:any)=> el.Project_ID == this.objproject.PROJECT_ID)
-      const SiteSiteList:any = this.SiteList.filter((el:any) => el.Site_ID == this.objproject.SITE_ID)
-      const groupListFilter:any = this.groupList.filter((el:any) => el.Budget_Group_ID == this.objproject.Budget_Group_ID)
-      const subGorupListFilter:any = this.subGorupList.filter((el:any)=> el.Budget_Sub_Group_ID == this.objproject.Budget_Sub_Group_ID )
-      const workListFilter:any = this.workList.filter((el:any) => el.Work_Details_ID == this.objproject.Work_Details_ID)
       const SubLedgerState = this.ObjPurChaseBill.Sub_Ledger_State
         ? this.ObjPurChaseBill.Sub_Ledger_State.toUpperCase()
         : undefined;
       const CostCenterState = this.ObjPurChaseBill.Cost_Cen_State
         ? this.ObjPurChaseBill.Cost_Cen_State.toUpperCase()
         : undefined;
-   if (SubLedgerState && CostCenterState) {
+    // this.ObjProductInfo.Taxable_Amount = Number(
+    //   this.ObjProductInfo.Amount ? this.ObjProductInfo.Amount : 0
+    // );
+    
+      if (SubLedgerState && CostCenterState) {
         if (SubLedgerState === CostCenterState) {
           this.ObjProductInfo.CGST_Amount = Number(((this.ObjProductInfo.Taxable_Amount * this.ObjProductInfo.CGST_Rate) / 100).toFixed(2));
           this.ObjProductInfo.SGST_Amount = Number(((this.ObjProductInfo.Taxable_Amount * this.ObjProductInfo.SGST_Rate) / 100).toFixed(2));
@@ -722,6 +677,8 @@ export class PurchaseBillComponent implements OnInit {
           this.ObjProductInfo.SGST_Rate = 0;
         }
       } 
+
+      // var cessamount = this.ObjProductInfo.CESS_Percentage ? Number(((this.ObjProductInfo.Taxable_Amount * this.ObjProductInfo.CESS_Percentage) / 100).toFixed(2)) : 0;
       this.ObjProductInfo.CESS_AMT = this.ObjProductInfo.CESS_AMT ? Number(this.ObjProductInfo.CESS_AMT) : 0;
       var netamount = (Number(this.ObjProductInfo.CGST_Amount) + Number(this.ObjProductInfo.SGST_Amount) 
                     + Number(this.ObjProductInfo.IGST_Amount) + Number(this.ObjProductInfo.CESS_AMT)).toFixed(2);
@@ -731,6 +688,7 @@ export class PurchaseBillComponent implements OnInit {
       Product_ID : this.ObjProductInfo.Product_ID,
       Product_Name : this.ObjProductInfo.Product_Specification,
       Product_Specification : this.ObjProductInfo.Product_Specification,
+      // HSN_Code : this.ObjProductInfo.HSN_No,
       HSL_No : this.ObjProductInfo.HSN_No,
       Batch_Number : this.ObjProductInfo.Batch_Number,
       Serial_No : this.ObjProductInfo.Serial_No,
@@ -760,22 +718,16 @@ export class PurchaseBillComponent implements OnInit {
       Pur_Order_No : this.ObjProductInfo.Pur_Order_No,
       Pur_Order_Date : this.PODate ? this.DateService.dateConvert(new Date(this.PODate)) : "01/Jan/1900",
       GRN_No : this.ObjProductInfo.GRN_No,
-      GRN_Date : this.GRNDate ? this.DateService.dateConvert(new Date(this.GRNDate)) : "01/Jan/1900",
-
-      SITE_ID	: this.openProject == 'Y' ? this.objproject.SITE_ID : null  ,
-      Site_Description : this.openProject == 'Y' && SiteSiteList.length ? SiteSiteList[0].Site_Description : "",
-      Budget_Group_ID: this.openProject == 'Y' ? this.objproject.Budget_Group_ID : null,
-      Budget_Group_Name:this.openProject == 'Y' && groupListFilter.length ? groupListFilter[0].Budget_Group_Name : "",
-      Budget_Sub_Group_ID: this.openProject == 'Y' ? this.objproject.Budget_Sub_Group_ID : null,
-      Budget_Sub_Group_Name:this.openProject == 'Y' && subGorupListFilter.length ? subGorupListFilter[0].Budget_Sub_Group_Name : "",	
-      Work_Details_ID: this.openProject == 'Y' ? this.objproject.Work_Details_ID : null,
-      Work_Details:this.openProject == 'Y' && workListFilter.length ? workListFilter[0].Work_Details : "",
-      Project_ID: this.openProject == 'Y' ? this.objproject.Work_Details_ID : null,
-      Project_Description: this.openProject == 'Y' && ProjectListFilter.length ? ProjectListFilter[0].Project_Description : "",
+      GRN_Date : this.GRNDate ? this.DateService.dateConvert(new Date(this.GRNDate)) : "01/Jan/1900"
   
     };
     this.AddProductDetails.push(productObj);
-   
+    // console.log('this.AddProductDetails===',this.AddProductDetails)
+    // this.ObjProductInfo = new ProductInfo();
+    // this.GRNList = [];
+    // this.GetProductdetails();
+    // this.ProductInfoSubmitted = false;
+    // this.ListofTotalAmount();
     if(this.Maintain_Serial_No){
       this.ProductInfoSubmitted = false;
       this.ObjProductInfo.Serial_No = undefined;
@@ -785,37 +737,56 @@ export class PurchaseBillComponent implements OnInit {
     },500)
     }
     else {
+     // console.log('this.AddProductDetails===',this.AddProductDetails)
       this.ObjProductInfo = new ProductInfo();
       this.ObjProductInfo.Godown_Id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
       this.GRNList = [];
       this.GetProductdetails();
       this.ProductInfoSubmitted = false;
-      this.PurchaseBillFormSubmitted = false
+      this.TcsAmtCalculation();
       this.ListofTotalAmount();
     }
     }
   }
   delete(index) {
-  this.AddProductDetails.splice(index,1)
+  this.AddProductDetails.splice(index,1);
+  this.TcsAmtCalculation();
   this.ListofTotalAmount();
+  }
+  TcsAmtCalculation(){
+    this.TCSInputLedger = 0;
+    if (this.TCSTaxRequired === 'YES') {
+        this.ngxService.start();
+        // this.$http.get("/Common/Get_TCS_Persentage_Sale?TCS_Enabled=YES",{responseType: 'text'}).subscribe((data: any) => {
+          const obj = {
+            "SP_String": "SP_Common_Purchase_Bill",
+            "Report_Name_String": "Get_Tcs_Percentage_And Ledger",
+            }
+          this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          console.log(data)
+          this.TCSInputLedger = data[0].TCS_Ledger_ID;
+          this.TCS_Persentage = data[0].TCS_Persentage;
+          this.TCS_Amount = Number(Number(this.Gross_Amount * this.TCS_Persentage) / 100).toFixed(2);
+          this.ListofTotalAmount();
+          this.ngxService.stop();
+        });   
+    }
+      else {
+        this.TCS_Persentage = 0;
+        this.TCS_Amount = 0;
+        this.ListofTotalAmount();
+    }
   }
   
   GetTerm() {
     const obj = {
-      "SP_String": "SP_Purchase_Bill",
-      "Report_Name_String": "Get_Term",
+      "SP_String": "SP_Common_Purchase_Bill",
+      "Report_Name_String": "Get_Term_Tax_Pur_GST",
       }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
           this.TermList = data;
          // console.log('TermList',this.TermList)
     })
-    // this.$http
-    //   .get("/Common/Get_Term_Tax_Pur_GST")
-    //   .subscribe((data: any) => {
-    //     this.StateList = data ? JSON.parse(data) : [];
-    //     // this.TermList = data;
-    //    // console.log('TermList',this.TermList)
-    //   });
   }
   TermChange(){
     this.GetProductdetails();
@@ -884,7 +855,8 @@ export class PurchaseBillComponent implements OnInit {
     }
   }
   DeteteTerm(index) {
-    this.AddTermList.splice(index,1)
+    this.AddTermList.splice(index,1);
+    this.TcsAmtCalculation();
     this.ListofTotalAmount();
     }
   ListofTotalAmount(){
@@ -962,8 +934,10 @@ export class PurchaseBillComponent implements OnInit {
     this.CESS = (count6).toFixed(2);
     this.Total_Tax = Number(Number(this.Total_GST) + Number(this.CESS)).toFixed(2);
     this.Gross_Amount = Number(Number(this.Taxable_Amount) + Number(this.Total_Tax)).toFixed(2);
-    this.Round_off = (Number(Math.round(this.Gross_Amount)) - Number(this.Gross_Amount)).toFixed(2);
-    this.Net_Amt = Number(Math.round(this.Gross_Amount)).toFixed(2);
+    this.TCS_Amount = Number(this.TCS_Amount) ? Number(this.TCS_Amount) : 0;
+    var grandtotal:any = Number(Number(this.Gross_Amount) + Number(this.TCS_Amount)).toFixed(2);
+    this.Round_off = (Number(Math.round(grandtotal)) - Number(grandtotal)).toFixed(2);
+    this.Net_Amt = Number(Math.round(grandtotal)).toFixed(2);
     this.ObjTDS.Taxable_Amount = Number(this.Taxable_Amount);
   }
   clearlistamount(){
@@ -984,7 +958,7 @@ export class PurchaseBillComponent implements OnInit {
   }
   GetLedger(){
     const obj = {
-      "SP_String": "SP_Purchase_Bill",
+      "SP_String": "SP_Common_Purchase_Bill",
       "Report_Name_String": "Get_Master_Accounting_Ledger_Dropdown",
      // "Json_Param_String": JSON.stringify([TempObj])
 
@@ -996,7 +970,7 @@ export class PurchaseBillComponent implements OnInit {
   }
   GetSubLedger(){
     const obj = {
-      "SP_String": "SP_Purchase_Bill",
+      "SP_String": "SP_Common_Purchase_Bill",
       "Report_Name_String": "Get_Sub_Ledger_Dropdown",
       "Json_Param_String": JSON.stringify([{Ledger_ID : this.ObjTDS.Ledger_ID}])
 
@@ -1061,11 +1035,7 @@ export class PurchaseBillComponent implements OnInit {
     //  this.ObjProductInfo.Product_Specification = undefined;
     // }
    }
-  clearProject(){
-    if(this.openProject === "Y"){
-      //this.ProjectInput.clearData()
-    }
-  }
+ 
    whateverCopy(obj) {
     return JSON.parse(JSON.stringify(obj))
   }
@@ -1085,20 +1055,44 @@ export class PurchaseBillComponent implements OnInit {
     return projectData
    }
   DataForSavePurchaseBill(){
+    this.ObjPurChaseBill.Doc_No = this.DocNo ? this.DocNo : "A";
     this.ObjPurChaseBill.Doc_Date = this.DateService.dateConvert(new Date(this.DocDate));
     this.ObjPurChaseBill.Supp_Ref_Date = this.DateService.dateConvert(new Date(this.SupplierBillDate));
     this.ObjPurChaseBill.CN_Date = this.ObjPurChaseBill.CN_Date ? this.DateService.dateConvert(new Date(this.CNDate)) : "01/Jan/1900";
+    // this.ObjPurChaseBill.CN_Date = this.DateService.dateConvert(new Date(this.CNDate));
     this.ObjPurChaseBill.Bill_Gross_Amt = Number(this.Gross_Amount);
     this.ObjPurChaseBill.Bill_Net_Amt = Number(this.Net_Amt);
     this.ObjPurChaseBill.Rounded_Off = Number(this.Round_off);
     this.ObjPurChaseBill.User_ID = this.$CompacctAPI.CompacctCookies.User_ID;
     this.ObjPurChaseBill.Fin_Year_ID = this.$CompacctAPI.CompacctCookies.Fin_Year_ID;
-    this.ObjPurChaseBill.Project_ID = this.objproject.PROJECT_ID
     if(this.AddProductDetails.length) {
+      // this.Spinner = true;
+      // this.ngxService.start();
+      // let tempArr = [];
+      // tempArr = {...this.ObjPurChaseBill}
+      // this.Objsave.T_Elemnts = this.ObjPurChaseBill;
       this.ObjPurChaseBill.L_element = this.AddProductDetails;
       this.ObjPurChaseBill.TERM_element = this.AddTermList;
       this.ObjPurChaseBill.TDS_element = this.AddTdsDetails;
-
+      this.ObjPurChaseBill.TCSTaxRequired = this.TCSTaxRequired;
+      this.ObjPurChaseBill.TCSInputLedger =  this.TCSInputLedger;
+      this.ObjPurChaseBill.TCS_Persentage = this.TCS_Persentage;
+      this.ObjPurChaseBill.TCS_Amount = Number(this.TCS_Amount);
+     // console.log("Create ====>",this.ObjPurChaseBill)
+  //   } else {
+  //     setTimeout(()=>{
+  //     this.Spinner = false;
+  //     this.ngxService.stop();
+  //   this.compacctToast.clear();
+  //   this.compacctToast.add({
+  //      key: "compacct-toast",
+  //     severity: "error",
+  //     summary: "Warn Message",
+  //     detail: "Error in Taxable amount"
+  //   });
+  //   },600)
+  // }
+   // console.log("save bill =" , tempArr)
     return JSON.stringify([this.ObjPurChaseBill]);
     }
      else {
@@ -1117,7 +1111,7 @@ export class PurchaseBillComponent implements OnInit {
     this.DocNo = undefined;
     this.Save = false;
     this.Del = false;
-    this.PurchaseBillFormSubmitted = true;
+    this.CommonPurchaseBillFormSubmitted = true;
     this.validatation.required = true
     if(valid){
       this.Save = true;
@@ -1136,15 +1130,23 @@ export class PurchaseBillComponent implements OnInit {
     }
    }
   async onConfirmSave(){
-  const obj = {
-      "SP_String": "SP_Purchase_Bill",
+    // this.CommonPurchaseBillFormSubmitted = true;
+    // this.validatation.required = true
+    // if(valid){
+      // this.Spinner = true;
+      // this.ngxService.start();
+      // this.DataForSavePurchaseBill();
+      const obj = {
+      "SP_String": "SP_Common_Purchase_Bill",
       "Report_Name_String": "Purchase_Bill_Create",
       "Json_Param_String": this.DataForSavePurchaseBill()
       }
       this.GlobalAPI.postData(obj).subscribe(async (data:any)=>{
      this.validatation.required = false;
+     //console.log(data);
      var tempID = data[0].Column1;
-    if(data[0].Column1 != "Total Dr Amt And Cr Amt Not matched" && data[0].Success != "False"){
+    //  this.Objcustomerdetail.Bill_No = data[0].Column1;
+     if(data[0].Column1 != "Total Dr Amt And Cr Amt Not matched" && data[0].Success != "False"){
       if(this.objproject.PROJECT_ID){ 
        const projectSaveData = await this.SaveProject(data[0].Column1);
        if(projectSaveData){
@@ -1158,14 +1160,20 @@ export class PurchaseBillComponent implements OnInit {
        summary: "Purchase_Bill_ID  " + tempID,
        detail: "Succesfully " + mgs
      });
-   
-     this.PurchaseBillFormSubmitted = false;
-   
+    //  if (tempID != "Total Dr Amt And Cr Amt Not matched") {
+     this.CommonPurchaseBillFormSubmitted = false;
+    //  this.clearlistamount();
+    //  this.cleartotalamount();
      this.clearData();
-     this.clearProject();
+    
      this.GetSerarchPurBill(true);
-     this.GetPendingPO(true);
-      }
+   //  this.GetPendingPO(true);
+    // this.GetPendingGRN(true);
+    //  } else {
+    //   this.Spinner = false;
+    //   this.ngxService.stop();
+    //  }
+       }
        else{
         this.Spinner = false;
         this.ngxService.stop();
@@ -1189,15 +1197,16 @@ export class PurchaseBillComponent implements OnInit {
          summary: "Purchase_Bill_ID  " + tempID,
          detail: "Succesfully " + mgs
        });
-   
-       this.PurchaseBillFormSubmitted = false;
-      
+      //  if (tempID != "Total Dr Amt And Cr Amt Not matched") {
+       this.CommonPurchaseBillFormSubmitted = false;
+      //  this.clearlistamount();
+      //  this.cleartotalamount();
        this.clearData();
-       this.clearProject();
+      
        this.GetSerarchPurBill(true);
-       this.GetPendingPO(true);
-       }
-       this.tabIndexToView = 0
+      // this.GetPendingPO(true);
+    //   this.GetPendingGRN(true);
+      }
      }
     else if (data[0].Column1 === "Total Dr Amt And Cr Amt Not matched") {
       this.Spinner = false;
@@ -1221,11 +1230,33 @@ export class PurchaseBillComponent implements OnInit {
         detail: "Error Occured "
       });
     }
-
+    // if(data[0].MSG !="Save Sucessfully" && data[0].Column1){
+    //   this.Spinner = false;
+    //   this.ngxService.stop();
+    //   this.compacctToast.clear();
+    //   this.compacctToast.add({
+    //     key: "compacct-toast",
+    //     severity: "error",
+    //     summary: "Warn Message",
+    //     detail: errormsg
+    //   });
+    // } else {
+    //   this.Spinner = false;
+    //   this.ngxService.stop();
+    //   this.compacctToast.clear();
+    //   this.compacctToast.add({
+    //     key: "compacct-toast",
+    //     severity: "error",
+    //     summary: "Warn Message",
+    //     detail: "Error Occured "
+    //   });
+    // }
   })
     // }
   }
-
+  // datechange(){
+  //  // console.log(this.DateService.dateConvert(new Date(this.expiryDate)))
+  // }
   
   // BROWSE
   getDateRange(dateRangeObj) {
@@ -1234,7 +1265,14 @@ export class PurchaseBillComponent implements OnInit {
       this.ObjBrowsePurBill.end_date = dateRangeObj[1];
     }
     }
-   
+    // FilterPeriod(){
+    //   if(this.ObjCosdHead.Fin_Year_Name){
+    //    const FinancialYearFilter:any = this.FinancialDataList.find((el:any)=> el.Fin_Year_Name === this.ObjCosdHead.Fin_Year_Name)
+    //   // console.log("FinancialYearFilter",FinancialYearFilter)
+    //     this.initDateValid = [new Date(FinancialYearFilter.Fin_Year_Start), new Date(FinancialYearFilter.Fin_Year_End)]
+    //    //console.log("initDate",this.initDate)
+    //   }
+    //   } 
   GetSerarchPurBill(valid){
   this.SearchPurBillFormSubmitted = true;
   const start = this.ObjBrowsePurBill.start_date
@@ -1252,23 +1290,28 @@ export class PurchaseBillComponent implements OnInit {
   }
   if (valid) {
   const obj = {
-    "SP_String": "SP_Purchase_Bill",
+    "SP_String": "SP_Purchase_Bill_GST_One_SP",
     "Report_Name_String": "Purchase_Bill_Browse",
     "Json_Param_String": JSON.stringify([tempobj])
     }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     this.SerarchPurBillList = data;
-  this.GetDistinctArr()
+    // this.BackupSearchedlist = data;
+    // this.GetDistinct();
+    // if(this.getAllDataList.length){
+    //   this.DynamicHeader = Object.keys(data[0]);
+    // }
+    this.GetDistinctArr()
     this.seachSpinner = false;
     this.SearchPurBillFormSubmitted = false;
- 
+   // console.log("Get All Data",this.SerarchPurBillList);
   })
   }
   }
   Print(DocNo) {
     if(DocNo) {
     const objtemp = {
-      "SP_String": "SP_Purchase_Bill",
+      "SP_String": "SP_Purchase_Bill_GST_One_SP",
       "Report_Name_String": "Purchase_Bill_Print"
       }
     this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
@@ -1299,7 +1342,7 @@ export class PurchaseBillComponent implements OnInit {
    onConfirmDel(){
     if(this.DocNo){
      const obj = {
-       "SP_String": "SP_Purchase_Bill",
+       "SP_String": "SP_Purchase_Bill_GST_One_SP",
        "Report_Name_String":"Purchase_Bill_Delete",
        "Json_Param_String": JSON.stringify([{Doc_No : this.DocNo , User_ID : this.$CompacctAPI.CompacctCookies.User_ID}]) 
        }
@@ -1365,7 +1408,7 @@ export class PurchaseBillComponent implements OnInit {
       }
       if (valid) {
       const obj = {
-        "SP_String": "SP_Purchase_Bill",
+        "SP_String": "SP_Purchase_Bill_GST_One_SP",
         "Report_Name_String": "PENDING_PURCHASE_ORDER_BROWSE",
         "Json_Param_String": JSON.stringify([tempobj])
         }
@@ -1405,7 +1448,42 @@ export class PurchaseBillComponent implements OnInit {
       this.ObjPendingGRN.end_date = dateRangeObj[1];
     }
   }
- 
+  GetPendingGRN(valid){
+      this.PendingGRNFormSubmitted = true;
+      const start = this.ObjPendingGRN.start_date
+      ? this.DateService.dateConvert(new Date(this.ObjPendingGRN.start_date))
+      : this.DateService.dateConvert(new Date());
+      const end = this.ObjPendingGRN.end_date
+      ? this.DateService.dateConvert(new Date(this.ObjPendingGRN.end_date))
+      : this.DateService.dateConvert(new Date());
+      const tempobj = {
+       From_date : start,
+       To_date : end,
+       Company_ID : this.ObjPendingGRN.Company_ID
+      //  Cost_Cen_ID : this.ObjPendingGRN.Cost_Cen_ID
+      }
+      if (valid) {
+      const obj = {
+        "SP_String": "SP_Purchase_Bill_GST_One_SP",
+        "Report_Name_String": "Browse_pending_GRN",
+        "Json_Param_String": JSON.stringify([tempobj])
+        }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.PendingGRNList = data;
+        // this.BackupSearchedlist = data;
+        // this.GetDistinct();
+        if(this.PendingGRNList.length){
+          this.DynamicHeaderforPGRN = Object.keys(data[0]);
+        }
+        else {
+          this.DynamicHeaderforPGRN = [];
+        }
+        this.seachSpinner = false;
+        this.PendingGRNFormSubmitted = false;
+       // console.log("PendingGRNList",this.PendingGRNList);
+      })
+      }
+  }
   PrintPGRN(DocNo) {
     if(DocNo) {
     const objtemp = {
@@ -1468,188 +1546,9 @@ export class PurchaseBillComponent implements OnInit {
       this.SerarchPurBillList = this.bckUpSerarchPurBillList;
     }
   }
-
-// Project
-
-getProject(){
-  this.ProjectList = [];
-    const obj = {
-      "SP_String": "SP_Purchase_Bill",
-      "Report_Name_String": "Get_Project_For_PBill",
-      "Json_Param_String": JSON.stringify({Doc_No : this.ObjProductInfo.Pur_Order_No ? this.ObjProductInfo.Pur_Order_No : 0 })
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      data.forEach(el => {
-        el['label'] = el.Project_Description;
-        el['value'] = el.Project_ID;
-      });
-      this.ProjectList = data;
-      console.log("ProjectList",this.ProjectList);
-      
-   
-    })
-  }
-getSite(){
-  let TempObj = {...this.objproject}
-  this.objproject = new project()
-  this.objproject.PROJECT_ID = TempObj.PROJECT_ID
-  this.SiteList = [];
-  this.groupList = [];
-  this.subGorupList = [];
-  this.workList = [];
-  this.ObjProductInfo.Product_ID = undefined
-  this.ProductDetails = []
-  if(this.objproject.PROJECT_ID){
-   let projectFilter:any = []
-  this.getWork()
-  projectFilter = this.ProjectList.filter((el:any)=> Number(el.Project_ID) === Number(this.objproject.PROJECT_ID))
-    console.log("projectFilter",projectFilter)
-    const obj = {
-      "SP_String": "SP_Purchase_Bill",
-      "Report_Name_String": "Get_Site_For_PBill",
-      "Json_Param_String": JSON.stringify([{Project_ID : Number(this.objproject.PROJECT_ID),Tender_Doc_ID : projectFilter[0].Tender_Doc_ID,Doc_No:this.ObjProductInfo.Pur_Order_No ? this.ObjProductInfo.Pur_Order_No : 0}]) 
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      data.forEach(el => {
-        el['label'] = el.Site_Description;
-        el['value'] = el.Site_ID;
-      });
-      this.SiteList = data;
-      this.GetProductdetails()
-       console.log("SiteList",this.SiteList);
-    })
-  }
-
-}
-getGroup(){
-  let TempObj = {...this.objproject}
-  this.objproject = new project()
-  this.objproject.PROJECT_ID = TempObj.PROJECT_ID
-  this.objproject.SITE_ID = TempObj.SITE_ID
-  this.groupList = [];
-  this.subGorupList = [];
-  this.workList = [];
-  this.ObjProductInfo.Product_ID = undefined
-  this.ProductDetails = []
-  if(this.objproject.PROJECT_ID && this.objproject.SITE_ID){
-   
-  
-  this.getWork()
-     const obj = {
-      "SP_String": "SP_Purchase_Bill",
-      "Report_Name_String": "Get_Budget_Group_For_PBill",
-      "Json_Param_String": JSON.stringify([{Project_ID : Number(this.objproject.PROJECT_ID) ,
-                                             Site_ID : Number(this.objproject.SITE_ID),
-                                             Doc_No : this.ObjProductInfo.Pur_Order_No ? this.ObjProductInfo.Pur_Order_No : 0}]) 
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      data.forEach(el => {
-        el['label'] = el.Budget_Group_Name;
-        el['value'] = el.Budget_Group_ID;
-      });
-      this.GetProductdetails()
-      this.groupList = data;
-    })
-  }
-}
-getSubGroup(){
-  let TempObj = {...this.objproject}
-   this.objproject = new project()
-   this.objproject.PROJECT_ID = TempObj.PROJECT_ID
-   this.objproject.SITE_ID = TempObj.SITE_ID
-   this.objproject.Budget_Group_ID = TempObj.Budget_Group_ID
-   this.subGorupList = [];
-   this.ObjProductInfo.Product_ID = undefined
-  this.ProductDetails = []
-  if(this.objproject.PROJECT_ID && this.objproject.SITE_ID && this.objproject.Budget_Group_ID){
-   const tampObj = {
-      Project_ID : Number(this.objproject.PROJECT_ID),
-      Site_ID : Number(this.objproject.SITE_ID),
-      Budget_Group_ID : Number(this.objproject.Budget_Group_ID),
-      Doc_No : this.ObjProductInfo.Pur_Order_No ? this.ObjProductInfo.Pur_Order_No : 0
-    }
-    const obj = {
-      "SP_String": "SP_Purchase_Bill",
-      "Report_Name_String": "Get_Budget_Sub_Group_For_PBill",
-      "Json_Param_String": JSON.stringify([tampObj]) 
-     }
-     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      data.forEach(el => {
-        el['label'] = el.Budget_Sub_Group_Name;
-        el['value'] = el.Budget_Sub_Group_ID;
-      });
-      this.GetProductdetails()
-        this.subGorupList = data;
-     })
-  }
-
-}
-SubGroupChange(){
-  this.ObjProductInfo.Product_ID = undefined
-  this.ProductDetails = []
-  if(this.objproject.Budget_Sub_Group_ID){
-    this.GetProductdetails()
-  }
-}
-getWork(){
-  this.workList = []
-  this.ObjProductInfo.Product_ID = undefined
-  this.ProductDetails = []
-  if(this.objproject.PROJECT_ID && this.objproject.SITE_ID){
-
-    const obj = {
-      "SP_String": "SP_Purchase_Bill",
-      "Report_Name_String": "Get_Work_Details_For_PBill",
-      "Json_Param_String": JSON.stringify([{Project_ID : Number(this.objproject.PROJECT_ID) , 
-                                            Site_ID : Number(this.objproject.SITE_ID),
-                                            Doc_No : this.ObjProductInfo.Pur_Order_No ? this.ObjProductInfo.Pur_Order_No : 0}]) 
-     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      data.forEach(el => {
-        el['label'] = el.Work_Details;
-        el['value'] = el.Work_Details_ID;
-      });
-      this.GetProductdetails()
-    this.workList = data
-    })
-  }
-}
-workChange(){
-  this.ObjProductInfo.Product_ID = undefined
-  this.ProductDetails = []
-  if(this.objproject.Work_Details_ID){
-    this.GetProductdetails()
-  }
- 
-}
-
-stringShort(str,wh) {
-  let retuObj:any = {}
-  if (str.length > 30) {
-    retuObj = {
-      field: str.substring(0, 30) + " ...",
-      cssClass : "txt"
-    }
-  }
-  else {
-     retuObj = {
-      field: str,
-      cssClass : ""
-    }
-  }
-return wh == "css" ? retuObj.cssClass : retuObj.field
-}
-selectWork(event,text, overlaypanel) {
-  //console.log("col",col)
-  if (text.length > 30) {
-   this.overlayPanelText= ""
-   this.overlayPanelText = text
-   overlaypanel.toggle(event); 
-  }
- 
-  }
 }
 class PurChaseBill {
+  Doc_No : any;
   Choose_Address : any;
   Doc_Date : any;
   Company_ID: any;
@@ -1665,7 +1564,7 @@ class PurChaseBill {
   Sub_Ledger_State : any;
   Sub_Ledger_Country : string;
   Sub_Ledger_Email : any;
-  Sub_Ledger_Mobile_No : any;
+  Sub_Ledger_Mobile_No : number;
   Sub_Ledger_PAN_No : any;
   Sub_Ledger_TIN_No : any;
   Sub_Ledger_CST_No : any;
@@ -1684,8 +1583,8 @@ class PurChaseBill {
   Cost_Cen_State : string;
   Cost_Cen_Country : string;
   Cost_Cen_PIN : any;
-  Cost_Cen_Mobile : any;
-  Cost_Cen_Phone : any;
+  Cost_Cen_Mobile : number;
+  Cost_Cen_Phone : number;
   Cost_Cen_Email : any;
   Cost_Cen_VAT_CST : any;
   Cost_Cen_CST_NO : any;
@@ -1703,6 +1602,7 @@ class PurChaseBill {
   CN_No : any;
   CN_Date : any;
   RCM : any;
+  Remarks : any;
 
   Bill_Gross_Amt : number;
   Bill_Net_Amt : number;
@@ -1715,6 +1615,10 @@ class PurChaseBill {
   L_element : any;
   TDS_element : any;
   TERM_element : any;
+  TCSTaxRequired: any;
+  TCSInputLedger: any;
+  TCS_Persentage: any;
+  TCS_Amount: any;
 
  }
  class project{
@@ -1782,6 +1686,7 @@ class ProductInfo {
   Product_Expiry : any;
   Expiry_Date: string;
   CESS_AMT: number;
+  
 
 }
 class Term {
