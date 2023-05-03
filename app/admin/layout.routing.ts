@@ -367,6 +367,7 @@ import { PurchaseOrderHarbauerTermsComponent } from './common/Harbauer/purchase-
 import { AudiologistTargetComponent } from './common/PatientManagement/Audiologist/audiologist-target/audiologist-target.component';
 import { CommonPurchaseBillGstComponent } from './common/FinancialManagement/Transaction/Purchase/common-purchase-bill-gst/common-purchase-bill-gst.component';
 import { FullAndFinalSettlementComponent } from './common/MICL/full-and-final-settlement/full-and-final-settlement.component';
+import { EmployeeSalaryMasterJohComponent } from './common/Attendance/employee-salary-master-joh/employee-salary-master-joh.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2789,6 +2790,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: FullAndFinalSettlementComponent,
         data: {
           title: 'Full And Final Settlement'
+    }
+    },
+    {
+      path: 'Employee_Salary_Master_JOH',
+        component: EmployeeSalaryMasterJohComponent,
+        data: {
+          title: 'Employee Salary Master'
     }
     },
     /*{

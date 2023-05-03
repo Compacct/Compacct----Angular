@@ -67,6 +67,7 @@ export class HREmployeeMasterComponent implements OnInit {
   Resign_On = new Date();
   Leave_Dt:any = new Date();
   DOB = new Date();
+  Child_D_O_B = new Date();
   checkcode : any;
   flag : boolean = false;
   Pan_No :any;
@@ -101,6 +102,8 @@ export class HREmployeeMasterComponent implements OnInit {
   leftdisabled = true;
   GradeList:any = [];
   databaseName:any;
+  ChildFormSubmitted:boolean = false;
+  AddChildList:any = [];
   constructor(
     private http : HttpClient,
     private commonApi : CompacctCommonApi,
@@ -433,6 +436,7 @@ getEmployeeDetails(Emp_ID){
           let data = JSON.parse(res[0].main)
           this.EmployeeDetailsList = data;
          console.log("EmployeeDetailsList=",this.EmployeeDetailsList);
+         this.getChildDetails(Emp_ID);
          const editlist = data ? data[0] : undefined;
          this.DocumentList = data[0].doc ? data[0].doc : []
           console.log("editlist=",editlist);
@@ -473,6 +477,34 @@ getEmployeeDetails(Emp_ID){
       else {
         this.objemployee = new Employee();
       }
+}
+getChildDetails(Emp_ID){
+  this.AddChildList = [];
+  if (this.objselect.Emp_ID) {
+    const obj = {
+      "SP_String": "Sp_HR_Employee_Master",
+       "Report_Name_String":"Get_HR_Employee_Child_Details",
+       "Json_Param_String": JSON.stringify([{Emp_ID : Emp_ID}]) 
+        }
+        
+          this.GlobalAPI.getData(obj).subscribe((data)=>
+          {
+            console.log("Get Data",data)
+            // JSON.parse(res[0].main)
+          if(data.length){
+            this.objemployee.Child_Details = true;
+            data.forEach(element => {
+              const  childObj = {
+                Child_Name : element.Child_Name,
+                Child_Gender : element.Child_Gender,
+                Child_D_O_B : this.DateService.dateConvert(new Date(element.Child_D_O_B)),
+              };
+        
+              this.AddChildList.push(childObj);
+            });
+          }
+          });
+  }
 }
 
 getBankName(){
@@ -545,6 +577,24 @@ CalculateTime(){
     // console.log(this.DateService.dateTimeConvert(new Date(this.objemployee.Off_Out_Time)));
   }
 }
+AddChildDetails(valid){
+  this.ChildFormSubmitted = true;
+    if(valid) {
+      var childobj = {
+        Child_Name : this.objemployee.Child_Name,
+        Child_Gender : this.objemployee.Child_Gender,
+        Child_D_O_B : this.DateService.dateConvert(new Date(this.Child_D_O_B)),
+    };
+    this.AddChildList.push(childobj);
+    this.objemployee.Child_Name = undefined;
+    this.objemployee.Child_Gender = undefined;
+    this.Child_D_O_B = new Date();
+    this.ChildFormSubmitted = false;
+  }
+}
+DetetechildDetails(index) {
+  this.AddChildList.splice(index,1)
+}
 
 async saveemployeemaster(valid){
   this.EmployeeFormSubmitted = true;
@@ -597,7 +647,8 @@ saveEmp(){
       const obj = {
         "SP_String": "Sp_HR_Employee_Master",
         "Report_Name_String":"Update_HR_Employee",
-        "Json_Param_String": JSON.stringify([this.objemployee]) 
+        "Json_Param_String": JSON.stringify([this.objemployee]),
+        "Json_1_String": JSON.stringify(this.AddChildList)
       }
       this.GlobalAPI.getData(obj)
       .subscribe((data : any)=>
@@ -641,7 +692,8 @@ saveEmp(){
       const obj = {
         "SP_String": "Sp_HR_Employee_Master",
         "Report_Name_String":"HR_Employee_Create",
-        "Json_Param_String": JSON.stringify([this.objemployee]) 
+        "Json_Param_String": JSON.stringify([this.objemployee]) ,
+        "Json_1_String": JSON.stringify(this.AddChildList)
       }
       this.GlobalAPI.getData(obj)
       .subscribe((data : any)=>
@@ -1256,7 +1308,12 @@ class Employee{
   Material_Status : any;
   Blood_Group : any;
   Gurdian_Name : any;
+  Father_Name : any;
+  Mother_Name : any;
   Spouse_Wife_Name : any;
+  Child_Details : any;
+  Child_Name : any;
+  Child_Gender : any;
   Contact_Phone : any;
   Contact_Mobile : any;
   Emergency_Contact : any;
