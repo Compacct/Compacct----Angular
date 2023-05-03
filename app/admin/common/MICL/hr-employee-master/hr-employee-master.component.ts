@@ -436,7 +436,9 @@ getEmployeeDetails(Emp_ID){
           let data = JSON.parse(res[0].main)
           this.EmployeeDetailsList = data;
          console.log("EmployeeDetailsList=",this.EmployeeDetailsList);
+         if(this.databaseName === 'GN_JOH_HR') {
          this.getChildDetails(Emp_ID);
+         }
          const editlist = data ? data[0] : undefined;
          this.DocumentList = data[0].doc ? data[0].doc : []
           console.log("editlist=",editlist);
@@ -470,12 +472,14 @@ getEmployeeDetails(Emp_ID){
         }
         else {
           this.objemployee = new Employee();
+          this.clearchilddetails();
         }
           
         });
       }
       else {
         this.objemployee = new Employee();
+        this.clearchilddetails();
       }
 }
 getChildDetails(Emp_ID){
@@ -576,6 +580,14 @@ CalculateTime(){
     // console.log(this.DateService.dateTimeConvert(new Date(this.objemployee.Off_In_Time)));
     // console.log(this.DateService.dateTimeConvert(new Date(this.objemployee.Off_Out_Time)));
   }
+}
+clearchilddetails(){
+  // if(!this.objemployee.Child_Details){
+    this.objemployee.Child_Name = undefined;
+    this.objemployee.Child_Gender = undefined;
+    this.Child_D_O_B = new Date();
+    this.AddChildList = [];
+  // }
 }
 AddChildDetails(valid){
   this.ChildFormSubmitted = true;

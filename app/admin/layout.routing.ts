@@ -368,6 +368,7 @@ import { AudiologistTargetComponent } from './common/PatientManagement/Audiologi
 import { CommonPurchaseBillGstComponent } from './common/FinancialManagement/Transaction/Purchase/common-purchase-bill-gst/common-purchase-bill-gst.component';
 import { FullAndFinalSettlementComponent } from './common/MICL/full-and-final-settlement/full-and-final-settlement.component';
 import { EmployeeSalaryMasterJohComponent } from './common/Attendance/employee-salary-master-joh/employee-salary-master-joh.component';
+import { OldProjectMasterComponent } from './common/Harbauer/old-project-master/old-project-master.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2797,6 +2798,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: EmployeeSalaryMasterJohComponent,
         data: {
           title: 'Employee Salary Master'
+    }
+    },
+    {
+      path: 'BL_CRM_Old_Project_Master',
+        component: OldProjectMasterComponent,
+        data: {
+          title: 'Old Project Master'
     }
     },
     /*{
