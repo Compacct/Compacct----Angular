@@ -59,7 +59,7 @@ export class OldProjectMasterComponent implements OnInit {
       "Report_Name_String": "Get_Old_Project_All"
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      console.log('Project Name Browse Data', data);
+      // console.log('Project Name Browse Data', data);
       this.projectNameTableData = data;
       data.forEach((ele: any) => {
         this.projectNameDropList.push({
@@ -81,26 +81,26 @@ export class OldProjectMasterComponent implements OnInit {
         "Json_Param_String": JSON.stringify([{ Project_ID: id }])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        console.log('Site Name Browse Data', data);
+        // console.log('Site Name Browse Data', data);
         this.siteNameTableData = data;
       });
     }
   }
 
   SaveProjectName(valid) {
-    console.log('save works');
+    // console.log('save works');
     this.projectNameFormSubmit = true;
     if (valid) {
       this.projectNameFormSubmit = false;
       this.Spinner = true;
-      console.log('project name save obj', this.objProjectName);
+      // console.log('project name save obj', this.objProjectName);
       const obj = {
         "SP_String": "SP_Old_Project_Master",
         "Report_Name_String": "Add_Old_Project",
         "Json_Param_String": JSON.stringify([this.objProjectName])
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
-        console.log('project name save response', data);
+        // console.log('project name save response', data);
         if (data.length) {
           this.CompacctToast.clear();
           this.CompacctToast.add({
@@ -126,19 +126,19 @@ export class OldProjectMasterComponent implements OnInit {
   }
 
   SaveSiteName(valid) {
-    console.log('save works');
+    // console.log('save works');
     this.siteNameFormSubmit = true;
     if (valid) {
       this.siteNameFormSubmit = false;
       this.Spinner2 = true;
-      console.log('site name save obj', this.objSiteName);
+      // console.log('site name save obj', this.objSiteName);
       const obj = {
         "SP_String": "SP_Old_Project_Master",
         "Report_Name_String": "Add_Old_Site",
         "Json_Param_String": JSON.stringify([this.objSiteName])
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
-        console.log('site name save response', data);
+        // console.log('site name save response', data);
         if (data.length) {
           this.CompacctToast.clear();
           this.CompacctToast.add({
@@ -196,19 +196,19 @@ export class OldProjectMasterComponent implements OnInit {
   }
 
   SaveTendertName(valid) {
-    console.log('save works');
+    // console.log('save works');
     this.tenderNameFormSubmit = true;
     if (valid) {
       this.tenderNameFormSubmit = false;
       this.Spinner3 = true;
-      console.log('tender name save obj', this.objTenderName);
+      // console.log('tender name save obj', this.objTenderName);
       const obj = {
         "SP_String": "SP_Tender_Management_All",
         "Report_Name_String": "Budget_Group_Create",
         "Json_Param_String": JSON.stringify([this.objTenderName])
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
-        console.log('tender name save response', data);
+        // console.log('tender name save response', data);
         if (data.length) {
           this.CompacctToast.clear();
           this.CompacctToast.add({
@@ -250,7 +250,7 @@ export class OldProjectMasterComponent implements OnInit {
       "Report_Name_String": "Get_Budget_Group_Name"
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      console.log('tender Name Browse Data', data);
+      // console.log('tender Name Browse Data', data);
       this.tenderTableData = data;
     });
   }
@@ -281,7 +281,7 @@ export class OldProjectMasterComponent implements OnInit {
         "Json_Param_String": JSON.stringify([{ Project_ID: this.deleteProjectId }])
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
-        console.log('delete res', data);
+        // console.log('delete res', data);
         if (data[0].Column1 == "Done") {
           this.CompacctToast.clear();
           this.CompacctToast.add({
@@ -323,7 +323,7 @@ export class OldProjectMasterComponent implements OnInit {
         "Json_Param_String": JSON.stringify([{ Site_ID: this.deleteSiteId }])
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
-        console.log('delete res', data);
+        // console.log('delete res', data);
         if (data[0].Column1 == "Done") {
           this.CompacctToast.clear();
           this.CompacctToast.add({

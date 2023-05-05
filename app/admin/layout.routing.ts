@@ -371,6 +371,7 @@ import { NPSupTktSalesReturnWarehouseComponent } from "./common/TicketManagement
 import { NPSupTktSalesReturnAccountsComponent } from "./common/TicketManagement/np-sup-tkt-sales-return-accounts/np-sup-tkt-sales-return-accounts.component";
 import { EmployeeSalaryMasterJohComponent } from './common/Attendance/employee-salary-master-joh/employee-salary-master-joh.component';
 import { OldProjectMasterComponent } from './common/Harbauer/old-project-master/old-project-master.component';
+import { MasterProjectTeamComponent } from './common/Harbauer/master-project-team/master-project-team.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2821,6 +2822,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: OldProjectMasterComponent,
         data: {
           title: 'Old Project Master'
+    }
+    },
+    {
+      path: 'BL_CRM_Master_Project_Team',
+        component: MasterProjectTeamComponent,
+        data: {
+          title: 'Project Team'
     }
     },
     /*{

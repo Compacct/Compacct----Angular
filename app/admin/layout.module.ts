@@ -468,6 +468,7 @@ import { NPSupTktSalesReturnWarehouseComponent } from './common/TicketManagement
 import { NPSupTktSalesReturnAccountsComponent } from './common/TicketManagement/np-sup-tkt-sales-return-accounts/np-sup-tkt-sales-return-accounts.component';
 import { EmployeeSalaryMasterJohComponent } from './common/Attendance/employee-salary-master-joh/employee-salary-master-joh.component';
 import { OldProjectMasterComponent } from './common/Harbauer/old-project-master/old-project-master.component';
+import { MasterProjectTeamComponent } from './common/Harbauer/master-project-team/master-project-team.component';
 
 @NgModule({
   declarations: [
@@ -852,7 +853,8 @@ import { OldProjectMasterComponent } from './common/Harbauer/old-project-master/
     NPSupTktSalesReturnWarehouseComponent,
     NPSupTktSalesReturnAccountsComponent,
     EmployeeSalaryMasterJohComponent,
-    OldProjectMasterComponent
+    OldProjectMasterComponent,
+    MasterProjectTeamComponent
 
 
   ],
