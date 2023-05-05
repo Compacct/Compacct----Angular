@@ -166,8 +166,11 @@ export class NepalSupTktSalesReturnApproveComponent implements OnInit {
             summary: "Sales Return Approved",
             detail: "Succesfully Update",
           });
-          this.clearData()
-          this.getBrowse()
+          this.tabIndexToView = 0;
+          this.viewModal = false;
+          this.clearData();
+          this.getBrowse();
+          this.getpendinglist();
         }
       })
     }

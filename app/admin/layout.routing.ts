@@ -367,6 +367,8 @@ import { PurchaseOrderHarbauerTermsComponent } from './common/Harbauer/purchase-
 import { AudiologistTargetComponent } from './common/PatientManagement/Audiologist/audiologist-target/audiologist-target.component';
 import { CommonPurchaseBillGstComponent } from './common/FinancialManagement/Transaction/Purchase/common-purchase-bill-gst/common-purchase-bill-gst.component';
 import { FullAndFinalSettlementComponent } from './common/MICL/full-and-final-settlement/full-and-final-settlement.component';
+import { NPSupTktSalesReturnWarehouseComponent } from "./common/TicketManagement/np-sup-tkt-sales-return-warehouse/np-sup-tkt-sales-return-warehouse.component";
+import { NPSupTktSalesReturnAccountsComponent } from "./common/TicketManagement/np-sup-tkt-sales-return-accounts/np-sup-tkt-sales-return-accounts.component";
 import { EmployeeSalaryMasterJohComponent } from './common/Attendance/employee-salary-master-joh/employee-salary-master-joh.component';
 import { OldProjectMasterComponent } from './common/Harbauer/old-project-master/old-project-master.component';
 
@@ -2794,6 +2796,20 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
     }
     },
     {
+      path: 'NP_Sup_Tkt_Sales_Return_Warehouse',
+        component: NPSupTktSalesReturnWarehouseComponent,
+        data: {
+          title: 'Sup Tkt Sales Return Warehouse'
+    }
+    },
+     {
+      path: 'NP_Sup_Tkt_Sales_Return_Accounts',
+        component: NPSupTktSalesReturnAccountsComponent,
+        data: {
+          title: 'Sup Tkt Sales Return Accounts'
+    }
+    },
+     {
       path: 'Employee_Salary_Master_JOH',
         component: EmployeeSalaryMasterJohComponent,
         data: {
