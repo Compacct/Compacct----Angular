@@ -367,7 +367,8 @@ import { PurchaseOrderHarbauerTermsComponent } from './common/Harbauer/purchase-
 import { AudiologistTargetComponent } from './common/PatientManagement/Audiologist/audiologist-target/audiologist-target.component';
 import { CommonPurchaseBillGstComponent } from './common/FinancialManagement/Transaction/Purchase/common-purchase-bill-gst/common-purchase-bill-gst.component';
 import { FullAndFinalSettlementComponent } from './common/MICL/full-and-final-settlement/full-and-final-settlement.component';
-
+import { NPSupTktSalesReturnWarehouseComponent } from "./common/TicketManagement/np-sup-tkt-sales-return-warehouse/np-sup-tkt-sales-return-warehouse.component";
+import { NPSupTktSalesReturnAccountsComponent } from "./common/TicketManagement/np-sup-tkt-sales-return-accounts/np-sup-tkt-sales-return-accounts.component";
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -2789,6 +2790,20 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: FullAndFinalSettlementComponent,
         data: {
           title: 'Full And Final Settlement'
+    }
+    },
+    {
+      path: 'NP_Sup_Tkt_Sales_Return_Warehouse',
+        component: NPSupTktSalesReturnWarehouseComponent,
+        data: {
+          title: 'Sup Tkt Sales Return Warehouse'
+    }
+    },
+     {
+      path: 'NP_Sup_Tkt_Sales_Return_Accounts',
+        component: NPSupTktSalesReturnAccountsComponent,
+        data: {
+          title: 'Sup Tkt Sales Return Accounts'
     }
     },
     /*{
