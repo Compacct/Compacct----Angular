@@ -50,8 +50,10 @@ export class NPSupTktSalesReturnAccountsComponent implements OnInit {
     this.items =["APPROVED","PENDING"];
     this.clearData()
   }
+  onReject(){}
   clearData(){
   }
+  AddRow(){}
   getSearchedPendinglist(){
     this.pendinglist = []
     this.pendinglistlistHeader = []

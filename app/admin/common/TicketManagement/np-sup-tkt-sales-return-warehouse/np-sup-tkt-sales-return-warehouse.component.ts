@@ -54,6 +54,7 @@ export class NPSupTktSalesReturnWarehouseComponent implements OnInit {
     this.items =["PICK UP DONE","PENDING"];
     this.clearData()
   }
+  onReject(){}
   clearData(){
   }
   getSearchedBrowselist(){
