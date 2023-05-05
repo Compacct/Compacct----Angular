@@ -476,7 +476,7 @@ export class MiclRawMaterialIssueNewComponent implements OnInit {
    //console.log(item.Product_ID);
    //console.log(this.ObjaddbillForm.Product_ID);
    //console.log(item.Product_ID == this.ObjaddbillForm.Product_ID);
-   if(item.Product_ID == this.ObjproductAdd.Product_ID && item.Batch_Sl_No == this.ObjproductAdd.Batch_No) {
+   if(item.Product_ID == this.ObjproductAdd.Product_ID && item.Batch_Sl_No == this.ObjproductAdd.Batch_No && item.Batch_No == batch[0].Batch_No && item.Note_Description == this.ObjproductAdd.Note_Description) {
      //console.log('select item true');
      item.Qty = Number(item.Qty) + Number( productObj.Qty);
 

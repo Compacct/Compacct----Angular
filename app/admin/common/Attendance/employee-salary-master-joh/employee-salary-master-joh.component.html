@@ -31,10 +31,13 @@
 
                             <div class="clearfix"></div>
                             <div class="no-padding">
-                                <p-table [value]="EmpSalaryListMICL" [paginator]="true" [rows]="100" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Emp_Name']" [rowHover]="true" 
-                                         [scrollable]="true"  scrollHeight="500px" #dt1>
+                                <p-table [value]="EmpSalaryListMICL" [paginator]="true" [rows]="10" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[20,200,300]" [globalFilterFields]="['Emp_Name']" [rowHover]="true" 
+                                         #dt1>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
+                                            <div class="col-sm-3 custombutton1">
+                                                <p-multiSelect [options]="Distdepartment" defaultLabel="Select a Department" [(ngModel)]="SelectedDistdepartment" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Dept_Name"></p-multiSelect>
+                                            </div>
                                             <div class="col-sm-3 pull-right" style="text-align: right">
                                                 <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                             </div>
@@ -45,31 +48,60 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th>Employee Code</th>
-                                            <th>Employee Name</th>
-                                            <th width="12%">Effected From</th>
-                                            <th>Basic Salary</th>
-                                            <th>HRA</th>
-                                            <th>Medical Allownce</th>
-                                            <th>Special Allowance</th>
-                                            <th>Meal Allowance</th>
-                                            <th>Educational Allowance</th>
-                                            <th>City Compensation Allowance</th>
-                                            <th>Action</th>
+                                            <th nowrap>Employee Name</th>
+                                            <!-- <th>Department</th> -->
+                                            <th nowrap>Effected From</th>
+                                            <th nowrap>Basic Salary</th>
+                                            <th nowrap>HRA</th>
+                                            <th nowrap>Medical Allownce</th>
+                                            <th nowrap>Special Allowance</th>
+                                            <th nowrap>Meal Allowance</th>
+                                            <th nowrap>City Compensation <br> Allowance</th>
+                                            <th nowrap>Educational Allowance</th>
+                                            <th nowrap>Total Earnings</th>
+                                            <th nowrap>PF Calc Type</th>
+                                            <th nowrap>PF Calc Amount</th>
+                                            <th nowrap>Voluntary PF <br> Contribution</th>
+                                            <th nowrap>ESI %</th>
+                                            <th nowrap>ESI Amount</th>
+                                            <th nowrap>Total Deduction</th>
+                                            <th nowrap>Net Pay</th>
+                                            <th nowrap>Action</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr>
                                             <td>{{col.Emp_Code}}</td>
-                                            <td>{{col.Emp_Name}}</td>
-                                            <td width="12%"><ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='col.Effective_From' [ngClass]="{'clearance' : flag}"></ejs-datepicker></td>
-                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Basic_Salary' CompacctDigitonly="true" class="form-control" style="width: 95px;" /></td>
-                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.HRA' CompacctDigitonly="true" class="form-control" style="width: 95px;" /></td>
-                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Medical_Allowance' CompacctDigitonly="true" class="form-control" style="width: 95px;" /></td>
-                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Special_Allowance' CompacctDigitonly="true" class="form-control" style="width: 95px;" /></td>
-                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Meal_Allownce'  CompacctDigitonly="true" class="form-control" style="width: 95px;" /></td>
-                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Educational_Allowance' CompacctDigitonly="true" class="form-control" style="width: 95px;" /></td>
-                                            <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.City_Compensation_Allowance' CompacctDigitonly="true" class="form-control" style="width: 95px;" /></td>
-                                            <td>
+                                            <td nowrap>{{col.Emp_Name}}</td>
+                                            <!-- <td nowrap>{{col.Dept_Name}}</td> -->
+                                            <td nowrap><ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='col.Effective_From' [ngClass]="{'clearance' : flag}"></ejs-datepicker></td>
+                                            <td nowrap><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></td>
+                                            <td nowrap><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.HRA' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></td>
+                                            <td nowrap><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Medical_Allowance' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></td>
+                                            <td nowrap><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Special_Allowance' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></td>
+                                            <td nowrap><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Meal_Allownce'  CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></td>
+                                            <td nowrap><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Educational_Allowance' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></td>
+                                            <td nowrap><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.City_Compensation_Allowance' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></td>
+                                            <td nowrap><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Total_Earning_Amout' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" [disabled]="true" style="width: 95px;" /></td>
+                                            <td nowrap>
+                                                <select style="width: 95px;" class="form-control" 
+                                                 name="col.PFCalcType" 
+                                                 [(ngModel)]="col.PF_Cal_Type"
+                                                 (ngModelChange)="PFChange(col)">
+                                                   <option  [ngValue]="undefined">Select</option>
+                                                   <option value ="%">PF 12% (Basic)</option>
+                                                   <option value ="PF Fixed">PF Fixed</option>
+                                                   <option value ="NO PF">NO PF</option>
+                                                </select>
+                                            </td>
+                                            <td nowrap><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.PF_Cal_Amount' (ngModelChange)="AfterPFCalChange(col)"
+                                                [disabled]="true" CompacctDigitonly="true" class="form-control" style="width: 95px;" /></td>
+                                            <td nowrap><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.PF_Extra_Contribution' (ngModelChange)="totaldeduction()" CompacctDigitonly="true" class="form-control" style="width: 95px;" /></td>
+                                            <td nowrap><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.ESI_Percentage' CompacctDigitonly="true" (ngModelChange)="ESICalChange(col)" class="form-control" style="width: 95px;" /></td>
+                                            <td nowrap><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.ESI_Amount' CompacctDigitonly="true" [disabled]="true" class="form-control" style="width: 95px;" /></td>
+                                            <td nowrap><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Total_Deduction' CompacctDigitonly="true" [disabled]="true" class="form-control" [disabled]="true" style="width: 95px;" /></td>
+                                            <td nowrap><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Total_CTC' CompacctDigitonly="true" class="form-control" [disabled]="true" style="width: 95px;" /></td>
+                                            <td nowrap>
                                                 <button class="btn btn-primary custombutton" (click)='UpdateMaster(col)' type="button" [id]="col.Emp_ID"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
                                                    Update
                                                 </button>

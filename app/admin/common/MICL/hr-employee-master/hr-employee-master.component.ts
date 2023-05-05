@@ -104,6 +104,17 @@ export class HREmployeeMasterComponent implements OnInit {
   databaseName:any;
   ChildFormSubmitted:boolean = false;
   AddChildList:any = [];
+  Referencelist:any = [];
+  Consultancylist:any = [];
+  emplist:any = [];
+  consultancyid : any;
+  ViewConsultancyList:any = [];
+  ViewConsultancyListObj:any = {};
+  ViewconsultancyModal:boolean = false;
+  CreateConsulModal:boolean = false;
+  objconsultancy : Consultancy = new Consultancy();
+  consultancyFormSubmitted:Boolean = false;
+  GSTvalidFlag:boolean=false;
   constructor(
     private http : HttpClient,
     private commonApi : CompacctCommonApi,
@@ -147,6 +158,9 @@ export class HREmployeeMasterComponent implements OnInit {
     this.getUser();
     this.leftdatechange();
     this.objemployee.Bank_ID = 1;
+    this.getReferenceBy();
+    this.getConsultancy();
+    this.getConsultancyEmp();
     
   }
   getDatabase(){
@@ -177,6 +191,7 @@ leftdatechange(){
 }
 onReject(){
     this.compacctToast.clear("c");
+    this.compacctToast.clear("consul");
 }
 Bankinfo(){
   if(this.objemployee.Salary_Paid_By === 'Bank')
@@ -1274,6 +1289,230 @@ clearData(){
   this.DocumentList = [];
   this.imagePath= "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu3_qIHtXBZ7vZeMQhyD8qLC1VRB9ImHadL09KET_iSQEX6ags4ICknfmqEKz8Nf6IOsA&usqp=CAU "
 }
+
+// JOH HR
+getReferenceBy(){
+  const obj = {
+    "SP_String": "Sp_HR_Employee_Master",
+    "Report_Name_String": "Get_Master_HR_Employee_Reference"
+    
+  }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.Referencelist = data;
+     console.log("Referencelist=", this.Referencelist);
+     
+   })
+
+}
+changeclearobj(){
+  this.objemployee.Reference_Details_ID = undefined;
+  this.objemployee.Reference_Details = undefined;
+  console.log('Reference_Details_ID===',this.objemployee.Reference_Details_ID)
+  console.log('Reference_Details===',this.objemployee.Reference_Details)
+}
+getConsultancy(){
+  const obj = {
+    "SP_String": "Sp_HR_Employee_Master",
+    "Report_Name_String": "View_Master_HR_Consultancy_Details"
+    
+  }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.Consultancylist = data;
+     console.log("Consultancylist=", this.Consultancylist);
+     
+   })
+
+}
+ViewConsultancy(){
+  const obj = {
+    "SP_String": "Sp_HR_Employee_Master",
+     "Report_Name_String":"View_Master_HR_Consultancy_Details" 
+      }
+      
+        this.GlobalAPI.getData(obj)
+        .subscribe((data)=>
+        {
+          this.ViewConsultancyList = data;
+          this.ViewConsultancyListObj = data;
+          //this.objSubLedger.State=this.AllStateList.StateName;
+          console.log('ViewDesignationListObj = ', this.ViewDesignationListObj);
+        
+        });
+        setTimeout(()=>{
+          this.ViewconsultancyModal = true;
+         },300);
+}
+
+DeleteConsultancy(col){
+  this.consultancyid = col.Desig_ID;
+        
+  console.log(this.consultancyid);
+           
+      this.Spinner = true;
+            
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "consul",
+       sticky: true,
+       closable: false,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      })
+      this.ngxService.stop();
+      this.Spinner = false;
+
+}
+
+onConfirmconsuldel(){
+  const tempobj={
+    Consultancy_ID : this.consultancyid,
+          
+  }
+  const obj = {
+    "SP_String": "Sp_HR_Employee_Master",
+    "Report_Name_String": "Delete_Designation",
+    "Json_Param_String": JSON.stringify([tempobj])
+          
+  }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log('data=',data);
+    //if (data[0].Sub_Ledger_ID)
+    if(data[0].Response=='Done')
+    {
+      //this.SubLedgerID = data[0].Column1
+     this.compacctToast.clear();
+     this.compacctToast.add({
+     key: "compacct-toast",
+     severity: "success",
+     summary: "Consultancy Delete Succesfully ",
+     detail: "Succesfully Deleted"
+    });
+    //this.Delete(this.DocNo);
+    this.ViewConsultancy();
+    this.getConsultancy();
+  }
+  else if(data[0].Response=='Already Exists'){
+    this.compacctToast.clear();
+     this.compacctToast.add({
+     key: "compacct-toast",
+     severity: "error",
+      summary: "Error",
+      detail: "Already Exists"
+      })
+
+  }
+  else{
+     this.compacctToast.clear();
+     this.compacctToast.add({
+    key: "compacct-toast",
+     severity: "error",
+     summary: "Error",
+    detail: "Something Wrong"
+  });
+}
+           
+   })
+      
+
+}
+checkGSTvalid(g){
+  // if (this.objSubLedger.Composite_GST === "No") {
+  this.GSTvalidFlag = false;
+  if(g) {
+    let regTest = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(g)
+    if(regTest){
+      let a = 65,b = 55, c =36;
+      let p;
+      return Array['from'](g).reduce((i:any,j:any,k:any,g:any)=>{
+        p =(p=(j.charCodeAt(0)<a?parseInt(j):j.charCodeAt(0)-b)*(k%2+1))>c?1+(p-c):p;
+        return k<14?i+p:j==((c=(c-(i%c)))<10?c:String.fromCharCode(c+b));
+      },0);
+    }
+    this.GSTvalidFlag = !regTest;
+  }
+  // }
+
+}
+
+CreateCunsultancy(){
+  this.objconsultancy = new Consultancy();
+    this.consultancyFormSubmitted = false;
+    setTimeout(() => {
+      this.CreateConsulModal = true;
+    }, 200);
+}
+
+SaveConsultancy(valid){
+    this.consultancyFormSubmitted = true;
+    this.Spinner = true;
+    if(valid){
+    const tempObj = {
+      Consultancy_ID : this.objemployee.Reference_Details_ID,
+      Reference_ID : this.objemployee.Reference_ID
+    }
+    this.objconsultancy.GST_NO = this.objconsultancy.GST_NO ? this.objconsultancy.GST_NO : "NA"
+    const obj = {
+      "SP_String": "Sp_HR_Employee_Master",
+      "Report_Name_String": "Save_Master_HR_Consultancy_Details",
+      "Json_Param_String": JSON.stringify([{...tempObj,...this.objconsultancy}])
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log('data=',data);
+      if(data[0].Column1){
+           //this.SubLedgerID = data[0].Column1
+          this.compacctToast.clear();
+          this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Consultancy Create Succesfully ",
+          detail: "Succesfully Created"
+        });
+        this.ngxService.stop();
+        this.Spinner = false;
+        
+        this.CreateConsulModal = false;
+        this.getConsultancy();
+        this.consultancyFormSubmitted = false;
+        
+      }
+      else{
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error",
+        detail: "Something Wrong"
+      });
+      this.ngxService.stop();
+      this.Spinner = false;
+      this.consultancyFormSubmitted = false
+      }
+       
+     });
+     
+    }
+}
+getConsultancyEmp(){
+  const obj = {
+    "SP_String": "Sp_HR_Employee_Master",
+    "Report_Name_String": "Get_Employee"
+    
+  }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    if (data.length){
+      data.forEach(element => {
+        element['label'] = element.NAME,
+        element['value'] = element.Emp_ID
+      });
+      this.emplist = data;
+    }
+    else {
+      this.emplist = [];
+    }
+   })
+
+}
 // onFileChanged(event) {
 //   const files = event.target.files;
 //   if (files.length === 0)
@@ -1382,9 +1621,30 @@ class Employee{
   Grade : any;
   Personal_Area : any;
   Grade_ID : any;
+  Reference_ID : any;
+  Reference_Name :  any;
+  Reference_Details_ID : any;
+  Reference_Details : any;
 }
 class Select{
   name : any;
   Emp_ID : any;
 
+}
+
+class Consultancy{
+  Consultancy_ID : any;
+  Reference_ID : any;
+  Name	: any;
+  Address	: any;
+  Phone_No	: any;
+  Contact_Person	: any;
+  Contact_Person_Phone	: any;
+  GST_NO	: any;
+  Bank_Name	: any;
+  Bank_AC_No	: any;
+  Bank_IFSC_Code	: any;
+  Bank_Branch	: any;
+  General_Recruitment_Terms	: any;
+  Remarks	: any;
 }

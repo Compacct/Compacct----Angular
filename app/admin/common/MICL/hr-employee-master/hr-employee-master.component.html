@@ -20,6 +20,24 @@
         </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" key="consul" (onClose)="onReject()" [modal]="true" baseZIndex="99999999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirmconsuldel()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -469,6 +487,42 @@
                             ">
                                         <i class="fa fa-certificate">
                             </i> &nbsp;<strong>Joining Details:</strong></h5>
+                                    <div class="col-sm-12" *ngIf="databaseName === 'GN_JOH_HR'">
+                                        <label class="control-label">Reference By<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="referenceby" #referenceby="ngModel" [(ngModel)]="objemployee.Reference_ID" (change)="changeclearobj()" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && referenceby.errors?.required}" required>
+                                         <option  [ngValue]="undefined">Select</option>
+                                         <option  *ngFor="let option of Referencelist" value="{{option.Reference_ID}}">
+                                            {{option.Reference_Name}}
+                                          </option> 
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-12" *ngIf="objemployee.Reference_ID == 1">
+                                        <label class="control-label">Consultancy List<sup class="text-danger">*</sup></label>
+                                        <div class="pull-right" *ngIf="!userdisabled">
+                                            <span (click)="ViewConsultancy()" class="btn-vk createPatient" style="cursor: pointer;"><i class="fa fa-fw  fa-eye"></i> View</span> &nbsp;
+                                            <span (click)="CreateCunsultancy()" class="btn-vk createPatient" style="cursor:pointer"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                        </div>
+                                        <select class="form-control" name="consultancylist" #consultancylist="ngModel" [(ngModel)]="objemployee.Reference_Details_ID" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && consultancylist.errors?.required}" required>
+                                         <option  [ngValue]="undefined">Select</option>
+                                         <option  *ngFor="let option of Consultancylist" value="{{option.Consultancy_ID}}">
+                                            {{option.Name}}
+                                          </option> 
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-12" *ngIf="objemployee.Reference_ID == 2">
+                                        <label class="control-label">Employee<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="emplist" name="conemp" #conemp="ngModel" [(ngModel)]="objemployee.Reference_Details_ID" [disabled]="userdisabled" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Employee'"
+                                        [virtualScroll]="true" itemSize="30" [styleClass]="{'clearance ': EmployeeFormSubmitted && conemp.errors?.required}" [required]="true">
+                                    </p-dropdown>
+                                    </div>
+                                <div class="col-sm-12" *ngIf="objemployee.Reference_ID == 3">
+                                        <label class="control-label">Advertisement<sup class="text-danger">*</sup></label>
+                                       <input class="form-control" placeholder="Advertisement" name="advertisement" #advertisement="ngModel" [disabled]="userdisabled" [(ngModel)]="objemployee.Reference_Details" [ngClass]="{'clearance ': EmployeeFormSubmitted && advertisement.errors?.required}" required>
+                                </div>
+                                <div class="col-sm-12" *ngIf="objemployee.Reference_ID == 4">
+                                    <label class="control-label">Others<sup class="text-danger">*</sup></label>
+                                   <input class="form-control" placeholder="Others" name="other" #other="ngModel" [(ngModel)]="objemployee.Reference_Details" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && other.errors?.required}" required>
+                                </div>
                                     <div class="col-sm-12">
                                         <label class="control-label">Joining Date</label>
                                         <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Joining_Dt' name="joining_date" [enabled]="userdatedisabled"></ejs-datepicker>
@@ -869,6 +923,129 @@ CLOSE
     <p-footer>
         <button type="button" pButton icon="pi pi-check" (click)="SaveDepartment(Dept)" label="Create"></button>
         <button type="button" (click)="ViewProTypeModal4 = false" class="btn btn-default">
+  CLOSE
+</button>
+    </p-footer>
+</p-dialog>
+
+<!-- Consultancy -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewconsultancyModal" [modal]="true" [responsive]="true" [style]="{ width: '50%', minWidth: '300px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+
+    <div class="table-responsive table-id no-padding" style="overflow-x: hidden !important;">
+        <p-table [value]="ViewConsultancyList" [globalFilterFields]='["Dept_Name"]' [rowHover]="true" [autoLayout]="true" #dt3>
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt3.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                    </div>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <!-- <th width='50%'>Product Description</th>
+                    <th width='25%'>Batch No</th>
+                    <th width='25%'>Receive Qty</th> -->
+                    <th>Consultancy</th>
+
+                    <!-- <th>Action</th> -->
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col>
+                <tr>
+
+                    <!-- <td>{{col.Product_Description}}</td>
+                    <td>{{col.Batch_No}}</td>
+                    <td>{{col.Rcv_Qty}}</td> -->
+                    <td>{{col.Name}}</td>
+
+                    <!-- <td><button (click)="DeleteDepartment(col)" class="btn danger"><i class="fa fa-trash"></i></button></td> -->
+
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+
+
+    <p-footer>
+        <button type="button" (click)="ViewconsultancyModal = false" class="btn btn-default">
+CLOSE
+</button>
+    </p-footer>
+</p-dialog>
+
+<p-dialog [header]="'Create'" [appendTo]="'body'" [visible]="CreateConsulModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '75%', minWidth: '375px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <form name="consultancyForm" #consultancyForm="ngForm" novalidate>
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="col-sm-3">
+                <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                <input class="form-control" name="consulname" #consulname="ngModel" [(ngModel)]="objconsultancy.Name" placeholder="Name" [ngClass]="{'clearance': consultancyFormSubmitted && consulname.errors?.required}" required>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Address<sup class="text-danger">*</sup></label>
+                <input class="form-control" name="consuladdress" #consuladdress="ngModel" [(ngModel)]="objconsultancy.Address" placeholder="Name" [ngClass]="{'clearance': consultancyFormSubmitted && consuladdress.errors?.required}" required>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Phone No.<sup class="text-danger">*</sup></label>
+                <input class="form-control" name="consulphone" #consulphone="ngModel" [(ngModel)]="objconsultancy.Phone_No" placeholder="Phone No." CompacctDigitonly="true" [ngClass]="{'clearance': consultancyFormSubmitted && consulphone.errors?.required}" required>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Contact Person<sup class="text-danger">*</sup></label>
+                <input class="form-control" name="consulcontactper" #consulcontactper="ngModel" [(ngModel)]="objconsultancy.Contact_Person" placeholder="Contact Person" [ngClass]="{'clearance': consultancyFormSubmitted && consulcontactper.errors?.required}" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-3">
+                <label class="control-label">Contact No.<sup class="text-danger">*</sup></label>
+                <input class="form-control" name="consulcontactno" #consulcontactno="ngModel" [(ngModel)]="objconsultancy.Contact_Person_Phone" placeholder="Contact No." CompacctDigitonly="true" [ngClass]="{'clearance': consultancyFormSubmitted && consulcontactno.errors?.required}" required>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">GST No.</label>
+                <input class="form-control" name="consulgstno" #consulgstno="ngModel" [(ngModel)]="objconsultancy.GST_NO" maxlength="15" minlength="15" placeholder="GST No." 
+                    [ngClass]="{clearance:consulgstno?.errors?.minlength}">
+            </div>
+        </div>
+
+        <div class="form-group " style="padding: 1em; ">
+            <h5 style=" padding: 0.5em 1em; background: #c1c1c185; border-top: 5px solid #3c8dbc; border-bottom: 1px solid #c6c6c6; margin-top: 10px; ">
+                <i class="fa fa-home " aria-hidden="true ">
+            </i> &nbsp;<strong>Bank Details:</strong></h5>
+            <div class="col-sm-3">
+                <label class="control-label ">Bank Name <sup class="text-danger ">*</sup></label>
+                <input class="form-control" placeholder="Bank Name" name="consulBankname" #consulBankname="ngModel" [(ngModel)]="objconsultancy.Bank_Name" [ngClass]="{ 'clearance': consultancyFormSubmitted && consulBankname.errors?.required}" required>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">A/C No.</label>
+                <input class="form-control" placeholder="A/C No." name="consulbankacno" #consulbankacno="ngModel" [(ngModel)]="objconsultancy.Bank_AC_No" [ngClass]="{ 'clearance':consultancyFormSubmitted && consulbankacno.errors?.required}" required>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">IFSC Code<sup class="text-danger">*</sup></label>
+                <input class="form-control" placeholder="IFSC Code" name="consulbackifsccode" #consulbackifsccode="ngModel" [(ngModel)]="objconsultancy.Bank_IFSC_Code" [ngClass]="{ 'clearance':consultancyFormSubmitted && consulbackifsccode.errors?.required}" required>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Branch</label>
+                <input class="form-control" placeholder="Branch" name="consulbranch" #consulbranch="ngModel" [(ngModel)]="objconsultancy.Bank_Branch" [ngClass]="{ 'clearance':consultancyFormSubmitted && consulbranch.errors?.required}" required>
+            </div>
+        </div>
+        <hr>
+            <div class="col-sm-3">
+                <label class="control-label">General Recruitment Terms<sup class="text-danger ">*</sup></label>
+                <input class="form-control" placeholder="General Recruitment Terms" name="consulgrt" #consulgrt="ngModel" [(ngModel)]="objconsultancy.General_Recruitment_Terms" [ngClass]="{ 'clearance':consultancyFormSubmitted && consulgrt.errors?.required}" required>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Remarks<sup class="text-danger ">*</sup></label>
+                <input class="form-control" placeholder="Remarks" name="consulremarks" #consulremarks="ngModel" [(ngModel)]="objconsultancy.Remarks" [ngClass]="{ 'clearance':consultancyFormSubmitted && consulremarks.errors?.required}" required>
+            </div>
+            <br>
+    </div>
+    </form>
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" (click)="SaveConsultancy(consultancyForm.form.valid)" label="Create"></button>
+        <button type="button" (click)="CreateConsulModal = false" class="btn btn-default">
   CLOSE
 </button>
     </p-footer>
