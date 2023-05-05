@@ -203,11 +203,11 @@
                                     <label class="control-label">Date Of Birth<sup class="text-danger">*</sup></label>
                                     <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='DOB' name="D_O_B" [enabled]="userdatedisabled"></ejs-datepicker>
                                 </div>
-                                <div class="col-sm-3 ">
+                                <div class="col-sm-3 " *ngIf="databaseName != 'GN_JOH_HR'">
                                     <label class="control-label">Father/Mother's Name<sup class="text-danger">*</sup></label>
                                     <input class="form-control" placeholder="Father/Mother's Name" name="Father" #Father="ngModel" [(ngModel)]="objemployee.Gurdian_Name" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Father.errors?.required}" required>
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-sm-3" *ngIf="databaseName != 'GN_JOH_HR'">
                                     <label class="control-label">Spouse Name</label>
                                     <input class="form-control" placeholder="Spouse Name" name="Husband" #Husband="ngModel" [(ngModel)]="objemployee.Spouse_Wife_Name" [disabled]="userdisabled">
                                 </div>
@@ -244,7 +244,8 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">AADHAAR NO</label>
-                                    <input class="form-control" placeholder="Aadhaar No" name="ADHAR" CompacctDigitonly="true" maxlength="12" minlength="12" #ADHAR="ngModel" [(ngModel)]="objemployee.Adhar_No" [disabled]="userdisabled">
+                                    <input class="form-control" placeholder="Aadhaar No" name="ADHAR" CompacctDigitonly="true" maxlength="12" #ADHAR="ngModel" [(ngModel)]="objemployee.Adhar_No" [disabled]="userdisabled"
+                                    [ngClass]="{clearance:ADHAR?.errors?.maxlength}">
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">PAN NO</label>
@@ -254,6 +255,74 @@
                                     <label class="control-label">Highest Qualification</label>
                                     <input class="form-control" placeholder="Highest Qualification" name="highqualification" #highqualification="ngModel" [(ngModel)]="objemployee.Highest_Qualification" [disabled]="userdisabled"  [ngClass]="{'clearance ': EmployeeFormSubmitted && highqualification.errors?.required}">
                                 </div>
+                                <div class="col-sm-3 " *ngIf="databaseName === 'GN_JOH_HR'">
+                                    <label class="control-label">Father's Name<sup class="text-danger">*</sup></label>
+                                    <input class="form-control" placeholder="Father's Name" name="Father" #Father="ngModel" [(ngModel)]="objemployee.Father_Name" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Father.errors?.required}" required>
+                                </div>
+                                <div class="col-sm-3 " *ngIf="databaseName === 'GN_JOH_HR'">
+                                    <label class="control-label">Mother's Name<sup class="text-danger">*</sup></label>
+                                    <input class="form-control" placeholder="Mother's Name" name="Mother" #Mother="ngModel" [(ngModel)]="objemployee.Mother_Name" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Mother.errors?.required}" required>
+                                </div>
+                                <div class="col-sm-3" *ngIf="databaseName === 'GN_JOH_HR'">
+                                    <label class="control-label">Spouse Name</label>
+                                    <input class="form-control" placeholder="Spouse Name" name="Husband" #Husband="ngModel" [(ngModel)]="objemployee.Spouse_Wife_Name" [disabled]="userdisabled">
+                                </div>
+                                <div class="col-sm-2" style="margin-top: 17px;" *ngIf="databaseName === 'GN_JOH_HR'">
+                                    <label class="control-label">Child Details</label>
+                                    <p-checkbox [(ngModel)]="objemployee.Child_Details" name="childdetails" [disabled]="userdisabled" [binary]="true" (onChange)="clearchilddetails()"></p-checkbox>
+                                </div>
+                                <div class="clearfix"></div>
+                            <div class="form-group" *ngIf="objemployee.Child_Details && databaseName === 'GN_JOH_HR'">
+                            <form name="ChildForm" #ChildForm="ngForm" novalidate>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Name</label>
+                                    <input class="form-control" placeholder="Child Name" name="childname" #childname="ngModel" [(ngModel)]="objemployee.Child_Name" [disabled]="userdisabled"
+                                    [ngClass]="{ 'clearance': ChildFormSubmitted && childname.errors?.required}" required>
+                                </div>
+                                <div class="col-sm-3 ">
+                                    <label class="control-label">Gender<sup class="text-danger ">*</sup></label>
+                                    <select class="form-control" name="ChildGender" #ChildGender="ngModel" [(ngModel)]="objemployee.Child_Gender" [disabled]="userdisabled" [ngClass]="{ 'clearance': ChildFormSubmitted && ChildGender.errors?.required}" required>
+                                        <option  [ngValue]="undefined ">Select</option>
+                                    <option  *ngFor="let option of GenderList" value="{{option}}">
+                                      {{option}}
+                                    </option>
+                                   </select>
+                                </div>
+                                <div class="col-sm-3 ">
+                                    <label class="control-label">Date Of Birth<sup class="text-danger">*</sup></label>
+                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Child_D_O_B' name="Child_D_O_B" [enabled]="userdatedisabled"
+                                    [ngClass]="{ 'clearance': ChildFormSubmitted && Child_D_O_B.errors?.required}" required="true"></ejs-datepicker>
+                                </div>
+                            </form>
+                                <div class="col-sm-2">
+                                    <button class="btn btn-primary custombutton" (click)="AddChildDetails(ChildForm.form.valid)">
+                                        <span class="glyphicon glyphicon-plus"> </span>Add
+                                        </button>
+                                </div>
+                                <br>
+                                <div class="clearfix"></div>
+                                <br>
+                                <div class="table-responsive no-padding">
+                                    <table class="table table-bordered">
+                                     <thead style="background-color:#3c8dbc;color:white;">
+                                        <tr style="background-color:#3c8dbc;color:white;">
+                                          <th class="text-center" >Name</th>
+                                          <th class="text-center" >Gender</th>
+                                          <th class="text-center" >D.O.B</th>
+                                          <th class="text-center" >Delete</th>
+                                        </tr>
+                                     </thead>
+                                    <tbody>
+                                        <tr *ngFor=" let data of AddChildList; let ind = index;">
+                                          <td class="text-center">{{ data.Child_Name }}</td>
+                                          <td class="text-center">{{ data.Child_Gender }}</td>
+                                          <td class="text-center">{{ data.Child_D_O_B }}</td>
+                                          <td class="text-center"><button (click)="DetetechildDetails(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                   </table>
+                                </div>
+                            </div>    
 
                             </div>
                             <div class="container pull-left">
@@ -329,7 +398,7 @@
                                         <label class="control-label">State</label>
                                         <input class="form-control" placeholder="State" name="Posting_State" #Posting_State="ngModel" [(ngModel)]="objemployee.Posting_State" [disabled]="userdisabled">
                                     </div>
-                                    <div class="col-sm-2" style="margin-top: 1px;">
+                                    <div class="col-sm-2" style="margin-top: 17px;">
                                         <label class="control-label">Is HOD</label>
                                         <p-checkbox [(ngModel)]="objemployee.Is_HOD" [disabled]="userdisabled" name="Hold_Bill_Flag" [binary]="true"></p-checkbox>
                                     </div>

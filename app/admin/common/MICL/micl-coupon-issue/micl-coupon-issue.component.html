@@ -23,7 +23,7 @@
             <div class="form-horizontal">
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" [disabled]="AddList.length">
                             <div class="form-group">
                                 <!-- <div class="col-sm-2">
                                     <ejs-datepicker [(value)]="CouponDateBrowseFirst" [format]="'dd/MMM/yyyy'"></ejs-datepicker>
@@ -68,17 +68,21 @@
                                         <ng-template pTemplate="header">
                                             <tr>
                                                 <th style="width:5em">Action</th>
-                                                <th>Date</th>
+                                                <th>Issue Date</th>
                                                 <th>Employee Name</th>
                                                 <th>Contractor Emp Name</th>
                                                 <th>Visitor Name</th>
-                                                <th>Lunch Qty</th>
-                                                <th>Lunch Qty Amount</th>
-                                                <th>Breakfast Qty</th>
-                                                <th>Breakfast Qty Amount</th>
-                                                <th>Dinner Qty</th>
-                                                <th>Dinner Qty Amount</th>
-                                                <th>Total</th>
+                                                <th>Coupon Start Qty</th>
+                                                <th>Coupon End Qty</th>
+                                                <th>Meal Coupon Qty</th>
+                                                <th>Total Amount</th><!--<th>Lunch Qty Amount</th>-->
+                                                <th>Coupon Start Qty</th>
+                                                <th>Coupon End Qty</th>
+                                                <th>Breakfast Coupon Qty</th><!--<th>Breakfast Qty</th>-->
+                                                <th>Total Amount</th><!--<th>Breakfast Qty Amount</th>-->
+                                                <!-- <th>Dinner Qty</th>
+                                                <th>Dinner Qty Amount</th> -->
+                                                <th>G.T Amount</th><!--<th>Total</th> -->
                                             </tr>
                                         </ng-template>
                                         <ng-template pTemplate="body" let-col>
@@ -109,12 +113,16 @@
                                                 <td>{{col.Emp_Name ? col.Emp_Name : '-'}}</td>
                                                 <td>{{col.Contractor_Emp_Name ? col.Contractor_Emp_Name : '-'}}</td>
                                                 <td>{{col.Visitor_Name ? col.Visitor_Name : '-'}}</td>
+                                                <td>{{col.Meal_Start_No ? col.Meal_Start_No : '-'}}</td>
+                                                <td>{{col.Meal_End_No ? col.Meal_End_No : '-'}}</td>
                                                 <td>{{col.Lunch_No_Of_Coupon ? col.Lunch_No_Of_Coupon : '-'}}</td>
                                                 <td>{{col.Lunch_Total_Amount ? col.Lunch_Total_Amount :'-'}}</td>
+                                                <td>{{col.BF_Start_No ? col.BF_Start_No : '-'}}</td>
+                                                <td>{{col.BF_End_No ? col.BF_End_No : '-'}}</td>
                                                 <td>{{col.BF_No_Of_Coupon ? col.BF_No_Of_Coupon : '-'}}</td>
                                                 <td>{{col.BF_Total_Amount ? col.BF_Total_Amount: '-'}}</td>
-                                                <td>{{col.Dinner_No_Of_Coupon ? col.Dinner_No_Of_Coupon : '-'}}</td>
-                                                <td>{{col.Dinner_Total_Amount ? col.Dinner_Total_Amount : '-'}}</td>
+                                                <!-- <td>{{col.Dinner_No_Of_Coupon ? col.Dinner_No_Of_Coupon : '-'}}</td>
+                                                <td>{{col.Dinner_Total_Amount ? col.Dinner_Total_Amount : '-'}}</td> -->
                                                 <td>{{col.Total_Amount ? col.Total_Amount : '-'}}</td>
                                             </tr>                                     
                                         </ng-template>

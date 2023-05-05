@@ -73,7 +73,8 @@ export class MICLCouponIssueComponent implements OnInit {
     this.tabIndexToView = e.index;
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
-    // this.clearData();
+    this.clearData();
+    this.AddList = [];
   }
   Finyear() {
     this.http

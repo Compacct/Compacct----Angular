@@ -180,6 +180,9 @@ export class MiclDispatchChallanComponent implements OnInit {
   DistStockPoint:any =[];
   SelectedDistStockPoint:any = [];
   formstockpointDisabled = false;
+  Server_Date = new Date();
+  minFromDate = new Date();
+  maxFromDate = new Date();
 
   constructor(
     private $http: HttpClient,
@@ -203,6 +206,8 @@ export class MiclDispatchChallanComponent implements OnInit {
       Link: "Material Management -> Outward -> Issue Material"
     });
     this.Finyear();
+    this.ServerDate();
+    this.AllowedEntryDays();
     this.GetFromCostcenter();
     // this.GetFromGodown();
     this.GetToCostCenter();
@@ -237,6 +242,8 @@ export class MiclDispatchChallanComponent implements OnInit {
     this.clearData();
     this.ReqDate = new Date();
     this.ChallanDate = new Date();
+    this.Server_Date = new Date();
+    this.maxFromDate = new Date();
     //this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
     this.SelectedIndent = undefined;
     this.IndentFilter = [];
@@ -278,6 +285,8 @@ export class MiclDispatchChallanComponent implements OnInit {
   this.createchallandisabled = false;
   this.indentlistdisabled = false;
   this.createChallanflag = true;
+  this.Server_Date = new Date();
+  this.maxFromDate = new Date();
   }
   Finyear() {
     this.$http
@@ -289,6 +298,30 @@ export class MiclDispatchChallanComponent implements OnInit {
       // this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
      this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
       });
+  }
+  ServerDate(){
+    this.$http
+    .get("/common/Get_Server_Date")
+    .subscribe((data: any) => {
+     //console.log("ServerDate",data)
+     this.Server_Date  = new Date(data)
+     
+    })
+  }
+  AllowedEntryDays(){
+    this.$http
+    .get("/Common/Get_Allowed_Entry_Days?User_ID=" + this.$CompacctAPI.CompacctCookies.User_ID)
+    .subscribe((rec: any) => {
+      //console.log("AllowedEntryDays",rec)
+     let data = JSON.parse(rec)
+      let days = Number(data[0].Allowed_Entry_Day)
+      //console.log("days",days)
+     this.minFromDate = new Date(this.Server_Date.getTime()-(days*24*60*60*1000));
+     this.maxFromDate = new Date();
+     //console.log("minFromDate",this.minFromDate)
+    //  console.log("maxFromDate currentdate",this.maxFromDate)
+      
+    })
   }
   GetFromCostcenter(){
     const obj = {
@@ -993,6 +1026,8 @@ saveqty(){
       this.To_Godown_ID_Dis = false;
       this.ReqDate = new Date();
       this.ChallanDate = new Date();
+      this.Server_Date = new Date();
+      this.maxFromDate = new Date();
       // this.ObjBrowseData.Cost_Cen_ID = this.Objdispatch.Cost_Cen_ID;
       // this.ObjBrowseData.Brand_ID = this.Objdispatch.Brand_ID;
       this.searchData(true);

@@ -190,7 +190,7 @@
                                                     <div class="col-sm-4">
                                                         <label class="control-label">Issue Date</label>
                                                         <!-- <div  class="label-t">{{myDate  | date :"dd/MMM/yyyy"}}</div> -->
-                                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='ChallanDate' [enabled]="docdateDisabled" (change)="GetshowProduct()"></ejs-datepicker>
+                                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='ChallanDate' [min]='minFromDate' [max]='maxFromDate' [enabled]="docdateDisabled" (change)="GetshowProduct()"></ejs-datepicker>
 
                                                     </div>
                                                     <div class="col-sm-4">

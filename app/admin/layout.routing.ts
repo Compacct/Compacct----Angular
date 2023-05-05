@@ -369,6 +369,9 @@ import { CommonPurchaseBillGstComponent } from './common/FinancialManagement/Tra
 import { FullAndFinalSettlementComponent } from './common/MICL/full-and-final-settlement/full-and-final-settlement.component';
 import { NPSupTktSalesReturnWarehouseComponent } from "./common/TicketManagement/np-sup-tkt-sales-return-warehouse/np-sup-tkt-sales-return-warehouse.component";
 import { NPSupTktSalesReturnAccountsComponent } from "./common/TicketManagement/np-sup-tkt-sales-return-accounts/np-sup-tkt-sales-return-accounts.component";
+import { EmployeeSalaryMasterJohComponent } from './common/Attendance/employee-salary-master-joh/employee-salary-master-joh.component';
+import { OldProjectMasterComponent } from './common/Harbauer/old-project-master/old-project-master.component';
+
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -2804,6 +2807,20 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: NPSupTktSalesReturnAccountsComponent,
         data: {
           title: 'Sup Tkt Sales Return Accounts'
+    }
+    },
+     {
+      path: 'Employee_Salary_Master_JOH',
+        component: EmployeeSalaryMasterJohComponent,
+        data: {
+          title: 'Employee Salary Master'
+    }
+    },
+    {
+      path: 'BL_CRM_Old_Project_Master',
+        component: OldProjectMasterComponent,
+        data: {
+          title: 'Old Project Master'
     }
     },
     /*{
