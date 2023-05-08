@@ -69,6 +69,7 @@
                                             <tr>
                                                 <th style="width:5em">Action</th>
                                                 <th>Issue Date</th>
+                                                <th>Issue To</th>
                                                 <th>Employee Name</th>
                                                 <th>Contractor Emp Name</th>
                                                 <th>Visitor Name</th>
@@ -110,6 +111,7 @@
                                                     </div>
                                                 </td>
                                                 <td>{{col.Date ? (col.Date|date:"dd/MMM/yyyy") : '-'}}</td>
+                                                <td>{{col.Issue_Type ? col.Issue_Type : '-'}}</td>
                                                 <td>{{col.Emp_Name ? col.Emp_Name : '-'}}</td>
                                                 <td>{{col.Contractor_Emp_Name ? col.Contractor_Emp_Name : '-'}}</td>
                                                 <td>{{col.Visitor_Name ? col.Visitor_Name : '-'}}</td>
@@ -144,9 +146,9 @@
                                         <select class="form-control" name="issueto" #issueto="ngModel" [(ngModel)]="Issue_To"
                                            (change)='changeField()' [ngClass]="{clearance: CouponFormsSubmitted && issueto.errors?.required}" required>
                                             <option [ngValue]="undefined">Select</option>
-                                            <option value="Employee">Employee</option>
-                                            <option value="Contractor">Contractor</option>
-                                            <option value="Visitor">Visitor</option>
+                                            <option *ngFor="let option of IssuetoList" value="{{ option}}">
+                                                {{ option }}
+                                            </option>
                                         </select>
                                     </div>
                                     <div class="col-sm-4" *ngIf="Issue_To==='Visitor'">
@@ -181,6 +183,18 @@
                                             [virtualScroll]="true" itemSize="30"
                                             [ngClass]="{'clearance': CouponFormsSubmitted && contractor.errors?.required}" required [disabled]="AddList.length">
                                         </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4" *ngIf="Issue_To==='H.O Staff'">
+                                        <label class="control-label">H.O Staff Name<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="hostaffname" #hostaffname="ngModel"
+                                            [(ngModel)]="ObjCouponIssue.Visitor_Name" placeholder="H.O Staff Name"
+                                            [ngClass]="{'clearance': CouponFormsSubmitted && hostaffname.errors?.required}" required [disabled]="AddList.length" >
+                                    </div>
+                                    <div class="col-sm-4" *ngIf="Issue_To==='Voucher Staff'">
+                                        <label class="control-label">Voucher Staff Name<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="voucherstaffname" #voucherstaffname="ngModel"
+                                            [(ngModel)]="ObjCouponIssue.Visitor_Name" placeholder="Voucher Staff Name"
+                                            [ngClass]="{'clearance': CouponFormsSubmitted && voucherstaffname.errors?.required}" required [disabled]="AddList.length" >
                                     </div>
                                     <div class="col-sm-2">
                                         <label class="control-label">Date<sup class="text-danger">*</sup></label>
