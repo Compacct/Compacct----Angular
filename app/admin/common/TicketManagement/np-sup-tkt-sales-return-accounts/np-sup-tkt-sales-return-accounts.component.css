@@ -84,5 +84,5 @@ body .ui-dropdown.ui-dropdown-clearable .ui-dropdown-label {
 }
 
 .ui-dialog .ui-dialog-content {
-    height: auto;
+    height: 45vh;
 }

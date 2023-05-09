@@ -22,10 +22,21 @@ export class NPSupTktSalesReturnAccountsComponent implements OnInit {
   pendinglistlistHeader: any = [];
   ShowModal: boolean = false; 
   UpdateList: any = [];
+  bckUpdateList:any = []
   Ticket: any = undefined;
   DocDate: any = [];
   DocDateShow: any = [];
   ChotoShowModal: boolean = false;
+  AddList: any = [];
+  ObjSmallPop: SmallPop = new SmallPop();
+  AClist: any = [];
+  AddButtonEnb: boolean = false;
+  objsale: any = {};
+  UpdateListIndex: any = undefined;
+  Approvelist:any =[];
+  ApprovelistHeader: any = [];
+  ViewModal: boolean = false;
+  ViewList: any = [];
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -44,6 +55,7 @@ export class NPSupTktSalesReturnAccountsComponent implements OnInit {
       Link: "Ticket Management -> Sales Return Accounts"
     });
     this.getSearchedPendinglist();
+    this.ApproveSerch()
   }
   TabClick(e:any){
     this.tabIndexToView = e.index;
@@ -53,7 +65,27 @@ export class NPSupTktSalesReturnAccountsComponent implements OnInit {
   onReject(){}
   clearData(){
   }
-  AddRow(){}
+  AddPop() {
+    if (this.ObjSmallPop.Accounts_Qty && this.ObjSmallPop.Accounts_Rate) {
+      this.AddList.push({
+        Accounts_Qty : this.ObjSmallPop.Accounts_Qty,
+        Accounts_Rate: this.ObjSmallPop.Accounts_Rate,
+        Accounts_Rate_Total: Number(this.ObjSmallPop.Accounts_Qty) * Number(this.ObjSmallPop.Accounts_Rate)
+      })
+        let GetTotalPro = this.GetTotalPro()
+      if ((Number(GetTotalPro)) >= this.objsale.Received_Qty ) {
+         this.AddButtonEnb = true
+      } else {
+        this.AddButtonEnb = false
+      }
+      this.GetPrice()
+      this.ObjSmallPop = new SmallPop();
+    }
+  }
+  delete(i:any) {
+    this.AddList.splice(i, 1);
+    this.AddButtonEnb = false;
+  }
   getSearchedPendinglist(){
     this.pendinglist = []
     this.pendinglistlistHeader = []
@@ -71,6 +103,26 @@ export class NPSupTktSalesReturnAccountsComponent implements OnInit {
         }
       this.pendinglist = data
       this.pendinglistlistHeader = Object.keys(data[0])
+      }
+    })
+  }
+  ApproveSerch() {
+    this.Approvelist = []
+    this.ApprovelistHeader = [];
+    const obj = {
+      'SP_String': "SP_Np_Sup_Tkt_Sales_Return_Request",
+      'Report_Name_String':  "Get_Accounts_Approved_Browse",
+      'Json_Param_String': JSON.stringify([{User_ID : this.$CompacctAPI.CompacctCookies.User_ID}]),
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+      if(data.length){
+        if(data[0].hasOwnProperty('Return_Date')){
+          data.forEach((ele:any) => {
+            ele.Return_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(ele.Return_Date);
+          });
+        }
+      this.Approvelist = data
+      this.ApprovelistHeader = Object.keys(data[0])
       }
     })
   }
@@ -92,12 +144,40 @@ export class NPSupTktSalesReturnAccountsComponent implements OnInit {
        }  
    return
   }
-  FinalUpdatePending() {
-    
+  FinalUpdateSmall() {
+    if (this.AddList.length) {
+      if (Number(this.GetTotalPro()) !== Number(this.objsale.Received_Qty)) {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Total Qty Not Match Received Qty",
+        });
+        return
+      } else { 
+        this.UpdateList[this.UpdateListIndex].Ac =  this.AddList
+        //console.log("FinalUpdateSmall",this.UpdateList)
+        this.UpdateListIndex = undefined
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Adjust Rate",
+            detail: "Succesfully Save",
+          });
+          this.ChotoShowModal = false;
+        this.objsale.Received_Amount = Number(this.GetPrice())
+       }  
+    }  
+  }
+  ChotoShowModalClose() {
+    this.ChotoShowModal = false
+    //this.UpdateList[this.UpdateListIndex].Ac = [...this.bckUpdateList[this.UpdateListIndex].Ac]
   }
   TicketPOP(Cool:any) {
     this.Ticket = undefined;
     this.UpdateList = [];
+    this.bckUpdateList = []
      if (Cool.Ticket_No) {
       this.Ticket = Cool.Ticket_No;
       const obj = {
@@ -108,20 +188,111 @@ export class NPSupTktSalesReturnAccountsComponent implements OnInit {
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
         if (data.length) {
           this.UpdateList = JSON.parse(data[0].Output)
-          this.DocDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(this.UpdateList[0].Request_Date);
-          //  this.UpdateList.forEach((ele:any) => {
-          //     ele.Received_Amount = ele.Approved_Amount
-          //     ele.Received_Qty = ele.Approved_Qty
-          //     ele.Received_Tax_Amount = ele.Approved_Tax_Amount
-          //     ele.Received_User_ID = this.$CompacctAPI.CompacctCookies.User_ID
-          //   });
-          console.log(this.UpdateList)
+          this.bckUpdateList = JSON.parse(data[0].Output)
+          this.DocDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(this.UpdateList[0].Request_Date); 
+          //console.log(this.UpdateList)
           this.ShowModal = true;
         }
       });
     }
   }
-  SmallPopOpen() {
+  SmallPopOpen(i: any, objsale: any) {
+    //console.log("index", i)
+    this.UpdateListIndex = i
     this.ChotoShowModal = true;
+    this.objsale = {}
+    this.objsale = objsale
+    this.ObjSmallPop = new SmallPop();
+    this.AClist = [];
+    this.AddList = [...objsale.Ac]
+    this.AddButtonEnb = true
   }
+  CheckQty() {
+    if (this.ObjSmallPop.Accounts_Qty) {
+      let GetTotalPro = this.GetTotalPro()
+      if ((Number(GetTotalPro) + Number(this.ObjSmallPop.Accounts_Qty)) > this.objsale.Received_Qty ) {
+         this.AddButtonEnb = true
+      } else {
+        this.AddButtonEnb = false
+      }
+  }  
+  }
+  GetTotalPro() {
+    let flg: Number = 0
+    this.AddList.forEach((ele: any) => {
+      flg = Number(ele.Accounts_Qty) + Number(flg)
+    });
+    return flg
+    
+  }
+  GetPrice() {
+    let flg: Number = 0
+    this.AddList.forEach((ele: any) => {
+      flg = Number(ele.Accounts_Rate_Total) + Number(flg)
+    });
+    return flg  
+  }
+  FinalUpdatePending() {
+    let saveDataList: any = []
+    if (this.UpdateList.length) {
+      this.UpdateList.forEach((ele: any) => {
+        saveDataList.push({
+          Ticket_No: ele.Ticket_No,
+          Product_ID: ele.Product_ID,
+          Rate: ele.Rate,
+          Accounts_Amount: ele.Received_Amount ? ele.Received_Amount : 0,
+          Accounts_User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
+          Ac: ele.Ac
+        })
+        //console.log("saveDataList",saveDataList)
+      })
+    }
+    if (saveDataList.length) {
+        const obj = {
+        'SP_String': "SP_Np_Sup_Tkt_Sales_Return_Request",
+        'Report_Name_String': "Update_For_Accounts",
+        'Json_Param_String': JSON.stringify(saveDataList),
+      }
+      this.GlobalAPI.postData(obj).subscribe((data: any) => {
+        if (data[0].Column1 == "Done") {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Sales Return Account",
+            detail: "Succesfully Update",
+          });
+          this.ShowModal = false;
+          this.getSearchedPendinglist();
+          this.tabIndexToView = 0
+          this.ApproveSerch();
+          }
+        }) 
+      }    
+  }
+  ViewTicket(col:any){
+    this.Ticket = undefined;
+    this.ViewList = [];
+    if (col.Ticket_No) {
+      this.Ticket = col.Ticket_No;
+    const obj = {
+      'SP_String': "SP_Np_Sup_Tkt_Sales_Return_Request",
+      'Report_Name_String':  "Get_Accounts_Approved_Data",
+      'Json_Param_String': JSON.stringify([{Ticket_No : this.Ticket}]),
+    }
+      this.GlobalAPI.postData(obj).subscribe((data: any) => {
+        if (data.length) {
+          this.ViewList = JSON.parse(data[0].Output)
+          this.DocDate = this.DateNepalConvertService.convertNewEngToNepaliDateObj(this.ViewList[0].Request_Date); 
+          //console.log(this.ViewList)
+          this.ViewModal = true;
+        }
+      });
+    }
+  }
+  onConfirm(){}
+}
+class SmallPop{
+  Accounts_Qty:number ;
+  Accounts_Rate:number;
 }
