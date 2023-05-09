@@ -215,7 +215,7 @@ export class FinsBrowseProjectComponent implements OnInit {
     this.SelectFinalDoc = this.FinalDocP;  
     this.SelectRemarksFinal_Doc = undefined;
     }
-    else if (field == 'Signing Date') {
+    else if (field == 'Signing Date') { 
     this.projectId = col.Project_ID;
     this.dialogheader = field;
     this.dialogModel = true;
