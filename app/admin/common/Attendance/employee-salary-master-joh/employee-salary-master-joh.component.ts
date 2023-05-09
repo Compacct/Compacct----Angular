@@ -31,6 +31,11 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
   SelectedDistdepartment:any = [];
   SearchFields:any = [];
   BackupEmpSalaryListMICL:any = [];
+  scrollableCols:any = [];
+  frozenCols:any = [];
+  rowGroupMetadata: any;
+  expanded = false;
+  Cols:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -50,6 +55,33 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
       Link: "HR -> Employee Salary Master"
     });
     this.GetEmpData();
+    this.expanded = false;
+    this.scrollableCols = [
+      { field: 'Emp_Code', header: 'Employee Code' },
+      // { field: 'Emp_Name', header: 'Employee Name' },
+      { field: 'Emp_Joining_Dt', header: 'Emp Joining Dt'},
+      { field: 'Effective_From', header: 'Effective From' },
+      { field: 'Basic_Salary', header: 'Basic Salary' },
+      { field: 'HRA', header: 'HRA' },
+      { field: 'Medical_Allowance', header: 'Medical Allowance' },
+      { field: 'Special_Allowance', header: 'Special Allowance' },
+      { field: 'Meal_Allownce', header: 'Meal Allownce' },
+      { field: 'City_Compensation_Allowance', header: 'City Compensation Allowance' },
+      { field: 'Educational_Allowance', header: 'Educational Allowance' },
+      { field: 'Total_Earning_Amout', header: 'Total Earning Amout' },
+      { field: 'PF_Cal_Type', header: 'PF Cal Type' },
+      { field: 'PF_Cal_Amount', header: 'PF Cal Amount' },
+      { field: 'PF_Extra_Contribution', header: 'Voluntary PF Contribution' },
+      { field: 'ESI_Percentage', header: 'ESI Percentage' },
+      { field: 'ESI_Amount', header: 'ESI Amount' },
+      { field: 'Total_Deduction', header: 'Total Deduction' },
+      { field: 'Total_CTC', header: 'Net Pay' },
+      { field: 'CTC', header: 'CTC' }
+  ];
+  
+    this.frozenCols = [
+      { field: 'Emp_Name', header: 'Employee Name' }
+    ];
   }
    // TabClick(e){
       // console.log(e)
@@ -61,6 +93,9 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
       this.compacctToast.clear("c");
     }
      GetEmpData(){
+      // this.rowGroupMetadata = {};
+      this.EmpSalaryListMICL = [];
+      // this.updateRowGroupMetaData();
       const obj = {
         "SP_String": "SP_Employee_Salary_Master_MICL",
         "Report_Name_String": "Get_EMP_Data"
@@ -73,7 +108,33 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
           item.PF_Cal_Type = item.PF_Cal_Type ? item.PF_Cal_Type : undefined;
           this.totalearnings();
         });
+        // this.updateRowGroupMetaData();
        })
+    }
+    updateRowGroupMetaData() {
+      this.rowGroupMetadata = {};
+      let previousRowGroup = [];
+    
+            if (this.EmpSalaryListMICL) {
+                for (let i = 0; i < this.EmpSalaryListMICL.length; i++) {
+                    let rowData = this.EmpSalaryListMICL[i];
+                    //console.log("rowData ===",rowData);
+                    let Dept_Name = rowData.Dept_Name;
+                    if (i == 0) {
+                        this.rowGroupMetadata[Dept_Name] = { index: 0, size: 1 };
+                    }
+                    else {
+                        let previousRowData = this.EmpSalaryListMICL[i - 1];
+                        let previousRowGroup = previousRowData.Dept_Name;
+    
+                        if (Dept_Name === previousRowGroup){
+                          this.rowGroupMetadata[Dept_Name].size++;
+                        }else {
+                          this.rowGroupMetadata[Dept_Name] = { index: i, size: 1 };
+                        }
+                    }
+                }
+            }
     }
     // DISTINCT & FILTER
   GetDistinct() {
@@ -112,6 +173,7 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
       item.Total_Earning_Amout = Number(Number(item.Basic_Salary) + Number(item.HRA) + Number(item.Medical_Allowance) + Number(item.Special_Allowance) +
                                 Number(item.Meal_Allownce) + Number(item.Educational_Allowance) + Number(item.City_Compensation_Allowance)).toFixed(2);
       this.totaldeduction();
+      this.ctccal();
     });
   }
   // TOTAL DEDUCTION
@@ -175,6 +237,15 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
       col.ESI_Amount = 0;
       this.totalearnings();
     }
+  }
+  ctccal(){
+    this.EmpSalaryListMICL.forEach((item)=>{
+      var ctccal;
+    if(item.Total_Earning_Amout && item.PF_Cal_Amount) {
+      ctccal = Number(Number(item.Total_Earning_Amout) +  Number(item.PF_Cal_Amount)).toFixed(2);
+      item.CTC =Number(ctccal);
+    }
+  });
   }
 
     UpdateMaster(Obj){
