@@ -544,9 +544,7 @@
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Pur Order No</th>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Details</th>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">HSN No</th>
-                                            <!-- <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Batch No</th>
-                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Serial No</th>
-                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Expiry Date</th> -->
+                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Purchase A/C Ledger</th>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Qty</th>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Unit</th>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Rate</th>
@@ -586,6 +584,16 @@
                                             <td>{{obj.Serial_No ? obj.Serial_No : '-'}}</td>
                                             <td>{{obj.Expiry_Date ? obj.Expiry_Date : '-'}}</td> -->
                                             <!-- <td>{{obj.Qty}}</td> -->
+                                            <td>
+                                                <select class="form-control" 
+                                                 name="obj.LedgerName" 
+                                                 [(ngModel)]="obj.Purchase_Ac_Ledger_ID">
+                                                   <option  [ngValue]="undefined">Select</option>
+                                                   <option  *ngFor="let option of PurchaseData" value="{{option.Ledger_ID}}">
+                                                    {{option.Ledger_Name}}
+                                                  </option>
+                                                </select>
+                                            </td>
                                             <td>
                                                 <input type="text"
                                                   class="form-control"

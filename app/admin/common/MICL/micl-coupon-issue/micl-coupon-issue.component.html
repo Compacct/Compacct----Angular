@@ -23,7 +23,7 @@
             <div class="form-horizontal">
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" [disabled]="AddList.length && buttonname === 'Save'">
                             <div class="form-group">
                                 <!-- <div class="col-sm-2">
                                     <ejs-datepicker [(value)]="CouponDateBrowseFirst" [format]="'dd/MMM/yyyy'"></ejs-datepicker>
@@ -68,17 +68,22 @@
                                         <ng-template pTemplate="header">
                                             <tr>
                                                 <th style="width:5em">Action</th>
-                                                <th>Date</th>
+                                                <th>Issue Date</th>
+                                                <th>Issue To</th>
                                                 <th>Employee Name</th>
                                                 <th>Contractor Emp Name</th>
                                                 <th>Visitor Name</th>
-                                                <th>Lunch Qty</th>
-                                                <th>Lunch Qty Amount</th>
-                                                <th>Breakfast Qty</th>
-                                                <th>Breakfast Qty Amount</th>
-                                                <th>Dinner Qty</th>
-                                                <th>Dinner Qty Amount</th>
-                                                <th>Total</th>
+                                                <th>Coupon Start Qty</th>
+                                                <th>Coupon End Qty</th>
+                                                <th>Meal Coupon Qty</th>
+                                                <th>Total Amount</th><!--<th>Lunch Qty Amount</th>-->
+                                                <th>Coupon Start Qty</th>
+                                                <th>Coupon End Qty</th>
+                                                <th>Breakfast Coupon Qty</th><!--<th>Breakfast Qty</th>-->
+                                                <th>Total Amount</th><!--<th>Breakfast Qty Amount</th>-->
+                                                <!-- <th>Dinner Qty</th>
+                                                <th>Dinner Qty Amount</th> -->
+                                                <th>G.T Amount</th><!--<th>Total</th> -->
                                             </tr>
                                         </ng-template>
                                         <ng-template pTemplate="body" let-col>
@@ -106,15 +111,20 @@
                                                     </div>
                                                 </td>
                                                 <td>{{col.Date ? (col.Date|date:"dd/MMM/yyyy") : '-'}}</td>
+                                                <td>{{col.Issue_Type ? col.Issue_Type : '-'}}</td>
                                                 <td>{{col.Emp_Name ? col.Emp_Name : '-'}}</td>
                                                 <td>{{col.Contractor_Emp_Name ? col.Contractor_Emp_Name : '-'}}</td>
                                                 <td>{{col.Visitor_Name ? col.Visitor_Name : '-'}}</td>
+                                                <td>{{col.Meal_Start_No ? col.Meal_Start_No : '-'}}</td>
+                                                <td>{{col.Meal_End_No ? col.Meal_End_No : '-'}}</td>
                                                 <td>{{col.Lunch_No_Of_Coupon ? col.Lunch_No_Of_Coupon : '-'}}</td>
                                                 <td>{{col.Lunch_Total_Amount ? col.Lunch_Total_Amount :'-'}}</td>
+                                                <td>{{col.BF_Start_No ? col.BF_Start_No : '-'}}</td>
+                                                <td>{{col.BF_End_No ? col.BF_End_No : '-'}}</td>
                                                 <td>{{col.BF_No_Of_Coupon ? col.BF_No_Of_Coupon : '-'}}</td>
                                                 <td>{{col.BF_Total_Amount ? col.BF_Total_Amount: '-'}}</td>
-                                                <td>{{col.Dinner_No_Of_Coupon ? col.Dinner_No_Of_Coupon : '-'}}</td>
-                                                <td>{{col.Dinner_Total_Amount ? col.Dinner_Total_Amount : '-'}}</td>
+                                                <!-- <td>{{col.Dinner_No_Of_Coupon ? col.Dinner_No_Of_Coupon : '-'}}</td>
+                                                <td>{{col.Dinner_Total_Amount ? col.Dinner_Total_Amount : '-'}}</td> -->
                                                 <td>{{col.Total_Amount ? col.Total_Amount : '-'}}</td>
                                             </tr>                                     
                                         </ng-template>
@@ -136,9 +146,9 @@
                                         <select class="form-control" name="issueto" #issueto="ngModel" [(ngModel)]="Issue_To"
                                            (change)='changeField()' [ngClass]="{clearance: CouponFormsSubmitted && issueto.errors?.required}" required>
                                             <option [ngValue]="undefined">Select</option>
-                                            <option value="Employee">Employee</option>
-                                            <option value="Contractor">Contractor</option>
-                                            <option value="Visitor">Visitor</option>
+                                            <option *ngFor="let option of IssuetoList" value="{{ option}}">
+                                                {{ option }}
+                                            </option>
                                         </select>
                                     </div>
                                     <div class="col-sm-4" *ngIf="Issue_To==='Visitor'">
@@ -173,6 +183,18 @@
                                             [virtualScroll]="true" itemSize="30"
                                             [ngClass]="{'clearance': CouponFormsSubmitted && contractor.errors?.required}" required [disabled]="AddList.length">
                                         </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4" *ngIf="Issue_To==='H.O Staff'">
+                                        <label class="control-label">H.O Staff Name<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="hostaffname" #hostaffname="ngModel"
+                                            [(ngModel)]="ObjCouponIssue.Visitor_Name" placeholder="H.O Staff Name"
+                                            [ngClass]="{'clearance': CouponFormsSubmitted && hostaffname.errors?.required}" required [disabled]="AddList.length" >
+                                    </div>
+                                    <div class="col-sm-4" *ngIf="Issue_To==='Voucher Staff'">
+                                        <label class="control-label">Voucher Staff Name<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="voucherstaffname" #voucherstaffname="ngModel"
+                                            [(ngModel)]="ObjCouponIssue.Visitor_Name" placeholder="Voucher Staff Name"
+                                            [ngClass]="{'clearance': CouponFormsSubmitted && voucherstaffname.errors?.required}" required [disabled]="AddList.length" >
                                     </div>
                                     <div class="col-sm-2">
                                         <label class="control-label">Date<sup class="text-danger">*</sup></label>

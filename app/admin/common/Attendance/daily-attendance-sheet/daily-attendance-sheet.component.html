@@ -164,7 +164,7 @@
                                </div>
                            </div>
                            <div class="box-footer">
-                               <button *ngIf="EmpDailyAttenList.length" class="btn btn-primary pull-right" (click)="Showdialog()" id="load" [disabled]="Spinner">
+                               <button *ngIf="EmpDailyAttenList.length" class="btn btn-primary pull-right" (click)="Showdialog()" id="load" [disabled]="Spinner || SaveButtonDisabled">
                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                    </button>

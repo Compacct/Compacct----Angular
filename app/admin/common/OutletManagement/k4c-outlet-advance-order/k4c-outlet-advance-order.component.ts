@@ -123,6 +123,9 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   ObjUpdatePayMode : UpdatePayMode =  new  UpdatePayMode();
   Ord_No = undefined;
 
+  BrandList:any = [];
+  Brand_ID:any;
+
   constructor(
     private Header: CompacctHeader,
     private $http : HttpClient,
@@ -179,6 +182,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
      this.getcredittoaccount();
      this.getwalletamount();
      this.getAdvOrderfield();
+     this.GetBrand();
      
      //Delivery Date
    //this.DateService.dateConvert(new Date (this.delivery_Date));
@@ -471,8 +475,8 @@ getcostcenid(){
    this.FromCostCentId = data[0].Cost_Cen_ID ? data[0].Cost_Cen_ID : 0;
    this.CostcentState = data[0].State;
    console.log('this.CostcentState',this.CostcentState)
-   //this.ObjaddbillForm.selectitem = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-   this.ObjaddbillForm.selectitem = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
+   this.ObjaddbillForm.selectitem = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+  //  this.ObjaddbillForm.selectitem = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
    if(this.$CompacctAPI.CompacctCookies.User_Type == 'U'){
    this.ObjaddbillForm.BrowserDeliveryto = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
    } else {
@@ -889,7 +893,7 @@ add(valid) {
   const selectedCostCenter = this.ObjaddbillForm.selectitem;
   this.ObjaddbillForm = new addbillForm();
   this.ObjaddbillForm.selectitem = selectedCostCenter;
-  this.getselectitem();
+  // this.getselectitem();
   this.addbillFormSubmitted = false;
   this.CalculateTotalAmt();
   this.listofamount();
@@ -1405,6 +1409,7 @@ saveprintandUpdate(){
        })
        this.photoforproductList = data;
        this.PhotoUploadPopup = true;
+       this.Brand_ID = undefined;
       //  this.clearData();
       //  this.productSubmit =[];
       //  this.clearlistamount();
@@ -1498,6 +1503,7 @@ if((this.ObjHomeDelivery.Delivery_Mobile_No == undefined || this.ObjHomeDelivery
       }
 
     const TempObj = {
+      Brand_ID : this.Brand_ID,
       Created_By : this.$CompacctAPI.CompacctCookies.User_ID,
       Foot_Fall_ID : this.Objcustomerdetail.Foot_Fall_ID,
       Order_Date : this.DateService.dateConvert(new Date(this.myDate)),
@@ -2276,6 +2282,51 @@ onConfirm2(){
       }
     })
 }
+myFunction() {
+  var doc:any = document.getElementById("myDropdown");
+  doc.classList.toggle("show");
+}
+GetBrand(){
+  this.BrandList = [];
+  const obj = {
+    "SP_String": "SP_Issue_Stock_Adjustment",
+    "Report_Name_String": "Get - Brand"
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.BrandList = data;
+  })
+}
+GetProduct(){
+  this.selectitem = [];
+  this.ObjaddbillForm.Product_ID = '';
+  const TempObj = {
+    Brand_ID : this.Brand_ID,
+    Product_Type_ID : 0
+   }
+   const obj = {
+    "SP_String": "SP_Controller_Master",
+    "Report_Name_String": "Product For Adv Order For User A",
+   "Json_Param_String": JSON.stringify([TempObj])
+
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    if(data.length) {
+      data.forEach(element => {
+        element['label'] = element.Product_Description,
+        element['value'] = element.Product_ID
+      });
+      this.selectitem = data;
+
+    } else {
+      this.selectitem = [];
+
+    }
+    console.log("select Product======",this.selectitem);
+
+
+  });
+}
+
 
 }
  class search{

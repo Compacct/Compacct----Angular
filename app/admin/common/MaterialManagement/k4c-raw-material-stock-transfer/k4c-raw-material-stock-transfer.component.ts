@@ -10,6 +10,7 @@ import { CompacctGlobalApiService } from "../../../shared/compacct.services/comp
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service"
 import { ActivatedRoute, Router } from "@angular/router";
 import { NgxUiLoaderService } from "ngx-ui-loader";
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-k4c-raw-material-stock-transfer',
@@ -597,7 +598,11 @@ const obj = {
  })
 }
 }
-
+exportoexcel(Arr,fileName): void {
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, fileName+'.xlsx');
+}
   clearData(){
     this.ObjRawMateriali.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     // FOR CREATE TAB

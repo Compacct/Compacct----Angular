@@ -38,6 +38,7 @@ export class NonReturnableGatePassComponent implements OnInit {
   Allreturnabledata : any = [];
   DocNo : any;
   SaveData : any = [];
+  datedisabled:boolean = true;
 
   constructor(
     private $http : HttpClient,
@@ -63,8 +64,8 @@ export class NonReturnableGatePassComponent implements OnInit {
     this.tabIndexToView = e.index;
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Create";
-    
     this.clearData();
+    this.datedisabled = true;
   }
 
   getSubLedger(){
@@ -133,8 +134,12 @@ export class NonReturnableGatePassComponent implements OnInit {
       })
       console.log(this.ReturnableListAdd);
       this.nonReturnableFormSubmit = false;
-      this.objNonReturnable = new NonReturnable();
-      this.Retrivedata();
+      // this.objNonReturnable = new NonReturnable();
+      // this.Retrivedata();
+      this.objNonReturnable.Product_Description = undefined;
+      this.objNonReturnable.UOM = undefined;
+      this.objNonReturnable.Qty = undefined;
+      this.objNonReturnable.Remarks = undefined;
     }
 
   }
@@ -142,7 +147,10 @@ export class NonReturnableGatePassComponent implements OnInit {
   Retrivedata(){
     if(this.ReturnableListAdd.length){
       this.objNonReturnable.Sub_Ledger_ID = this.ReturnableListAdd.length? this.ReturnableListAdd[0].Sub_Ledger_ID : 0;
-      
+      this.objNonReturnable.Mode_Of_Transport = this.ReturnableListAdd.length? this.ReturnableListAdd[0].Mode_Of_Transport : undefined;
+      this.objNonReturnable.Vehicle_No = this.ReturnableListAdd.length? this.ReturnableListAdd[0].Vehicle_No : undefined;
+      this.objNonReturnable.By_Order = this.ReturnableListAdd.length? this.ReturnableListAdd[0].By_Order : undefined;
+      this.objNonReturnable.Remarks = this.ReturnableListAdd.length? this.ReturnableListAdd[0].Remarks : undefined;
     }
     else{
       this.objNonReturnable.Sub_Ledger_ID = undefined;
@@ -171,13 +179,17 @@ export class NonReturnableGatePassComponent implements OnInit {
         this.SaveData.push({
           Sub_Ledger_ID : el.Sub_Ledger_ID,
           Created_By : this.commonApi.CompacctCookies.User_ID,
-          Qty : el.Qty,
+          Qty : Number(el.Qty),
           UOM : el.UOM,
           Product_Description : el.Product_Description,
           Remarks : el.Remarks,
           Doc_No : el.Doc_No,
           Doc_Date : el.Doc_Date?this.DateService.dateConvert(el.Doc_Date): null,
-          Fin_Year_ID : this.commonApi.CompacctCookies.Fin_Year_ID
+          Fin_Year_ID : this.commonApi.CompacctCookies.Fin_Year_ID,
+          Mode_Of_Transport : this.objNonReturnable.Mode_Of_Transport,
+          Vehicle_No : this.objNonReturnable.Vehicle_No,
+          By_Order : this.objNonReturnable.By_Order,
+          Purpose : this.objNonReturnable.Purpose,
         })
       });
       console.log(this.SaveData);
@@ -233,13 +245,17 @@ export class NonReturnableGatePassComponent implements OnInit {
       this.SaveData.push({
         Sub_Ledger_ID : el.Sub_Ledger_ID,
         Created_By : el.Created_By,
-        Qty : el.Qty,
+        Qty : Number(el.Qty),
         UOM : el.UOM,
         Product_Description : el.Product_Description,
         Remarks : el.Remarks,
         Doc_No : el.Doc_No,
         Doc_Date : el.Doc_Date?this.DateService.dateConvert(el.Doc_Date): null,
-        Fin_Year_ID : el.Fin_Year_ID
+        Fin_Year_ID : el.Fin_Year_ID,
+        Mode_Of_Transport : this.objNonReturnable.Mode_Of_Transport,
+        Vehicle_No : this.objNonReturnable.Vehicle_No,
+        By_Order : this.objNonReturnable.By_Order,
+        Purpose : this.objNonReturnable.Purpose
       })
     });
     console.log(this.SaveData);
@@ -309,7 +325,7 @@ export class NonReturnableGatePassComponent implements OnInit {
   }
 
   ShowSearchData(valid){
-    this.nonReturnableSearchFormSubmit = true;
+    // this.nonReturnableSearchFormSubmit = true;
     if(valid){
       this.objsearch.Start_Date = this.objsearch.Start_Date
     ? this.DateService.dateConvert(new Date(this.objsearch.Start_Date))
@@ -322,7 +338,7 @@ export class NonReturnableGatePassComponent implements OnInit {
       //Cost_Cen_ID: Number(this.objsearch.Cost_Cen_ID),
       Start_Date: this.objsearch.Start_Date,
       End_Date: this.objsearch.End_Date,
-      Sub_Ledger_ID : Number(this.objsearch.Sub_Ledger_ID)
+      Sub_Ledger_ID : this.objsearch.Sub_Ledger_ID ? Number(this.objsearch.Sub_Ledger_ID) : 0
      
     }
     const obj = {
@@ -335,10 +351,34 @@ export class NonReturnableGatePassComponent implements OnInit {
      this.Allreturnabledata = data;
       
      })
-     this.nonReturnableSearchFormSubmit = false;
+    //  this.nonReturnableSearchFormSubmit = false;
 
     }
 
+  }
+  PrintGatePass(DocNo) {
+    if (DocNo) {
+      const objtemp = {
+        "SP_String": "SP_BL_Txn_Non_Returnable_Gate_Pass",
+        "Report_Name_String": "Non_Returnable_Gate_Pass_Print"
+      }
+      this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
+        var printlink = data[0].Column1;
+        window.open(printlink + "?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      })
+    }
+  }
+  PrintChallan(DocNo) {
+    if (DocNo) {
+      const objtemp = {
+        "SP_String": "SP_BL_Txn_Non_Returnable_Gate_Pass",
+        "Report_Name_String": "Non_Returnable_Gate_Pass_Challan_Print"
+      }
+      this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
+        var printlink = data[0].Column1;
+        window.open(printlink + "?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      })
+    }
   }
 
   EditnonReturnable(col){
@@ -347,6 +387,7 @@ export class NonReturnableGatePassComponent implements OnInit {
       this.tabIndexToView = 1;
       this.items = ["BROWSE", "UPDATE"];
       this.buttonname = "Update";
+      this.datedisabled = true;
       this.getNonReturnable(col.Doc_No);
       }
   }
@@ -361,8 +402,13 @@ export class NonReturnableGatePassComponent implements OnInit {
         console.log('Data=',data);
         this.ReturnableListAdd = data;
         //this.SaveData = data;
-         this.objNonReturnable.Sub_Ledger_ID = data[0].Sub_Ledger_ID;
-        
+        this.Doc_Date = new Date(data[0].Doc_Date);
+        this.datedisabled = false;
+        this.objNonReturnable.Sub_Ledger_ID = data[0].Sub_Ledger_ID;
+        this.objNonReturnable.Mode_Of_Transport = data[0].Mode_Of_Transport;
+        this.objNonReturnable.Vehicle_No = data[0].Vehicle_No;
+        this.objNonReturnable.By_Order = data[0].By_Order;
+        this.objNonReturnable.Purpose = data[0].Purpose;
 
   });
 }
@@ -375,6 +421,7 @@ export class NonReturnableGatePassComponent implements OnInit {
     this.Doc_Date = new Date();
     this.nonReturnableSearchFormSubmit  = false;
     this.nonReturnableFormSubmit  = false;
+    this.datedisabled = true;
   }
 
   onReject(){
@@ -401,6 +448,10 @@ class NonReturnable{
   Created_By : any;
   Fin_Year_ID : any;
   Doc_Date : any;
+  Mode_Of_Transport : any;
+  Vehicle_No : any;
+  By_Order : any;
+  Purpose : any;
 }
 class NonReturnableSearch{
   Sub_Ledger_ID : any;

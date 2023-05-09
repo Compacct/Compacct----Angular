@@ -177,6 +177,9 @@ export class PurchaseOrderComponent implements OnInit {
   paramarr:any = [];
   objPoText:any = {}
   potextFormSubmit:boolean = false
+  Server_Date = new Date();
+  minFromDate = new Date();
+  maxFromDate = new Date();
 
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
@@ -212,6 +215,8 @@ ngOnInit() {
       });
       this.getDatabase();
       this.Finyear();
+      this.ServerDate();
+      this.AllowedEntryDays();
       this.objpurchase.Credit_Days = 0;
       this.GetFreightType();
       this.getsubLedger();
@@ -330,6 +335,8 @@ clearData(){
     setTimeout(() => {
       this.editorDis = false
     }, 500);
+    this.Server_Date = new Date();
+    this.maxFromDate = new Date();
 }
 onReject() {
     this.compacctToast.clear("c");
@@ -375,6 +382,30 @@ onConfirmDel(){
         this.getAllData(true);
        });
    }
+}
+ServerDate(){
+  this.$http
+  .get("/common/Get_Server_Date")
+  .subscribe((data: any) => {
+   //console.log("ServerDate",data)
+   this.Server_Date  = new Date(data)
+   
+  })
+}
+AllowedEntryDays(){
+  this.$http
+  .get("/Common/Get_Allowed_Entry_Days?User_ID=" + this.$CompacctAPI.CompacctCookies.User_ID)
+  .subscribe((rec: any) => {
+    //console.log("AllowedEntryDays",rec)
+   let data = JSON.parse(rec)
+    let days = Number(data[0].Allowed_Entry_Day)
+    //console.log("days",days)
+   this.minFromDate = new Date(this.Server_Date.getTime()-(days*24*60*60*1000));
+   this.maxFromDate = new Date();
+   //console.log("minFromDate",this.minFromDate)
+  //  console.log("maxFromDate currentdate",this.maxFromDate)
+    
+  })
 }
 getsubLedger(){
     this.SubLedgerList = [];

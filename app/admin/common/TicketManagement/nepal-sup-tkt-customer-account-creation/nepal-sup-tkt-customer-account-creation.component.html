@@ -1,4 +1,5 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
 <p-toast position="center" baseZIndex="99999" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
@@ -16,6 +17,7 @@
         </div>
     </ng-template>
 </p-toast>
+
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -83,6 +85,7 @@
                                             <th>Company Registration Certificate</th>
                                             <th>Pan or Vat Registration Certificate</th>
                                             <th>Citizenship of Owner/Director</th>
+                                            <th>Share Lagat Document</th>
 
                                         </tr>
                                     </ng-template>
@@ -133,6 +136,8 @@
                                             </td>                                    
                                             <td style="text-align: center;"><i (click)="opneFile(col.URL_Citizenship_Owner)" class="fa fa-file-text doc" ></i> 
                                             </td>
+                                            <td style="text-align: center;"><i (click)="opneFile(col.URL_Share_Lagat_Document)" class="fa fa-file-text doc"></i>
+                                            </td>
                                         </tr>
                                     </ng-template>                                 
                                 </p-table>
@@ -155,7 +160,7 @@
                                                     [placeholder]="'Select Executive Name'" 
                                                     [virtualScroll]="true"
                                                     itemSize="30" 
-                                                    [ngClass]="{'clearance': cusacccreationFormsSubmitted && Executive_Name.errors?.required}"
+                                                    [styleClass]="cusacccreationFormsSubmitted &&  Executive_Name.errors?.required ? 'clearance' :''"
                                                      required
                                                      [disabled]="view" >
                                                     </p-dropdown>
@@ -198,8 +203,9 @@
                                           class="form-control"
                                           name="Type_of_company"
                                           #Type_of_company="ngModel"
+                                          (change)="selectTypeOfCompany()"
                                           [(ngModel)]="objcusacccre.Type_of_company"
-                                         [ngClass]="{'clearance': cusacccreationFormsSubmitted && Type_of_company.errors?.required}"
+                                          [ngClass]="{'clearance': cusacccreationFormsSubmitted && Type_of_company.errors?.required}"
                                           required
                                           [disabled]="view"
                                         >
@@ -692,8 +698,23 @@
                                             <i *ngIf="!view" (click)="closeBtn('imageCitizenshipOwner')" class="fa fa-times-circle closeBtn" aria-hidden="true"></i>
                                         </div>
                                      
+                                    </div>                                   
+                                </div>
+                                <div class="form-group">                                  
+                                    <div class="col-sm-4" *ngIf="!(objcusacccre.Type_of_company=='Proprietorship' || objcusacccre.Type_of_company=='Others')">
+                                        <label *ngIf="objcusacccre.Type_of_company!='Partnership'" class="control-label">Share Lagat Document<sup class="text-danger"></sup></label>
+                                        <label *ngIf="objcusacccre.Type_of_company=='Partnership'" class="control-label">Partnership Deed<sup class="text-danger"></sup></label>
+                                        <p-fileUpload *ngIf="!imageLagatDocumentOwner && !view" #LargeDoc mode="advanced" [multiple]="false"
+                                            [fileLimit]="1" name="large-Doc" accept=".pdf, .jpg, .png, .doc, .docx, .csv, .jfif"
+                                            [chooseLabel]="'Browse'" [customUpload]="true" [showUploadButton]="false"
+                                            (onSelect)="handleDocSelect($event)"></p-fileUpload>
                                     </div>
-                                    </div>
+                                        <div class="col-sm-12" *ngIf="imageLagatDocumentOwner">
+                                            <i (click)="opneFile(imageLagatDocumentOwner)" class="fa fa-file-text doc"></i>
+                                            <i *ngIf="!view" (click)="closeBtn('imageLagatDocumentOwner')" class="fa fa-times-circle closeBtn"
+                                                aria-hidden="true"></i>
+                                        </div>                                                                 
+                                </div>
                                 <div class="box-footer"  *ngIf="!view" >
                                     <button class="btn btn-primary pull-right"
                                             (click)="Savecusacccre(cusacccreationForms.form.valid)"

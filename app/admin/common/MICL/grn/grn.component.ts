@@ -99,6 +99,9 @@ export class GrnComponent implements OnInit {
   grNetTerm: number = 0
   TCSTaxRequiredValidation = false;
   TCSdataList:any = [];
+  Server_Date = new Date();
+  minFromDate = new Date();
+  maxFromDate = new Date();
 
 
   constructor(
@@ -123,6 +126,8 @@ export class GrnComponent implements OnInit {
       Link: " Material Management -> Inward -> GRN"
     });
     this.Finyear();
+    this.ServerDate();
+    this.AllowedEntryDays();
     this.GetSupplier();
     this.GetCostCenter();
     // this.GetSearchedlist(true);
@@ -144,6 +149,8 @@ export class GrnComponent implements OnInit {
      this.GRN2FormSubmitted = false;
      this.PODate = new Date();
      this.GRNDate = new Date();
+     this.Server_Date = new Date();
+     this.maxFromDate = new Date();
      this.podatedisabled = true;
      this.Spinner = false;
      this.Godownlist = [];
@@ -218,6 +225,8 @@ export class GrnComponent implements OnInit {
     this.INVNo = undefined;
     this.SE_No_Date = undefined;
     this.INV_No_Date = undefined;
+    this.Server_Date = new Date();
+    this.maxFromDate = new Date();
    }
   Finyear() {
     this.$http
@@ -229,6 +238,30 @@ export class GrnComponent implements OnInit {
       // this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
      this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
       });
+  }
+  ServerDate(){
+    this.$http
+    .get("/common/Get_Server_Date")
+    .subscribe((data: any) => {
+     //console.log("ServerDate",data)
+     this.Server_Date  = new Date(data)
+     
+    })
+  }
+  AllowedEntryDays(){
+    this.$http
+    .get("/Common/Get_Allowed_Entry_Days?User_ID=" + this.$CompacctAPI.CompacctCookies.User_ID)
+    .subscribe((rec: any) => {
+      //console.log("AllowedEntryDays",rec)
+     let data = JSON.parse(rec)
+      let days = Number(data[0].Allowed_Entry_Day)
+      //console.log("days",days)
+     this.minFromDate = new Date(this.Server_Date.getTime()-(days*24*60*60*1000));
+     this.maxFromDate = new Date();
+     //console.log("minFromDate",this.minFromDate)
+    //  console.log("maxFromDate currentdate",this.maxFromDate)
+      
+    })
   }
    getcompany(){
     const obj = {
@@ -772,6 +805,8 @@ export class GrnComponent implements OnInit {
        this.GRN2FormSubmitted = false;
        this.PODate = new Date();
        this.GRNDate = new Date();
+       this.Server_Date = new Date();
+       this.maxFromDate = new Date();
        this.podatedisabled = true;
        this.Spinner = false;
        this.Godownlist = [];

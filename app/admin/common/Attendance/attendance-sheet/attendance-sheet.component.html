@@ -164,7 +164,7 @@
 
                     <div class="form_group">
                         <div class="col-sm-3">
-                            <input class="form-control" type="month" name="month" [(ngModel)]="Month_Name" (change)="getAttendanceData()">
+                            <input class="form-control" type="month" name="month" [(ngModel)]="Month_Name">
                         </div>
                         <!-- <div class="col-sm-2">
                             <button  class="btn btn-primary" (click)="getAttendanceDatafornewmonth()" >Generate Attendance</button>
@@ -172,8 +172,14 @@
                         <div class="col-sm-3">
                             <button  class="btn btn-primary" (click)="getAttendanceDataforExistingmonth()" >Add Employee in Attendance Sheet</button>
                         </div> -->
+                        <div class="col-sm-2">
+                            <button class="btn btn-primary" data-toggle="modal" (click)="getAttendanceData()" id="load" [disabled]="seachSpinner">
+                             <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                             <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Show Details
+                            </button>
+                        </div>
                         <div class="col-sm-3" *ngIf="AllAttendanceData.length">
-                            <button  class="btn btn-warning"  (click)="ChekMonthlyProcAS()">Process Monthly Attendance Sheet</button>
+                            <button  class="btn btn-warning"  (click)="ChekMonthlyProcAS()" [disabled]="PMAttnSheet">Process Monthly Attendance Sheet</button>
                         </div>
                         <div class="col-sm-2" *ngIf="AllAttendanceData.length">
                             <button  class="btn btn-success"  (click)="exportoexcelattnsht('Attendance_Sheet')">Export To Excel</button>

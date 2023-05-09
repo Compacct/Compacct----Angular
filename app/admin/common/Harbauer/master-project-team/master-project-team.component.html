@@ -1,0 +1,153 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+   <ng-template let-message pTemplate="message">
+      <div style="text-align: center">
+         <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+         <h3>{{message.summary}}</h3>
+         <p>{{message.detail}}</p>
+      </div>
+      <div class="ui-g ui-fluid">
+         <div class="ui-g-6">
+            <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+         </div>
+         <div class="ui-g-6">
+            <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+         </div>
+      </div>
+   </ng-template>
+</p-toast>
+<form name="projectTeam" #projectTeam="ngForm" novalidate>
+   <div class="row">
+      <div class="col-xs-7">
+         <div class="box box-primary">
+            <div class="form-horizontal">
+               <div class="box-body">
+                  <div class="form-group">
+                     <!-- <br> -->
+                     <div class="col-sm-1">
+                     </div>
+                     <div class="col-sm-10 col-md-8">
+                        <label class="control-label">Project Name<sup class="text-danger">*</sup></label>
+                        <p-dropdown [options]="projectNameList" name="projectName" #projectName="ngModel"
+                           [(ngModel)]="objProject.Project_ID" [showClear]="true"
+                           [emptyFilterMessage]="' No Project Found'" [filter]="true" filterBy="label,value"
+                           [resetFilterOnHide]="true" [placeholder]="'Select Project '" [virtualScroll]="true"
+                           itemSize="30" (onChange)="getProjectDeatils()"
+                           [styleClass]="ProjectFormSubmitted &&  projectName.errors?.required ? 'clearance' :''"
+                           [required]="true" [disabled]="edit">
+                        </p-dropdown>
+                     </div>
+                  </div>
+                  <br>
+
+                  <p-table [value]="TableData" [paginator]="true" [rows]="10" [rowHover]="true" [autoLayout]="true"
+                     sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100]"
+                     [globalFilterFields]="['Name','Intro_Name']" [rowHover]="true" #dt>
+                     <ng-template pTemplate="caption">
+                        <div class="row">
+                           <div class="col-sm-3 pull-right" style="text-align: right">
+                              <input type="text" pInputText size="50" placeholder="Search"
+                                 (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                 class="searchInput form-control">
+                           </div>
+                        </div>
+                     </ng-template>
+                     <ng-template pTemplate="header">
+                        <tr style="width: 100%;">
+                           <th style="text-align: center; width: 5rem;" nowrap>Sl. No</th>
+                           <th style="text-align: center ;" nowrap>Under Member</th>
+                           <th style="text-align: center ;" nowrap>Member</th>
+                           <th style="text-align: center ;  width: 5rem;" nowrap>Edit</th>
+                           <th style="text-align: center ;  width: 5rem;" nowrap>Delete</th>
+                        </tr>
+                     </ng-template>
+                     <ng-template pTemplate="body" let-col let-i="rowIndex">
+                        <tr>
+                           <td nowrap style="text-align: center;">{{i+1}}</td>
+                           <td nowrap style="text-align: center;">{{col.Intro_Name}}</td>
+                           <td nowrap style="text-align: center;">{{col.Name}}</td>
+                           <td nowrap style="text-align: center;">
+                              <button type="button" class="btn btn-sm btn-success" (click)="editTableRow(col)">
+                                 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                              </button>
+                           </td>
+                           <td nowrap style="text-align: center;">
+                              <button type="button" class="btn btn-sm btn-danger" (click)="deleteTableRow(col)">
+                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                              </button>
+                           </td>
+                        </tr>
+                     </ng-template>
+                     <ng-template pTemplate="emptymessage">
+                        <tr>
+                           <td colspan="2">No Data in Table</td>
+                        </tr>
+                     </ng-template>
+                     <ng-template pTemplate="paginatorright" let-state>
+                        Showing {{state.first+1}} of {{(state.first) + state.rows}} of {{state.totalRecords}}
+                     </ng-template>
+                  </p-table>
+
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="col-xs-5">
+         <div class="box box-primary">
+            <div class="form-horizontal">
+               <div class="box-body">
+                  <div class="form-group">
+                     <div class="col-sm-1"></div>
+                     <div class="col-sm-10">
+                        <label class="control-label">Member Name<sup class="text-danger">*</sup></label>
+                        <p-dropdown [options]="memberNameList" name="membertName" #membertName="ngModel"
+                           [(ngModel)]="objProject.User_ID" [showClear]="true" [emptyFilterMessage]="' No Member Found'"
+                           [filter]="true" filterBy="label,value" [resetFilterOnHide]="true"
+                           [placeholder]="'Select Member '" [virtualScroll]="true" itemSize="30"
+                           [styleClass]="ProjectFormSubmitted &&  membertName.errors?.required ? 'clearance' :''"
+                           [required]="true" [disabled]="edit">
+                        </p-dropdown>
+                     </div>
+                     <div class="col-sm-1"></div>
+                  </div>
+                  <div class="form-group">
+                     <div class="col-sm-1"></div>
+                     <div class="col-sm-10">
+                        <label class="control-label">Under Name<sup class="text-danger">*</sup></label>
+                        <p-dropdown [options]="underNameList" name="underName" #underName="ngModel"
+                           [(ngModel)]="objProject.Intro_User_ID" [showClear]="true"
+                           [emptyFilterMessage]="' No Name Found'" [filter]="true" filterBy="label,value"
+                           [resetFilterOnHide]="true" [placeholder]="'Select Name '" [virtualScroll]="true"
+                           itemSize="30"
+                           [styleClass]="ProjectFormSubmitted &&  underName.errors?.required ? 'clearance' :''"
+                           [required]="true">
+                        </p-dropdown>
+                     </div>
+                     <div class="col-sm-1"></div>
+                  </div>
+                  <div class="form-group">
+                     <div class="col-sm-1"></div>
+                     <div class="col-sm-5">
+                        <button class="btn btn-primary pull-left" style="margin: 26px 0 0 15px;" *ngIf="edit"
+                           (click)="backToCreate()" id="load">
+
+                           <span class="glyphicon glyphicon-chevron-left"></span> Back To Create
+                        </button>
+                     </div>
+                     <div class="col-sm-5">
+                        <button class="btn btn-primary pull-right" style="margin: 26px 0 0 15px;"
+                           (click)="SaveProjectName(projectTeam.form.valid)" id="load">
+                           <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
+                              animationDuration=".5s"></p-progressSpinner>
+                           <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
+                        </button>
+                     </div>
+                     
+                     <div class="col-sm-1"></div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>

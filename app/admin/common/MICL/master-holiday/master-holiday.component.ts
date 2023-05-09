@@ -6,6 +6,7 @@ import { CompacctHeader } from "../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service";
 import { ActivatedRoute } from "@angular/router";
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-master-holiday',
@@ -139,6 +140,24 @@ export class MasterHolidayComponent implements OnInit {
     }
 
   }
+  exportoexcel(fileName){
+    const tempobj = {
+      HR_Year_ID : this.objBrowse.HR_Year_ID
+    }
+      const obj = {
+        "SP_String": "SP_Master_Holiday",
+        "Report_Name_String": "Browse_Master_Holiday_For_Export",
+        "Json_Param_String": JSON.stringify([tempobj])
+  
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        if(data.length){
+        const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+        const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+        XLSX.writeFile(workbook, fileName+'.xlsx');
+        }
+      })
+    }
 
   AddMasterHoliday(valid:any){
     this.HolidayFormSubmitted = true;

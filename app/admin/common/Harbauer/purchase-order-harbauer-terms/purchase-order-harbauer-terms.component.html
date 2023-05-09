@@ -24,15 +24,14 @@
                <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                   <form name="PurchaseTerms" #PurchaseTerms="ngForm" novalidate>
                      <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-6">
                            <label class="control-label">Purchase Terms<sup class="text-danger">*</sup></label>
                            <input type="text" class="form-control" placeholder="Purchase Terms" name="purchase_terms"
                               #purchase_terms="ngModel" [(ngModel)]="objPurchaseOreder.Terms_Name"
                               [ngClass]="{clearance: purchseOrederFormSubmit && purchase_terms?.errors?.required}"
                               required>
                         </div>
-                        <div class="col-sm-4"></div>
-                        <div class="col-sm-4"></div>
+                        <div class="col-sm-6"></div>
                      </div>
                      <div class="row">
                         <!-- <div class="col-sm-1"></div> -->
@@ -74,8 +73,7 @@
                      <ng-template pTemplate="header">
                         <tr>
                            <th style="width:5em">Action</th>
-                           <th style="text-align: center ; width:30em ;" nowrap>Purchase Terms</th>
-                           <th style="text-align: center ;" nowrap>Terms Detail</th>
+                           <th style="text-align: center;" nowrap>Purchase Terms</th>
                         </tr>
                      </ng-template>
                      <ng-template pTemplate="body" let-col let-i="rowIndex">
@@ -102,7 +100,6 @@
                               </div>
                            </td>
                            <td style="text-align: center ;" nowrap>{{col.Terms_Name ? col.Terms_Name : '-'}}</td>
-                           <td style="text-align: center ;" nowrap [innerHTML]="col.Terms_Details"></td>
                         </tr>
                      </ng-template>
                      <ng-template pTemplate="emptymessage">

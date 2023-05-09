@@ -72,6 +72,10 @@ export class LeaveApprovalComponent implements OnInit {
   Approved_Status_Reporting_Manager: any;
   NoteBusinessManager: any;
   NoteReportingManager: any;
+  No_Of_Days_Apply:any;
+  disapproveafterapproveFormSubmit:boolean = false;
+  disapprovetxnappid:any;
+  disapproveempid:any;
 
   constructor(
     private route : ActivatedRoute,
@@ -289,6 +293,7 @@ this.ApprovalList = [...this.BackupApprovalList] ;
   }
   onReject(){
     this.compacctToast.clear("c");
+    this.compacctToast.clear("disapprove");
   }
 
   //View Pop Panding 
@@ -336,6 +341,7 @@ this.ApprovalList = [...this.BackupApprovalList] ;
       this.Bussidisabled = false;
     }
     this.Getleaveapplyempown();
+    this.GetNoOfDays();
     }
   }
   Getleaveapplyempown(){
@@ -373,9 +379,31 @@ this.ApprovalList = [...this.BackupApprovalList] ;
       //  console.log("leaveapplyemplist ===", this.leaveapplyemplist);
     })
   }
+  GetNoOfDays(){
+    this.No_Of_Days_Apply = undefined;
+       const tempobj = {
+         Emp_ID : this.pendingempid,
+         Atten_Type_ID : this.attntypeid,
+         Issued_From_Date : this.DateService.dateConvert(new Date(this.Issued_From_Date)),
+         Issued_To_Date : this.DateService.dateConvert(new Date(this.Issued_To_Date))
+         }
+    if(this.pendingempid && this.Issued_From_Date && this.Issued_To_Date){
+    const obj = {
+      "SP_String":"SP_Leave_Application",
+      "Report_Name_String":"Show_No_Of_Days",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+     this.GlobalAPI.getData(obj)
+     .subscribe((data:any)=>{
+      console.log("no of days ===",data)
+      this.No_Of_Days_Apply = data[0].Column1;
+      }); 
+    }
+  }
   ApprovedLeaves(valid){
     this.ApproveFormSubmit = true;
     if (valid && this.Apply_From_Date && this.Apply_To_Date){
+    if(this.No_Of_Days_Apply <= this.ShowObj.No_Of_Days_Apply){
     if(this.txnid && this.pendingempid) {
       if (((Number(this.BusinessManager) === Number(this.empid)) && (this.Approved_Note_Business_Manager)) || 
          ((Number(this.ReportManager) === Number(this.empid)) && (this.Approved_Note_Reporting_Manager))){
@@ -464,6 +492,16 @@ this.ApprovalList = [...this.BackupApprovalList] ;
       severity: "error",
       summary: "Warn Message",
       detail: "Something Wrong"
+    });
+  }
+  }
+  else {
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "No. of days issued can't be greater than  no. of days applied."
     });
   }
     }
@@ -645,6 +683,108 @@ this.ApprovedApprovalList = LeadArr.length ? LeadArr : [];
 } else {
 this.ApprovedApprovalList = [...this.BackupApprovedApprovalList] ;
 }
+  }
+  DisapprovedAfterApproval(objdata){
+    this.disapprovetxnappid = undefined;
+    this.disapproveempid = undefined;
+    this.Approved_Note_Business_Manager = undefined;
+    this.Approved_Note_Reporting_Manager = undefined;
+    if(objdata.Txn_App_ID && objdata.Emp_ID) {
+      this.disapprovetxnappid = objdata.Txn_App_ID;
+      this.disapproveempid = objdata.Emp_ID;
+      if (Number(objdata.Business_Manager) ===  Number(this.empid)) {
+        this.Bussidisabled = true;
+        this.Reportdisabled = false;
+      }
+      else if (Number(objdata.Report_Manager) ===  Number(this.empid)) {
+        this.Reportdisabled = true;
+        this.Bussidisabled = false;
+      }
+      else {
+        this.Reportdisabled = false;
+        this.Bussidisabled = false;
+      }
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "disapprove",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+        });
+    }
+  }
+  DisapprovedLeavesAfterApproval(valid){
+    this.disapproveafterapproveFormSubmit = true;
+    if (valid){
+    if(this.disapprovetxnappid && this.disapproveempid) {
+      // if (((Number(this.BusinessManager) === Number(this.empid)) && (this.Approved_Note_Business_Manager)) || 
+      //    ((Number(this.ReportManager) === Number(this.empid)) && (this.Approved_Note_Reporting_Manager))){
+      const TObj = {
+        Txn_App_ID : this.disapprovetxnappid,
+        Emp_ID : this.disapproveempid,
+        Approved_Status_Business_Manager : this.Approved_Note_Business_Manager ? "N" : this.Approved_Status_Business_Manager,
+        Approved_Status_Reporting_Manager : this.Approved_Note_Reporting_Manager ? "N" : this.Approved_Status_Reporting_Manager,
+        Approved_Note_Business_Manager : this.Approved_Note_Business_Manager ? this.Approved_Note_Business_Manager : this.NoteBusinessManager,
+        Approved_Note_Reporting_Manager : this.Approved_Note_Reporting_Manager ? this.Approved_Note_Reporting_Manager : this.NoteReportingManager
+        
+       }
+    const Tempobj = {
+        "SP_String": "SP_Leave_Application",
+        "Report_Name_String": "DisApprove_Leave_Application_After_Approved",
+        "Json_Param_String" : JSON.stringify([TObj])
+      }
+      this.GlobalAPI.postData(Tempobj).subscribe((data:any)=>{
+           // console.log(data);
+            if(data[0].Column1) {
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "success",
+                summary: 'Emp ID : ' + this.disapprovetxnappid,
+                detail: "Leave Disapproved."
+              });
+              this.disapproveafterapproveFormSubmit = false;
+              this.disapprovetxnappid = undefined;
+              this.disapproveempid = undefined;
+              this.Approved_Note_Business_Manager = undefined;
+              this.Approved_Note_Reporting_Manager = undefined;
+              this.getPedingApprovaldetails();
+              this.getApprovedApprovaldetails();
+              this.getDisApprovedApprovaldetails();
+            }
+            else {
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "error",
+                summary: "Error",
+                detail: "Error Occured"
+              });
+            }
+      });
+      console.log('Update ===', TObj)
+    // }
+    // else {
+    //   this.compacctToast.clear();
+    //   this.compacctToast.add({
+    //     key: "compacct-toast",
+    //     severity: "error",
+    //     summary: "Warn Message",
+    //     detail: "Enter Remarks"
+    //   });
+    // }
+  }
+  else {
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Something Wrong"
+    });
+  }
+    }
   }
 
   // Disapproved Approval

@@ -64,8 +64,10 @@ export class HREmployeeMasterComponent implements OnInit {
   ischeckaddress : boolean = false;
   Employeeid: any;
   Joining_Dt = new Date();
+  Resign_On = new Date();
   Leave_Dt:any = new Date();
   DOB = new Date();
+  Child_D_O_B = new Date();
   checkcode : any;
   flag : boolean = false;
   Pan_No :any;
@@ -100,6 +102,19 @@ export class HREmployeeMasterComponent implements OnInit {
   leftdisabled = true;
   GradeList:any = [];
   databaseName:any;
+  ChildFormSubmitted:boolean = false;
+  AddChildList:any = [];
+  Referencelist:any = [];
+  Consultancylist:any = [];
+  emplist:any = [];
+  consultancyid : any;
+  ViewConsultancyList:any = [];
+  ViewConsultancyListObj:any = {};
+  ViewconsultancyModal:boolean = false;
+  CreateConsulModal:boolean = false;
+  objconsultancy : Consultancy = new Consultancy();
+  consultancyFormSubmitted:Boolean = false;
+  GSTvalidFlag:boolean=false;
   constructor(
     private http : HttpClient,
     private commonApi : CompacctCommonApi,
@@ -126,8 +141,8 @@ export class HREmployeeMasterComponent implements OnInit {
     this.BloodGroupList = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
     this.SalaryPaidList = ["Bank", "Cheque", "Cash"];
     this.physicallyChallanged = ["YES", "NO"];
-    this.weakofflist = ["MONDAY", "TUESDAY", "WEDNESDAY", "THRUSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
-    this.weakofflist2 = ["MONDAY", "TUESDAY", "WEDNESDAY", "THRUSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+    this.weakofflist = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+    this.weakofflist2 = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
     // this.Statuslist = ["WORKING-REJOIN", "WORKING-PROVISION", "WORKING-CASUAL", "WORKING-CONFIRMED", "WORKING-PARTTIME", "RETIRED", "LEFT", "SUSPENDED", "ABSCONDED", "PROBATION"];
     this.Statuslist = ["TRAINEE", "PROBATION", "PERMANENT", "RESIGNED", "SUSPENDED", "ABSCONDED"];
     this.getDatabase();
@@ -143,6 +158,9 @@ export class HREmployeeMasterComponent implements OnInit {
     this.getUser();
     this.leftdatechange();
     this.objemployee.Bank_ID = 1;
+    this.getReferenceBy();
+    this.getConsultancy();
+    this.getConsultancyEmp();
     
   }
   getDatabase(){
@@ -173,6 +191,7 @@ leftdatechange(){
 }
 onReject(){
     this.compacctToast.clear("c");
+    this.compacctToast.clear("consul");
 }
 Bankinfo(){
   if(this.objemployee.Salary_Paid_By === 'Bank')
@@ -432,6 +451,9 @@ getEmployeeDetails(Emp_ID){
           let data = JSON.parse(res[0].main)
           this.EmployeeDetailsList = data;
          console.log("EmployeeDetailsList=",this.EmployeeDetailsList);
+         if(this.databaseName === 'GN_JOH_HR') {
+         this.getChildDetails(Emp_ID);
+         }
          const editlist = data ? data[0] : undefined;
          this.DocumentList = data[0].doc ? data[0].doc : []
           console.log("editlist=",editlist);
@@ -447,6 +469,7 @@ getEmployeeDetails(Emp_ID){
          this.objemployee.Late_Ded_Tag = data[0].Late_Ded_Tag == "Y"? true : false; 
          this.objemployee.Is_HOD = data[0].Is_HOD == "Y"? true : false;
          this.Joining_Dt = new Date(data[0].Emp_Joining_Dt);
+         this.Resign_On = new Date(data[0].Resign_On);
          this.Leave_Dt = new Date(data[0].Emp_Leave_Dt) ;
          this.objemployee.Present_Status = data[0].Present_Status;
          this.leftdisabled = this.objemployee.Present_Status === "RESIGNED" || 
@@ -464,13 +487,43 @@ getEmployeeDetails(Emp_ID){
         }
         else {
           this.objemployee = new Employee();
+          this.clearchilddetails();
         }
           
         });
       }
       else {
         this.objemployee = new Employee();
+        this.clearchilddetails();
       }
+}
+getChildDetails(Emp_ID){
+  this.AddChildList = [];
+  if (this.objselect.Emp_ID) {
+    const obj = {
+      "SP_String": "Sp_HR_Employee_Master",
+       "Report_Name_String":"Get_HR_Employee_Child_Details",
+       "Json_Param_String": JSON.stringify([{Emp_ID : Emp_ID}]) 
+        }
+        
+          this.GlobalAPI.getData(obj).subscribe((data)=>
+          {
+            console.log("Get Data",data)
+            // JSON.parse(res[0].main)
+          if(data.length){
+            this.objemployee.Child_Details = true;
+            data.forEach(element => {
+              const  childObj = {
+                Child_Name : element.Child_Name,
+                Child_Gender : element.Child_Gender,
+                Child_D_O_B : this.DateService.dateConvert(new Date(element.Child_D_O_B)),
+              };
+        
+              this.AddChildList.push(childObj);
+            });
+          }
+          });
+  }
 }
 
 getBankName(){
@@ -543,6 +596,32 @@ CalculateTime(){
     // console.log(this.DateService.dateTimeConvert(new Date(this.objemployee.Off_Out_Time)));
   }
 }
+clearchilddetails(){
+  // if(!this.objemployee.Child_Details){
+    this.objemployee.Child_Name = undefined;
+    this.objemployee.Child_Gender = undefined;
+    this.Child_D_O_B = new Date();
+    this.AddChildList = [];
+  // }
+}
+AddChildDetails(valid){
+  this.ChildFormSubmitted = true;
+    if(valid) {
+      var childobj = {
+        Child_Name : this.objemployee.Child_Name,
+        Child_Gender : this.objemployee.Child_Gender,
+        Child_D_O_B : this.DateService.dateConvert(new Date(this.Child_D_O_B)),
+    };
+    this.AddChildList.push(childobj);
+    this.objemployee.Child_Name = undefined;
+    this.objemployee.Child_Gender = undefined;
+    this.Child_D_O_B = new Date();
+    this.ChildFormSubmitted = false;
+  }
+}
+DetetechildDetails(index) {
+  this.AddChildList.splice(index,1)
+}
 
 async saveemployeemaster(valid){
   this.EmployeeFormSubmitted = true;
@@ -575,6 +654,7 @@ saveEmp(){
   if(this.checkcode != 1){
     if(this.objemployee.Off_Day != this.objemployee.Second_Off_Day ){
     this.objemployee.Emp_Joining_Dt = this.DateService.dateConvert(new Date(this.Joining_Dt));
+    this.objemployee.Resign_On = this.DateService.dateConvert(new Date(this.Resign_On));
     this.objemployee.Emp_Leave_Dt = this.DateService.dateConvert(new Date(this.Leave_Dt));
     this.objemployee.D_O_B = this.DateService.dateConvert(new Date(this.DOB));
     this.objemployee.User_ID = this.commonApi.CompacctCookies.User_ID;
@@ -594,7 +674,8 @@ saveEmp(){
       const obj = {
         "SP_String": "Sp_HR_Employee_Master",
         "Report_Name_String":"Update_HR_Employee",
-        "Json_Param_String": JSON.stringify([this.objemployee]) 
+        "Json_Param_String": JSON.stringify([this.objemployee]),
+        "Json_1_String": JSON.stringify(this.AddChildList)
       }
       this.GlobalAPI.getData(obj)
       .subscribe((data : any)=>
@@ -638,7 +719,8 @@ saveEmp(){
       const obj = {
         "SP_String": "Sp_HR_Employee_Master",
         "Report_Name_String":"HR_Employee_Create",
-        "Json_Param_String": JSON.stringify([this.objemployee]) 
+        "Json_Param_String": JSON.stringify([this.objemployee]) ,
+        "Json_1_String": JSON.stringify(this.AddChildList)
       }
       this.GlobalAPI.getData(obj)
       .subscribe((data : any)=>
@@ -737,6 +819,7 @@ GetNewEmployee(){
   this.objemployee.Present_Country = "India";
   this.objemployee.Perm_Country = "India";
   this.Joining_Dt = new Date();
+  this.Resign_On = new Date();
   // this.Leave_Dt = new Date();
   this.objemployee.Present_Status = undefined;
   this.objemployee.Personal_Area = (this.databaseName === 'MICL_Demo' || this.databaseName === 'MICL') ? "HALDIA" : undefined;
@@ -1191,6 +1274,7 @@ clearData(){
   this.objemployee = new Employee();
   this.objselect = new Select();
   this.Joining_Dt = new Date();
+  this.Resign_On = new Date();
   // this.Leave_Dt = new Date();
   this.leftdatechange();
   this.DOB = new Date();
@@ -1204,6 +1288,230 @@ clearData(){
   this.flag = false;
   this.DocumentList = [];
   this.imagePath= "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu3_qIHtXBZ7vZeMQhyD8qLC1VRB9ImHadL09KET_iSQEX6ags4ICknfmqEKz8Nf6IOsA&usqp=CAU "
+}
+
+// JOH HR
+getReferenceBy(){
+  const obj = {
+    "SP_String": "Sp_HR_Employee_Master",
+    "Report_Name_String": "Get_Master_HR_Employee_Reference"
+    
+  }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.Referencelist = data;
+     console.log("Referencelist=", this.Referencelist);
+     
+   })
+
+}
+changeclearobj(){
+  this.objemployee.Reference_Details_ID = undefined;
+  this.objemployee.Reference_Details = undefined;
+  console.log('Reference_Details_ID===',this.objemployee.Reference_Details_ID)
+  console.log('Reference_Details===',this.objemployee.Reference_Details)
+}
+getConsultancy(){
+  const obj = {
+    "SP_String": "Sp_HR_Employee_Master",
+    "Report_Name_String": "View_Master_HR_Consultancy_Details"
+    
+  }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     this.Consultancylist = data;
+     console.log("Consultancylist=", this.Consultancylist);
+     
+   })
+
+}
+ViewConsultancy(){
+  const obj = {
+    "SP_String": "Sp_HR_Employee_Master",
+     "Report_Name_String":"View_Master_HR_Consultancy_Details" 
+      }
+      
+        this.GlobalAPI.getData(obj)
+        .subscribe((data)=>
+        {
+          this.ViewConsultancyList = data;
+          this.ViewConsultancyListObj = data;
+          //this.objSubLedger.State=this.AllStateList.StateName;
+          console.log('ViewDesignationListObj = ', this.ViewDesignationListObj);
+        
+        });
+        setTimeout(()=>{
+          this.ViewconsultancyModal = true;
+         },300);
+}
+
+DeleteConsultancy(col){
+  this.consultancyid = col.Desig_ID;
+        
+  console.log(this.consultancyid);
+           
+      this.Spinner = true;
+            
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "consul",
+       sticky: true,
+       closable: false,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      })
+      this.ngxService.stop();
+      this.Spinner = false;
+
+}
+
+onConfirmconsuldel(){
+  const tempobj={
+    Consultancy_ID : this.consultancyid,
+          
+  }
+  const obj = {
+    "SP_String": "Sp_HR_Employee_Master",
+    "Report_Name_String": "Delete_Designation",
+    "Json_Param_String": JSON.stringify([tempobj])
+          
+  }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log('data=',data);
+    //if (data[0].Sub_Ledger_ID)
+    if(data[0].Response=='Done')
+    {
+      //this.SubLedgerID = data[0].Column1
+     this.compacctToast.clear();
+     this.compacctToast.add({
+     key: "compacct-toast",
+     severity: "success",
+     summary: "Consultancy Delete Succesfully ",
+     detail: "Succesfully Deleted"
+    });
+    //this.Delete(this.DocNo);
+    this.ViewConsultancy();
+    this.getConsultancy();
+  }
+  else if(data[0].Response=='Already Exists'){
+    this.compacctToast.clear();
+     this.compacctToast.add({
+     key: "compacct-toast",
+     severity: "error",
+      summary: "Error",
+      detail: "Already Exists"
+      })
+
+  }
+  else{
+     this.compacctToast.clear();
+     this.compacctToast.add({
+    key: "compacct-toast",
+     severity: "error",
+     summary: "Error",
+    detail: "Something Wrong"
+  });
+}
+           
+   })
+      
+
+}
+checkGSTvalid(g){
+  // if (this.objSubLedger.Composite_GST === "No") {
+  this.GSTvalidFlag = false;
+  if(g) {
+    let regTest = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(g)
+    if(regTest){
+      let a = 65,b = 55, c =36;
+      let p;
+      return Array['from'](g).reduce((i:any,j:any,k:any,g:any)=>{
+        p =(p=(j.charCodeAt(0)<a?parseInt(j):j.charCodeAt(0)-b)*(k%2+1))>c?1+(p-c):p;
+        return k<14?i+p:j==((c=(c-(i%c)))<10?c:String.fromCharCode(c+b));
+      },0);
+    }
+    this.GSTvalidFlag = !regTest;
+  }
+  // }
+
+}
+
+CreateCunsultancy(){
+  this.objconsultancy = new Consultancy();
+    this.consultancyFormSubmitted = false;
+    setTimeout(() => {
+      this.CreateConsulModal = true;
+    }, 200);
+}
+
+SaveConsultancy(valid){
+    this.consultancyFormSubmitted = true;
+    this.Spinner = true;
+    if(valid){
+    const tempObj = {
+      Consultancy_ID : this.objemployee.Reference_Details_ID,
+      Reference_ID : this.objemployee.Reference_ID
+    }
+    this.objconsultancy.GST_NO = this.objconsultancy.GST_NO ? this.objconsultancy.GST_NO : "NA"
+    const obj = {
+      "SP_String": "Sp_HR_Employee_Master",
+      "Report_Name_String": "Save_Master_HR_Consultancy_Details",
+      "Json_Param_String": JSON.stringify([{...tempObj,...this.objconsultancy}])
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log('data=',data);
+      if(data[0].Column1){
+           //this.SubLedgerID = data[0].Column1
+          this.compacctToast.clear();
+          this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Consultancy Create Succesfully ",
+          detail: "Succesfully Created"
+        });
+        this.ngxService.stop();
+        this.Spinner = false;
+        
+        this.CreateConsulModal = false;
+        this.getConsultancy();
+        this.consultancyFormSubmitted = false;
+        
+      }
+      else{
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error",
+        detail: "Something Wrong"
+      });
+      this.ngxService.stop();
+      this.Spinner = false;
+      this.consultancyFormSubmitted = false
+      }
+       
+     });
+     
+    }
+}
+getConsultancyEmp(){
+  const obj = {
+    "SP_String": "Sp_HR_Employee_Master",
+    "Report_Name_String": "Get_Employee"
+    
+  }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    if (data.length){
+      data.forEach(element => {
+        element['label'] = element.NAME,
+        element['value'] = element.Emp_ID
+      });
+      this.emplist = data;
+    }
+    else {
+      this.emplist = [];
+    }
+   })
+
 }
 // onFileChanged(event) {
 //   const files = event.target.files;
@@ -1251,7 +1559,12 @@ class Employee{
   Material_Status : any;
   Blood_Group : any;
   Gurdian_Name : any;
+  Father_Name : any;
+  Mother_Name : any;
   Spouse_Wife_Name : any;
+  Child_Details : any;
+  Child_Name : any;
+  Child_Gender : any;
   Contact_Phone : any;
   Contact_Mobile : any;
   Emergency_Contact : any;
@@ -1287,6 +1600,7 @@ class Employee{
   PTax_Avail : any;
   Is_HOD : any;
   Emp_Leave_Dt : any;
+  Resign_On : any;
   Emp_Joining_Dt : any;
   D_O_B : any;
   PF_Avail : any= false;
@@ -1307,9 +1621,30 @@ class Employee{
   Grade : any;
   Personal_Area : any;
   Grade_ID : any;
+  Reference_ID : any;
+  Reference_Name :  any;
+  Reference_Details_ID : any;
+  Reference_Details : any;
 }
 class Select{
   name : any;
   Emp_ID : any;
 
+}
+
+class Consultancy{
+  Consultancy_ID : any;
+  Reference_ID : any;
+  Name	: any;
+  Address	: any;
+  Phone_No	: any;
+  Contact_Person	: any;
+  Contact_Person_Phone	: any;
+  GST_NO	: any;
+  Bank_Name	: any;
+  Bank_AC_No	: any;
+  Bank_IFSC_Code	: any;
+  Bank_Branch	: any;
+  General_Recruitment_Terms	: any;
+  Remarks	: any;
 }
