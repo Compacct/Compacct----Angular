@@ -204,6 +204,7 @@ style="text-align: center;"
                     name="Engagment"
                     #Engagment="ngModel"
                     [(ngModel)]="EngagmentLetter"
+                    (change)="DataClear()"
                     [ngClass]="{'clearance': AllPopForm && Engagment?.errors?.required}" required >
                     <option  [ngValue]="undefined">Select</option>
                     <option  [ngValue]="'Y'">YES</option>
@@ -225,7 +226,7 @@ style="text-align: center;"
         <div class="col-sm-4" *ngIf="EngagmentLetter == 'N'" >
             <label class="control-label">Detalis<sup class="text-danger">*</sup></label>
             <input class="form-control"
-            name="Detalis"#Detalis="ngModel" [(ngModel)]="Eng_letter_details"
+            name="Detalis"#Detalis="ngModel" [(ngModel)]="Type_of_eng"
             placeholder="Write Here..." 
              [ngClass]="{'clearance': AllPopForm && Detalis?.errors?.required}" required >
         </div>
