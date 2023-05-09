@@ -443,27 +443,52 @@ export class NepalPurchaseRequestComponent implements OnInit {
       });
     }
   }
-  onConfirm(){
+ async onConfirm(){
     if(this.PurchaseRequestNo){
-      const obj = {
-        "SP_String": "sp_Bl_Txn_Purchase_Request",
-        "Report_Name_String": "Delete_Purchase_Request",
-        "Json_Param_String": JSON.stringify([{Purchase_Request_No : this.PurchaseRequestNo}])
-       }
-      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        if(data[0].Column1 =="Done"){
-          this.onReject()
-          this.GetSearchedList(true)
-         this.PurchaseRequestNo = undefined
-          this.compacctToast.clear();
-          this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "success",
-          detail:  "Succesfully Delete"
-        })
-        }
+      this.compacctToast.clear();
+      this.ngxService.start();
+      this.$http.get('https://api.ipify.org/?format=json').subscribe((data:any)=>{
+        console.log(data)
+        this.deleteonConfirm(data.ip )
       })
+   }
+  }
+  deleteonConfirm(ip:any){
+    const tempobj = {
+      Purchase_Request_No : this.PurchaseRequestNo,
+      User_ID:this.$CompacctAPI.CompacctCookies.User_ID,
+      USER_IP : ip
     }
+  console.log("tempobj",tempobj)
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_Request",
+      "Report_Name_String": "Delete_Purchase_Request",
+      "Json_Param_String": JSON.stringify([tempobj])
+     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data[0].Column1 =="Done"){
+        this.onReject()
+        this.GetSearchedList(true)
+        this.ngxService.stop();
+       this.PurchaseRequestNo = undefined
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        detail:  "Succesfully Delete"
+      })
+      }
+      else {
+        this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "try again later",
+          detail: "Something Wrong"
+        });
+      }
+    })
   }
   tableWidthCal(str:any){
   let flg = ''
