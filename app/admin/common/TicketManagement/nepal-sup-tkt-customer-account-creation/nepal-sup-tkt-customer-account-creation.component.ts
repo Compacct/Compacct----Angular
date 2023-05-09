@@ -472,6 +472,14 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
 
    }
   }
+
+  selectTypeOfCompany(){
+    // console.log('select works type of company');
+    if(this.objcusacccre.Type_of_company=='Proprietorship' || this.objcusacccre.Type_of_company=='Others'){
+      this.ProductLdoc = {};
+      // console.log('select defined',this.ProductLdoc );
+    }
+  }
 }
 
 class cusacccre{
