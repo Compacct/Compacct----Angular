@@ -1452,6 +1452,7 @@ SaveConsultancy(valid){
       Reference_ID : this.objemployee.Reference_ID
     }
     this.objconsultancy.GST_NO = this.objconsultancy.GST_NO ? this.objconsultancy.GST_NO : "NA"
+    this.objconsultancy.PAN = this.objconsultancy.PAN ? this.objconsultancy.PAN : "NA"
     const obj = {
       "SP_String": "Sp_HR_Employee_Master",
       "Report_Name_String": "Save_Master_HR_Consultancy_Details",
@@ -1641,10 +1642,13 @@ class Consultancy{
   Contact_Person	: any;
   Contact_Person_Phone	: any;
   GST_NO	: any;
+  PAN :  any;
+  Email : any;
   Bank_Name	: any;
   Bank_AC_No	: any;
   Bank_IFSC_Code	: any;
   Bank_Branch	: any;
+  Holder_Name : any;
   General_Recruitment_Terms	: any;
   Remarks	: any;
 }

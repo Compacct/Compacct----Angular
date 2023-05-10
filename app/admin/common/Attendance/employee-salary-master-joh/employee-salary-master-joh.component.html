@@ -25,10 +25,26 @@
             <div class="form-horizontal">
                 <div class="box-body">
                             <div class="clearfix"></div>
-                          <p-table [columns]="scrollableCols" [frozenColumns]="frozenCols" [value]="EmpSalaryListMICL" [scrollable]="true" scrollHeight="200px" frozenWidth="300px">
+                          <p-table [columns]="scrollableCols" [frozenColumns]="frozenCols" [value]="EmpSalaryListMICL" [scrollable]="true" scrollHeight="400px" frozenWidth="250px" [globalFilterFields]="['Emp_Name','Emp_Code','Emp_Joining_Dt']" [rowHover]="true" 
+                          #dt1>
+                            <ng-template pTemplate="caption">
+                                <div class="row">
+                                    <div class="col-sm-3 custombutton1">
+                                        <p-multiSelect [options]="Distdepartment" defaultLabel="Select a Department" [(ngModel)]="SelectedDistdepartment" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Dept_Name"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3 custombutton1">
+                                        <p-multiSelect [options]="DistPresentStatus" defaultLabel="Select a Present Status" [(ngModel)]="SelectedDistPresentStatus" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Present_Status"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3 pull-right" style="text-align: right">
+                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                    </div>
+
+                                </div>
+
+                            </ng-template>
                                 <ng-template pTemplate="colgroup" let-columns>
                                     <colgroup>
-                                        <col *ngFor="let col of columns" style="width:300px">
+                                        <col *ngFor="let col of columns" style="width:250px">
                                     </colgroup>
                                 </ng-template>
                                 <ng-template pTemplate="header" let-columns>
@@ -41,33 +57,46 @@
                                 </ng-template>
                                 <ng-template pTemplate="body" let-rowData let-columns="columns">
                                     <tr>
-                                        <td *ngFor="let col of columns">
-                                            <ng-container [ngSwitch]="col.field">
-                                                    <span *ngSwitchCase="'Emp_Name'" > {{rowData.Emp_Name}}</span>
-                                                    <span *ngSwitchCase="'Emp_Code'" > {{rowData.Emp_Code}}</span>
-                                                    <span *ngSwitchCase="'Emp_Joining_Dt'" > {{rowData.Emp_Joining_Dt}}</span>
-                                                    <span *ngSwitchCase="'Effective_From'" > <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='rowData.Effective_From' [ngClass]="{'clearance' : flag}"></ejs-datepicker></span>
-                                                    <span *ngSwitchCase="'Basic_Salary'" > <input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span>
-                                                    <span *ngSwitchCase="'HRA'" > <input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span>
-                                                    <span *ngSwitchCase="'Medical_Allowance'" > <input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span>
-                                                    <span *ngSwitchCase="'Special_Allowance'" > <input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span>
-                                                    <span *ngSwitchCase="'Meal_Allownce'" ><input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span>
-                                                    <span *ngSwitchCase="'City_Compensation_Allowance'" > <input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span>
-                                                    <span *ngSwitchCase="'Educational_Allowance'" > <input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span>
-                                                    <span *ngSwitchCase="'Total_Earning_Amout'" > <input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span>
-                                                    <span *ngSwitchCase="'PF_Cal_Type'" ><input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span>
-                                                    <span *ngSwitchCase="'PF_Cal_Amount'" ><input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span>
-                                                    <span *ngSwitchCase="'PF_Extra_Contribution'" > <input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span>
-                                                    <span *ngSwitchCase="'ESI_Percentage'" > <input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span>
-                                                    <span *ngSwitchCase="'ESI_Amount'" > <input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span>
-                                                    <span *ngSwitchCase="'Total_Deduction'" > <input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span>
-                                                    <span *ngSwitchCase="'Total_CTC'" > <input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span>
-                                                    <span *ngSwitchCase="'CTC'" > <input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span>
-                                                    <span *ngSwitchCase="'Action'" ><button class="btn btn-primary custombutton" (click)='UpdateMaster(rowData)' type="button" [id]="rowData.Emp_ID" data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                        <!-- <td *ngFor="let col of columns"> -->
+                                            <ng-container [ngSwitch]="col.field" *ngFor="let col of columns">
+                                                    <td *ngSwitchCase="'Emp_Name'" > {{rowData.Emp_Name}}</td>
+                                                    <td *ngSwitchCase="'Emp_Code'" > {{rowData.Emp_Code}}</td>
+                                                    <td *ngSwitchCase="'Emp_Joining_Dt'" > {{rowData.Emp_Joining_Dt}}</td>
+                                                    <td *ngSwitchCase="'Effective_From'" > <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='rowData.Effective_From' [ngClass]="{'clearance' : flag}"></ejs-datepicker></td>
+                                                    <td *ngSwitchCase="'Basic_Salary'"> <input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></td>
+                                                    <td *ngSwitchCase="'HRA'" > <input type="text" [name]="rowData.hra" [(ngModel)]='rowData.HRA' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></td>
+                                                    <td *ngSwitchCase="'Medical_Allowance'" > <input type="text" [name]="rowData.ma" [(ngModel)]='rowData.Medical_Allowance' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></td>
+                                                    <td *ngSwitchCase="'Special_Allowance'" > <input type="text" [name]="rowData.sa" [(ngModel)]='rowData.Special_Allowance' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></td>
+                                                    <td *ngSwitchCase="'Meal_Allownce'" ><input type="text" [name]="rowData.mall" [(ngModel)]='rowData.Meal_Allownce' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></td>
+                                                    <td *ngSwitchCase="'City_Compensation_Allowance'" > <input type="text" [name]="rowData.cca" [(ngModel)]='rowData.City_Compensation_Allowance' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></td>
+                                                    <td *ngSwitchCase="'Educational_Allowance'" > <input type="text" [name]="rowData.ea" [(ngModel)]='rowData.Educational_Allowance' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></td>
+                                                    <td *ngSwitchCase="'Total_Earning_Amout'" > <input type="text" [name]="rowData.tea" [(ngModel)]='rowData.Total_Earning_Amout' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></td>
+                                                    <!-- <span *ngSwitchCase="'PF_Cal_Type'" ><input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.PF_Cal_Type' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span> -->
+                                                    <td *ngSwitchCase="'PF_Cal_Type'">
+                                                        <select class="form-control" 
+                                                         name="rowData.PFCalcType" 
+                                                         [(ngModel)]="rowData.PF_Cal_Type"
+                                                         (ngModelChange)="PFChange(rowData)">
+                                                           <option  [ngValue]="undefined">Select</option>
+                                                           <option value ="%">PF 12% (Basic)</option>
+                                                           <option value ="PF Fixed">PF Fixed</option>
+                                                           <option value ="NO PF">NO PF</option>
+                                                        </select>
+                                                    </td>
+                                                    <td *ngSwitchCase="'PF_Cal_Amount'" ><input type="text" [name]="rowData.pfcala" [(ngModel)]='rowData.PF_Cal_Amount' (ngModelChange)="AfterPFCalChange(rowData)"
+                                                        [disabled]="true" CompacctDigitonly="true" class="form-control" style="width: 95px;" /></td>
+                                                    <!-- <span *ngSwitchCase="'PF_Cal_Amount'" ><input type="text" [name]="rowData.basicsalary" [(ngModel)]='rowData.Basic_Salary' CompacctDigitonly="true" (ngModelChange)="totalearnings()" class="form-control" style="width: 95px;" /></span> -->
+                                                    <td *ngSwitchCase="'PF_Extra_Contribution'" > <input type="text" [name]="rowData.pfextra" [(ngModel)]='rowData.PF_Extra_Contribution' CompacctDigitonly="true" (ngModelChange)="totaldeduction()" class="form-control" style="width: 95px;" /></td>
+                                                    <td *ngSwitchCase="'ESI_Percentage'" > <input type="text" [name]="rowData.esiper" [(ngModel)]='rowData.ESI_Percentage' CompacctDigitonly="true" (ngModelChange)="ESICalChange(rowData)" class="form-control" style="width: 95px;" /></td>
+                                                    <td *ngSwitchCase="'ESI_Amount'" > <input type="text" [name]="rowData.esiamt" [(ngModel)]='rowData.ESI_Amount' CompacctDigitonly="true" [disabled]="true" class="form-control" style="width: 95px;" /></td>
+                                                    <td *ngSwitchCase="'Total_Deduction'" > <input type="text" [name]="rowData.td" [(ngModel)]='rowData.Total_Deduction' CompacctDigitonly="true" [disabled]="true" class="form-control" style="width: 95px;" /></td>
+                                                    <td *ngSwitchCase="'Total_CTC'" > <input type="text" [name]="rowData.tctc" [(ngModel)]='rowData.Total_CTC' CompacctDigitonly="true" [disabled]="true" class="form-control" style="width: 95px;" /></td>
+                                                    <td *ngSwitchCase="'CTC'" > <input type="text" [name]="rowData.ctc" [(ngModel)]='rowData.CTC' CompacctDigitonly="true" [disabled]="true" class="form-control" style="width: 95px;" /></td>
+                                                    <td *ngSwitchCase="'Action'" ><button class="btn btn-primary custombutton" (click)='UpdateMaster(rowData)' type="button" [id]="rowData.Emp_ID" data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
                                                         Update
-                                                     </button> </span>
+                                                     </button> </td>
                                                 </ng-container>
-                                         </td>
+                                         <!-- </td> -->
                                     </tr>
                                 </ng-template>
                             </p-table>

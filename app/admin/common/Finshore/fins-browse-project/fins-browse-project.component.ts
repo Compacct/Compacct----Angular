@@ -20,7 +20,6 @@ export class FinsBrowseProjectComponent implements OnInit {
   dialogheader:string =""
   EngagmentLetter: any = undefined
   Type_of_eng: any = undefined;
-  Eng_letter_details: any = undefined;
   Letter2: any = undefined;
   SigningDate:Date = new Date()
   DynamicHeader:any =[]
@@ -203,7 +202,7 @@ export class FinsBrowseProjectComponent implements OnInit {
     this.EngagmentLetter = this.LetterType; 
     this.Type_of_eng = this.Letter2; 
     if (this.LetterType == 'N') {
-     this.Eng_letter_details = this.Letter2; 
+     this.Type_of_eng = this.Letter2; 
     }  
     this.SelectRemarksE_letter = undefined;
     }
@@ -216,13 +215,13 @@ export class FinsBrowseProjectComponent implements OnInit {
     this.SelectFinalDoc = this.FinalDocP;  
     this.SelectRemarksFinal_Doc = undefined;
     }
-    else if (field == 'Signing Date') {
+    else if (field == 'Signing Date') { 
     this.projectId = col.Project_ID;
     this.dialogheader = field;
     this.dialogModel = true;
     this.AllPopForm = false;
-    this.Signing_Date = col.Signning_Date;
-    this.SigningDate = new Date(this.Signing_Date);  
+    this.Signing_Date = this.DateService.dateConvert(col.Signning_Date);
+    this.SigningDate = this.Signing_Date == null ? new Date() : this.Signing_Date ;  
     this.SelectRemarksFinal_Doc = undefined;
     }
   }
@@ -268,10 +267,10 @@ export class FinsBrowseProjectComponent implements OnInit {
             User_ID: this.cokiseId,
             Previous_Data: this.LetterType,
             Changed_To: this.EngagmentLetter,
-            Next_Engagement_Letter_Type: this.Type_of_eng ? this.Type_of_eng :this.Eng_letter_details, 
+            Next_Engagement_Letter_Type: this.Type_of_eng , 
             Previous_Data_Text: this.LetterType + " : " + this.Letter2,
             Previuos_Engagement_Letter_Type: this.Letter2,
-            Changed_To_Text: this.EngagmentLetter +" : " + this.Type_of_eng,
+            Changed_To_Text: this.EngagmentLetter +" : " + this.Type_of_eng ,
             Remarks: this.SelectRemarksE_letter
           }
         }
@@ -285,6 +284,17 @@ export class FinsBrowseProjectComponent implements OnInit {
             Previous_Data_Text: this.FinalDocP,
             Changed_To_Text:this.SelectFinalDoc,
             Remarks: this.SelectRemarksFinal_Doc
+          }
+        }
+        else if (this.dialogheader == 'Signing Date') {
+           tempobj = {
+            Project_ID: this.projectId,
+            Project_Column: this.dialogheader,
+            User_ID: this.cokiseId,
+            Previous_Data: this.Signing_Date,
+            Previous_Data_Text :this.Signing_Date,
+            Changed_To: this.DateService.dateConvert(this.SigningDate), 
+            Changed_To_Text : this.DateService.dateConvert(this.SigningDate) 
           }
         }
          const Obj = {
@@ -352,6 +362,14 @@ export class FinsBrowseProjectComponent implements OnInit {
       }
     });  
   } 
-  }   
+  }
+  DataClear() {
+    if (this.EngagmentLetter === 'N' || this.EngagmentLetter === undefined ) {
+      this.Type_of_eng = undefined;  
+    }
+    if (this.EngagmentLetter === 'Y' || this.EngagmentLetter === undefined) {
+      this.Type_of_eng = undefined;
+    }
+  }
 }
 

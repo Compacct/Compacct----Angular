@@ -138,7 +138,7 @@
                                                             </li>
                                                           </ul> -->
                                                          <ul class="dropdown-menu">
-                                                            <li *ngIf="col.Consultancy_Type == 'Speech'">
+                                                            <li *ngIf="col.Consultancy_Type == 'Speech' && !(col.Cons_ID == '103')">
                                                                 <a (click)="actionClick(col ,'Speech Evaluation')">
                                                                     <i class="fa fa-refresh"></i>
                                                                      Speech Evaluation Outcome Update

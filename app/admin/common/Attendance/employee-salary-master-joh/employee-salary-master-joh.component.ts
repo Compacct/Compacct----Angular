@@ -36,6 +36,8 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
   rowGroupMetadata: any;
   expanded = false;
   Cols:any = [];
+  DistPresentStatus:any = [];
+  SelectedDistPresentStatus:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -139,28 +141,41 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
     // DISTINCT & FILTER
   GetDistinct() {
     let DDepartment:any = [];
+    let DPresentstatus:any = [];
     this.Distdepartment = [];
     this.SelectedDistdepartment = [];
+    this.DistPresentStatus = [];
+    this.SelectedDistPresentStatus = [];
     this.SearchFields =[];
     this.EmpSalaryListMICL.forEach((item) => {
    if (DDepartment.indexOf(item.Dept_Name) === -1) {
     DDepartment.push(item.Dept_Name);
    this.Distdepartment.push({ label: item.Dept_Name, value: item.Dept_Name });
    }
+   if (DPresentstatus.indexOf(item.Present_Status) === -1) {
+    DPresentstatus.push(item.Present_Status);
+   this.DistPresentStatus.push({ label: item.Present_Status, value: item.Present_Status });
+   }
   });
      this.BackupEmpSalaryListMICL = [...this.EmpSalaryListMICL];
   }
   FilterDist() {
     let DDepartment:any = [];
+    let DPresentStatus:any = [];
     this.SearchFields =[];
   if (this.SelectedDistdepartment.length) {
     this.SearchFields.push('Dept_Name');
     DDepartment = this.SelectedDistdepartment;
   }
+  if (this.SelectedDistPresentStatus.length) {
+    this.SearchFields.push('Present_Status');
+    DPresentStatus = this.SelectedDistPresentStatus;
+  }
   this.EmpSalaryListMICL = [];
   if (this.SearchFields.length) {
     let LeadArr = this.BackupEmpSalaryListMICL.filter(function (e) {
-      return (DDepartment.length ? DDepartment.includes(e['Dept_Name']) : true)
+      return (DDepartment.length ? DDepartment.includes(e['Dept_Name']) : true) &&
+             (DPresentStatus.length ? DPresentStatus.includes(e['Present_Status']) : true)
     });
   this.EmpSalaryListMICL = LeadArr.length ? LeadArr : [];
   } else {
@@ -183,7 +198,7 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
       this.totalctc();
     });
   }
-  // CTC
+  // CTC (NET PAY)
   totalctc(){
     this.EmpSalaryListMICL.forEach((item)=>{
       item.Total_CTC = Number(Number(item.Total_Earning_Amout) - Number(item.Total_Deduction)).toFixed(2);
