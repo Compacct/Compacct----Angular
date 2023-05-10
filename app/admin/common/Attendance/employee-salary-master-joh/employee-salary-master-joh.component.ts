@@ -9,6 +9,7 @@ import { CompacctHeader } from "../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service"
 import { ActivatedRoute, Router } from "@angular/router";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-employee-salary-master-joh',
@@ -48,6 +49,7 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -95,9 +97,7 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
       this.compacctToast.clear("c");
     }
      GetEmpData(){
-      // this.rowGroupMetadata = {};
-      this.EmpSalaryListMICL = [];
-      // this.updateRowGroupMetaData();
+      this.ngxService.start();
       const obj = {
         "SP_String": "SP_Employee_Salary_Master_MICL",
         "Report_Name_String": "Get_EMP_Data"
@@ -110,6 +110,7 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
           item.PF_Cal_Type = item.PF_Cal_Type ? item.PF_Cal_Type : undefined;
           this.totalearnings();
         });
+        this.ngxService.stop();
         // this.updateRowGroupMetaData();
        })
     }

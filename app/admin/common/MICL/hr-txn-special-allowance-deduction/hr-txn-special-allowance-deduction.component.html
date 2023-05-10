@@ -118,7 +118,8 @@
                                                 </ul>
                                             </div>
                                         </td> -->
-                                        <td nowrap>{{col.Emp_Code ? col.Emp_Code : '-' }}</td>
+                                        <td nowrap *ngIf="databaseName === 'GN_JOH_HR'">{{col.Emp_Code ? col.Emp_Code : '-' }}</td>
+                                        <td nowrap *ngIf="databaseName != 'GN_JOH_HR'">{{col.Emp_ID ? col.Emp_ID : '-' }}</td>
                                         <td nowrap>{{col.Emp_Name ? col.Emp_Name : '-'}}</td>
                                         <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Allowance_Deduction_Value' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                         <td><input type="text" [name]="col.Emp_ID+'remark'" [(ngModel)]='col.Remarks' class="form-control" style="width: 71px;" /></td>

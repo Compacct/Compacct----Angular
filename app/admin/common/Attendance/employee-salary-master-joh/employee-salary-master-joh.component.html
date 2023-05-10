@@ -25,8 +25,8 @@
             <div class="form-horizontal">
                 <div class="box-body">
                             <div class="clearfix"></div>
-                          <p-table [columns]="scrollableCols" [frozenColumns]="frozenCols" [value]="EmpSalaryListMICL" [scrollable]="true" scrollHeight="400px" frozenWidth="250px" [globalFilterFields]="['Emp_Name','Emp_Code','Emp_Joining_Dt']" [rowHover]="true" 
-                          #dt1>
+                          <p-table [columns]="scrollableCols" [frozenColumns]="frozenCols" [value]="EmpSalaryListMICL" [scrollable]="true" scrollHeight="400px" frozenWidth="210px" 
+                          [globalFilterFields]="['Emp_Name','Emp_Code','Emp_Joining_Dt']" [rowHover]="true" #dt1>
                             <ng-template pTemplate="caption">
                                 <div class="row">
                                     <div class="col-sm-3 custombutton1">
@@ -44,7 +44,7 @@
                             </ng-template>
                                 <ng-template pTemplate="colgroup" let-columns>
                                     <colgroup>
-                                        <col *ngFor="let col of columns" style="width:250px">
+                                        <col *ngFor="let col of columns" style="width:210px">
                                     </colgroup>
                                 </ng-template>
                                 <ng-template pTemplate="header" let-columns>
