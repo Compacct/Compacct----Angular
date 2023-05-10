@@ -58,7 +58,6 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
     this.expanded = false;
     this.scrollableCols = [
       { field: 'Emp_Code', header: 'Employee Code' },
-      // { field: 'Emp_Name', header: 'Employee Name' },
       { field: 'Emp_Joining_Dt', header: 'Emp Joining Dt'},
       { field: 'Effective_From', header: 'Effective From' },
       { field: 'Basic_Salary', header: 'Basic Salary' },
@@ -76,7 +75,8 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
       { field: 'ESI_Amount', header: 'ESI Amount' },
       { field: 'Total_Deduction', header: 'Total Deduction' },
       { field: 'Total_CTC', header: 'Net Pay' },
-      { field: 'CTC', header: 'CTC' }
+      { field: 'CTC', header: 'CTC' },
+      { field: 'Action', header: 'Action' },
   ];
   
     this.frozenCols = [
