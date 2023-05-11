@@ -1008,6 +1008,15 @@ CLOSE
                 <input class="form-control" name="consulgstno" #consulgstno="ngModel" [(ngModel)]="objconsultancy.GST_NO" maxlength="15" minlength="15" placeholder="GST No." 
                     [ngClass]="{clearance:consulgstno?.errors?.minlength}">
             </div>
+            <div class="col-sm-3">
+                <label class="control-label">PAN No.</label>
+                <input class="form-control" placeholder="Pan No" name="consulpanno" #consulpanno="ngModel" maxlength="10" minlength="10" [(ngModel)]="objconsultancy.PAN" [ngClass]="{clearance:consulpanno?.errors?.minlength}">
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Email Id<sup class="text-danger">*</sup></label>
+                <input class="form-control" name="consulemailid" #consulemailid="ngModel" [(ngModel)]="objconsultancy.Email" placeholder="Email ID" 
+                [ngClass]="{'clearance': consultancyFormSubmitted && consulemailid.errors?.required}" required>
+            </div>
         </div>
 
         <div class="form-group " style="padding: 1em; ">
@@ -1027,8 +1036,12 @@ CLOSE
                 <input class="form-control" placeholder="IFSC Code" name="consulbackifsccode" #consulbackifsccode="ngModel" [(ngModel)]="objconsultancy.Bank_IFSC_Code" [ngClass]="{ 'clearance':consultancyFormSubmitted && consulbackifsccode.errors?.required}" required>
             </div>
             <div class="col-sm-3">
-                <label class="control-label">Branch</label>
+                <label class="control-label">Branch<sup class="text-danger">*</sup></label>
                 <input class="form-control" placeholder="Branch" name="consulbranch" #consulbranch="ngModel" [(ngModel)]="objconsultancy.Bank_Branch" [ngClass]="{ 'clearance':consultancyFormSubmitted && consulbranch.errors?.required}" required>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Holder Name<sup class="text-danger">*</sup></label>
+                <input class="form-control" placeholder="Holder Name" name="consulholdername" #consulholdername="ngModel" [(ngModel)]="objconsultancy.Holder_Name" [ngClass]="{ 'clearance':consultancyFormSubmitted && consulholdername.errors?.required}" required>
             </div>
         </div>
         <hr>

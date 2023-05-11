@@ -328,6 +328,21 @@
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-sm-6">
+                <label class="control-label">Test Done</label>
+                <p-multiSelect 
+                        [options]="TestDoneList"
+                        defaultLabel="Select Test"
+                        [filter]="true" filterBy="label,value.name" 
+                        name="Test_Done" 
+                        #Test_Done="ngModel" 
+                        [(ngModel)]="objAppointment.Test_Done"
+                [styleClass]="'compacct-multiselect'" >
+                </p-multiSelect>
+            </div>
+        </div>
+
         <hr class="box boxboxDivide-primary">
 
         <div class="row">
@@ -810,6 +825,31 @@
                 </div>
             </div>
         </div>
+        
+        <hr class="box boxboxDivide-primary">
+
+        <div class="row">
+            <h5 style="background: #c1c1c185;
+            border-top: 5px solid #3c8dbc;
+            border-bottom: 1px solid #c6c6c6;
+            height: 33px">
+            <strong style="font-size: 20px; margin-left: 7px;">Comments</strong>
+            </h5>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <label class="control-label">Remarks</label>
+                <input class="form-control"
+                    name="Remarks"
+                    #Remarks="ngModel"
+                    [(ngModel)]="objAppointment.Remarks" 
+                    [ngClass]="{clearance: AppointmentFormSubmitted && Remarks?.errors?.required }"
+                    required
+                placeholder="Write Here" > 
+            </div>
+        </div>
+
    </form>
    <p-footer>
       <button class="btn btn-primary pull-right" (click)="SaveAppointment(Appointment.form.valid)" [disabled]="AppoSpinner">
@@ -880,6 +920,13 @@
             <div class="col-sm-5">
                 <label class="control-label">Consultancy Name</label>
                 <div class="label-t">{{Cons_Name ? Cons_Name : '-'}}</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <label class="control-label">Test Done</label>
+                <div class="label-t">{{objAppointment.Test_Done ? objAppointment.Test_Done : '-'}}</div>
             </div>
         </div>
 
@@ -1088,6 +1135,24 @@
                     <label class="control-label">Reason</label>
                     <div class="label-t">{{objAppointment.Trail_Missed_Reason ? objAppointment.Trail_Missed_Reason : '-'}}</div>
                 </div>
+            </div>
+        </div>
+
+        <hr class="box boxboxDivide-primary">
+
+        <div class="row">
+            <h5 style="background: #c1c1c185;
+            border-top: 5px solid #3c8dbc;
+            border-bottom: 1px solid #c6c6c6;
+            height: 33px">
+            <strong style="font-size: 20px; margin-left: 7px;">Comments</strong>
+            </h5>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <label class="control-label">Remarks</label>
+                <div class="label-t">{{objAppointment.Remarks ? objAppointment.Remarks : '-'}}</div>
             </div>
         </div>
 

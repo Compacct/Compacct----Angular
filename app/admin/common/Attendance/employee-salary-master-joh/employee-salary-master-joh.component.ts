@@ -9,6 +9,7 @@ import { CompacctHeader } from "../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service"
 import { ActivatedRoute, Router } from "@angular/router";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-employee-salary-master-joh',
@@ -31,6 +32,13 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
   SelectedDistdepartment:any = [];
   SearchFields:any = [];
   BackupEmpSalaryListMICL:any = [];
+  scrollableCols:any = [];
+  frozenCols:any = [];
+  rowGroupMetadata: any;
+  expanded = false;
+  Cols:any = [];
+  DistPresentStatus:any = [];
+  SelectedDistPresentStatus:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -41,6 +49,7 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -50,6 +59,33 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
       Link: "HR -> Employee Salary Master"
     });
     this.GetEmpData();
+    this.expanded = false;
+    this.scrollableCols = [
+      { field: 'Emp_Code', header: 'Employee Code' },
+      { field: 'Emp_Joining_Dt', header: 'Emp Joining Dt'},
+      { field: 'Effective_From', header: 'Effective From' },
+      { field: 'Basic_Salary', header: 'Basic Salary' },
+      { field: 'HRA', header: 'HRA' },
+      { field: 'Medical_Allowance', header: 'Medical Allowance' },
+      { field: 'Special_Allowance', header: 'Special Allowance' },
+      { field: 'Meal_Allownce', header: 'Meal Allownce' },
+      { field: 'City_Compensation_Allowance', header: 'City Compensation Allowance' },
+      { field: 'Educational_Allowance', header: 'Educational Allowance' },
+      { field: 'Total_Earning_Amout', header: 'Total Earning Amout' },
+      { field: 'PF_Cal_Type', header: 'PF Cal Type' },
+      { field: 'PF_Cal_Amount', header: 'PF Cal Amount' },
+      { field: 'PF_Extra_Contribution', header: 'Voluntary PF Contribution' },
+      { field: 'ESI_Percentage', header: 'ESI Percentage' },
+      { field: 'ESI_Amount', header: 'ESI Amount' },
+      { field: 'Total_Deduction', header: 'Total Deduction' },
+      { field: 'Total_CTC', header: 'Net Pay' },
+      { field: 'CTC', header: 'CTC' },
+      { field: 'Action', header: 'Action' },
+  ];
+  
+    this.frozenCols = [
+      { field: 'Emp_Name', header: 'Employee Name' }
+    ];
   }
    // TabClick(e){
       // console.log(e)
@@ -61,6 +97,7 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
       this.compacctToast.clear("c");
     }
      GetEmpData(){
+      this.ngxService.start();
       const obj = {
         "SP_String": "SP_Employee_Salary_Master_MICL",
         "Report_Name_String": "Get_EMP_Data"
@@ -73,33 +110,73 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
           item.PF_Cal_Type = item.PF_Cal_Type ? item.PF_Cal_Type : undefined;
           this.totalearnings();
         });
+        this.ngxService.stop();
+        // this.updateRowGroupMetaData();
        })
+    }
+    updateRowGroupMetaData() {
+      this.rowGroupMetadata = {};
+      let previousRowGroup = [];
+    
+            if (this.EmpSalaryListMICL) {
+                for (let i = 0; i < this.EmpSalaryListMICL.length; i++) {
+                    let rowData = this.EmpSalaryListMICL[i];
+                    //console.log("rowData ===",rowData);
+                    let Dept_Name = rowData.Dept_Name;
+                    if (i == 0) {
+                        this.rowGroupMetadata[Dept_Name] = { index: 0, size: 1 };
+                    }
+                    else {
+                        let previousRowData = this.EmpSalaryListMICL[i - 1];
+                        let previousRowGroup = previousRowData.Dept_Name;
+    
+                        if (Dept_Name === previousRowGroup){
+                          this.rowGroupMetadata[Dept_Name].size++;
+                        }else {
+                          this.rowGroupMetadata[Dept_Name] = { index: i, size: 1 };
+                        }
+                    }
+                }
+            }
     }
     // DISTINCT & FILTER
   GetDistinct() {
     let DDepartment:any = [];
+    let DPresentstatus:any = [];
     this.Distdepartment = [];
     this.SelectedDistdepartment = [];
+    this.DistPresentStatus = [];
+    this.SelectedDistPresentStatus = [];
     this.SearchFields =[];
     this.EmpSalaryListMICL.forEach((item) => {
    if (DDepartment.indexOf(item.Dept_Name) === -1) {
     DDepartment.push(item.Dept_Name);
    this.Distdepartment.push({ label: item.Dept_Name, value: item.Dept_Name });
    }
+   if (DPresentstatus.indexOf(item.Present_Status) === -1) {
+    DPresentstatus.push(item.Present_Status);
+   this.DistPresentStatus.push({ label: item.Present_Status, value: item.Present_Status });
+   }
   });
      this.BackupEmpSalaryListMICL = [...this.EmpSalaryListMICL];
   }
   FilterDist() {
     let DDepartment:any = [];
+    let DPresentStatus:any = [];
     this.SearchFields =[];
   if (this.SelectedDistdepartment.length) {
     this.SearchFields.push('Dept_Name');
     DDepartment = this.SelectedDistdepartment;
   }
+  if (this.SelectedDistPresentStatus.length) {
+    this.SearchFields.push('Present_Status');
+    DPresentStatus = this.SelectedDistPresentStatus;
+  }
   this.EmpSalaryListMICL = [];
   if (this.SearchFields.length) {
     let LeadArr = this.BackupEmpSalaryListMICL.filter(function (e) {
-      return (DDepartment.length ? DDepartment.includes(e['Dept_Name']) : true)
+      return (DDepartment.length ? DDepartment.includes(e['Dept_Name']) : true) &&
+             (DPresentStatus.length ? DPresentStatus.includes(e['Present_Status']) : true)
     });
   this.EmpSalaryListMICL = LeadArr.length ? LeadArr : [];
   } else {
@@ -112,6 +189,7 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
       item.Total_Earning_Amout = Number(Number(item.Basic_Salary) + Number(item.HRA) + Number(item.Medical_Allowance) + Number(item.Special_Allowance) +
                                 Number(item.Meal_Allownce) + Number(item.Educational_Allowance) + Number(item.City_Compensation_Allowance)).toFixed(2);
       this.totaldeduction();
+      this.ctccal();
     });
   }
   // TOTAL DEDUCTION
@@ -121,7 +199,7 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
       this.totalctc();
     });
   }
-  // CTC
+  // CTC (NET PAY)
   totalctc(){
     this.EmpSalaryListMICL.forEach((item)=>{
       item.Total_CTC = Number(Number(item.Total_Earning_Amout) - Number(item.Total_Deduction)).toFixed(2);
@@ -175,6 +253,15 @@ export class EmployeeSalaryMasterJohComponent implements OnInit {
       col.ESI_Amount = 0;
       this.totalearnings();
     }
+  }
+  ctccal(){
+    this.EmpSalaryListMICL.forEach((item)=>{
+      var ctccal;
+    if(item.Total_Earning_Amout && item.PF_Cal_Amount) {
+      ctccal = Number(Number(item.Total_Earning_Amout) +  Number(item.PF_Cal_Amount)).toFixed(2);
+      item.CTC =Number(ctccal);
+    }
+  });
   }
 
     UpdateMaster(Obj){

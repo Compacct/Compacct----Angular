@@ -158,6 +158,7 @@ export class MiclPurchaseBillComponent implements OnInit {
   SelectedGRNno:any = [];
   TPOnoList:any = [];
   BackUpGRNNoProlist:any = [];
+  PurchaseData:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -200,6 +201,7 @@ export class MiclPurchaseBillComponent implements OnInit {
     this.ObjPurChaseBill.RCM = "N";
     this.GetLedger();
     this.GetTerm();
+    this.getPurchaseledger();
     // this.GetSearchedlist();
   }
   TabClick(e){
@@ -570,6 +572,31 @@ export class MiclPurchaseBillComponent implements OnInit {
       this.GetGRNNoProductdetails();
      }
   }
+  // Purchase Account Ledger
+  getPurchaseledger(){
+    this.PurchaseData=[]; 
+     console.log("1 PurchaseData==");
+    
+     const obj = {
+      "SP_String": "SP_MICL_Purchase_Bill_New",
+      "Report_Name_String": "Get_Purchase_AC_Ledger",
+      // "Report_Name_String": this.PurchaseACFlag ? "Get_All_Ledger" : "Get_Purchase_AC_Ledger",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.PurchaseData = data;
+      // if (data.length) {
+      //   data.forEach(element => {
+      //     element['label'] = element.Ledger_Name,
+      //     element['value'] = element.Ledger_ID
+      //   });
+      //   this.PurchaseData = data;
+      // }
+      // else {
+      //   this.PurchaseData = [];
+      // }
+    }) 
+      
+  }
   //  ChangeGRN(){
   //   this.GRNDate = undefined;
   //   // this.podatedisabled = true;
@@ -636,7 +663,8 @@ export class MiclPurchaseBillComponent implements OnInit {
       item.Discount_Type_Amount = item.Discount_Type_Amount ? item.Discount_Type_Amount : 0;
       item.Discount = item.Discount_Amount ? item.Discount_Amount : 0;
       item.Pur_Order_No = this.ObjProductInfo.Pur_Order_No,
-      item.Pur_Order_Date = this.DateService.dateConvert(new Date(this.PODate))
+      item.Pur_Order_Date = this.DateService.dateConvert(new Date(this.PODate)),
+      item.Purchase_Ac_Ledger_ID = item.Purchase_Ac_Ledger
     })
     this.CalculateCessAmt();
     this.calculategstamt();

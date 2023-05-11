@@ -25,7 +25,7 @@ export class MasterProjectTeamComponent implements OnInit {
   buttonname: string = 'Create';
   ProjectFormSubmitted: boolean = false;
   edit: boolean = false;
-  deleteuserId:number = 0;
+  deleteuserId: number = 0;
 
   objProject = new project();
 
@@ -41,7 +41,7 @@ export class MasterProjectTeamComponent implements OnInit {
   ngOnInit() {
     this.Header.pushHeader({
       Header: "Project Team",
-      Link: ""
+      Link: "Project Management --> Old Project Master"
     });
     this.getProjectNameDrop();
     this.getMemberName();
@@ -55,7 +55,7 @@ export class MasterProjectTeamComponent implements OnInit {
     }
 
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      console.log(data);
+      // console.log(data);
       data.forEach((ele: any) => {
         this.projectNameList.push({
           "label": ele.Project_Description,
@@ -67,7 +67,7 @@ export class MasterProjectTeamComponent implements OnInit {
 
   getMemberName() {
     this.http.get('/Master_User/Get_All_Data').pipe(map((data: any) => data ? JSON.parse(data) : [])).subscribe((data: any) => {
-      console.log('data member name', data);
+      // console.log('data member name', data);
       data.forEach((ele: any) => {
         this.underNameList.push({
           "label": ele.Name,
@@ -92,7 +92,7 @@ export class MasterProjectTeamComponent implements OnInit {
         "Json_Param_String": JSON.stringify([this.objProject])
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
-        console.log('project Team save response', data);
+        // console.log('project Team save response', data);
         if (data[0].Column1 == "Done") {
           this.CompacctToast.clear();
           this.CompacctToast.add({
@@ -119,7 +119,7 @@ export class MasterProjectTeamComponent implements OnInit {
 
   getProjectDeatils() {
     this.TableData = [];
-    console.log('table data function works')
+    // console.log('table data function works')
     if (this.objProject.Project_ID) {
       const obj = {
         "SP_String": "SP_Project_Team_Member",
@@ -128,7 +128,7 @@ export class MasterProjectTeamComponent implements OnInit {
       }
 
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        console.log('browse data', data);
+        // console.log('browse data', data);
         this.TableData = data;
       })
     }
@@ -140,11 +140,7 @@ export class MasterProjectTeamComponent implements OnInit {
       this.objProject.Intro_User_ID = col.Intro_User_ID;
       this.objProject.User_ID = col.User_ID;
       this.buttonname = "Update";
-
     }
-
-
-
   }
 
   backToCreate() {
@@ -155,7 +151,7 @@ export class MasterProjectTeamComponent implements OnInit {
 
   deleteTableRow(col) {
     if (col && this.objProject.Project_ID) {
-      console.log('Delete obj', col);
+      // console.log('Delete obj', col);
       this.deleteuserId = col.User_ID;
       this.CompacctToast.clear();
       this.CompacctToast.add({
@@ -165,7 +161,6 @@ export class MasterProjectTeamComponent implements OnInit {
         summary: "Are you sure?",
         detail: "Confirm to proceed"
       });
-      
     }
   }
 
@@ -180,43 +175,42 @@ export class MasterProjectTeamComponent implements OnInit {
   }
 
   onConfirm() {
-    if(this.objProject.Project_ID && this.deleteuserId){
-    const obj = {
-      "SP_String": "SP_Project_Team_Member",
-      "Report_Name_String": "Delete_Member_For_Project",
-      "Json_Param_String": JSON.stringify([{ "Project_ID": this.objProject.Project_ID, "User_ID": this.deleteuserId }])
-    }
+    if (this.objProject.Project_ID && this.deleteuserId) {
+      const obj = {
+        "SP_String": "SP_Project_Team_Member",
+        "Report_Name_String": "Delete_Member_For_Project",
+        "Json_Param_String": JSON.stringify([{ "Project_ID": this.objProject.Project_ID, "User_ID": this.deleteuserId }])
+      }
 
-    this.GlobalAPI.postData(obj).subscribe((data: any) => {
-      console.log('delete response', data);
-      if (data[0].Column1 == "Done") {
-        this.CompacctToast.clear();
-        this.CompacctToast.add({
-          key: "compacct-toast",
-          severity: "success",
-          summary: "Project Team",
-          detail: "Succesfully Deleted"
-        });
-        this.deleteuserId = 0;
-        this.getProjectDeatils();
-      }
-      else {
-        this.CompacctToast.clear();
-        this.CompacctToast.add({
-          key: "compacct-toast",
-          severity: "error",
-          summary: "Error",
-          detail: "Something went Wrong"
-        });
-      }
-    });
+      this.GlobalAPI.postData(obj).subscribe((data: any) => {
+        // console.log('delete response', data);
+        if (data[0].Column1 == "Done") {
+          this.CompacctToast.clear();
+          this.CompacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Project Team",
+            detail: "Succesfully Deleted"
+          });
+          this.deleteuserId = 0;
+          this.getProjectDeatils();
+        }
+        else {
+          this.CompacctToast.clear();
+          this.CompacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error",
+            detail: "Something went Wrong"
+          });
+        }
+      });
+    }
   }
-}
 
   onReject() {
     this.CompacctToast.clear("c");
   }
-
 }
 
 class project {

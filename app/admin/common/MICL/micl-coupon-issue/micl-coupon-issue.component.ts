@@ -45,6 +45,7 @@ export class MICLCouponIssueComponent implements OnInit {
   Issue_To: any;
   contractorList:any = [];
   contractorEmpList:any = [];
+  IssuetoList:any = [] ;
   
   constructor(
     private http: HttpClient,
@@ -67,6 +68,7 @@ export class MICLCouponIssueComponent implements OnInit {
     this.getContractor();
     this.getContractorEmp();
     this.getCoupontype();
+    this.IssuetoData();
     this.Issue_To = "Employee";
   }
   TabClick(e) {
@@ -75,6 +77,9 @@ export class MICLCouponIssueComponent implements OnInit {
     this.buttonname = "Save";
     this.clearData();
     this.AddList = [];
+  }
+  IssuetoData(){
+    this.IssuetoList = ['Employee', 'Contractor', 'Visitor', 'H.O Staff', 'Voucher Staff'];
   }
   Finyear() {
     this.http
@@ -196,7 +201,7 @@ export class MICLCouponIssueComponent implements OnInit {
         filterAmt = this.CouponList.filter((Elee: any) => Elee.Coupon_Type === this.ObjCouponIssue.Coupon_Type); 
     }
     if (filterAmt.length === 1&& this.TotalCoupon) {
-      if(this.Issue_To === "Employee") {
+      if(this.Issue_To === "Employee" || this.Issue_To === "H.O Staff" || this.Issue_To === "Voucher Staff") {
       this.TotalAmount = Number(filterAmt[0].Amount) * Number(this.TotalCoupon)
       }
       if(this.Issue_To === "Contractor") {
