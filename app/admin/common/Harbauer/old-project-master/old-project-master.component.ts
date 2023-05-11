@@ -1,10 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MessageService } from 'primeng/api';
-import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
-import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
-import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-old-project-master',
@@ -39,8 +36,6 @@ export class OldProjectMasterComponent implements OnInit {
     private Header: CompacctHeader,
     private CompacctToast: MessageService,
     private GlobalAPI: CompacctGlobalApiService,
-    private commonApi: CompacctCommonApi,
-    private DateService: DateTimeConvertService
   ) { }
 
   ngOnInit() {
@@ -68,13 +63,11 @@ export class OldProjectMasterComponent implements OnInit {
         })
       })
     })
-
   }
 
   getSiteNames(id: number) {
     this.siteNameTableData = [];
     if (id) {
-
       const obj = {
         "SP_String": "SP_Old_Project_Master",
         "Report_Name_String": "Get_Old_Site",
@@ -190,9 +183,7 @@ export class OldProjectMasterComponent implements OnInit {
         summary: "Are you sure?",
         detail: "Confirm to proceed"
       });
-
     }
-
   }
 
   SaveTendertName(valid) {
@@ -334,7 +325,6 @@ export class OldProjectMasterComponent implements OnInit {
           });
           this.onReject();
           this.getSiteNames(this.objSiteName.Project_ID);
-
         }
         else {
           this.CompacctToast.clear();
@@ -347,7 +337,6 @@ export class OldProjectMasterComponent implements OnInit {
         }
       });
     }
-
   }
 
   onReject() {

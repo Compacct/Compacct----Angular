@@ -1,12 +1,9 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MessageService } from 'primeng/api';
-import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
-import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
-import * as XLSX from 'xlsx';
 import { HttpClient } from '@angular/common/http';
-import { map, catchError } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-master-project-team',
@@ -34,8 +31,6 @@ export class MasterProjectTeamComponent implements OnInit {
     private Header: CompacctHeader,
     private CompacctToast: MessageService,
     private GlobalAPI: CompacctGlobalApiService,
-    private commonApi: CompacctCommonApi,
-    private DateService: DateTimeConvertService
   ) { }
 
   ngOnInit() {
@@ -59,7 +54,7 @@ export class MasterProjectTeamComponent implements OnInit {
       data.forEach((ele: any) => {
         this.projectNameList.push({
           "label": ele.Project_Description,
-          "value": ele.Tender_Doc_ID
+          "value": ele.Project_ID
         })
       })
     });
