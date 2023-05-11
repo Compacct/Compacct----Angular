@@ -30,6 +30,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   AppoSpinner:boolean = false;
   DegreeLossList:any = [];
   AppointmentFormSubmitted: boolean = false;
+  TestDoneList:any=[];
   TypeLossList:any = [];
   YesNoList: any = [];
   HAYesNoListL: any =[];
@@ -108,6 +109,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.GetDegreeLossList();
     this.GetProductList();
     this.GetMissedReasonList();
+    this.GetTestDoneList();
   }
 
   TabClick(e:any) {
@@ -287,6 +289,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.objAppointment.Trial_For_Mono_Reason= this.objAppointment.Trial_For_Mono_Reason ? this.objAppointment.Trial_For_Mono_Reason : 'NA';
       this.objAppointment.Trial_Restult= this.objAppointment.Trial_Restult ? this.objAppointment.Trial_Restult : 'NA';
       this.objAppointment.Trail_Missed_Reason= this.objAppointment.Trail_Missed_Reason ? this.objAppointment.Trail_Missed_Reason.toString() : 'NA';
+      this.objAppointment.Test_Done= this.objAppointment.Test_Done ? this.objAppointment.Test_Done.toString() : '-';
 
       let TrialList:any =[];
       for(let item of this.PTLList){
@@ -596,6 +599,27 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
    });
   }
 
+  GetTestDoneList(){
+    this.TestDoneList = [];
+    const obj = {
+      "SP_String": "sp_BSHPL_Audiologist_Appo",
+      "Report_Name_String": "Get_Consultancy_Dropdown"
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //  console.log("Get TestDoneList",data);
+      if(data.length) {
+          data.forEach(element => {
+            element['label'] = element.Consultancy_Descr,
+            element['value'] = element.Consultancy_Descr
+          });
+        this.TestDoneList = data;
+      }
+      else {
+          this.TestDoneList = [];
+      }
+   });
+  }
+
   GetMissedReasonList(){
     this.MissedReasonList = [];
     const obj = {
@@ -686,7 +710,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.ngxService.start();
       this.GlobalAPI.postData(SaveObj).subscribe((data: any) => {
         this.ngxService.stop();
-       // console.log("save data",data);
+       console.log("save data",data);
 
         if (data[0].Column1){
           this.getAlldata();
@@ -1045,6 +1069,7 @@ class Appointment{
   Doctor_ID: any;
   Created_On: any;
 
+  Test_Done:any;
   Degree_Of_Loss_L: any;
   Degree_Of_Loss_R: any;
   Type_Of_Loss_L: any;
@@ -1057,6 +1082,7 @@ class Appointment{
   Trial_For_Mono_Reason: any;
   Trial_Restult: any;
   Trail_Missed_Reason:any;
+  Remarks: any;
 
   Update_Select_Details: any;
   Update_Trial_Details: any;
