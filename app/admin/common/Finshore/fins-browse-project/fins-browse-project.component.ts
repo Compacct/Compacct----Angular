@@ -27,17 +27,25 @@ export class FinsBrowseProjectComponent implements OnInit {
   CourierDate:Date = new Date()
   userlist:any = []
   DistCustomer:any = []
-  DistCustomerSelect:any = []
+  DistCustomerSelect: any = []
+  DistCustomer1:any = []
+  DistCustomerSelect1:any = []
 
   DistConsultant:any = []
-  DistConsultantSelect:any = []
+  DistConsultantSelect: any = []
+  DistConsultant1:any = []
+  DistConsultantSelect1:any = []
 
   DistStatus:any = []
-  DistStatusSelect:any = []
+  DistStatusSelect: any = []
+  DistStatus1:any = []
+  DistStatusSelect1:any = []
 
   DistEmployee:any = []
   DistEmployeeSelect: any = []
-  
+  DistEmployee1:any = []
+  DistEmployeeSelect1: any = []
+  tabIndexToView: number = 0;
   cokiseId: any = undefined;
   backUPdataList; any = [];
   StatusList: any = [];
@@ -57,6 +65,21 @@ export class FinsBrowseProjectComponent implements OnInit {
   Signing_Date: any = undefined;
   viewList: any = [];
   ViewModel: boolean = false;
+  SelectReportShr: any = undefined;
+  Pveus_Report_Shr: any = undefined;
+  SelectClientName: any = undefined;
+  bckupCilint: any = undefined;
+  bckupCurDate: any = undefined;
+  items: any = [];
+  completedList: any = [];
+  DynamicHeaderCompleted: any = [];
+  backUPdataListCompleted: any = [];
+  SelectBill_To: any = undefined;
+  PIDate: Date = new Date();
+  SelectPIno:any = undefined;
+  SelectPIAmt: any = undefined;
+  PvbBillto:any =undefined;
+  PvbDatebill:any =undefined;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -68,13 +91,19 @@ export class FinsBrowseProjectComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.items =['UPDATE','COMPLETED']
     this.Header.pushHeader({
-      Header: "Create Browse",
-      Link: "Create Browse"
+      Header: "Browse",
+      Link: "Track Project"
     });
     this.cokiseId = this.$CompacctAPI.CompacctCookies.User_ID;
     this.getAllBrowse();
-    this.getSubledger()
+    this.getSubledger();
+    this.getAllBrowseCompled();
+  }
+  TabClick(e) {
+    this.tabIndexToView = e.index;
+    this.items =['UPDATE','COMPLETED']
   }
   getAllBrowse() {
     this.alldataList = [];
@@ -155,6 +184,85 @@ export class FinsBrowseProjectComponent implements OnInit {
     }
 
   }
+  getAllBrowseCompled() {
+    this.completedList = [];
+    this.backUPdataListCompleted = [];
+    const obj = {
+      "SP_String": "SP_BL_Txn_Finshore_Project",
+      "Report_Name_String": "Browse_Project_Completed",
+       "Json_Param_String": JSON.stringify([{ Assigned_To: this.cokiseId }])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      if (data.length > 0) {
+        this.completedList = data;
+        this.backUPdataListCompleted = data;
+        this.DynamicHeaderCompleted = Object.keys(data[0]);
+        this.GetDistinct1();
+      }
+    });
+  }
+  GetDistinct1() {
+    let Status: any = [];
+    this.DistCustomer1 = [];
+    this.DistConsultant1 = [];
+    this.DistStatus1 = [];
+    this.DistEmployee1 = [];
+    this.completedList.forEach((item) => {
+      if (Status.indexOf(item.Sub_Ledger_Client) === -1) {
+        Status.push(item.Sub_Ledger_Client);
+        this.DistCustomer1.push({ label: item.Sub_Ledger_Client, value: item.Sub_Ledger_Client });
+      }
+      if (Status.indexOf(item.Status_Name) === -1) {
+        Status.push(item.Status_Name);
+        this.DistStatus1.push({ label: item.Status_Name, value: item.Status_Name });
+      }
+       if (Status.indexOf(item.Assign_To_Name) === -1) {
+        Status.push(item.Assign_To_Name);
+        this.DistEmployee1.push({ label: item.Assign_To_Name, value: item.Assign_To_Name });
+      }
+      if (Status.indexOf(item.Sub_Ledger_Consultant) === -1) {
+        Status.push(item.Sub_Ledger_Consultant);
+        this.DistConsultant1.push({ label: item.Sub_Ledger_Consultant, value: item.Sub_Ledger_Consultant });
+      }    
+    });
+    this.backUPdataListCompleted = [...this.completedList];
+  }
+  FilterDist1() {
+    let First: any = [];
+    let Second: any = [];
+    let three: any = [];
+    let fore: any = [];
+    let SearchFields: any = [];
+    if (this.DistEmployeeSelect1.length) {
+      SearchFields.push('Assign_To_Name');
+      First = this.DistEmployeeSelect1;
+    }
+    if (this.DistStatusSelect1.length) {
+      SearchFields.push('Status_Name');
+      Second = this.DistStatusSelect1;
+    }
+    if (this.DistCustomerSelect1.length) {
+      SearchFields.push('Sub_Ledger_Client');
+      three = this.DistCustomerSelect1;
+    }
+     if (this.DistConsultantSelect1.length) {
+      SearchFields.push('Sub_Ledger_Consultant');
+      fore = this.DistConsultantSelect1;
+    }
+    this.completedList = [];
+    if (SearchFields.length) {
+      let LeadArr = this.backUPdataListCompleted.filter(function (e) {
+        return (First.length ? First.includes(e['Assign_To_Name']) : true)
+          && (Second.length ? Second.includes(e['Status_Name']) : true)
+          && (three.length ? three.includes(e['Sub_Ledger_Client']) : true)
+          &&(fore.length ? fore.includes(e['Sub_Ledger_Consultant']) : true)
+      });
+      this.completedList = LeadArr.length ? LeadArr : [];
+    } else {
+      this.completedList = [...this.backUPdataListCompleted];
+    }
+
+  }
   getStatus() {
     this.StatusList = [];
     const obj = {
@@ -220,9 +328,38 @@ export class FinsBrowseProjectComponent implements OnInit {
     this.dialogheader = field;
     this.dialogModel = true;
     this.AllPopForm = false;
-    this.Signing_Date = this.DateService.dateConvert(col.Signning_Date);
+    this.Signing_Date = col.Signning_Date;
     this.SigningDate = this.Signing_Date == null ? new Date() : this.Signing_Date ;  
-    this.SelectRemarksFinal_Doc = undefined;
+    }
+    else if (field == 'Report Shared') { 
+    this.projectId = col.Project_ID;
+    this.dialogheader = field;
+    this.dialogModel = true;
+    this.AllPopForm = false; 
+    this.Pveus_Report_Shr = col.Report_Shared
+    this.SelectReportShr = this.Pveus_Report_Shr
+    }
+    else if (field == 'Courier Detalis To') { 
+    this.projectId = col.Project_ID;
+    this.dialogheader = field;
+    this.dialogModel = true;
+    this.AllPopForm = false;
+    this.bckupCilint = col.Courier_Details_To;
+    this.bckupCurDate = col.Courier_Details_Date
+    this.SelectClientName = this.bckupCilint 
+    this.CourierDate = this.bckupCurDate == null ? new Date() : this.bckupCurDate   
+    }
+    else if (field == 'Bill To') { 
+    this.projectId = col.Project_ID;
+    this.dialogheader = field;
+    this.dialogModel = true;
+      this.AllPopForm = false;
+      this.PvbBillto = col.Bill_To;
+      this.PvbDatebill = col.Bill_To_PI_Date
+      this.SelectBill_To = this.PvbBillto;
+      this.PIDate = this.PvbDatebill == null ? new Date() : this.PvbDatebill;
+      this.SelectPIAmt = col.Bill_To_PI_Amount;
+      this.SelectPIno = col.Bill_To_PI_No;
     }
   }
   UpdateAllPop(valid:any) {
@@ -297,6 +434,83 @@ export class FinsBrowseProjectComponent implements OnInit {
             Changed_To_Text : this.DateService.dateConvert(this.SigningDate) 
           }
         }
+        else if (this.dialogheader == 'Report Shared') {
+           tempobj = {
+            Project_ID: this.projectId,
+            Project_Column: this.dialogheader,
+            User_ID: this.cokiseId,
+            Previous_Data: this.Pveus_Report_Shr,
+            Previous_Data_Text :this.Pveus_Report_Shr,
+            Changed_To: this.SelectReportShr, 
+            Changed_To_Text : this.SelectReportShr 
+          }
+        }
+        else if (this.dialogheader == 'Courier Detalis To') {
+           tempobj = {
+            Project_ID: this.projectId,
+            Project_Column: this.dialogheader,
+            User_ID: this.cokiseId,
+            Courier_Details_To: this.SelectClientName,
+						Courier_Details_Date: this.DateService.dateConvert( this.CourierDate),	        	
+						Previous_Courier_Details_To: this.bckupCilint,	              							
+						Previous_Courier_Details_Date: this.DateService.dateConvert(this.bckupCurDate) 	       
+          }
+          const Obj = {
+            "SP_String": "SP_BL_Txn_Finshore_Project",
+            "Report_Name_String": 'Update_Courier_Detalis',
+            "Json_Param_String": JSON.stringify([tempobj])
+          }
+        this.GlobalAPI.getData(Obj).subscribe((data: any) => {
+        if (data[0].Column1) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: this.dialogheader,
+            detail: "Succesfully Update "
+          });
+          this.dialogModel = false;
+          this.AllPopForm = false;
+          this.dialogheader = '';
+          this.getAllBrowse(); 
+            }
+        })
+          return
+        }
+        else if (this.dialogheader == 'Bill To') {
+           tempobj = {
+            Project_ID: this.projectId,
+            Project_Column: this.dialogheader,
+            User_ID: this.cokiseId,
+            Bill_To: this.SelectBill_To,
+            Bill_To_PI_No: this.SelectPIno, 
+            Bill_To_PI_Date: this.DateService.dateConvert(this.PIDate),
+            Bill_To_PI_Amount: this.SelectPIAmt,        	
+						Previous_Bill_To: this.PvbBillto,	              							
+            Previous_Bill_To_PI_Date: this.DateService.dateConvert(this.PvbDatebill) 	                     																  
+          }
+          const Obj = {
+            "SP_String": "SP_BL_Txn_Finshore_Project",
+            "Report_Name_String": 'Update_Bill_To',
+            "Json_Param_String": JSON.stringify([tempobj])
+          }
+        this.GlobalAPI.getData(Obj).subscribe((data: any) => {
+        if (data[0].Column1) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: this.dialogheader,
+            detail: "Succesfully Update "
+          });
+          this.dialogModel = false;
+          this.AllPopForm = false;
+          this.dialogheader = '';
+          this.getAllBrowse();       
+            }
+        })
+          return
+        }
          const Obj = {
             "SP_String": "SP_BL_Txn_Finshore_Project",
             "Report_Name_String": 'Update_Project_Column',
@@ -312,22 +526,39 @@ export class FinsBrowseProjectComponent implements OnInit {
             summary: this.dialogheader,
             detail: "Succesfully Update "
           });
-          this.dialogModel = false;
-          this.AllPopForm = false;
-          this.dialogheader = '';
-          this.getAllBrowse();
+          if (this.SelectStatus === 8) {
+            this.dialogModel = false;
+            this.AllPopForm = false;
+            this.dialogheader = '';
+            this.getAllBrowse();
+            this.FilterDist();
+            this.GetDistinct();
+            this.tabIndexToView = 1
+            this.getAllBrowseCompled(); 
+          } else {
+              this.dialogModel = false;
+              this.AllPopForm = false;
+              this.dialogheader = '';
+              this.getAllBrowse(); 
+          }
+
           
         }
       })
         
     }
   }
-  getSubledger(){
-    this.$http.get("/Common/Get_Subledger_DR")
-    .pipe(map((data:any) => data ? JSON.parse(data) : []))
-    .subscribe((data:any)=>{
-      this.SubledgerList = [...data]
-    })
+  getSubledger() {
+    this.SubledgerList = [];
+    const obj = {
+      "SP_String": "SP_BL_Txn_Finshore_Project",
+      "Report_Name_String": "Get_Client_Name",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      if (data.length > 0) {
+        this.SubledgerList = data;
+      }
+    });
   }
   getuser() {
     this.userlist = [];

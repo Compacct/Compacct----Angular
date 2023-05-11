@@ -60,8 +60,8 @@ export class FinsCreateProjectComponent implements OnInit {
 
   ngOnInit() {
     this.Header.pushHeader({
-      Header: "Create Project",
-      Link: "Create Projectt"
+      Header: "Create New Project",
+      Link: "Create New Project"
     });
     this.CokiuserId = this.$CompacctAPI.CompacctCookies.User_ID;
     this.getSubledger();
