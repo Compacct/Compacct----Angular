@@ -39,7 +39,7 @@
                                         [(ngModel)]="objsearch.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" 
                                         [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Vendor'"
                                         [virtualScroll]="true" itemSize="30" 
-                                        [styleClass]="nonReturnableSearchFormSubmit && Vendor2.errors?.required ? 'clearance': ''" [required]="true">
+                                        [styleClass]="nonReturnableSearchFormSubmit && Vendor2.errors?.required ? 'clearance': ''">
                                         </p-dropdown>
                                     </div>
 
@@ -73,13 +73,11 @@
                                             <th nowrap>Doc Date</th>
                                             <th nowrap>Vendor</th>
                                             <th nowrap>Total Qty</th>
-                                            <!-- <th nowrap>Adjustment Doc No</th>
-                                            <th nowrap>Adjustment Amt</th> -->
+                                            <th nowrap>Mode Of Transport</th>
+                                            <th nowrap>Vehicle No</th>
+                                            <th nowrap>By Order</th>
+                                            <th nowrap>Purpose</th>
                                             <th nowrap>Created By</th>
-                                            <!-- <th nowrap>CR Amt</th>
-                                            <th nowrap>Cost Cen Name</th>
-                                            <th nowrap>Cost Cen trn Name</th>
-                                            <th nowrap>Fin Year Name</th> -->
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -97,16 +95,16 @@
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li>
-                                                        <!-- <li *ngIf="User_Type =='A'">
-                                                            <a (click)="DeleteJournal(col)">
-                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                        <li>
+                                                            <a (click)="PrintGatePass(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print Gate Pass
                                                             </a>
-                                                        </li> -->
-                                                        <!-- <li *ngIf="col.Is_Visiable == 'N'">
-                                                            <a (click)="Active(col)">
-                                                                <i class="fa fa-power-off"></i> Active
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="PrintChallan(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print Challan
                                                             </a>
-                                                        </li> -->
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </td>
@@ -114,8 +112,10 @@
                                             <td nowrap>{{col.Doc_Date | date: "dd/MMM/yyyy"}}</td>
                                             <td nowrap>{{col.Vendor ? col.Vendor : '-'}} </td>
                                             <td nowrap>{{col.Total_Qty ? col.Total_Qty : '-'}}</td>
-                                            <!-- <td nowrap>{{col.Adjustment_Doc_No ? col.Adjustment_Doc_No : '-'}}</td>
-                                            <td nowrap>{{col.Adjustment_Amt ? col.Adjustment_Amt : '-'}}</td> -->
+                                            <td nowrap>{{col.Mode_Of_Transport ? col.Mode_Of_Transport : '-'}}</td>
+                                            <td nowrap>{{col.Vehicle_No ? col.Vehicle_No : '-'}}</td>
+                                            <td nowrap>{{col.By_Order ? col.By_Order : '-'}}</td>
+                                            <td nowrap>{{col.Purpose ? col.Purpose : '-'}}</td>
                                             <td nowrap>{{col.Created_By ? col.Created_By : '-'}}</td>
                                             <!-- <td nowrap>{{col.CR_Amt ? col.CR_Amt : '-'}}</td>
                                             <td nowrap>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
@@ -135,7 +135,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-6">
                                         <label class="control-label">Date<sup class="text-danger">*</sup></label>
-                                        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Doc_Date' name="Ref_Date" ></ejs-datepicker>
+                                        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Doc_Date' name="Ref_Date" [enabled]="datedisabled" ></ejs-datepicker>
                                     </div>
                                     <div class="col-sm-6" style=" height: 77px;">
                                         <label class="control-label">Vendor<sup class="text-danger">*</sup></label>
@@ -154,6 +154,10 @@
                                         <input class="form-control" placeholder="Product" name="Product" #Product="ngModel" [(ngModel)]="objNonReturnable.Product_Description" [ngClass]="{'clearance ': nonReturnableFormSubmit && Product.errors?.required}" required >
                                     </div>
                                     <div class="col-sm-3">
+                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" placeholder="Qty" name="Qty" #Qty="ngModel" [(ngModel)]="objNonReturnable.Qty" CompacctDigitonly="true" [ngClass]="{'clearance ': nonReturnableFormSubmit && Qty.errors?.required}" required >
+                                    </div>
+                                    <div class="col-sm-3">
                                         <label class="control-label">UOM<sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="UOM" #UOM="ngModel" [(ngModel)]="objNonReturnable.UOM" [ngClass]="{'clearance ': nonReturnableFormSubmit && UOM.errors?.required}" required >
                                         <option  [ngValue]="undefined">Select</option>
@@ -163,12 +167,22 @@
                                    </select>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" placeholder="Qty" name="Qty" #Qty="ngModel" [(ngModel)]="objNonReturnable.Qty" CompacctDigitonly="true" [ngClass]="{'clearance ': nonReturnableFormSubmit && Qty.errors?.required}" required >
+                                        <label class="control-label">Mode Of Transport<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="Transport" #Transport="ngModel" [(ngModel)]="objNonReturnable.Mode_Of_Transport" placeholder="Mode Of Transport" [ngClass]="{'clearance': nonReturnableFormSubmit && Transport.errors?.required}" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Vehicle No.<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="Vehicle_No" #Vehicle_No="ngModel" [(ngModel)]="objNonReturnable.Vehicle_No" placeholder="Vehicle No" [ngClass]="{'clearance': nonReturnableFormSubmit && Vehicle_No.errors?.required}" required>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">By Order<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="byorder" #byorder="ngModel" [(ngModel)]="objNonReturnable.By_Order" placeholder="By Order" [ngClass]="{'clearance': nonReturnableFormSubmit && byorder.errors?.required}" required>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Remarks<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" placeholder="Remarks" name="Remarks" #Remarks="ngModel" [(ngModel)]="objNonReturnable.Remarks" [ngClass]="{'clearance ': nonReturnableFormSubmit && Remarks.errors?.required}" required >
+                                        <input class="form-control" placeholder="Remarks" name="remarks" #remarks="ngModel" [(ngModel)]="objNonReturnable.Remarks" [ngClass]="{'clearance ': nonReturnableFormSubmit && remarks.errors?.required}" required >
                                     </div>
                                 </div>
                                 <div class="box-footer">
@@ -214,6 +228,15 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Purpose</label>
+                                    <textarea name="purpose"
+                                    #purpose ="ngModel"
+                                    [(ngModel)]="objNonReturnable.Purpose" 
+                                    placeholder="Purpose"  class="form-control"> </textarea>
+                                </div> 
                             </div>
                             <div class="box-footer">
                                 <button class="btn btn-primary pull-right" (click)="NonReturnableSave()" id="load" [disabled]="Spinner ||  !ReturnableListAdd.length? true : false">

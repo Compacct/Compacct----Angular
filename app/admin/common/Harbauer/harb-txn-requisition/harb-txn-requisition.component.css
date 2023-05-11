@@ -50,3 +50,8 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav {
 .txt:hover {
   text-decoration: underline;
 }
+ .overpaneltext{
+  list-style-type: square;
+ }
+ .overpaneltext li { background: #EBEDEF; }
+ .overpaneltext li:nth-child(odd) { background: #f9f9f9; }

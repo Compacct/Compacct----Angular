@@ -183,6 +183,16 @@ GetLIview(dataobj){
       }
     
 }
+LIpopupCancle(){
+  this.LIviewData = {};
+  this.AddProdList = [];
+  this.Tax = undefined;
+  this.CGST = undefined;
+  this.SGST = undefined;
+  this.IGST = undefined;
+  this.NetAMT = undefined;
+  this.LIviewPopup = false;
+}
 TotalCalculation(){
   this.Tax = undefined;
   this.CGST = undefined;

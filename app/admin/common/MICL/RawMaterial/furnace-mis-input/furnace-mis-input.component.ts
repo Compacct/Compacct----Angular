@@ -544,6 +544,7 @@ GetSlagProduction() {
           Time_Duration: this.Time_Duration,
           Reason_ID: Number(this.ObjFurMISinputShutdoun.Reason_ID),
           Reason_Des: reson[0].Reason_Des,
+          Reason_Remarks: this.ObjFurMISinputShutdoun.Reason_Remarks
         })
         this.Shutdownvalid = false;
         this.ObjFurMISinputShutdoun = new FurMISinputShutdoun()
@@ -939,4 +940,5 @@ class FurMISinputShutdoun {
   To_Time : any;
   Reason_ID : any;
   Reason_Des : any;
+  Reason_Remarks : any;
 }

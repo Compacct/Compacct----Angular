@@ -1,0 +1,248 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+   <ng-template let-message pTemplate="message">
+      <div style="text-align: center">
+         <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+         <h3>{{message.summary}}</h3>
+         <p>{{message.detail}}</p>
+      </div>
+      <div class="ui-g ui-fluid">
+         <div class="ui-g-6">
+            <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+         </div>
+         <div class="ui-g-6">
+            <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+         </div>
+      </div>
+   </ng-template>
+</p-toast>
+<p-toast position="center" key="d" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+   <ng-template let-message pTemplate="message">
+      <div style="text-align: center">
+         <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+         <h3>{{message.summary}}</h3>
+         <p>{{message.detail}}</p>
+      </div>
+      <div class="ui-g ui-fluid">
+         <div class="ui-g-6">
+            <button type="button" pButton (click)="onConfirmAgain()" label="Yes" class="ui-button-success"></button>
+         </div>
+         <div class="ui-g-6">
+            <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+         </div>
+      </div>
+   </ng-template>
+</p-toast>
+<div class="row">
+   <div class="col-xs-12">
+      <div class="box box-primary">
+         <div class="form-horizontal">
+            <div class="box-body">
+               <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                  <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[0]"
+                     leftIcon="glyphicon glyphicon-list-alt">
+                     <form name="ProjectName" #ProjectNameForm="ngForm" novalidate>
+                        <div class="row">
+                           <div class="col-sm-4">
+                              <label class="control-label">Project Name<sup class="text-danger">*</sup></label>
+                              <input type="text" class="form-control" placeholder="Project Name" name="ProjectName"
+                                 #ProjectName="ngModel" [(ngModel)]="objProjectName.Project_Description"
+                                 [ngClass]="{clearance: (projectNameFormSubmit && ProjectName?.errors?.required) }"
+                                 required>
+                           </div>
+                           <div class="col-sm-4">
+                              <button class="btn btn-primary" style="margin: 26px 0 0 15px;"
+                                 (click)="SaveProjectName(ProjectNameForm.form.valid)" id="load">
+                                 <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}"
+                                    strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+                                 <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
+                              </button>
+                           </div>
+                           <div class="col-sm-4"></div>
+                        </div>
+                     </form>
+                     <br>
+                     <p-table [value]="projectNameTableData" [paginator]="true" [rows]="10" [rowHover]="true"
+                        [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100,200,300]"
+                        [globalFilterFields]="['Project_Description']" [rowHover]="true" #dt>
+                        <ng-template pTemplate="caption">
+                           <div class="row">
+                              <div class="col-sm-3 pull-right" style="text-align: right">
+                                 <input type="text" pInputText size="50" placeholder="Search"
+                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                    class="searchInput form-control">
+                              </div>
+                           </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                           <tr style="width: 100%;">
+                              <th style="text-align: center; width: 5rem;" nowrap>Sl. No</th>
+                              <th style="text-align: center ;" nowrap>Project Name</th>
+                              <th style="text-align: center ;  width: 5rem;" nowrap>Delete</th>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-col let-i="rowIndex">
+                           <tr>
+                              <td nowrap style="text-align: center;">{{i+1}}</td>
+                              <td nowrap style="text-align: center;">{{col.Project_Description ? col.Project_Description
+                                 : "-"}}</td>
+                              <td nowrap style="text-align: center;">
+                                 <button type="button" class="btn btn-sm btn-danger" (click)="deleteProject(col)">
+                                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                 </button>
+                              </td>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                           <tr>
+                              <td colspan="2">No Data in Table</td>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorright" let-state>
+                           Showing {{state.first+1}} of {{(state.first) + state.rows}} of {{state.totalRecords}}
+                        </ng-template>
+                     </p-table>
+                  </p-tabPanel>
+                  <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[1]"
+                     leftIcon="glyphicon glyphicon-floppy-save">
+                     <form name="Site_Form" #Site_Form="ngForm" novalidate>
+                        <div class="row">
+                           <div class="col-sm-4">
+                              <label class="control-label">Project Name<sup class="text-danger">*</sup></label>
+                              <p-dropdown [options]="projectNameDropList" name="project_name" #project_name="ngModel"
+                                 [(ngModel)]="objSiteName.Project_ID" [showClear]="true"
+                                 [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value"
+                                 [resetFilterOnHide]="true" [placeholder]="'Select Project '" [virtualScroll]="true"
+                                 itemSize="30" (onChange)="getSiteNames(objSiteName.Project_ID)"
+                                 [styleClass]="siteNameFormSubmit &&  project_name.errors?.required ? 'clearance' :''"
+                                 [required]="true">
+                              </p-dropdown>
+                           </div>
+                           <div class="col-sm-4">
+                              <label class="control-label">Site Name<sup class="text-danger">*</sup></label>
+                              <input type="text" class="form-control" placeholder="Site Name" name="SiteName"
+                                 #SiteName="ngModel" [(ngModel)]="objSiteName.Site_Description"
+                                 [ngClass]="{clearance: (siteNameFormSubmit && SiteName?.errors?.required) }"
+                                 required>
+                           </div>
+                           <div class="col-sm-4">
+                              <button class="btn btn-primary" style="margin: 26px 0 0 15px;"
+                                 (click)="SaveSiteName(Site_Form.form.valid)" id="load">
+                                 <p-progressSpinner *ngIf="Spinner2" [style]="{width: '15px', height: '15px'}"
+                                    strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+                                 <span *ngIf="!Spinner2" class="glyphicon glyphicon-save"></span> {{buttonname}}
+                              </button>
+                           </div>
+                        </div>
+                     </form>
+                     <br>
+                     <p-table [value]="siteNameTableData" [paginator]="true" [rows]="10" [rowHover]="true"
+                        [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100,200,300]"
+                        [globalFilterFields]="['Site_Description']" [rowHover]="true" #dt>
+                        <ng-template pTemplate="caption">
+                           <div class="row">
+                              <div class="col-sm-3 pull-right" style="text-align: right">
+                                 <input type="text" pInputText size="50" placeholder="Search"
+                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                    class="searchInput form-control">
+                              </div>
+                           </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                           <tr style="width: 100%;">
+                              <th style="text-align: center; width: 5rem;" nowrap>Sl. No</th>
+                              <th style="text-align: center ;" nowrap>Site Name</th>
+                              <th style="text-align: center ;  width: 5rem;" nowrap>Delete</th>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-col let-i="rowIndex">
+                           <tr>
+                              <td nowrap style="text-align: center;">{{i+1}}</td>
+                              <td nowrap style="text-align: center;">{{col.Site_Description ? col.Site_Description
+                                 : "-"}}</td>
+                              <td nowrap style="text-align: center;">
+                                 <button type="button" class="btn btn-sm btn-danger" (click)="deleteSite(col)">
+                                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                 </button>
+                              </td>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                           <tr>
+                              <td colspan="2">No Data in Table</td>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorright" let-state>
+                           Showing {{state.first+1}} of {{(state.first) + state.rows}} of {{state.totalRecords}}
+                        </ng-template>
+                     </p-table>
+                  </p-tabPanel>
+                  <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[2]"
+                     leftIcon="glyphicon glyphicon-th-list">
+                     <form name="tender_Form" #tender_Form="ngForm" novalidate>
+                        <div class="row">
+                           <div class="col-sm-4">
+                              <label class="control-label">Tender Group Name<sup class="text-danger">*</sup></label>
+                              <input type="text" class="form-control" placeholder="Tender Group Name" name="TenderName"
+                                 #TenderName="ngModel" [(ngModel)]="objTenderName.Budget_Group_Name"
+                                 [ngClass]="{clearance: (tenderNameFormSubmit && TenderName?.errors?.required) }"
+                                 required>
+                           </div>
+                           <div class="col-sm-4">
+                              <button class="btn btn-primary" style="margin: 26px 0 0 15px;"
+                                 (click)="SaveTendertName(tender_Form.form.valid)" id="load">
+                                 <p-progressSpinner *ngIf="Spinner3" [style]="{width: '15px', height: '15px'}"
+                                    strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+                                 <span *ngIf="!Spinner3" class="glyphicon glyphicon-save"></span> {{buttonname}}
+                              </button>
+                           </div>
+                           <div class="col-sm-4"></div>
+                        </div>
+                     </form>
+                     <p-table [value]="tenderTableData" [paginator]="true" [rows]="10" [rowHover]="true"
+                        [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100,200,300]"
+                        [globalFilterFields]="['Budget_Group_Name']" [rowHover]="true" #dt>
+                        <ng-template pTemplate="caption">
+                           <div class="row">
+                              <div class="col-sm-3 pull-right" style="text-align: right">
+                                 <input type="text" pInputText size="50" placeholder="Search"
+                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                    class="searchInput form-control">
+                              </div>
+                           </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                           <tr style="width: 100%;">
+                              <th style="text-align: center; width: 5rem;" nowrap>Sl. No</th>
+                              <th style="text-align: center ;" nowrap>Tender Group Name</th>
+                              <th style="text-align: center ;  width: 5rem;" nowrap>Delete</th>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-col let-i="rowIndex">
+                           <tr>
+                              <td nowrap style="text-align: center;">{{i+1}}</td>
+                              <td nowrap style="text-align: center;">{{col. Budget_Group_Name  ? col. Budget_Group_Name 
+                                 : "-"}}</td>
+                              <td nowrap style="text-align: center;">
+                                 <button type="button" class="btn btn-sm btn-danger" (click)="deletetender(col)">
+                                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                 </button>
+                              </td>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                           <tr>
+                              <td colspan="2">No Data in Table</td>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorright" let-state>
+                           Showing {{state.first+1}} of {{(state.first) + state.rows}} of {{state.totalRecords}}
+                        </ng-template>
+                     </p-table>
+                     </p-tabPanel>
+               </p-tabView>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>

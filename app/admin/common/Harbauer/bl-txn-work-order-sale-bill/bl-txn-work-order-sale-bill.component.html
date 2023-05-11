@@ -124,12 +124,27 @@
                                 <div class="form-group">
                                     <div class="col-sm-3">
                                         <label class="control-label">Work Details<sup *ngIf = "WorkDetailsList.length" class="text-danger">*</sup></label>
-                                        <select class="form-control" name="Work_Details" #Work_Details="ngModel" [(ngModel)]="objWorkOrder.Work_Details_ID" [ngClass]="{'clearance ': WorkFormSubmit && Work_Details.errors?.required && validcheck()}" [required]="validcheck()"  >
+                                        <!-- <select class="form-control" name="Work_Details" #Work_Details="ngModel" 
+                                            [(ngModel)]="objWorkOrder.Work_Details_ID" 
+                                            [ngClass]="{'clearance ': WorkFormSubmit && Work_Details.errors?.required && validcheck()}" 
+                                            [required]="validcheck()"  >
                                         <option  [ngValue]="undefined">Select</option>
-                                    <option  *ngFor="let option of WorkDetailsList" value="{{option.Work_Details_ID}}" >
-                                      {{option.Work_Details}}
-                                    </option>
-                                   </select>
+                                        <option  *ngFor="let option of WorkDetailsList" value="{{option.Work_Details_ID}}" >
+                                        {{option.Work_Details}}
+                                        </option>
+                                    </select> -->
+                                   <p-dropdown [options]="WorkDetailsList" name="Work_Details"
+                                          [(ngModel)]="objWorkOrder.Work_Details_ID" 
+                                          [showClear]="true"
+                                          [emptyFilterMessage]="' No Work Details Found'"
+                                          [filter]="true"
+                                          filterBy="label,value.name" 
+                                          [placeholder]="'Select Work Details'" [virtualScroll]="true"
+                                          itemSize="30" #Work_Details="ngModel"
+                                          [styleClass]="
+                                          WorkFormSubmit && Work_Details.errors?.required && validcheck()? 'clearance': ''"
+                                          [required]="validcheck()">
+                                        </p-dropdown>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Qty<sup class="text-danger">*</sup></label>

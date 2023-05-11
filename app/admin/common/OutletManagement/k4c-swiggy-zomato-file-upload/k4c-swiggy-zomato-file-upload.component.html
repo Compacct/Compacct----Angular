@@ -34,9 +34,24 @@
                                 </div>
                                 <div class="col-sm-4" *ngIf="seleteChoose" >
                                     <label class="control-label">File<sup class="text-danger"></sup></label>
-                                    <p-fileUpload #fileInput mode="advanced" [multiple]="false" [fileLimit]="1" name="aFile566" accept=".csv" [chooseLabel]="'Browse'" customUpload="true" [showUploadButton]="false" (onSelect)="handleFileSelect($event)"></p-fileUpload>
+                                    <p-fileUpload #fileInput mode="advanced" [multiple]="false" 
+                                    [fileLimit]="1" name="aFile566" 
+                                    accept=".csv,.xlsx" 
+                                    [chooseLabel]="'Browse'" 
+                                    customUpload="true" 
+                                    [showUploadButton]="false" 
+                                    (onRemove)="fileRemove($event)" 
+                                    (onSelect)="handleFileSelect($event)"></p-fileUpload>
                                 </div>
-                                <div class="col-sm-4" ></div>
+                                <div class="col-sm-4" *ngIf='tableDataList.length' >
+                                    <button class="btn btn-primary custombutton"
+                                     (click)="SaveFileData()" 
+                                     id="load" 
+                                     [disabled]="Spinner">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Save
+                                </button>
+                                </div>
                             </div>
                         </form>
                         <div class="no-padding">
@@ -44,6 +59,7 @@
                             [paginator]="tableDataList.length ? true : false"
                             *ngIf='tableDataList.length'
                             [paginator]="true" 
+                            [loading]="loading"
                             [rows]="100" 
                             [rowHover]="true" 
                             [autoLayout]="true" 

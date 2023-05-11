@@ -38,11 +38,16 @@
                                 </option>
                                </select>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-1">
                                         <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetBrowseList(BrowseForm.form.valid)" id="load2" [disabled]="seachSpinner">
                                         <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                         <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                             </button>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-success custombutton" data-toggle="modal" (click)="exportoexcel('Master_Holiday')" id="load2" [disabled]="seachSpinner">
+                                        Export to Excel
+                                        </button>
                                     </div>
                                 </div>
                             </form>
@@ -96,7 +101,7 @@
                                                 </div>
                                             </td>
                                             <td>{{col.HR_Year_Name ? col.HR_Year_Name : '-'}}</td>
-                                            <td>{{col.Holiday_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td>{{col.Holiday_Date}}</td>
                                             <td>{{col.Atten_Type ? col.Atten_Type : '-'}}</td>
                                             <td>{{col.Location ? col.Location : '-'}}</td>
                                             <td>{{col.Purpose ? col.Purpose : '-'}}</td>
