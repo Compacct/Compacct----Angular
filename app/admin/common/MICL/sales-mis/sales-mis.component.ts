@@ -66,6 +66,15 @@ export class SalesMisComponent implements OnInit {
   RAList:any = [];
   RAListHeader:any = [];
 
+  BackupSalesMISList:any = [];
+  DistLiCustomer:any = [];
+  SelectedDistLiCustomer:any = [];
+  DistProductName:any = [];
+  SelectedDistProductName:any = [];
+  SearchFields:any = [];
+  PendingLIfilterFLag:boolean = false;
+  PendingSOfilterFLag:boolean = false;
+
   constructor(
     private GlobalAPI:CompacctGlobalApiService,
     private compacctToast:MessageService,
@@ -103,6 +112,10 @@ export class SalesMisComponent implements OnInit {
     }
   }
   GetSalesMIS() {
+    this.SalesMISList = [];
+    this.BackupSalesMISList = [];
+    this.PendingLIfilterFLag = false;
+    this.PendingSOfilterFLag = false;
     const start = this.start_date
       ? this.DateService.dateConvert(new Date(this.start_date))
       : this.DateService.dateConvert(new Date());
@@ -122,6 +135,8 @@ export class SalesMisComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       this.SalesMISList = data;
+      this.BackupSalesMISList = data;
+      this.GetDistinct();
       if (this.SalesMISList.length) {
         this.SalesMISListHeader = Object.keys(data[0]);
       } else {
@@ -131,7 +146,81 @@ export class SalesMisComponent implements OnInit {
       // console.log("SalesMISList", this.SalesMISList);
     });
   }
-}
+  }
+  // DISTINCT & FILTER
+  GetDistinct() {
+    let DLiCustomer:any = [];
+    let DProductName:any = [];
+    this.DistLiCustomer = [];
+    this.SelectedDistLiCustomer = [];
+    this.DistProductName = [];
+    this.SelectedDistProductName = [];
+    this.SearchFields =[];
+    this.SalesMISList.forEach((item) => {
+   if (DLiCustomer.indexOf(item.LI_Customer) === -1) {
+    DLiCustomer.push(item.LI_Customer);
+   this.DistLiCustomer.push({ label: item.LI_Customer, value: item.LI_Customer });
+   }
+   if (DProductName.indexOf(item.Product_Name) === -1) {
+    DProductName.push(item.Product_Name);
+   this.DistProductName.push({ label: item.Product_Name, value: item.Product_Name });
+   }
+  });
+     this.BackupSalesMISList = [...this.SalesMISList];
+  }
+  FilterDist() {
+    let DLiCustomer:any = [];
+    let DProductName:any = [];
+    this.SearchFields =[];
+  if (this.SelectedDistLiCustomer.length) {
+    this.SearchFields.push('Dept_Name');
+    DLiCustomer = this.SelectedDistLiCustomer;
+  }
+  if (this.SelectedDistProductName.length) {
+    this.SearchFields.push('Present_Status');
+    DProductName = this.SelectedDistProductName;
+  }
+  this.SalesMISList = [];
+  if (this.SearchFields.length) {
+    let LeadArr = this.BackupSalesMISList.filter(function (e) {
+      return (DLiCustomer.length ? DLiCustomer.includes(e['LI_Customer']) : true) &&
+             (DProductName.length ? DProductName.includes(e['Product_Name']) : true)
+    });
+  this.SalesMISList = LeadArr.length ? LeadArr : [];
+  } else {
+  this.SalesMISList = [...this.BackupSalesMISList] ;
+  }
+  }
+  PendingLIFilter(){
+    this.SalesMISList = []
+     if(this.PendingLIfilterFLag){
+      this.PendingSOfilterFLag = false;
+      this.BackupSalesMISList.forEach(el=>{
+        if(Number(el.Pending_LI_Qty) > 0){
+          this.SalesMISList.push(el);
+        }
+      })
+    }
+    else{
+      this.SalesMISList = this.BackupSalesMISList;
+    }
+    // console.log("Pending Qty flag ==",this.SalesMISList)
+  }
+  PendingSOFilter(){
+    this.SalesMISList = []
+     if(this.PendingSOfilterFLag){
+      this.PendingLIfilterFLag = false;
+      this.BackupSalesMISList.forEach(el=>{
+        if(Number(el.Pending_SO_Qty) > 0){
+          this.SalesMISList.push(el);
+        }
+      })
+    }
+    else{
+      this.SalesMISList = this.BackupSalesMISList;
+    }
+    // console.log("Pending Qty flag ==",this.SalesMISList)
+  }
 onReject(){}
 GetLIview(dataobj){
   this.LIviewData = {};

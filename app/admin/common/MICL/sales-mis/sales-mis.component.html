@@ -31,14 +31,15 @@
                                      <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
                                     </app-compacct-daterangepicker>
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                         <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetSalesMIS()" id="load" [disabled]="seachSpinner">
                                       <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Show MIS
                                    </button>
                                 </div>
                             </div>
                         </form>
+                        <hr>
                         <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt"> -->
                             <div class="table-responsive no-padding" *ngIf="SalesMISList.length">
                                 <div class="table-responsive no-padding">
@@ -49,6 +50,30 @@
 
                                         <ng-template pTemplate="caption"  >
                                             <div class="row">
+                                                <div class="col-sm-2 custombutton1">
+                                                    <p-multiSelect [options]="DistLiCustomer" defaultLabel="Select a Customer" [(ngModel)]="SelectedDistLiCustomer" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="LI_Customer"></p-multiSelect>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <p-multiSelect [options]="DistProductName" defaultLabel="Select a Product" [(ngModel)]="SelectedDistProductName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Product_Name"></p-multiSelect>
+                                                </div>
+                                                <div class="col-sm-2 custombutton2">
+                                                    <label class="control-label"></label>
+                                                    <div class="checkBox">
+                                                        <label class="pull-right">
+                                                       <p-checkbox  [(ngModel)]="PendingLIfilterFLag"  name="pendinglifilter"  (onChange)="PendingLIFilter()"  binary="true" ></p-checkbox>
+                                                       Show Only Pending LI
+                                                   </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2 custombutton2">
+                                                    <label class="control-label"></label>
+                                                    <div class="checkBox">
+                                                        <label class="pull-right">
+                                                       <p-checkbox  [(ngModel)]="PendingSOfilterFLag"  name="pendingsofilter"  (onChange)="PendingSOFilter()"  binary="true" ></p-checkbox>
+                                                       Show Only Pending SO
+                                                   </label>
+                                                    </div>
+                                                </div>
                                                 <div class="col-sm-3 pull-right" style="text-align: right">
                                                     <input type="text" pInputText size="50" placeholder="Search"
                                                         (input)="dt.filterGlobal($event.target.value, 'contains')"
@@ -65,7 +90,7 @@
                                         <ng-template pTemplate="header">
                                             <tr>
                                                 <!-- <th style="width: 5em">Action</th> -->
-                                                <th nowrap colspan="5" style="text-align: center; color: black !important;
+                                                <th nowrap colspan="7" style="text-align: center; color: black !important;
                                                 background-color: #9ab8cb !important; border: 1px solid black !important;">AS PER LETTER OF INTENT
                                                 </th>
                                                 <th nowrap colspan="3" style="text-align: center; color: black !important;
@@ -92,9 +117,13 @@
                                                 <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #9ab8cb !important; border: 1px solid black !important;">Customer</th>
                                                 <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #9ab8cb !important; border: 1px solid black !important;">Product Name</th>
+                                                <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #9ab8cb !important; border: 1px solid black !important;">Qty</th>
                                                 <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #9ab8cb !important; border: 1px solid black !important;">Amount</th>
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #9ab8cb !important; border: 1px solid black !important;">Pending Qty</th>
 
                                                 <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #e5b694 !important; border: 1px solid black !important;">Qty</th>
@@ -161,19 +190,21 @@
                                                 <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetLIview(col)">{{col.LI_Doc_No}}</a></td>
                                                 <td nowrap style="text-align: center;">{{col.LI_Doc_Date | date:"dd/MMM/yy"}}</td>
                                                 <td nowrap style="text-align: center;">{{col.LI_Customer}}</td>
+                                                <td nowrap style="text-align: center;">{{col.Product_Name}}</td>
                                                 <td nowrap style="text-align: center;">{{col.LI_Qty}}</td>
                                                 <td nowrap style="text-align: center;">{{col.LI_Amount}}</td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetPI(col)">{{col.PI_Qty}}</p></td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetPI(col)">{{col.PI_Total_Amount}}</p></td>
+                                                <td nowrap style="text-align: center;">{{col.Pending_LI_Qty}}</td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetPI(col)">{{col.PI_Qty}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetPI(col)">{{col.PI_Total_Amount}}</a></td>
                                                 <td nowrap style="text-align: center;">{{col.Pending_PI_Qty}}</td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetSO(col)">{{col.SO_Qty}}</p></td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetSO(col)">{{col.SO_Total_Amount}}</p></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetSO(col)">{{col.SO_Qty}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetSO(col)">{{col.SO_Total_Amount}}</a></td>
                                                 <td nowrap style="text-align: center;">{{col.Pending_SO_Qty}}</td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetOC(col)">{{col.SC_Qty}}</p></td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetOC(col)">{{col.SC_Total_Amount}}</p></td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetSB(col)">{{col.SB_Qty}}</p></td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetSB(col)">{{col.SB_Total_Amount}}</p></td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetRA(col)">{{col.RA_Total_Amount}}</p></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetOC(col)">{{col.SC_Qty}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetOC(col)">{{col.SC_Total_Amount}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetSB(col)">{{col.SB_Qty}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetSB(col)">{{col.SB_Total_Amount}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetRA(col)">{{col.RA_Total_Amount}}</a></td>
                                             </tr>
                                         </ng-template>
 
