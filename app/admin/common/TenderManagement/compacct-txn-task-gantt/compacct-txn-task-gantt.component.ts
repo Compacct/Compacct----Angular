@@ -306,9 +306,19 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
   }
   
   GetUserList() {
-    this.$http.get('/Master_User/Get_All_Data').subscribe((data: any) => {
-      this.AssignToList = JSON.parse(data);
-    })
+    const obj = {
+      "SP_String": "SP_Project_Team_Member",
+      "Report_Name_String": "Get_Member_Asign_To_Project_Plan",
+      "Json_Param_String": JSON.stringify([{
+        'Project_ID': this.ObjProjectTask.Project_ID
+      }])
+    }
+    this.GlobalAPI
+      .getData(obj)
+      .subscribe((data: any) => {
+        this.AssignToList = data;
+      })
+
   }
   GetProject() {
     const obj = {
@@ -365,6 +375,7 @@ export class CompacctTxnTaskGanttComponent implements OnInit {
     this.ObjProjectTask.Project_Name = undefined;
     this.ObjProjectTask.Tender_Doc_ID = undefined;
     if (this.ObjProjectTask.Project_ID) {
+      this.GetUserList()
       const tempArr = this.ProjectList.filter(i => Number(i.Project_ID) === Number(this.ObjProjectTask.Project_ID))
       this.ObjProjectTask.Project_Name = tempArr.length ? tempArr[0].label : undefined;
       this.ObjProjectTask.Tender_Doc_ID = tempArr.length ? tempArr[0].Tender_Doc_ID : undefined;
