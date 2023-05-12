@@ -62,8 +62,11 @@ export class HarbaTaskListComponent implements OnInit {
   GetProject(){
     this.projectList = [];
     const obj = {
-        "SP_String": "SP_Task_Management_Tender",
-        "Report_Name_String": "Get_Project_All",
+        "SP_String": "SP_Project_Team_Member",
+        "Report_Name_String": "Get_Project_for_Task",
+        "Json_Param_String": JSON.stringify([{
+          'User_ID': this.commonApi.CompacctCookies.User_ID
+        }])
       }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.projectBackUp = data
