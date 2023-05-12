@@ -59,7 +59,7 @@ export class MasterProjectTeamComponent implements OnInit {
       data.forEach((ele: any) => {
         this.projectNameList.push({
           "label": ele.Project_Description,
-          "value": ele.Tender_Doc_ID
+          "value":ele.Project_ID
         })
       })
     });
