@@ -16,6 +16,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class TransferTransectionComponent implements OnInit {
 
+  tabIndexToView: number = 0;
   Spinner: boolean = false;
   buttonname: string = 'Create Voucher';
   receiveAcList: any = [];
@@ -51,7 +52,8 @@ export class TransferTransectionComponent implements OnInit {
       .subscribe((res: any) => {
         // console.log(res);
         let data = JSON.parse(res)
-        this.initDate = [new Date(data[0].Fin_Year_Start), new Date(data[0].Fin_Year_End)];
+        this.initDate = [new Date(data[0].Fin_Year_Start), new Date(data[0].Fin_Year_End)]
+
       });
   }
 
@@ -72,10 +74,12 @@ export class TransferTransectionComponent implements OnInit {
         });
         // console.log(this.receiveAcList);
       }
+
     });
   }
 
   getGiveEffectList() {
+
     const obj = {
       "SP_String": "BL_Txn_Hearing_Transfer_Trn",
       "Report_Name_String": "Get_Effect_IN"
@@ -94,6 +98,7 @@ export class TransferTransectionComponent implements OnInit {
       }
 
     });
+
   }
 
   getDateRangeClosingReport(dateRangeObj: any) {
@@ -101,6 +106,7 @@ export class TransferTransectionComponent implements OnInit {
       this.startDate = dateRangeObj[0];
       this.endDate = dateRangeObj[1];
     }
+
   }
 
   SaveTransferTransection(valid) {
@@ -128,6 +134,8 @@ export class TransferTransectionComponent implements OnInit {
           });
           this.Spinner = false;
           this.objTransferTransection = new transferTransection();
+          // this.Finyear();
+
         }
         else {
           this.CompacctToast.clear();
@@ -142,6 +150,11 @@ export class TransferTransectionComponent implements OnInit {
       });
     }
   }
+
+  TabClick(e: any) {
+  }
+  onReject(){}
+
 }
 
 class transferTransection {

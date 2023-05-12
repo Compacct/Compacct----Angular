@@ -1,18 +1,35 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+   <ng-template let-message pTemplate="message">
+      <div style="text-align: center">
+         <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+         <h3>{{message.summary}}</h3>
+         <p>{{message.detail}}</p>
+      </div>
+      <div class="ui-g ui-fluid">
+         <div class="ui-g-6">
+            <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+         </div>
+         <div class="ui-g-6">
+            <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+         </div>
+      </div>
+   </ng-template>
+</p-toast>
 <div class="row">
    <div class="col-xs-12">
       <div class="box box-primary">
          <div class="form-horizontal">
             <div class="box-body">
-               <p-tabView>
+               <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                   <form name="TransferTransection" #TransferTransection="ngForm" novalidate>
                      <div class="row">
                         <div class="col-sm-4">
                            <label class="control-label">Select Receive A/C<sup class="text-danger">*</sup></label>
                            <p-dropdown [options]="receiveAcList" name="recive Acount List" #rcvacList="ngModel"
-                              [(ngModel)]="objTransferTransection.Ledger_ID" [showClear]="true"
-                              [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value"
-                              [resetFilterOnHide]="true" [placeholder]="'Select'" [virtualScroll]="true" itemSize="30"
+                              [(ngModel)]="objTransferTransection.Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'"
+                              [filter]="true" filterBy="label,value" [resetFilterOnHide]="true"
+                              [placeholder]="'Select'" [virtualScroll]="true" itemSize="30"
                               [styleClass]="transferTransectionFormSubmit &&  rcvacList.errors?.required ? 'clearance' :''"
                               [required]="true">
                            </p-dropdown>
@@ -20,29 +37,25 @@
                         <div class="col-sm-4">
                            <label class="control-label">Give Effect In<sup class="text-danger">*</sup></label>
                            <p-dropdown [options]="giveEffectList" name="give effect List" #giveEffList="ngModel"
-                              [(ngModel)]="objTransferTransection.Sub_Ledger_ID" [showClear]="true"
-                              [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value"
-                              [resetFilterOnHide]="true" [placeholder]="'Select'" [virtualScroll]="true" itemSize="30"
+                              [(ngModel)]="objTransferTransection.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'"
+                              [filter]="true" filterBy="label,value" [resetFilterOnHide]="true"
+                              [placeholder]="'Select'" [virtualScroll]="true" itemSize="30"
                               [styleClass]="transferTransectionFormSubmit &&  giveEffList.errors?.required ? 'clearance' :''"
                               [required]="true">
-                           </p-dropdown>
+                           </p-dropdown> 
                         </div>
                         <div class="col-sm-4">
                            <label class="control-label">Transection Due<sup class="text-danger">*</sup></label>
-                           <app-compacct-daterangepicker (DaterangeObj)="getDateRangeClosingReport($event)"
-                              [HardCodeDateOpt]="initDate"></app-compacct-daterangepicker>
+                           <app-compacct-daterangepicker (DaterangeObj)="getDateRangeClosingReport($event)" [HardCodeDateOpt]="initDate"></app-compacct-daterangepicker>
                         </div>
                      </div>
                      <br>
-                     <div class="form-group">
-                        <button style="margin-right: 10px" class="btn btn-primary pull-right"
-                           (click)="SaveTransferTransection(TransferTransection.form.valid)" id="load"
-                           [disabled]="Spinner">
-                           <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
-                              animationDuration=".5s"></p-progressSpinner>
-                           <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
-                        </button>
-                     </div>
+                <div class="form-group">
+                    <button style="margin-right: 10px" class="btn btn-primary pull-right" (click)="SaveTransferTransection(TransferTransection.form.valid)" id="load" [disabled]="Spinner">
+                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                      </button>
+                </div>
                   </form>
                </p-tabView>
             </div>
