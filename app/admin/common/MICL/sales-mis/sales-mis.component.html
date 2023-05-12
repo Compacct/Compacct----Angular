@@ -24,6 +24,7 @@
             <div class="form-horizontal">
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                         <form name="SearchSalesMISForm" #SearchSalesMISForm="ngForm" novalidate>
                             <div class="form-group">
                                 <div class="col-sm-4">
@@ -36,6 +37,9 @@
                                       <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                       <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Show MIS
                                    </button>
+                                </div>
+                                <div class="col-sm-2" *ngIf="SalesMISList.length">
+                                    <button  class="btn btn-success custombutton"  (click)="ExportToExcel()">Export To Excel</button>
                                 </div>
                             </div>
                         </form>
@@ -215,7 +219,69 @@
                                     </p-table>
                                 </div>
                             </div>
-                        <!-- </p-tabPanel> -->
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt">
+                        <form name="SearchSalesMISForm" #SearchSalesMISForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Date</label>
+                                     <app-compacct-daterangepicker (DaterangeObj)="getDispatchMISDateRange($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetDispatchMIS()" id="load" [disabled]="seachSpinner">
+                                      <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Show Dispatch MIS
+                                   </button>
+                                </div>
+                                <!-- <div class="col-sm-2" *ngIf="SalesMISList.length">
+                                    <button  class="btn btn-success custombutton"  (click)="ExportToExcel()">Export To Excel</button>
+                                </div> -->
+                            </div>
+                        </form>
+                        <hr>
+                            <div class="table-responsive no-padding" *ngIf="DispatchMISList.length">
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="DispatchMISList" [paginator]="DispatchMISList.length ? true : false"
+                                        [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                        [rowsPerPageOptions]="[100,200,300]"
+                                        [globalFilterFields]="DispatchMISListHeader" [rowHover]="true" #dt>
+
+                                        <ng-template pTemplate="caption"  >
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                        class="searchInput form-control">
+                                                </div>
+                                            </div>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th nowrap="nowrap" *ngFor="let option of DispatchMISListHeader">{{option.replaceAll('_',' ')}}</th> 
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <ng-container *ngFor="let option of DispatchMISListHeader">
+                                                    <td nowrap="nowrap">{{col[option]}}</td>
+                                                </ng-container>
+                                                
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                        </ng-template>
+
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                                            {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                    </p-tabPanel>
 
                     </p-tabView>
                 </div>

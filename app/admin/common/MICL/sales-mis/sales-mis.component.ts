@@ -5,6 +5,7 @@ import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { ExportExcelService } from '../../../shared/compacct.services/export-excel.service';
 @Component({
   selector: 'app-sales-mis',
   templateUrl: './sales-mis.component.html',
@@ -74,6 +75,11 @@ export class SalesMisComponent implements OnInit {
   SearchFields:any = [];
   PendingLIfilterFLag:boolean = false;
   PendingSOfilterFLag:boolean = false;
+  DIspatchMIS_start_date: Date;
+  DIspatchMIS_end_date: Date;
+  DispatchMISList:any = [];
+  BackupDispatchMISList:any = [];
+  DispatchMISListHeader:any = [];
 
   constructor(
     private GlobalAPI:CompacctGlobalApiService,
@@ -82,6 +88,7 @@ export class SalesMisComponent implements OnInit {
     private Header: CompacctHeader,
     public $CompacctAPI: CompacctCommonApi,
     private $http: HttpClient,
+    private excelservice: ExportExcelService
   ) { }
 
   ngOnInit() {
@@ -89,7 +96,7 @@ export class SalesMisComponent implements OnInit {
       Header: "Sales MIS",
       Link: "MICL -> Sales MIS"
     });
-    // this.items = ["BROWSE", "CREATE"];
+    this.items = ["SALES MIS", "DISPATCH MIS"];
     this.Finyear();
     // this.GetSalesMIS();
   }
@@ -104,7 +111,11 @@ export class SalesMisComponent implements OnInit {
         this.initDate = [new Date(data[0].Fin_Year_Start), new Date(data[0].Fin_Year_End)]
       });
   }
-  TabClick(e){}
+  TabClick(e){
+    // console.log(e)
+    this.tabIndexToView = e.index;
+    this.items = ["SALES MIS", "DISPATCH MIS"];
+  }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
       this.start_date = dateRangeObj[0];
@@ -531,6 +542,66 @@ GetRAviewDetails(DocNo) {
   //     window.open(printlink + "?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
   //   })
   // }
+}
+ExportToExcel(){
+  const start = this.start_date
+  ? this.DateService.dateConvert(new Date(this.start_date))
+  : this.DateService.dateConvert(new Date());
+const end = this.end_date
+  ? this.DateService.dateConvert(new Date(this.end_date))
+  : this.DateService.dateConvert(new Date());
+   let tempobj = {}
+if (start && end) {
+ tempobj = {
+  From_Date: start,
+  To_Date: end,
+}
+}
+  this.excelservice.exporttoExcelSalesMIS(this.SalesMISList,tempobj);
+}
+
+//DISPATCH MIS
+getDispatchMISDateRange(dateRangeObj) {
+  if (dateRangeObj.length) {
+    this.DIspatchMIS_start_date = dateRangeObj[0];
+    this.DIspatchMIS_end_date = dateRangeObj[1];
+  }
+}
+GetDispatchMIS() {
+  this.DispatchMISList = [];
+  this.BackupDispatchMISList = [];
+  // this.PendingLIfilterFLag = false;
+  // this.PendingSOfilterFLag = false;
+  const start = this.DIspatchMIS_start_date
+    ? this.DateService.dateConvert(new Date(this.DIspatchMIS_start_date))
+    : this.DateService.dateConvert(new Date());
+  const end = this.DIspatchMIS_end_date
+    ? this.DateService.dateConvert(new Date(this.DIspatchMIS_end_date))
+    : this.DateService.dateConvert(new Date());
+    this.seachSpinner = true;
+if (start && end) {
+  const tempobj = {
+    From_Date: start,
+    To_Date: end,
+  }
+  const obj = {
+    "SP_String": "SP_Sales_MIS_Report",
+    "Report_Name_String": "Get_Despatch_Report_Date",
+    "Json_Param_String": JSON.stringify([tempobj])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data: any) => {
+    this.DispatchMISList = data;
+    this.BackupDispatchMISList = data;
+    this.GetDistinct();
+    if (this.DispatchMISList.length) {
+      this.DispatchMISListHeader = Object.keys(data[0]);
+    } else {
+      this.DispatchMISListHeader = [];
+    }
+    this.seachSpinner = false;
+    // console.log("SalesMISList", this.SalesMISList);
+  });
+}
 }
 
 }
