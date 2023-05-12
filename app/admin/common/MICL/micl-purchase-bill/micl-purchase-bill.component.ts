@@ -201,6 +201,7 @@ export class MiclPurchaseBillComponent implements OnInit {
     this.ObjPurChaseBill.RCM = "N";
     this.GetLedger();
     this.GetTerm();
+    this.getPurchaseledger();
     // this.GetSearchedlist();
   }
   TabClick(e){
@@ -568,7 +569,6 @@ export class MiclPurchaseBillComponent implements OnInit {
            // console.log(GRNDateObj);
             this.GRNDate = new Date(GRNDateObj.GRN_Date);
       });
-      this.getPurchaseledger();
       this.GetGRNNoProductdetails();
      }
   }

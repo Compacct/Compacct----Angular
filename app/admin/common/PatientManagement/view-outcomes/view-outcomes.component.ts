@@ -207,6 +207,8 @@ class Diagonisis{
   Type_Of_Loss1: any;
   Tinnitus_Status: any;
   Sub_Status: any;
+  Objection: any;
+  Trial_Success: any;
   PTA_Remarks: any;
   PTA_Support_Convert: any;
 } 

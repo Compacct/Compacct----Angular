@@ -39,6 +39,7 @@ export class HRTxnSpecialAllowanceDeductionComponent implements OnInit {
   URLid : any;
   Allowancefilter : any = [];
   AllName : any = [];
+  databaseName : any;
 
   constructor(
     private $http : HttpClient,
@@ -70,6 +71,16 @@ export class HRTxnSpecialAllowanceDeductionComponent implements OnInit {
     this.Month_Name = month < 10 ? year+'-'+0+month : year+'-'+month
     this.getAllowance();
     this.getName();
+    this.getDatabase();
+  }
+  getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log(data)
+        });
   }
 
   onReject(){
