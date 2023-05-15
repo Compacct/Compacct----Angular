@@ -45,6 +45,7 @@ export class MasterProjectTeamComponent implements OnInit {
     });
     this.getProjectNameDrop();
     this.getMemberName();
+    
   }
 
   getProjectNameDrop() {
@@ -69,16 +70,38 @@ export class MasterProjectTeamComponent implements OnInit {
     this.http.get('/Master_User/Get_All_Data').pipe(map((data: any) => data ? JSON.parse(data) : [])).subscribe((data: any) => {
       // console.log('data member name', data);
       data.forEach((ele: any) => {
-        this.underNameList.push({
-          "label": ele.Name,
-          "value": ele.User_ID
-        });
         this.memberNameList.push({
           "label": ele.Name,
           "value": ele.User_ID
         });
+        
+        
       })
     })
+  }
+
+  getUnderMemberName(){
+    this.underNameList = [];
+    this.objProject.Intro_User_ID = undefined;
+    // console.log('get ubder name function works');
+    
+    if (this.objProject.Project_ID){
+    const obj = {
+      "SP_String": "SP_Project_Team_Member",
+      "Report_Name_String": "Get_Under_Member_For_Project",
+      "Json_Param_String": JSON.stringify([{"Project_ID":this.objProject.Project_ID}])
+    }
+
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      // console.log('under names',data);
+      data.forEach((ele: any) => {
+        this.underNameList.push({
+          "label": ele.Name,
+          "value": ele.User_ID
+        });
+      })
+    });
+  }
   }
 
   SaveProjectName(valid) {
@@ -119,6 +142,7 @@ export class MasterProjectTeamComponent implements OnInit {
 
   getProjectDeatils() {
     this.TableData = [];
+    this.getUnderMemberName();
     // console.log('table data function works')
     if (this.objProject.Project_ID) {
       const obj = {
