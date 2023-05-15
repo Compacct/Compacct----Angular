@@ -20,7 +20,7 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav {
 }
 
 .custombutton {
-    margin-top: 28px;
+    margin-top: 27px;
 }
 
 .text-red-active > td {
@@ -53,3 +53,9 @@ p:hover {
     text-decoration: underline;
     cursor: pointer;
   }
+.custombutton1 {
+    margin-left: 90px;
+}
+.custombutton2 {
+    margin-top: -16px;
+}

@@ -24,9 +24,9 @@
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="fa fa-check">
-                            <!-- <div class="table-responsive no-padding">
-                                <p-table #dt [value]="pickuplist" *ngIf="pickuplist.length"
-                                    [globalFilterFields]="pickuplistlistHeader" [paginator]="true" [rows]="100"
+                            <div class="table-responsive no-padding">
+                                <p-table #dt [value]="Approvelist" *ngIf="Approvelist.length"
+                                    [globalFilterFields]="ApprovelistHeader" [paginator]="true" [rows]="100"
                                     [rowHover]="true" [autoLayout]="true" sortMode="multiple"
                                     [rowsPerPageOptions]="[100,300,500]" [rowHover]="true">
                                     <ng-template pTemplate="caption">
@@ -46,8 +46,8 @@
                                             <th>Sales Executive</th>
                                             <th>Return Date</th>
                                             <th>Customer</th>
-                                            <th>Total Approved Qty</th>
-                                            <th>Pick Up Qty</th>
+                                            <th>Total Pick Up Qty</th>
+                                            <th>Accounts Amount</th>
                                             <th>User name</th>
                                             <th>Status</th>
                                         </tr>
@@ -74,8 +74,8 @@
                                             <td>{{col.Sales_Executive ? col.Sales_Executive : '-'}}</td>
                                             <td>{{col.Return_Date ? col.Return_Date : '-'}}</td>
                                             <td>{{col.Customer ? col.Customer : '-'}}</td>
-                                            <td>{{col.Total_Approved_Qty ? col.Total_Approved_Qty : '-'}}</td>
                                             <td>{{col.Total_Received_Qty ? col.Total_Received_Qty : '-'}}</td>
+                                            <td>{{col.Total_Accounts_Amount ? col.Total_Accounts_Amount : '-'}}</td>
                                             <td>{{col.User_name ? col.User_name : '-'}}</td>
                                             <td>
                                                 <ng-container *ngFor=" let statusdata of col.Status.split(',')">
@@ -86,7 +86,7 @@
                                         </tr>
                                     </ng-template>
                                 </p-table>
-                            </div> -->
+                            </div>
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="fa fa-clock-o">
                             <div class="table-responsive no-padding">
@@ -286,14 +286,12 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-3">
-                                                        <div class="col-sm-4">
-                                                        <label class="control-label"> <sup class="text-danger"></sup></label>
-                                                        <button class="btn btn-primary" type="button"(click)="SmallPopOpen()"style="margin-top: 5px;">Add</button>
+                                                        <label class="control-label">Account Amount<sup class="text-danger"></sup></label>
+                                                        <div class="pull-right">
+                                                            <button (click)="SmallPopOpen(i,objsale)" class="btn btn-primary  createPatient"><i
+                                                                    class="fa fa-fw  fa-plus"></i>ADD</button>
                                                         </div>
-                                                        <div class="col-sm-8">
-                                                            <label class="control-label">Account Amount<sup class="text-danger"></sup></label>
                                                                 <div class="label-t">{{objsale.Received_Amount ? objsale.Received_Amount : 0}}</div>
-                                                        </div>
                                                     </div>
                                                     <div class="col-sm-3">
                                                         <label class="control-label">Received Tax Amount<sup
@@ -355,8 +353,8 @@
     </p-footer>
 </p-dialog>
 
-<!--View POP-->
-<!-- <p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewModal" [closeOnEscape]="true" [closable]="false"
+<!-- View POP-->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewModal" [closeOnEscape]="true" [closable]="false"
     [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '200px' }" style="text-align: center;"
     [minY]="70" [maximizable]="false" [baseZIndex]="10000">
     <div class="row">
@@ -367,7 +365,7 @@
                         <div class="form-group">
                             <div class="col-sm-4">
                                 <label class="control-label">Sales Executive <sup class="text-danger"></sup></label>
-                                <div class="label-t">{{showdataList.length ? showdataList[0].Member_Name : '-'}}</div>
+                                <div class="label-t">{{ViewList.length ? ViewList[0].Member_Name : '-'}}</div>
 
                             </div>
                             <div class="col-sm-4">
@@ -376,21 +374,20 @@
                                     <div class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                     </div>
-                                    <input CompacctNepaliDatepicker id="Docdatevs" name="Docdatevs" #Docdatevs="ngModel"
-                                        Class="form-control" [(ngModel)]="DocDateShow" disabled>
+                                    <input CompacctNepaliDatepicker id="Docdatev" name="Docdatev" #Docdatev="ngModel"
+                                        Class="form-control" [(ngModel)]="DocDate" disabled>
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <label class="control-label">Customar Name <sup class="text-danger"></sup></label>
-                                <div class="label-t">{{showdataList.length ? showdataList[0].Sub_Ledger_Name : '-'}}
-                                </div>
+                                <div class="label-t">{{ViewList.length ? ViewList[0].Sub_Ledger_Name : '-'}}</div>
                             </div>
                         </div>
                         <div class="container-fluid" style="margin-top: 5px;padding-right: 0px; padding-left: 0px;">
                             <div class="panel panel-primary">
                                 <div class="panel-heading"></div>
                                 <div class="panel-body" style="overflow-y: auto; height: 500px;">
-                                    <ng-container *ngFor=" let objsale of showdataList; let i = index">
+                                    <ng-container *ngFor=" let objsale of ViewList; let i = index">
                                         <div class="card"
                                             style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;">
                                             <div class="card-body">
@@ -449,8 +446,8 @@
                                                         <div class="input-group">
                                                             <div class="label-t">{{objsale.Approved_Qty ?
                                                                 objsale.Approved_Qty : 0}}</div>
-                                                            <span class="input-group-addon">{{objsale.UOM ? objsale.UOM:
-                                                                "UOM"}}</span>
+                                                            <span class="input-group-addon">{{objsale.UOM ?
+                                                                objsale.UOM:"UOM"}}</span>
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-3">
@@ -468,8 +465,8 @@
                                                     <div class="col-sm-3">
                                                         <label class="control-label">Amount Approved <sup
                                                                 class="text-danger"></sup></label>
-                                                        <div class="label-t">{{objsale.Approved_Amount ? objsale.
-                                                            Approved_Amount : 0}}</div>
+                                                        <div class="label-t">{{objsale.Approved_Amount ?
+                                                            objsale.Approved_Amount : 0}}</div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -479,11 +476,21 @@
                                                         <div class="input-group">
                                                             <div class="label-t">{{objsale.Received_Qty ?
                                                                 objsale.Received_Qty : 0}}</div>
-                                                            <span class="input-group-addon">{{objsale.UOM ? objsale.UOM:
-                                                                "UOM"}}</span>
+                                                            <span class="input-group-addon">{{objsale.UOM ?
+                                                                objsale.UOM:"UOM"}}</span>
                                                         </div>
                                                     </div>
-                                                    <div class="col-sm-3"></div>
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">Account Amount<sup
+                                                                class="text-danger"></sup></label>
+                                                        <div class="pull-right">
+                                                            <button (click)="SmallPopOpen(i,objsale)"
+                                                                class="btn btn-primary  createPatient"><i
+                                                                    class="fa fa-eye"></i>View</button>
+                                                        </div>
+                                                        <div class="label-t">{{objsale.Accounts_Amount ?
+                                                                objsale.Accounts_Amount : 0}}</div>
+                                                    </div>
                                                     <div class="col-sm-3">
                                                         <label class="control-label">Received Tax Amount<sup
                                                                 class="text-danger"></sup></label>
@@ -491,20 +498,20 @@
                                                             objsale.Received_Tax_Amount : 0}}</div>
                                                     </div>
                                                     <div class="col-sm-3">
-                                                        <label class="control-label">Received_Amount<sup
+                                                        <label class="control-label">Received Amount<sup
                                                                 class="text-danger"></sup></label>
-                                                        <div class="label-t">{{objsale.Received_Amount ? objsale.
-                                                            Received_Amount : 0}}</div>
+                                                        <div class="label-t">{{objsale.Received_Amount ?
+                                                            objsale.Received_Amount : 0}}</div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <div class="col-sm-2">
+                                                    <div class="col-sm-3">
                                                         <label class="control-label">Type of Return <sup
                                                                 class="text-danger"></sup></label>
                                                         <div class="label-t">{{objsale.Type_Of_Return ?
                                                             objsale.Type_Of_Return : '-'}} </div>
                                                     </div>
-                                                    <div class="col-sm-2">
+                                                    <div class="col-sm-3">
                                                         <label class="control-label">Return <sup
                                                                 class="text-danger"></sup></label>
                                                         <div class="label-t">{{objsale.Return_Text ? objsale.Return_Text
@@ -517,22 +524,15 @@
                                                             objsale.Against_Challan_No : '-'}} </div>
                                                     </div>
                                                     <div class="col-sm-3">
-                                                        <label class="control-label">Tax Invoice No<sup
+                                                        <label class="control-label">Tax Invoice No <sup
                                                                 class="text-danger"></sup></label>
                                                         <div class="label-t">{{objsale.Tax_Invoice_No ?
                                                             objsale.Tax_Invoice_No : '-'}} </div>
-                                                    </div>
-                                                    <div class="col-sm-2">
-                                                        <label class="control-label">Approver Name<sup
-                                                                class="text-danger"></sup></label>
-                                                        <div class="label-t">{{objsale.Approver_Name ?
-                                                            objsale.Approver_Name : '-'}} </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </ng-container>
-
                                 </div>
                             </div>
                         </div>
@@ -546,44 +546,66 @@
             Close
         </button>
     </p-footer>
-</p-dialog> -->
+</p-dialog>
 
-
+<!--Adjust Rate Pop-->
 <p-dialog [header]="'Adjust Rate'" [appendTo]="'body'" [visible]="ChotoShowModal" [closeOnEscape]="true" [closable]="false"
     [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;"
     [minY]="70" [maximizable]="false" [baseZIndex]="10000">
-    <div class="row">
+    <div class="row" *ngIf="!ViewModal">
         <div class="col-xs-12">
-            <div class="box box-primary">
-                <div class="form-horizontal">
-                    <div class="box-body">
                         <div class="form-group">
-                            <div class="col-sm-4">
-                                <label class="control-label">QTY <sup class="text-danger"></sup></label>
-                                <input class="form-control"
-                                     placeholder="Type qty.....">
+                            <div class="col-sm-5">
+                                <label class="control-label">QTY<sup class="text-danger"></sup></label>
+                                <input class="form-control" placeholder="Type qty..."
+                                name="Accounts_Qty"#Accounts_Qty="ngModel" CompacctDigitonly="true"
+                                [(ngModel)]="ObjSmallPop.Accounts_Qty" (ngModelChange)="CheckQty()">
 
                             </div>
-                            <div class="col-sm-4">
-                                <label class="control-label">RATE <sup class="text-danger"></sup></label>
-                                <input class="form-control" placeholder="Type qty.....">
+                            <div class="col-sm-5">
+                                <label class="control-label">RATE<sup class="text-danger"></sup></label>
+                                <input class="form-control" placeholder="Type Rate..."
+                                name="Accounts_Rate" #Accounts_Rate="ngModel" CompacctDigitonly="true"
+                                [(ngModel)]="ObjSmallPop.Accounts_Rate">
 
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-2" *ngIf="!AddButtonEnb">
                                 <label class="control-label">  <sup class="text-danger"></sup></label>
-                                <button class="btn btn-success" type="button" (click)="AddRow()" style="margin-top: 28px;">Add Row</button>
+                                <button class="btn btn-success" type="button" (click)="AddPop()" style="margin-top: 4px;">Add</button>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
+    <br>
+    <div class="table-responsive no-padding">
+        <table class="table table-bordered">
+            <thead>
+                <tr style="background-color:#3c8dbc;color:white;">
+                    <th>Sl No</th>
+                    <th>Qty</th>
+                    <th>Rate</th>
+                    <th style="text-align: center;" *ngIf="!ViewModal">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let obj of AddList ;let ind = index;">
+                    <td>{{ind +1}}</td>
+                    <td>{{obj.Accounts_Qty}}</td>
+                    <td>{{obj.Accounts_Rate}}</td>                   
+                    <td *ngIf="!ViewModal"><button (click)="delete(ind)" class="btn btn-danger" style="text-align: center;"><i class="fa fa-trash"></i></button></td>
+                </tr>
+                <tr *ngIf="AddList.length">
+                    <td nowrap colspan="1" style="text-align: right; font-weight: 700;"><span>Total QTY:</span></td>
+                    <td colspan="1" style="text-align: left; font-weight: 700;">{{GetTotalPro()}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
     <p-footer>
-        <button class="btn btn-primary pull-right" type="button" (click)="FinalUpdatePending()">
+        <button class="btn btn-primary pull-right" type="button" (click)="FinalUpdateSmall()" *ngIf="!ViewModal">
             <span class="glyphicon glyphicon-refresh"></span> Update
         </button>
-        <button type="button" (click)="ChotoShowModal = false" class="btn btn-info">
+        <button type="button" (click)="ChotoShowModalClose()" class="btn btn-info">
             Close
         </button>
     </p-footer>
