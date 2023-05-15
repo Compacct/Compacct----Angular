@@ -192,7 +192,7 @@
                                                     </div>
                                                 </td> -->
                                                 <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetLIview(col)">{{col.LI_Doc_No}}</a></td>
-                                                <td nowrap style="text-align: center;">{{col.LI_Doc_Date | date:"dd/MMM/yy"}}</td>
+                                                <td nowrap style="text-align: center;">{{col.LI_Doc_Date | date:"dd/MMM/yyyy"}}</td>
                                                 <td nowrap style="text-align: center;">{{col.LI_Customer}}</td>
                                                 <td nowrap style="text-align: center;">{{col.Product_Name}}</td>
                                                 <td nowrap style="text-align: center;">{{col.LI_Qty}}</td>
@@ -258,6 +258,12 @@
                                         </ng-template>
 
                                         <ng-template pTemplate="header">
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th [attr.colspan]="DispatchMISList.length - 2" nowrap="nowrap" style="text-align: center;">Grade</th>
+                                                
+                                            </tr>
                                             <tr>
                                                 <th nowrap="nowrap" *ngFor="let option of DispatchMISListHeader">{{option.replaceAll('_',' ')}}</th> 
                                             </tr>

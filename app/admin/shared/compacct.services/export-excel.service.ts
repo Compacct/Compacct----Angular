@@ -373,16 +373,17 @@ export class ExportExcelService {
     // Add Data and Conditional Formatting
     data.forEach((d,i) => {
       const row = worksheet.addRow(d);
-    // const dataalign =  row.getCell(i+1)
-    // dataalign.alignment = {
-    //   horizontal : 'center'
-    // }
-    // dataalign.border = {
-    //   top: { style: 'thin' },
-    //   left: { style: 'thin' },
-    //   bottom: { style: 'thin' },
-    //   right: { style: 'thin' },
-    // };
+    for( let i= 0; i< d.length;i++ ){
+      row.getCell(i + 1).border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+      }
+      row.getCell(i + 1).alignment = {
+        horizontal:'center'
+      }
+    }
     });
     worksheet.getColumn(1).width = 20;
     worksheet.getColumn(2).width = 15;

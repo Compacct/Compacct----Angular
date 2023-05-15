@@ -600,6 +600,8 @@ if (start && end) {
     }
     this.seachSpinner = false;
     // console.log("SalesMISList", this.SalesMISList);
+    let colspan = Number(this.DispatchMISList.length) - 2;
+    console.log("colspan", colspan);
   });
 }
 }

@@ -20,6 +20,42 @@
         </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" key="joh" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirmjoh()" label="Yes" class="ui-button-success"></button>
+            </div> 
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="johAU" (onClose)="onReject()" [modal]="true"  baseZIndex="99999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirmjohAutoUp()" label="Yes" class="ui-button-success"></button>
+            </div> 
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
     <div class="row">
         <div class="col-xs-12">
             <div class="box box-primary">
@@ -29,7 +65,7 @@
                             <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                                 <form name="HrLeaveAOpenSearchForm" #HrLeaveAOpenSearchForm="ngForm" novalidate>
                                     <div class="form-group">
-                                        <div class="col-sm-3">
+                                        <div class="col-sm-2">
                                             <label class="control-label">HR Year
                                                 <sup class="text-danger">*</sup></label>
                                                 <select class="form-control" name="HRYear"
@@ -53,13 +89,16 @@
                                                 <option *ngFor="let type of leaveList" value="{{type.Atten_Type_ID}}">{{type.Leave_Type}}</option>
                                               </select>
                                             </div>
-                                        <div class="col-sm-2">
-                                            <!-- <div class="col-sm-3"> -->
+                                        <div [class]="databaseName === 'GN_JOH_HR' ? 'col-sm-1' : 'col-sm-2'">
                                                 <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetAllData(HrLeaveAOpenSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
                                           <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                           <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                        </button>
-                                            <!-- </div> -->
+                                        </div>
+                                        <div class="col-sm-2" *ngIf="databaseName === 'GN_JOH_HR'">
+                                            <button class="btn btn-primary custombutton" (click)="AutoUpdatePopup()">
+                                            Auto Update
+                                       </button>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="control-label">Employee Name <span class="text-danger"></span></label>
@@ -91,6 +130,7 @@
                                                     <th style="width:5em">Action</th>
                                                     <th>Emp Name</th>
                                                     <th>HR Year Name</th>
+                                                    <th>Validity</th>
                                                     <th>Leave TYPE</th>
                                                     <th>Tran Type</th>
                                                     <th>DR Leave</th>
@@ -130,6 +170,7 @@
                                                     
                                                     <td>{{col.Emp_Name ? col.Emp_Name:"-"}}</td>
                                                     <td>{{col.HR_Year_Name ? col.HR_Year_Name:"-"}}</td> 
+                                                    <td>{{col.From_Date | date : 'dd/MMM/yyyy'}} - {{col.To_Date | date : 'dd/MMM/yyyy'}}</td>
                                                     <td>{{col.LEAVE_TYPE ? col.LEAVE_TYPE:"-"}}</td>
                                                     <td>{{col.Tran_Type ? col.Tran_Type:"-"}}</td>
                                                     <td>{{col.DR_Leave ? col.DR_Leave:"-"}}</td>
@@ -237,10 +278,14 @@
                            </div> 
 
                                 <div class="box-footer">
-                                    <button class="btn btn-primary pull-right"  id="load" (click)="saveData(leaveForm.form.valid)"   [disabled]="Spinner">
-                                                    <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
-                                            </button>
+                                    <button *ngIf="databaseName != 'GN_JOH_HR'" class="btn btn-primary pull-right"  id="load" (click)="saveData(leaveForm.form.valid)"   [disabled]="Spinner">
+                                        <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                     </button>
+                                     <button *ngIf="databaseName === 'GN_JOH_HR'" class="btn btn-primary pull-right"  id="load" (click)="Getsavestatus(leaveForm.form.valid)"   [disabled]="Spinner">
+                                        <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                     </button>
                                 </div>
                             </form>
                         </p-tabPanel>
@@ -250,6 +295,58 @@
             </div>
         </div>
     </div>
+
+<!-- AUTO UPDATE -->
+<p-dialog [header]="'Auto Update'" [appendTo]="'body'" [visible]="AutoUpdateModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '50%', minWidth: '300px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+ [baseZIndex]="10000">
+ <form name="AutoUpdateleaveForm" #AutoUpdateleaveForm="ngForm" novalidate >
+        <div class="col-sm-12">
+            <label class="control-label">HR Year
+                <sup class="text-danger">*</sup></label>
+                <select class="form-control" name="AU_HR_Year_ID"
+                    #AU_HR_Year_ID ="ngModel"
+                    [(ngModel)]="ObjAutoUpdateleave.HR_Year_ID"
+                    [ngClass]="{'clearance': AutoUpdateleaveFormSubmitted && AU_HR_Year_ID?.errors?.required}"
+                    required>
+                    <option [ngValue]="undefined">Select</option>
+                    <option *ngFor="let year of AUhrYeatList"  value ={{year.HR_Year_ID}} >{{year.HR_Year_Name}}</option>
+                </select>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Transaction Date <sup class="text-danger">*</sup></label>
+            <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='AutoU_Transaction_Date'></ejs-datepicker>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Validity<sup class="text-danger">*</sup></label>
+            <div class="input-group date">
+                <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                 </div>
+                <app-compacct-daterangepicker (DaterangeObj)="getAutoUDateRange($event)" [HardCodeDateOpt]= "initDate">
+                </app-compacct-daterangepicker>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Employees</label>
+                <select class="form-control" name="AU_Emp_Name"
+                #AU_Emp_Name ="ngModel"
+                [(ngModel)]="ObjAutoUpdateleave.Emp_ID" >
+                <option [ngValue]="undefined">All</option>
+                <option  *ngFor="let Emp of AutoUpdateempDataList"  value ={{Emp.Emp_ID}}>{{Emp.Emp_Name}}</option>
+             </select>
+        </div>
+               
+         <hr>
+            <div class="box-footer pull-right">
+                <p-footer>
+                    <button type="button" pButton icon="pi pi-check" (click)="GetAutoUpsavestatus(AutoUpdateleaveForm.form.valid)" label="Auto Update"></button>
+                    <button type="button" (click)="AutoUpdateModal = false" class="btn btn-default">
+                      CLOSE
+                    </button>
+                </p-footer>
+            </div>
+        </form>
+</p-dialog>
 
     
 
