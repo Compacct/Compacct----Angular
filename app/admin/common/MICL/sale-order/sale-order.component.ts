@@ -300,7 +300,7 @@ export class SaleOrderComponent implements OnInit {
     this.ObjProductInfo.Rate = undefined;
     this.ObjProductInfo.Taxable_Amount = undefined
     // this.LiDocNoList = [];
-    this.ProductDetalist = [];
+    // this.ProductDetalist = [];
     this.SaveAddress = [];
     this.Choose_Address = undefined;
     this.ObjSaleOrder.Sub_Ledger_Address_1 = undefined;

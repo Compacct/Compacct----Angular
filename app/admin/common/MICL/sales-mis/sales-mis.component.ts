@@ -602,8 +602,14 @@ if (start && end) {
     "Json_Param_String": JSON.stringify([tempobj])
   }
   this.GlobalAPI.getData(obj).subscribe((data: any) => {
+    data.forEach((el:any,i:any)=>{
+      let DispatchMISListHeader:any = Object.values(data[i]).slice(2)
+       const sumWithInitial = DispatchMISListHeader.reduce(
+         (accumulator, currentValue) => accumulator + currentValue,
+       );
+       el['Total'] = Number(Number(sumWithInitial).toFixed(2));
+       })
     this.DispatchMISList = data;
-    this.CalculateRow();
     this.BackupDispatchMISList = data;
     this.GetDistinct();
     if (this.DispatchMISList.length) {
@@ -616,16 +622,7 @@ if (start && end) {
   });
 }
 }
-CalculateRow() {
-  this.DispatchMISList.forEach((el:any,i:any)=>{
-    let DispatchMISListHeader:any = Object.values(this.DispatchMISList[i]).slice(2)
-     const sumWithInitial = DispatchMISListHeader.reduce(
-       (accumulator, currentValue) => accumulator + currentValue,
-     );
-     el['Total'] = Number(Number(sumWithInitial).toFixed(2));
-     this.seachSpinner = false;
-     })
- }
+
 CalculateColumn(field:any){
   if(field != 'SlNo' && field != 'Sub_Ledger_Billing_Name'){
     let coltotal = 0;
