@@ -98,21 +98,16 @@ export class SalesMisComponent implements OnInit {
     });
     this.items = ["SALES MIS", "DISPATCH MIS"];
     this.Finyear();
-    // this.GetSalesMIS();
   }
   Finyear() {
     this.$http
       .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
       .subscribe((res: any) => {
         let data = JSON.parse(res)
-        // this.vouchermaxDate = new Date(data[0].Fin_Year_End);
-        // this.voucherminDate = new Date(data[0].Fin_Year_Start);
-        // this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
         this.initDate = [new Date(data[0].Fin_Year_Start), new Date(data[0].Fin_Year_End)]
       });
   }
   TabClick(e){
-    // console.log(e)
     this.tabIndexToView = e.index;
     this.items = ["SALES MIS", "DISPATCH MIS"];
   }
@@ -145,16 +140,38 @@ export class SalesMisComponent implements OnInit {
       "Json_Param_String": JSON.stringify([tempobj])
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      this.SalesMISList = data;
-      this.BackupSalesMISList = data;
+      if(data.length){
+      let temp:any = [];
+      data.forEach(element => {
+        const obj = {
+          LI_Doc_No : element.LI_Doc_No,
+          LI_Doc_Date : element.LI_Doc_Date,
+          LI_Customer : element.LI_Customer,
+          Product_Name : element.Product_Name,
+          LI_Qty : element.LI_Qty,
+          LI_Amount : element.LI_Amount,
+          Pending_LI_Qty : element.Pending_LI_Qty,
+          SO_Qty : element.SO_Qty,
+          SO_Total_Amount : element.SO_Total_Amount,
+          Pending_SO_Qty : element.Pending_SO_Qty,
+          SC_Qty : element.SC_Qty,
+          SC_Total_Amount : element.SC_Total_Amount,
+          SB_Qty : element.SB_Qty,
+          SB_Total_Amount : element.SB_Total_Amount,
+          RA_Total_Amount : element.RA_Total_Amount
+         }
+         temp.push(obj)
+      });
+      this.SalesMISList = temp;
+      this.BackupSalesMISList = temp;
       this.GetDistinct();
       if (this.SalesMISList.length) {
-        this.SalesMISListHeader = Object.keys(data[0]);
+        this.SalesMISListHeader = Object.keys(temp[0]);
       } else {
         this.SalesMISListHeader = [];
       }
       this.seachSpinner = false;
-      // console.log("SalesMISList", this.SalesMISList);
+    }
     });
   }
   }
@@ -215,7 +232,6 @@ export class SalesMisComponent implements OnInit {
     else{
       this.SalesMISList = this.BackupSalesMISList;
     }
-    // console.log("Pending Qty flag ==",this.SalesMISList)
   }
   PendingSOFilter(){
     this.SalesMISList = []
@@ -230,7 +246,6 @@ export class SalesMisComponent implements OnInit {
     else{
       this.SalesMISList = this.BackupSalesMISList;
     }
-    // console.log("Pending Qty flag ==",this.SalesMISList)
   }
 onReject(){}
 GetLIview(dataobj){
@@ -255,7 +270,6 @@ GetLIview(dataobj){
           this.LIviewData = data[0];
           data.forEach(element => {
             const  productObj = {
-               //ID : element.ID,
                Product_Type : element.Product_Type,
                Product_Sub_Type : element.Product_Sub_Type,
                Product_Specification : element.Product_Name,
@@ -570,8 +584,6 @@ getDispatchMISDateRange(dateRangeObj) {
 GetDispatchMIS() {
   this.DispatchMISList = [];
   this.BackupDispatchMISList = [];
-  // this.PendingLIfilterFLag = false;
-  // this.PendingSOfilterFLag = false;
   const start = this.DIspatchMIS_start_date
     ? this.DateService.dateConvert(new Date(this.DIspatchMIS_start_date))
     : this.DateService.dateConvert(new Date());
@@ -591,6 +603,7 @@ if (start && end) {
   }
   this.GlobalAPI.getData(obj).subscribe((data: any) => {
     this.DispatchMISList = data;
+    this.CalculateRow();
     this.BackupDispatchMISList = data;
     this.GetDistinct();
     if (this.DispatchMISList.length) {
@@ -599,9 +612,29 @@ if (start && end) {
       this.DispatchMISListHeader = [];
     }
     this.seachSpinner = false;
-    // console.log("SalesMISList", this.SalesMISList);
+    console.log("SalesMISList", this.SalesMISList);
   });
 }
+}
+CalculateRow() {
+  this.DispatchMISList.forEach((el:any,i:any)=>{
+    let DispatchMISListHeader:any = Object.values(this.DispatchMISList[i]).slice(2)
+     const sumWithInitial = DispatchMISListHeader.reduce(
+       (accumulator, currentValue) => accumulator + currentValue,
+     );
+     el['Total'] = Number(sumWithInitial).toFixed(2);
+     this.seachSpinner = false;
+     })
+ }
+CalculateColumn(field:any){
+  if(field != 'SlNo' && field != 'Sub_Ledger_Billing_Name'){
+    let coltotal = 0;
+    this.DispatchMISList.forEach((el:any,i:any)=>{
+      coltotal = Number(coltotal) + Number(el[field])
+       })
+    return coltotal ? Number(coltotal).toFixed(2) : '-'
+  }
+  
 }
 
 }
