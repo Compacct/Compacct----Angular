@@ -5,7 +5,6 @@ import * as fs from 'file-saver';
   providedIn: 'root'
 })
 export class ExportExcelService {
-
   constructor() { }
   exportExcel(excelData:any) {
     //Title, Header & Data
@@ -428,4 +427,163 @@ export class ExportExcelService {
       fs.saveAs(blob, 'Sales_MIS.xlsx');
     });
   }
+  exporttoExcelSales(excelData:any, daterange:any){
+    const header = Object.keys(excelData[0])
+    const data:any = [];
+    excelData.forEach((ele:any) => {
+      data.push(Object.values(ele))
+    });
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet('DISPATCH_MIS');
+    let CompanyNameRow = worksheet.addRow([]);
+    CompanyNameRow.getCell(1).value = "MODERN CONCAST INDIA LIMITED";
+    CompanyNameRow.getCell(1).font={
+     size: 15,
+     bold:true
+    }
+    let ReportNameRow = worksheet.addRow([]);
+    ReportNameRow.getCell(1).value = "SALES DISPATCH MIS";
+    ReportNameRow.getCell(1).font={
+     bold:true
+    }
+    let DateRangeRow = worksheet.addRow([]);
+    DateRangeRow.getCell(1).value = "For the Period "+"( " + `${daterange.From_Date} - ${daterange.To_Date}` + " )";
+    DateRangeRow.getCell(1).font={
+     bold:true
+    }
+     worksheet.addRow([]);
+   let topHeader= worksheet.addRow([]);
+   topHeader.getCell(1).value = "SL NO"
+ 
+  
+   topHeader.getCell(2).value = "NAME OF THE CUSTOMER"
+   topHeader.getCell(3).value = "Grade"
+   topHeader.getCell(header.length).value = "Total"
+    topHeader.eachCell((cell, number) => {
+  
+    cell.alignment = { vertical: 'middle' , horizontal: 'center' };
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '3c8dbc' },
+      bgColor: { argb: '' }
+    }
+    cell.font = {
+      bold: true,
+      color: { argb: 'FFFFFF' },
+      size: 12
+    }
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+  })
+     let headerRow = worksheet.addRow(header);
+     headerRow.eachCell((cell, number) => {
+      worksheet.getColumn(number).width = 20;
+      cell.alignment = { vertical: 'middle' , horizontal: 'center' };
+       cell.fill = {
+         type: 'pattern',
+         pattern: 'solid',
+         fgColor: { argb: '3c8dbc' },
+         bgColor: { argb: '' }
+       }
+       cell.font = {
+         bold: true,
+         color: { argb: 'FFFFFF' },
+         size: 12
+       }
+       cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+     })
+         // Adding Data with Conditional Formatting
+    data.forEach(d => {
+    const row= worksheet.addRow(d);
+    for( let i= 0; i< d.length;i++ ){
+      row.getCell(i + 1).border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+      }
+      row.getCell(i + 1).alignment = {
+        horizontal:'center'
+      }
+    }
+     }
+   );
+   let headerMar = [...header]
+   const headerMarHeader = headerMar.slice(2)
+   let totalRow = worksheet.addRow([]);
+   totalRow.getCell(1).value = "Total"
+   totalRow.getCell(1).alignment = {
+    horizontal:'right'
+   }
+   console.log(header)
+   const result = (rinx) => {
+    let sum: any = 0;
+    data.forEach((arr: any) => {
+      arr.forEach((arr1: any, inx: any) => {
+        if (inx == rinx) {
+          sum += arr1;
+        }
+      });
+    });
+    return sum;
+  };
+   headerMarHeader.forEach((el) => {
+    console.log(header.indexOf(el));
+    totalRow.getCell(header.indexOf(el) + 1).value = result(
+      header.indexOf(el)
+    );
+
+  });
+  totalRow.eachCell((cell, number) => {
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    cell.font = {
+      bold: true,
+      size: 12
+    }
+    cell.alignment = {
+      horizontal:'center'
+    }
+  })
+  worksheet.getColumn(2).width = 40;
+  worksheet.mergeCells('A1:D1');
+  worksheet.mergeCells('A2:D2');
+  worksheet.mergeCells('A3:D3');
+  worksheet.mergeCells('A5', 'A6');
+   worksheet.mergeCells('B5', 'B6');
+   worksheet.mergeCells('C5', this.colName(headerMarHeader.length )+'5');
+   worksheet.mergeCells(this.colName(header.length - 1)+'5' , this.colName(header.length-1)+'6')
+   worksheet.mergeCells(`A${totalRow.number}:B${totalRow.number}`);
+     //Generate & Save Excel File
+     workbook.xlsx.writeBuffer().then((data) => {
+      let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      fs.saveAs(blob, 'DISPATCH_MIS.xlsx');
+    })
+  }
+  colName(n:any) {
+    var ordA = 'A'.charCodeAt(0);
+    var ordZ = 'Z'.charCodeAt(0);
+    var len = ordZ - ordA + 1;
+  
+    var s = "";
+    while(n >= 0) {
+        s = String.fromCharCode(n % len + ordA) + s;
+        n = Math.floor(n / len) - 1;
+    }
+    return s;
+}
 }

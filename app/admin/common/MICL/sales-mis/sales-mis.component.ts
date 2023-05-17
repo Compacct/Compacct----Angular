@@ -622,7 +622,7 @@ CalculateRow() {
      const sumWithInitial = DispatchMISListHeader.reduce(
        (accumulator, currentValue) => accumulator + currentValue,
      );
-     el['Total'] = Number(sumWithInitial).toFixed(2);
+     el['Total'] = Number(Number(sumWithInitial).toFixed(2));
      this.seachSpinner = false;
      })
  }
@@ -636,6 +636,20 @@ CalculateColumn(field:any){
   }
   
 }
-
+ExportToExcelDispatchMIS(){
+  const start = this.DIspatchMIS_start_date
+  ? this.DateService.dateConvert(new Date(this.DIspatchMIS_start_date))
+  : this.DateService.dateConvert(new Date());
+const end = this.DIspatchMIS_end_date
+  ? this.DateService.dateConvert(new Date(this.DIspatchMIS_end_date))
+  : this.DateService.dateConvert(new Date());
+ 
+if (start && end) {
+const tempobj = {
+  From_Date: start,
+  To_Date: end,
 }
-
+  this.excelservice.exporttoExcelSales(this.DispatchMISList,tempobj);
+}
+}
+}
