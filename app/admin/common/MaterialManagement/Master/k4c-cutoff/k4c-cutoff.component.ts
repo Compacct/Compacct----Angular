@@ -172,7 +172,8 @@ shiftUpdate(col){
 let saveObj = {}
 saveObj = {
     Shift_ID : col.Shift_ID,
-    Shift_Time : this.DateService.dateTimeConvert(new Date(col.time))
+    Shift_Time : this.DateService.dateTimeConvert(new Date(col.time)),
+    User_ID : this.$CompacctAPI.CompacctCookies.User_ID
   }
 console.log("save",saveObj);
 const obj = {
