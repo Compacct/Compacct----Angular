@@ -16,7 +16,7 @@ import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime
   encapsulation: ViewEncapsulation.None
 })
 export class HrLeaveOpeningComponent  implements OnInit {
-  items = [];
+  items:any = [];
   menuList=[];
   AllData = [];
   empDataList=[];
@@ -55,6 +55,16 @@ export class HrLeaveOpeningComponent  implements OnInit {
   Availed : any;
   Balance : any;
   hryear : any;
+  databaseName:any;
+
+  ObjAutoUpdateleave: AutoUpdateleave = new AutoUpdateleave ();
+  AUhrYeatList:any = [];
+  AutoU_Transaction_Date = new Date();
+  AutoUpdateModal:boolean = false;
+  AutoUpdateempDataList:any = [];
+  CheckStatusData:any;
+  AutoUpdateleaveFormSubmitted:boolean = false;
+  APCheckStatusData: any;
 
   constructor(
     public $http: HttpClient,
@@ -77,6 +87,7 @@ ngOnInit() {
     Header: "HR Leave Opening Balance",
     Link: " MICL -> HR-leave Opening"
   })
+  this.getDatabase();
   this.employeeData();
   // this.GetAllData();
   this.hrYearList();
@@ -90,6 +101,15 @@ TabClick(e) {
   this.clearData();
   this.Editdisable = false;
   this.hryear = undefined;
+}
+getDatabase(){
+  this.$http
+      .get("/Common/Get_Database_Name",
+      {responseType: 'text'})
+      .subscribe((data: any) => {
+        this.databaseName = data;
+        console.log(data)
+      });
 }
 clearData(){
   this.leaveFormSubmitted = false;
@@ -170,6 +190,7 @@ employeeData(){
    this.GlobalAPI.getData(obj)
    .subscribe((data:any)=>{
     this.empDataList = data;
+    this.AutoUpdateempDataList = data;
     console.log("employee==",this.empDataList);
     });
 }
@@ -182,10 +203,12 @@ hrYearList(){
    this.GlobalAPI.getData(obj)
    .subscribe((data:any)=>{
     this.hrYeatList = data;
+    this.AUhrYeatList = data;
     this.Objleave.HR_Year_ID = data[0].HR_Year_ID;
     this.ObjBrowse.HR_Year_ID = data[0].HR_Year_ID;
+    this.ObjAutoUpdateleave.HR_Year_ID = data[0].HR_Year_ID;
     console.log("Hr Year==",this.hrYeatList);
-    if (this.buttonname === "Create") {
+    if (this.buttonname === "Create" || this.ObjAutoUpdateleave.HR_Year_ID) {
       this.leaveChange();
     }
     });
@@ -278,7 +301,7 @@ saveData(valid:any){
        }
       }
     }
-  }
+}
 onConfirm2(){
   console.log("savedata==",this.Objleave);
   this.leaveFormSubmitted = true
@@ -326,6 +349,8 @@ onConfirm2(){
 }
 onReject(){
     this.compacctToast.clear("c");
+    this.compacctToast.clear("joh");
+    this.compacctToast.clear("johAU");
 }
 EditLeave(leave:any){
     this.leaveId = undefined;
@@ -448,6 +473,194 @@ leaveChange(){
 //    this.Objleave.To_Date = undefined;
 // }
 }
+
+// For Joh
+Getsavestatus(valid){
+  this.CheckStatusData = undefined;
+  this.leaveFormSubmitted = true
+  if(valid){
+  const johobj = {
+    HR_Year_ID : this.Objleave.HR_Year_ID,
+    Atten_Type_ID : Number(this.Objleave.LEAVE_TYPE),
+    From_Date : this.Objleave.From_Date ? this.DateService.dateConvert(new Date(this.Objleave.From_Date)): this.DateService.dateConvert(new Date()),
+    To_Date : this.Objleave.To_Date ? this.DateService.dateConvert(new Date(this.Objleave.To_Date)): this.DateService.dateConvert(new Date())
+  }
+  const obj = {
+    "SP_String":"SP_HR_Leave_Opening_Issue_Balance",
+    "Report_Name_String":"Check_Balance_Already_Exists_Or_Not",
+    "Json_Param_String": JSON.stringify(johobj)
+  }
+
+   this.GlobalAPI.getData(obj)
+   .subscribe((data:any)=>{
+    this.CheckStatusData = data[0].Column1;
+    // console.log("CheckStatusData==",this.CheckStatusData);
+      if(this.CheckStatusData === "OK"){
+       //console.log("this.Objleave.Emp_ID",this.Objleave.Emp_ID)
+        this.Spinner =true;
+        this.onConfirmjoh();
+      } 
+      else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "joh",
+          sticky: true,
+          severity: "error",
+          detail: this.CheckStatusData,
+          summary: "Want to proceed",
+         
+        });
+        this.Spinner = false
+      }
+    });
+  }
+}
+onConfirmjoh(){
+  console.log("savedata==",this.Objleave);
+  this.leaveFormSubmitted = true
+    console.log("leaveId==",this.leaveId);
+    // if(this.$CompacctAPI.CompacctCookies.User_Type === "A") {
+   this.Objleave.From_Date = this.Objleave.From_Date ? this.DateService.dateConvert(new Date(this.Objleave.From_Date)): this.DateService.dateConvert(new Date());
+   this.Objleave.To_Date = this.Objleave.To_Date ? this.DateService.dateConvert(new Date(this.Objleave.To_Date)): this.DateService.dateConvert(new Date());
+   this.Objleave.Leave_Month = "NA"
+   this.Objleave.Leave_Year = "NA"
+   this.Objleave.Tran_Type = "Opening"
+   this.Objleave.Emp_ID = this.Objleave.Emp_ID ? this.Objleave.Emp_ID : 0
+   this.Objleave.LEAVE_TYPE = Number(this.Objleave.LEAVE_TYPE)
+   this.Objleave.Transaction_Date = this.Objleave.Transaction_Date ? this.DateService.dateConvert(new Date(this.Transaction_Date)) : this.DateService.dateConvert(new Date());
+    // }
+    let msg = this.buttonname ;
+      const obj = {
+        "SP_String": "SP_HR_Leave_Opening_Issue_Balance",
+        "Report_Name_String": 'Save_HR_Leave_Opening_Issue_Balance',
+        "Json_Param_String": JSON.stringify([this.Objleave])
+       }
+       this.GlobalAPI.getData(obj)
+       .subscribe((data:any)=>{
+        console.log("Final save data ==",data);
+        if (data[0].Emp_ID || data[0].Column1){
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "User Succesfully " +msg,
+            detail: "Succesfully " +msg
+          });
+          }
+          this.Spinner = false;
+          this.GetAllData(true);
+          this.leaveId = undefined;
+          this.txnId = undefined;
+          this.Editdisable = false;
+          this.tabIndexToView = 0;
+          this.leaveFormSubmitted = false;
+          this.Objleave = new leave();
+          this.hryear = undefined;
+        });
+    
+      
+}
+AutoUpdatePopup(){
+  this.AutoUpdateleaveFormSubmitted = false;
+  this.ObjAutoUpdateleave = new AutoUpdateleave();
+  this.leaveId = undefined;
+  this.initDate =[];
+  this.hrYearList();
+ this.AutoUpdateModal = true;
+}
+getAutoUDateRange(dateRangeObj:any) {
+  if (dateRangeObj.length) {
+   this.ObjAutoUpdateleave.From_Date = dateRangeObj[0];
+   this.ObjAutoUpdateleave.To_Date = dateRangeObj[1];
+  }
+}
+GetAutoUpsavestatus(valid){
+  this.APCheckStatusData = undefined;
+  this.AutoUpdateleaveFormSubmitted = true
+  if(valid){
+  const johobj = {
+    HR_Year_ID : this.ObjAutoUpdateleave.HR_Year_ID,
+    Atten_Type_ID : Number(this.ObjAutoUpdateleave.LEAVE_TYPE),
+    From_Date : this.ObjAutoUpdateleave.From_Date ? this.DateService.dateConvert(new Date(this.ObjAutoUpdateleave.From_Date)): this.DateService.dateConvert(new Date()),
+    To_Date : this.ObjAutoUpdateleave.To_Date ? this.DateService.dateConvert(new Date(this.ObjAutoUpdateleave.To_Date)): this.DateService.dateConvert(new Date())
+  }
+  const obj = {
+    "SP_String":"SP_HR_Leave_Opening_Issue_Balance",
+    "Report_Name_String":"Check_Balance_Already_Exists_Or_Not",
+    "Json_Param_String": JSON.stringify(johobj)
+  }
+
+   this.GlobalAPI.getData(obj)
+   .subscribe((data:any)=>{
+    this.APCheckStatusData = data[0].Column1;
+    // console.log("CheckStatusData==",this.CheckStatusData);
+      if(this.APCheckStatusData === "OK"){
+       //console.log("this.Objleave.Emp_ID",this.Objleave.Emp_ID)
+        this.Spinner =true;
+        this.onConfirmjohAutoUp();
+      } 
+      else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "johAU",
+          sticky: true,
+          severity: "error",
+          detail: this.APCheckStatusData,
+          summary: "Want to proceed",
+         
+        });
+        this.Spinner =false
+      }
+    });
+  }
+}
+onConfirmjohAutoUp(){
+  console.log("savedata==",this.Objleave);
+  this.AutoUpdateleaveFormSubmitted = true
+    console.log("leaveId==",this.leaveId);
+    // if(this.$CompacctAPI.CompacctCookies.User_Type === "A") {
+    this.ObjAutoUpdateleave.From_Date = this.Objleave.From_Date ? this.DateService.dateConvert(new Date(this.Objleave.From_Date)): this.DateService.dateConvert(new Date());
+    this.ObjAutoUpdateleave.To_Date = this.Objleave.To_Date ? this.DateService.dateConvert(new Date(this.Objleave.To_Date)): this.DateService.dateConvert(new Date());
+   this.ObjAutoUpdateleave.Emp_ID = this.Objleave.Emp_ID ? this.Objleave.Emp_ID : 0
+   this.ObjAutoUpdateleave.Transaction_Date = this.Objleave.Transaction_Date ? this.DateService.dateConvert(new Date(this.Transaction_Date)) : this.DateService.dateConvert(new Date());
+    // }
+      const obj = {
+        "SP_String": "SP_HR_Leave_Opening_Issue_Balance",
+        "Report_Name_String": 'Auto_Update_HR_Leave_Opening_Issue_Balance',
+        "Json_Param_String": JSON.stringify([this.ObjAutoUpdateleave])
+       }
+       this.GlobalAPI.getData(obj)
+       .subscribe((data:any)=>{
+        console.log("Final save data ==",data);
+        if (data[0].Column1 === "Done"){
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "User Succesfully Updated",
+            detail: "Succesfully Updated"
+          });
+          this.Spinner = false;
+          this.GetAllData(true);
+          this.leaveId = undefined;
+          this.AutoUpdateleaveFormSubmitted = false;
+          this.ObjAutoUpdateleave = new AutoUpdateleave();
+          this.hryear = undefined;
+          this.AutoUpdateModal = false;
+        } 
+        else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error Message",
+            detail: data[0].Column1
+          });
+        }
+        });
+    
+      
+}
 } 
 class leave{
   HR_Year_ID:any
@@ -471,3 +684,19 @@ class Browse {
   From_date : Date;
   To_date : Date;
  }
+ class AutoUpdateleave{
+  HR_Year_ID:any
+  Leave_Month:any
+  Leave_Year:any
+  Leave_Type:any
+  LEAVE_TYPE:any
+  Tran_Type = "Opening"
+  DR_Leave:any
+  CR_Leave:any
+  Remarks:any
+  From_Date:any
+  To_Date:any
+  Emp_ID:any
+  Emp_Name:any
+  Transaction_Date:any;
+}

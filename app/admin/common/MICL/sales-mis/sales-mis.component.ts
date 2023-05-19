@@ -5,6 +5,7 @@ import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { ExportExcelService } from '../../../shared/compacct.services/export-excel.service';
 @Component({
   selector: 'app-sales-mis',
   templateUrl: './sales-mis.component.html',
@@ -74,6 +75,11 @@ export class SalesMisComponent implements OnInit {
   SearchFields:any = [];
   PendingLIfilterFLag:boolean = false;
   PendingSOfilterFLag:boolean = false;
+  DIspatchMIS_start_date: Date;
+  DIspatchMIS_end_date: Date;
+  DispatchMISList:any = [];
+  BackupDispatchMISList:any = [];
+  DispatchMISListHeader:any = [];
 
   constructor(
     private GlobalAPI:CompacctGlobalApiService,
@@ -82,6 +88,7 @@ export class SalesMisComponent implements OnInit {
     private Header: CompacctHeader,
     public $CompacctAPI: CompacctCommonApi,
     private $http: HttpClient,
+    private excelservice: ExportExcelService
   ) { }
 
   ngOnInit() {
@@ -89,22 +96,21 @@ export class SalesMisComponent implements OnInit {
       Header: "Sales MIS",
       Link: "MICL -> Sales MIS"
     });
-    // this.items = ["BROWSE", "CREATE"];
+    this.items = ["SALES MIS", "DISPATCH MIS"];
     this.Finyear();
-    // this.GetSalesMIS();
   }
   Finyear() {
     this.$http
       .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
       .subscribe((res: any) => {
         let data = JSON.parse(res)
-        // this.vouchermaxDate = new Date(data[0].Fin_Year_End);
-        // this.voucherminDate = new Date(data[0].Fin_Year_Start);
-        // this.voucherdata = new Date().getMonth() > new Date(data[0].Fin_Year_End).getMonth() ? new Date() : new Date(data[0].Fin_Year_End)
         this.initDate = [new Date(data[0].Fin_Year_Start), new Date(data[0].Fin_Year_End)]
       });
   }
-  TabClick(e){}
+  TabClick(e){
+    this.tabIndexToView = e.index;
+    this.items = ["SALES MIS", "DISPATCH MIS"];
+  }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
       this.start_date = dateRangeObj[0];
@@ -134,16 +140,38 @@ export class SalesMisComponent implements OnInit {
       "Json_Param_String": JSON.stringify([tempobj])
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      this.SalesMISList = data;
-      this.BackupSalesMISList = data;
+      if(data.length){
+      let temp:any = [];
+      data.forEach(element => {
+        const obj = {
+          LI_Doc_No : element.LI_Doc_No,
+          LI_Doc_Date : element.LI_Doc_Date,
+          LI_Customer : element.LI_Customer,
+          Product_Name : element.Product_Name,
+          LI_Qty : element.LI_Qty,
+          LI_Amount : element.LI_Amount,
+          Pending_LI_Qty : element.Pending_LI_Qty,
+          SO_Qty : element.SO_Qty,
+          SO_Total_Amount : element.SO_Total_Amount,
+          Pending_SO_Qty : element.Pending_SO_Qty,
+          SC_Qty : element.SC_Qty,
+          SC_Total_Amount : element.SC_Total_Amount,
+          SB_Qty : element.SB_Qty,
+          SB_Total_Amount : element.SB_Total_Amount,
+          RA_Total_Amount : element.RA_Total_Amount
+         }
+         temp.push(obj)
+      });
+      this.SalesMISList = temp;
+      this.BackupSalesMISList = temp;
       this.GetDistinct();
       if (this.SalesMISList.length) {
-        this.SalesMISListHeader = Object.keys(data[0]);
+        this.SalesMISListHeader = Object.keys(temp[0]);
       } else {
         this.SalesMISListHeader = [];
       }
       this.seachSpinner = false;
-      // console.log("SalesMISList", this.SalesMISList);
+    }
     });
   }
   }
@@ -204,7 +232,6 @@ export class SalesMisComponent implements OnInit {
     else{
       this.SalesMISList = this.BackupSalesMISList;
     }
-    // console.log("Pending Qty flag ==",this.SalesMISList)
   }
   PendingSOFilter(){
     this.SalesMISList = []
@@ -219,7 +246,6 @@ export class SalesMisComponent implements OnInit {
     else{
       this.SalesMISList = this.BackupSalesMISList;
     }
-    // console.log("Pending Qty flag ==",this.SalesMISList)
   }
 onReject(){}
 GetLIview(dataobj){
@@ -244,7 +270,6 @@ GetLIview(dataobj){
           this.LIviewData = data[0];
           data.forEach(element => {
             const  productObj = {
-               //ID : element.ID,
                Product_Type : element.Product_Type,
                Product_Sub_Type : element.Product_Sub_Type,
                Product_Specification : element.Product_Name,
@@ -532,6 +557,96 @@ GetRAviewDetails(DocNo) {
   //   })
   // }
 }
-
+ExportToExcel(){
+  const start = this.start_date
+  ? this.DateService.dateConvert(new Date(this.start_date))
+  : this.DateService.dateConvert(new Date());
+const end = this.end_date
+  ? this.DateService.dateConvert(new Date(this.end_date))
+  : this.DateService.dateConvert(new Date());
+   let tempobj = {}
+if (start && end) {
+ tempobj = {
+  From_Date: start,
+  To_Date: end,
+}
+}
+  this.excelservice.exporttoExcelSalesMIS(this.SalesMISList,tempobj);
 }
 
+//DISPATCH MIS
+getDispatchMISDateRange(dateRangeObj) {
+  if (dateRangeObj.length) {
+    this.DIspatchMIS_start_date = dateRangeObj[0];
+    this.DIspatchMIS_end_date = dateRangeObj[1];
+  }
+}
+GetDispatchMIS() {
+  this.DispatchMISList = [];
+  this.BackupDispatchMISList = [];
+  const start = this.DIspatchMIS_start_date
+    ? this.DateService.dateConvert(new Date(this.DIspatchMIS_start_date))
+    : this.DateService.dateConvert(new Date());
+  const end = this.DIspatchMIS_end_date
+    ? this.DateService.dateConvert(new Date(this.DIspatchMIS_end_date))
+    : this.DateService.dateConvert(new Date());
+    this.seachSpinner = true;
+if (start && end) {
+  const tempobj = {
+    From_Date: start,
+    To_Date: end,
+  }
+  const obj = {
+    "SP_String": "SP_Sales_MIS_Report",
+    "Report_Name_String": "Get_Despatch_Report_Date",
+    "Json_Param_String": JSON.stringify([tempobj])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data: any) => {
+    data.forEach((el:any,i:any)=>{
+      let DispatchMISListHeader:any = Object.values(data[i]).slice(2)
+       const sumWithInitial = DispatchMISListHeader.reduce(
+         (accumulator, currentValue) => accumulator + currentValue,
+       );
+       el['Total'] = Number(Number(sumWithInitial).toFixed(2));
+       })
+    this.DispatchMISList = data;
+    this.BackupDispatchMISList = data;
+    this.GetDistinct();
+    if (this.DispatchMISList.length) {
+      this.DispatchMISListHeader = Object.keys(data[0]);
+    } else {
+      this.DispatchMISListHeader = [];
+    }
+    this.seachSpinner = false;
+    console.log("SalesMISList", this.SalesMISList);
+  });
+}
+}
+
+CalculateColumn(field:any){
+  if(field != 'SlNo' && field != 'Sub_Ledger_Billing_Name'){
+    let coltotal = 0;
+    this.DispatchMISList.forEach((el:any,i:any)=>{
+      coltotal = Number(coltotal) + Number(el[field])
+       })
+    return coltotal ? Number(coltotal).toFixed(2) : '-'
+  }
+  
+}
+ExportToExcelDispatchMIS(){
+  const start = this.DIspatchMIS_start_date
+  ? this.DateService.dateConvert(new Date(this.DIspatchMIS_start_date))
+  : this.DateService.dateConvert(new Date());
+const end = this.DIspatchMIS_end_date
+  ? this.DateService.dateConvert(new Date(this.DIspatchMIS_end_date))
+  : this.DateService.dateConvert(new Date());
+ 
+if (start && end) {
+const tempobj = {
+  From_Date: start,
+  To_Date: end,
+}
+  this.excelservice.exporttoExcelSales(this.DispatchMISList,tempobj);
+}
+}
+}

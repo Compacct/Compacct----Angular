@@ -488,6 +488,7 @@ getEmployeeDetails(Emp_ID){
         else {
           this.objemployee = new Employee();
           this.clearchilddetails();
+          this.cleanPreView();
         }
           
         });
@@ -495,6 +496,7 @@ getEmployeeDetails(Emp_ID){
       else {
         this.objemployee = new Employee();
         this.clearchilddetails();
+        this.cleanPreView();
       }
 }
 getChildDetails(Emp_ID){
