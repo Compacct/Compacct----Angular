@@ -114,7 +114,7 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                             <form name="salereturnForms" #salereturnForms="ngForm" novalidate>
                                 <div class="form-group">
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <label class="control-label">Sales Executive<sup class="text-danger">*</sup></label>
                                         <p-dropdown [options]="ExecutiveList" 
                                                     [showClear]="true" 
@@ -133,7 +133,7 @@
                                                     [disabled]="SalereturnList.length? true : false" >
                                         </p-dropdown>
                                     </div>
-                                    <div class="col-sm-4" >
+                                    <div class="col-sm-3" >
                                         <label class="control-label">Date Of Return<sup class="text-danger">*</sup></label>
                                         <div class="input-group date">
                                             <div class="input-group-addon">
@@ -147,7 +147,7 @@
                                            >                                      
                                         </div> 
                                     </div>
-                                    <div class="col-sm-4" >
+                                    <div class="col-sm-3" >
                                         <label class="control-label">Customar Name<sup class="text-danger">*</sup></label>
                                         <p-dropdown [options]="customarList" 
                                                     [showClear]="true" 
@@ -168,6 +168,17 @@
                                                       >
                                                   
                                                     </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Request Type<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="RequestList" [showClear]="true" name="Request" #Request="ngModel"
+                                            [(ngModel)]="objsaleReturn.Request_Type" [emptyFilterMessage]="' No Customar Name Found'" [filter]="true"
+                                            filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Customar Name'"
+                                            [virtualScroll]="true" itemSize="30"
+                                            [ngClass]="{'clearance': salereturnFormsSubmitted && Request.errors?.required}" required
+                                            [disabled]="SalereturnList.length? true : false">
+                                    
+                                        </p-dropdown>
                                     </div>
                                     </div>
                                 </form>

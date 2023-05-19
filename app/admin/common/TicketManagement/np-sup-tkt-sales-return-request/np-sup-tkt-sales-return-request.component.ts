@@ -54,7 +54,9 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
   DistEmployeeSelect1:any =[];
   DistStatusSelect1:any =[];
   DistCustomerSelect1:any =[];
-  DistUserSelect1:any =[];
+  DistUserSelect1: any = [];
+  RequestList: any = [{ "label": "Normal Sales Return", "value": "Normal Sales Return" },
+                      { "label": "Price Change", "value": "Price Change" }];
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -89,6 +91,7 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
     this.buttonname = "Save";
     this.salereturnFormsSubmitted = false
     this.objsaleReturn = new saleReturn()
+    this.objsaleReturn.Request_Type = [...this.RequestList[0].value];
     this.ProductList = []
     this.ObjaddSaleReturn = new addSaleReturn()
     this.addSalereturnFormsSubmitted = false
@@ -96,7 +99,6 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
     this.Spinner = false
     this.TicketNo = undefined
     this.DocDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
-   
   }
   onReject() {
     this.compacctToast.clear("c");
@@ -390,7 +392,7 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
     this.getEditdata(col.Ticket_No)
   }
  }
- getEditdata(TicketNo:any){
+  getEditdata(TicketNo: any) {
   const obj = {
     'SP_String': "SP_Np_Sup_Tkt_Sales_Return_Request",
     'Report_Name_String':  "Get_Return_Request",
@@ -433,7 +435,8 @@ class saleReturn{
       Request_Date:any
       Sub_Ledger_ID:any
       Posted_By:any
-      Ticket_No:any
+      Ticket_No: any
+      Request_Type: any;
 }
 
 class addSaleReturn {
