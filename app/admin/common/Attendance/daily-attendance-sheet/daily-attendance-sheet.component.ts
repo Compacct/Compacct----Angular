@@ -51,6 +51,8 @@ export class DailyAttendanceSheetComponent implements OnInit {
   Leave_Without_Pay: any;
   Total_Left: any;
   Total_Late:any;
+  Half_Day: any;
+  Annual_Leave: any;
   DistWorkLocation:any = [];
   SelectedDistWorkLocation:any = [];
   SearchFields:any = [];
@@ -300,6 +302,14 @@ export class DailyAttendanceSheetComponent implements OnInit {
     var late = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "LT")
     this.Total_Late = late.length ? late.length : undefined;
     // console.log("this.Total_Late===",this.Total_Late);
+
+    var halfday = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "HD")
+    this.Half_Day = halfday.length ? halfday.length : undefined;
+    // console.log("this.Half_Day===",this.Half_Day);
+
+    var annualleave = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "AL")
+    this.Annual_Leave = annualleave.length ? annualleave.length : undefined;
+    // console.log("this.Half_Day===",this.Half_Day);
   }
   getAttenTypedropdown(atnid){
     const obj = {
@@ -369,7 +379,9 @@ export class DailyAttendanceSheetComponent implements OnInit {
       this.employeename = obj.Emp_Name;
       var attnid = this.AttenTypelist.filter(ele=> ele.Sht_Desc === obj.Atten_Type_ID)
       this.Atten_Type = attnid[0].Atten_Type_ID;
+      if(this.databaseName != 'GN_JOH_HR') {
       this.getAttenTypedropdown(obj.Atten_Type_ID);
+      }
       this.AttendancePopup = true;
     }
   }

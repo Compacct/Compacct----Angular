@@ -135,6 +135,8 @@
                                             <th style=" width: 8% ;" *ngIf="Leave_Without_Pay">Leave Without Pay</th>
                                             <th style=" width: 7% ;" *ngIf="Total_Left">Left</th>
                                             <th style=" width: 7% ;" *ngIf="Total_Late">Late</th>
+                                            <th style=" width: 7% ;" *ngIf="Half_Day">Half Day</th>
+                                            <th style=" width: 7% ;" *ngIf="Annual_Leave">Annual Leave</th>
                                       </tr>
                                       <tr>
                                         <th style=" width: 7% ;" *ngIf="Total_Present">{{Total_Present ? Total_Present : 0}}</th>
@@ -151,6 +153,8 @@
                                         <th style=" width: 8% ;" *ngIf="Leave_Without_Pay">{{Leave_Without_Pay ? Leave_Without_Pay : 0}}</th>
                                         <th style=" width: 7% ;" *ngIf="Total_Left">{{Total_Left ? Total_Left : 0}}</th>
                                         <th style=" width: 7% ;" *ngIf="Total_Late">{{Total_Late ? Total_Late : 0}}</th>
+                                        <th style=" width: 7% ;" *ngIf="Half_Day">{{Half_Day ? Half_Day : 0}}</th>
+                                        <th style=" width: 7% ;" *ngIf="Annual_Leave">{{Annual_Leave ? Annual_Leave : 0}}</th>
                                   </tr>
                               
                                     </thead>
@@ -187,11 +191,20 @@
             <label>Date:</label>&nbsp; {{Doc_date}}
 
         </div> -->
-        <div class="col-sm-12">
+        <div class="col-sm-12" *ngIf="databaseName != 'GN_JOH_HR'">
             <label>Attendance Type <sup class="text-danger">*</sup></label>&nbsp;
             <select name="attentype" #attentype="ngModel" [(ngModel)]="Atten_Type" [ngClass]="{'clearance': attendancetypeFormSubmitted && attentype?.errors?.required}" required>
            <option  [ngValue]="undefined">Select</option>
            <option *ngFor = "let option of AttendanceTypeList" value="{{option.Atten_Type_ID}}">
+             {{option.Atten_Type}}
+            </option>
+           </select>
+        </div>
+        <div class="col-sm-12" *ngIf="databaseName === 'GN_JOH_HR'">
+            <label>Attendance Type <sup class="text-danger">*</sup></label>&nbsp;
+            <select name="attentype" #attentype="ngModel" [(ngModel)]="Atten_Type" [ngClass]="{'clearance': attendancetypeFormSubmitted && attentype?.errors?.required}" required>
+           <option  [ngValue]="undefined">Select</option>
+           <option *ngFor = "let option of AttenTypelist" value="{{option.Atten_Type_ID}}">
              {{option.Atten_Type}}
             </option>
            </select>
