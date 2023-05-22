@@ -38,6 +38,15 @@ export class NepalSupTktSalesReturnApproveComponent implements OnInit {
   browseDataListheader:any = []
   ShowModal:boolean = false
   showdataList:any = []
+  bckupbrowseDataList: any = [];
+  DistUserSelect1: any = [];
+  DistCustomerSelect1: any = [];
+  DistStatusSelect1: any = [];
+  DistEmployeeSelect1: any = [];
+  DistUser1: any = [];
+  DistEmployee1: any = [];
+  DistStatus1: any = [];
+  DistCustomer1: any = [];
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -176,7 +185,9 @@ export class NepalSupTktSalesReturnApproveComponent implements OnInit {
     }
   }
   getBrowse(){
-    console.log("getBrowse")
+    this.browseDataListheader = [];
+    this.browseDataList = [];
+    this.bckupbrowseDataList = [];
     const obj = {
       'SP_String': "SP_Np_Sup_Tkt_Sales_Return_Request ",
       'Report_Name_String':  "Approved_Browse_Return_Approve",
@@ -191,9 +202,72 @@ export class NepalSupTktSalesReturnApproveComponent implements OnInit {
         }
         this.browseDataListheader = Object.keys(data[0])
         this.browseDataList = data
-        console.log(this.browseDataList)
+        this.bckupbrowseDataList = data;
+        this.GetDistinct1();
       }
     })
+  }
+   GetDistinct1() {
+    let Status: any = [];
+    this.DistCustomer1 = [];
+    this.DistUser1 = [];
+    this.DistStatus1 = [];
+    this.DistEmployee1 = [];
+    this.browseDataList.forEach((item) => {
+      if (Status.indexOf(item.Customer) === -1) {
+        Status.push(item.Customer);
+        this.DistCustomer1.push({ label: item.Customer, value: item.Customer });
+      }
+      if (Status.indexOf(item.Status) === -1) {
+        Status.push(item.Status);
+        this.DistStatus1.push({ label: item.Status, value: item.Status });
+      }
+       if (Status.indexOf(item.Sales_Executive) === -1) {
+        Status.push(item.Sales_Executive);
+        this.DistEmployee1.push({ label: item.Sales_Executive, value: item.Sales_Executive });
+      }
+      if (Status.indexOf(item.User_name) === -1) {
+        Status.push(item.User_name);
+        this.DistUser1.push({ label: item.User_name, value: item.User_name });
+      }    
+    });
+      this.bckupbrowseDataList = [...this.browseDataList];
+  }
+  FilterDist1() {
+    let First: any = [];
+    let Second: any = [];
+    let three: any = [];
+    let fore: any = [];
+    let SearchFields: any = [];
+    if (this.DistEmployeeSelect1.length) {
+      SearchFields.push('Sales_Executive');
+      First = this.DistEmployeeSelect1;
+    }
+    if (this.DistStatusSelect1.length) {
+      SearchFields.push('Status');
+      Second = this.DistStatusSelect1;
+    }
+    if (this.DistCustomerSelect1.length) {
+      SearchFields.push('Customer');
+      three = this.DistCustomerSelect1;
+    }
+     if (this.DistUserSelect1.length) {
+      SearchFields.push('User_name');
+      fore = this.DistUserSelect1;
+    }
+    this.browseDataList = [];
+    if (SearchFields.length) {
+      let LeadArr = this.bckupbrowseDataList.filter(function (e) {
+        return (First.length ? First.includes(e['Sales_Executive']) : true)
+          && (Second.length ? Second.includes(e['Status']) : true)
+          && (three.length ? three.includes(e['Customer']) : true)
+          &&(fore.length ? fore.includes(e['User_name']) : true)
+      });
+      this.browseDataList = LeadArr.length ? LeadArr : [];
+    } else {
+      this.browseDataList = [...this.bckupbrowseDataList];
+    }
+
   }
   getView(col:any){
      this.showdataList = []

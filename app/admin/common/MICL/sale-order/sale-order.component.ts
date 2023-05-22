@@ -300,7 +300,7 @@ export class SaleOrderComponent implements OnInit {
     this.ObjProductInfo.Rate = undefined;
     this.ObjProductInfo.Taxable_Amount = undefined
     // this.LiDocNoList = [];
-    this.ProductDetalist = [];
+    // this.ProductDetalist = [];
     this.SaveAddress = [];
     this.Choose_Address = undefined;
     this.ObjSaleOrder.Sub_Ledger_Address_1 = undefined;
@@ -524,6 +524,40 @@ export class SaleOrderComponent implements OnInit {
     this.ObjProductInfo.Rate = undefined;
     this.ObjProductInfo.Taxable_Amount = undefined;
     this.ObjSaleOrder.Sub_Ledger_ID = undefined;
+
+    this.ProductDetalist = [];
+    this.ObjProductInfo.Product_Specification = undefined;
+    this.UomList = '';
+    this.ObjProductInfo.Product_Type_ID = undefined;
+    this.ObjProductInfo.Product_Sub_Type_ID = undefined;
+    this.ProductSub = [];
+    this.Tax_Category = undefined;
+    this.ObjProductInfo.Qty = undefined;
+    this.ObjProductInfo.Rate = undefined;
+    this.ObjProductInfo.Taxable_Amount = undefined
+
+    this.ObjSaleOrder.Sub_Ledger_Billing_Name = '';
+    this.ObjProductInfo.godown_id = undefined;
+    this.ObjProductInfo.Batch_Number = undefined;
+    this.ObjProductInfo.LI_Qty = undefined;
+    this.SaveAddress = [];
+    this.Choose_Address = undefined;
+    this.ObjSaleOrder.Sub_Ledger_Address_1 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_District = undefined;
+    this.ObjSaleOrder.Sub_Ledger_State = undefined;
+    this.ObjSaleOrder.Sub_Ledger_Pin = undefined;
+    this.ObjSaleOrder.Sub_Ledger_GST_No = undefined;
+    this.SaveAddress1 = [];
+    this.ObjSaleOrder.Choose_Address2 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_Billing_Name = undefined;
+    this.ObjSaleOrder.Sub_Ledger_Address_2 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_Pin_2 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_District_2 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_State_2 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_GST_No_2 = undefined;
+    this.Customer_PO_No = undefined;
+    this.Customer_PO_Date = new Date();
+    this.DocDate = new Date();
     if (this.LI_Doc_No) {
       const LiObj = this.LiDocNoList.filter(el=> el.Doc_No == this.LI_Doc_No);
       this.LI_Doc_Date = LiObj.length ? new Date(LiObj[0].Doc_Date) : new Date();
