@@ -94,4 +94,8 @@ legend {
     padding: 0px 10px 0px 10px;
     background-color: #55627ca1;
 }
-
+.ui-table p-sorticon {
+    float: none !important;
+    padding-top: 1px;
+    padding-left: 6px;
+}

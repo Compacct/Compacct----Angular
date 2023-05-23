@@ -53,7 +53,7 @@
                             </fieldset>
                             <div class="clearfix"></div>
                             <div class="table-responsive no-padding">
-                                <p-table #dt [value]="SearchedBrowselist"
+                                <p-table #dt [value]="SearchedBrowselist" [columns]="colsAdv"
                                     *ngIf="SearchedBrowselist.length"
                                     [globalFilterFields]="SearchedBrowselistHeader"
                                     [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true"
@@ -68,10 +68,12 @@
                                         </div>
 
                                     </ng-template>
-                                    <ng-template pTemplate="header">
+                                    <ng-template pTemplate="header" let-columns>
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th nowrap="nowrap" *ngFor="let option of SearchedBrowselistHeader">{{option.replaceAll('_',' ')}}</th> 
+                                            <th nowrap="nowrap" *ngFor="let option of columns"  [pSortableColumn]="option.header">{{option.header.replaceAll('_',' ')}}
+                                                    <p-sortIcon [field]="option.header" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th> 
 
                                         </tr>
                                     </ng-template>

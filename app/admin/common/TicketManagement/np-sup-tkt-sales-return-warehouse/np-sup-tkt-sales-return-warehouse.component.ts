@@ -37,7 +37,9 @@ export class NPSupTktSalesReturnWarehouseComponent implements OnInit {
   DistEmployeeSelect1:any = [];
   DistStatusSelect1:any = [];
   DistCustomerSelect1:any = [];
-  DistUserSelect1:any = [];
+  DistUserSelect1: any = [];
+  ApproveKye: any = [];
+  ApproveKye1: any = [];
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -82,7 +84,12 @@ export class NPSupTktSalesReturnWarehouseComponent implements OnInit {
           });
         }
       this.SearchedBrowselist = data
-      this.SearchedBrowselistHeader = Object.keys(data[0])
+        this.SearchedBrowselistHeader = Object.keys(data[0])
+        this.SearchedBrowselistHeader.forEach(element => {
+          this.ApproveKye1.push({
+            header : element
+          })
+        });
       }
     })
   }
@@ -105,6 +112,11 @@ export class NPSupTktSalesReturnWarehouseComponent implements OnInit {
         this.pickuplist = data;
         this.backUPdataListPickup = data;
         this.pickuplistlistHeader = Object.keys(data[0]);
+         this.pickuplistlistHeader.forEach(element => {
+          this.ApproveKye.push({
+            header : element
+          })
+        });
         this.GetDistinct1();
       }
     })

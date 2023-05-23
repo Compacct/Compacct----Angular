@@ -19,7 +19,11 @@ div.table-responsive.table-id>p-table>div>div {
 .custombutton {
     margin-top: 25px;
 }
-
+.ui-table p-sorticon {
+    float: none !important;
+    padding-top: 1px;
+    padding-left: 6px;
+}
 hr {
     margin-top: 1rem;
     margin-bottom: 1rem;
@@ -50,6 +54,8 @@ body .ui-dropdown.ui-dropdown-clearable .ui-dropdown-label {
 .ui-dropdown-panel .ui-dropdown-empty-message {
     text-align: left !important;
 }
+element.style {}
+
 .createPatient {
     padding: 0 5px !important;
     border-radius: 3px !important;
