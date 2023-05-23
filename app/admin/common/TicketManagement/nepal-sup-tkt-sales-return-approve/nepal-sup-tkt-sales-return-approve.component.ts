@@ -47,6 +47,8 @@ export class NepalSupTktSalesReturnApproveComponent implements OnInit {
   DistEmployee1: any = [];
   DistStatus1: any = [];
   DistCustomer1: any = [];
+  colsAdv: any = [];
+  colsAdv1: any = [];
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -101,7 +103,12 @@ export class NepalSupTktSalesReturnApproveComponent implements OnInit {
           });
         }
       this.pendinglist = data
-      this.pendinglistHeader = Object.keys(data[0])
+        this.pendinglistHeader = Object.keys(data[0])
+          this.pendinglistHeader.forEach(element => {
+          this.colsAdv1.push({
+            header : element
+          })
+        });
       }
     })
   }
@@ -201,6 +208,11 @@ export class NepalSupTktSalesReturnApproveComponent implements OnInit {
           });
         }
         this.browseDataListheader = Object.keys(data[0])
+         this.browseDataListheader.forEach(element => {
+          this.colsAdv.push({
+            header : element
+          })
+        });
         this.browseDataList = data
         this.bckupbrowseDataList = data;
         this.GetDistinct1();
