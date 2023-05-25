@@ -49,8 +49,10 @@ export class HrCouponReportComponent implements OnInit {
       this.ObjBrowse.To_date = dateRangeObj[1];
     }
   }
-  SearchData(){
 
+
+  SearchData(){
+    this.seachSpinner = true
     const start =  this.ObjBrowse.From_date
     ? this.DateService.dateConvert(new Date(this.ObjBrowse.From_date))
     : this.DateService.dateConvert(new Date());
@@ -68,10 +70,9 @@ export class HrCouponReportComponent implements OnInit {
       "Json_Param_String": JSON.stringify([tempobj])
       }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("FACTORY",data)
+      this.GetSTATEMENTData(data)
       
-      if(data.length){
-        this.GetSTATEMENTData(data)
-      }
     })
  }
 
@@ -93,10 +94,55 @@ export class HrCouponReportComponent implements OnInit {
       "Json_Param_String": JSON.stringify([tempobj])
       }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log("data",data)
-      this._exportExcel.exporttoExcelCouponReport(data1,data,tempobj) 
+      console.log("STATEMENT",data)
+
+      this.GetOtherDetailsFactory(data1,data)
+    
     })
  }
+ GetOtherDetailsFactory(FACTORYCANTEENDETAILS,STATEMENTOFDAILYMEALS){
+  const obj = {
+    "SP_String": "SP_MICL_HR_Coupon_Report",
+    "Report_Name_String": 'Other Details Factory'
+    }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log("Other Details Factory",data)
+    this.GetOtherDetailsFactoryPart2(FACTORYCANTEENDETAILS,STATEMENTOFDAILYMEALS,data)
+  })
+ }
+ GetOtherDetailsFactoryPart2(FACTORYCANTEENDETAILS,STATEMENTOFDAILYMEALS,OtherDetailsFactory){
+  const obj = {
+    "SP_String": "SP_MICL_HR_Coupon_Report",
+    "Report_Name_String": 'Other Details Factory 2nd Part'
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log("Other Details Factory 2nd Part",data)
+    this.getOtherDetalis(FACTORYCANTEENDETAILS,STATEMENTOFDAILYMEALS,OtherDetailsFactory,data)
+  })
+ }
+
+ getOtherDetalis(FACTORYCANTEENDETAILS,STATEMENTOFDAILYMEALS,OtherDetailsFactory,OtherDetailsFactory2ndPart){
+  const start =  this.ObjBrowse.From_date
+    ? this.DateService.dateConvert(new Date(this.ObjBrowse.From_date))
+    : this.DateService.dateConvert(new Date());
+    const end =   this.ObjBrowse.To_date
+    ? this.DateService.dateConvert(new Date( this.ObjBrowse.To_date))
+    : this.DateService.dateConvert(new Date());
+    const tempobj = {
+      StartDate  : start,
+      EndDate  : end,
+    }
+  const obj = {
+    "SP_String": "SP_MICL_HR_Coupon_Report",
+    "Report_Name_String": 'Other Details'
+    }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log("other Detalis",data)
+    this.seachSpinner = false
+    this._exportExcel.exporttoExcelCouponReport(FACTORYCANTEENDETAILS,STATEMENTOFDAILYMEALS,tempobj,OtherDetailsFactory,OtherDetailsFactory2ndPart,data) 
+  })
+ }
+
 }
 class Browse {
   From_date : Date;
