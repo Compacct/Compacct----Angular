@@ -498,8 +498,12 @@
                                         (change)="GetNumberOfdays()"
                                         required></ejs-datepicker> -->
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-4"> 
                                     <label class="control-label">Number Of Days <span *ngIf="ObjHrleave.Leave_Type">(Min Day - {{mndays}})</span></label>
+                                    <div *ngIf="databaseName === 'GN_JOH_HR' && checkboxdisabled" class="col-sm-2 pull-right" style="width:115px;">
+                                        <small><b>Is Half Day</b></small> &nbsp;
+                                        <p-checkbox (onChange)='HalfDayChange()' name='halfday'  [(ngModel)]="HalfDayFlag"  [binary]="true"></p-checkbox>
+                                    </div>
                                     <input  class="form-control" placeholder="Number Of Days"
                                     name="No_Of_Days_Apply"
                                     #No_Of_Days_Apply="ngModel"

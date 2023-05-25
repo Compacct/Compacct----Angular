@@ -77,7 +77,8 @@ export class AudiologistTargetComponent implements OnInit {
         this.addedAudioLogist.push({
           "Target_ID": ele.Target_ID,
           "Doctor_ID": ele.Doctor_ID,
-          "Target_Amount": ele.Target_Amount,
+          "Target_Amount_1": ele.Target_Amount_1,
+          "Target_Amount_2": ele.Target_Amount_2,
           "Name": ele.Name
         })
       })
@@ -143,12 +144,12 @@ export class AudiologistTargetComponent implements OnInit {
   }
 
   updateAmount(col) {
-    if (col.Target_ID && col.Target_Amount) {
-      // console.log('col.Target_ID && col.Target_Amount', col.Target_ID, col.Target_Amount);
+    if (col.Target_ID && col.Target_Amount_1 && col.Target_Amount_2) {
+      // console.log('col.Target_ID && col.Target_Amount_1 && col.Target_Amount_2', col.Target_ID, col.Target_Amount, col.Target_Amount_2);
       const obj = {
         "SP_String": "Sp_BL_Txn_Audiologist_Target",
         "Report_Name_String": "Update_Audiologist_Target",
-        "Json_Param_String": JSON.stringify([{ Target_ID: col.Target_ID, Target_Amount: col.Target_Amount }])
+        "Json_Param_String": JSON.stringify([{ Target_ID: col.Target_ID, Target_Amount_1: col.Target_Amount_1, Target_Amount_2: col.Target_Amount_2}])
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
         // console.log('update response', data);
@@ -225,13 +226,22 @@ export class AudiologistTargetComponent implements OnInit {
     });
   }
 
-  calTotal() {
-    let tootalAmount  = 0;
+  calTotal1() {
+    let totalAmount1  = 0;
     this.addedAudioLogist.forEach((ele:any) =>{
-      tootalAmount += Number(ele.Target_Amount);
+      totalAmount1 += Number(ele.Target_Amount_1);
     })
 
-    return tootalAmount;
+    return totalAmount1;
+  }
+
+  calTotal2() {
+    let totalAmount2  = 0;
+    this.addedAudioLogist.forEach((ele:any) =>{
+      totalAmount2 += Number(ele.Target_Amount_2);
+    })
+
+    return totalAmount2;
   }
 
 
@@ -249,5 +259,6 @@ class Audiologist {
   Target_ID: any;
   Target_Date: any;
   Doctor_ID: any;
-  Target_Amount: any;
+  Target_Amount_1: any;
+  Target_Amount_2: any;
 }

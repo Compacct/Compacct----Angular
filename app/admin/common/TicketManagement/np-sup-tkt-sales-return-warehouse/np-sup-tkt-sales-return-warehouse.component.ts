@@ -29,6 +29,17 @@ export class NPSupTktSalesReturnWarehouseComponent implements OnInit {
   pickuplistlistHeader: any = [];
   ViewModal: boolean = false;
   showdataList: any = [];
+  backUPdataListPickup: any = [];
+  DistCustomer1:any = [];
+  DistUser1:any = [];
+  DistStatus1:any = [];
+  DistEmployee1: any = [];
+  DistEmployeeSelect1:any = [];
+  DistStatusSelect1:any = [];
+  DistCustomerSelect1:any = [];
+  DistUserSelect1: any = [];
+  ApproveKye: any = [];
+  ApproveKye1: any = [];
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -73,13 +84,19 @@ export class NPSupTktSalesReturnWarehouseComponent implements OnInit {
           });
         }
       this.SearchedBrowselist = data
-      this.SearchedBrowselistHeader = Object.keys(data[0])
+        this.SearchedBrowselistHeader = Object.keys(data[0])
+        this.SearchedBrowselistHeader.forEach(element => {
+          this.ApproveKye1.push({
+            header : element
+          })
+        });
       }
     })
   }
   getPickupBrowselist(){
     this.pickuplist = []
-    this.pickuplistlistHeader = []
+    this.pickuplistlistHeader = [];
+    this.backUPdataListPickup = [];
     const obj = {
       'SP_String': "SP_Np_Sup_Tkt_Sales_Return_Request",
       'Report_Name_String':  "Pickup_Done_For_Warehouse",
@@ -92,10 +109,79 @@ export class NPSupTktSalesReturnWarehouseComponent implements OnInit {
             ele.Return_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(ele.Return_Date);
           });
         }
-      this.pickuplist = data
-      this.pickuplistlistHeader = Object.keys(data[0])
+        this.pickuplist = data;
+        this.backUPdataListPickup = data;
+        this.pickuplistlistHeader = Object.keys(data[0]);
+         this.pickuplistlistHeader.forEach(element => {
+          this.ApproveKye.push({
+            header : element
+          })
+        });
+        this.GetDistinct1();
       }
     })
+  }
+  GetDistinct1() {
+    let Status: any = [];
+    this.DistCustomer1 = [];
+    this.DistUser1 = [];
+    this.DistStatus1 = [];
+    this.DistEmployee1 = [];
+    this.pickuplist.forEach((item) => {
+      if (Status.indexOf(item.Customer) === -1) {
+        Status.push(item.Customer);
+        this.DistCustomer1.push({ label: item.Customer, value: item.Customer });
+      }
+      if (Status.indexOf(item.Status) === -1) {
+        Status.push(item.Status);
+        this.DistStatus1.push({ label: item.Status, value: item.Status });
+      }
+       if (Status.indexOf(item.Sales_Executive) === -1) {
+        Status.push(item.Sales_Executive);
+        this.DistEmployee1.push({ label: item.Sales_Executive, value: item.Sales_Executive });
+      }
+      if (Status.indexOf(item.User_name) === -1) {
+        Status.push(item.User_name);
+        this.DistUser1.push({ label: item.User_name, value: item.User_name });
+      }    
+    });
+      this.backUPdataListPickup = [...this.pickuplist];
+  }
+  FilterDist1() {
+    let First: any = [];
+    let Second: any = [];
+    let three: any = [];
+    let fore: any = [];
+    let SearchFields: any = [];
+    if (this.DistEmployeeSelect1.length) {
+      SearchFields.push('Sales_Executive');
+      First = this.DistEmployeeSelect1;
+    }
+    if (this.DistStatusSelect1.length) {
+      SearchFields.push('Status');
+      Second = this.DistStatusSelect1;
+    }
+    if (this.DistCustomerSelect1.length) {
+      SearchFields.push('Customer');
+      three = this.DistCustomerSelect1;
+    }
+     if (this.DistUserSelect1.length) {
+      SearchFields.push('User_name');
+      fore = this.DistUserSelect1;
+    }
+    this.pickuplist = [];
+    if (SearchFields.length) {
+      let LeadArr = this.backUPdataListPickup.filter(function (e) {
+        return (First.length ? First.includes(e['Sales_Executive']) : true)
+          && (Second.length ? Second.includes(e['Status']) : true)
+          && (three.length ? three.includes(e['Customer']) : true)
+          &&(fore.length ? fore.includes(e['User_name']) : true)
+      });
+      this.pickuplist = LeadArr.length ? LeadArr : [];
+    } else {
+      this.pickuplist = [...this.backUPdataListPickup];
+    }
+
   }
   getStatusWiseColor(Status:any) {
   switch (Status) {

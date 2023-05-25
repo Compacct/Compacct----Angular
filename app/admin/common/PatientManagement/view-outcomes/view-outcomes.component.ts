@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
@@ -18,6 +17,11 @@ export class ViewOutcomesComponent implements OnInit {
   tabIndexToView = 0;
   PatientList: any=[];
   PatientID: any=undefined;
+  AudiologistList: any=[];
+  AudiologistID:any=undefined;
+  StartDate:any=undefined;
+  EndDate:any=undefined;
+  seachSpinner:boolean=false;
   PatientDetailsList: any=[];
   PatientDetailsListHeader: any=[];
   OpenDiagnosis: boolean =false;
@@ -28,8 +32,6 @@ export class ViewOutcomesComponent implements OnInit {
   objDiagonisis: Diagonisis = new Diagonisis();
   objAppointment: Appointment = new Appointment();
   constructor(
-    private $http: HttpClient,
-    private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
     private Header: CompacctHeader,
     private DateService: DateTimeConvertService,
@@ -43,6 +45,7 @@ export class ViewOutcomesComponent implements OnInit {
       Header: "View Outcomes",
       Link: " Patient Management -> View Outcomes"
     });
+    this.GetAudiologist();
     this.GetPatient();
   }
 
@@ -67,15 +70,58 @@ export class ViewOutcomesComponent implements OnInit {
    });
   }
 
-  getPatientDetailsList(){
-    if(this.PatientID){
+  GetAudiologist(){
+    this.AudiologistList = [];
+    const obj = {
+      "SP_String": "Sp_View_Outcomes",
+      "Report_Name_String": "Get_Audiologist"
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //  console.log("Get AudiologistList",data);
+      if(data.length) {
+          data.forEach(element => {
+            element['label'] = element.Name,
+            element['value'] = element.Doctor_ID
+          });
+        this.AudiologistList = data;
+      }
+      else {
+          this.AudiologistList = [];
+      }
+   });
+  }
 
-      this.PatientDetailsList=[];
-      this.OpenDiagnosis=false;
-      this.OpenFinal=false;
+  getDateRange(dateRangeObj:any){
+    if(dateRangeObj.length){
+      this.StartDate = dateRangeObj[0];
+      this.EndDate = dateRangeObj[1];
+    }
+  }
+
+  getPatientDetailsList(){
+    // console.log('this.StartDate',this.StartDate);
+    // console.log('this.EndDate',this.EndDate);
+    // console.log('this.AudiologistID',this.AudiologistID);
+    // console.log('this.PatientID',this.PatientID);
+
+    const start = this.StartDate
+    ? this.DateService.dateConvert(new Date(this.StartDate))
+    : this.DateService.dateConvert(new Date());
+    const end = this.EndDate
+    ? this.DateService.dateConvert(new Date(this.EndDate))
+    : this.DateService.dateConvert(new Date());
+
+    this.PatientDetailsList=[];
+    this.OpenDiagnosis=false;
+    this.OpenFinal=false;
+
+    if(start && end){
 
       const tempobj = {
-        Foot_Fall_ID: this.PatientID
+        FromDate: start,
+        ToDate: end,
+        Doctor_ID: this.AudiologistID ? this.AudiologistID : 0,
+        Foot_Fall_ID: this.PatientID ? this.PatientID : 0
       }
       // console.log("tempobj",tempobj);
 
@@ -96,8 +142,6 @@ export class ViewOutcomesComponent implements OnInit {
           // console.log('PatientDetailsListHeader=====',this.PatientDetailsListHeader);
         }
         else{
-          this.PatientDetailsList=[];
-    
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -107,11 +151,6 @@ export class ViewOutcomesComponent implements OnInit {
           });
         }
       })
-    }
-    else{
-      this.PatientDetailsList=[];
-      this.OpenDiagnosis=false;
-      this.OpenFinal=false;
     }
   }
 

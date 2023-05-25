@@ -473,193 +473,190 @@
             <form name="TaskModalUpdate" #TaskModalUpdate="ngForm" novalidate>
               <fieldset  *ngIf="commonApi.CompacctCookies.User_Type == 'A'" [disabled]="TaskDisabledFlag">
                 <div class="form-group">
-                  <div class="col-sm-6">
-                    <label class="control-label">Type of Work&nbsp;<span class="text-danger">*</span></label>
-                    <span (click)="Type_Of_Work.toggle($event)" class="btn-vk  pull-right createPatient"><i
-                        class="fa fa-fw  fa-plus"></i> Create</span>
+                      <div class="col-sm-6">
+                        <label class="control-label">Type of Work&nbsp;<span class="text-danger">*</span></label>
+                        <span (click)="Type_Of_Work.toggle($event)" class="btn-vk  pull-right createPatient"><i
+                            class="fa fa-fw  fa-plus"></i> Create</span>
 
-                    <p-dropdown [options]="TypeofWorkList" name="TypWork" [(ngModel)]="ObjTask.Work_Type_ID"
-                      [showClear]="true" [emptyFilterMessage]="' No Work Found'" [filter]="true"
-                      filterBy="label,value.name"  [placeholder]="'Select Work Name'"
-                      [virtualScroll]="true" itemSize="30" #TypWork="ngModel" [styleClass]="
-                                                TaskSubmitted && TypWork.errors?.required? 'clearance': ''"
-                      [required]="true">
-                    </p-dropdown>
-                  </div>
-                  <div class="col-sm-6">
-                    <label class="control-label">Tender Group&nbsp;<span class="text-danger">*</span></label>
-                    <p-dropdown [options]="GroupNameList" name="GroupName" [(ngModel)]="ObjTask.Budget_Group_ID"
-                      [showClear]="true" [emptyFilterMessage]="' No Group Found'" [filter]="true" (onChange)="ChangeGroupName()"
-                      filterBy="label,value.name" [placeholder]="'Select Group Name'" [virtualScroll]="true"
-                      itemSize="30" #GroupName="ngModel" [styleClass]="
-                                                TaskSubmitted && GroupName.errors?.required? 'clearance': ''"
-                      [required]="true">
-                    </p-dropdown>
-                  </div>
-                  <div class="col-sm-6">
-                    <label class="control-label">Summary Task&nbsp;<span class="text-danger">*</span></label>
-                    <span (click)="Summary_Task.toggle($event)" class="btn-vk  pull-right createPatient"><i
-                        class="fa fa-fw  fa-plus"></i> Create</span>
+                        <p-dropdown [options]="TypeofWorkList" name="TypWork" [(ngModel)]="ObjTask.Work_Type_ID"
+                          [showClear]="true" [emptyFilterMessage]="' No Work Found'" [filter]="true"
+                          filterBy="label,value.name"  [placeholder]="'Select Work Name'"
+                          [virtualScroll]="true" itemSize="30" #TypWork="ngModel" [styleClass]="
+                                                    TaskSubmitted && TypWork.errors?.required? 'clearance': ''"
+                          [required]="true">
+                        </p-dropdown>
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="control-label">Tender Group&nbsp;<span class="text-danger">*</span></label>
+                        <p-dropdown [options]="GroupNameList" name="GroupName" [(ngModel)]="ObjTask.Budget_Group_ID"
+                          [showClear]="true" [emptyFilterMessage]="' No Group Found'" [filter]="true" (onChange)="ChangeGroupName()"
+                          filterBy="label,value.name" [placeholder]="'Select Group Name'" [virtualScroll]="true"
+                          itemSize="30" #GroupName="ngModel" [styleClass]="
+                                                    TaskSubmitted && GroupName.errors?.required? 'clearance': ''"
+                          [required]="true">
+                        </p-dropdown>
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="control-label">Summary Task&nbsp;<span class="text-danger">*</span></label>
+                        <span (click)="Summary_Task.toggle($event)" class="btn-vk  pull-right createPatient"><i
+                            class="fa fa-fw  fa-plus"></i> Create</span>
 
-                    <p-dropdown [options]="SummaryList" name="Summary" [(ngModel)]="ObjTask.Summary_Task_ID"
-                      [showClear]="true" [emptyFilterMessage]="' No Summary Found'" [filter]="true"
-                      filterBy="label,value.name" [placeholder]="'Select Summary Name'" [virtualScroll]="true"
-                      itemSize="30" #Summary="ngModel" [styleClass]="
-                                                TaskSubmitted && Summary.errors?.required? 'clearance': ''"
-                      [required]="true">
-                    </p-dropdown>
-                  </div>
-                  <div class="col-sm-6">
-                    <label class="control-label">Task&nbsp;<span class="text-danger">*</span></label>
-                    <span (click)="Task_Create_Overlay.toggle($event)" class="btn-vk  pull-right createPatient"><i
-                        class="fa fa-fw  fa-plus"></i> Create</span>
-                    <p-dropdown [options]="TaskList" name="Taskname" [(ngModel)]="ObjTask.Task_ID" [showClear]="true"
-                      [emptyFilterMessage]="' No Task Found'"  [filter]="true"
-                      filterBy="label,value.name" [placeholder]="'Select Task Name'" [virtualScroll]="true"
-                      itemSize="30" #Taskname="ngModel" [styleClass]="
-                                            TaskSubmitted && Taskname.errors?.required? 'clearance': ''"
-                      [required]="true" >
-                    </p-dropdown>
-                  </div>
-                  <div class="col-sm-6">
-                    <label class="control-label">Remarks<sup class="text-danger"></sup></label>
-                    <textarea class="form-control" rows="4" name="remarkFollowUpCreation"
-                      #remarkFollowUpCreation="ngModel"
-                      [ngClass]="{'clearance':TaskSubmitted && remarkFollowUpCreation?.errors?.required}"
-                      [(ngModel)]="ObjTask.Remarks" placeholder="Remarks"></textarea>
-                  </div>
-                  <div class="col-sm-6">
-                    <label class="control-label">Job Name &nbsp;<span class="text-danger">*</span></label>
-                    <span (click)="Sub_Task_Create_Overlay.toggle($event)"
-                      class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
-                    <p-dropdown [options]="SubTaskList" name="SubTask" [(ngModel)]="ObjTask.Job_ID" [showClear]="true"
-                      [emptyFilterMessage]="' No Job Found'" [filter]="true" filterBy="label,value.name"
-                      [placeholder]="'Select Job Name'" [virtualScroll]="true" itemSize="30" #SubTask="ngModel"
-                      (onChange)="GetBOM()"
-                      [styleClass]="TaskSubmitted && SubTask.errors?.required? 'clearance': ''" [required]="true">
-                    </p-dropdown>
-                  </div>
-                  <!-- <div class="col-sm-12">
-                                            <label class="control-label">Subject<sup class="text-danger">*</sup></label>
-                                            <textarea class="form-control" rows="2" name="Subject"
-                                            #Subject="ngModel"
-                                            [ngClass]="{'clearance':TaskSubmitted && Subject?.errors?.required}"
-                                            [(ngModel)]="ObjTask.Task_Subject" placeholder="Subject"
-                                            required></textarea>
-                                        </div> -->
+                        <p-dropdown [options]="SummaryList" name="Summary" [(ngModel)]="ObjTask.Summary_Task_ID"
+                          [showClear]="true" [emptyFilterMessage]="' No Summary Found'" [filter]="true"
+                          filterBy="label,value.name" [placeholder]="'Select Summary Name'" [virtualScroll]="true"
+                          itemSize="30" #Summary="ngModel" [styleClass]="
+                                                    TaskSubmitted && Summary.errors?.required? 'clearance': ''"
+                          [required]="true">
+                        </p-dropdown>
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="control-label">Task&nbsp;<span class="text-danger">*</span></label>
+                        <span (click)="Task_Create_Overlay.toggle($event)" class="btn-vk  pull-right createPatient"><i
+                            class="fa fa-fw  fa-plus"></i> Create</span>
+                        <p-dropdown [options]="TaskList" name="Taskname" [(ngModel)]="ObjTask.Task_ID" [showClear]="true"
+                          [emptyFilterMessage]="' No Task Found'"  [filter]="true"
+                          filterBy="label,value.name" [placeholder]="'Select Task Name'" [virtualScroll]="true"
+                          itemSize="30" #Taskname="ngModel" [styleClass]="
+                                                TaskSubmitted && Taskname.errors?.required? 'clearance': ''"
+                          [required]="true" >
+                        </p-dropdown>
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="control-label">Remarks<sup class="text-danger"></sup></label>
+                        <textarea class="form-control" rows="4" name="remarkFollowUpCreation"
+                          #remarkFollowUpCreation="ngModel"
+                          [ngClass]="{'clearance':TaskSubmitted && remarkFollowUpCreation?.errors?.required}"
+                          [(ngModel)]="ObjTask.Remarks" placeholder="Remarks"></textarea>
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="control-label">Job Name &nbsp;<span class="text-danger">*</span></label>
+                        <span (click)="Sub_Task_Create_Overlay.toggle($event)"
+                          class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                        <p-dropdown [options]="SubTaskList" name="SubTask" [(ngModel)]="ObjTask.Job_ID" [showClear]="true"
+                          [emptyFilterMessage]="' No Job Found'" [filter]="true" filterBy="label,value.name"
+                          [placeholder]="'Select Job Name'" [virtualScroll]="true" itemSize="30" #SubTask="ngModel"
+                          (onChange)="GetBOM()"
+                          [styleClass]="TaskSubmitted && SubTask.errors?.required? 'clearance': ''" [required]="true">
+                        </p-dropdown>
+                      </div>
+                      <!-- <div class="col-sm-12">
+                                                <label class="control-label">Subject<sup class="text-danger">*</sup></label>
+                                                <textarea class="form-control" rows="2" name="Subject"
+                                                #Subject="ngModel"
+                                                [ngClass]="{'clearance':TaskSubmitted && Subject?.errors?.required}"
+                                                [(ngModel)]="ObjTask.Task_Subject" placeholder="Subject"
+                                                required></textarea>
+                                            </div> -->
 
-                  <div class="col-sm-6">
-                    <label class="control-label">Expected Start Date<sup class="text-danger">*</sup></label>
-                    <input type="date" class="form-control" id="taskstartdate1" #taskstartdate1="ngModel"
-                      name="taskstartdate1" [ngModel]="TaskStartDate | date:'yyyy-MM-dd'"
-                      (ngModelChange)="TaskStartDate = $event"
-                      [ngClass]="{'clearance':TaskSubmitted && taskstartdate1?.errors?.required}" required>
-                  </div>
-                 
-                 
-                  <!-- <div class="col-sm-6">
-                                            <label class="control-label">Target Date<sup class="text-danger">*</sup></label>
-                                            <input type="date" class="form-control"
-                                            id="taskenddate1" #taskenddate1="ngModel"
-                                            name="taskenddate1" [ngModel]="TaskEndtDate | date:'yyyy-MM-dd'"
-                                            (ngModelChange)="TaskEndtDate = $event"
-                                            [ngClass]="{'clearance':TaskSubmitted && taskenddate1?.errors?.required}"
-                                            required>
-                                        </div> -->
-                  
-                  <div class="col-sm-3">
-                    <label class="control-label">
-                      No Of Days <sup class="text-danger">*</sup></label>
-                    <input class="form-control" name="No_Of_Days" #No_Of_Days="ngModel" [(ngModel)]="ObjTask.No_Of_Days"
-                      CompacctDigitonly="true" [ngClass]="{'clearance': TaskSubmitted && No_Of_Days?.errors?.required}"
-                      placeholder="No Of Days" [required]="true" />
-                  </div>
-                  <div class="col-sm-3">
-                    <label class="control-label">Status<sup class="text-danger">*</sup></label>
-                    <select class="form-control" [ngClass]="{'clearance':TaskSubmitted && Status?.errors?.required}"
-                      name="Status" #Status="ngModel" [(ngModel)]="ObjTask.Task_Status" required>
-                      <option [ngValue]="undefined">Select</option>
-                      <option value="Not Started">Not Started</option>
-                      <option value="In Progress">In Progress</option>
-                      <option value="Completed">Completed</option>
-                    </select>
-                  </div>
-                  <div class="col-sm-6">
-                    <label class="control-label">
-                      Assign To <sup class="text-danger">*</sup></label>
-                    <select class="form-control" name='Assign' #Assign='ngModel'
-                      [ngClass]="{'clearance': TaskSubmitted &&  Assign?.errors?.required}"
-                      [(ngModel)]="ObjTask.User_ID" required>
-                      <option [ngValue]="undefined">Select</option>
-                      <option *ngFor="let option of AssignToList" [ngValue]="option.User_ID">{{option.Name}}</option>
-                    </select>
-                  </div>
-                  <div class="col-sm-3">
-                    <label class="control-label">Expect Bill<sup class="text-danger">*</sup></label><br>
-                    <p-selectButton [options]="ExpectBillType" name="Expect_Billing" (onChange)="ExpectBillTypeChange()"
-                      [(ngModel)]="ObjTask.Expect_Billing"></p-selectButton>
-                  </div>
-                  <div class="col-sm-3">
-                    <label class="control-label">Dependency Required<sup class="text-danger">*</sup></label><br>
-                    <p-selectButton [options]="ExpectBillType" name="Required" (onChange)="DependencyRequiredChange()"
-                      [(ngModel)]="ObjTask.Dependency_Required"></p-selectButton>
-                  </div>
-                  <div class="col-sm-3">
-                    <label class="control-label">BOM Required<sup class="text-danger">*</sup></label><br>
-                    <p-selectButton [options]="ExpectBillType" name="BOM" (onChange)="DependencyRequiredChange()"
-                      [(ngModel)]="ObjTask.BOM"></p-selectButton>
-                  </div>
-                  <div class="col-sm-3" *ngIf="ObjTask.Expect_Billing === 'Y'">
-                    <label class="control-label">Waitage Field<sup class="text-danger">*</sup></label>
-                      <input class="form-control" type="text" name="Waitage_Field" #Waitage_Field="ngModel"
-                      placeholder="Select"
-                        [ngClass]="{'clearance':TaskSubmitted && Waitage_Field?.errors?.required}" list="suggestions"
-                        [(ngModel)]="ObjTask.Waitage_Field" required>
-                        <datalist id="suggestions">
-                          <option value="Type of Work">
-                          <option value="Tender Group">
-                          <option value="Summary Task">
-                          <option value="Task Name">
-                          <option value="Job Name">
-                      </datalist>
-                  </div>                      
-                  <div class="col-sm-3" *ngIf="ObjTask.Expect_Billing === 'Y'">
-                    <label class="control-label">Waitage Persentage<sup class="text-danger">*</sup></label>
-                    <div class="input-group">
-
-                      <input class="form-control" type="text" name="Waitage_Persentage" #Waitage_Persentage="ngModel"
-                        [ngClass]="{'clearance':TaskSubmitted && Waitage_Persentage?.errors?.required}"
-                        [(ngModel)]="ObjTask.Waitage_Value" CompacctDigitonly="true" required>
-                      <span class="input-group-addon">%</span>
-                    </div>
-                  </div>
-                  <div class="col-sm-3"  *ngIf="ObjTask.Dependency_Required ==='Y'">
-                    <label class="control-label">Dependency Relationship<sup class="text-danger">*</sup></label>
-                    <select class="form-control" 
-                    [ngClass]="{'clearance':TaskSubmitted && Relationship?.errors?.required}"
-                    name="Relationship"
-                    #Relationship="ngModel"
-                    [(ngModel)]="ObjTask.Dependency_Relationship"
-                    required>
-                        <option [ngValue]="undefined">Select</option>
-                        <option value="SS">Start to Start(SS)</option>
-                        <option value="SF">Start to Finish(SF)</option>
-                        <option value="FS">Finish to Start(FS)</option>
-                        <option value="FF">Finish to Finish(FF)</option>
-                    </select>
-                  </div>
-                  <div class="col-sm-6" *ngIf="ObjTask.Dependency_Required ==='Y'">
-                    <label class="control-label">Dependency&nbsp;<span class="text-danger">*</span></label>
-                    <p-dropdown [options]="DependencyList" name="Dependency" [(ngModel)]="ObjTask.Dependency_Job_ID"
-                      [showClear]="true" [emptyFilterMessage]="' No Dependency Found'" [filter]="true"
-                      filterBy="label,value.name" [placeholder]="'Select Dependency Name'" [virtualScroll]="true"
-                      itemSize="30" #Dependency="ngModel"
-                       [styleClass]="TaskSubmitted && Dependency.errors?.required? 'clearance': ''"
-                       [required]="true">
-                    </p-dropdown>
-                  </div>
+                      <div class="col-sm-6">
+                        <label class="control-label">Expected Start Date<sup class="text-danger">*</sup></label>
+                        <input type="date" class="form-control" id="taskstartdate1" #taskstartdate1="ngModel"
+                          name="taskstartdate1" [ngModel]="TaskStartDate | date:'yyyy-MM-dd'"
+                          (ngModelChange)="TaskStartDate = $event"
+                          [ngClass]="{'clearance':TaskSubmitted && taskstartdate1?.errors?.required}" required>
+                      </div>
+                    
+                    
+                      <!-- <div class="col-sm-6">
+                                                <label class="control-label">Target Date<sup class="text-danger">*</sup></label>
+                                                <input type="date" class="form-control"
+                                                id="taskenddate1" #taskenddate1="ngModel"
+                                                name="taskenddate1" [ngModel]="TaskEndtDate | date:'yyyy-MM-dd'"
+                                                (ngModelChange)="TaskEndtDate = $event"
+                                                [ngClass]="{'clearance':TaskSubmitted && taskenddate1?.errors?.required}"
+                                                required>
+                                            </div> -->
+                      
+                      <div class="col-sm-3">
+                        <label class="control-label">
+                          No Of Days <sup class="text-danger">*</sup></label>
+                        <input class="form-control" name="No_Of_Days" #No_Of_Days="ngModel" [(ngModel)]="ObjTask.No_Of_Days"
+                          CompacctDigitonly="true" [ngClass]="{'clearance': TaskSubmitted && No_Of_Days?.errors?.required}"
+                          placeholder="No Of Days" [required]="true" />
+                      </div>
+                      <div class="col-sm-3">
+                        <label class="control-label">Status<sup class="text-danger">*</sup></label>
+                        <select class="form-control" [ngClass]="{'clearance':TaskSubmitted && Status?.errors?.required}"
+                          name="Status" #Status="ngModel" [(ngModel)]="ObjTask.Task_Status" required>
+                          <option [ngValue]="undefined">Select</option>
+                          <option value="Not Started">Not Started</option>
+                          <option value="In Progress">In Progress</option>
+                          <option value="Completed">Completed</option>
+                        </select>
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="control-label">
+                          Assign To <sup class="text-danger">*</sup></label>
+                        <select class="form-control" name='Assign' #Assign='ngModel'
+                          [ngClass]="{'clearance': TaskSubmitted &&  Assign?.errors?.required}"
+                          [(ngModel)]="ObjTask.User_ID" required>
+                          <option [ngValue]="undefined">Select</option>
+                          <option *ngFor="let option of AssignToList" [ngValue]="option.User_ID">{{option.Name}}</option>
+                        </select>
+                      </div>
+                      <div class="col-sm-3">
+                        <label class="control-label">Expect Bill<sup class="text-danger">*</sup></label><br>
+                        <p-selectButton [options]="ExpectBillType" name="Expect_Billing" (onChange)="ExpectBillTypeChange()"
+                          [(ngModel)]="ObjTask.Expect_Billing"></p-selectButton>
+                      </div>
+                      <div class="col-sm-3">
+                        <label class="control-label">Dependency Required<sup class="text-danger">*</sup></label><br>
+                        <p-selectButton [options]="ExpectBillType" name="Required" (onChange)="DependencyRequiredChange()"
+                          [(ngModel)]="ObjTask.Dependency_Required"></p-selectButton>
+                      </div>
+                      <div class="col-sm-3">
+                        <label class="control-label">BOM Required<sup class="text-danger">*</sup></label><br>
+                        <p-selectButton [options]="ExpectBillType" name="BOM" (onChange)="DependencyRequiredChange()"
+                          [(ngModel)]="ObjTask.BOM"></p-selectButton>
+                      </div>
+                      <div class="col-sm-3" *ngIf="ObjTask.Dependency_Required ==='Y'">
+                        <label class="control-label">Dependency Relationship<sup class="text-danger">*</sup></label>
+                        <select class="form-control" [ngClass]="{'clearance':TaskSubmitted && Relationship?.errors?.required}"
+                          name="Relationship" #Relationship="ngModel" [(ngModel)]="ObjTask.Dependency_Relationship" required>
+                          <option [ngValue]="undefined">Select</option>
+                          <option value="SS">Start to Start(SS)</option>
+                          <option value="SF">Start to Finish(SF)</option>
+                          <option value="FS">Finish to Start(FS)</option>
+                          <option value="FF">Finish to Finish(FF)</option>
+                        </select>
+                      </div>
+                      <div class="col-sm-6" *ngIf="ObjTask.Dependency_Required ==='Y'">
+                        <label class="control-label">Dependency&nbsp;<span class="text-danger">*</span></label>
+                        <p-dropdown [options]="DependencyList" name="Dependency" [(ngModel)]="ObjTask.Dependency_Job_ID" [showClear]="true"
+                          [emptyFilterMessage]="' No Dependency Found'" [filter]="true" filterBy="label,value.name"
+                          [placeholder]="'Select Dependency Name'" [virtualScroll]="true" itemSize="30" #Dependency="ngModel"
+                          [styleClass]="TaskSubmitted && Dependency.errors?.required? 'clearance': ''" [required]="true">
+                        </p-dropdown>
+                      </div>
+                      <div class="clearfix" *ngIf="ObjTask.Expect_Billing === 'Y'"></div>
                 </div>
               </fieldset>
+            </form>
+            <form name="TaskUpdate"*ngIf="ObjTask.Expect_Billing === 'Y'" #TaskUpdate="ngForm" novalidate>
+              <div class="col-sm-3" >
+                <label class="control-label">Fin Year<sup class="text-danger">*</sup></label>
+                <p-dropdown [options]="finList" name="Year" [(ngModel)]="ObjInflow.Fin_Year_ID" [showClear]="true"
+                  [emptyFilterMessage]="' No fin Year List Found'" [filter]="true" filterBy="label,value.name"
+                  [placeholder]="'Select fin Year'" [virtualScroll]="true" itemSize="30" #Year="ngModel"
+                  [styleClass]=" SubmittedForm && Year.errors?.required? 'clearance': ''" [required]="true">
+                </p-dropdown>
+              </div>
+              <div class="col-sm-3">
+                <label class="control-label">Inflow<sup class="text-danger">*</sup></label>
+                <input class="form-control" type="text" name="Inflow" #Inflow="ngModel"
+                  [ngClass]="{'clearance':SubmittedForm && Inflow?.errors?.required}" placeholder="Inflow"
+                  [(ngModel)]="ObjInflow.Inflow" CompacctDigitonly="true" required>
+              </div>
+              <div class="col-sm-3">
+                <label class="control-label">Outflow<sup class="text-danger">*</sup></label>
+                <input class="form-control" type="text" name="Outflow" #Outflow="ngModel" placeholder="Outcome"
+                  [ngClass]="{'clearance':SubmittedForm && Outflow?.errors?.required}" [(ngModel)]="ObjInflow.Outflow"
+                  CompacctDigitonly="true" required>
+              </div>
+              <div class="col-sm-3">
+                <button class="btn btn-success custombutton" (click)="AddSmall(TaskUpdate.form.valid)">
+                  <i class="fa fa-fw fa-plus"></i>&nbsp;Add</button>
+              </div>
             </form>
             <form name="TaskModalUpdate" *ngIf="ObjTask.BOM === 'Y' && ObjProdPlan.Budget_Group_ID && ObjTask.Job_ID" #TaskModalUpdate="ngForm" novalidate>
                 <div class="form-group" 
@@ -742,14 +739,43 @@
                     
                 </div>
             </form>
-            <div class="box-footer"  *ngIf="commonApi.CompacctCookies.User_Type == 'A'">
+            <div class="panel panel-primary"  *ngIf="SmallAddList.length" style="margin-top: 79px; border-radius: 30px;margin-bottom: 0;margin-left: 55px; margin-right: 55px;">
+              <div class="panel-body" style="padding: 15px;">
+                <div class="table-responsive no-padding">
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr style="background-color:#3c8dbc;color:white;">
+                        <th>Sl.</th>
+                        <th>FIN YEAR</th>
+                        <th>INFLOW</th>
+                        <th>OUTFLOW</th>
+                        <th>DELETE</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let d of SmallAddList;let odd = odd;let index = index" [class.even]="odd" >
+                        <td>{{index+1}}</td>
+                        <td>{{d.Fin_Year_Name}}</td>
+                        <td>{{d.Inflow}}</td>
+                        <td>{{d.Outflow}}</td>
+                        <td>
+                          <button (click)="DeleteNew(index)"class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>
+                        </td>                   
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-3 pull-right"  *ngIf="commonApi.CompacctCookies.User_Type == 'A'">
               <button class="btn btn-warning custombutton" 
                 (click)="AddTask(TaskModalUpdate.form.valid)" [disabled]="TaskSubmitSpinner">
                 <p-progressSpinner *ngIf="TaskSubmitSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
                   animationDuration=".5s"></p-progressSpinner>
                 <i class="fa fa-fw fa-plus"></i>&nbsp;Save Project Task</button>
             </div>
-                <div class="table-responsive no-padding" style="margin-top:2.5em">
+            <br>
+                <div class="table-responsive no-padding" style="margin-top:10rem">
                   <table class="table table-bordered">
                     <thead>
                       <tr style="background-color:#3c8dbc;color:white;">
@@ -1019,49 +1045,17 @@
                   </div> -->
                   <div class="col-sm-3">
                     <label class="control-label">Expect Bill<sup class="text-danger">*</sup></label><br>
-                    <p-selectButton [options]="ExpectBillType" name="Expect_Billing"
+                    <p-selectButton [options]="ExpectBillType" name="Expect_Billing"  (onChange)="ExpectBillTypeChange()"
                       [(ngModel)]="ObjTask.Expect_Billing"></p-selectButton>
                   </div>
-                  <!-- <div class="col-sm-12">
-                    <div style="
-                                            margin-top: 1em;
-                                            margin-bottom: 1.5em;
-                                            background: #8080806b;
-                                            height: 1px;
-                                        "></div>
-                  </div> -->
-                  <div class="col-sm-3" *ngIf="ObjTask.Expect_Billing === 'Y'">
-                    <label class="control-label">Waitage Field<sup class="text-danger">*</sup></label>
-                      <input class="form-control" type="text" name="Waitage_Field" #Waitage_Field="ngModel"
-                      placeholder="Select"
-                        [ngClass]="{'clearance':TaskSubmitted && Waitage_Field?.errors?.required}" list="suggestions"
-                        [(ngModel)]="ObjTask.Waitage_Field" required>
-                        <datalist id="suggestions">
-                          <option value="Type of Work">
-                          <option value="Tender Group">
-                          <option value="Summary Task">
-                          <option value="Task Name">
-                          <option value="Job Name">
-                      </datalist>
-                  </div> 
-                  <div class="col-sm-3" *ngIf="ObjTask.Expect_Billing === 'Y'">
-                    <label class="control-label">Waitage Persentage<sup class="text-danger">*</sup></label>
-                    <div class="input-group">
-
-                      <input class="form-control" type="text" name="Waitage_Persentage" #Waitage_Persentage="ngModel"
-                        [ngClass]="{'clearance':TaskSubmitted && Waitage_Persentage?.errors?.required}"
-                        [(ngModel)]="ObjTask.Waitage_Value" CompacctDigitonly="true" required>
-                      <span class="input-group-addon">%</span>
-                    </div>
-                  </div>
-                  <div class="col-sm-2">
+                  <div class="col-sm-3">
                     <label class="control-label">
                       No Of Days <sup class="text-danger">*</sup></label>
                     <input class="form-control" name="No_Of_Days" #No_Of_Days="ngModel" [(ngModel)]="ObjTask.No_Of_Days"
                       CompacctDigitonly="true" [ngClass]="{'clearance': TaskSubmitted && No_Of_Days?.errors?.required}"
                       placeholder="No Of Days" [required]="true" />
                   </div>
-                  <div class="col-sm-2">
+                  <div class="col-sm-3">
                     <label class="control-label">Status<sup class="text-danger">*</sup></label>
                     <select class="form-control" [ngClass]="{'clearance':TaskSubmitted && Status?.errors?.required}"
                       name="Status" #Status="ngModel" [(ngModel)]="ObjTask.Task_Status" required>
@@ -1110,19 +1104,65 @@
                         <option value="FS">Finish to Start(FS)</option>
                         <option value="FF">Finish to Finish(FF)</option>
                     </select>
-                  </div>
-                  <!-- <div class="col-sm-5">
-                    <label class="control-label">Dependency&nbsp;<span class="text-danger"></span></label>
-                    <p-dropdown [options]="SubTaskList" name="Dependency" [(ngModel)]="ObjTask.Dependency_Job_ID"
-                      [showClear]="true" [emptyFilterMessage]="' No Dependency Found'" [filter]="true"
-                      filterBy="label,value.name" [placeholder]="'Select Dependency Name'" [virtualScroll]="true"
-                      itemSize="30" #Dependency="ngModel" 
-                      [styleClass]="TaskSubmitted && Dependency.errors?.required? 'clearance': ''">
-                    </p-dropdown>
-                  </div> -->
+                  </div>               
                 </div>
               </fieldset>
             </form>
+            <form name="TaskUpdate" *ngIf="ObjTask.Expect_Billing === 'Y'" #TaskUpdate="ngForm" novalidate>
+              <div class="col-sm-3">
+                <label class="control-label">Fin Year<sup class="text-danger">*</sup></label>
+                <p-dropdown [options]="finList" name="Year" [(ngModel)]="ObjInflow.Fin_Year_ID" [showClear]="true"
+                  [emptyFilterMessage]="' No fin Year List Found'" [filter]="true" filterBy="label,value.name"
+                  [placeholder]="'Select fin Year'" [virtualScroll]="true" itemSize="30" #Year="ngModel"
+                  [styleClass]=" SubmittedForm && Year.errors?.required? 'clearance': ''" [required]="true">
+                </p-dropdown>
+              </div>
+              <div class="col-sm-3">
+                <label class="control-label">Inflow<sup class="text-danger">*</sup></label>
+                <input class="form-control" type="text" name="Inflow" #Inflow="ngModel"
+                  [ngClass]="{'clearance':SubmittedForm && Inflow?.errors?.required}" placeholder="Inflow"
+                  [(ngModel)]="ObjInflow.Inflow" CompacctDigitonly="true" required>
+              </div>
+              <div class="col-sm-3">
+                <label class="control-label">Outflow<sup class="text-danger">*</sup></label>
+                <input class="form-control" type="text" name="Outflow" #Outflow="ngModel" placeholder="Outcome"
+                  [ngClass]="{'clearance':SubmittedForm && Outflow?.errors?.required}" [(ngModel)]="ObjInflow.Outflow"
+                  CompacctDigitonly="true" required>
+              </div>
+              <div class="col-sm-3">
+                <button class="btn btn-success custombutton" (click)="AddSmall(TaskUpdate.form.valid)">
+                  <i class="fa fa-fw fa-plus"></i>&nbsp;Add</button>
+              </div>
+            </form>
+            <div class="panel panel-primary" *ngIf="SmallAddList.length"
+              style="margin-top: 79px; border-radius: 30px;margin-bottom: 0;margin-left: 55px; margin-right: 55px;">
+              <div class="panel-body" style="padding: 15px;">
+                <div class="table-responsive no-padding">
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr style="background-color:#3c8dbc;color:white;">
+                        <th>Sl.</th>
+                        <th>FIN YEAR</th>
+                        <th>INFLOW</th>
+                        <th>OUTFLOW</th>
+                        <th>DELETE</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let d of SmallAddList;let odd = odd;let index = index" [class.even]="odd">
+                        <td>{{index+1}}</td>
+                        <td>{{d.Fin_Year_Name}}</td>
+                        <td>{{d.Inflow}}</td>
+                        <td>{{d.Outflow}}</td>
+                        <td>
+                          <button (click)="DeleteNew(index)" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

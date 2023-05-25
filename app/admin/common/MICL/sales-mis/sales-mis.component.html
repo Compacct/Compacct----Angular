@@ -97,9 +97,9 @@
                                                 <th nowrap colspan="7" style="text-align: center; color: black !important;
                                                 background-color: #9ab8cb !important; border: 1px solid black !important;">AS PER LETTER OF INTENT
                                                 </th>
-                                                <th nowrap colspan="3" style="text-align: center; color: black !important;
+                                                <!-- <th nowrap colspan="3" style="text-align: center; color: black !important;
                                                 background-color: #e5b694 !important; border: 1px solid black !important;">AS PER PROFORMA INVOICE
-                                                </th>
+                                                </th> -->
                                                 <th nowrap colspan="3" style="text-align: center; color: black !important;
                                                 background-color: #f6d889 !important; border: 1px solid black !important;">AS PER SALES ORDER
                                                 </th>
@@ -129,12 +129,12 @@
                                                 <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #9ab8cb !important; border: 1px solid black !important;">Pending Qty</th>
 
-                                                <th nowrap style="text-align: center; color: black !important;
+                                                <!-- <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #e5b694 !important; border: 1px solid black !important;">Qty</th>
                                                 <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #e5b694 !important; border: 1px solid black !important;">Amount</th>
                                                 <th nowrap style="text-align: center; color: black !important;
-                                                background-color: #e5b694 !important; border: 1px solid black !important;">Pending Qty</th>
+                                                background-color: #e5b694 !important; border: 1px solid black !important;">Pending Qty</th> -->
 
                                                 <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #f6d889 !important; border: 1px solid black !important;">Qty</th>
@@ -192,15 +192,15 @@
                                                     </div>
                                                 </td> -->
                                                 <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetLIview(col)">{{col.LI_Doc_No}}</a></td>
-                                                <td nowrap style="text-align: center;">{{col.LI_Doc_Date | date:"dd/MMM/yy"}}</td>
+                                                <td nowrap style="text-align: center;">{{col.LI_Doc_Date | date:"dd/MMM/yyyy"}}</td>
                                                 <td nowrap style="text-align: center;">{{col.LI_Customer}}</td>
                                                 <td nowrap style="text-align: center;">{{col.Product_Name}}</td>
                                                 <td nowrap style="text-align: center;">{{col.LI_Qty}}</td>
                                                 <td nowrap style="text-align: center;">{{col.LI_Amount}}</td>
                                                 <td nowrap style="text-align: center;">{{col.Pending_LI_Qty}}</td>
-                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetPI(col)">{{col.PI_Qty}}</a></td>
+                                                <!-- <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetPI(col)">{{col.PI_Qty}}</a></td>
                                                 <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetPI(col)">{{col.PI_Total_Amount}}</a></td>
-                                                <td nowrap style="text-align: center;">{{col.Pending_PI_Qty}}</td>
+                                                <td nowrap style="text-align: center;">{{col.Pending_PI_Qty}}</td> -->
                                                 <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetSO(col)">{{col.SO_Qty}}</a></td>
                                                 <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetSO(col)">{{col.SO_Total_Amount}}</a></td>
                                                 <td nowrap style="text-align: center;">{{col.Pending_SO_Qty}}</td>
@@ -234,9 +234,9 @@
                                       <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Show Dispatch MIS
                                    </button>
                                 </div>
-                                <!-- <div class="col-sm-2" *ngIf="SalesMISList.length">
-                                    <button  class="btn btn-success custombutton"  (click)="ExportToExcel()">Export To Excel</button>
-                                </div> -->
+                                <div class="col-sm-2" *ngIf="DispatchMISList.length">
+                                    <button  class="btn btn-success custombutton"  (click)="ExportToExcelDispatchMIS()">Export To Excel</button>
+                                </div>
                             </div>
                         </form>
                         <hr>
@@ -259,15 +259,34 @@
 
                                         <ng-template pTemplate="header">
                                             <tr>
-                                                <th nowrap="nowrap" *ngFor="let option of DispatchMISListHeader">{{option.replaceAll('_',' ')}}</th> 
+                                                <th rowspan="2">SL NO</th>
+                                                <th rowspan="2">NAME OF THE CUSTOMER</th>
+                                                <th [attr.colspan]="DispatchMISListHeader.length - 3" nowrap="nowrap" style="text-align: center;">Grade</th>
+                                                <th rowspan="2">Total</th>
                                             </tr>
+                                            <tr>
+                                                <ng-container *ngFor="let option of DispatchMISListHeader">
+                                                    <th *ngIf="option != 'SlNo' && option != 'Sub_Ledger_Billing_Name' && option != 'Total'" nowrap="nowrap" >
+                                                    {{option.replaceAll('_',' ')}}
+                                                </th>
+                                                </ng-container>
+                                            </tr>
+                                                
+                                                
                                         </ng-template>
-                                        <ng-template pTemplate="body" let-col>
+                                        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
                                             <tr>
                                                 <ng-container *ngFor="let option of DispatchMISListHeader">
                                                     <td nowrap="nowrap">{{col[option]}}</td>
                                                 </ng-container>
                                                 
+                                            </tr>
+                                            <tr *ngIf='rowIndex === (DispatchMISList.length - 1)'>
+                                                <ng-container *ngFor="let option of DispatchMISListHeader">
+                                                     <td *ngIf="option == 'SlNo'" colspan="2" style="text-align: right;">Total</td>
+                                                     <td *ngIf="option != 'SlNo' && option != 'Sub_Ledger_Billing_Name' " >{{CalculateColumn(option)}}</td>
+                                                </ng-container>
+                                                    
                                             </tr>
                                         </ng-template>
                                         <ng-template pTemplate="paginatorright" let-state>
@@ -820,6 +839,7 @@
         <ng-template pTemplate="header">
             <tr>
                 <th>Sale Order No</th>
+                <th>Customer P.O No</th>
                 <th>Date</th>
                 <th>Customer</th>
                 <th>Qty</th>
@@ -829,6 +849,7 @@
         <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
             <tr>
                 <td><a class="btn btn-link" (click)="GetSOviewDetails(col.SO_Doc_No)">{{col.SO_Doc_No}}</a></td>
+                <td>{{col.Customer_PO_No ? col.Customer_PO_No : '-'}}</td>
                 <td>{{col.SO_Doc_Date | date : "dd/MMM/yy"}}</td>
                 <td>{{col.SO_Customer ? col.SO_Customer : '-'}}</td>
                 <td>{{col.SO_Qty ? col.SO_Qty : '-'}}</td>

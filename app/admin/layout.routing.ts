@@ -372,6 +372,8 @@ import { NPSupTktSalesReturnAccountsComponent } from "./common/TicketManagement/
 import { EmployeeSalaryMasterJohComponent } from './common/Attendance/employee-salary-master-joh/employee-salary-master-joh.component';
 import { OldProjectMasterComponent } from './common/Harbauer/old-project-master/old-project-master.component';
 import { MasterProjectTeamComponent } from './common/Harbauer/master-project-team/master-project-team.component';
+import { HrCouponReportComponent } from "./common/MICL/hr-coupon-report/hr-coupon-report.component";
+import { JohDailyAttendanceComponent } from './common/Attendance/joh-daily-attendance/joh-daily-attendance.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2829,6 +2831,20 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: MasterProjectTeamComponent,
         data: {
           title: 'Project Team'
+    }
+    },
+    {
+      path: 'MICL_HR_Coupon_Report',
+        component: HrCouponReportComponent,
+        data: {
+          title: 'HR Coupon Report'
+    }
+    },
+    {
+      path: 'Daily_Attendance_JOH',
+        component: JohDailyAttendanceComponent,
+        data: {
+          title: 'Daily Attendance JOH'
     }
     },
     /*{

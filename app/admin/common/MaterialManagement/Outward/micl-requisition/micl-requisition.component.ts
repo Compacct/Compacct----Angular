@@ -180,6 +180,7 @@ export class MiclRequisitionComponent implements OnInit {
     this.buttonname = "Save";
     this.clearData();
     this.Current_Stock = undefined;
+    this.reqDocNo = undefined;
   }
   clearData(){
     if(this.openProject === "Y"){

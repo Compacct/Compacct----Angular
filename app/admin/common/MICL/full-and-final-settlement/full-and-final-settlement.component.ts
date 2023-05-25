@@ -196,14 +196,13 @@ export class FullAndFinalSettlementComponent implements OnInit {
         this.ObjFullAndFinalSettlement.Last_Gross_Amount = Number(Last_Gross_Amount).toFixed(2);
 
         this.GetBonusDetails();
+        this.CalculateNoticePeriod(); 
 
         this.ObjFullAndFinalSettlement.EPF_Deduction = data[0].EPF ? data[0].EPF : 0;
         this.ObjFullAndFinalSettlement.ESI_Deduction = data[0].ESIC ? data[0].ESIC : 0;
         this.ObjFullAndFinalSettlement.P_Tax_Deduction = data[0].P_TAX ? data[0].P_TAX : 0;
         this.ObjFullAndFinalSettlement.TDS_Deduction = data[0].TDS ? data[0].TDS : 0;
-        var Total_Deduction = Number(this.ObjFullAndFinalSettlement.EPF_Deduction) + Number(this.ObjFullAndFinalSettlement.ESI_Deduction) +
-                              Number(this.ObjFullAndFinalSettlement.P_Tax_Deduction) + Number(this.ObjFullAndFinalSettlement.TDS_Deduction)
-        this.ObjFullAndFinalSettlement.Total_Deduction = Number(Total_Deduction).toFixed(2);
+        this.GetTotalDeduction();
       })
   }
   GetBonusDetails(){
@@ -246,6 +245,33 @@ export class FullAndFinalSettlementComponent implements OnInit {
         this.GetNetPayble();
       })
   
+  }
+  CalculateNoticePeriod(){
+    if(this.ObjFullAndFinalSettlement.Notice_Period_Day){
+        const date = new Date(this.Leave_Dt);
+        const totaldays =  new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+      // console.log("totaldays====",totaldays);
+      var result = Number(this.ObjFullAndFinalSettlement.Last_Gross_Amount / totaldays).toFixed(2);
+      var noticeperioddeduction = Number(this.ObjFullAndFinalSettlement.Notice_Period_Day * Number(result)).toFixed(2);
+      this.ObjFullAndFinalSettlement.Notice_Period_Amount = Number(noticeperioddeduction);
+      // Notice Period Deduction--->
+      // Notice Period Deduction=Gross Salary/Last Month Total Days=Result1
+      //                   =Input Deduction Days * Result1
+      //                   = Value
+      this.GetTotalDeduction();
+      this.GetNetPayble();
+    }
+    else {
+      this.ObjFullAndFinalSettlement.Notice_Period_Amount = 0;
+      this.GetTotalDeduction();
+      this.GetNetPayble();
+    }
+  }
+  GetTotalDeduction(){
+    var Total_Deduction = Number(this.ObjFullAndFinalSettlement.EPF_Deduction) + Number(this.ObjFullAndFinalSettlement.ESI_Deduction) +
+                              Number(this.ObjFullAndFinalSettlement.P_Tax_Deduction) + Number(this.ObjFullAndFinalSettlement.TDS_Deduction) +
+                              Number(this.ObjFullAndFinalSettlement.Notice_Period_Amount);
+        this.ObjFullAndFinalSettlement.Total_Deduction = Number(Total_Deduction).toFixed(2);
   }
   GetNetPayble(){
     var TotalAB = (Number(this.ObjFullAndFinalSettlement.Last_Gross_Amount) + Number(this.ObjFullAndFinalSettlement.Total_Statutory_Earnings)).toFixed(2);
@@ -331,6 +357,20 @@ GetFullFinalSettlementBrowse(){
     })
     
 }
+Printfullandfinal(empid:any) {
+  //console.log("DocNo",DocNo)
+  if(empid) {
+  const objtemp = {
+    "SP_String": "SP_HR_Full_And_Final_Settlement",
+    "Report_Name_String": "Full_and_Final_Settlement_Print"
+    }
+  this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+    var printlink = data[0].Column1;
+    window.open(printlink+"?Emp_ID=" + empid, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    // console.log("doc===",DocNo.Doc_No)
+  })
+  }
+}
 Edit(col){
   this.Emp_ID = undefined;
   this.ObjFullAndFinalSettlement = new FullAndFinalSettlement();
@@ -412,5 +452,7 @@ class FullAndFinalSettlement{
   TDS_Deduction : any;
   Total_Deduction : any;
   Net_Payable : any;
+  Notice_Period_Day : any;
+  Notice_Period_Amount : any;
 
 }

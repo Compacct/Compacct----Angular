@@ -136,10 +136,6 @@ this.createListObj ={};
 // this.Searchedlist =[];
 }
 getDateRange(dateRangeObj) {
-  if (dateRangeObj.length) {
-    this.ObjPanding.From_Date = dateRangeObj[0];
-    this.ObjPanding.To_Date = dateRangeObj[1];
-  }
    if (dateRangeObj.length){
     this.ObjPanding.From_Date = dateRangeObj[0];
     this.ObjPanding.To_Date = dateRangeObj[1];
@@ -590,6 +586,12 @@ const obj = {
  }
   console.log("create==",this.createListObj)
  })
+}
+getDateRangebrowse(dateRangeObj) {
+  if (dateRangeObj.length) {
+    this.ObjBrowse.From_date = dateRangeObj[0];
+    this.ObjBrowse.To_date = dateRangeObj[1];
+  }
 }
 GetSearchedlist(valid){
   this.RDBSearchFormSubmitted = true;

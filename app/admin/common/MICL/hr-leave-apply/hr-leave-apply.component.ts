@@ -86,6 +86,10 @@ export class HrLeaveApplyComponent implements OnInit {
   DynamicHeaderforLL:any = [];
 
   Param_Flag:string
+  HalfDayFlag:boolean = false;
+  checkboxdisabled:boolean = false;
+  backupnoofapplydays:any;
+  databaseName:any;
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -115,14 +119,25 @@ export class HrLeaveApplyComponent implements OnInit {
   // this.minDateTo_Time = this.From_Time
     this.FromDatevalue = new Date(this.currentdate);
     this.ToDatevalue = new Date();
+    this.getDatabase();
     this.employeeData();
     // this.GetBrowseData();
     this.hrYearList();
     this.leaveTypList();
     this.GetNumberOfdays();
     this.GetNoOfDays();
+    this.compareDate();
     this.ToDatevalue = new Date();
     // this.initDate = [new Date(),new Date()]
+  }
+  getDatabase(){
+    this.http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log(data)
+        });
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -422,6 +437,7 @@ export class HrLeaveApplyComponent implements OnInit {
   GetNoOfDays(){
     this.ObjHrleave.Apply_From_Date = this.DateService.dateConvert(new Date(this.FromDatevalue));
      this.ObjHrleave.Apply_To_Date = this.DateService.dateConvert(new Date(this.ToDatevalue));
+    //  this.backupnoofapplydays = undefined;
        const tempobj = {
          Emp_ID : this.ObjHrleave.Emp_ID,
          Atten_Type_ID : this.ObjHrleave.Leave_Type,
@@ -438,9 +454,12 @@ export class HrLeaveApplyComponent implements OnInit {
      .subscribe((data:any)=>{
       console.log("no of days ===",data)
       this.ObjHrleave.No_Of_Days_Apply = data[0].Column1;
+      this.backupnoofapplydays = data[0].Column1;
       this.getShowBaln();
+      this.compareDate();
       }); 
     }
+    this.compareDate();
   }
   getShowBaln(){
     this.showBaln = undefined;
@@ -469,9 +488,32 @@ export class HrLeaveApplyComponent implements OnInit {
     }
   
   } 
+  compareDate(){
+    const Apply_From_Date = new Date(this.FromDatevalue);
+    const Apply_To_Date = new Date(this.ToDatevalue);
+    console.log("Apply_From_Date====",Apply_From_Date)
+    console.log("Apply_To_Date====",Apply_To_Date)
+    if(Apply_From_Date && Apply_To_Date) {
+    if(Apply_From_Date.getTime() === Apply_To_Date.getTime()) {
+      this.checkboxdisabled = true;
+      this.HalfDayFlag = false;
+    }
+    else {
+      this.checkboxdisabled = false;
+    }
+    }
+  }
+  HalfDayChange(){
+    if(this.HalfDayFlag){
+      this.ObjHrleave.No_Of_Days_Apply = 0.5;
+    } else {
+      this.ObjHrleave.No_Of_Days_Apply = this.backupnoofapplydays;
+    }
+  }
   getminday(){
     this.mndays = undefined;
     this.applydays = undefined;
+    this.HalfDayFlag = false;
     // this.minFromDate  = new Date();
   if(this.ObjHrleave.Leave_Type) {
     const ctrl = this;

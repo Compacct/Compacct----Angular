@@ -37,6 +37,17 @@ export class NPSupTktSalesReturnAccountsComponent implements OnInit {
   ApprovelistHeader: any = [];
   ViewModal: boolean = false;
   ViewList: any = [];
+  backUPdataListApproved: any = [];
+  DistCustomer1:any = [];
+  DistUser1:any = [];
+  DistStatus1:any = [];
+  DistEmployee1: any = [];
+  DistEmployeeSelect1:any = [];
+  DistStatusSelect1:any = [];
+  DistCustomerSelect1:any = [];
+  DistUserSelect1: any = [];
+  ApproveKye: any = [];
+  ApproveKye1: any = [];
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -102,13 +113,19 @@ export class NPSupTktSalesReturnAccountsComponent implements OnInit {
           });
         }
       this.pendinglist = data
-      this.pendinglistlistHeader = Object.keys(data[0])
+        this.pendinglistlistHeader = Object.keys(data[0])
+         this.pendinglistlistHeader.forEach(element => {
+          this.ApproveKye1.push({
+            header : element
+          })
+        });
       }
     })
   }
   ApproveSerch() {
     this.Approvelist = []
     this.ApprovelistHeader = [];
+    this.backUPdataListApproved = [];
     const obj = {
       'SP_String': "SP_Np_Sup_Tkt_Sales_Return_Request",
       'Report_Name_String':  "Get_Accounts_Approved_Browse",
@@ -121,10 +138,79 @@ export class NPSupTktSalesReturnAccountsComponent implements OnInit {
             ele.Return_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(ele.Return_Date);
           });
         }
-      this.Approvelist = data
-      this.ApprovelistHeader = Object.keys(data[0])
+        this.Approvelist = data;
+        this.backUPdataListApproved = data;
+        this.ApprovelistHeader = Object.keys(data[0]);
+        this.ApprovelistHeader.forEach(element => {
+          this.ApproveKye.push({
+            header : element
+          })
+        });
+        this.GetDistinct1();
       }
     })
+  }
+  GetDistinct1() {
+    let Status: any = [];
+    this.DistCustomer1 = [];
+    this.DistUser1 = [];
+    this.DistStatus1 = [];
+    this.DistEmployee1 = [];
+    this.Approvelist.forEach((item) => {
+      if (Status.indexOf(item.Customer) === -1) {
+        Status.push(item.Customer);
+        this.DistCustomer1.push({ label: item.Customer, value: item.Customer });
+      }
+      if (Status.indexOf(item.Status) === -1) {
+        Status.push(item.Status);
+        this.DistStatus1.push({ label: item.Status, value: item.Status });
+      }
+       if (Status.indexOf(item.Sales_Executive) === -1) {
+        Status.push(item.Sales_Executive);
+        this.DistEmployee1.push({ label: item.Sales_Executive, value: item.Sales_Executive });
+      }
+      if (Status.indexOf(item.User_name) === -1) {
+        Status.push(item.User_name);
+        this.DistUser1.push({ label: item.User_name, value: item.User_name });
+      }    
+    });
+      this.backUPdataListApproved = [...this.Approvelist];
+  }
+  FilterDist1() {
+    let First: any = [];
+    let Second: any = [];
+    let three: any = [];
+    let fore: any = [];
+    let SearchFields: any = [];
+    if (this.DistEmployeeSelect1.length) {
+      SearchFields.push('Sales_Executive');
+      First = this.DistEmployeeSelect1;
+    }
+    if (this.DistStatusSelect1.length) {
+      SearchFields.push('Status');
+      Second = this.DistStatusSelect1;
+    }
+    if (this.DistCustomerSelect1.length) {
+      SearchFields.push('Customer');
+      three = this.DistCustomerSelect1;
+    }
+     if (this.DistUserSelect1.length) {
+      SearchFields.push('User_name');
+      fore = this.DistUserSelect1;
+    }
+    this.Approvelist = [];
+    if (SearchFields.length) {
+      let LeadArr = this.backUPdataListApproved.filter(function (e) {
+        return (First.length ? First.includes(e['Sales_Executive']) : true)
+          && (Second.length ? Second.includes(e['Status']) : true)
+          && (three.length ? three.includes(e['Customer']) : true)
+          &&(fore.length ? fore.includes(e['User_name']) : true)
+      });
+      this.Approvelist = LeadArr.length ? LeadArr : [];
+    } else {
+      this.Approvelist = [...this.backUPdataListApproved];
+    }
+
   }
   getStatusWiseColor(Status:any) {
   switch (Status) {

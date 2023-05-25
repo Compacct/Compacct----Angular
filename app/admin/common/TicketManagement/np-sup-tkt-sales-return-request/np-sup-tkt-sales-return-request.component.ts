@@ -45,7 +45,19 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
   SearchedBrowselistHeader:any = []
   viewModal:boolean = false
   viewList:any = []
-  TicketNo:any = ""
+  TicketNo: any = "";
+  bckupSearchedBrowselist: any = [];
+  DistCustomer1:any = [];
+  DistUser1:any = [];
+  DistStatus1:any = [];
+  DistEmployee1: any = [];
+  DistEmployeeSelect1:any =[];
+  DistStatusSelect1:any =[];
+  DistCustomerSelect1:any =[];
+  DistUserSelect1: any = [];
+  colsAdv: any = [];
+  RequestList: any = [{ "label": "Normal Sales Return", "value": "Normal Sales Return" },
+                      { "label": "Price Change", "value": "Price Change" }];
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -80,6 +92,7 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
     this.buttonname = "Save";
     this.salereturnFormsSubmitted = false
     this.objsaleReturn = new saleReturn()
+    this.objsaleReturn.Request_Type = [...this.RequestList[0].value];
     this.ProductList = []
     this.ObjaddSaleReturn = new addSaleReturn()
     this.addSalereturnFormsSubmitted = false
@@ -87,7 +100,6 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
     this.Spinner = false
     this.TicketNo = undefined
     this.DocDate = this.DateNepalConvertService.GetNepaliCurrentDateNew();
-   
   }
   onReject() {
     this.compacctToast.clear("c");
@@ -271,7 +283,8 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
   }
   getSearchedBrowselist(){
     this.SearchedBrowselist = []
-    this.SearchedBrowselistHeader = []
+    this.SearchedBrowselistHeader = [];
+    this.bckupSearchedBrowselist = [];
     const obj = {
       'SP_String': "SP_Np_Sup_Tkt_Sales_Return_Request",
       'Report_Name_String':  "Browse_Return_Request",
@@ -284,12 +297,81 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
             ele.Return_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(ele.Return_Date);
           });
         }
-      this.SearchedBrowselist = data
-      this.SearchedBrowselistHeader = Object.keys(data[0])
+        this.SearchedBrowselist = data
+        console.log(data)
+        this.SearchedBrowselistHeader = Object.keys(data[0])
+        this.SearchedBrowselistHeader.forEach(element => {
+          this.colsAdv.push({
+            header : element
+          })
+        });
+        this.bckupSearchedBrowselist = data;
+        this.GetDistinct1();
       }
     })
   }
+ GetDistinct1() {
+    let Status: any = [];
+    this.DistCustomer1 = [];
+    this.DistUser1 = [];
+    this.DistStatus1 = [];
+    this.DistEmployee1 = [];
+    this.SearchedBrowselist.forEach((item) => {
+      if (Status.indexOf(item.Customer) === -1) {
+        Status.push(item.Customer);
+        this.DistCustomer1.push({ label: item.Customer, value: item.Customer });
+      }
+      if (Status.indexOf(item.Status) === -1) {
+        Status.push(item.Status);
+        this.DistStatus1.push({ label: item.Status, value: item.Status });
+      }
+       if (Status.indexOf(item.Sales_Executive) === -1) {
+        Status.push(item.Sales_Executive);
+        this.DistEmployee1.push({ label: item.Sales_Executive, value: item.Sales_Executive });
+      }
+      if (Status.indexOf(item.User_name) === -1) {
+        Status.push(item.User_name);
+        this.DistUser1.push({ label: item.User_name, value: item.User_name });
+      }    
+    });
+      this.bckupSearchedBrowselist = [...this.SearchedBrowselist];
+  }
+  FilterDist1() {
+    let First: any = [];
+    let Second: any = [];
+    let three: any = [];
+    let fore: any = [];
+    let SearchFields: any = [];
+    if (this.DistEmployeeSelect1.length) {
+      SearchFields.push('Sales_Executive');
+      First = this.DistEmployeeSelect1;
+    }
+    if (this.DistStatusSelect1.length) {
+      SearchFields.push('Status');
+      Second = this.DistStatusSelect1;
+    }
+    if (this.DistCustomerSelect1.length) {
+      SearchFields.push('Customer');
+      three = this.DistCustomerSelect1;
+    }
+     if (this.DistUserSelect1.length) {
+      SearchFields.push('User_name');
+      fore = this.DistUserSelect1;
+    }
+    this.SearchedBrowselist = [];
+    if (SearchFields.length) {
+      let LeadArr = this.bckupSearchedBrowselist.filter(function (e) {
+        return (First.length ? First.includes(e['Sales_Executive']) : true)
+          && (Second.length ? Second.includes(e['Status']) : true)
+          && (three.length ? three.includes(e['Customer']) : true)
+          &&(fore.length ? fore.includes(e['User_name']) : true)
+      });
+      this.SearchedBrowselist = LeadArr.length ? LeadArr : [];
+    } else {
+      this.SearchedBrowselist = [...this.bckupSearchedBrowselist];
+    }
 
+  }
  getView(col:any){
  this.DocDate = {}
  this.viewList = []
@@ -317,7 +399,7 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
     this.getEditdata(col.Ticket_No)
   }
  }
- getEditdata(TicketNo:any){
+  getEditdata(TicketNo: any) {
   const obj = {
     'SP_String': "SP_Np_Sup_Tkt_Sales_Return_Request",
     'Report_Name_String':  "Get_Return_Request",
@@ -360,7 +442,8 @@ class saleReturn{
       Request_Date:any
       Sub_Ledger_ID:any
       Posted_By:any
-      Ticket_No:any
+      Ticket_No: any
+      Request_Type: any;
 }
 
 class addSaleReturn {

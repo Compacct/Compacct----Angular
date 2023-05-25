@@ -44,7 +44,6 @@ div.label-t {
     margin-top: 2px;
     margin-left: 600px;
 }
-
 .custombutton {
     margin-top: 26px;
 
@@ -85,4 +84,25 @@ body .ui-dropdown.ui-dropdown-clearable .ui-dropdown-label {
 
 .ui-dialog .ui-dialog-content {
     height: 45vh;
+}
+fieldset {
+    border: 1px solid #bed8e747 !important;
+    margin: 0;
+    min-width: 0;
+    padding: 10px;
+    position: relative;
+    border-radius: 4px;
+    background-color: #bed8e747;
+    padding-left: 10px !important;
+}
+
+legend {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 0px;
+    width: fit-content;
+    border: 1px solid #55627ca1;
+    border-radius: 4px;
+    padding: 0px 10px 0px 10px;
+    background-color: #55627ca1;
 }
