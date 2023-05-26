@@ -94,19 +94,29 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                     <ul class="dropdown-menu">
-                                                        <li>
+                                                        <li *ngIf="userType == 'A'">
                                                                 <a (click)="EditBranchReq(col)">
                                                                     <i class="fa fa-fw fa-pencil"></i> Edit
                                                                 </a>
                                                             </li>               
-                                                        <li>
+                                                        <li *ngIf="userType == 'A'">
                                                             <a (click)="DeleteBranchReq(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
                                                         </li>
                                                         <li *ngIf="userType == 'A'">
+                                                            <a (click)="PodUpdate(col)">
+                                                                <i class="fa fa-fw  fa-cab"></i> POD Update
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="userType == 'A'">
                                                             <a (click)="UpdateBotton(col)">
                                                                 <i class="fa fa-refresh" aria-hidden="true"></i> Update
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="browsePrint(col)">
+                                                                <i class="fa fa-print" aria-hidden="true"></i> Print
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -280,5 +290,58 @@
     <p-footer> 
         <!-- <button type="button" (click)="DisapprovedPo(TElementobj.Doc_NO)" class="btn btn-danger"><i class="pi pi-times"></i> DisApproved</button> -->
         <button type="button"  (click)="UpdateData()" class="btn btn-primary"><i class="fa fa-refresh" aria-hidden="true"></i>Update</button>    
+    </p-footer>
+</p-dialog>
+
+<!-- Pod Update -->
+<p-dialog [header]="'POD UPDATE'" [appendTo]="'body'" [visible]="ViewPoTypeModal"
+    [closeOnEscape]="true" [closable]="true" [modal]="true" [responsive]="true"
+    [style]="{width: '350px', minWidth: '200px'}" [minY]="70"  [maximizable]="false"
+    [baseZIndex]="10000">
+    <form name="POPForms" #POPForms="ngForm" novalidate>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">POD No.<sup class="text-danger">*</sup></label>
+                <input Class="form-control" name="Pod" #Pod="ngModel" [(ngModel)]="POD_No" placeholder="POD No."
+                [ngClass]="{'clearance': POPform && Pod?.errors?.required}" required>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">POD Date<sup class="text-danger">*</sup></label>
+                <div class="input-group date">
+                    <div class="input-group-addon">
+                        <i class="fa fa-calendar"></i>
+                    </div>
+                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='POD_Date'>
+                    </ejs-datepicker>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">Courier Name<sup class="text-danger">*</sup></label>
+               <input  Class="form-control" name="PodCoName" #PodCoName="ngModel" [(ngModel)]="Courier_Name" placeholder="Courier Name"
+                 [ngClass]="{'clearance': POPform && PodCoName?.errors?.required}" required>
+            </div>
+            <div class="col-sm-12" style="margin-top: 10px;">
+                <input type="checkbox" name="Check" #Check="ngModel" [(ngModel)]="ReciveCheck">&nbsp;&nbsp;
+                <label for="Check">Received</label>
+            </div>
+            <div class="col-sm-12" *ngIf="ReciveCheck">
+                <label class="control-label">Receive On</label>
+                <div class="input-group date">
+                    <div class="input-group-addon">
+                        <i class="fa fa-calendar"></i>
+                    </div>
+                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Recieve_Date'>
+                    </ejs-datepicker>
+                </div>
+            </div>
+        </div>     
+    </form>
+    <p-footer>
+        <button type="button" (click)="UpdatePOP(POPForms.form.valid)" class="btn btn-primary">
+            Update
+        </button>
+        <button type="button" (click)="ViewPoTypeModal= false" class="btn btn-info">
+            Cancel
+        </button>
     </p-footer>
 </p-dialog>
