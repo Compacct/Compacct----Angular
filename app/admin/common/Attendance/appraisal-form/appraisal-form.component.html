@@ -8,11 +8,8 @@
         </div>
 
         <div class="ui-g ui-fluid">
-            <div class="ui-g-6" *ngIf="can_popup && !act_popup">
+            <div class="ui-g-6">
                 <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
-            </div>
-            <div class="ui-g-6" *ngIf="act_popup && !can_popup">
-                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>

@@ -115,6 +115,8 @@ export class AppraisalFormComponent implements OnInit {
       });
     }
   }
+  onReject() { }
+  onConfirm(){}
 }
 class Appraisal{ 
 Emp_ID :any; 	
