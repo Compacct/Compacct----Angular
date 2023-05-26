@@ -1,1 +1,243 @@
-<p>appraisal-form works!</p>
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6" *ngIf="can_popup && !act_popup">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="act_popup && !can_popup">
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]"leftIcon="glyphicon glyphicon-list-alt">
+                            <div class="table-responsive no-padding">
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="AllData" [paginator]="AllData.length ? true : false" [rows]="10"
+                                        [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                        [rowsPerPageOptions]="[10,20,30]"
+                                        [globalFilterFields]="BrowseSerchDym"
+                                        [rowHover]="true" #dt>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                        class="searchInput form-control">
+                                                </div>
+                                            </div>
+
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <!-- <th style="width:5em">Action</th> -->
+                                                <th>Employee Name</th>
+                                                <th>Employee Code</th>
+                                                <th>Date Of Joining</th>
+                                                <th>Designation</th>
+                                                <th>Rating</th>
+                                                <th>Reporting Manager</th>
+                                                <th>Review Period</th>
+                                                <th>Reviewer</th>
+                                                <th>Appraisee Comments</th>
+                                                <th>Appraiser’s Remarks</th>
+                                                <th>Reviewer's Remarks</th>
+                                                <th>Last Annual CTC</th>
+                                                <th>Revised Annual CTC</th>
+                                                <th>Last In hand salary (Monthly)</th>
+                                                <th>In hand salary after increment (Monthly)</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr [class]='col.Is_Active === "N" ? "text-red-active" : ""'>
+
+                                                <!-- <td>
+                                                    <div class="dropdown">
+                                                        <button
+                                                            class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                            type="button" data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <a (click)="EditUser(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Is_Active == 'Y' && col.User_ID != 4 ">
+                                                                <a (click)="DeleteUser(col)">
+                                                                    <i class="fa fa-fw fa-trash"></i> Delete
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Is_Active == 'N' ">
+                                                                <a (click)="Active(col)">
+                                                                    <i class="fa fa-power-off"></i> Active
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td> -->
+                                                <td>{{col.Emp_Name}}</td>
+                                                <td>{{col.Emp_Code}}</td>
+                                                <td>{{col.DOJ|date:"dd/MMM/yyyy"}}</td>
+                                                <td>{{col.Designation}}</td>
+                                                <td>{{col.Rating}}</td>
+                                                <td>{{col.Reporting_Manager}}</td>
+                                                <td>{{col.Review_Period}}</td>
+                                                <td>{{col.Reviewer}}</td>
+                                                <td>{{col.Appraisee_Comments}}</td>
+                                                <td>{{col.Appraiser_Remarks ? col.Appraiser_Remarks : "-"}}</td>
+                                                <td>{{col.Reviewer_Remarks ? col.Reviewer_Remarks : "-"}}</td>
+                                                <td>{{col.Last_Annual_CTC}}</td>
+                                                <td>{{col.Revised_Annual_CTC}}</td>
+                                                <td>{{col.Last_In_hand_salary_Mothly}}</td>
+                                                <td>{{col.In_hand_salary_after_increment_Monthly}}</td>
+                                            </tr>
+                                        </ng-template>                                     
+                                    </p-table>
+                                </div>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]"leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="userForm" #userForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Employee<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="EmplyList" name="Employee1"  
+                                            #Employee1="ngModel"
+                                            [(ngModel)]="ObjAppraisal.Emp_ID" 
+                                            [showClear]="true"
+                                            [emptyFilterMessage]="'No Employee Found'"  
+                                            [filter]="true"filterBy="label,value.name" 
+                                            [placeholder]="'Select Employee '" 
+                                            (onChange)="getCodeAll()"
+                                            [virtualScroll]="true" itemSize="30"
+                                            [ngClass]="{'clearance': userFormSubmitted && Employee1?.errors?.required}" required>
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Employee Code<sup class="text-danger"></sup></label>
+                                        <div class="label-t" >{{ObjAppraisal.Emp_Code ? ObjAppraisal.Emp_Code : "-"}}</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date Of Joining</label>
+                                         <div class="input-group date">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                 <div class="label-t">{{ObjAppraisal.DOJ ? (ObjAppraisal.DOJ|date:"dd/MMM/yyyy") : '-'}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Designation</label>
+                                        <div class="label-t">{{ObjAppraisal.Designation ? ObjAppraisal.Designation : "-"}}</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Review Period<sup class="taxt-danger">*</sup></label>
+                                        <input class="form-control" name="Review" #Review ="ngModel"
+                                                [(ngModel)]="ObjAppraisal.Review_Period" placeholder="Review Period"
+                                                [ngClass]="{'clearance': userFormSubmitted && Review?.errors?.required}" required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Reviewer<sup class="taxt-danger">*</sup></label>
+                                        <input class="form-control"name="Reviewer" #Reviewer ="ngModel"
+                                                [(ngModel)]="ObjAppraisal.Reviewer" placeholder="Reviewer"
+                                                [ngClass]="{'clearance': userFormSubmitted && Reviewer?.errors?.required}" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Reporting Manager<sup class="taxt-danger">*</sup></label>
+                                        <input class="form-control" name="Reporting" #Reporting ="ngModel"
+                                                [(ngModel)]="ObjAppraisal.Reporting_Manager"placeholder="Reporting Manager"
+                                                [ngClass]="{'clearance': userFormSubmitted && Reporting?.errors?.required}" required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Rating<sup class="taxt-danger">*</sup></label>
+                                       <select class="form-control" name="Rating" #Rating ="ngModel"
+                                        [(ngModel)]="ObjAppraisal.Rating"
+                                        [ngClass]="{'clearance': userFormSubmitted && Rating?.errors?.required}" required>
+                                        <option [ngValue]="undefined">Select Rating</option>
+                                        <option value="JOH Values Rating">JOH Values Rating</option>
+                                        <option value="Business Goals Rating">Business Goals Rating</option>
+                                        <option value="Final Rating">Final Rating</option>
+                                    </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Appraisee Comments<sup class="taxt-danger">*</sup></label>
+                                        <input class="form-control" name="Appraisee" #Appraisee ="ngModel"
+                                                [(ngModel)]="ObjAppraisal.Appraisee_Comments" placeholder="Appraisee Comments"
+                                                [ngClass]="{'clearance': userFormSubmitted && Appraisee?.errors?.required}" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Appraiser’s Remarks</label>
+                                        <textarea class="form-control" name="Appraisers" #Appraisers ="ngModel"
+                                                [(ngModel)]="ObjAppraisal.Appraiser_Remarks" placeholder="Appraiser’s Remarks" ></textarea>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Reviewer's Remarks</label>
+                                        <textarea class="form-control" name="Reviewers"#Reviewers ="ngModel"
+                                                [(ngModel)]="ObjAppraisal.Reviewer_Remarks" placeholder="Reviewer's Remarks"></textarea>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Last Annual CTC<sup class="taxt-danger">*</sup></label>
+                                       <input class="form-control" name="Last_Annual" #Last_Annual ="ngModel" CompacctDigitonly="true"
+                                                [(ngModel)]="ObjAppraisal.Last_Annual_CTC"placeholder="Last Annual CTC"
+                                                [ngClass]="{'clearance': userFormSubmitted && Last_Annual?.errors?.required}" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Revised Annual CTC<sup class="taxt-danger">*</sup></label>
+                                         <input class="form-control"name="Revised_Annual" #Revised_Annual ="ngModel" CompacctDigitonly="true"
+                                                [(ngModel)]="ObjAppraisal.Revised_Annual_CTC" placeholder="Revised Annual CTC"
+                                                [ngClass]="{'clearance': userFormSubmitted && Revised_Annual?.errors?.required}" required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Last In hand salary (Monthly)<sup class="taxt-danger">*</sup></label>
+                                        <input class="form-control"name="Last_In_hand" #Last_In_hand ="ngModel" CompacctDigitonly="true"
+                                                [(ngModel)]="ObjAppraisal.Last_In_hand_salary_Mothly" placeholder="Last In hand salary (Monthly)"
+                                                [ngClass]="{'clearance': userFormSubmitted && Last_In_hand?.errors?.required}" required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">In hand salary after increment (Monthly)<sup class="taxt-danger">*</sup></label>
+                                         <input class="form-control"name="In_hand_salary" #In_hand_salary ="ngModel" CompacctDigitonly="true"
+                                                [(ngModel)]="ObjAppraisal.In_hand_salary_after_increment_Monthly" placeholder="In hand salary after increment (Monthly)"
+                                                [ngClass]="{'clearance': userFormSubmitted && In_hand_salary?.errors?.required}" required>
+                                    </div>
+                                </div>
+
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right" (click)="saveData(userForm.form.valid)">
+                                        <span class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
