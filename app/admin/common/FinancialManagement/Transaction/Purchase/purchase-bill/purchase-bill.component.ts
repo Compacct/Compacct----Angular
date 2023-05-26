@@ -158,6 +158,7 @@ export class PurchaseBillComponent implements OnInit {
   groupList = [];
   subGorupList = [];
   workList = [];
+  projectDis:boolean = false
   overlayPanelText = ""
   constructor(
     private Header: CompacctHeader,
@@ -514,7 +515,7 @@ export class PurchaseBillComponent implements OnInit {
     this.subGorupList = []
     this.workList = []
     this.objproject = new project()
-  
+    this.projectDis = false
      if(this.ObjProductInfo.Pur_Order_No) {
       const ctrl = this;
       const DateObj = $.grep(ctrl.POList,function(item: any) {return item.value == ctrl.ObjProductInfo.Pur_Order_No})[0];
@@ -775,18 +776,22 @@ export class PurchaseBillComponent implements OnInit {
   
     };
     this.AddProductDetails.push(productObj);
-   
+    
     if(this.Maintain_Serial_No){
       this.ProductInfoSubmitted = false;
       this.ObjProductInfo.Serial_No = undefined;
     setTimeout(function(){
-      const elem  = document.getElementById('serialnumber');
+      const elem:any  = document.getElementById('serialnumber');
       elem.focus();
     },500)
     }
     else {
+      const tempobjBck = {...this.ObjProductInfo}
       this.ObjProductInfo = new ProductInfo();
+      this.ObjProductInfo.Pur_Order_No = tempobjBck.Pur_Order_No
+      this.projectDis = true
       this.ObjProductInfo.Godown_Id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
+      this.ObjProductInfo.Godown_Id = this.openProject == 'Y' ? 1 : undefined
       this.GRNList = [];
       this.GetProductdetails();
       this.ProductInfoSubmitted = false;
@@ -798,6 +803,9 @@ export class PurchaseBillComponent implements OnInit {
   delete(index) {
   this.AddProductDetails.splice(index,1)
   this.ListofTotalAmount();
+  if(!this.AddProductDetails){
+    this.objproject = new project() 
+  }
   }
   
   GetTerm() {
