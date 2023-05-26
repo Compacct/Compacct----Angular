@@ -507,7 +507,7 @@ export class HrLeaveApplyComponent implements OnInit {
     if(this.HalfDayFlag){
       this.ObjHrleave.No_Of_Days_Apply = 0.5;
     } else {
-      this. ObjHrleave.No_Of_Days_Apply = this.backupnoofapplydays;
+      this.ObjHrleave.No_Of_Days_Apply = this.backupnoofapplydays;
     }
   }
   getminday(){

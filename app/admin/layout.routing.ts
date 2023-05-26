@@ -373,6 +373,10 @@ import { EmployeeSalaryMasterJohComponent } from './common/Attendance/employee-s
 import { OldProjectMasterComponent } from './common/Harbauer/old-project-master/old-project-master.component';
 import { MasterProjectTeamComponent } from './common/Harbauer/master-project-team/master-project-team.component';
 import { HrCouponReportComponent } from "./common/MICL/hr-coupon-report/hr-coupon-report.component";
+import { JohDailyAttendanceComponent } from './common/Attendance/joh-daily-attendance/joh-daily-attendance.component';
+import { CandidateInterviewProcessComponent } from './common/Attendance/candidate-interview-process/candidate-interview-process.component';
+import { ConsultancyPaymentComponent } from "./common/Attendance/consultancy-payment/consultancy-payment.component";
+import { AppraisalFormComponent } from "./common/Attendance/appraisal-form/appraisal-form.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2839,6 +2843,36 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
           title: 'HR Coupon Report'
     }
     },
+    {
+      path: 'Daily_Attendance_JOH',
+        component: JohDailyAttendanceComponent,
+        data: {
+          title: 'Daily Attendance JOH'
+    }
+    },
+    {
+      path: 'Candidate_Interview_Process',
+        component: CandidateInterviewProcessComponent,
+        data: {
+          title: 'Candidate Interview Process'
+    }
+    },
+    {
+      path: 'Consultancy_Payment',
+        component: ConsultancyPaymentComponent,
+        data: {
+          title: 'Consultancy Payment'
+    }
+    },
+    {
+      path: 'Appraisal_Form',
+        component: AppraisalFormComponent,
+        data: {
+          title: 'Appraisal Form'
+    }
+    },
+
+    
     /*{
 
 

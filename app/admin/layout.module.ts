@@ -470,6 +470,10 @@ import { EmployeeSalaryMasterJohComponent } from './common/Attendance/employee-s
 import { OldProjectMasterComponent } from './common/Harbauer/old-project-master/old-project-master.component';
 import { MasterProjectTeamComponent } from './common/Harbauer/master-project-team/master-project-team.component';
 import { HrCouponReportComponent } from './common/MICL/hr-coupon-report/hr-coupon-report.component';
+import { JohDailyAttendanceComponent } from './common/Attendance/joh-daily-attendance/joh-daily-attendance.component';
+import { CandidateInterviewProcessComponent } from './common/Attendance/candidate-interview-process/candidate-interview-process.component';
+import { ConsultancyPaymentComponent } from './common/Attendance/consultancy-payment/consultancy-payment.component';
+import { AppraisalFormComponent } from './common/Attendance/appraisal-form/appraisal-form.component';
 
 @NgModule({
   declarations: [
@@ -856,9 +860,11 @@ import { HrCouponReportComponent } from './common/MICL/hr-coupon-report/hr-coupo
     EmployeeSalaryMasterJohComponent,
     OldProjectMasterComponent,
     MasterProjectTeamComponent,
-    HrCouponReportComponent
-
-
+    HrCouponReportComponent,
+    JohDailyAttendanceComponent,
+    CandidateInterviewProcessComponent,
+    ConsultancyPaymentComponent,
+    AppraisalFormComponent
   ],
   imports: [
     CommonModule,

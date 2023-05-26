@@ -55,6 +55,7 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
   DistStatusSelect1:any =[];
   DistCustomerSelect1:any =[];
   DistUserSelect1: any = [];
+  colsAdv: any = [];
   RequestList: any = [{ "label": "Normal Sales Return", "value": "Normal Sales Return" },
                       { "label": "Price Change", "value": "Price Change" }];
   constructor(
@@ -297,8 +298,14 @@ export class NPSupTktSalesReturnRequestComponent implements OnInit {
           });
         }
         this.SearchedBrowselist = data
-        this.bckupSearchedBrowselist = data;
+        console.log(data)
         this.SearchedBrowselistHeader = Object.keys(data[0])
+        this.SearchedBrowselistHeader.forEach(element => {
+          this.colsAdv.push({
+            header : element
+          })
+        });
+        this.bckupSearchedBrowselist = data;
         this.GetDistinct1();
       }
     })

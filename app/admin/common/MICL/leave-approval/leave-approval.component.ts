@@ -76,6 +76,10 @@ export class LeaveApprovalComponent implements OnInit {
   disapproveafterapproveFormSubmit:boolean = false;
   disapprovetxnappid:any;
   disapproveempid:any;
+  databaseName:any;
+  checkboxdisabled:boolean = false;
+  HalfDayFlag:boolean = false;
+  backupnoofapplydays:any;
 
   constructor(
     private route : ActivatedRoute,
@@ -98,6 +102,7 @@ export class LeaveApprovalComponent implements OnInit {
       Link: " HR -> Transaction -> Leave Approval"
     });
     this.getemployee();
+    this.getDatabase();
   }
   TabClick(e){
     // console.log(e)
@@ -107,6 +112,15 @@ export class LeaveApprovalComponent implements OnInit {
     //  this.Spinner = false;
     //  this.clearData();
    }
+   getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log(data)
+        });
+  }
   getemployee(){
     this.empid = undefined;
     const obj = {
@@ -324,6 +338,7 @@ this.ApprovalList = [...this.BackupApprovalList] ;
     this.Issued_To_Date = new Date(col.Issued_To_Date);
     this.Apply_From_Date = new Date(col.Issued_From_Date);
     this.Apply_To_Date = new Date(col.Issued_To_Date);
+    this.GetNoOfDays();
     this.Approved_Status_Business_Manager = col.Approved_Status_Business_Manager;
     this.Approved_Status_Reporting_Manager = col.Approved_Status_Reporting_Manager;
     this.NoteBusinessManager = col.Approved_Note_Business_Manager;
@@ -340,8 +355,17 @@ this.ApprovalList = [...this.BackupApprovalList] ;
       this.Reportdisabled = false;
       this.Bussidisabled = false;
     }
+    setTimeout(() => {
+      if(this.ShowObj.Leave_Type === "Half Day"){
+        this.HalfDayFlag = true;
+        this.HalfDayChange();
+      }else {
+        this.HalfDayFlag = false;
+      }
+    }, 300);
+    setTimeout(() => {
     this.Getleaveapplyempown();
-    this.GetNoOfDays();
+    }, 300);
     }
   }
   Getleaveapplyempown(){
@@ -397,7 +421,31 @@ this.ApprovalList = [...this.BackupApprovalList] ;
      .subscribe((data:any)=>{
       console.log("no of days ===",data)
       this.No_Of_Days_Apply = data[0].Column1;
+      this.backupnoofapplydays = data[0].Column1;
+      this.compareDate();
       }); 
+    }
+  }
+  compareDate(){
+    const Issued_From_Date = new Date(this.Issued_From_Date);
+    const Issued_To_Date = new Date(this.Issued_To_Date);
+    console.log("Issued_From_Date====",Issued_From_Date)
+    console.log("Issued_To_Date====",Issued_To_Date)
+    if(Issued_From_Date && Issued_To_Date) {
+    if(Issued_From_Date.getTime() === Issued_To_Date.getTime()) {
+      this.checkboxdisabled = true;
+      this.HalfDayFlag = false;
+    }
+    else {
+      this.checkboxdisabled = false;
+    }
+    }
+  }
+  HalfDayChange(){
+    if(this.HalfDayFlag){
+      this.No_Of_Days_Apply = 0.5;
+    } else {
+      this.No_Of_Days_Apply = this.backupnoofapplydays;
     }
   }
   ApprovedLeaves(valid){

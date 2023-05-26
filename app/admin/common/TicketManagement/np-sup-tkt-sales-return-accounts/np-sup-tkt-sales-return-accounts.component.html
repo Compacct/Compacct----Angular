@@ -53,7 +53,7 @@
                             </fieldset>
                             <div class="clearfix"></div>
                             <div class="table-responsive no-padding">
-                                <p-table #dt [value]="Approvelist" *ngIf="Approvelist.length"
+                                <p-table #dt [value]="Approvelist" *ngIf="Approvelist.length" [columns]="ApproveKye"
                                     [globalFilterFields]="ApprovelistHeader" [paginator]="true" [rows]="100"
                                     [rowHover]="true" [autoLayout]="true" sortMode="multiple"
                                     [rowsPerPageOptions]="[100,300,500]" [rowHover]="true">
@@ -67,18 +67,53 @@
                                         </div>
 
                                     </ng-template>
-                                    <ng-template pTemplate="header">
+                                    <ng-template pTemplate="header" let-columns>
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>Ticket No</th>
-                                            <th>Request Type</th>
-                                            <th>Sales Executive</th>
-                                            <th>Return Date</th>
-                                            <th>Customer</th>
-                                            <th>Total Pick Up Qty</th>
-                                            <th>Accounts Amount</th>
-                                            <th>User name</th>
-                                            <th>Status</th>
+                                            <th nowrap="nowrap" [pSortableColumn]="columns[0].header">Ticket No
+                                                <p-sortIcon [field]="columns[0].header" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th nowrap="nowrap"  [pSortableColumn]="columns[1].header">Request Type
+                                            <p-sortIcon [field]="columns[1].header" ariaLabel="Activate to sort"
+                                                ariaLabelDesc="Activate to sort in descending order"
+                                                ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th nowrap="nowrap" [pSortableColumn]="columns[2].header">Sales Executive
+                                                <p-sortIcon [field]="columns[2].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th nowrap="nowrap" [pSortableColumn]="columns[3].header">Return Date
+                                                <p-sortIcon [field]="columns[3].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th nowrap="nowrap" [pSortableColumn]="columns[4].header">Customer
+                                                <p-sortIcon [field]="columns[4].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th nowrap="nowrap" [pSortableColumn]="columns[5].header">Total Pick Up Qty
+                                                <p-sortIcon [field]="columns[5].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th nowrap="nowrap" [pSortableColumn]="columns[6].header">Accounts Amount
+                                                <p-sortIcon [field]="columns[6].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th nowrap="nowrap" [pSortableColumn]="columns[7].header">User name
+                                                <p-sortIcon [field]="columns[7].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th nowrap="nowrap" [pSortableColumn]="columns[8].header">Status
+                                                <p-sortIcon [field]="columns[8].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -120,7 +155,7 @@
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="fa fa-clock-o">
                             <div class="table-responsive no-padding">
-                                <p-table #dt [value]="pendinglist" *ngIf="pendinglist.length"
+                                <p-table #dt [value]="pendinglist" *ngIf="pendinglist.length" [columns]="ApproveKye1"
                                     [globalFilterFields]="pendinglistlistHeader" [paginator]="true" [rows]="100"
                                     [rowHover]="true" [autoLayout]="true" sortMode="multiple"
                                     [rowsPerPageOptions]="[100,300,500]" [rowHover]="true">
@@ -134,17 +169,49 @@
                                         </div>
 
                                     </ng-template>
-                                    <ng-template pTemplate="header">
+                                    <ng-template pTemplate="header" let-columns>
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>Ticket No</th>
-                                            <th>Request Type</th>
-                                            <th>Sales Executive</th>
-                                            <th>Return Date</th>
-                                            <th>Customer</th>
-                                            <th>Total Pickup Qty</th>
-                                            <th>User name</th>
-                                            <th>Status</th>
+                                            <th  [pSortableColumn]="columns[0].header">Ticket No
+                                                <p-sortIcon [field]="columns[0].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th  [pSortableColumn]="columns[1].header">Request Type
+                                                <p-sortIcon [field]="columns[1].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th  [pSortableColumn]="columns[2].header">Sales Executive
+                                                <p-sortIcon [field]="columns[2].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th  [pSortableColumn]="columns[3].header">Return Date
+                                                <p-sortIcon [field]="columns[3].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th  [pSortableColumn]="columns[4].header">Customer
+                                                <p-sortIcon [field]="columns[4].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th  [pSortableColumn]="columns[5].header">Total Pickup Qty
+                                                <p-sortIcon [field]="columns[5].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th  [pSortableColumn]="columns[6].header">User name
+                                                <p-sortIcon [field]="columns[6].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th  [pSortableColumn]="columns[7].header">Status
+                                                <p-sortIcon [field]="columns[7].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
