@@ -184,6 +184,7 @@ export class ProcessSalaryComponent implements OnInit {
           })
         })
         this.GetBrowseData();
+        this.UpdateProcessSalaryforLoan();
       }
       else {
         this.DynamicHeader = [];
@@ -209,6 +210,23 @@ export class ProcessSalaryComponent implements OnInit {
   })
   }
   }
+  UpdateProcessSalaryforLoan(){
+    var firstDate = this.Month_Name+'-'+'01'
+    const obj = {
+      "SP_String": "SP_Process_Monthly_Attendance_Sheet",
+      "Report_Name_String": "Update Salary Process For Loan",
+      "Json_Param_String": JSON.stringify([{StartDate : this.DateService.dateConvert(new Date(firstDate))}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data[0].Column1 === "Done"){
+        return true;
+      } else{
+        return false;
+      }
+    })
+  }
+
   // exportoexcel(Arr,fileName): void {
   //   const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
   //   const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};

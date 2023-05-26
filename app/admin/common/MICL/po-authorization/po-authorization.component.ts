@@ -349,10 +349,22 @@ PrintAuthorized(DocAuth:any) {
       }
     this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
       var printlink = data[0].Column1;
-      window.open(printlink+"?Doc_No=" + DocAuth.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      window.open(printlink+"?Doc_No=" + DocAuth, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
       //console.log("DocAuth===",DocAuth.Doc_No)
     })
 }
+}
+PrintAuthorizedWO(DocNo:any) {
+  if(DocNo) {
+    const objtemp = {
+      "SP_String": "Sp_Purchase_Order",
+      "Report_Name_String": "Work_Order_Print"
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      var printlink = data[0].Column1;
+      window.open(printlink+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    })
+    }
 }
 //Not Auth Print
 PrintNotAuthorized(DocNot:any) {

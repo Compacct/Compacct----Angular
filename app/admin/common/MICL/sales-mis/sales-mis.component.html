@@ -24,6 +24,7 @@
             <div class="form-horizontal">
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                         <form name="SearchSalesMISForm" #SearchSalesMISForm="ngForm" novalidate>
                             <div class="form-group">
                                 <div class="col-sm-4">
@@ -31,14 +32,18 @@
                                      <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
                                     </app-compacct-daterangepicker>
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                         <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetSalesMIS()" id="load" [disabled]="seachSpinner">
                                       <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Show MIS
                                    </button>
+                                </div>
+                                <div class="col-sm-2" *ngIf="SalesMISList.length">
+                                    <button  class="btn btn-success custombutton"  (click)="ExportToExcel()">Export To Excel</button>
                                 </div>
                             </div>
                         </form>
+                        <hr>
                         <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt"> -->
                             <div class="table-responsive no-padding" *ngIf="SalesMISList.length">
                                 <div class="table-responsive no-padding">
@@ -49,6 +54,30 @@
 
                                         <ng-template pTemplate="caption"  >
                                             <div class="row">
+                                                <div class="col-sm-2 custombutton1">
+                                                    <p-multiSelect [options]="DistLiCustomer" defaultLabel="Select a Customer" [(ngModel)]="SelectedDistLiCustomer" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="LI_Customer"></p-multiSelect>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <p-multiSelect [options]="DistProductName" defaultLabel="Select a Product" [(ngModel)]="SelectedDistProductName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Product_Name"></p-multiSelect>
+                                                </div>
+                                                <div class="col-sm-2 custombutton2">
+                                                    <label class="control-label"></label>
+                                                    <div class="checkBox">
+                                                        <label class="pull-right">
+                                                       <p-checkbox  [(ngModel)]="PendingLIfilterFLag"  name="pendinglifilter"  (onChange)="PendingLIFilter()"  binary="true" ></p-checkbox>
+                                                       Show Only Pending LI
+                                                   </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2 custombutton2">
+                                                    <label class="control-label"></label>
+                                                    <div class="checkBox">
+                                                        <label class="pull-right">
+                                                       <p-checkbox  [(ngModel)]="PendingSOfilterFLag"  name="pendingsofilter"  (onChange)="PendingSOFilter()"  binary="true" ></p-checkbox>
+                                                       Show Only Pending SO
+                                                   </label>
+                                                    </div>
+                                                </div>
                                                 <div class="col-sm-3 pull-right" style="text-align: right">
                                                     <input type="text" pInputText size="50" placeholder="Search"
                                                         (input)="dt.filterGlobal($event.target.value, 'contains')"
@@ -65,12 +94,12 @@
                                         <ng-template pTemplate="header">
                                             <tr>
                                                 <!-- <th style="width: 5em">Action</th> -->
-                                                <th nowrap colspan="5" style="text-align: center; color: black !important;
+                                                <th nowrap colspan="7" style="text-align: center; color: black !important;
                                                 background-color: #9ab8cb !important; border: 1px solid black !important;">AS PER LETTER OF INTENT
                                                 </th>
-                                                <th nowrap colspan="3" style="text-align: center; color: black !important;
+                                                <!-- <th nowrap colspan="3" style="text-align: center; color: black !important;
                                                 background-color: #e5b694 !important; border: 1px solid black !important;">AS PER PROFORMA INVOICE
-                                                </th>
+                                                </th> -->
                                                 <th nowrap colspan="3" style="text-align: center; color: black !important;
                                                 background-color: #f6d889 !important; border: 1px solid black !important;">AS PER SALES ORDER
                                                 </th>
@@ -92,16 +121,20 @@
                                                 <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #9ab8cb !important; border: 1px solid black !important;">Customer</th>
                                                 <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #9ab8cb !important; border: 1px solid black !important;">Product Name</th>
+                                                <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #9ab8cb !important; border: 1px solid black !important;">Qty</th>
                                                 <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #9ab8cb !important; border: 1px solid black !important;">Amount</th>
-
                                                 <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #9ab8cb !important; border: 1px solid black !important;">Pending Qty</th>
+
+                                                <!-- <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #e5b694 !important; border: 1px solid black !important;">Qty</th>
                                                 <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #e5b694 !important; border: 1px solid black !important;">Amount</th>
                                                 <th nowrap style="text-align: center; color: black !important;
-                                                background-color: #e5b694 !important; border: 1px solid black !important;">Pending Qty</th>
+                                                background-color: #e5b694 !important; border: 1px solid black !important;">Pending Qty</th> -->
 
                                                 <th nowrap style="text-align: center; color: black !important;
                                                 background-color: #f6d889 !important; border: 1px solid black !important;">Qty</th>
@@ -159,21 +192,23 @@
                                                     </div>
                                                 </td> -->
                                                 <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetLIview(col)">{{col.LI_Doc_No}}</a></td>
-                                                <td nowrap style="text-align: center;">{{col.LI_Doc_Date | date:"dd/MMM/yy"}}</td>
+                                                <td nowrap style="text-align: center;">{{col.LI_Doc_Date | date:"dd/MMM/yyyy"}}</td>
                                                 <td nowrap style="text-align: center;">{{col.LI_Customer}}</td>
+                                                <td nowrap style="text-align: center;">{{col.Product_Name}}</td>
                                                 <td nowrap style="text-align: center;">{{col.LI_Qty}}</td>
                                                 <td nowrap style="text-align: center;">{{col.LI_Amount}}</td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetPI(col)">{{col.PI_Qty}}</p></td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetPI(col)">{{col.PI_Total_Amount}}</p></td>
-                                                <td nowrap style="text-align: center;">{{col.Pending_PI_Qty}}</td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetSO(col)">{{col.SO_Qty}}</p></td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetSO(col)">{{col.SO_Total_Amount}}</p></td>
+                                                <td nowrap style="text-align: center;">{{col.Pending_LI_Qty}}</td>
+                                                <!-- <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetPI(col)">{{col.PI_Qty}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetPI(col)">{{col.PI_Total_Amount}}</a></td>
+                                                <td nowrap style="text-align: center;">{{col.Pending_PI_Qty}}</td> -->
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetSO(col)">{{col.SO_Qty}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetSO(col)">{{col.SO_Total_Amount}}</a></td>
                                                 <td nowrap style="text-align: center;">{{col.Pending_SO_Qty}}</td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetOC(col)">{{col.SC_Qty}}</p></td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetOC(col)">{{col.SC_Total_Amount}}</p></td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetSB(col)">{{col.SB_Qty}}</p></td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetSB(col)">{{col.SB_Total_Amount}}</p></td>
-                                                <td nowrap style="text-align: center;"><p (click)="GetRA(col)">{{col.RA_Total_Amount}}</p></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetOC(col)">{{col.SC_Qty}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetOC(col)">{{col.SC_Total_Amount}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetSB(col)">{{col.SB_Qty}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetSB(col)">{{col.SB_Total_Amount}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetRA(col)">{{col.RA_Total_Amount}}</a></td>
                                             </tr>
                                         </ng-template>
 
@@ -184,7 +219,88 @@
                                     </p-table>
                                 </div>
                             </div>
-                        <!-- </p-tabPanel> -->
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt">
+                        <form name="SearchSalesMISForm" #SearchSalesMISForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Date</label>
+                                     <app-compacct-daterangepicker (DaterangeObj)="getDispatchMISDateRange($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetDispatchMIS()" id="load" [disabled]="seachSpinner">
+                                      <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Show Dispatch MIS
+                                   </button>
+                                </div>
+                                <div class="col-sm-2" *ngIf="DispatchMISList.length">
+                                    <button  class="btn btn-success custombutton"  (click)="ExportToExcelDispatchMIS()">Export To Excel</button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr>
+                            <div class="table-responsive no-padding" *ngIf="DispatchMISList.length">
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="DispatchMISList" [paginator]="DispatchMISList.length ? true : false"
+                                        [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                        [rowsPerPageOptions]="[100,200,300]"
+                                        [globalFilterFields]="DispatchMISListHeader" [rowHover]="true" #dt>
+
+                                        <ng-template pTemplate="caption"  >
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                        class="searchInput form-control">
+                                                </div>
+                                            </div>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th rowspan="2">SL NO</th>
+                                                <th rowspan="2">NAME OF THE CUSTOMER</th>
+                                                <th [attr.colspan]="DispatchMISListHeader.length - 3" nowrap="nowrap" style="text-align: center;">Grade</th>
+                                                <th rowspan="2">Total</th>
+                                            </tr>
+                                            <tr>
+                                                <ng-container *ngFor="let option of DispatchMISListHeader">
+                                                    <th *ngIf="option != 'SlNo' && option != 'Sub_Ledger_Billing_Name' && option != 'Total'" nowrap="nowrap" >
+                                                    {{option.replaceAll('_',' ')}}
+                                                </th>
+                                                </ng-container>
+                                            </tr>
+                                                
+                                                
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                            <tr>
+                                                <ng-container *ngFor="let option of DispatchMISListHeader">
+                                                    <td nowrap="nowrap">{{col[option]}}</td>
+                                                </ng-container>
+                                                
+                                            </tr>
+                                            <tr *ngIf='rowIndex === (DispatchMISList.length - 1)'>
+                                                <ng-container *ngFor="let option of DispatchMISListHeader">
+                                                     <td *ngIf="option == 'SlNo'" colspan="2" style="text-align: right;">Total</td>
+                                                     <td *ngIf="option != 'SlNo' && option != 'Sub_Ledger_Billing_Name' " >{{CalculateColumn(option)}}</td>
+                                                </ng-container>
+                                                    
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                        </ng-template>
+
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                                            {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                    </p-tabPanel>
 
                     </p-tabView>
                 </div>
@@ -723,6 +839,7 @@
         <ng-template pTemplate="header">
             <tr>
                 <th>Sale Order No</th>
+                <th>Customer P.O No</th>
                 <th>Date</th>
                 <th>Customer</th>
                 <th>Qty</th>
@@ -732,6 +849,7 @@
         <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
             <tr>
                 <td><a class="btn btn-link" (click)="GetSOviewDetails(col.SO_Doc_No)">{{col.SO_Doc_No}}</a></td>
+                <td>{{col.Customer_PO_No ? col.Customer_PO_No : '-'}}</td>
                 <td>{{col.SO_Doc_Date | date : "dd/MMM/yy"}}</td>
                 <td>{{col.SO_Customer ? col.SO_Customer : '-'}}</td>
                 <td>{{col.SO_Qty ? col.SO_Qty : '-'}}</td>

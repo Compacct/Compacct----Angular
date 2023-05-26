@@ -155,6 +155,7 @@ export class SaleOrderComponent implements OnInit {
       Header: "Sale Order",
       Link: "Sale Order"
     });
+    this.GetLiDocNo();
     this.getDisable();
     this.Finyear();
     this.GetVendor();
@@ -184,6 +185,8 @@ export class SaleOrderComponent implements OnInit {
     this.ObjSaleOrder.Vehicle_Type = "Regular";
     this.Customer_PO_No = undefined;
     this.Customer_PO_Date = new Date();
+    this.LI_Doc_No = undefined;
+    this.LI_Doc_Date = new Date();
   }
   clearData() { 
     this.SaleOrderFormSubmitted = false;
@@ -287,7 +290,7 @@ export class SaleOrderComponent implements OnInit {
   }
   VenderNameChange() {
     this.ObjSaleOrder.Sub_Ledger_Billing_Name = '';
-    this.LI_Doc_No = undefined;
+    // this.LI_Doc_No = undefined;
     this.Tax_Category = undefined;
     this.ObjProductInfo.godown_id = undefined;
     this.ObjProductInfo.Batch_Number = undefined;
@@ -296,8 +299,8 @@ export class SaleOrderComponent implements OnInit {
     this.ObjProductInfo.Qty = undefined;
     this.ObjProductInfo.Rate = undefined;
     this.ObjProductInfo.Taxable_Amount = undefined
-    this.LiDocNoList = [];
-    this.ProductDetalist = [];
+    // this.LiDocNoList = [];
+    // this.ProductDetalist = [];
     this.SaveAddress = [];
     this.Choose_Address = undefined;
     this.ObjSaleOrder.Sub_Ledger_Address_1 = undefined;
@@ -319,7 +322,7 @@ export class SaleOrderComponent implements OnInit {
       this.ObjSaleOrder.Sub_Ledger_Billing_Name = vendorObj.Sub_Ledger_Billing_Name;
       this.ObjSaleOrder.Sub_Ledger_Name = vendorObj.label;
       this.GetChooseAddress();
-      this.GetLiDocNo();
+      // this.GetLiDocNo();
     } else {
     this.ObjSaleOrder.Sub_Ledger_Billing_Name = '';
     }
@@ -481,19 +484,14 @@ export class SaleOrderComponent implements OnInit {
     }
   }
   GetLiDocNo() {
-    this.LiDocNoList = [];
-    this.LI_Doc_No = undefined;
-    this.LI_Doc_Date = new Date();
-    this.Reference_Doc_No = undefined;
-    this.Reference_Doc_Date = undefined;
-    if (this.ObjSaleOrder.Sub_Ledger_ID) {
-      const TempObj = {
-        Sub_Ledger_ID: this.ObjSaleOrder.Sub_Ledger_ID,
-      }
+    // this.LiDocNoList = [];
+    // this.LI_Doc_No = undefined;
+    // this.LI_Doc_Date = new Date();
+    // this.Reference_Doc_No = undefined;
+    // this.Reference_Doc_Date = undefined;
       const obj = {
         "SP_String": "SP_BL_Txn_Sale_Order",
-        "Report_Name_String": "Get_Letter_Of_Intent_NOs",
-        "Json_Param_String": JSON.stringify([TempObj])
+        "Report_Name_String": "Get_Letter_Of_Intent_NOs"
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         console.log("LiDocNoList  ===", data);
@@ -508,7 +506,6 @@ export class SaleOrderComponent implements OnInit {
           this.LiDocNoList = [];
         }
       })
-    }
   
   }
   getLiDataChange(){
@@ -526,12 +523,49 @@ export class SaleOrderComponent implements OnInit {
     this.ObjProductInfo.Qty = undefined;
     this.ObjProductInfo.Rate = undefined;
     this.ObjProductInfo.Taxable_Amount = undefined;
+    this.ObjSaleOrder.Sub_Ledger_ID = undefined;
+
+    this.ProductDetalist = [];
+    this.ObjProductInfo.Product_Specification = undefined;
+    this.UomList = '';
+    this.ObjProductInfo.Product_Type_ID = undefined;
+    this.ObjProductInfo.Product_Sub_Type_ID = undefined;
+    this.ProductSub = [];
+    this.Tax_Category = undefined;
+    this.ObjProductInfo.Qty = undefined;
+    this.ObjProductInfo.Rate = undefined;
+    this.ObjProductInfo.Taxable_Amount = undefined
+
+    this.ObjSaleOrder.Sub_Ledger_Billing_Name = '';
+    this.ObjProductInfo.godown_id = undefined;
+    this.ObjProductInfo.Batch_Number = undefined;
+    this.ObjProductInfo.LI_Qty = undefined;
+    this.SaveAddress = [];
+    this.Choose_Address = undefined;
+    this.ObjSaleOrder.Sub_Ledger_Address_1 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_District = undefined;
+    this.ObjSaleOrder.Sub_Ledger_State = undefined;
+    this.ObjSaleOrder.Sub_Ledger_Pin = undefined;
+    this.ObjSaleOrder.Sub_Ledger_GST_No = undefined;
+    this.SaveAddress1 = [];
+    this.ObjSaleOrder.Choose_Address2 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_Billing_Name = undefined;
+    this.ObjSaleOrder.Sub_Ledger_Address_2 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_Pin_2 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_District_2 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_State_2 = undefined;
+    this.ObjSaleOrder.Sub_Ledger_GST_No_2 = undefined;
+    this.Customer_PO_No = undefined;
+    this.Customer_PO_Date = new Date();
+    this.DocDate = new Date();
     if (this.LI_Doc_No) {
       const LiObj = this.LiDocNoList.filter(el=> el.Doc_No == this.LI_Doc_No);
       this.LI_Doc_Date = LiObj.length ? new Date(LiObj[0].Doc_Date) : new Date();
       this.Reference_Doc_No = LiObj.length ? LiObj[0].Ref_Doc_No : undefined;
       this.Reference_Doc_Date = LiObj.length ? this.DateService.dateConvert(new Date(LiObj[0].Ref_Doc_Date)) : undefined;
       this.ProductDetalforLi();
+      this.ObjSaleOrder.Sub_Ledger_ID = LiObj.length ? LiObj[0].Sub_Ledger_ID : undefined;
+      this.VenderNameChange();
     }
   }
   getProductType() {
@@ -763,8 +797,8 @@ export class SaleOrderComponent implements OnInit {
       this.TotalCalculation();
       console.log("this.AddProdList", this.AddProdList)
       this.TermFormSubmitted = false;
-      this.LI_Doc_No = undefined;
-      this.LI_Doc_Date = new Date();
+      // this.LI_Doc_No = undefined;
+      // this.LI_Doc_Date = new Date();
       this.Reference_Doc_No = undefined;
       this.Reference_Doc_Date = undefined;
       this.ObjProductInfo.godown_id = undefined;
@@ -958,6 +992,9 @@ export class SaleOrderComponent implements OnInit {
       this.LotNolist = [];
       this.ObjSaleOrder.Vehicle_Type = "Regular";
       this.Choose_Address = undefined;
+      this.LI_Doc_No = undefined;
+      this.LI_Doc_Date = new Date();
+      this.GetLiDocNo();
      }
     }); 
      
@@ -999,6 +1036,7 @@ export class SaleOrderComponent implements OnInit {
           });
           this.DocNo = undefined;
           this.GetSerarchBrowse(true);
+          this.GetLiDocNo();
         }
       });
     }

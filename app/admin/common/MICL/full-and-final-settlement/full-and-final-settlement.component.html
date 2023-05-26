@@ -67,11 +67,11 @@
                                                             <span class="caret"></span>
                                                         </button>
                                                         <ul class="dropdown-menu">
-                                                            <!-- <li>
-                                                                <a (click)="PrintPRDB(col.RDB_No)">
+                                                            <li>
+                                                                <a (click)="Printfullandfinal(col.Emp_ID)">
                                                                     <i class="fa fa-fw fa-print"></i> Print
                                                                 </a>
-                                                            </li> -->
+                                                            </li>
                                                             <li>
                                                                 <a (click)="Edit(col.Emp_ID)">
                                                                   <i class="fa fa-fw fa-pencil"></i> Edit
@@ -171,7 +171,7 @@
                                             <td>DOL</td>
                                             <td></td>
                                             <!-- <td><input type="text" name="doj" #doj="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Emp_Joining_Dt' class="form-control" style="width: 71px;" /></td> -->
-                                            <td><ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Leave_Dt' name="dol"></ejs-datepicker></td>
+                                            <td><ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Leave_Dt' name="dol" [enabled]="!this.ObjFullAndFinalSettlement.Notice_Period_Day"></ejs-datepicker></td>
                                         </tr>
                                         <tr>
                                             <td class="text-center" style="vertical-align:middle">8</td>
@@ -370,6 +370,14 @@
                                             <td></td>
                                             <td><input type="text" name="tds" #tds="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.TDS_Deduction' CompacctDigitonly="true" class="form-control" 
                                                 [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && tds.errors?.required}" required/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="vertical-align:middle">5</td>
+                                            <td>Notice Period Deduction</td>
+                                            <td><input type="text" name="npddays" #npddays="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Notice_Period_Day' CompacctDigitonly="true" class="form-control" style="width: 71px;"
+                                                (ngModelChange)="CalculateNoticePeriod()" [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && npddays.errors?.required}"/></td>
+                                            <td><input type="text" name="npd" #npd="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Notice_Period_Amount' CompacctDigitonly="true" class="form-control" disabled="true"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && npd.errors?.required}" required/></td>
                                         </tr>
                                         <tr>
                                             <th class="text-center" style="vertical-align:middle"></th>

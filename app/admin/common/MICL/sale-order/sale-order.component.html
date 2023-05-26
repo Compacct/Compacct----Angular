@@ -145,6 +145,30 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                                         <form name="SaleOrderForm" #SaleOrderForm="ngForm" novalidate>
                                             <div class="form-group">
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">LI Doc No </label>
+                                                    <p-dropdown [options]="LiDocNoList" name="lidocno" #lidocno="ngModel"  
+                                                        [(ngModel)]="LI_Doc_No" 
+                                                        [showClear]="true" [emptyFilterMessage]="' No LI No Found'" 
+                                                        (onChange)="getLiDataChange()" [filter]="true" filterBy="label,value.name"
+                                                        [resetFilterOnHide]="true" [placeholder]="'Select LI No'"
+                                                        [virtualScroll]="true" itemSize="30" 
+                                                        [disabled]="AddProdList.length"
+                                                        [ngClass]="{'clearance':TermFormSubmitted && lidocno?.errors?.required}">
+                                                        </p-dropdown>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">LI Doc Date </label>
+                                                    <div class="input-group date">
+                                                        <div class="input-group-addon">
+                                                         <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='LI_Doc_Date' [enabled]="!LI_Doc_No"></ejs-datepicker>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="form-group">
                                                     <div class="col-sm-6">
                                                         <div class="col-sm-12">
                                                         <h4><strong>Buyer's Details/Challan to:</strong></h4>
@@ -157,6 +181,7 @@
                                                         (onChange)="VenderNameChange()" [filter]="true" filterBy="label,value.name"
                                                         [resetFilterOnHide]="true" [placeholder]="'Select Buyer s'"
                                                         [virtualScroll]="true" itemSize="30" 
+                                                        [disabled]="AddProdList.length"
                                                         [ngClass]="{'clearance':SaleOrderFormSubmitted && Billvendor?.errors?.required}" [required]="true">
                                                         </p-dropdown>
                                                       </div>
@@ -164,7 +189,7 @@
                                                             <div class="col-sm-12">
                                                                 <label class="control-label">Choose Address<sup class="text-danger">*</sup></label>
                                                                 <select class="form-control" name="billchooseaddress" 
-                                                                #billchooseaddress="ngModel" [(ngModel)]="Choose_Address"
+                                                                #billchooseaddress="ngModel" [(ngModel)]="Choose_Address" [disabled]="AddProdList.length"
                                                                 (change)="onChangeAdd()">
                                                                     <option  [ngValue]="undefined">Select</option>
                                                                     <option *ngFor="let option of SaveAddress" value="{{option.Address_Caption}}">
@@ -218,7 +243,7 @@
                                                             <h4><strong>Shipped To :</strong></h4>
                                                             </div>
                                                             <div class="col-sm-8"  style="margin-top: 10px;"> 
-                                                                <p-checkbox name="Address" [(ngModel)]="Same_as_Bill"(onChange)="getDisable()" binary="true"></p-checkbox> &nbsp;&nbsp;
+                                                                <p-checkbox name="Address" [(ngModel)]="Same_as_Bill"(onChange)="getDisable()" binary="true" [disabled]="AddProdList.length"></p-checkbox> &nbsp;&nbsp;
                                                                         <label>Address Form Buyer's</label>
                                                             </div>
                                                         </div>
@@ -227,7 +252,7 @@
                                                             <label class="control-label">Choose Address<sup class="text-danger">*</sup></label>
                                                             <select class="form-control" name="shipchooseaddress" #shipchooseaddress="ngModel" 
                                                             [(ngModel)]="ObjSaleOrder.Choose_Address2"
-                                                            [disabled]="DisableField===false"
+                                                            [disabled]="DisableField===false || AddProdList.length"
                                                             (change)="onChangeAdd()">
                                                                 <option  [ngValue]="undefined">Select</option>
                                                                 <option *ngFor="let opt of SaveAddress1" value="{{opt.Address_Caption}}">
@@ -425,27 +450,6 @@
                             </div>
                             <div class="clearfix"></div>
                             <div class="col-sm-3">
-                                <label class="control-label">LI Doc No </label>
-                               <p-dropdown [options]="LiDocNoList" name="lidocno" #lidocno="ngModel"  
-                                    [(ngModel)]="LI_Doc_No" 
-                                    [showClear]="true" [emptyFilterMessage]="' No LI No Found'" 
-                                    [filter]="true" filterBy="label,value.name"
-                                    [resetFilterOnHide]="true" [placeholder]="'Select LI No'"
-                                    [virtualScroll]="true" itemSize="30" 
-                                    (onChange)="getLiDataChange()"
-                                    [ngClass]="{'clearance':TermFormSubmitted && lidocno?.errors?.required}">
-                                </p-dropdown>
-                            </div>
-                            <div class="col-sm-3">
-                                <label class="control-label">LI Doc Date </label>
-                                <div class="input-group date">
-                                    <div class="input-group-addon">
-                                     <i class="fa fa-calendar"></i>
-                                </div>
-                                <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='LI_Doc_Date'></ejs-datepicker>
-                                </div>
-                            </div>
-                            <div class="col-sm-3">
                               <label>Reference No<sup class="text-danger">*</sup></label>
                               <input class="form-control" name="refno" #refno="ngModel"
                               [(ngModel)]="Reference_Doc_No" placeholder="Reference No"
@@ -457,7 +461,6 @@
                                 [(ngModel)]="Reference_Doc_Date" placeholder="Reference Date"
                                 [disabled]="true">
                             </div>
-                            <div class="clearfix"></div>
                             <div class="col-sm-3">
                               <label>Product Type<sup class="text-danger">*</sup></label>
                             <select class="form-control" name="ProducType" #ProducType="ngModel" 
@@ -486,6 +489,7 @@
                                 </option>
                                 </select>
                             </div>
+                            <div class="clearfix"></div>
                             <div class="col-sm-4">
                                 <label>Product Description<sup class="text-danger">*</sup></label>
                                 <p-dropdown [options]="ProductDetalist" name="Description" #Description="ngModel"  
@@ -510,7 +514,6 @@
                                     </option>
                                 </select>
                             </div>
-                            <div class="clearfix"></div>
                             <div class="col-sm-2">
                                 <label class="control-label">LI Qty </label>
                                 <div class="input-group">                                  
@@ -546,6 +549,7 @@
                                 CompacctDigitonly="true"
                                 [ngClass]="{clearance: TermFormSubmitted && Rate?.errors?.required}" required>
                             </div>
+                            <div class="clearfix"></div>
                             <div class="col-sm-2">
                                 <label class="control-label">Taxable Amount <sup class="text-danger">*</sup></label>
                                 <input class="form-control"  name="Taxable" #Taxable="ngModel" 

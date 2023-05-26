@@ -213,7 +213,9 @@ div.table-responsive.table-id>p-table>div>div {
   
   .SL,
   .CL,
-  .PL {
+  .PL,
+  .AL,
+  .HD {
     background-color: rgb(27 56 173) !important;
     color: #ffff;
     text-align: center;
