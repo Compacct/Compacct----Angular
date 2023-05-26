@@ -786,7 +786,9 @@ export class PurchaseBillComponent implements OnInit {
     },500)
     }
     else {
+      const tempobjBck = {...this.ObjProductInfo}
       this.ObjProductInfo = new ProductInfo();
+      this.ObjProductInfo.Pur_Order_No = tempobjBck.Pur_Order_No
       this.projectDis = true
       this.ObjProductInfo.Godown_Id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
       this.ObjProductInfo.Godown_Id = this.openProject == 'Y' ? 1 : undefined
