@@ -376,6 +376,7 @@ import { HrCouponReportComponent } from "./common/MICL/hr-coupon-report/hr-coupo
 import { JohDailyAttendanceComponent } from './common/Attendance/joh-daily-attendance/joh-daily-attendance.component';
 import { CandidateInterviewProcessComponent } from './common/Attendance/candidate-interview-process/candidate-interview-process.component';
 import { ConsultancyPaymentComponent } from "./common/Attendance/consultancy-payment/consultancy-payment.component";
+import { AppraisalFormComponent } from "./common/Attendance/appraisal-form/appraisal-form.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2861,6 +2862,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: ConsultancyPaymentComponent,
         data: {
           title: 'Consultancy Payment'
+    }
+    },
+    {
+      path: 'Appraisal_Form',
+        component: AppraisalFormComponent,
+        data: {
+          title: 'Appraisal Form'
     }
     },
 
