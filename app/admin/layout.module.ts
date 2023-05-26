@@ -471,6 +471,7 @@ import { OldProjectMasterComponent } from './common/Harbauer/old-project-master/
 import { MasterProjectTeamComponent } from './common/Harbauer/master-project-team/master-project-team.component';
 import { HrCouponReportComponent } from './common/MICL/hr-coupon-report/hr-coupon-report.component';
 import { JohDailyAttendanceComponent } from './common/Attendance/joh-daily-attendance/joh-daily-attendance.component';
+import { CandidateInterviewProcessComponent } from './common/Attendance/candidate-interview-process/candidate-interview-process.component';
 
 @NgModule({
   declarations: [
@@ -858,7 +859,8 @@ import { JohDailyAttendanceComponent } from './common/Attendance/joh-daily-atten
     OldProjectMasterComponent,
     MasterProjectTeamComponent,
     HrCouponReportComponent,
-    JohDailyAttendanceComponent
+    JohDailyAttendanceComponent,
+    CandidateInterviewProcessComponent
 
 
   ],

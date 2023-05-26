@@ -374,6 +374,7 @@ import { OldProjectMasterComponent } from './common/Harbauer/old-project-master/
 import { MasterProjectTeamComponent } from './common/Harbauer/master-project-team/master-project-team.component';
 import { HrCouponReportComponent } from "./common/MICL/hr-coupon-report/hr-coupon-report.component";
 import { JohDailyAttendanceComponent } from './common/Attendance/joh-daily-attendance/joh-daily-attendance.component';
+import { CandidateInterviewProcessComponent } from './common/Attendance/candidate-interview-process/candidate-interview-process.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2847,6 +2848,15 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
           title: 'Daily Attendance JOH'
     }
     },
+    {
+      path: 'Candidate_Interview_Process',
+        component: CandidateInterviewProcessComponent,
+        data: {
+          title: 'Candidate Interview Process'
+    }
+    },
+
+    
     /*{
 
 
