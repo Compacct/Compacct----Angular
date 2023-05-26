@@ -429,32 +429,38 @@
 <br>
 <form name="ApproveForm" #ApproveForm="ngForm" novalidate>
     <div class="form-group">
-    <div class="col-sm-3"> 
+    <div class="col-sm-4"> 
         <label class="control-label">Approved From Date  <sup class="text-danger">*</sup></label>
         <ejs-datepicker [zIndex]="99999" [format]="'dd/MMM/yyyy'" [(value)]='Issued_From_Date' (change)="GetNoOfDays()"></ejs-datepicker>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-4">
         <label class="control-label">Approved To Date  <sup class="text-danger">*</sup></label>
         <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Issued_To_Date' (change)="GetNoOfDays()"></ejs-datepicker>
     </div> 
-    <div class="col-sm-2">
+    <div class="col-sm-4">
         <label class="control-label">No. Of Days issued</label>
+        <div *ngIf="databaseName === 'GN_JOH_HR' && checkboxdisabled" class="col-sm-2 pull-right" style="width:115px;">
+            <small><b>Is Half Day</b></small> &nbsp;
+            <p-checkbox (onChange)='HalfDayChange()' name='halfday'  [(ngModel)]="HalfDayFlag"  [binary]="true"></p-checkbox>
+        </div>
         <input  class="form-control" placeholder="Number Of Days"
         name="NoOfDaysApply"
         #NoOfDaysApply="ngModel"
             [(ngModel)]="No_Of_Days_Apply" 
             disabled>
     </div>
-    <div class="col-sm-4" *ngIf="Bussidisabled && !Reportdisabled">
-        <label class="control-label">Remarks of Approval 2  <sup class="text-danger">*</sup></label>
-        <input type="text" name="BMremarks" #BMremarks="ngModel"  [(ngModel)]='Approved_Note_Business_Manager' class="form-control" 
-        [ngClass]="{'clearance': ApproveFormSubmit && BMremarks?.errors?.required}" required/>
     </div>
-    <div class="col-sm-4" *ngIf="Reportdisabled && !Bussidisabled">
-        <label class="control-label">Remarks of Approval 1  <sup class="text-danger">*</sup></label>
-        <input type="text" name="RMremarks" #RMremarks="ngModel" [(ngModel)]='Approved_Note_Reporting_Manager' class="form-control" 
-        [ngClass]="{'clearance': ApproveFormSubmit && RMremarks?.errors?.required}" required/>
-    </div>
+    <div class="form-group">
+        <div class="col-sm-4" *ngIf="Bussidisabled && !Reportdisabled">
+            <label class="control-label">Remarks of Approval 2  <sup class="text-danger">*</sup></label>
+            <input type="text" name="BMremarks" #BMremarks="ngModel"  [(ngModel)]='Approved_Note_Business_Manager' class="form-control" 
+            [ngClass]="{'clearance': ApproveFormSubmit && BMremarks?.errors?.required}" required/>
+        </div>
+        <div class="col-sm-4" *ngIf="Reportdisabled && !Bussidisabled">
+            <label class="control-label">Remarks of Approval 1  <sup class="text-danger">*</sup></label>
+            <input type="text" name="RMremarks" #RMremarks="ngModel" [(ngModel)]='Approved_Note_Reporting_Manager' class="form-control" 
+            [ngClass]="{'clearance': ApproveFormSubmit && RMremarks?.errors?.required}" required/>
+        </div>
     </div>
 </form>
     <p-footer> 

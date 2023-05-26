@@ -156,7 +156,7 @@
                                                                     Update Outcome
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="col.Consultancy_Descr == 'PTA' ||col.Consultancy_Descr == 'PTA +Tympanometry +Speech Audiometry' ||col.Consultancy_Descr == 'PTA+ Tympanometry'">
+                                                            <li *ngIf="col.Consultancy_Descr == 'PTA' ||col.Consultancy_Descr == 'PTA +Tympanometry +Speech Audiometry' ||col.Consultancy_Descr == 'PTA+ Tympanometry' || col.Consultancy_Descr == 'PTA + Hearing Aid Trial'">
                                                                 <a (click)="actionClick(col ,'PTA')">
                                                                     <i class="fa fa-arrow-right"></i>
                                                                     Update Outcome
@@ -196,6 +196,12 @@
                                                                 <a (click)="actionClick(col ,'DisplayModel')" >
                                                                     <i class="fa fa-plus"></i>
                                                                    Therapy Attendance
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Check_Other">
+                                                                <a (click)="actionClick(col ,'Other Outcome')">
+                                                                    <i class="fa fa-plus"></i>
+                                                                    Other Outcome
                                                                 </a>
                                                             </li>
                                                          </ul>
@@ -1426,6 +1432,41 @@ style="text-align: center;"
         </button>
         <button type="button" (click)=" EvaluationModal = false" class="btn btn-info">
             <span class="glyphicon glyphicon-remove"></span>Close
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!-- otherOutcome-->
+<p-dialog [header]="TitleHeder" [appendTo]="'body'" [visible]="ViewPoTypeModal"
+    [closeOnEscape]="true" [closable]="true" [modal]="true" [responsive]="true"
+    [style]="{width: '400px', minWidth: '280px'}" [minY]="70"  [maximizable]="false"
+    [baseZIndex]="10000">
+    <form name="POPForms" #POPForms="ngForm" novalidate>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">Other Outcome<sup class="text-danger">*</sup></label>
+                <p-dropdown [options]="OtherOutComelist" name="Other" #Other="ngModel"
+                    [(ngModel)]="OTHER_OUTCOME_ID"[showClear]="true" [disabled]="OtherOutcom"
+                    [emptyFilterMessage]="'No List Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                    (onChange)="FinalStatus()" [placeholder]="'Choose List'" [virtualScroll]="true" itemSize="30"
+                    [ngClass]="{'clearance':  otherRemarksSummited&& Other.errors?.required}" required>
+                </p-dropdown>
+            </div> 
+            <div class="col-sm-12">
+                <label class="control-label">Remarks<sup class="text-danger">*</sup></label>
+                <textarea class="form-control"  name="Remarks" #Remarks="ngModel"
+                    [(ngModel)]="Outcome_Remarks" placeholder="Remarks" [disabled]="OtherOutcom"
+                    [ngClass]="{'clearance': otherRemarksSummited && Remarks.errors?.required}" required>
+                </textarea>
+            </div>
+        </div>     
+    </form>
+    <p-footer>
+        <button type="button" (click)="UpdatePOP(POPForms.form.valid)" class="btn btn-primary" *ngIf="!OtherOutcom">
+            Update
+        </button>
+        <button type="button" (click)="ViewPoTypeModal= false" class="btn btn-info">
+            Cancel
         </button>
     </p-footer>
 </p-dialog>

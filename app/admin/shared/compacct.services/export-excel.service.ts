@@ -177,7 +177,7 @@ export class ExportExcelService {
     };
     // AS PER INVOICE
     const headerTitleCell5 = headerTitle.getCell(13);
-    headerTitle.getCell(13).alignment = { vertical: 'middle' , horizontal: 'center' , wrapText: true};
+    headerTitle.getCell(13).alignment = { vertical: 'middle' , horizontal: 'center' };
     headerTitleCell5.value = 'AS PER INVOICE';
     headerTitleCell5.fill = {
       type: 'pattern',
@@ -525,7 +525,7 @@ export class ExportExcelService {
    totalRow.getCell(1).alignment = {
     horizontal:'right'
    }
-   console.log(header)
+  
    const result = (rinx) => {
     let sum: any = 0;
     data.forEach((arr: any) => {
@@ -574,6 +574,1126 @@ export class ExportExcelService {
       fs.saveAs(blob, 'DISPATCH_MIS.xlsx');
     })
   }
+  exporttoExcelCouponReport(exceldata:any,exceldata1:any,daterange:any,OtherDetailsFactory:any,OtherDetailsFactory2ndPart:any,OtherDetails:any){
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet('Sheet1');
+    let CompanyNameRow = worksheet.addRow([]);
+    CompanyNameRow.getCell(1).value = "MODERN INDIA CON-CAST LIMITED(HALDIA WORKS)";
+    CompanyNameRow.getCell(1).font={
+      size: 14,
+      bold:true
+     }
+     CompanyNameRow.getCell(1).alignment = {
+      horizontal:'center'
+     }
+    let ReportNameRow = worksheet.addRow([]);
+     ReportNameRow.getCell(1).value = "FACTORY CANTEEN DETAILS";
+     ReportNameRow.getCell(1).font={
+      bold:true,
+      size:11
+     }
+     ReportNameRow.getCell(1).alignment = {
+      horizontal:'center'
+     }
+     ReportNameRow.getCell(1).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+     ReportNameRow.getCell(this.foo('Y')).value = "STATEMENT OF DAILY MEALS";
+     ReportNameRow.getCell(this.foo('Y')).font={
+       size: 15,
+       bold:true
+      }
+      ReportNameRow.getCell(this.foo('Y')).alignment = {
+       horizontal:'center'
+      }
+      ReportNameRow.getCell(this.foo('Y')).border = {
+       top: { style: 'thin' },
+       left: { style: 'thin' },
+       bottom: { style: 'thin' },
+       right: { style: 'thin' },
+     };
+
+
+     let TopHeaderRow = worksheet.addRow([]);
+     TopHeaderRow.getCell(1).value = ""
+     TopHeaderRow.getCell(1).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+     TopHeaderRow.getCell(2).value = "COUPON SUMMARY"
+     TopHeaderRow.getCell(2).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'EBF110' },
+      bgColor: { argb: '' }
+    }
+    TopHeaderRow.getCell(2).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    TopHeaderRow.getCell(2).alignment = {
+      horizontal:'center'
+     }
+     TopHeaderRow.getCell(2).font={
+      bold:true,
+      size:11
+     }
+     TopHeaderRow.getCell(10).value = "COUPON SALE"
+     TopHeaderRow.getCell(10).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'EBF110' },
+      bgColor: { argb: '' }
+    }
+    TopHeaderRow.getCell(10).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    TopHeaderRow.getCell(10).alignment = {
+      horizontal:'center'
+     }
+     TopHeaderRow.getCell(10).font={
+      bold:true,
+      size:11
+     }
+     TopHeaderRow.getCell(19).value = "EXPENSES"
+     TopHeaderRow.getCell(19).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'EBF110' },
+      bgColor: { argb: '' }
+    }
+    TopHeaderRow.getCell(19).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    TopHeaderRow.getCell(19).alignment = {
+      horizontal:'center'
+    }
+    TopHeaderRow.getCell(19).font={
+      bold:true,
+      size:11
+    }
+
+    TopHeaderRow.getCell(this.foo('Y')).value = "PARTIALLY SUBSIDISED AGAINST COUPON"
+    TopHeaderRow.getCell(this.foo('Y')).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    TopHeaderRow.getCell(this.foo('Y')).alignment = {
+      horizontal:'center'
+    }
+    TopHeaderRow.getCell(this.foo('Y')).font={
+      bold:true,
+      size:10
+    }
+
+
+
+    TopHeaderRow.getCell(this.foo('AD')).value = "100% SUBSIDISED"
+    TopHeaderRow.getCell(this.foo('AD')).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    TopHeaderRow.getCell(this.foo('AD')).alignment = {
+      horizontal:'center'
+    }
+    TopHeaderRow.getCell(this.foo('AD')).font={
+      bold:true,
+      size:10
+    }
+
+
+    TopHeaderRow.getCell(this.foo('AI')).value = ""
+    TopHeaderRow.getCell(this.foo('AI')).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    TopHeaderRow.getCell(this.foo('AJ')).value = ""
+    TopHeaderRow.getCell(this.foo('AJ')).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    TopHeaderRow.getCell(this.foo('AK')).value = ""
+    TopHeaderRow.getCell(this.foo('AK')).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    TopHeaderRow.getCell(this.foo('AL')).value = ""
+    TopHeaderRow.getCell(this.foo('AL')).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+   const midheaderRow = worksheet.addRow([])
+   const midheaderRowdata:any = [ 
+      // {pos:1,dces:`${daterange.StartDate.split('/')[1]}-${daterange.StartDate.split('/')[2].substr(daterange.StartDate.split('/')[2].length - 2)}`},
+      {pos:1,dces: new Date(new Date(daterange.StartDate).setHours(new Date(daterange.StartDate).getHours() + 6))},
+      {pos:2,dces:'BREAKFAST'},
+      {pos:6,dces:'MEAL'},
+      {pos:10,dces:'BREAKFAST'},
+      {pos:14,dces:'MEAL'},
+      {pos:18,dces:'GRAND TOTAL'},
+      {pos:19,dces:'PAYMENT'}]
+      const midheaderRowdataTb2:any = [
+        {
+          pos:'Y',value:'Date'
+        },
+        {
+          pos:'Z',value:'STAFF'
+        },
+        {
+          pos:'AD',value:'GUEST'
+        },
+        {
+          pos:'AE',value:'MEAL(COOK &HELPER)'
+        },
+        {
+          pos:'AF',value:'B/F(COOK &HELPER)'
+        },
+        {
+          pos:'AG',value:'WASTAGE'
+        },
+        {
+          pos:'AH',value:'TOTAL'
+        },
+        {
+          pos:'AI',value:'TOTAL (B/F)'
+         
+        },
+        {
+          pos:'AJ',value:'TOTAL (MEAL)'
+        },
+        {
+          pos:'AK',value:'GRAND TOTAL'
+        },
+        {
+          pos:'AL',value:'REMARKS'
+        }
+      ]
+      midheaderRowdata.forEach((ele:any) => {
+      midheaderRow.getCell(ele.pos).value = ele.dces
+      if(ele.pos == 1){
+       midheaderRow.getCell(ele.pos).numFmt = 'MMM-YY'
+      }
+      midheaderRow.getCell(ele.pos).border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+      if( ele.pos == 18){
+       midheaderRow.getCell(ele.pos).alignment = {
+          horizontal:'center',
+          wrapText: true
+         }
+         midheaderRow.getCell(ele.pos).font={
+          bold:true,
+          size:8
+         }
+      }
+      else{
+        midheaderRow.getCell(ele.pos).alignment = {
+          horizontal:'center'
+         }
+         midheaderRow.getCell(ele.pos).font={
+          bold:true,
+          size:11
+         }
+      }
+     
+       
+    });
+    midheaderRowdataTb2.forEach((ele:any) => {
+      midheaderRow.getCell(this.foo(ele.pos)).value = ele.value
+      midheaderRow.getCell(this.foo(ele.pos)).border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+      midheaderRow.getCell(this.foo(ele.pos)).alignment = {
+        horizontal:'center',
+        vertical:"middle",
+        wrapText:true
+       }
+       if( ele.pos == 'Z'){
+        midheaderRow.getCell(this.foo(ele.pos)).font={
+          bold:true,
+          size:12
+         }
+       }
+       else if(ele.pos == 'AG'){
+        midheaderRow.getCell(this.foo(ele.pos)).font={
+          bold:true,
+          size:6
+         }
+       }
+       else if(ele.pos == 'Y' || ele.pos == 'AK' || ele.pos == 'AL'){
+        midheaderRow.getCell(this.foo(ele.pos)).font={
+          bold:true,
+          size:11
+         }
+       }
+       else {
+        midheaderRow.getCell(this.foo(ele.pos)).font={
+          bold:true,
+          size:9
+         }
+       }
+      
+     
+       
+    });
+    const DataHeaderRowList:any = ['DATE','OP.BAL','RECEIVED','SALE','CL.BAL.','OP.BAL','RECEIVED','SALE','CL.BAL.','STAFF','WORKERS','TOTAL','AMOUNT','STAFF','WORKERS','TOTAL','AMOUNT','AMOUNT','VEGETABLE','GROCERY','MISC/OTHERS(NON VEG ITEMS)','FUEL','TOTAL']
+    
+    const DataHeaderRow = worksheet.addRow(DataHeaderRowList)
+    DataHeaderRow.eachCell((cell,Number)=>{
+        cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+      cell.font = {
+        bold: true,
+        size: 8
+      }
+      cell.alignment = {
+        horizontal:'center',
+        vertical:'middle',
+       }
+    })
+    DataHeaderRow.getCell(1).font = {
+      bold: true,
+      size: 11
+    }
+   
+    DataHeaderRow.getCell(11).font = {
+      bold: true,
+      size: 6
+    }
+    DataHeaderRow.getCell(11).alignment = {
+      horizontal:'right',
+      wrapText:true
+     }
+     DataHeaderRow.getCell(15).font = {
+      bold: true,
+      size: 6
+    }
+    DataHeaderRow.getCell(15).alignment = {
+      horizontal:'right',
+      wrapText:true
+     }
+     DataHeaderRow.getCell(21).font = {
+      bold: true,
+      size: 6
+    }
+    DataHeaderRow.getCell(21).alignment = {
+      horizontal:'right',
+      wrapText:true
+     }
+    DataHeaderRow.getCell(5).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'bdd7ee' },
+      bgColor: { argb: '' }
+    }
+    DataHeaderRow.getCell(9).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'd6dce4' },
+      bgColor: { argb: '' }
+    }
+    DataHeaderRow.getCell(13).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '99ff99' },
+      bgColor: { argb: '' }
+    }
+    DataHeaderRow.getCell(17).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '9ef4f8' },
+      bgColor: { argb: '' }
+    }
+    DataHeaderRow.getCell(18).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '99ff99' },
+      bgColor: { argb: '' }
+    }
+    DataHeaderRow.getCell(23).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'ffff00' },
+      bgColor: { argb: '' }
+    }
+    const DataHeaderRow2:any = [
+      {
+        pos:'Z',value:'BREAKFAST'
+      },
+      {
+        pos:'AA',value:'LUNCH'
+      },
+      {
+        pos:'AB',value:'DINNER'
+      },
+      {
+        pos:'AC',value:'TOTAL'
+      },
+    ]
+
+    DataHeaderRow2.forEach(ele => {
+      DataHeaderRow.getCell(this.foo(ele.pos)).value = ele.value
+      DataHeaderRow.getCell(this.foo(ele.pos)).border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+      DataHeaderRow.getCell(this.foo(ele.pos)).alignment = {
+        horizontal:'center',
+        vertical:"middle",
+        wrapText:true
+       }
+       DataHeaderRow.getCell(this.foo(ele.pos)).font={
+        bold:true,
+        size:10
+       }
+    });
+    const lastHeaderRowList = ['','PCS','PCS','PCS','PCS','PCS','PCS','PCS','PCS','PCS','PCS','PCS','RS','PCS','PCS','PCS','RS','RS','RS','RS','RS','RS','RS']
+
+    const lastHeaderRow = worksheet.addRow(lastHeaderRowList)
+
+    const lastHeaderRowListTb2 = [
+      {
+        pos:'Y',value:''
+      },
+      {
+        pos:'Z',value:'PCS'
+      },
+      {
+        pos:'AA',value:'PCS'
+      },
+      {
+        pos:'AB',value:'PCS'
+      },
+      {
+        pos:'AC',value:'PCS'
+      },
+      {
+        pos:'AD',value:'PCS'
+      },
+      {
+        pos:'AE',value:'PCS'
+      },
+      {
+        pos:'AF',value:'PCS'
+      
+      },
+      {
+        pos:'AG',value:'PCS'
+      },
+      {
+        pos:'AH',value:'PCS'
+      },
+      {
+        pos:'AI',value:'PCS'
+      },
+      {
+        pos:'AJ',value:'PCS'
+      },
+      {
+        pos:'AK',value:'PCS'
+      },
+      {
+        pos:'AL',value:''
+      }
+    ]
+
+   lastHeaderRowListTb2.forEach(el=>{
+    lastHeaderRow.getCell(this.foo(el.pos)).value = el.value
+    lastHeaderRow.getCell(this.foo(el.pos)).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    lastHeaderRow.getCell(this.foo(el.pos)).alignment = {
+      horizontal:'center',
+      vertical:"middle",
+      wrapText:true
+     }
+     lastHeaderRow.getCell(this.foo(el.pos)).font={
+      bold:true,
+      size:8
+     }
+    })
+      lastHeaderRow.eachCell((cell,Number)=>{
+        cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+      cell.font = {
+        bold: true,
+        size: 8
+      }
+      cell.alignment = {
+        horizontal:'center',
+        vertical:'middle',
+      }
+    })
+    lastHeaderRow.getCell(5).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'bdd7ee' },
+      bgColor: { argb: '' }
+    }
+    lastHeaderRow.getCell(9).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'd6dce4' },
+      bgColor: { argb: '' }
+    }
+    lastHeaderRow.getCell(13).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '99ff99' },
+      bgColor: { argb: '' }
+    }
+    lastHeaderRow.getCell(17).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '9ef4f8' },
+      bgColor: { argb: '' }
+    }
+    lastHeaderRow.getCell(18).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '99ff99' },
+      bgColor: { argb: '' }
+    }
+    lastHeaderRow.getCell(23).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'ffff00' },
+      bgColor: { argb: '' }
+    }
+
+  const data:any = [];
+  exceldata.forEach((ele:any) => {
+    data.push(Object.values(ele))
+  });
+  const data1:any = [];
+  exceldata1.forEach((ele:any) => {
+    data1.push(Object.values(ele))
+  });
+   // Adding Data with Conditional Formatting
+  const dataposTb2:any = [
+    {
+      pos:'Y'
+    },
+    {
+      pos:'Z'
+    },
+    {
+      pos:'AA'
+    },
+    {
+      pos:'AB'
+    },
+    {
+      pos:'AC'
+    },
+    {
+      pos:'AD'
+    },
+    {
+      pos:'AE'
+    },
+    {
+      pos:'AF'
+     
+    },
+    {
+      pos:'AG'
+    },
+    {
+      pos:'AH'
+    },
+    {
+      pos:'AI'
+    },
+    {
+      pos:'AJ'
+    },
+    {
+      pos:'AK'
+    },
+    {
+      pos:'AL'
+    }
+   ]
+  data.forEach(d => {
+  const row= worksheet.addRow(d);
+  for( let i= 0; i< d.length;i++ ){
+    row.getCell(i + 1).border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+    }
+    row.getCell(i + 1).alignment = {
+      horizontal:'center'
+    }
+    row.getCell(i+1).font = {
+      size:11
+    }
+    row.getCell(5).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'bdd7ee' },
+      bgColor: { argb: '' }
+    }
+    row.getCell(9).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'd6dce4' },
+      bgColor: { argb: '' }
+    }
+    row.getCell(13).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '99ff99' },
+      bgColor: { argb: '' }
+    }
+    row.getCell(17).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '9ef4f8' },
+      bgColor: { argb: '' }
+    }
+    row.getCell(18).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '99ff99' },
+      bgColor: { argb: '' }
+    }
+    row.getCell(23).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'ffff00' },
+      bgColor: { argb: '' }
+    }
+  }
+    }
+  );
+  data1.forEach((ele,i) => {
+   dataposTb2.forEach((e,inx) => {
+
+      let row:any =  worksheet.getCell(`${e.pos}${i+7}`) 
+      row.value = ele[inx]
+        worksheet.getCell(`${e.pos}${i+7}`).border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        }
+        worksheet.getCell(`${e.pos}${i+7}`).alignment = {
+          horizontal : "center",
+          vertical:"middle"
+        }
+
+    if(e.pos == 'AC'){
+      row.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'b4c6e7' },
+        bgColor: { argb: '' }
+      }
+    }
+    if(e.pos == 'AG'){
+      row.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'ffff00' },
+      bgColor: { argb: '' }
+      }
+    }
+    if(e.pos == 'AH'){
+      row.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'b4c6e7' },
+      bgColor: { argb: '' }
+      }
+    }
+    if(e.pos == 'AI'){
+      row.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'b4c6e7' },
+        bgColor: { argb: '' }
+      }
+    }
+    if(e.pos == 'AJ'){
+      row.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '99ff99' },
+      bgColor: { argb: '' }
+      }
+    }
+    if(e.pos == 'AK'){
+      row.fill = {
+       type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'c6e0b4' },
+      bgColor: { argb: '' }
+      }
+    }
+    if(e.pos == 'AE'){
+    row.font = {color: {argb: "F11310"}};
+    }
+    if(e.pos == 'AF'){
+      row.font = {color: {argb: "F11310"}};
+    }
+     });
+     
+  
+  });
+ // Blank Row
+   worksheet.addRow([])
+  // Add Other Detalis
+    const otherDetalisRow = worksheet.addRow([])
+
+    const rowDataList = [ 
+      {
+        pos:"E",
+        value:"MEAL COST"
+     },
+      {
+      pos:"K",
+      value:"COMPANY SUBSIDY(IN RS)"
+     },
+     {
+    pos:"N",
+    value:" AMOUNT  (in unit)"
+      },
+      {
+      pos:"O",
+      value:"(%)"
+      },
+      {
+      pos:"P",
+      value:"AMOUNT (Expenses)"
+      },
+     {
+      pos:"Q",
+      value:"(%)"
+     },
+      {
+      pos:"AG",
+      value:"CONVERSION(IN UNIT)"
+     },
+     {
+      pos:"AI",
+      value:"RATE OF RELIASATION"
+     },
+     {
+      pos:"AJ",
+      value:"UNIT"
+     }
+     ]
+
+    otherDetalisRow.height = 25.50
+    rowDataList.forEach(el=>{
+      otherDetalisRow.getCell(this.foo(el.pos)).value = el.value
+      otherDetalisRow.getCell(this.foo(el.pos)).border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+      otherDetalisRow.getCell(this.foo(el.pos)).alignment = {
+        horizontal: "center",
+        vertical : "middle",
+      }
+
+      if(el.pos == "AG"){
+        otherDetalisRow.getCell(this.foo(el.pos)).alignment = {
+          horizontal: "center",
+          vertical : "middle",
+          wrapText:true
+        }
+        otherDetalisRow.getCell(this.foo(el.pos)).font = {
+          bold: true,
+          size: 7
+        }
+      }
+      if(el.pos == "AI" || el.pos == "AJ"){
+        otherDetalisRow.getCell(this.foo(el.pos)).alignment = {
+          horizontal: "center",
+          vertical : "middle",
+          wrapText:true
+        }
+        otherDetalisRow.getCell(this.foo(el.pos)).font = {
+          bold: true,
+          size: 6
+        }
+      }
+    })
+    otherDetalisRow.getCell(this.foo('E')).font = {
+      size:11
+    }
+    otherDetalisRow.getCell(this.foo('K')).font = {
+      size:8,
+      bold:true
+    }
+    otherDetalisRow.getCell(this.foo('N')).font = {
+      size:8,
+      bold:true
+    }
+    otherDetalisRow.getCell(this.foo('N')).alignment = {
+      horizontal:"center",
+      vertical:"middle",
+      wrapText:true
+    }
+    otherDetalisRow.getCell(this.foo('O')).font = {
+      size:11,
+      bold:true
+    }
+    otherDetalisRow.getCell(this.foo('P')).font = {
+      size:8,
+      bold:true
+    }
+    otherDetalisRow.getCell(this.foo('P')).alignment = {
+      horizontal:"center",
+      vertical:"middle",
+      wrapText:true
+    }
+    otherDetalisRow.getCell(this.foo('Q')).font = {
+      size:11,
+      bold:true
+    }
+    
+
+    const otherDetalisRow2List = [
+      [
+        {
+          pos:"E",
+          value:"TOTAL EXPENDITURE"
+        },
+        {
+          pos:"I",
+          value: OtherDetailsFactory[0].Total_Expenditure
+        },
+        {
+          pos:"K",
+          value: 'MEAL'
+        },
+        {
+          pos:"L",
+          value: ''
+        },
+        {
+          pos:"M",
+          value: OtherDetailsFactory2ndPart[0].Company_Subsidy_Meal
+        },
+        {
+          pos:"N",
+          value: OtherDetailsFactory2ndPart[0].Company_Subsidy_Meal_Amount
+        },
+        {
+          pos:"O",
+          value: OtherDetailsFactory2ndPart[0].Company_Subsidy_Meal_Percentage
+        },
+        {
+          pos:"P",
+          value: OtherDetailsFactory2ndPart[0].Company_Subsidy_Meal_Amount_Expenses
+        },
+        {
+          pos:"Q",
+          value: OtherDetailsFactory2ndPart[0].Meal_Percentage
+        },
+        {
+          pos:"AG",
+          value: "B/F"
+        },
+        {
+          pos:"AI",
+          value: OtherDetails[0].Breakfast_Rate_Of_Reliasation
+        },
+        {
+          pos:"AJ",
+          value: OtherDetails[0].Total_Breakfast
+        }
+      ],
+      [
+        {
+          pos:"E",
+          value:"TOTAL MEAL"
+        },
+        {
+          pos:"I",
+          value: OtherDetailsFactory[0].Total_Meal
+        },
+        {
+          pos:"K",
+          value: 'B/F'
+        },
+        {
+          pos:"L",
+          value: ''
+        },
+        {
+          pos:"M",
+          value: OtherDetailsFactory2ndPart[0].Company_Subsidy_Breakfast
+        },
+        {
+          pos:"N",
+          value: OtherDetailsFactory2ndPart[0].Company_Subsidy_Breakfast_Amount
+        },
+        {
+          pos:"O",
+          value: OtherDetailsFactory2ndPart[0].Company_Subsidy_BF_Percentage
+        },
+        {
+          pos:"P",
+          value: OtherDetailsFactory2ndPart[0].Company_Subsidy_Breakfast_Amount_Expenses
+        },
+        {
+          pos:"Q",
+          value: OtherDetailsFactory2ndPart[0].BF_Percentage
+        } ,
+        {
+          pos:"AG",
+          value: "MEAL"
+        },
+        {
+          pos:"AI",
+          value: OtherDetails[0].Meal_Rate_Of_Reliasation
+        },
+        {
+          pos:"AJ",
+          value: OtherDetails[0].Total_Meal
+        }
+      ],
+      [
+        {
+          pos:"E",
+          value:"COST/MEAL"
+        },
+        {
+          pos:"I",
+          value: OtherDetailsFactory[0].Cost_Meal
+        },
+        {
+          pos:"K",
+          value: ''
+        },
+        {
+          pos:"L",
+          value: ''
+        },
+        {
+          pos:"M",
+          value: ""
+        },
+        {
+          pos:"N",
+          value: OtherDetailsFactory2ndPart[0].Company_Subsidy_Total_Amount
+        },
+        {
+          pos:"O",
+          value: ""
+        },
+        {
+          pos:"P",
+          value: OtherDetailsFactory2ndPart[0].Company_Subsidy_Total_Amount_Expenses
+        },
+        {
+          pos:"Q",
+          value: ""
+        },
+        {
+          pos:"AG",
+          value: "TOTAL MEALS(IN UNIT)"
+        },
+        {
+          pos:"AI",
+          value: ""
+        },
+        {
+          pos:"AJ",
+          value: OtherDetails[0].Total_Meals_In_Unit
+        }
+      ],
+      [
+        {
+          pos:"E",
+          value:"COST/B.F"
+        },
+        {
+          pos:"I",
+          value: OtherDetailsFactory[0].Cost_breakfast
+        },
+        {
+          pos:"K",
+          value: ''
+        },
+        {
+          pos:"L",
+          value: ''
+        },
+        {
+          pos:"M",
+          value: ""
+        },
+        {
+          pos:"N",
+          value: ""
+        },
+        {
+          pos:"O",
+          value: ""
+        },
+        {
+          pos:"P",
+          value: ""
+        },
+        {
+          pos:"Q",
+          value: ""
+        }
+      ]
+    ]
+
+    otherDetalisRow2List.forEach((obj,i)=>{
+      const otherDetalisRow2 = worksheet.addRow([])
+      obj.forEach(el=>{
+        otherDetalisRow2.getCell(this.foo(el.pos)).value = el.value
+        otherDetalisRow2.getCell(this.foo(el.pos)).font = {
+          size : 11,
+         }
+        otherDetalisRow2.getCell(this.foo(el.pos)).border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+        otherDetalisRow2.getCell(this.foo(el.pos)).alignment = {
+          horizontal: "center",
+          vertical : "middle"
+        }
+        if(el.pos == 'AG'){
+          otherDetalisRow2.getCell(this.foo(el.pos)).alignment = {
+            horizontal: "center",
+            vertical : "middle",
+            wrapText:true
+            
+          }
+          otherDetalisRow2.getCell(this.foo(el.pos)).font = {
+            size:7,
+            bold:true
+            
+          }
+        }
+        
+      })
+      worksheet.mergeCells(`E${data.length + 9 + i}`,`H${data.length + 9 + i}` );
+      worksheet.mergeCells(`AG${data.length + 9 + i}`,`AH${data.length + 9 + i}` );
+      if( i == 2){
+        otherDetalisRow2.height = 18.00
+      }
+      
+    })
+  
+    // Merge Cell 
+  
+    worksheet.mergeCells('A1', 'W1');
+
+    worksheet.mergeCells('A2', 'W2');
+
+    worksheet.mergeCells('B3', 'I3');
+    worksheet.mergeCells('J3', 'R3');
+    worksheet.mergeCells('S3', 'W3');
+
+    worksheet.mergeCells('B4', 'E4');
+    worksheet.mergeCells('F4', 'I4');
+    worksheet.mergeCells('J4', 'M4');
+    worksheet.mergeCells('N4', 'Q4');
+    worksheet.mergeCells('S4', 'W4');
+
+    worksheet.mergeCells('A5', 'A6');
+
+
+
+    worksheet.mergeCells('Y2', 'AL2');
+
+    worksheet.mergeCells('Y3', 'AC3');
+    worksheet.mergeCells('AD3', 'AH3');
+
+
+    worksheet.mergeCells('Z4', 'AC4');
+    worksheet.mergeCells('Y4', 'Y5');
+
+    worksheet.mergeCells('AD4', 'AD5');
+    worksheet.mergeCells('AE4', 'AE5');
+    worksheet.mergeCells('AF4', 'AF5');
+    worksheet.mergeCells('AG4', 'AG5');
+    worksheet.mergeCells('AH4', 'AH5');
+    worksheet.mergeCells('AI4', 'AI5');
+    worksheet.mergeCells('AJ4', 'AJ5');
+    worksheet.mergeCells('AK4', 'AK5');
+    worksheet.mergeCells('AL4', 'AL5');
+
+    worksheet.mergeCells(`E${data.length + 8}`,`I${data.length + 8}` );
+    worksheet.mergeCells(`K${data.length + 8}`,`M${data.length + 8}` );
+    worksheet.mergeCells(`AG${data.length + 8}`,`AH${data.length + 8}` );
+    // cell width
+   
+    worksheet.getColumn(1).width = 11;
+    worksheet.getColumn(11).width = 6;
+    worksheet.getColumn(15).width = 6;
+    worksheet.getColumn(21).width = 9;
+    worksheet.getColumn(this.foo('AE')).width = 12;
+    worksheet.getColumn(this.foo('AL')).width = 20;
+    worksheet.getColumn(this.foo('Z')).width = 11;
+    worksheet.getColumn(this.foo('Y')).width = 11;
+  
+    
+      //Generate & Save Excel File
+      workbook.xlsx.writeBuffer().then((data) => {
+        let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        fs.saveAs(blob, daterange.StartDate+'_To_'+daterange.EndDate+'_Coupon_Report'+'.xlsx');
+      })
+  } 
   colName(n:any) {
     var ordA = 'A'.charCodeAt(0);
     var ordZ = 'Z'.charCodeAt(0);
@@ -585,5 +1705,20 @@ export class ExportExcelService {
         n = Math.floor(n / len) - 1;
     }
     return s;
-}
+  }
+  foo (val) {
+    var base = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', i, j, result = 0;
+
+    for (i = 0, j = val.length - 1; i < val.length; i += 1, j -= 1) {
+      result += Math.pow(base.length, j) * (base.indexOf(val[i]) + 1);
+    }
+
+    return result;
+  }
+  getMonthName(monthNumber) {
+    const date = new Date();
+    date.setMonth(monthNumber - 1);
+
+    return date.toLocaleString('en-US', { month: 'short' });
+  }
 }

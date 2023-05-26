@@ -11,13 +11,13 @@ import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime
 import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
-  selector: 'app-daily-attendance-sheet',
-  templateUrl: './daily-attendance-sheet.component.html',
-  styleUrls: ['./daily-attendance-sheet.component.css'],
+  selector: 'app-joh-daily-attendance',
+  templateUrl: './joh-daily-attendance.component.html',
+  styleUrls: ['./joh-daily-attendance.component.css'],
   providers: [MessageService],
   encapsulation: ViewEncapsulation.None
 })
-export class DailyAttendanceSheetComponent implements OnInit {
+export class JohDailyAttendanceComponent implements OnInit {
   items:any = [];
   Spinner = false;
   seachSpinner = false

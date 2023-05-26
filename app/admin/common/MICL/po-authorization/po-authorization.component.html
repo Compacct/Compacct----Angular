@@ -78,9 +78,14 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                     <ul class="dropdown-menu">
-                                                        <li>
+                                                        <li *ngIf="col.Is_Work_Order != 'Y'">
                                                             <a (click)="Print(col)">
-                                                                <i class="fa fa-print"></i> Print Po
+                                                                <i class="fa fa-print"></i> Print PO
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Is_Work_Order == 'Y'">
+                                                            <a (click)="PrintAuthorizedWO(col.Doc_No)">
+                                                                <i class="fa fa-print"></i> Print WO
                                                             </a>
                                                         </li>
                                                          <li   >
@@ -158,11 +163,16 @@
                                                                         <span class="caret"></span>
                                                                     </button>
                                                         <ul class="dropdown-menu">
-                                                            <li>
-                                                                <a (click)="PrintAuthorized(col)">
+                                                            <li *ngIf="col.Is_Work_Order != 'Y'">
+                                                                <a (click)="PrintAuthorized(col.Doc_No)">
                                                                     <i class="fa fa-print"></i> Print Authorized PO
                                                                 </a>
-                                                            </li>                                                           
+                                                            </li>    
+                                                            <li *ngIf="col.Is_Work_Order == 'Y'">
+                                                                <a (click)="PrintAuthorizedWO(col.Doc_No)">
+                                                                    <i class="fa fa-print"></i> Print Authorized WO
+                                                                </a>
+                                                            </li>                                                        
                                                         </ul>
                                                     </div>
                                                 </td>
@@ -225,11 +235,16 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                     <ul class="dropdown-menu">
-                                                        <li>
+                                                        <li *ngIf="col.Is_Work_Order != 'Y'">
                                                             <a (click)="PrintNotAuthorized(col)">
-                                                                <i class="fa fa-print"></i> Print Not Authorized Po
+                                                                <i class="fa fa-print"></i> Print Not Authorized PO
                                                             </a>
-                                                        </li>                                                        
+                                                        </li>  
+                                                        <li *ngIf="col.Is_Work_Order == 'Y'">
+                                                            <a (click)="PrintAuthorizedWO(col.Doc_No)">
+                                                                <i class="fa fa-print"></i> Print Not Authorized WO
+                                                            </a>
+                                                        </li>                                                      
                                                     </ul>
                                                 </div>
                                             </td>

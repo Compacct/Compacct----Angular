@@ -116,6 +116,9 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   SubLedgerID:any = undefined
   SMSSelect:any
   @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
+  BackupSearchedlist: any = [];
+  DistUser1:any =[];
+  DistUserSelect1:any =[];
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -563,7 +566,8 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
   BrowseSearch(valid) {
     this.SearchFormSubmit = true
     if (valid) {
-      this.Searchedlist = []
+      this.Searchedlist = [];
+      this.BackupSearchedlist = [];
       const tempobj = {
         From_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseStartDate)),
         To_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseEndDate)),
@@ -576,14 +580,44 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         if (data.length) {
           //console.log("Searchedlist", data)
-          this.Searchedlist = data
           data.forEach((y: any) => {
             y.Doc_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(y.Doc_Date);
           });
-     
+          this.Searchedlist = data
+          this.BackupSearchedlist = data 
+          this.GetDistinct1();
         }
       })
     }
+  }
+  GetDistinct1() {
+    let Status: any = [];
+    this.DistUser1 = [];
+    this.Searchedlist.forEach((item) => {
+      if (Status.indexOf(item.User_Name) === -1) {
+        Status.push(item.User_Name);
+        this.DistUser1.push({ label: item.User_Name, value: item.User_Name });
+      }    
+    });
+      this.BackupSearchedlist = [...this.Searchedlist];
+  }
+  FilterDist1() {
+    let First: any = [];
+    let SearchFields: any = [];
+     if (this.DistUserSelect1.length) {
+      SearchFields.push('User_Name');
+      First = this.DistUserSelect1;
+    }
+    this.Searchedlist = [];
+    if (SearchFields.length) {
+      let LeadArr = this.BackupSearchedlist.filter(function (e) {
+        return (First.length ? First.includes(e['User_Name']) : true)
+      });
+      this.Searchedlist = LeadArr.length ? LeadArr : [];
+    } else {
+      this.Searchedlist = [...this.BackupSearchedlist];
+    }
+
   }
   DeleteBrowse(DocID) {
     this.masterDoc = undefined;

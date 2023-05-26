@@ -66,14 +66,25 @@
                                                 [ngClass]="{'clearance': SearchFormSubmit && Btdate?.errors?.required}" required>
                                         </div>
                                     </div>                              
-                                        <div class="col-sm-2">
-                                            <button class="btn btn-primary custombutton" type="button" (click)="BrowseSearch(POFormsBrowse.form.valid)" id="load">
-                                                <span *ngIf="!Spinner" class="glyphicon glyphicon-search"></span> Search
-                                            </button>
-                                        </div>
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton" type="button" (click)="BrowseSearch(POFormsBrowse.form.valid)" id="load">
+                                            <span *ngIf="!Spinner" class="glyphicon glyphicon-search"></span> Search
+                                        </button>
+                                    </div>
                                 </div>
-                            </form>
-                            <div class="table-responsive no-padding">
+                                <fieldset class="col-md-12" style="margin-top: 15px;">
+                                    <legend>Filter</legend>
+                                    <div class="form-group">
+                                        <div class="col-sm-5">
+                                            <label class="control-label">User Name<span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistUser1" [(ngModel)]="DistUserSelect1" [virtualScroll]="true"
+                                                itemSize="30" [styleClass]="'compacct-multiselect'" (onChange)='FilterDist1()' name="User"
+                                              [defaultLabel]="Searchedlist.length?'Choose User Name' :'No User Name Found' "></p-multiSelect>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>                       
+                            <div class="table-responsive no-padding" style="margin-top: 145px;">
                                 <p-table #dt [value]="Searchedlist"
                                     [globalFilterFields]="['Doc_No','Doc_Date','Billing_To','Sub_Ledger_Name','Purchase_Request_No','Grant_Total','Current_Status']"
                                     [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true"
@@ -97,7 +108,7 @@
                                             <th>Sub Ledger Name</th>
                                             <th>Purchase Request No</th>
                                             <th>Grant Total</th>
-                                            <!-- <th>Current Status</th> -->
+                                            <th>User Name</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -155,7 +166,7 @@
                                             <td>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
                                             <td>{{col.Purchase_Request_No ? col.Purchase_Request_No : '-'}}</td>
                                             <td>{{col.Grant_Total ? col.Grant_Total : '-'}}</td> 
-                                            <!-- <td>{{col.Current_Status ? col.Current_Status : '-'}}</td>                                        -->
+                                            <td>{{col.User_Name ? col.User_Name : '-'}}</td>                     
                                         </tr>
                                     </ng-template>                                 
                                 </p-table>

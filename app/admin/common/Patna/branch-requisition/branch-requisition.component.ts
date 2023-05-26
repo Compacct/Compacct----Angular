@@ -38,7 +38,15 @@ export class BranchRequisitionComponent implements OnInit {
   DOCNo:any = undefined;
   ViewProTypeModal :boolean =false;
   BranchRequisitionBrowseFormSubmit:boolean = false
-  DeliveryRemarksObj:any = {Status: undefined , DOC_No:undefined}
+  DeliveryRemarksObj: any = { Status: undefined, DOC_No: undefined }
+  ViewPoTypeModal: boolean = false;
+  POD_Date :Date = new Date();
+  Recieve_Date: Date = new Date();
+  Courier_Name: any = undefined;
+  POD_No: any = undefined;
+  ReciveCheck: boolean = false;
+  POPform: boolean = false;
+  NewDoc: any = undefined;
   constructor( private Header: CompacctHeader,
     private router : Router,
     private $http : HttpClient,
@@ -142,7 +150,6 @@ export class BranchRequisitionComponent implements OnInit {
   }
   searchData(valid:any){
     this.BranchRequisitionBrowseFormSubmit = true
-    console.log(valid)
     if(valid){
       const start = this.objBrowseData.From_Date
     ? this.DateService.dateConvert(new Date(this.objBrowseData.From_Date))
@@ -297,6 +304,49 @@ export class BranchRequisitionComponent implements OnInit {
            this.searchData(true)
           }
         })
+    }
+  }
+  PodUpdate(Cool: any) {
+    this.NewDoc = Cool.DOC_No;
+    this.Courier_Name = Cool.Courier_Name;
+    this.POD_No = Cool.POD_No;
+    this.POD_Date = Cool.POD_Date;
+    this.Recieve_Date = Cool.Received_On;
+    this.ReciveCheck = Cool.Is_Received === "Y" ? true : false;
+    this.POPform = false;
+    this.ViewPoTypeModal = true; 
+  }
+  UpdatePOP(valid:any) {
+    this.POPform = true;
+    if (valid) {
+      const ctobj = {
+        Doc_No : this.NewDoc,
+        POD_No: this.POD_No,
+        POD_No_HO: this.POD_No,
+        POD_Date: this.POD_Date ? this.DateService.dateConvert(this.POD_Date): null ,
+        Courier_Name: this.Courier_Name,
+        Is_Received: this.ReciveCheck === true ? "Y": "N",
+        Received_On: this.Recieve_Date ? this.DateService.dateConvert(this.Recieve_Date) : null
+      }
+      this.$http.post("BL_Txn_Branch_Requisition/Update_POD", ctobj).subscribe((data: any) => {
+       if(data.success == true){
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: 'POD No : ' + this.POD_No,
+              detail:"Succesfully Update." 
+            });
+         this.POPform = false;
+         this.ViewPoTypeModal = false;
+         this.POD_No = undefined;
+         this.Courier_Name = undefined;
+         this.ReciveCheck = false;
+         this.Recieve_Date = new Date();
+         this.POD_Date = new Date();
+         this.searchData(true);
+          }
+      })
     }
   }
 }
