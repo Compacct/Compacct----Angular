@@ -377,6 +377,7 @@ import { JohDailyAttendanceComponent } from './common/Attendance/joh-daily-atten
 import { CandidateInterviewProcessComponent } from './common/Attendance/candidate-interview-process/candidate-interview-process.component';
 import { ConsultancyPaymentComponent } from "./common/Attendance/consultancy-payment/consultancy-payment.component";
 import { AppraisalFormComponent } from "./common/Attendance/appraisal-form/appraisal-form.component";
+import { PendingOutcomesComponent } from "./common/PatientManagement/pending-outcomes/pending-outcomes.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2869,6 +2870,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: AppraisalFormComponent,
         data: {
           title: 'Appraisal Form'
+    }
+    },
+    {
+      path: 'PendingOutcome',
+        component: PendingOutcomesComponent,
+        data: {
+          title: 'Pending Outcome'
     }
     },
 
