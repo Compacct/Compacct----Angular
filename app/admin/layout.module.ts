@@ -473,6 +473,7 @@ import { HrCouponReportComponent } from './common/MICL/hr-coupon-report/hr-coupo
 import { JohDailyAttendanceComponent } from './common/Attendance/joh-daily-attendance/joh-daily-attendance.component';
 import { CandidateInterviewProcessComponent } from './common/Attendance/candidate-interview-process/candidate-interview-process.component';
 import { ConsultancyPaymentComponent } from './common/Attendance/consultancy-payment/consultancy-payment.component';
+import { AppraisalFormComponent } from './common/Attendance/appraisal-form/appraisal-form.component';
 
 @NgModule({
   declarations: [
@@ -862,9 +863,8 @@ import { ConsultancyPaymentComponent } from './common/Attendance/consultancy-pay
     HrCouponReportComponent,
     JohDailyAttendanceComponent,
     CandidateInterviewProcessComponent,
-    ConsultancyPaymentComponent
-
-
+    ConsultancyPaymentComponent,
+    AppraisalFormComponent
   ],
   imports: [
     CommonModule,

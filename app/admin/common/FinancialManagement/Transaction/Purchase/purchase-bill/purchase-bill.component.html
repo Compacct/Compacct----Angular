@@ -568,7 +568,7 @@
                                                         [styleClass]="
                                                         ProductInfoSubmitted && PROJECT_ID.errors?.required? 'clearance': ''"
                                                         [required]="true"
-                                                        [disabled]="AddProductDetails.length" >
+                                                        [disabled]="AddProductDetails.length && projectDis" >
                                                     </p-dropdown>
                                                     </div>
                                                     <div class="col-sm-4">

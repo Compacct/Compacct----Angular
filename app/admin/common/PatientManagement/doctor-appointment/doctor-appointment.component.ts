@@ -1689,7 +1689,8 @@ export class DoctorAppointmentComponent implements OnInit {
     }
   }
   getRetrivOther(typeAssr1:any){
-  this.RetvComelist = [];
+    this.RetvComelist = [];
+    this.OtherOutcom = false;
     const tempobj = {
      Appo_ID: typeAssr1
     }
