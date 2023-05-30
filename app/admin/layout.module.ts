@@ -472,6 +472,9 @@ import { MasterProjectTeamComponent } from './common/Harbauer/master-project-tea
 import { HrCouponReportComponent } from './common/MICL/hr-coupon-report/hr-coupon-report.component';
 import { JohDailyAttendanceComponent } from './common/Attendance/joh-daily-attendance/joh-daily-attendance.component';
 import { CandidateInterviewProcessComponent } from './common/Attendance/candidate-interview-process/candidate-interview-process.component';
+import { ConsultancyPaymentComponent } from './common/Attendance/consultancy-payment/consultancy-payment.component';
+import { AppraisalFormComponent } from './common/Attendance/appraisal-form/appraisal-form.component';
+import { PendingOutcomesComponent } from './common/PatientManagement/pending-outcomes/pending-outcomes.component';
 
 @NgModule({
   declarations: [
@@ -860,9 +863,10 @@ import { CandidateInterviewProcessComponent } from './common/Attendance/candidat
     MasterProjectTeamComponent,
     HrCouponReportComponent,
     JohDailyAttendanceComponent,
-    CandidateInterviewProcessComponent
-
-
+    CandidateInterviewProcessComponent,
+    ConsultancyPaymentComponent,
+    AppraisalFormComponent,
+    PendingOutcomesComponent
   ],
   imports: [
     CommonModule,

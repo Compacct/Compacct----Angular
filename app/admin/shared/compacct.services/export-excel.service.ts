@@ -577,7 +577,7 @@ export class ExportExcelService {
   exporttoExcelCouponReport(exceldata:any,exceldata1:any,daterange:any,OtherDetailsFactory:any,OtherDetailsFactory2ndPart:any,OtherDetails:any){
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet('Sheet1');
-    let CompanyNameRow = worksheet.addRow([]);
+   let CompanyNameRow = worksheet.addRow([]);
     CompanyNameRow.getCell(1).value = "MODERN INDIA CON-CAST LIMITED(HALDIA WORKS)";
     CompanyNameRow.getCell(1).font={
       size: 14,
@@ -1633,9 +1633,6 @@ export class ExportExcelService {
       }
       
     })
-  
-    // Merge Cell 
-  
     worksheet.mergeCells('A1', 'W1');
 
     worksheet.mergeCells('A2', 'W2');
@@ -1686,7 +1683,6 @@ export class ExportExcelService {
     worksheet.getColumn(this.foo('AL')).width = 20;
     worksheet.getColumn(this.foo('Z')).width = 11;
     worksheet.getColumn(this.foo('Y')).width = 11;
-  
     
       //Generate & Save Excel File
       workbook.xlsx.writeBuffer().then((data) => {
@@ -1694,7 +1690,7 @@ export class ExportExcelService {
         fs.saveAs(blob, daterange.StartDate+'_To_'+daterange.EndDate+'_Coupon_Report'+'.xlsx');
       })
   } 
-  colName(n:any) {
+ colName(n:any) {
     var ordA = 'A'.charCodeAt(0);
     var ordZ = 'Z'.charCodeAt(0);
     var len = ordZ - ordA + 1;
@@ -1720,5 +1716,112 @@ export class ExportExcelService {
     date.setMonth(monthNumber - 1);
 
     return date.toLocaleString('en-US', { month: 'short' });
+  }
+
+
+  // Cell Text
+  CellText(worksheet,CellTextDetalis){
+    
+  // let CellTextDetalis = [
+  //  {
+  //    CreateRow: true, // * New Row Create
+  //    Cell: "A1", // * Column Name
+  //    Value: "Text", //* Cell Value String | Number 
+  //   border:  {
+  //      top: { style: 'thin' }, //'thin' | 'dotted' | 'hair' | 'medium' | 'double' | 'thick' | 'dashDot'| 'dashDotDot' | 'slantDashDot' | 'mediumDashed' | 'mediumDashDotDot' | 'mediumDashDot'
+  //      left: { style: 'thin' }, //'thin' | 'dotted' | 'hair' | 'medium' | 'double' | 'thick' | 'dashDot'| 'dashDotDot' | 'slantDashDot' | 'mediumDashed' | 'mediumDashDotDot' | 'mediumDashDot'
+  //      bottom: { style: 'thin' }, //'thin' | 'dotted' | 'hair' | 'medium' | 'double' | 'thick' | 'dashDot'| 'dashDotDot' | 'slantDashDot' | 'mediumDashed' | 'mediumDashDotDot' | 'mediumDashDot'
+  //      right: { style: 'thin' }, //'thin' | 'dotted' | 'hair' | 'medium' | 'double' | 'thick' | 'dashDot'| 'dashDotDot' | 'slantDashDot' | 'mediumDashed' | 'mediumDashDotDot' | 'mediumDashDot'
+  //    },
+  //    Font :  {
+  //      bold: true,
+  //      size: 14,
+  //      color:{ argb: 'EBF110' },
+  //      italic: true,
+  //      underline: true, // boolean | 'none' | 'single' | 'double' | 'singleAccounting' | 'doubleAccounting';
+  //      vertAlign: 'superscript', // 'superscript' | 'subscript';
+        
+  //    },
+  //    Fill: {
+  //     type: 'pattern',
+  //     pattern: 'solid',
+  //     fgColor: { argb: '99ff99' },
+  //     bgColor: { argb: '' }
+  //    }
+  //  }
+  // ] 
+ CellTextDetalis.forEach(el=>{
+  if(el.CreateRow){
+    worksheet.addRow([])
+  }
+  
+  worksheet.getCell(el.Cell).value = el.Value
+  if(el.hasOwnProperty('border')){
+    worksheet.getCell(el.Cell).border = el.border
+  }
+  if(el.hasOwnProperty('Font')){
+    worksheet.getCell(el.Cell).Font = el.Font
+  }
+  if(el.hasOwnProperty('Fill')){
+    worksheet.getCell(el.Cell).Fill = el.Fill
+  }
+ })
+  }
+
+  // get Total Value of Row
+  getTotalValueOfRow(worksheet,startRow,EndRow,positionTotalValueOfRow){
+    // startRow  = "A1"
+    // EndRow = "E1"
+    // positionTotalValueOfRow = "F1"
+  let TotalValueOfRow = 0
+    let z = 0
+  for( let i =  this.foo(startRow.replace(/[0-9]/g, '')) ; i <= this.foo(EndRow.replace(/[0-9]/g, '')); i++){
+      TotalValueOfRow = TotalValueOfRow + worksheet.getCell(` ${this.colName((this.foo(startRow[0].replace(/[0-9]/g, '')) + z) - 1)}${EndRow.replace(/\D/g, "")}`).value
+    z = z+1
+} 
+  worksheet.getCell(positionTotalValueOfRow).value = TotalValueOfRow
+ }
+  // get Total value of column
+  getTotalValueOfColumn(worksheet,startColumn,endColumn,positionTotalValueOfColumn){
+    // startColumn = "A1"
+    // endColumn = "A20"
+    // positionTotalValueOfColumn = "A21"
+    let TotalValueOfColumn = 0
+   let z = 0
+  for(let i = Number(startColumn.replace(/\D/g, "")) ; i <= Number( endColumn.replace(/\D/g, "")); i++){
+      TotalValueOfColumn = TotalValueOfColumn + worksheet.getCell(`${startColumn.replace(/[0-9]/g, '')}${Number(startColumn.replace(/\D/g, "" )) + z}`).value
+      z = z+1
+    }
+   worksheet.getCell(positionTotalValueOfColumn).value = TotalValueOfColumn
+ }
+  // Merge Cell
+  worksheetmergeCells(worksheet,mergeCell:any[]){
+    // mergeCell = ["A1:B1","D2 : E4"]
+    mergeCell.forEach(element => {
+      worksheet.mergeCells(element);
+    });
+  }
+  // Alignment  Column
+  worksheetColumnAlignment(worksheet,AlignmentDetalis:any){
+    // ColumnName : Name Of That 
+
+   //  let AlignmentDetalis = [
+  //   {
+  //     ColumnName : "A1",
+  //     AlignmentColumName: {
+  //     horizontal: 'left' ,
+  //     vertical: 'top' ,
+  //     wrapText: true,
+  //     indent: 1,
+  //     readingOrder: 'rtl' ,
+  //     textRotation:'vertical'
+  //     }
+  //   }
+  // ]
+
+  AlignmentDetalis.forEach(el=>{
+    worksheet.getColumn(el.ColumnName).alignment = el.AlignmentColumName
+  })
+
   }
 }

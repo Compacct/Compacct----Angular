@@ -109,6 +109,25 @@ export class DoctorAppointmentComponent implements OnInit {
   RetriveEvlotion1st:boolean =false;
   RetriveEvlotion2nd: boolean = false;
   GropAssementId: any = {};
+//other outcome
+  ViewPoTypeModal: boolean = false;
+  OTHER_OUTCOME_ID :any = undefined;
+  Outcome_Remarks: any = undefined;
+  otherRemarksSummited :boolean = false
+  CenID: any = undefined;
+  OtherOutComelist: any = [];
+  RetvComelist: any = [];
+  OtherOutcom: boolean = false;
+  ConsultancyMlist = [
+    {'Consultancy_Type': 'Tympanometry'}, {'Consultancy_Type': 'Speech Audiometery'}, {'Consultancy_Type': 'Tympanometry + Reflexometry'},
+    {'Consultancy_Type': 'OAE'}, {'Consultancy_Type': 'Adjustment and Fine Tuning of Hearing Aids'}, {'Consultancy_Type': 'Home Visit'},
+    {'Consultancy_Type': 'SISI'}, {'Consultancy_Type': 'Tinnitus Therapy (Per Session)'}, {'Consultancy_Type': 'Speech Therapy Per Session'},
+    {'Consultancy_Type': 'Eustachian Tube Function Test (ETF)'}, {'Consultancy_Type': 'Reflex Decay Test'}, {'Consultancy_Type': 'VEMP'},
+    {'Consultancy_Type': 'Glycerol Test'}, {'Consultancy_Type': 'Tone Decay'}, {'Consultancy_Type': 'Stenger'},
+    {'Consultancy_Type': 'Audiology Consultation'}, {'Consultancy_Type': 'Hearing Aid Repair/Servicing Charges'}, {'Consultancy_Type': 'SPIN'},
+    { 'Consultancy_Type': 'Fitting' }, { 'Consultancy_Type': 'Review' }, { 'Consultancy_Type': 'Speech Therapy (5 Sessions)' },
+    { 'Consultancy_Type': 'Speech Therapy (25 Sessions)' }, { 'Consultancy_Type': 'Speech Therapy (10 Sessions)' },
+  ]
   constructor(    
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -161,10 +180,12 @@ export class DoctorAppointmentComponent implements OnInit {
         "Json_Param_String": JSON.stringify([Temp])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        this.allDetalis = data;
-        this.backupAlldetalis = data;
-        if (this.allDetalis.length) {
+        
+        if (data.length) {
+          this.allDetalis = data;
+         this.backupAlldetalis = data;
           this.allDetalisHeader = Object.keys(data[0])
+          this.getotherOut()
           this.GetDist3();
           this.ClickCheck();
         }
@@ -332,6 +353,18 @@ export class DoctorAppointmentComponent implements OnInit {
     case 'PrintReport' :
       window.open(col.Print_Aspx+ col.Appo_ID, 'Print Appointment', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
        break;
+     
+    case 'Other Outcome':
+       this.TitleHeder = "Other Outcome";
+       this.RetvAppoid = col.Appo_ID;
+       this.CenID = col.Cons_ID;
+       this.OTHER_OUTCOME_ID = undefined;
+       this.Outcome_Remarks = undefined;
+       this.ViewPoTypeModal = true;
+       this.otherRemarksSummited = false;
+       this.getRetrivOther(this.RetvAppoid)
+       this.getlistOther(this.CenID)
+       break
      
     case 'DisplayModel':
         this.therapyAttendance = true;
@@ -1591,7 +1624,93 @@ export class DoctorAppointmentComponent implements OnInit {
         }); 
    } 
   }
-   
+   //other outcome
+  getlistOther(typeAssr:any){
+  this.OtherOutComelist = [];
+    const tempobj = {
+     Cons_ID: typeAssr
+    }
+    const obj = {
+      "SP_String": "Sp_Other_Outcomes",
+      "Report_Name_String": "Get_Other_Outcome_Dropdown",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.OTHER_OUTCOME,
+          element['value'] = element.OTHER_OUTCOME_ID
+        });
+       this.OtherOutComelist = data;
+        //console.table(data)
+      }
+    }); 
+  }
+  getotherOut() {
+    let arry = this.ConsultancyMlist;
+    let pairs = this.allDetalis;
+     arry.forEach(ele => {
+       pairs.forEach(el => { 
+         if (ele.Consultancy_Type === el.Consultancy_Descr) {
+           el['Check_Other'] = true;
+         }
+       })
+    })
+  }
+  UpdatePOP(Valid :any) {
+    this.otherRemarksSummited = true;
+    if (Valid) {
+      const OBJ = {
+        Appo_ID : this.RetvAppoid,                        
+			  OTHER_OUTCOME_ID  : this.OTHER_OUTCOME_ID,              
+			  Outcome_Remarks  : this.Outcome_Remarks               
+      }  
+        const obj = {
+        "SP_String": "Sp_Other_Outcomes",
+        "Report_Name_String": 'Update_Other_Outcome_Deatils',
+        "Json_Param_String": JSON.stringify([OBJ]) 
+       }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        if (data[0].Column1){
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: 'Other OutCome',
+            detail: "Succesfully Update "
+          });
+          this.otherRemarksSummited = false;
+          this.RetvAppoid = undefined;
+          this.OTHER_OUTCOME_ID = undefined;
+          this.Outcome_Remarks = undefined;
+          this.ViewPoTypeModal = false;
+          }
+        });
+    }
+  }
+  getRetrivOther(typeAssr1:any){
+    this.RetvComelist = [];
+    this.OtherOutcom = false;
+    const tempobj = {
+     Appo_ID: typeAssr1
+    }
+    const obj = {
+      "SP_String": "Sp_Other_Outcomes",
+      "Report_Name_String": "Retrieve_PTA_Deatils",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      if(data.length) {
+        this.RetvComelist = data;
+        this.OTHER_OUTCOME_ID = this.RetvComelist[0].OTHER_OUTCOME_ID;
+        this.Outcome_Remarks = this.RetvComelist[0].Outcome_Remarks;
+        if (this.OTHER_OUTCOME_ID) {
+          this.OtherOutcom = true
+        }
+        //console.log(data)
+      }
+    }); 
+  }
 }
 class TherapAttendance {
   Therapy_Goal:any;

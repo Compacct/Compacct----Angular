@@ -122,6 +122,9 @@ export class MiclRequisitionComponent implements OnInit {
   paramarr:any = [];
   objPoText:any = {}
   potextFormSubmit:boolean = false
+  Department_ID:any;
+  SelectedDistcreatedbyDepartment:any = [];
+  DistcreatedbyDepartment:any = [];
 
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -162,6 +165,7 @@ export class MiclRequisitionComponent implements OnInit {
     this.ServerDate();
     this.AllowedEntryDays();
     this.getCostcenter();
+    this.getDepartment();
     this.getRequisitionType();
     this.getMaterialType();
     this.getProductCategory();
@@ -207,6 +211,7 @@ export class MiclRequisitionComponent implements OnInit {
     this.deleteError = false;
     this.ProductCatList = [];
     this.productTypeList = [];
+    this.Department_ID = undefined;
     this.Requisition_ID = undefined;
     // this.Material_Type_ID = undefined;
     // this.getMaterialType();
@@ -528,6 +533,7 @@ export class MiclRequisitionComponent implements OnInit {
       // }
       // else{
       //  mgs = "Save"
+      const departmentname:any = this.DepartmentList.filter((el:any)=> Number(el.Dept_ID) === Number(this.Department_ID))
         const consCenterFilter:any = this.costcenterList.filter((el:any)=> Number(el.Cost_Cen_ID) === Number(this.objreqi.Cost_Cen_ID))
         this.AddMaterialsList.forEach((el:any)=>{
         let save = {
@@ -547,6 +553,8 @@ export class MiclRequisitionComponent implements OnInit {
          Type_Of_Product : el.Product_Category,
          To_Cost_Cen_ID : Number(this.toCostCenter),
          Remarks : this.objreqi.Remarks,
+         Department_ID: this.Department_ID,
+         Department_Name: departmentname[0].Dept_Name,
          Requisiton_Type : this.Requisition_ID,
          Material_Type : this.Material_Type_ID,
          Challan_No : el.Challan_No,
@@ -598,6 +606,7 @@ export class MiclRequisitionComponent implements OnInit {
            // this.SaveNPrintBill();
            this.Print(data[0].Column1)
             this.clearData();
+            this.Department_ID = undefined;
             this.Requisition_ID = undefined;
             this.Material_Type_ID = undefined;
             this.Spinner = false;
@@ -770,6 +779,16 @@ export class MiclRequisitionComponent implements OnInit {
     }
 
    
+  }
+  getDepartment(){
+    const obj = {
+      "SP_String": "SP_Txn_Requisition",
+      "Report_Name_String": "Get_Department"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.DepartmentList = data;
+     //console.log("DepartmentList",this.DepartmentList);
+     })
   }
   getRequisitionType(){
     const obj = {
@@ -1143,6 +1162,7 @@ export class MiclRequisitionComponent implements OnInit {
       this.objreqi = data[0];
       this.Getgodown(data[0].Cost_Cen_ID,data[0].Godown_ID);
       // this.objreqi.Godown_ID = data[0].Godown_ID;
+      this.Department_ID = data[0].Department_ID;
       this.Requisition_ID = data[0].Requisiton_Type;
       this.Material_Type_ID = data[0].Material_Type;
       // this.objmaterial = data[0];
@@ -1320,11 +1340,16 @@ export class MiclRequisitionComponent implements OnInit {
       XLSX.writeFile(workbook, fileName+'.xlsx');
     }
     FilterDistStatus() {
+      let createbydepartment:any = [];
       let department:any = [];
       let producttype:any = [];
       let SearchFieldsStatus:any =[];
+    if (this.SelectedDistcreatedbyDepartment.length) {
+      SearchFieldsStatus.push('Created_By_Department');
+      createbydepartment = this.SelectedDistDepartment;
+    }
     if (this.SelectedDistDepartment.length) {
-      SearchFieldsStatus.push('Dept_Name');
+      SearchFieldsStatus.push('Created_For_Department');
       department = this.SelectedDistDepartment;
     }
     if (this.SelectedDistProductType.length) {
@@ -1334,7 +1359,8 @@ export class MiclRequisitionComponent implements OnInit {
     this.ReqStatusDataList = [];
     if (SearchFieldsStatus.length) {
       let LeadArr = this.backUpReqStatusDataList.filter(function (e) {
-        return (department.length ? department.includes(e['Dept_Name']) : true)
+        return  (createbydepartment.length ? createbydepartment.includes(e['Created_By_Department']) : true)
+        && (department.length ? department.includes(e['Created_For_Department']) : true)
         && (producttype.length ? producttype.includes(e['Product_Type']) : true)
       });
     this.ReqStatusDataList = LeadArr.length ? LeadArr : [];
@@ -1343,17 +1369,24 @@ export class MiclRequisitionComponent implements OnInit {
     }
     }
     GetDistinctStatus() {
+      let createbydepartment:any = [];
       let department:any = [];
       let producttype:any = [];
+      this.DistcreatedbyDepartment = [];
+      this.SelectedDistcreatedbyDepartment = [];
       this.DistDepartment =[];
       this.SelectedDistDepartment =[];
       this.DistProductType =[];
       this.SelectedDistProductType =[];
       this.ReqStatusDataList.forEach((item) => {
-    if (department.indexOf(item.Dept_Name) === -1) {
-      department.push(item.Dept_Name);
-      this.DistDepartment.push({ label: item.Dept_Name, value: item.Dept_Name });
+    if (createbydepartment.indexOf(item.Created_By_Department) === -1) {
+      createbydepartment.push(item.Created_By_Department);
+      this.DistcreatedbyDepartment.push({ label: item.Created_By_Department, value: item.Created_By_Department });
       }
+      if (department.indexOf(item.Created_For_Department) === -1) {
+        department.push(item.Created_For_Department);
+        this.DistDepartment.push({ label: item.Created_For_Department, value: item.Created_For_Department });
+        }
      if (producttype.indexOf(item.Product_Type) === -1) {
       producttype.push(item.Product_Type);
      this.DistProductType.push({ label: item.Product_Type, value: item.Product_Type });
