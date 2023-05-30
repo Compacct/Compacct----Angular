@@ -1,4 +1,9 @@
- #ui-tabpanel-0>div>p-table>div>div.ui-table-wrapper.ng-star-inserted {
+
+div.label-t {
+    padding: 6px 12px;
+    background: rgb(206 216 216 / 51%);
+  }
+  #ui-tabpanel-0>div>p-table>div>div.ui-table-wrapper.ng-star-inserted {
     width: auto !important;
   }
   div.table-responsive.table-id>p-table>div>div {
@@ -34,12 +39,26 @@
     float: right!important;
   }
   
+  .custombutton {
+    margin-top: 28px;
+    /* margin-left: 130px; */
+  }
+  
   .table-header {
     color: #ffffff !important;
     background-color: #3c8dbc !important;
   }
 
+  th {
+    text-align: center;
+  }
+  
+  table,
+  th,
+  td {
+    border: 1px solid #ffffff !important;
+    padding: 5px;
+  }
   th, td{
     text-align: center !important;
    }
-  

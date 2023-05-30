@@ -97,3 +97,23 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav {
   .pull-right {
     margin-right: 20px;
 }
+div.label-t {
+  padding: 7px 12px;
+  background: rgb(206 216 216 / 51%);
+  margin-left: -28px;
+}
+.lcAIGs {
+  font-size: var(--font-size-body2);
+  font-weight: var(--font-weight-normal);
+  color: var(--text-tertiary);
+  text-align: inherit;
+  margin-bottom: unset;
+}
+.ant-input-suffix {
+  margin-left: 4px;
+}
+.ant-input-prefix, .ant-input-suffix {
+  align-items: center;
+  display: flex;
+  flex: none;
+}

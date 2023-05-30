@@ -675,14 +675,14 @@ export class OutwardChallanComponent implements OnInit {
     }
   }
   checksamebatch () {
-    const sameproductwithsameorderno = this.AddProdList.filter(item=> item.Batch_No === this.ObjProductInfo.Batch_Number && item.Product_ID === this.ObjProductInfo.Product_Specification );
+    const sameproductwithsameorderno = this.AddProdList.filter(item=> item.Sale_Order_No === this.ObjProductInfo.Sale_Order_No && item.Batch_No === this.ObjProductInfo.Batch_Number && item.Product_ID === this.ObjProductInfo.Product_Specification );
     if(sameproductwithsameorderno.length) {
       this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "error",
             summary: "Warn Message",
-            detail: "Can't add Same Product with same batch"
+            detail: "Can't add Same Product with same batch and with same Sale order no."
           });
       return false;
     }

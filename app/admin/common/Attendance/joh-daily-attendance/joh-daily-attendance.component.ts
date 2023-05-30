@@ -61,6 +61,21 @@ export class JohDailyAttendanceComponent implements OnInit {
   Recapture:any;
   CheckFinalizedOrNot:any;
   SaveButtonDisabled:boolean = false;
+  OTPopup:boolean = false;
+  OtEmpid: any;
+  OtEmpname: any;
+  OT_Hours:any;
+  OTFormSubmitted:boolean = false;
+  Overtime_Rate:any;
+  Per_Hours:any;
+  Total_Amount:any;
+  Add_Custom_Salary_Multiple: any;
+  otattntype: any;
+  Balance: any;
+  ottotalmin:any;
+  fixedtotalamt: any;
+  backupperhour: any;
+
 
   constructor(
     private Header: CompacctHeader,
@@ -159,12 +174,7 @@ export class JohDailyAttendanceComponent implements OnInit {
         var attendanceid = this.AttenTypelist.filter( ele => Number(ele.Atten_Type_ID) === Number(val.Atten_Type_ID));
         val.Atten_Type_ID = attendanceid ?  attendanceid[0].Sht_Desc : null;
         }
-        if(val.OT_Avail === 0 || val.OT_Avail === null) {
-          // val["OT_Minutes"] = val.OT_Minutes;
           val["OTdisabled"] = true;
-        } else {
-          val["OTdisabled"] = false;
-        }
       })
       this.TotalLeaveType();
       this.getdataforbuttondisabled();
@@ -203,12 +213,7 @@ export class JohDailyAttendanceComponent implements OnInit {
         var attendanceid = this.AttenTypelist.filter( ele => Number(ele.Atten_Type_ID) === Number(val.Atten_Type_ID));
         val.Atten_Type_ID = attendanceid ?  attendanceid[0].Sht_Desc : null;
         }
-        if(val.OT_Avail === 0 || val.OT_Avail === null) {
-          // val["OT_Minutes"] = val.OT_Minutes;
           val["OTdisabled"] = true;
-        } else {
-          val["OTdisabled"] = false;
-        }
       })
       this.TotalLeaveType();
       this.getdataforbuttondisabled();
@@ -379,11 +384,28 @@ export class JohDailyAttendanceComponent implements OnInit {
       this.employeename = obj.Emp_Name;
       var attnid = this.AttenTypelist.filter(ele=> ele.Sht_Desc === obj.Atten_Type_ID)
       this.Atten_Type = attnid[0].Atten_Type_ID;
-      if(this.databaseName != 'GN_JOH_HR') {
-      this.getAttenTypedropdown(obj.Atten_Type_ID);
+      console.log("this.Atten_Type===",this.Atten_Type)
+      if(this.Atten_Type === 8 || this.Atten_Type === 6){
+      this.GetBalance();
       }
       this.AttendancePopup = true;
     }
+  }
+  GetBalance() {
+    this.Balance = undefined;
+    const AtObj = {
+      Emp_ID : this.empid,
+      Atten_Type_ID : this.Atten_Type,
+      Date : this.DateService.dateConvert(new Date(this.Daily_Atten_Date))
+    }
+    const objtemp = {
+      "SP_String": "SP_HR_Attn_Sheet_Day_Wise",
+      "Report_Name_String": "Show_Balance",
+      "Json_Param_String": JSON.stringify([AtObj])
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      this.Balance = data.length ? data[0].Balance : undefined;
+    })
   }
   // CheckIsLeave () {
   //   const attndata = this.AttenTypelist.filter(item=> Number(item.Atten_Type_ID) === Number(this.Atten_Type));
@@ -472,29 +494,9 @@ export class JohDailyAttendanceComponent implements OnInit {
       // var minutes = Math.abs(outtime.getTime() - intime.getTime()) / 36e5 * 60;
       var minutes = (Math.abs(outtime.getTime() - intime.getTime()) / (1000 * 60));
       obj.Work_Minute = minutes;
-      if (obj.OT_Avail === 0 || obj.OT_Avail === null) {
-        obj.OT_Minutes = 0;
-      }
-      else {
-        this.CalculateOTMin(obj);
-      }
       // console.log(this.DateService.dateTimeConvert(new Date(this.objemployee.Off_In_Time)));
       // console.log(this.DateService.dateTimeConvert(new Date(this.objemployee.Off_Out_Time)));
     } 
-    else {
-      // obj.Work_Minute = obj.Working_Hours_Mins;
-      obj.OT_Minutes = obj.OT_Minutes;
-    }
-  }
-  CalculateOTMin(object){
-    // console.log("object.Work_Minute ====", object.Work_Minute)
-    if(object.Working_Hours_Mins && object.Work_Minute) {
-      var otmin = Number(object.Working_Hours_Mins) - Number(object.Work_Minute);
-      // console.log(Number(otmin))
-      object.OT_Minutes = Number(otmin);
-    } else {
-      object.OT_Minutes = object.OT_Minutes;
-    }
   }
   // TimeChq(col){
   //   this.flag = false;
@@ -540,6 +542,7 @@ export class JohDailyAttendanceComponent implements OnInit {
             Work_Minute : item.Work_Minute ? item.Work_Minute : null,
             OT_Minutes : item.OT_Minutes,
             OT_Avail	: item.OT_Avail,
+            Amount : item.Amount,
             Remarks	: item.Remarks
          }
         tempArr.push(TempObj)
@@ -634,5 +637,86 @@ information() {
   window.open(printlink, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
   }
   })
+}
+
+OTpopup(otdata){
+  this.OT_Hours = undefined;
+  this.OtEmpid = undefined;
+  this.OtEmpname = undefined;
+  this.otattntype = undefined;
+  this.Per_Hours = undefined;
+  this.Add_Custom_Salary_Multiple = undefined;
+  this.Total_Amount = undefined;
+  if(otdata.Emp_ID && otdata.Atten_Type_ID) {
+    this.OtEmpid = otdata.Emp_ID;
+    this.OtEmpname = otdata.Emp_Name;
+    this.otattntype = otdata.Atten_Type_ID
+    
+    this.Overtime_Rate = "Fixed_Amount";
+    this.GetPerHour();
+  }
+  this.OTPopup = true;
+}
+calculatemin(){
+  if(this.OT_Hours){
+    var othours:any = this.OT_Hours;
+    var gethr:any = othours.split(":");
+    var hr = gethr[0];
+    var min = gethr[1];
+    console.log("ot===",hr);
+    var otmin = ((60 * Number(hr)) + Number(min));
+    this.ottotalmin = Number(otmin);
+    console.log("ot min===",this.ottotalmin);
+    this.Calculatemultiple();
+  }
+}
+gethalfdaytime(){
+  this.OT_Hours = "04:30";
+  this.calculatemin();
+}
+getfulldaytime(){
+  this.OT_Hours = "09:00";
+  this.calculatemin();
+}
+GetPerHour() {
+  if(this.Overtime_Rate === "Fixed_Amount"){
+  const objtemp = {
+    "SP_String": "SP_HR_Attn_Sheet_Day_Wise",
+    "Report_Name_String": "Get_Per_Hour_Amount",
+    "Json_Param_String": JSON.stringify([{Emp_ID: this.OtEmpid}])
+    }
+  this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+    this.backupperhour = data[0].Per_Hour_Amount;
+    this.Per_Hours = Number(this.backupperhour).toFixed(2);
+    this.Add_Custom_Salary_Multiple = undefined;
+    this.Calculatemultiple();
+  })
+  } 
+  else {
+    this.Per_Hours = Number(this.backupperhour).toFixed(2);
+    this.Calculatemultiple();
+  }
+}
+Calculatemultiple(){
+  if(this.OT_Hours){
+  var gethractototalmin = Number((this.Per_Hours * this.ottotalmin) / 60).toFixed(2);
+  this.fixedtotalamt =  Number(gethractototalmin).toFixed(2);
+  if(this.Add_Custom_Salary_Multiple) {
+    this.Total_Amount = Number(Number(this.Add_Custom_Salary_Multiple) * Number(this.fixedtotalamt)).toFixed(2);
+    console.log("this.Total_Amount===",this.Total_Amount);
+  }
+  else {
+    this.Total_Amount = Number(this.fixedtotalamt).toFixed(2);
+  }
+  }
+}
+SaveOT(){
+      this.EmpDailyAttenList.forEach((el:any)=>{
+        if(Number(el.Emp_ID )== Number(this.OtEmpid)){
+         el.OT_Minutes = this.ottotalmin ?  this.ottotalmin : 0;
+         el.Amount = this.Total_Amount ? this.Total_Amount : 0;
+        }
+      })
+      this.OTPopup = false;
 }
 }

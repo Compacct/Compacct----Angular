@@ -129,6 +129,7 @@ export class ProformaInvoiceComponent implements OnInit {
   LiDocNoList:any = [];
   Reference_Doc_No: any;
   Reference_Doc_Date: any;
+  Remarks:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -182,6 +183,7 @@ export class ProformaInvoiceComponent implements OnInit {
     this.ObjPorformaInv.Vehicle_Type = "Regular";
     this.LI_Doc_No = undefined;
     this.LI_Doc_Date = new Date();
+    this.Remarks = undefined;
   }
   clearData() { 
     this.PorformaInvFormSubmitted = false;
@@ -855,6 +857,7 @@ export class ProformaInvoiceComponent implements OnInit {
         Delivery_Point: this.ObjPorformaInv.Delivery_Point,
         Vehicle_No: this.ObjPorformaInv.Vehicle_No,
         Transporter: this.ObjPorformaInv.Transporterr,
+        Remarks: this.Remarks,
         L_element: this.SaveLowerData
       }
       const obj = {
@@ -883,6 +886,7 @@ export class ProformaInvoiceComponent implements OnInit {
           //   detail: "Confirm to proceed"
           // });
       this.ObjPorformaInv = new PorformaInv();
+      this.Remarks = undefined;
       this.DocDate = new Date();
       this.SupplierBillDate = new Date();
       this.LI_Doc_No = undefined;
