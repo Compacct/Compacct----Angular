@@ -865,6 +865,7 @@ addClear(){
       const bckpUpObj = {...this.objproject}
       this.objproject = new project()
       this.objproject.PROJECT_ID = bckpUpObj.PROJECT_ID
+      this.Requlist = []
       // console.log("addPurchaseList",this.addPurchaseList);
       this.getAllTotal();
 }
