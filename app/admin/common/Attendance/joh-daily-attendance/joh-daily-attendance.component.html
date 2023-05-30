@@ -58,12 +58,12 @@
                           <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                        </button>
                             </div>
-                            <div class="col-sm-2">
+                            <!-- <div class="col-sm-2">
                                 <button class="btn btn-warning custombutton" data-toggle="modal" (click)="GetReCaptureData()" id="load" [disabled]="recaptureSpinner">
                           <p-progressSpinner *ngIf="recaptureSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                           Re-Capture bio matric data
                        </button>
-                            </div>
+                            </div> -->
                                 <div class="col-sm-3" *ngIf="databaseName == 'GN_CCSAHA_Kolkata'">
                                     <label class="control-label">Work Location <span class="text-danger"></span></label>
                                     <p-multiSelect [options]="DistWorkLocation" [(ngModel)]="SelectedDistWorkLocation" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Work_Location"></p-multiSelect>
@@ -89,23 +89,25 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th width='3%'>Employee Code</th>
-                                            <th width='20%'>Employee Name</th>
-                                            <th *ngIf="databaseName == 'GN_CCSAHA_Kolkata'" width='9%'>Work Location</th>
-                                            <th width='4%'>Attendance Type</th>
-                                            <th width='33%'>In Time</th>
-                                            <th width='33%'>Out Time</th>
-                                            <th width='4%'>Working Minutes</th>
-                                            <th width='4%'>OT Minutes</th>
-                                            <th width='4%'>Remarks</th>
+                                            <th>Employee Code</th>
+                                            <th>Employee Name</th>
+                                            <th>Attendance Type</th>
+                                            <th nowrap>OT</th>
+                                            <th nowrap>In Time</th>
+                                            <th nowrap>Out Time</th>
+                                            <th>Working Minutes</th>
+                                            <th nowrap>OT Minutes</th>
+                                            <th nowrap>Remarks</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
                                         <tr>
                                             <td>{{col.Emp_Code}}</td>
                                             <td>{{col.Emp_Name}}</td>
-                                            <td *ngIf="databaseName == 'GN_CCSAHA_Kolkata'">{{col.Work_Location}}</td>
                                             <td [class]="col.Atten_Type_ID" (click)="ShowAttendancePopup(col)">{{col.Atten_Type_ID}}</td>
+                                            <td><button class="btn btn-primary" (click)='OTpopup(col)' type="button" [id]="col.Emp_ID" data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                                OT
+                                             </button> </td>
                                             <td><ejs-datetimepicker [(ngModel)]='col.Off_In_Time' [value]="col.Off_In_Time" [min]='col.InTimeminDate' [format]="'dd/MMM/yyyy hh:mm a'" (ngModelChange)="CalculateTime(col)" style="width: 250px;"></ejs-datetimepicker ></td>
                                             <td><ejs-datetimepicker [(ngModel)]='col.Off_Out_Time' [value]="col.Off_Out_Time"  [min]='col.minDate' [format]="'dd/MMM/yyyy hh:mm a'" (ngModelChange)="CalculateTime(col)" style="width: 250px;"></ejs-datetimepicker ></td>
                                             <td><input type="text" [name]="col.Emp_ID+2" [(ngModel)]='col.Work_Minute' [ngClass]="{'clearance' : flag}" class="form-control" style="width: 70px;" disabled/></td>
@@ -191,23 +193,15 @@
             <label>Date:</label>&nbsp; {{Doc_date}}
 
         </div> -->
-        <div class="col-sm-12" *ngIf="databaseName != 'GN_JOH_HR'">
+        <div class="col-sm-12">
             <label>Attendance Type <sup class="text-danger">*</sup></label>&nbsp;
-            <select name="attentype" #attentype="ngModel" [(ngModel)]="Atten_Type" [ngClass]="{'clearance': attendancetypeFormSubmitted && attentype?.errors?.required}" required>
-           <option  [ngValue]="undefined">Select</option>
-           <option *ngFor = "let option of AttendanceTypeList" value="{{option.Atten_Type_ID}}">
-             {{option.Atten_Type}}
-            </option>
-           </select>
-        </div>
-        <div class="col-sm-12" *ngIf="databaseName === 'GN_JOH_HR'">
-            <label>Attendance Type <sup class="text-danger">*</sup></label>&nbsp;
-            <select name="attentype" #attentype="ngModel" [(ngModel)]="Atten_Type" [ngClass]="{'clearance': attendancetypeFormSubmitted && attentype?.errors?.required}" required>
+            <select name="attentype" #attentype="ngModel" [(ngModel)]="Atten_Type" (change)="GetBalance()" [ngClass]="{'clearance': attendancetypeFormSubmitted && attentype?.errors?.required}" required>
            <option  [ngValue]="undefined">Select</option>
            <option *ngFor = "let option of AttenTypelist" value="{{option.Atten_Type_ID}}">
              {{option.Atten_Type}}
             </option>
-           </select>
+           </select> &nbsp;
+           <div *ngIf="Balance" style="padding: 6px 12px; margin-left: 115px; width: 80px; background: rgb(206 216 216 / 51%);">{{Balance ? Balance : "-"}}</div>
         </div>
     </form>
         <hr>
@@ -215,6 +209,71 @@
             <div class="text-right">
                 <button type="button" (click)="AttendancePopup = false" class="btn btn-default"><i class="fa fa-time"></i>&nbsp; Close</button>&nbsp;
                 <button type="button" (click)="CheckApproveStatus(attendancetypeForm.form.valid)" class="btn btn-success">
+           <i class="fa fa-check"></i>&nbsp;  Done
+         </button>
+            </div>
+        </p-footer>
+</p-dialog>
+
+<!-- OT POPUP -->
+<p-dialog header="Overtime" [appendTo]="'body'" [(visible)]="OTPopup" [modal]="true" [responsive]="true" [minY]="80" [closeOnEscape]="true" [style]="{ width: '30%', minWidth: '200px' }">
+    <form name="OTForm" #OTForm="ngForm" novalidate>
+        <div class="col-sm-12">
+            <label>Employee Name:</label>&nbsp; {{OtEmpname}}
+        </div>
+        <div class="col-sm-12">
+            <label>Date:</label>&nbsp; {{Daily_Atten_Date | date : "dd/MMM/yyyy"}}
+
+        </div>
+        <div class="col-sm-12">
+            <label>Number of hours <sup class="text-danger">*</sup></label>&nbsp;
+                <!-- <ejs-timepicker [(value)]="OT_Hours" [step]='interval' [format]="'hh:mm a'"></ejs-timepicker> -->
+                <input class="form-control" type="time" name="othours" [(ngModel)]="OT_Hours" (click)="calculatemin()">
+        </div>
+        
+        <div class="form-group">
+        <div class="col-sm-6">
+            <button type="button" (click)="gethalfdaytime()" class="btn btn-default" style="margin-top: 5px; font-size: 13px;">&nbsp;
+                 Half Day (4:30 Hrs) hours</button>
+        </div>
+        <div class="col-sm-6">
+            <button type="button" (click)="getfulldaytime()" class="btn btn-default" style="margin-top: 5px; font-size: 13px; margin-left: -6px;">&nbsp; 
+                 Full Day (9:00 Hrs) hours
+            </button>
+        </div>
+        </div>
+        <div class="form-group">
+        <div class="col-sm-6">
+            <label>Overtime Rate</label>&nbsp;
+            <select class="form-control" name="overtimerate" #overtimerate="ngModel" [(ngModel)]="Overtime_Rate" (change)="GetPerHour()" [ngClass]="{'clearance': OTFormSubmitted && overtimerate?.errors?.required}" >
+                <option  value="Fixed_Amount">Fixed Amount</option>
+                <option  value="Add_Custom_Salary_Multiple">Add Custom Salary Multiple</option>
+            </select>
+        </div>
+        <div class="col-sm-6">
+            <label></label>&nbsp;
+            <input class="form-control" name="acsm" [disabled]="Overtime_Rate === 'Fixed_Amount'" placeholder="Add Custom Salary Multiple" [(ngModel)]="Add_Custom_Salary_Multiple" (ngModelChange)="Calculatemultiple()" style="margin-top: 5px;">
+    </div>
+    <div class="form-group">
+    <div class="col-sm-8">
+        <label></label>&nbsp;
+        <input class="form-control" name="perhours" [(ngModel)]="Per_Hours">
+    </div>
+    <div class="col-sm-4">
+        <label></label>
+        <div class="label-t">{{"Per Hour"}}</div>
+    </div>
+    </div>
+    <div class="col-sm-12">
+        <label>Total Amount:</label>&nbsp; {{Total_Amount}}
+    </div>
+    </div>
+    </form>
+        <hr>
+        <p-footer>
+            <div class="text-right">
+                <button type="button" (click)="OTPopup = false" class="btn btn-default"><i class="fa fa-time"></i>&nbsp; Close</button>&nbsp;
+                <button type="button" (click)="SaveOT()" class="btn btn-success">
            <i class="fa fa-check"></i>&nbsp;  Done
          </button>
             </div>
