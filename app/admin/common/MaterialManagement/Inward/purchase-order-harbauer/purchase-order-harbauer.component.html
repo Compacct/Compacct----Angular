@@ -688,7 +688,7 @@
                                                 <td *ngIf="openProject == 'Y'" >{{col.Site_Description ? col.Site_Description : '-'}}</td>
                                                 <td *ngIf="openProject == 'Y'" >{{col.Budget_Group_Name ? col.Budget_Group_Name : '-'}}</td>
                                                 <td *ngIf="openProject == 'Y'" >{{col.Budget_Sub_Group_Name ? col.Budget_Sub_Group_Name : '-'}}</td>
-                                                <td *ngIf="openProject == 'Y'" > <div (click)="selectWork($event,col,op)" [ngClass]="stringShort(col.Work_Details ,'css')">{{stringShort(col.Work_Details ,'ff')}}</div></td>
+                                                <td *ngIf="openProject == 'Y'" > <div (click)="selectWork($event,col.Work_Details,op)" [ngClass]="stringShort(col.Work_Details ,'css')">{{stringShort(col.Work_Details ,'ff')}}</div></td>
 
 
                                                 <td *ngIf="openProject == 'Y'" >{{col.Req_No ? col.Req_No : '-'}}</td>

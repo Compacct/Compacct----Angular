@@ -343,13 +343,13 @@ export class CompacctChartComponent implements OnInit {
     this.stackFlag = false;
     if (data[0].Y1) {
       this.stackFlag = true;
-      const xData = [];
-      const x2Data = [];
-      const label = [];
-      data.forEach(el => {
+      const xData:any = [];
+      const x2Data:any = [];
+      const label:any = [];
+      data.forEach((el:any) => {
         label.push(el.X);
         xData.push(el.Y);
-        x2Data.push(Number(el.Y1) - Number(el.Y));
+        x2Data.push((Number(el.Y1) - Number(el.Y)).toFixed(2));
       });
       console.log(data);
       this.data = {
@@ -375,7 +375,7 @@ export class CompacctChartComponent implements OnInit {
           }
         ]
       };
-      console.log(this.data);
+      console.log("data xData",this.data);
     } else {
       const xData = [];
       const label = [];
@@ -395,6 +395,7 @@ export class CompacctChartComponent implements OnInit {
         ]
       };
     }
+    
   }
   RandomColorPicker(label) {
     const ColorArray = [];
