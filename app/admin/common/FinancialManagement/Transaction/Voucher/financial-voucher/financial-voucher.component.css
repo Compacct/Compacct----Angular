@@ -23,3 +23,10 @@
     .Outlet{
       display: inline-block !important;
     }
+    .txt {
+      cursor: pointer;
+      color: rgb(0 0 255);
+    }
+    .txt:hover {
+      text-decoration: underline;
+    }
