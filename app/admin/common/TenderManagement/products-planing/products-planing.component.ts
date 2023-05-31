@@ -469,6 +469,7 @@ export class ProductsPlaningComponent implements OnInit {
         this.ObjProdPlan.Qty = Number(this.ObjProdPlan.Qty).toFixed(3);
         let tempObj = {...this.ObjProdPlan}
          this.ObjProdPlan = new ProdPlan()
+         this.ObjProdPlan.Budget_Group_Name = subGroupFilter.Budget_Sub_Group_Name
          this.ObjProdPlan.Budget_Group_ID = tempObj.Budget_Group_ID
          this.ObjProdPlan.Budget_Sub_Group_ID = tempObj.Budget_Sub_Group_ID
          this.ObjProdPlan.Work_Details_ID = tempObj.Work_Details_ID

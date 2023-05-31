@@ -222,6 +222,19 @@
                                 <hr class="box boxboxDivide-primary">
                                 <form name="requisitionmaterialForm" #requisitionmaterialForm="ngForm" novalidate>
                                     <div class="form-group">
+                                        <div class="col-sm-3" *ngIf="headerText != 'Issue Requisition'">
+                                            <label class="control-label">Department <sup class="text-danger">*</sup></label>
+                                             <select class="form-control" 
+                                              name="department" 
+                                             #department="ngModel"
+                                             [(ngModel)]='Department_ID' 
+                                             [disabled]="AddMaterialsList.length"
+                                             [ngClass]="{'clearance': requisitionmaterialFormSubmit && department?.errors?.required}" 
+                                              required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of DepartmentList" [value]="option.Dept_ID">{{option.Dept_Name}}</option>
+                                            </select>
+                                        </div>
                                         <div class="col-sm-3" *ngIf="ReqType === 'Y'">
                                             <label class="control-label">Requisition Type <sup class="text-danger">*</sup></label>
                                              <select class="form-control" 
@@ -291,7 +304,7 @@
                                             required>
                                         </p-dropdown>
                                         </div>
-                                        <div class="col-sm-3">
+                                        <div [class]="headerText === 'Issue Requisition' ? 'col-sm-6' : 'col-sm-3'">
                                             <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
                                             <p-dropdown [options]="productList" 
                                             name="Product_ID" 
@@ -339,7 +352,7 @@
                                             required>
                                         </div>
                                        
-                                        <div class="col-sm-2">
+                                        <div class="col-sm-3">
                                             <label class="control-label">UOM<sup class="text-danger">*</sup></label>
                                             <input class="form-control" 
                                                 name="UOM" 
@@ -349,6 +362,8 @@
                                                 disabled
                                                 >
                                         </div>
+                                        </div>
+                                        <div  class="form-group">
                                         <div class="col-sm-2" *ngIf="headerText === 'Issue Requisition' || headerText === 'Purchase Indent'">
                                             <label class="control-label">Current Stock<sup class="text-danger">*</sup></label>
                                             <input class="form-control" 
@@ -372,7 +387,7 @@
                                             [(ngModel)]="objmaterial.Purpose"
                                             ></textarea>
                                         </div>
-                                     </div>
+                                    </div>
                                      <div class="box-footer">
                                         <button type="button" 
                                         class="btn btn-primary pull-right" 
@@ -500,7 +515,11 @@
                             
                                     <div class="form-group">
                                         <div class="col-sm-3">
-                                            <label class="control-label">Department <span class="text-danger"></span></label>
+                                            <label class="control-label">Created by Department <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistcreatedbyDepartment" [(ngModel)]="SelectedDistcreatedbyDepartment" itemSize="30" (onChange)='FilterDistStatus()' [styleClass]="'compacct-multiselect'" name="Created_By_Department"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Created for Department <span class="text-danger"></span></label>
                                             <p-multiSelect [options]="DistDepartment" [(ngModel)]="SelectedDistDepartment" itemSize="30" (onChange)='FilterDistStatus()' [styleClass]="'compacct-multiselect'" name="Department"></p-multiSelect>
                                         </div>
                                         <div class="col-sm-3">
