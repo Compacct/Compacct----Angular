@@ -238,6 +238,9 @@ export class StockInterchangeComponent implements OnInit {
             detail: "Succesfully " + msg
           });
           this.Objstockinterc = new stockinterc();
+          this.AddProductFormValid = false;
+          this.Doc_Date = new Date();
+          this.Spinner = false;
           // this.tabIndexToView = 0;
           // this.items = ["BROWSE", "CREATE"];
           this.ProductionList=[];
@@ -435,13 +438,29 @@ GetDistinct() {
       this.ObjAddProduct.Product_Description = prodata[0].Product_Description;
     }
   }
-  addProduction(valid) {
+  checksamestockwithsamepro () {
+    const sameproductwithsameorderno = this.ProductionList.filter(item=> Number(item.Godown_ID) === Number(this.ObjAddProduct.Godown_ID) && Number(item.Product_ID) === Number(this.ObjAddProduct.Product_ID));
+    if(sameproductwithsameorderno.length) {
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Already exists same prodct with same stock point."
+          });
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+  AddProduct(valid) {
   this.AddProductFormValid = true;
   var stockpoint = this.ProGodownList.filter(el=> Number(el.Godown_ID) === Number(this.ObjAddProduct.Godown_ID));
   var protype = this.ProProductTypeList.filter(el=> Number(el.Product_Type_ID) === Number(this.ObjAddProduct.Product_Type_ID));
   var prosubtype = this.ProproductSubTypeList.filter(el=> Number(el.Product_Sub_Type_ID) === Number(this.ObjAddProduct.Product_Sub_Type_ID));
-  if(valid){
-      this.AddProductionList.push({
+  if(valid && this.checksamestockwithsamepro()){
+      this.ProductionList.push({
         Cost_Cent_ID : this.ObjAddProduct.Cost_Cent_ID,
         Godown_ID : Number(this.ObjAddProduct.Godown_ID),
         Godown_Name : stockpoint[0].godown_name,
@@ -451,10 +470,12 @@ GetDistinct() {
         Product_Sub_Type : prosubtype[0].Product_Sub_Type,
         Product_ID : this.ObjAddProduct.Product_ID,
         Product_Description: this.ObjAddProduct.Product_Description,
-        Batch_No: this.ObjAddProduct.Batch_No,
-        Qty: Number(this.ObjAddProduct.Qty).toFixed(3),
+        Batch_No: "NA",
+        Qty: 0,
+        Changed_Qty: Number(this.ObjAddProduct.Qty).toFixed(3),
         UOM : this.ObjAddProduct.UOM
       })
+      this.getTotal();
       this.AddProductFormValid = false;
       this.ObjAddProduct = new Product();
       this.ProproductSubTypeList = [];
@@ -462,10 +483,6 @@ GetDistinct() {
       this.ObjAddProduct.Cost_Cent_ID = 36;
     }
   }
-  Productiondelete(i) {
-    this.AddProductionList.splice(i,1);
-  }
-
 }
 
 class Browse{
