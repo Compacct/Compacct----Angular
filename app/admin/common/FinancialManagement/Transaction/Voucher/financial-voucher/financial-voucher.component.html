@@ -467,11 +467,11 @@
                                         <tbody>
                                             <tr *ngFor='let obj of lowerList let i = index' >
                                                <td>{{obj.SL_NO }}</td>
-                                               <td *ngIf="openProject == 'Y'">{{getProjectName('PROJECT_ID',obj.PROJECT_ID)}}</td>
-                                               <td *ngIf="openProject == 'Y'">{{getProjectName('SITE_ID',obj.SITE_ID)}}</td>
-                                               <td *ngIf="openProject == 'Y'">{{getProjectName('Budget_Group_ID',obj.Budget_Group_ID)}}</td>
-                                               <td *ngIf="openProject == 'Y'">{{getProjectName('Budget_Sub_Group_ID',obj.Budget_Sub_Group_ID)}}</td>
-                                               <td *ngIf="openProject == 'Y'">{{getProjectName('Work_Details_ID',obj.Work_Details_ID)}}</td>
+                                               <td *ngIf="openProject == 'Y'">{{obj.Project_Description}}</td>
+                                               <td *ngIf="openProject == 'Y'">{{obj.Site_Description}}</td>
+                                               <td *ngIf="openProject == 'Y'">{{obj.Budget_Group_Name}}</td>
+                                               <td *ngIf="openProject == 'Y'">{{obj.Budget_Sub_Group_Name}}</td>
+                                               <td *ngIf="openProject == 'Y'"><div (click)="selectWork($event,obj.Work_Details,op)" [ngClass]="stringShort(obj.Work_Details ,'css')">{{stringShort(obj.Work_Details ,'ff')}}</div></td>
                                                <td>{{obj.Ledger_Name}}</td>
                                                <td>{{obj.Sub_Ledger_Name}}</td>
                                                <td>{{obj.Adjustment_Doc_No}}</td>
@@ -527,4 +527,13 @@
         </div>
     </div>
 </div>
-                    
+                
+<p-overlayPanel [dismissable]="true" [showCloseIcon]="true" [appendTo]="'body'" [baseZIndex]="9999999" #op>
+    <ul style="width: 215px; padding: 5px" class="overpaneltext" >
+              <li *ngFor="let ovtext of overlayPanelText.split('#')" >
+                  {{ovtext}}
+              </li>
+          </ul>
+      
+  
+  </p-overlayPanel>

@@ -184,7 +184,7 @@
                         <div class="col-sm-2" *ngIf="AllAttendanceData.length">
                             <button  class="btn btn-success"  (click)="exportoexcelattnsht('Attendance_Sheet')">Export To Excel</button>
                         </div>
-                        <div class="col-sm-1" *ngIf="AllAttendanceData.length">
+                        <div class="col-sm-1" *ngIf="AllAttendanceData.length && databaseName != 'Harbauer'">
                             <button  class="btn btn-primary"  (click)="Printattendance()"><span class="fa fa-fw fa-print"></span>Print</button>
                         </div>
                         <div>

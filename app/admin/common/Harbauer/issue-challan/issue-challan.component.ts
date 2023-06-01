@@ -43,7 +43,8 @@ export class IssueChallanComponent implements OnInit {
   DynamicHeader2:any = [];
   costCenterList:any = [];
   Stocklist:any =[];
-  buttonList =[];
+  buttonList:any =[];
+  buttonListBackUp:any = []
   SearchedlistPanding:any=[];
   SearchedlistBrowse:any=[];
   backUPSearchedlistPanding:any=[];
@@ -68,6 +69,9 @@ export class IssueChallanComponent implements OnInit {
   Searchedlist : any;
   validatation : any;
   showTost = true;
+  ObjCol = {}
+  overlayPanelText= ""
+  Objproject:any = {}
   constructor(
     public $http: HttpClient,
     public commonApi: CompacctCommonApi,
@@ -80,18 +84,18 @@ export class IssueChallanComponent implements OnInit {
   ) {}
 
 ngOnInit() {
-    this.items = ["BROWSE", "PANDING REQUISITION","CREATE"];
+    this.items = ["BROWSE", "PENDING REQUISITION","CREATE"];
        this.Header.pushHeader({
       Header: "Issue Challan",
       Link: " Project Management ->Issue to Project"
     });
     this.getCostCenter();
     this.Finyear();
-    this.GetcreateIssueMaster();
+   // this.GetcreateIssueMaster();
   }
 TabClick(e:any) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "PANDING REQUISITION","CREATE"];
+    this.items = ["BROWSE", "PENDING REQUISITION","CREATE"];
     this.buttonname = "Create";
     this.clearData();
   }
@@ -207,8 +211,12 @@ clearData(){
     this.SelectedDistWorkDetails =[];
     this.createListObj = {};
     this.buttonList =[];
+    this.buttonListBackUp = []
     this.showTost = true;
     this.DelQtyTotal = 0
+    this.Objproject = {}
+
+    this.projectFromSubmit = false
 }
 getDateRange(dateRangeObj:any) {
     if (dateRangeObj.length) {
@@ -264,12 +272,21 @@ GetPandingSearch(){
 }
 GetDistinct() {
   let Project:any = [];
+  this.DistProject = [];
+  this.SelectedDistProject = [];
+  this.SearchedlistPanding.forEach((item) => {
+ if (Project.indexOf(item.Project_Description) === -1) {
+  Project.push(item.Project_Description);
+ this.DistProject.push({ label: item.Project_Description, value: item.Project_Description });
+ }
+});
+   this.backUPSearchedlistPanding = [...this.SearchedlistPanding];
+}
+GetDistinctbuttonList() {
   let Site:any = [];
   let BudgetGroup:any = [];
   let BudgetSubGroup:any = [];
   let WorkDetails:any = []
-  this.DistProject = [];
-  this.SelectedDistProject = [];
   this.DistSite = [];
   this.SelectedDistSite = [];
   this.DistBudgetGroup = [];
@@ -278,11 +295,8 @@ GetDistinct() {
   this.SelectedBudgetSubGroup =[];
   this.DistWorkDetails =[];
   this.SelectedDistWorkDetails =[];
-  this.SearchedlistPanding.forEach((item) => {
- if (Project.indexOf(item.Project_Description) === -1) {
-  Project.push(item.Project_Description);
- this.DistProject.push({ label: item.Project_Description, value: item.Project_Description });
- }
+  this.buttonList.forEach((item) => {
+
 if (Site.indexOf(item.Site_Description) === -1) {
   Site.push(item.Site_Description);
   this.DistSite.push({ label: item.Site_Description, value: item.Site_Description });
@@ -301,19 +315,34 @@ if (WorkDetails.indexOf(item.Work_Details) === -1) {
   }
 
 });
-   this.backUPSearchedlistPanding = [...this.SearchedlistPanding];
+   this.buttonListBackUp = [...this.buttonList];
 }
 FilterDist() {
   let Project:any = [];
-  let Site:any = [];
-  let BudgetGroup:any = [];
-  let BudgetSubGroup:any = [];
-  let WorkDetails:any = []
+
   let SearchFields:any =[];
 if (this.SelectedDistProject.length) {
    SearchFields.push('Project_Description');
    Project = this.SelectedDistProject;
 }
+this.SearchedlistPanding = [];
+if (SearchFields.length) {
+  let LeadArr = this.backUPSearchedlistPanding.filter(function (e) {
+    return (Project.length ? Project.includes(e['Project_Description']) : true)
+  });
+this.SearchedlistPanding = LeadArr.length ? LeadArr : [];
+} else {
+this.SearchedlistPanding = [...this.backUPSearchedlistPanding] ;
+}
+
+}
+FilterDistbuttonList() {
+  let Site:any = [];
+  let BudgetGroup:any = [];
+  let BudgetSubGroup:any = [];
+  let WorkDetails:any = []
+  let SearchFields:any =[];
+
 if (this.SelectedDistSite.length) {
   SearchFields.push('Site_Description');
   Site = this.SelectedDistSite;
@@ -331,19 +360,18 @@ if (this.SelectedDistWorkDetails.length) {
   WorkDetails = this.SelectedDistWorkDetails;
 }
 
-this.SearchedlistPanding = [];
+this.buttonList = [];
 if (SearchFields.length) {
-  let LeadArr = this.backUPSearchedlistPanding.filter(function (e) {
-    return (Project.length ? Project.includes(e['Project_Description']) : true)
-    && (Site.length ? Site.includes(e['Site_Description']) : true)
+  let LeadArr = this.buttonListBackUp.filter(function (e) {
+    return (Site.length ? Site.includes(e['Site_Description']) : true)
     && (BudgetGroup.length ? BudgetGroup.includes(e['Budget_Group_Name']) : true)
     && (BudgetSubGroup.length ? BudgetSubGroup.includes(e['Budget_Sub_Group_Name']) : true)
     && (WorkDetails.length ? WorkDetails.includes(e['Work_Details']) : true)
     
   });
-this.SearchedlistPanding = LeadArr.length ? LeadArr : [];
+this.buttonList = LeadArr.length ? LeadArr : [];
 } else {
-this.SearchedlistPanding = [...this.backUPSearchedlistPanding] ;
+this.buttonList = [...this.buttonListBackUp] ;
 }
 
 }
@@ -359,50 +387,23 @@ PrintBill(obj:any){
     })
     }
   }
-//   if (obj.Appo_ID) {
-//     window.open("Report/Crystal_Files/CRM/Clinic/Audiometry_Report_CC_Saha_P1.aspx?Appo_ID=" + obj.Appo_ID, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
-
-//     );
-// }
 createIssue(ReqnoObj:any){
   this.ReqNoId= undefined
   if (ReqnoObj.Req_No) {
     this.ReqNoId= undefined;
     this.tabIndexToView = 2;
-    this.items = ["BROWSE", "PANDING REQUISITION","CREATE"];
+    this.items = ["BROWSE", "PENDING REQUISITION","CREATE"];
     this.buttonname = "Create";
     this.clearData();
     this.ReqNoId = ReqnoObj.Req_No;
     this.createListObj = {};
-   this.GetcreateIssueMaster();
-  
+    this.createListObj = ReqnoObj;
    }    
 }
-GetcreateIssueMaster(){
-const tempobj = {
-  Req_No : this.ReqNoId,
-}
-const obj = {
-  "SP_String": "SP_BL_CRM_Issue_Challan",
-  "Report_Name_String":"Get_Requisition_Product_Details",
-  "Json_Param_String": JSON.stringify([tempobj]) 
- }
- this.GlobalAPI.getData(obj).subscribe((res:any)=>{
-  //let data = JSON.parse(res[0].topper);
- //this.createList= data
- if(res.length){
-  this.createListObj = res[0]
-  //this.objproject = data[0];
-  this.objproject.Req_No = res[0].Req_No;
- }
 
-  
-  //this.lowerAddList = data[0].bottom
- // console.log("create==",this.createListObj)
- })
-}
 getButtomData(){
   this.buttonList = []
+  this.buttonListBackUp = []
 const tempobj = {
   Req_No : this.ReqNoId,
   Cost_Cen_ID : Number(this.objproject.Cost_Cen_ID),
@@ -411,16 +412,19 @@ const tempobj = {
 const obj = {
   "SP_String": "SP_BL_CRM_Issue_Challan",
   "Report_Name_String":"Get_Requisition_Product_Details_Batch",
-  "Json_Param_String": JSON.stringify([tempobj]) 
+  "Json_Param_String": JSON.stringify([{...tempobj,...this.Objproject}]) 
  }
  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
   console.log("getButtomData==",data)
   if(data.length){
     this.buttonList = data;
+    this.buttonListBackUp = data
     this.GetTotalIssue()
+    this.GetDistinctbuttonList()
   }
   else{
     this.buttonList =[]
+    this.buttonListBackUp = []
   }
   
   //this.createListObj = res[0] 
@@ -463,16 +467,10 @@ saveData(valid:any){
       User_ID: this.$CompacctAPI.CompacctCookies.User_ID ,	
       DOC_TYPE: "ISSUE CHALLAN",
       PROJECT_ID: Number(this.createListObj.PROJECT_ID),
-      SITE_ID: Number(this.createListObj.SITE_ID),
-      Budget_Group_ID: Number(this.createListObj.Budget_Group_ID),
-      Budget_Sub_Group_ID: Number(this.createListObj.Budget_Sub_Group_ID),
-      Work_Details_ID	: Number(this.createListObj.Work_Details_ID),
       Remarks : this.objproject.Remarks,
       Delivery_By: this.objproject.Delivery_By,
       bottom : this.bottomData()
      } 
- 
-// console.log("data fi",this.objproject)
    const obj = {
         "SP_String": "Sp_Issue_Challan",
         "Report_Name_String": 'Bl_Txn_Issue_Challan_Create',
@@ -515,18 +513,23 @@ saveData(valid:any){
 }
 bottomData(){
   let tempbottomArr:any = []
-  this.buttonList.forEach((el:any)=>{
+  this.buttonListBackUp.forEach((el:any)=>{
     tempbottomArr.push({
       Product_ID:el.Product_ID,
       Product_Description:el.Product_Description,
-      Issue_Qty:el.Del_Qty,
+      Issue_Qty:Number(el.Del_Qty),
       UOM:el.UOM,
       Sub_Ledger_ID:0,
       Batch_Number:el.Batch_No,
       Serial_No:null,
       Rate: el.Rate,
       Product_Expiry:el.Product_Expiry,		
-      Expiry_Date:el.Expiry_Date
+      Expiry_Date:el.Expiry_Date,
+      PROJECT_ID :el.PROJECT_ID,     
+      SITE_ID  : el.SITE_ID,
+      Budget_Group_ID :el.Budget_Group_ID,
+      Budget_Sub_Group_ID :el.Budget_Sub_Group_ID,
+      Work_Details_ID:el.Work_Details_ID
     })
   })
   return tempbottomArr
@@ -535,7 +538,7 @@ QTYCheck(col:any){
  // this.GetTotalIssue();
   this.showTost = true
   this.buttonList.forEach((ele:any) => {
-    if( Number(ele.Del_Qty) >=  Number(ele.Ori_Req_Qty))
+    if( Number(ele.Del_Qty) >  Number(ele.Ori_Req_Qty))
     {
       this.showTost = false
       this.compacctToast.clear();
@@ -568,6 +571,35 @@ PrintBillBrowse(objj:any){
     })
     }
 }
+stringShort(str,wh) {
+  let retuObj:any = {}
+  if(str){
+    if (str.length > 30) {
+      retuObj = {
+        field: str.substring(0, 30) + " ...",
+        cssClass : "txt"
+      }
+    }
+    else {
+       retuObj = {
+        field: str,
+        cssClass : ""
+      }
+    }
+  }
+ 
+return wh == "css" ? retuObj.cssClass : retuObj.field
+}
+selectWork(event,text, overlaypanel) {
+  //console.log("col",col)
+  if (text.length > 30) {
+    this.ObjCol = {}
+    this.overlayPanelText= ""
+   this.overlayPanelText = text
+   overlaypanel.toggle(event); 
+  }
+ 
+  }
 }
 class project{
 PROJECT_ID:any;

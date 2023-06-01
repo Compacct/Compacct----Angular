@@ -554,7 +554,7 @@ export class MiclRequisitionComponent implements OnInit {
          To_Cost_Cen_ID : Number(this.toCostCenter),
          Remarks : this.objreqi.Remarks,
          Department_ID: this.Department_ID,
-         Department_Name: departmentname[0].Dept_Name,
+         Department_Name: departmentname.length ? departmentname[0].Dept_Name : undefined,
          Requisiton_Type : this.Requisition_ID,
          Material_Type : this.Material_Type_ID,
          Challan_No : el.Challan_No,

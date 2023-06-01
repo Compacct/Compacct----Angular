@@ -689,7 +689,7 @@ export class OutwardChallanComponent implements OnInit {
     else {
       return true;
     }
-    }
+  }
   AddProduct(valid: any) {
     this.TermFormSubmitted = true;
     if (valid && this.checksamebatch()) {
@@ -931,7 +931,7 @@ export class OutwardChallanComponent implements OnInit {
             detail: "Confirm to proceed"
           });
       this.ObjPurChaseBill = new PurChaseBill();
-      this.Choose_Address = undefined;
+      // this.Choose_Address = undefined;
       this.DocDate = new Date();
       this.SupplierBillDate = new Date();
       this.PurchaseBillFormSubmitted = false

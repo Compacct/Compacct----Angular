@@ -48,6 +48,9 @@ export class SaleBillComponent implements OnInit {
   Challan_No:any;
   Tax_Category:any;
   TaxCategoryList:any = [];
+  editlist:any = [];
+  SelectedChallanNo:any = [];
+  editChallanList:any = [];
   constructor(
     private Header: CompacctHeader,
     private $http: HttpClient,
@@ -68,6 +71,8 @@ export class SaleBillComponent implements OnInit {
           this.tabIndexToView = 1;
           // this.SubLedgerID = Number(this.QueryStringObj.Sub_Ledger_ID)
           // this.Tax_Category = this.QueryStringObj.Cat_ID
+          this.ObjTopSale.Sub_Ledger_ID = Number(this.QueryStringObj.Sub_Ledger_ID);
+          this.CustmerNameChange();
          }
       }
     } );
@@ -84,7 +89,6 @@ export class SaleBillComponent implements OnInit {
     this.GetStateList();
     this.Finyear();
     this.GetTaxCategory();
-    this.ObjTopSale.Sub_Ledger_ID = Number(this.QueryStringObj.Sub_Ledger_ID);
   }
   TabClick(e:any) {
     this.tabIndexToView = e.index;
@@ -96,7 +100,8 @@ export class SaleBillComponent implements OnInit {
     this.SaleBillFormSubmitted = false;
     this.ObjTopSale.Sub_Ledger_ID = undefined;
     this.ChallanNoList = [];
-    this.ObjTopSale.Bill_No = undefined;
+    // this.ObjTopSale.Bill_No = undefined;
+    this.SelectedChallanNo = [];
     this.BillDate = new Date();
     this.SaveAddress = [];
     this.GridList = [];
@@ -113,7 +118,7 @@ export class SaleBillComponent implements OnInit {
     this.SGST = undefined;
     this.IGST = undefined;
     this.NetAMT = undefined;
-    this.SerarchSaleBill = [];
+    // this.SerarchSaleBill = [];
   
   }
   Finyear() {
@@ -166,8 +171,6 @@ export class SaleBillComponent implements OnInit {
       this.CustmerList = data;
       this.CustmerListbrowse = data;
       
-      
-      console.log("CustmerList==", this.ObjTopSale.Sub_Ledger_ID);
     });
   }
   GetCostcenter() {
@@ -177,22 +180,25 @@ export class SaleBillComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       this.CostCenterList = data;
-      //console.log("this.CostCenterList", this.CostCenterList)
       this.ObjTopSale.Cost_Cen_ID = this.QueryStringObj.Cost_Cen_ID ? Number(this.QueryStringObj.Cost_Cen_ID) : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
       this.GetCosCenAddress();
     })
   }
   GetCosCenAddress() {
     if (this.ObjTopSale.Cost_Cen_ID) {
-      this.ObjTopSale.Bill_No = []
+      // this.ObjTopSale.Bill_No = []
+      // this.SelectedChallanNo = [];
       const ctrl = this;
       const costcenObj = $.grep(ctrl.CostCenterList, function (item: any) { return item.Cost_Cen_ID == ctrl.ObjTopSale.Cost_Cen_ID })[0];
       // this.ObjTopSale = {...costcenObj}
-      this.ObjTopSale.Sub_Ledger_ID = Number(this.QueryStringObj.Sub_Ledger_ID)
-      if(this.ObjTopSale.Sub_Ledger_ID){
-        this.CustmerNameChange();
-      }
-      this.ObjTopSale.Bill_No.push(this.QueryStringObj.Challan_No)
+      // if(this.buttonname != "Update") {
+      // this.ObjTopSale.Sub_Ledger_ID = this.QueryStringObj.Sub_Ledger_ID ? Number(this.QueryStringObj.Sub_Ledger_ID) : this.ObjTopSale.Sub_Ledger_ID;
+      // if(this.ObjTopSale.Sub_Ledger_ID){
+      //   this.CustmerNameChange();
+      // }
+      // }
+      // this.ObjTopSale.Bill_No.push(this.QueryStringObj.Challan_No)
+      // this.SelectedChallanNo.push(this.QueryStringObj.Challan_No);
 
       this.ObjTopSale.Cost_Cen_Address1 = costcenObj.Cost_Cen_Address1;
       this.ObjTopSale.Cost_Cen_Address2 = costcenObj.Cost_Cen_Address2;
@@ -224,7 +230,8 @@ export class SaleBillComponent implements OnInit {
   CustmerNameChange() {
     if(this.ObjTopSale.Sub_Ledger_ID){
       this.ObjTopSale.Choose_Address = undefined;
-      this.ObjTopSale.Bill_No = [];
+      // this.ObjTopSale.Bill_No = [];
+      this.SelectedChallanNo = [];
       this.ObjTopSale.Sub_Ledger_Address_1 = undefined;
       this.ObjTopSale.Sub_Ledger_District = undefined;
       this.ObjTopSale.Sub_Ledger_State = undefined;
@@ -246,7 +253,9 @@ export class SaleBillComponent implements OnInit {
         this.onChangeAdd();
         }
       })
-      this.getChallanNo();  
+      if(this.buttonname != "Update"){
+        this.getChallanNo();  
+      }
     }
     
   }
@@ -302,7 +311,6 @@ export class SaleBillComponent implements OnInit {
     "Json_Param_String": JSON.stringify([{Sub_Ledger_ID : this.ObjTopSale.Sub_Ledger_ID}])
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-    //console.log("ChallanNoList==",data);
      if(data.length) {
        data.forEach(element => {
          element['label'] = element.Doc_No,
@@ -310,11 +318,14 @@ export class SaleBillComponent implements OnInit {
        });
        this.ChallanNoList = data;
        if (this.QueryStringObj.Challan_No) {
-        // var challanarr:any = [];
-        // challanarr = this.QueryStringObj.Challan_No;
-        // console.log("challanarr", challanarr);
+        var challanarr:any = [];
+        challanarr.push(this.QueryStringObj.Challan_No);
+        console.log("challanarr", challanarr);
         // this.ObjTopSale.Bill_No = challanarr;
         //   console.log("this.ObjTopSale.Bill_No", this.ObjTopSale.Bill_No);
+        challanarr.forEach(element => {
+          this.SelectedChallanNo.push(element);
+        });
        this.getButtomTable();
        }
       } 
@@ -328,9 +339,9 @@ export class SaleBillComponent implements OnInit {
     this.SGST = undefined;
     this.IGST = undefined;
     this.NetAMT = undefined;
-    // console.log("this.ObjTopSale.Bill_No>>>>>",this.ObjTopSale.Bill_No)
     this.ngxService.start();
-    this.ObjTopSale.Bill_No.forEach(element => {
+    // this.ObjTopSale.Bill_No.forEach(element => {
+    this.SelectedChallanNo.forEach(element => {
       this.TempObj.push({
         Doc_No:element 
       })
@@ -358,7 +369,6 @@ export class SaleBillComponent implements OnInit {
         "Report_Name_String": "Get_TAX_Catagory",
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        console.log("TaxCategoryList  ===", data);
         this.TaxCategoryList = data;
       })
   
@@ -389,7 +399,6 @@ export class SaleBillComponent implements OnInit {
   }
   SaveSaleBill(valid:any) {
     this.SaleBillFormSubmitted = true;
-    console.log("SubLedgerID",this.ObjTopSale.Sub_Ledger_ID)
     if (valid) {
       this.compacctToast.clear();
      this.compacctToast.add({
@@ -399,107 +408,44 @@ export class SaleBillComponent implements OnInit {
        summary: "Are you sure?",
        detail: "Confirm to proceed"
      });
-    //   const FilterSubledger = this.CustmerList.filter((el: any) => Number(el.value) === Number(this.ObjTopSale.Sub_Ledger_ID))
-    //   const TempSaveList = {
-    //   Doc_Date: this.DateService.dateConvert(this.BillDate),	
-    //   Sub_Ledger_ID	 : this.ObjTopSale.Sub_Ledger_ID,
-		// 	Sub_Ledger_Name	: FilterSubledger[0].label,	
-		// 	Sub_Ledger_GST	:	this.ObjTopSale.Sub_Ledger_GST_No,			
-		// 	Billing_Name:	FilterSubledger[0].label,				
-		// 	Address_1	:	this.ObjTopSale.Sub_Ledger_Address_1,			
-		// 	Address_2	:	FilterSubledger[0].Sub_Ledger_Address_2,			
-		// 	Address_3	:	FilterSubledger[0].Sub_Ledger_Address_3,	
-		// 	Land_Mark	:	FilterSubledger[0].Sub_Ledger_Land_Mark,			
-		// 	Pin	:		this.ObjTopSale.Sub_Ledger_Pin,					
-		// 	District	:	this.ObjTopSale.Sub_Ledger_District	,						
-		// 	State	:	this.ObjTopSale.Sub_Ledger_State,					
-		// 	Country		:	FilterSubledger[0].Sub_Ledger_Country,				
-		// 	Email:	FilterSubledger[0].Sub_Ledger_Email,					
-		// 	Mobile_No	:FilterSubledger[0].Sub_Ledger_Mobile_No,					
-		// 	Phone	:	FilterSubledger[0].Sub_Ledger_Mobile_No,							
-		// 	Taxable_Amt	: this.Tax,				
-		// 	CGST_Amt:	this.CGST,					
-		// 	SGST_Amt: this.SGST	,					
-		// 	IGST_Amt:	this.IGST	,					
-		// 	Gross_Amt: this.NetAMT,					
-		// 	Tax_Amt	: this.Tax,								
-		// 	Net_Amt: this.NetAMT,								
-		// 	User_ID	:	this.$CompacctAPI.CompacctCookies.User_ID	,									
-		// 	Cost_Cen_ID	:this.ObjTopSale.Cost_Cen_ID,																							
-    //   Grand_Total: this.NetAMT,
-    //   Fin_Year_ID : this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
-    //   }
-    //   this.ChallanSave = [];
-    //   this.ObjTopSale.Bill_No.forEach(element => {
-    //   this.ChallanSave.push({
-    //     Challan_No:element
-    //   })
-    // });
-    //        const obj = {
-    //     "SP_String": "SP_MICL_Sale_Bill",
-    //     "Report_Name_String": "Sale_Bill_Create",
-    //     "Json_Param_String": JSON.stringify([TempSaveList]),
-    //     "Json_1_String" : JSON.stringify(this.ChallanSave)
-    //   }
-    //   this.GlobalAPI.getData(obj).subscribe((data: any) => {
-    //     var tempID = data[0].Column1;
-    //     if (data[0].Column1) {
-    //       this.compacctToast.clear();
-    //       this.compacctToast.add({
-    //         key: "compacct-toast",
-    //         severity: "success",
-    //         summary: tempID,
-    //         detail: "successfully Create ",
-    //       });
-    //   this.ObjTopSale = new TopSale();
-    //   this.BillDate = new Date();
-    //   this.SaleBillFormSubmitted = false
-    //   this.tabIndexToView = 0;
-    //   this.items = ["BROWSE", "CREATE"];
-    //   this.Tax = undefined;
-    //   this.CGST = undefined;
-    //   this.SGST = undefined;
-    //   this.IGST = undefined;
-    //   this.NetAMT = undefined;
-    //   this.GridList = [];
-    //   // this.Tax_Category = undefined;
-    //  }
-    // });
     }
   }
   onConfirmSave(){
     const FilterSubledger = this.CustmerList.filter((el: any) => Number(el.value) === Number(this.ObjTopSale.Sub_Ledger_ID))
       const TempSaveList = {
-      Doc_Date: this.DateService.dateConvert(this.BillDate),	
-      Sub_Ledger_ID	 : this.ObjTopSale.Sub_Ledger_ID,
-			Sub_Ledger_Name	: FilterSubledger[0].label,	
-			Sub_Ledger_GST	:	this.ObjTopSale.Sub_Ledger_GST_No,			
-			Billing_Name:	FilterSubledger[0].label,				
-			Address_1	:	this.ObjTopSale.Sub_Ledger_Address_1,			
-			Address_2	:	FilterSubledger[0].Sub_Ledger_Address_2,			
-			Address_3	:	FilterSubledger[0].Sub_Ledger_Address_3,	
-			Land_Mark	:	FilterSubledger[0].Sub_Ledger_Land_Mark,			
-			Pin	:		this.ObjTopSale.Sub_Ledger_Pin,					
-			District	:	this.ObjTopSale.Sub_Ledger_District	,						
-			State	:	this.ObjTopSale.Sub_Ledger_State,					
-			Country		:	FilterSubledger[0].Sub_Ledger_Country,				
-			Email:	FilterSubledger[0].Sub_Ledger_Email,					
-			Mobile_No	:FilterSubledger[0].Sub_Ledger_Mobile_No,					
-			Phone	:	FilterSubledger[0].Sub_Ledger_Mobile_No,							
-			Taxable_Amt	: this.Tax,				
-			CGST_Amt:	this.CGST,					
-			SGST_Amt: this.SGST	,					
-			IGST_Amt:	this.IGST	,					
-			Gross_Amt: this.NetAMT,					
-			Tax_Amt	: this.Tax,								
-			Net_Amt: this.NetAMT,								
-			User_ID	:	this.$CompacctAPI.CompacctCookies.User_ID	,									
-			Cost_Cen_ID	:this.ObjTopSale.Cost_Cen_ID,																							
-      Grand_Total: this.NetAMT,
-      Fin_Year_ID : this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
+        Doc_No : this.DocNo ? this.DocNo : "A",
+        Doc_Date: this.DateService.dateConvert(this.BillDate),	
+        Sub_Ledger_ID	 : this.ObjTopSale.Sub_Ledger_ID,
+			  Sub_Ledger_Name	: FilterSubledger[0].label,	
+			  Sub_Ledger_GST	:	this.ObjTopSale.Sub_Ledger_GST_No,			
+			  Billing_Name:	FilterSubledger[0].label,				
+			  Address_1	:	this.ObjTopSale.Sub_Ledger_Address_1,			
+			  Address_2	:	FilterSubledger[0].Sub_Ledger_Address_2,			
+			  Address_3	:	FilterSubledger[0].Sub_Ledger_Address_3,	
+			  Land_Mark	:	FilterSubledger[0].Sub_Ledger_Land_Mark,			
+			  Pin	:		this.ObjTopSale.Sub_Ledger_Pin,					
+			  District	:	this.ObjTopSale.Sub_Ledger_District	,						
+			  State	:	this.ObjTopSale.Sub_Ledger_State,					
+			  Country		:	FilterSubledger[0].Sub_Ledger_Country,				
+			  Email:	FilterSubledger[0].Sub_Ledger_Email,					
+			  Mobile_No	:FilterSubledger[0].Sub_Ledger_Mobile_No,					
+			  Phone	:	FilterSubledger[0].Sub_Ledger_Mobile_No,							
+			  Taxable_Amt	: this.Tax,				
+			  CGST_Amt:	this.CGST,					
+			  SGST_Amt: this.SGST	,					
+			  IGST_Amt:	this.IGST	,					
+			  Gross_Amt: this.NetAMT,					
+			  Tax_Amt	: this.Tax,								
+			  Net_Amt: this.NetAMT,								
+			  User_ID	:	this.$CompacctAPI.CompacctCookies.User_ID	,									
+			  Cost_Cen_ID	:this.ObjTopSale.Cost_Cen_ID,																							
+        Grand_Total: this.NetAMT,
+        Fin_Year_ID : this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
+        Address_Type : this.ObjTopSale.Choose_Address
       }
       this.ChallanSave = [];
-      this.ObjTopSale.Bill_No.forEach(element => {
+      // this.ObjTopSale.Bill_No.forEach(element => {
+      this.SelectedChallanNo.forEach(element => {
       this.ChallanSave.push({
         Challan_No:element
       })
@@ -531,6 +477,7 @@ export class SaleBillComponent implements OnInit {
       this.IGST = undefined;
       this.NetAMT = undefined;
       this.GridList = [];
+      this.SelectedChallanNo = [];
       this.router.navigate(['./MICL_Sale_Bill']);
       this.GetSerarchBrowse(true);
       // this.Tax_Category = undefined;
@@ -617,6 +564,113 @@ export class SaleBillComponent implements OnInit {
     this.compacctToast.clear("c");
     this.compacctToast.clear("s");
   }
+
+  Edit(col){
+    this.clearData();
+    this.DocNo = undefined;
+    if(col.Doc_No){
+      this.DocNo = col.Doc_No;
+      this.tabIndexToView = 1;
+      this.items = ["BROWSE", "UPDATE"];
+      this.buttonname = "Update";
+      this.getedit(col.Doc_No);
+      this.geteditChallanNo(col.Doc_No);
+      setTimeout(() => {
+        this.getChallanNoEdit(col.Doc_No);
+      }, 300);
+     }
+   }
+   getedit(Dno){
+    this.editlist = [];
+    const obj = {
+      "SP_String": "SP_MICL_Sale_Bill",
+      "Report_Name_String": "Get_Data_For_Sale_Bill_Edit",
+      "Json_Param_String": JSON.stringify([{Doc_No : Dno}])
+  
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.editlist = data;
+      this.ObjTopSale.Sub_Ledger_ID = data[0].Sub_Ledger_ID;
+      this.CustmerNameChange();
+      this.ObjTopSale.Choose_Address = data[0].Address_Type;
+      this.ObjTopSale.Sub_Ledger_Address_1 = data[0].Address_1;
+      this.ObjTopSale.Sub_Ledger_District = data[0].District;
+      this.ObjTopSale.Sub_Ledger_State = data[0].State;
+      this.ObjTopSale.Sub_Ledger_Pin = data[0].Pin;
+      this.ObjTopSale.Sub_Ledger_GST_No = data[0].Sub_Ledger_GST;
+      this.ObjTopSale.Cost_Cen_ID = data[0].Cost_Cen_ID;
+      this.GetCosCenAddress();
+      this.BillDate = new Date(data[0].Doc_Date);
+      // this.RDBListAdd = data[0].L_element;
+    })
+   }
+   geteditChallanNo(Dno){
+    this.editChallanList = [];
+    const obj = {
+      "SP_String": "SP_MICL_Sale_Bill",
+      "Report_Name_String": "Get_Sale_Challan_Nos_For_Edit",
+      "Json_Param_String": JSON.stringify([{Doc_No : Dno}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         if(data.length) {
+          data.forEach(element => {
+            element['label'] = element.Doc_No,
+            element['value'] = element.Doc_No								
+          });
+          this.ChallanNoList = data;
+         } 
+    })
+  }
+   getChallanNoEdit(Dno){
+    this.editChallanList = [];
+    const obj = {
+      "SP_String": "SP_MICL_Sale_Bill",
+      "Report_Name_String": "Get_Product_Details_For_Sale_Bill_Edit",
+      "Json_Param_String": JSON.stringify([{Doc_No : Dno}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.editChallanList = data;
+      // if(this.editChallanList.length){
+      //   for(let i of this.editChallanList){
+      //     this.ChallanNoList.push({ Doc_No: i.Doc_No , label: i.Doc_No , value: i.Doc_No });
+      //     console.log("ChallanNoList===",this.ChallanNoList);
+      //  }
+      // }
+      this.Getchallandist();
+      this.editChallanList.forEach(el=>{
+        this.GridList.push({
+          Cost_Cen_ID : el.Cost_Cen_ID,
+          Cost_Cen_Name : el.Cost_Cen_Name,
+          godown_name : el.godown_name,
+          Product_Type_ID : el.Product_Type_ID,
+          Product_Type : el.Product_Type,
+          Product_Sub_Type_ID : el.Product_Sub_Type_ID,
+          Product_Sub_Type : el.Product_Sub_Type,
+          Product_ID : el.Product_ID,
+          Product_Description : el.Product_Description,
+          Batch_Number : el.Batch_Number,
+          Qty : el.Qty,
+          UOM : el.UOM,
+          Rate : el.Rate,
+          Taxable_Amount : el.Taxable_Amount,
+          CGST_Rate : el.CGST_Rate,
+          CGST_Amount : el.CGST_Amount,
+          SGST_Rate : el.SGST_Rate,
+          SGST_Amount : el.SGST_Amount,
+          IGST_Rate : el.IGST_Rate,
+          IGST_Amount : el.IGST_Amount,
+          Line_Total_Amount : el.Line_Total_Amount
+        });
+      })
+      this.TotalCalculation();
+    })
+   }
+   Getchallandist(){
+    this.SelectedChallanNo =[];
+    this.editChallanList.forEach((item) => {
+         this.SelectedChallanNo.push(item.Doc_No);
+    });
+  }
 }
 class TopSale{
   Sub_Ledger_ID: any;
@@ -641,7 +695,7 @@ class TopSale{
   Cost_Cen_Phone: any;
   Cost_Cen_Email: any;
 
-  Bill_No:any = [];
+  Bill_No:any;
 }
 class BrowseSaleBill {
   Sub_Ledger_ID: any;
