@@ -1,0 +1,179 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView >
+                        <form name="MasterCompanyUpdateForm"  #MasterCompanyUpdateForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label"> Company Name<sup class="text-danger">*</sup></label>
+                                      <input class="form-control"
+                                            name="Company_Name"
+                                            #Company_Name="ngModel"
+                                            [(ngModel)]="objcompany.Company_Name"
+                                            placeholder="Company Name"
+                                            [ngClass]="{'clearance': MasterCompanyFormSubmit && Company_Name?.errors?.required}"
+                                            required>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label"> Mailing Name<sup class="text-danger">*</sup></label>
+                                      <input class="form-control"
+                                            name="Mailing_Name"
+                                            #Mailing_Name="ngModel"
+                                            [(ngModel)]="objcompany.Mailing_Name"
+                                            placeholder="Mailing Name"
+                                            [ngClass]="{'clearance': MasterCompanyFormSubmit && Mailing_Name?.errors?.required}"
+                                            required>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label"> Mailing Address 1<sup class="text-danger">*</sup></label>
+                                      <input class="form-control"
+                                            name="Mailing_Address_1"
+                                            #Mailing_Address_1="ngModel"
+                                            [(ngModel)]="objcompany.Mailing_Address_1"
+                                            placeholder="Mailing Address 1"
+                                            [ngClass]="{'clearance': MasterCompanyFormSubmit && Mailing_Address_1?.errors?.required}"
+                                            required>
+                                </div>
+                            </div> 
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label"> Mailing Address 2<sup class="text-danger">*</sup></label>
+                                      <input class="form-control"
+                                            name="Mailing_Address_2"
+                                            #Mailing_Address_2="ngModel"
+                                            [(ngModel)]="objcompany.Mailing_Address_2"
+                                            placeholder="Mailing Address 2" 
+                                            [ngClass]="{'clearance': MasterCompanyFormSubmit && Mailing_Address_2?.errors?.required}"
+                                            required>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Country<sup class="text-danger">*</sup>
+                                    </label>
+                                  <select class="form-control"
+                                          name="Country"
+                                          #Country="ngModel"
+                                          [(ngModel)]="objcompany.Country"
+                                          [ngClass]="{'clearance': MasterCompanyFormSubmit && Country?.errors?.required}"
+                                            required>
+                                          <option  [ngValue]="undefined">Select</option>
+                                      <option *ngFor="let option of CountryList" value={{option.Country}}>
+                                          {{option.Country}}
+                                          </option>
+                                  </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">PIN<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"
+                                                name="Pin"
+                                                #Pin="ngModel"
+                                                [(ngModel)]="objcompany.Pin"
+                                                placeholder="PIN"
+                                                (ngModelChange)="stateDistrictChange(objcompany.Pin)"
+                                                minlength="6"
+                                                maxlength="6"
+                                                CompacctDigitonly="true"
+                                                [ngClass]="{'clearance': MasterCompanyFormSubmit && (Pin?.errors?.required || Pin?.errors?.minlength || Pin?.errors?.maxlength)}"
+                                                required>
+                                </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label"> State<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="State"
+                                        #State="ngModel"
+                                        [(ngModel)]="objcompany.State"
+                                        placeholder="State"
+                                        disabled>
+                                         
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">District<sup class="text-danger">*</sup>
+                                        </label>
+                                        <input class="form-control"
+                                        name="District"
+                                        #State="ngModel"
+                                        [(ngModel)]="objcompany.District"
+                                        placeholder="District"
+                                        disabled>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Phone<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                                    name="Phone"
+                                                    #Phone="ngModel"
+                                                    [(ngModel)]="objcompany.Phone"
+                                                    placeholder="Phone"
+                                                    minlength="10"
+                                                    maxlength="10"
+                                                    CompacctDigitonly="true"
+                                                    [ngClass]="{'clearance': MasterCompanyFormSubmit && (Phone?.errors?.required || Phone?.errors?.minlength || Phone?.errors?.maxlength)}"
+                                                    required>
+                                    </div>
+                                </div> 
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label"> Email<sup class="text-danger">*</sup></label>
+                                          <input class="form-control"
+                                                name="Email"
+                                                #Email="ngModel"
+                                                [(ngModel)]="objcompany.Email"
+                                                placeholder="Email"
+                                                [ngClass]="{'clearance': MasterCompanyFormSubmit && Email?.errors?.required }"
+                                                required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Logo Image<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                                    name="Logo_Img"
+                                                    #Logo_Img="ngModel"
+                                                    [(ngModel)]="objcompany.Logo_Img"
+                                                    placeholder="Logo Image"
+                                                    [ngClass]="{'clearance': MasterCompanyFormSubmit && Logo_Img?.errors?.required}"
+                                                    required>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Quot Footer Img<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                                    name="Logo_Img"
+                                                    #Logo_Img="ngModel"
+                                                    [(ngModel)]="objcompany.Logo_Img"
+                                                    placeholder="Quot Footer Img"
+                                                    [ngClass]="{'clearance': MasterCompanyFormSubmit && Quot_Footer_Img?.errors?.required}"
+                                                    required>
+                                    </div>
+                                </div>
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right"  id="load" (click)="saveData(MasterCompanyUpdateForm.form.valid)" [disabled]="Spinner">
+                                                    <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>Update
+                                            </button>
+                                </div>
+                        </form>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
