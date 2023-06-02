@@ -378,6 +378,7 @@ import { CandidateInterviewProcessComponent } from './common/Attendance/candidat
 import { ConsultancyPaymentComponent } from "./common/Attendance/consultancy-payment/consultancy-payment.component";
 import { AppraisalFormComponent } from "./common/Attendance/appraisal-form/appraisal-form.component";
 import { PendingOutcomesComponent } from "./common/PatientManagement/pending-outcomes/pending-outcomes.component";
+import { BLTxnProductReturnFromProjectComponent } from "./common/Harbauer/bl-txn-product-return-from-project/bl-txn-product-return-from-project.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2877,6 +2878,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: PendingOutcomesComponent,
         data: {
           title: 'Pending Outcome'
+    }
+    },
+    {
+      path: 'BL_Txn_Product_Return_From_Project',
+        component: BLTxnProductReturnFromProjectComponent,
+        data: {
+          title: 'Product Return From Project'
     }
     },
 

@@ -475,6 +475,7 @@ import { CandidateInterviewProcessComponent } from './common/Attendance/candidat
 import { ConsultancyPaymentComponent } from './common/Attendance/consultancy-payment/consultancy-payment.component';
 import { AppraisalFormComponent } from './common/Attendance/appraisal-form/appraisal-form.component';
 import { PendingOutcomesComponent } from './common/PatientManagement/pending-outcomes/pending-outcomes.component';
+import { BLTxnProductReturnFromProjectComponent } from './common/Harbauer/bl-txn-product-return-from-project/bl-txn-product-return-from-project.component';
 
 @NgModule({
   declarations: [
@@ -866,7 +867,8 @@ import { PendingOutcomesComponent } from './common/PatientManagement/pending-out
     CandidateInterviewProcessComponent,
     ConsultancyPaymentComponent,
     AppraisalFormComponent,
-    PendingOutcomesComponent
+    PendingOutcomesComponent,
+    BLTxnProductReturnFromProjectComponent
   ],
   imports: [
     CommonModule,
