@@ -46,6 +46,7 @@
                                         <tr>
                                             <th style="width: 5em">Action</th>
                                             <th nowrap>Candidate Name</th>
+                                            <th nowrap>Reference By</th>
                                             <th nowrap>Position Closed</th>
                                             <th nowrap>Joining Date</th>
                                             <th nowrap>Number Of Days</th>
@@ -80,6 +81,7 @@
                                                 </div>
                                             </td>
                                             <td nowrap>{{col.Candidate_Name ? col.Candidate_Name : '-'}}</td>
+                                            <td nowrap>{{col.Reference_Name ? col.Reference_Name : '-'}}</td>
                                             <td nowrap>{{col.Designation ? col.Designation : '-'}}</td>
                                             <td nowrap>{{col.Joining_Date ? (col.Joining_Date|date:"dd/MMM/yyyy") : '-'}}</td>
                                             <td nowrap>{{col.Number_Of_Days ? col.Number_Of_Days : '-'}}</td>
@@ -200,13 +202,23 @@
                                 <div class="form-group">
 
                                     <div class="col-sm-4">
+                                        <label class="control-label">Invoice No.<sup class="text-danger">*</sup></label>
+                                        <input 
+                                            class="form-control" 
+                                            name="invoiceno" 
+                                            #invoiceno="ngModel"
+                                            [(ngModel)]="objPayment.Invoice_No" 
+                                            placeholder="Invoice No"
+                                            [ngClass]="{'clearance': PaymentFormSubmitted && invoiceno.errors?.required}" 
+                                        required>
+                                    </div>
+                                    <div class="col-sm-4">
                                         <label class="control-label">Invoice Date<sup class="text-danger">*</sup></label>
                                         <ejs-datepicker 
                                             [(value)]="Invoice_Date"
                                             [format]="'dd/MMM/yyyy'" >
                                         </ejs-datepicker>
                                     </div>
-
                                     <div class="col-sm-4">
                                         <label class="control-label">Payment Status<sup class="text-danger">*</sup></label>
                                         <select class="form-control"
@@ -222,6 +234,10 @@
                                         </select>
                                     </div>
 
+                                </div>
+
+                                <div class="form-group"> 
+
                                     <div class="col-sm-4">
                                         <label class="control-label">Payment Date<sup class="text-danger">*</sup></label>
                                         <ejs-datepicker 
@@ -229,11 +245,6 @@
                                             [format]="'dd/MMM/yyyy'" >
                                         </ejs-datepicker>
                                     </div>
-                                    
-                                </div>
-
-                                <div class="form-group">
-
                                     <div class="col-sm-4">
                                         <label class="control-label">Neft Number<sup class="text-danger">*</sup></label>
                                         <input 
@@ -245,13 +256,85 @@
                                             [ngClass]="{'clearance': PaymentFormSubmitted && NEFT_Number.errors?.required}" 
                                         required>
                                     </div>
-
                                     <div class="col-sm-4">
-
+                                        <label class="control-label">Reference By<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" 
+                                                name="referenceby" 
+                                                #referenceby="ngModel" 
+                                                [(ngModel)]="objPayment.Reference_ID" 
+                                                (change)="changeclearobj()"
+                                                [ngClass]="{'clearance ': PaymentFormSubmitted && referenceby.errors?.required}" required>
+                                         <option  [ngValue]="undefined">Select</option>
+                                         <option  *ngFor="let option of Referencelist" value="{{option.Reference_ID}}">
+                                            {{option.Reference_Name}}
+                                          </option> 
+                                        </select>
                                     </div>
+                                    
+                                </div>
+
+                                <div class="form-group">
+
+                                    <div class="col-sm-4" *ngIf="objPayment.Reference_ID == 1">
+                                        <label class="control-label">Consultancy List<sup class="text-danger">*</sup></label>
+                                        <!-- <div class="pull-right" *ngIf="!userdisabled">
+                                            <span (click)="ViewConsultancy()" class="btn-vk createPatient" style="cursor: pointer;"><i class="fa fa-fw  fa-eye"></i> View</span> &nbsp;
+                                            <span (click)="CreateCunsultancy()" class="btn-vk createPatient" style="cursor:pointer"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                                        </div> -->
+                                        <select class="form-control"
+                                                name="consultancylist" 
+                                                #consultancylist="ngModel" 
+                                                [(ngModel)]="objPayment.Reference_Details_ID" 
+                                                [ngClass]="{'clearance ': PaymentFormSubmitted && consultancylist.errors?.required}" required>
+                                         <option  [ngValue]="undefined">Select</option>
+                                         <option  *ngFor="let option of Consultancylist" value="{{option.Consultancy_ID}}">
+                                            {{option.Name}}
+                                          </option> 
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4" *ngIf="objPayment.Reference_ID == 2">
+                                        <label class="control-label">Employee<sup class="text-danger">*</sup></label>
+                                        <p-dropdown 
+                                           [options]="emplist" 
+                                           name="conemp" 
+                                           #conemp="ngModel" 
+                                           [(ngModel)]="objPayment.Reference_Details_ID"
+                                           [showClear]="true" 
+                                           [emptyFilterMessage]="' No Item Found'" 
+                                           [filter]="true" filterBy="label,value.name" 
+                                           [resetFilterOnHide]="true" 
+                                           [placeholder]="'Select Employee'"
+                                           [virtualScroll]="true" itemSize="30" 
+                                           [styleClass]="{'clearance ': PaymentFormSubmitted && conemp.errors?.required}" [required]="true">
+                                    </p-dropdown>
+                                   </div>
+                                <div class="col-sm-4" *ngIf="objPayment.Reference_ID == 3">
+                                        <label class="control-label">Advertisement<sup class="text-danger">*</sup></label>
+                                       <input class="form-control" 
+                                              placeholder="Advertisement" 
+                                              name="advertisement" 
+                                              #advertisement="ngModel" 
+                                              [(ngModel)]="objPayment.Reference_Details" 
+                                              [ngClass]="{'clearance ': PaymentFormSubmitted && advertisement.errors?.required}" required>
+                                </div>
+                                <div class="col-sm-4" *ngIf="objPayment.Reference_ID == 4">
+                                    <label class="control-label">Others<sup class="text-danger">*</sup></label>
+                                   <input class="form-control" 
+                                          placeholder="Others" 
+                                          name="other" 
+                                          #other="ngModel" 
+                                          [(ngModel)]="objPayment.Reference_Details" 
+                                          [ngClass]="{'clearance ': PaymentFormSubmitted && other.errors?.required}" required>
+                                </div>
 
                                     <div class="col-sm-4">
-                                        
+                                        <label class="control-label">Remarks </label>
+                                        <textarea class="form-control"
+                                         name="remarks" 
+                                         #remarks="ngModel" 
+                                         [(ngModel)]="objPayment.Remarks" 
+                                         placeholder="Remarks" 
+                                         [ngClass]="{'clearance':PaymentFormSubmitted && remarks?.errors?.required}" ></textarea>
                                     </div>
 
                                 </div>

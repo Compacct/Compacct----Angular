@@ -379,6 +379,7 @@ import { ConsultancyPaymentComponent } from "./common/Attendance/consultancy-pay
 import { AppraisalFormComponent } from "./common/Attendance/appraisal-form/appraisal-form.component";
 import { PendingOutcomesComponent } from "./common/PatientManagement/pending-outcomes/pending-outcomes.component";
 import { BLTxnProductReturnFromProjectComponent } from "./common/Harbauer/bl-txn-product-return-from-project/bl-txn-product-return-from-project.component";
+import { MasterCompanyUpdateComponent } from "./common/FinancialManagement/Master/master-company-update/master-company-update.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2887,7 +2888,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
           title: 'Product Return From Project'
     }
     },
-
+    {
+      path: 'MasterCompanyUpdate_V2',
+        component: MasterCompanyUpdateComponent,
+        data: {
+          title: 'Master Company Update'
+    }
+    },
     
     /*{
 

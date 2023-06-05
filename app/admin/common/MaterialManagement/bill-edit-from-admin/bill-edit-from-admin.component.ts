@@ -101,6 +101,8 @@ export class BillEditFromAdminComponent implements OnInit {
   walletdisabled = false;
   creditdisabled = false;
   FranchiseBill: any;
+  Online_Order_Date:any;
+  Online_Order_No: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -286,6 +288,8 @@ autoaFranchiseBill() {
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.editList = data;
         this.ObjaddbillForm.Advance = data[0].Online_Order_No ? data[0].Online_Order_No : data[0].Adv_Order_No;
+        this.Online_Order_No = data[0].Online_Order_No;
+        this.Online_Order_Date = data[0].Online_Order_Date ? new Date(data[0].Online_Order_Date) : null;
         this.Objcustomerdetail.Costomer_Mobile = data[0].Costomer_Mobile;
         this.Objcustomerdetail.Customer_Name= data[0].Customer_Name;
         // this.Objcustomerdetail.Customer_DOB = data[0].Customer_DOB;
@@ -1220,8 +1224,8 @@ checkdiscountamt(){
         Hold_Bill  : this.Hold_Bill_Flag ? "Y" : "N",
         Order_Txn_ID : 0,
         Adv_Order_No : this.ObjaddbillForm.Advance ? this.ObjaddbillForm.Advance : "" ,
-        Online_Order_No : null,
-        Online_Order_Date : null,
+        Online_Order_No : this.Online_Order_No ? this.Online_Order_No : null,
+        Online_Order_Date : this.Online_Order_Date ? this.DateService.dateConvert(new Date(this.Online_Order_Date)) : null,
 
         Total_CGST_Amt : this.CGST_Amount,
         Total_SGST_Amt : this.SGST_Amount,
