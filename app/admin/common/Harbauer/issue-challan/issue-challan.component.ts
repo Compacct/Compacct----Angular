@@ -72,6 +72,9 @@ export class IssueChallanComponent implements OnInit {
   ObjCol = {}
   overlayPanelText= ""
   Objproject:any = {}
+  validatationBatch_No:boolean = false
+  openTab:boolean = false
+  DOCNo:any = ""
   constructor(
     public $http: HttpClient,
     public commonApi: CompacctCommonApi,
@@ -217,6 +220,9 @@ clearData(){
     this.Objproject = {}
 
     this.projectFromSubmit = false
+    this.openTab = false
+    this.validatationBatch_No = false
+    this.DOCNo = ""
 }
 getDateRange(dateRangeObj:any) {
     if (dateRangeObj.length) {
@@ -391,19 +397,21 @@ createIssue(ReqnoObj:any){
   this.ReqNoId= undefined
   if (ReqnoObj.Req_No) {
     this.ReqNoId= undefined;
-    this.tabIndexToView = 2;
-    this.items = ["BROWSE", "PENDING REQUISITION","CREATE"];
+     this.items = ["BROWSE", "PENDING REQUISITION","CREATE"];
     this.buttonname = "Create";
     this.clearData();
     this.ReqNoId = ReqnoObj.Req_No;
     this.createListObj = {};
     this.createListObj = ReqnoObj;
+    this.openTab = true
+    this.tabIndexToView = 2;
    }    
 }
 
 getButtomData(){
   this.buttonList = []
   this.buttonListBackUp = []
+  this.ngxService.start()
 const tempobj = {
   Req_No : this.ReqNoId,
   Cost_Cen_ID : Number(this.objproject.Cost_Cen_ID),
@@ -416,6 +424,7 @@ const obj = {
  }
  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
   console.log("getButtomData==",data)
+  this.ngxService.stop()
   if(data.length){
     this.buttonList = data;
     this.buttonListBackUp = data
@@ -453,8 +462,18 @@ GetTotalIssue(){
 saveData(valid:any){
   this.projectFromSubmit= true
   let tempDataSave:any = []
- if(valid){
-  this.showTost = true
+  console.log(this.validatationBatch_No)
+ if(valid ){
+  this.ngxService.start()
+    this.buttonList.forEach((ele:any) => {
+      if(!ele.Batch_No){
+        this.validatationBatch_No = true
+       return
+      }
+      
+    });
+    if(!this.validatationBatch_No){
+      this.showTost = true
   const costCenter:any = this.costCenterList.filter((el:any)=> Number(el.Cost_Cen_ID) == Number(this.objproject.Cost_Cen_ID))
   tempDataSave = {
       DOC_No: "NA",
@@ -492,11 +511,14 @@ saveData(valid:any){
           this.tabIndexToView = 0;
           this.projectFromSubmit = false;
           this.objproject = new project();
+          this.openTab = false
           //this.FromDatevalue = new Date()
           //this.ToDatevalue = new Date()
+          this.ngxService.stop()
           
           }
           else {
+            this.ngxService.stop()
             this.Spinner = false;
             this.compacctToast.clear();
             this.compacctToast.add({
@@ -509,6 +531,9 @@ saveData(valid:any){
          
          
     });
+    }
+   
+  
   }
 }
 bottomData(){
@@ -600,6 +625,30 @@ selectWork(event,text, overlaypanel) {
   }
  
   }
+validatationBatchNo(BatchNo:any){
+ this.validatationBatch_No = BatchNo ? false : true
+ return !this.validatationBatch_No
+}
+editIssueChallan(col:any){
+  if(col.DOC_No){
+    this.clearData()
+    this.DOCNo = col.DOC_No
+    this.tabIndexToView = 2
+    this.items = ["BROWSE", "PENDING REQUISITION","UPDATE"];
+    this.buttonname = "Update";
+    this.GetEditData(col.DOC_No)
+  }
+}
+GetEditData(DOCNo){
+  const obj = {
+    "SP_String": "SP_BL_CRM_Issue_Challan",
+    "Report_Name_String": "Get_Pending_Requisition",
+    "Json_Param_String": JSON.stringify([{DOC_No : DOCNo}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
+      console.log("Data",data)
+    })
+}
 }
 class project{
 PROJECT_ID:any;

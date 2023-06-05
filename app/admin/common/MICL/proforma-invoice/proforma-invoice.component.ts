@@ -858,6 +858,7 @@ export class ProformaInvoiceComponent implements OnInit {
         Vehicle_No: this.ObjPorformaInv.Vehicle_No,
         Transporter: this.ObjPorformaInv.Transporterr,
         Remarks: this.Remarks,
+        Address_Type: this.Choose_Address,
         L_element: this.SaveLowerData
       }
       const obj = {
