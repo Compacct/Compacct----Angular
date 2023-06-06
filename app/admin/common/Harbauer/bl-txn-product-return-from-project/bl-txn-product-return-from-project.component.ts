@@ -64,6 +64,8 @@ export class BLTxnProductReturnFromProjectComponent implements OnInit {
     this.getCostCenterBrowse();
     this.Finyear();
   }
+  onReject(){}
+  getButtomData(){}
   TabClick(e:any) {
     this.tabIndexToView = e.index;
     this.items = ["BROWSE","CREATE"];
