@@ -72,7 +72,11 @@ export class BLTxnProductReturnFromProjectComponent implements OnInit {
     this.buttonname = "Save";
     this.InflowFormSubmitted = false;
     this.projectFromSubmit = false;
+    this.Disabled = false;
+    this.addList = [];
     this.ObjCol = {};
+    this.Objproject.Project_ID = undefined;
+    this.Objproject.Remarks = undefined;
   }
   getProject(){
   this.ProjectList = [];
@@ -319,12 +323,12 @@ export class BLTxnProductReturnFromProjectComponent implements OnInit {
       this.ObjProj = new Proj();
     }
   }
-  getChange(i: any,) {
-    if (Number(this.addList[i].Qty) <= Number(this.addList[i].Issue_Qty) ) {
-     this.addList[i].Qty = (Number(this.addList[i].Qty))  
+  getChange(i:any) {
+    if (Number(this.addList[i].Rcv_Qty) <= Number(this.addList[i].Issue_Qty) ) {
+     this.addList[i].Rcv_Qty = (Number(this.addList[i].Rcv_Qty))  
     }
     else {
-        this.addList[i].Qty = ""
+       this.addList[i].Rcv_Qty = 0
        this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -337,12 +341,12 @@ export class BLTxnProductReturnFromProjectComponent implements OnInit {
   saveData(Valid1: any) {
     this.projectFromSubmit = true;
     if (Valid1 && this.addList.length) {
-      this.addList.forEach(element => {
-        if (element.Qty == 0||element.Qty > element.Issue_Qty) {
+      this.addList.forEach((element:any )=> {
+        if (!element.Rcv_Qty||element.Rcv_Qty > element.Issue_Qty) {
           this.VAlidation = true;
-        }
-        else {
-          this.VAlidation = false; 
+          return
+        } else {
+         this.VAlidation = false;  
         }
       });
       if (!this.VAlidation) {
@@ -452,10 +456,10 @@ return wh == "css" ? retuObj.cssClass : retuObj.field
       this.SearchedlistBrowse = data;
       this.DynamicHeader2 = Object.keys(data[0]);
     }
-   console.log('SearchedlistBrowse===',this.SearchedlistBrowse)
+   //console.log('SearchedlistBrowse===',this.SearchedlistBrowse)
   })
 }
-}
+  }
 }
 class Proj{
   Site_ID: any;

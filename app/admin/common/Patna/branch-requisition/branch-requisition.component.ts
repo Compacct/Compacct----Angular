@@ -148,7 +148,8 @@ export class BranchRequisitionComponent implements OnInit {
       this.objBrowseData.To_Date = dateRangeObj[1];
     }
   }
-  searchData(valid:any){
+  searchData(valid: any) {
+    this.getAllDataList = [];
     this.BranchRequisitionBrowseFormSubmit = true
     if(valid){
       const start = this.objBrowseData.From_Date
@@ -160,7 +161,7 @@ export class BranchRequisitionComponent implements OnInit {
     const tempobj = {
       Start_Date : start,
       End_Date	 : end,
-      Cost_Cent_ID : this.objBrowseData.Cost_Cent_ID,
+      Cost_Cent_ID : this.objBrowseData.Cost_Cent_ID ? this.objBrowseData.Cost_Cent_ID : 0,
       }
       const obj = {
       "SP_String": this.SPString,
