@@ -96,7 +96,7 @@
 
                             </form>
                             <div class="table-responsive table-id">
-                                <p-table [value]="Searchedlist" 
+                                <p-table [value]="Searchedlist" [columns]="ApproveKye1"
                                 #dt [paginator]="true" 
                                 [rows]="100" 
                                 *ngIf='Searchedlist.length'
@@ -114,10 +114,13 @@
                                         </div>
 
                                     </ng-template>
-                                    <ng-template pTemplate="header">
+                                    <ng-template pTemplate="header" let-columns>
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th *ngFor="let option of DynamicSearchedlist">{{option.replaceAll('_',' ')}}</th>
+                                            <th *ngFor="let option of columns" [pSortableColumn]="option.header">{{option.header.replaceAll('_',' ')}}
+                                                <p-sortIcon [field]="option.header" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
                                            
                                         </tr>
                                     </ng-template>

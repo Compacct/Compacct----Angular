@@ -238,8 +238,8 @@
                                                         <td>{{d.Batch_No}}</td>
                                                         <td>{{d.Issue_Qty}}</td>
                                                         <td>{{d.UOM}}</td>
-                                                        <td><input class="form-control" CompacctDigitonly="true"[name]="'qty'+index" #qty="ngModel" [(ngModel)]="d.Rcv_Qty"(ngModelChange)="getChange(index)"
-                                                             [ngClass]="{'clearance': (VAlidation && qty?.errors?.required) || (d.Rcv_Qty == 0) }" required></td>
+                                                        <td><input class="form-control" CompacctDigitonly="true"[name]="'d.Rcv_Qty'+index" #qty="ngModel" [(ngModel)]="d.Rcv_Qty"(ngModelChange)="getChange(index)"
+                                                            [ngClass]="{'clearance': VAlidation && (!d.Rcv_Qty ||d.Rcv_Qty > d.Issue_Qty) }"></td>
                                                         <td>{{d.Site_Description}}</td>
                                                         <td>{{d.Budget_Group_Name}}</td>
                                                         <td>{{d.Budget_Sub_Group_Name}}</td>
