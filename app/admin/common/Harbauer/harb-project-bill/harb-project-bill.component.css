@@ -90,3 +90,17 @@ div.table-responsive.table-id > p-table > div > div {
     background: #f1f1f1;
     text-align: center;
 }
+
+.txt {
+  cursor: pointer;
+  color: rgb(0 0 255);
+}
+.txt:hover {
+  text-decoration: underline;
+}
+
+.overpaneltext{
+  list-style-type: square;
+ }
+ .overpaneltext li { background: #EBEDEF; }
+ .overpaneltext li:nth-child(odd) { background: #f9f9f9; }

@@ -60,3 +60,7 @@ background-color: #ffffff;
     border-bottom: 1px dotted #000;
     text-decoration: none;
 }
+body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+    border-bottom: 1px solid #c1c1c1 !important;
+    margin-bottom: 0px;
+}

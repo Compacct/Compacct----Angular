@@ -917,7 +917,7 @@ AddPurchase(valid){
      const productFilter:any = this.productDataList.filter((el:any)=> Number(el.Product_ID) === Number(this.objaddPurchacse.Product_ID))
      this.paramarr = [];
      this.paramlist.forEach(element => {
-      if((element.Min_Value || element.Min_Value > 0) && (element.Max_Value || element.Max_Value > 0)) {
+      if((element.Min_Value || element.Min_Value == 0) && (element.Max_Value || element.Max_Value === 0)) {
       const obj = {
         Line_No : this.addPurchaseList.length + 1,
         Product_ID : Number(this.objaddPurchacse.Product_ID),

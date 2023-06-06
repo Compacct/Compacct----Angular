@@ -404,7 +404,7 @@ export class JohDailyAttendanceComponent implements OnInit {
       "Json_Param_String": JSON.stringify([AtObj])
       }
     this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
-      this.Balance = data.length ? data[0].Balance : undefined;
+      this.Balance = data.length ? data[0].Balance : "0";
     })
   }
   // CheckIsLeave () {

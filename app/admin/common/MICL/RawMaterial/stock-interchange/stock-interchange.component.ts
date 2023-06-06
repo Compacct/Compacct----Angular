@@ -42,6 +42,14 @@ export class StockInterchangeComponent implements OnInit {
   Qty:any = undefined;
   Changes_Qty:any = undefined;
 
+  ObjAddProduct: Product = new Product();
+  AddProductFormValid:boolean = false;
+  ProGodownList:any = [];
+  ProProductTypeList:any = [];
+  ProproductSubTypeList:any = [];
+  ProdList:any = [];
+  AddProductionList:any = [];
+
   constructor(
     private $http: HttpClient,
     private GlobalAPI:CompacctGlobalApiService,
@@ -61,6 +69,8 @@ export class StockInterchangeComponent implements OnInit {
     this.getFurnaceNo();
     this.Created_By= Number(this.$CompacctAPI.CompacctCookies.User_ID);
     this.Cost_Cen_ID= Number(this.$CompacctAPI.CompacctCookies.Cost_Cen_ID);
+    this.GetProductionGodown();
+    this.getProProductTyp();
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -228,6 +238,9 @@ export class StockInterchangeComponent implements OnInit {
             detail: "Succesfully " + msg
           });
           this.Objstockinterc = new stockinterc();
+          this.AddProductFormValid = false;
+          this.Doc_Date = new Date();
+          this.Spinner = false;
           // this.tabIndexToView = 0;
           // this.items = ["BROWSE", "CREATE"];
           this.ProductionList=[];
@@ -335,6 +348,141 @@ GetDistinct() {
     this.compacctToast.clear("s");
   }
 
+  // PRODUCTION
+  GetProductionGodown() {
+    const obj = {
+     "SP_String": "SP_Furnace_MIS_Input",
+     "Report_Name_String": "Get_Production_Cost_Center_Godown"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.ProGodownList = data;
+      //console.log("this.ProGodownList",this.ProGodownList);
+      })
+  }
+  getProProductTyp(){
+    this.ProProductTypeList = [];
+       const obj = {
+        "SP_String": "SP_BL_Txn_Production_MIS_Adj",
+        "Report_Name_String":"Get_Master_Product_Type",
+       }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       if(data.length) {
+           data.forEach(element => {
+             element['label'] = element.Product_Type,
+             element['value'] = element.Product_Type_ID
+           });
+           this.ProProductTypeList = data;
+         }
+         else {
+           this.ProProductTypeList = [];
+         }
+      })
+ }
+ getProProductSubTyp(ProductTypeID){
+  this.ProproductSubTypeList = [];
+  if(ProductTypeID){
+    const obj = {
+      "SP_String": "SP_BL_Txn_Production_MIS_Adj",
+      "Report_Name_String":"Get_Master_Product_Sub_Type",
+      "Json_Param_String": JSON.stringify([{Product_Type_ID:ProductTypeID}]) 
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     if(data.length) {
+      data.forEach(element => {
+        element['label'] = element.Product_Sub_Type,
+        element['value'] = element.Product_Sub_Type_ID
+      });
+      this.ProproductSubTypeList = data;
+    }
+    else {
+      this.ProproductSubTypeList = [];
+    }
+    })
+    
+   }
+ }
+ GetProProduction() {
+  this.ProdList = [];
+  if (this.ObjAddProduct.Product_Type_ID && this.ObjAddProduct.Product_Sub_Type_ID) {
+   const proobj = {
+     Product_Type_ID : this.ObjAddProduct.Product_Type_ID,
+     Product_Sub_Type_ID : this.ObjAddProduct.Product_Sub_Type_ID
+   }
+   const obj = {
+     "SP_String": "SP_BL_Txn_Production_MIS_Adj",
+     "Report_Name_String": "Get_Master_Product",
+     "Json_Param_String": JSON.stringify([proobj])
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     //this.ProductionlList = data;
+     if(data.length) {
+       data.forEach(element => {
+         element['label'] = element.Product_Description,
+         element['value'] = element.Product_ID
+       });
+       this.ProdList = data;
+     } else {
+      this.ProdList = [];
+     }
+     console.log("Production List ===",this.ProdList);
+    })
+  }
+ }
+  getProData(proid) {
+    this.ObjAddProduct.Product_Description = undefined;
+    this.ObjAddProduct.UOM = undefined;
+    if (proid) {
+      console.log("proid ====",proid)
+      var prodata = this.ProdList.filter(item=> Number(item.Product_ID) === Number(proid))
+      this.ObjAddProduct.UOM = prodata[0].UOM;
+      this.ObjAddProduct.Product_Description = prodata[0].Product_Description;
+    }
+  }
+  checksamestockwithsamepro () {
+    const sameproductwithsameorderno = this.ProductionList.filter(item=> Number(item.Godown_ID) === Number(this.ObjAddProduct.Godown_ID) && Number(item.Product_ID) === Number(this.ObjAddProduct.Product_ID));
+    if(sameproductwithsameorderno.length) {
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Already exists same prodct with same stock point."
+          });
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+  AddProduct(valid) {
+  this.AddProductFormValid = true;
+  var stockpoint = this.ProGodownList.filter(el=> Number(el.Godown_ID) === Number(this.ObjAddProduct.Godown_ID));
+  var protype = this.ProProductTypeList.filter(el=> Number(el.Product_Type_ID) === Number(this.ObjAddProduct.Product_Type_ID));
+  var prosubtype = this.ProproductSubTypeList.filter(el=> Number(el.Product_Sub_Type_ID) === Number(this.ObjAddProduct.Product_Sub_Type_ID));
+  if(valid && this.checksamestockwithsamepro()){
+      this.ProductionList.push({
+        Cost_Cent_ID : this.ObjAddProduct.Cost_Cent_ID,
+        Godown_ID : Number(this.ObjAddProduct.Godown_ID),
+        Godown_Name : stockpoint[0].godown_name,
+        Product_Type_ID : Number(this.ObjAddProduct.Product_Type_ID),
+        Product_Type : protype[0].Product_Type,
+        Product_Sub_Type_ID : Number(this.ObjAddProduct.Product_Sub_Type_ID),
+        Product_Sub_Type : prosubtype[0].Product_Sub_Type,
+        Product_ID : this.ObjAddProduct.Product_ID,
+        Product_Description: this.ObjAddProduct.Product_Description,
+        Batch_No: "NA",
+        Qty: 0,
+        Changed_Qty: Number(this.ObjAddProduct.Qty).toFixed(3),
+        UOM : this.ObjAddProduct.UOM
+      })
+      this.getTotal();
+      this.AddProductFormValid = false;
+      this.ObjAddProduct = new Product();
+      this.ProproductSubTypeList = [];
+      this.ProdList = [];
+      this.ObjAddProduct.Cost_Cent_ID = 36;
+    }
+  }
 }
 
 class Browse{
@@ -353,5 +501,16 @@ class stockinterc{
   SelectProduct: any;
   Sub_Ledger_ID: number;
   UOM: any;
+}
+class Product{
+  Cost_Cent_ID : any;
+  Godown_ID : any;
+  Product_Type_ID : any;
+  Product_Sub_Type_ID : any;
+  Product_ID : any;
+  Product_Description : any;
+  Batch_No : any;
+  Qty : any;
+  UOM : any;
 }
 

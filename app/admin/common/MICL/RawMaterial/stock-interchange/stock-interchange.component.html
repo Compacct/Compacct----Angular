@@ -101,7 +101,12 @@
                         </p-tabPanel> -->
 
                         <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save"> -->
-
+                            
+                <div class="form-group">
+                <div class="col-lg-12">
+                    <div class="panel-group">
+                     <div class="panel panel-primary">
+                      <div class="panel-body">
                         <form name="stockinterchange" #stockinterchange="ngForm" novalidate>
 
                         <div class="row">
@@ -135,6 +140,125 @@
                             </div>
                         </div> 
                         </form>
+                    </div>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <div class="panel-group">
+                                <div class="panel panel-primary">
+                                    <div class="panel-body">
+                                        <form name="AddProductForm" #AddProductForm="ngForm" novalidate>
+                                            <div class="form-group">
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
+                                                    <select class="form-control" 
+                                                    name="Pro_Godown_ID" 
+                                                    #Pro_Godown_ID="ngModel" 
+                                                    [(ngModel)]="ObjAddProduct.Godown_ID" 
+                                                    [ngClass]="{'clearance': AddProductFormValid && Pro_Godown_ID?.errors?.required}"
+                                                    required 
+                                                    >
+                                                        <option  [ngValue]="undefined">Select</option>
+                                                        <option *ngFor="let option of ProGodownList" [value]="option.Godown_ID">{{option.godown_name}}</option>
+                                                </select>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Product Type<sup class="text-danger">*</sup></label>
+                                                    <p-dropdown 
+                                                    [options]="ProProductTypeList" 
+                                                    name="Product_Type"
+                                                    [(ngModel)]="ObjAddProduct.Product_Type_ID"
+                                                    #Product_Type="ngModel" 
+                                                    [showClear]="true" 
+                                                    [emptyFilterMessage]="' No Product Found'" 
+                                                    [filter]="true" filterBy="label,value.name" 
+                                                    [resetFilterOnHide]="true" 
+                                                    [placeholder]="'Select Product Type'" 
+                                                    [virtualScroll]="true" 
+                                                    itemSize="30"
+                                                    (onChange)="getProProductSubTyp(ObjAddProduct.Product_Type_ID)"
+                                                    [styleClass]="AddProductFormValid && Product_Type.errors?.required ? 'clearance': ''"
+                                                    [required]="true">
+                                                    </p-dropdown>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Product Sub Type<sup class="text-danger">*</sup></label>
+                                                    <p-dropdown 
+                                                    [options]="ProproductSubTypeList" 
+                                                    name="Product_Sub_Type"
+                                                    [(ngModel)]="ObjAddProduct.Product_Sub_Type_ID"
+                                                    #Product_Sub_Type="ngModel" 
+                                                    [showClear]="true" 
+                                                    [emptyFilterMessage]="' No Item Found'" 
+                                                    [filter]="true" filterBy="label,value.name" 
+                                                    [resetFilterOnHide]="true" 
+                                                    [placeholder]="'Select Product Sub Type'" 
+                                                    [virtualScroll]="true" 
+                                                    itemSize="30"
+                                                    (onChange)="GetProProduction()"
+                                                    [styleClass]="AddProductFormValid && Product_Sub_Type.errors?.required ? 'clearance': ''"  [required]="true">
+                                                    </p-dropdown>  
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
+                                                    <p-dropdown [options]="ProdList" 
+                                                    name="production" 
+                                                    [(ngModel)]="ObjAddProduct.Product_ID"
+                                                    [showClear]="true" 
+                                                    [emptyFilterMessage]="' No Data Found'" 
+                                                    [filter]="true" 
+                                                    filterBy="label,value" 
+                                                    [resetFilterOnHide]="true"
+                                                    [placeholder]="'Select Product'" 
+                                                    [virtualScroll]="true" 
+                                                    #production="ngModel"
+                                                    (onChange)="getProData(ObjAddProduct.Product_ID)"
+                                                    [styleClass]="AddProductFormValid && production.errors?.required ? 'clearance': ''" 
+                                                    required>
+                                                </p-dropdown>
+                                                </div>
+                                                    <div class="col-sm-1">
+                                                        <label class="control-label">Qty <sup class="text-danger">*</sup></label>
+                                                            <input class="form-control"
+                                                                    name="rmconqty"
+                                                                    #rmconqty="ngModel"
+                                                                    [(ngModel)]="ObjAddProduct.Qty"
+                                                                    CompacctDigitonly="true"
+                                                                    [ngClass]="{'clearance': AddProductFormValid && rmconqty?.errors?.required}"
+                                                                    required>
+                            
+                                                    </div>
+                                                    <div class="col-sm-1">
+                                                        <label class="control-label">UOM <sup class="text-danger">*</sup></label>
+                                                            <input class="form-control"
+                                                                    name="rmconuom"
+                                                                    #rmconuom="ngModel"
+                                                                    [(ngModel)]="ObjAddProduct.UOM"
+                                                                    disabled="true"
+                                                                    [ngClass]="{'clearance': AddProductFormValid && rmconuom?.errors?.required}"
+                                                                    required>
+                            
+                                                    </div>
+                                                <div class="col-sm-1">
+                                                    <button type="button" class="btn btn-primary custombutton" 
+                                                            (click)="AddProduct(AddProductForm.form.valid)">
+                                                        <span class="glyphicon glyphicon-plus"></span> ADD
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
                         
                             <div class="table-responsive no-padding">
                                 <p-table [value]="ProductionList" [paginator]="ProductionList.length ? true : false"
@@ -190,6 +314,7 @@
                                             <td colspan="5" class="text-right">Total</td>
                                             <td>{{Qty}}</td>
                                             <td>{{Changes_Qty}}</td>
+                                            <td></td>
                                         </tr>
                                     </ng-template>
 

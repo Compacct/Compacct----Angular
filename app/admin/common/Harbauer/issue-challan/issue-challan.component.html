@@ -102,7 +102,7 @@
                                 <ng-template pTemplate="header">
                                     <tr>
                                         <th style="width:5em">Action</th>
-                                        <th *ngFor="let option of DynamicHeader2 | slice:2">{{option.replaceAll('_',' ')}}</th> 
+                                        <th *ngFor="let option of DynamicHeader2 ">{{option.replaceAll('_',' ')}}</th> 
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-col>
@@ -121,15 +121,15 @@
                                                         </a>
                                                     </li>
                                                     <!-- <li>
-                                                        <a (click)="DeleteVoucher(col)">
-                                                            <i class="fa fa-fw fa-trash"></i> Delete
+                                                        <a (click)="editIssueChallan(col)">
+                                                            <i class="fa fa-fw fa-pencil"></i> Edit
                                                         </a>
                                                     </li> -->
                                                   
                                                 </ul>
                                             </div>
                                         </td>
-                                         <ng-container *ngFor="let option of DynamicHeader2 | slice:2" data->
+                                         <ng-container *ngFor="let option of DynamicHeader2" data->
                                             <td>{{col[option]}}</td>
                                         </ng-container>
                                     </tr>
@@ -163,7 +163,7 @@
                                     <fieldset class="col-md-12">
                                         <legend>Filter</legend>
                                         <div class="form-group" >
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-5">
                                               <label class="control-label">Project Description<span class="text-danger"></span></label>
                                               <p-multiSelect [options]="DistProject"  
                                                 itemSize="30" [styleClass]="'compacct-multiselect'"  
@@ -171,38 +171,6 @@
                                                 name="ProjectDescription"
                                                 (onChange)='FilterDist()'></p-multiSelect>
                                             </div>
-                                             <div class="col-sm-4">
-                                              <label class="control-label">Site Description<span class="text-danger"></span></label>
-                                              <p-multiSelect [options]="DistSite"  
-                                                itemSize="30" [styleClass]="'compacct-multiselect'"  
-                                                [(ngModel)]="SelectedDistSite"
-                                                name="SiteDescription"
-                                                (onChange)='FilterDist()'></p-multiSelect>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <label class="control-label">Budget Group Name<span class="text-danger"></span></label>
-                                                <p-multiSelect [options]="DistBudgetGroup"  
-                                                  itemSize="30" [styleClass]="'compacct-multiselect'"  
-                                                  [(ngModel)]="SelectedBudgetGroup" 
-                                                  name="BudgetGroupName"
-                                                  (onChange)='FilterDist()'></p-multiSelect>
-                                              </div>
-                                              <div class="col-sm-4">
-                                                <label class="control-label">Budget Sub Group Name<span class="text-danger"></span></label>
-                                                <p-multiSelect [options]="DistBudgetSubGroup"  
-                                                  itemSize="30" [styleClass]="'compacct-multiselect'"  
-                                                  [(ngModel)]="SelectedBudgetSubGroup"
-                                                  name="BudgetSubGroupName"
-                                                  (onChange)='FilterDist()'></p-multiSelect>
-                                              </div>
-                                              <div class="col-sm-4">
-                                                <label class="control-label">Work Details<span class="text-danger"></span></label>
-                                                <p-multiSelect [options]="DistWorkDetails"  
-                                                  itemSize="30" [styleClass]="'compacct-multiselect'" 
-                                                  [(ngModel)]="SelectedDistWorkDetails"
-                                                  name="WorkDetails"
-                                                  (onChange)='FilterDist()'></p-multiSelect>
-                                              </div>
                                         </div>
                                     </fieldset>
                                 </div>
@@ -226,7 +194,7 @@
                                 <ng-template pTemplate="header">
                                     <tr>
                                         <th style="width:5em">Action</th>
-                                        <th *ngFor="let option of DynamicHeader">{{option.replaceAll('_',' ')}}</th> 
+                                        <th *ngFor="let option of DynamicHeader |  slice:1">{{option.replaceAll('_',' ')}}</th> 
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-col>
@@ -252,7 +220,7 @@
                                                 </ul>
                                             </div>
                                         </td>
-                                         <ng-container *ngFor="let option of DynamicHeader" data->
+                                         <ng-container *ngFor="let option of DynamicHeader |  slice:1" data->
                                             <td>{{col[option]}}</td>
                                         </ng-container>
                                     </tr>
@@ -326,86 +294,11 @@
                                     border-bottom: 1px solid #c6c6c6;
                                     margin-top: 15px;">
                                     <i class="fa fa-fw fa-fax">
-                                    </i> &nbsp;<strong>Project Details:</strong></h5>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Project<sup class="text-danger">*</sup></label>
-                                        <!-- <p-dropdown [options]="createList" 
-                                                        name="Project" 
-                                                        [(ngModel)]="objproject.Project_Description"
-                                                        [showClear]="true" 
-                                                        [emptyFilterMessage]="' No Project Found'" 
-                                                        [filter]="true" filterBy="label,value.name" 
-                                                        [resetFilterOnHide]="true"
-                                                        [placeholder]="'Select Project'" 
-                                                        [virtualScroll]="true" 
-                                                        itemSize="30" 
-                                                        [required]="true">
-                                                </p-dropdown> -->
-                                                <div class="label-t">{{createListObj?.Project_Description ? createListObj?.Project_Description : "-"}}</div>
+                                    </i> &nbsp;<strong>Project :</strong></h5>
+                                    <div class="col-sm-12">
+                                     <div class="label-t">{{createListObj?.Project_Description ? createListObj?.Project_Description : "-"}}</div>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Site<sup class="text-danger">*</sup></label>
-                                        <!-- <p-dropdown [options]="createList" 
-                                                        name="Site"
-                                                        [(ngModel)]="objproject.Site_Description" 
-                                                        [showClear]="true" 
-                                                        [emptyFilterMessage]="' No Site Found'" 
-                                                        [filter]="true" filterBy="label,value.name" 
-                                                        [resetFilterOnHide]="true"
-                                                        [placeholder]="'Select Site'" 
-                                                        [virtualScroll]="true" 
-                                                        itemSize="30" 
-                                                        [required]="true">
-                                                </p-dropdown> -->
-                                                <div class="label-t">{{createListObj.Site_Description ? createListObj.Site_Description : "-"}}</div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Group<sup class="text-danger">*</sup></label>
-                                        <!-- <p-dropdown [options]="createList" 
-                                                        name="Group"
-                                                        [(ngModel)]="objproject.Budget_Group_Name" 
-                                                        [showClear]="true" 
-                                                        [emptyFilterMessage]="' No Group Found'" 
-                                                        [filter]="true" filterBy="label,value.name" 
-                                                        [resetFilterOnHide]="true"
-                                                        [placeholder]="'Select Group'" 
-                                                        [virtualScroll]="true" 
-                                                        itemSize="30" 
-                                                        [required]="true">
-                                                </p-dropdown> -->
-                                                <div class="label-t">{{createListObj.Budget_Group_Name ? createListObj.Budget_Group_Name : "-"}}</div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Sub Group<sup class="text-danger">*</sup></label>
-                                        <!-- <p-dropdown [options]="createList" 
-                                                        name="SubGroup" 
-                                                        [(ngModel)]="objproject.Budget_Sub_Group_Name" 
-                                                        [showClear]="true" 
-                                                        [emptyFilterMessage]="' No Sub Group Found'" 
-                                                        [filter]="true" filterBy="label,value.name" 
-                                                        [resetFilterOnHide]="true"
-                                                        [placeholder]="'Select Sub Group'" 
-                                                        [virtualScroll]="true" 
-                                                        itemSize="30" 
-                                                        [required]="true">
-                                                </p-dropdown> -->
-                                                <div class="label-t">{{createListObj.Budget_Sub_Group_Name ? createListObj.Budget_Sub_Group_Name : "-"}}</div>
-                                    </div>
-                                    <div class="col-sm-8">
-                                        <label class="control-label">Work Detalis<sup class="text-danger">*</sup></label>
-                                      <!-- <p-dropdown [options]="createList" name="Work_Details"
-                                      [(ngModel)]="objproject.Work_Details" [showClear]="true"
-                                      [emptyFilterMessage]="' No Work Details Found'"
-                                      [filter]="true"
-                                      filterBy="label,value.name" [placeholder]="'Select Work Details'" [virtualScroll]="true"
-                                      itemSize="30" #Work_Details="ngModel" [styleClass]="
-                                      projectFromSubmit && Work_Details.errors?.required? 'clearance': ''"
-                                      [required]="requField"
-                                      >
-                                    </p-dropdown> -->
-                                    <div class="label-t">{{createListObj.Work_Details ? createListObj.Work_Details : "-"}}</div>
-                                    </div>
-                                </div>
+                                  </div>
                                 <div class="form-group"style="padding: 1em;">
                                     <h5 style="
                                     padding: 0.5em 1em;
@@ -417,19 +310,7 @@
                                     </i> &nbsp;<strong>Requisition Details:</strong></h5>
                                     <div class="col-sm-5">
                                         <label class="control-label">Requisition No.<sup class="text-danger">*</sup></label>
-                                                <!-- <p-dropdown [options]="createList" 
-                                                        name="Requisition" 
-                                                        [(ngModel)]="objproject.Req_No" 
-                                                        [showClear]="true" 
-                                                        [emptyFilterMessage]="' No Requisition No. Found'" 
-                                                        [filter]="true" filterBy="label,value.name" 
-                                                        [resetFilterOnHide]="true"
-                                                        [placeholder]="'Select Requisition No.'" 
-                                                        [virtualScroll]="true" 
-                                                        itemSize="30" 
-                                                        [required]="true">
-                                                </p-dropdown> -->
-                                                <div class="label-t">{{createListObj.Req_No ? createListObj.Req_No : "-"}}</div>
+                                               <div class="label-t">{{createListObj.Req_No ? createListObj.Req_No : "-"}}</div>
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Requisition Date<sup class="text-danger">*</sup></label>
@@ -477,34 +358,84 @@
                                 </div>    
                       </form>
                         <br>
+                        <div  class="form-group"*ngIf='buttonList.length' style="padding:15px">
+                            <fieldset class="col-md-12">
+                                <legend>Filter</legend>
+                                <div class="form-group" >
+                                   <div class="col-sm-3">
+                                      <label class="control-label">Site Description<span class="text-danger"></span></label>
+                                      <p-multiSelect [options]="DistSite"  
+                                        itemSize="30" [styleClass]="'compacct-multiselect'"  
+                                        [(ngModel)]="SelectedDistSite"
+                                        name="SiteDescription"
+                                        (onChange)='FilterDistbuttonList()'></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Budget Group Name<span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="DistBudgetGroup"  
+                                          itemSize="30" [styleClass]="'compacct-multiselect'"  
+                                          [(ngModel)]="SelectedBudgetGroup" 
+                                          name="BudgetGroupName"
+                                          (onChange)='FilterDistbuttonList()'></p-multiSelect>
+                                      </div>
+                                      <div class="col-sm-3">
+                                        <label class="control-label">Budget Sub Group Name<span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="DistBudgetSubGroup"  
+                                          itemSize="30" [styleClass]="'compacct-multiselect'"  
+                                          [(ngModel)]="SelectedBudgetSubGroup"
+                                          name="BudgetSubGroupName"
+                                          (onChange)='FilterDistbuttonList()'></p-multiSelect>
+                                      </div>
+                                      <div class="col-sm-3">
+                                        <label class="control-label">Work Details<span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="DistWorkDetails"  
+                                          itemSize="30" [styleClass]="'compacct-multiselect'" 
+                                          [(ngModel)]="SelectedDistWorkDetails"
+                                          name="WorkDetails"
+                                          (onChange)='FilterDistbuttonList()'></p-multiSelect>
+                                      </div>
+                                </div>
+                            </fieldset>
+                        </div>
                             <div class="table-responsive">
                                 <table class="table table-bordered table-striped">
                                     <thead>
                                         <tr style="background-color:#3c8dbc;color:white">
+                                            <th>Site</th>
+                                            <th>Budget Group Name</th>
+                                            <th>Budget Sub Group Name</th>
+                                            <th>Work Details</th>
                                             <th>Product Type</th>
                                             <th>Product Description</th>
                                             <th>UOM</th>
                                             <th style="width: 12%;">Requisition QTY</th>
-                                            <th>Batch No</th>
-                                            <th style="width: 11%;">Batch QTY</th>
+                                            <th  style="width: 11%;" >Batch No</th>
+                                            <th nowrap>Batch QTY</th>
                                             <th style="width: 15%;">Issue QTY</th>
                                        </tr>
                                   </thead>
                                    <tbody>
                                     <tr *ngFor="let optt of buttonList">
+                                        <td>{{optt.Site_Description}}</td>
+                                        <td>{{optt.Budget_Group_Name}}</td>
+                                        <td>{{optt.Budget_Sub_Group_Name}}</td>
+                                        <td><div (click)="selectWork($event,optt.Work_Details,op)" [ngClass]="stringShort(optt.Work_Details ,'css')">{{stringShort(optt.Work_Details ,'ff')}}</div> </td>
+
                                         <td>{{optt.Product_Type}}</td>
                                         <td>{{optt.Product_Description}}</td>
                                         <td>{{optt.UOM}}</td>
                                         <td>{{optt.Ori_Req_Qty}}</td>
-                                        <td>{{optt.Batch_No}}</td>
+                                        <td><input class="form-control" [name]="optt.Product_ID+'BatchNo'"
+                                            [(ngModel)]="optt.Batch_No"  (ngModelChange)="validatationBatchNo(optt.Batch_No)"  [ngClass]="{'clearance': validatationBatch_No && !optt.Batch_No }"  >
+                                        </td>
                                         <td>{{getToFix(optt.Batch_Qty)}}</td>
                                         <td>
-                                            <input class="form-control"  CompacctDigitonly="true" [name]="optt.Product_ID" CompacctDigitonly="true"
+                                            <input class="form-control"  CompacctDigitonly="true" [name]="optt.Product_ID"
                                             [(ngModel)]="optt.Del_Qty" (ngModelChange)="QTYCheck(optt)">
                                         </td>
                                     </tr>
                                    <tr *ngIf="buttonList.length" >
-                                        <td colspan="5"></td>
+                                        <td colspan="9"></td>
                                         <td  nowrap colspan="1" style="text-align: left; font-weight: 600;"><span>Total Batch QTY :</span>{{GetTotalbatch()}}</td>
                                         <td  nowrap colspan="1" style="text-align: left; font-weight: 600;"><span>Total Issue QTY :</span>{{DelQtyTotal}}</td>
                                     </tr>
@@ -526,3 +457,12 @@
     </div>
 </div>
 
+<p-overlayPanel [dismissable]="true" [showCloseIcon]="true" [appendTo]="'body'" [baseZIndex]="9999999" #op>
+    <ul style="width: 215px; padding: 5px" class="overpaneltext" >
+              <li *ngFor="let ovtext of overlayPanelText.split('#')" >
+                  {{ovtext}}
+              </li>
+          </ul>
+      
+  
+  </p-overlayPanel>
