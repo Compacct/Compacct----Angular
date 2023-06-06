@@ -46,6 +46,7 @@ export class MICLCouponIssueComponent implements OnInit {
   contractorList:any = [];
   contractorEmpList:any = [];
   IssuetoList:any = [] ;
+  DynamicHeaderforBrowseData:any = [];
   
   constructor(
     private http: HttpClient,
@@ -379,24 +380,30 @@ export class MICLCouponIssueComponent implements OnInit {
   }
   SearchData() {
     this.BrowseData = [];
+    this.DynamicHeaderforBrowseData = [];
     if (this.From_date && this.To_date) {
-      const Date = {
+      const Data = {
         From_Date: this.DateService.dateConvert(this.From_date) ,
         To_Date: this.DateService.dateConvert(this.To_date) 
       }
       const obj = {
         "SP_String": "SP_Master_Coupon_Receive",
         "Report_Name_String": "Browse_Master_Coupon_Issue",
-        "Json_Param_String": JSON.stringify([Date])
+        "Json_Param_String": JSON.stringify([Data])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => { 
         //console.log("Browse",data)
         if (data.length) {
+          data.forEach(element => {
+            element['Date'] = this.DateService.dateConvert(new Date(element.Date))
+          });
           this.BrowseData = data
           this.NoDataFound = false;  
+          this.DynamicHeaderforBrowseData = Object.keys(data[0]);
         }
         else {
          this.NoDataFound = true; 
+         this.DynamicHeaderforBrowseData = [];
         }
       })       
    } 
