@@ -380,6 +380,7 @@ import { AppraisalFormComponent } from "./common/Attendance/appraisal-form/appra
 import { PendingOutcomesComponent } from "./common/PatientManagement/pending-outcomes/pending-outcomes.component";
 import { BLTxnProductReturnFromProjectComponent } from "./common/Harbauer/bl-txn-product-return-from-project/bl-txn-product-return-from-project.component";
 import { MasterCompanyUpdateComponent } from "./common/FinancialManagement/Master/master-company-update/master-company-update.component";
+import { BlTxnProjectwiseReportComponent } from "./common/FinancialManagement/Report/bl-txn-projectwise-report/bl-txn-projectwise-report.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2893,6 +2894,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: MasterCompanyUpdateComponent,
         data: {
           title: 'Master Company Update'
+    }
+    },
+    {
+      path: 'BL_Txn_Projectwise_Report',
+        component: BlTxnProjectwiseReportComponent,
+        data: {
+          title: 'Project wise Report'
     }
     },
     
