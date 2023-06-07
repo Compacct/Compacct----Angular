@@ -40,10 +40,7 @@
                                         name="Cost_Cen_ID_Browse" 
                                         #Cost_Cen_ID_Browse='ngModel' 
                                         [(ngModel)]="objBrowseData.Cost_Cent_ID"
-                                        [ngClass]="{'clearance': BranchRequisitionBrowseFormSubmit && Cost_Cen_ID.errors?.required}" 
-                                        required
-                                        [attr.disabled]="userType != 'A' ? true :null"
-                                        >
+                                        [attr.disabled]="userType != 'A' ? true :null">
                                             <option  [ngValue]="undefined">Select</option>
                                             <option *ngFor="let option of costCenterList" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
                                       </select>

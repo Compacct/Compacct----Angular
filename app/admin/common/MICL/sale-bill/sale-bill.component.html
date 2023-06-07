@@ -117,7 +117,7 @@
                                                         <span class="caret"></span>
                                                     </button>
                                                     <ul class="dropdown-menu">
-                                                        <li>
+                                                        <li *ngIf="!col.E_Invoice_IRN_No && !col.E_Invoice_AckNo">
                                                             <a (click)="Edit(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>

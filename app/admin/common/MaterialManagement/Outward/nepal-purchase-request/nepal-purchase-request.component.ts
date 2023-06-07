@@ -56,6 +56,7 @@ export class NepalPurchaseRequestComponent implements OnInit {
   editFlg: boolean = false
   DynamicSearchedlist: any = [];
   SpinnerEXCEL:boolean = false
+  ApproveKye1: any =[];
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -331,6 +332,11 @@ export class NepalPurchaseRequestComponent implements OnInit {
           });
           this.Searchedlist = data
           this.DynamicSearchedlist = Object.keys(data[0]);
+          this.DynamicSearchedlist.forEach((element:any) => {
+          this.ApproveKye1.push({
+            header : element
+          })
+           });
          //console.log("Searchedlist",this.Searchedlist)
         }
         this.seachSpinner = false

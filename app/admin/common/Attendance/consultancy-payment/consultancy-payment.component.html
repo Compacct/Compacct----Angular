@@ -336,6 +336,19 @@
                                          placeholder="Remarks" 
                                          [ngClass]="{'clearance':PaymentFormSubmitted && remarks?.errors?.required}" ></textarea>
                                     </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Upload File</label>
+                                        <span class="btn btn-xs btn-danger pull-right" (click)="ClearUploadInpt(UploadFile)"
+                                          *ngIf="file"><i class="fa fa-close"></i></span>
+                                        <div>
+                                          <p-fileUpload mode="basic" name="filedoc" #UploadFile chooseLabel="BROWSE" uploadLabel="UPLOAD"
+                                            accept="image/*" [customUpload]="true" (onSelect)="fileSelect()"
+                                            *ngIf="upload" (uploadHandler)="onBasicUpload(UploadFile)">
+                                          </p-fileUpload>
+                                          <button name="pan" *ngIf="!upload" pButton pRipple type="button"
+                                            label="Show Document" (click)="showDoc()"></button>
+                                        </div>
+                                      </div>
 
                                 </div>
 
