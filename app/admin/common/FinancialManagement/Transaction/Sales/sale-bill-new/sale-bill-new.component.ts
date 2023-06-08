@@ -133,6 +133,7 @@ export class SaleBillNewComponent implements OnInit {
   cols:any =[];
   Edit_TCS_Amount : any;
   withoutbatchpro:any = [];
+  popouSpinner:boolean = false;
 
 
   constructor(
@@ -488,6 +489,9 @@ export class SaleBillNewComponent implements OnInit {
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=> {
      this.Productlist = data;
+     data.forEach((element,ind) => {
+      
+     });
      this.ngxService.stop();
      this.Productbutton = "(Show All Product)"
     })
@@ -811,7 +815,10 @@ export class SaleBillNewComponent implements OnInit {
       this.GetAllProductdetails();
     }
    }
-   GetProductDetailsChange(){
+   GetProductDetailsChange(obj){
+     console.log(obj)
+     const productObj:any = []
+     productObj.push(obj)
      this.ObjProductInfo.HSN_No = undefined;
      this.ObjProductInfo.Product_Specification = undefined;
      this.ObjProductInfo.Godown_Id = undefined;
@@ -827,8 +834,7 @@ export class SaleBillNewComponent implements OnInit {
      this.ObjProductInfo.SGST_Amount = undefined;
      this.ObjProductInfo.IGST_Rate = undefined;
      this.ObjProductInfo.IGST_Amount = undefined;
-    if(this.ObjProductInfo.Product_ID) {
-     const productObj = this.Productlist.filter(item=> item.value == this.ObjProductInfo.Product_ID);
+    this.ObjProductInfo.Product_ID = productObj[0].Product_ID
     // console.log(vendorObj);
      this.ObjProductInfo.HSN_No = productObj[0].HSN_No;
      this.ObjProductInfo.Product_Specification = productObj[0].Product_Spec;
@@ -844,7 +850,6 @@ export class SaleBillNewComponent implements OnInit {
      this.ObjProductInfo.IGST_Rate = productObj[0].IGST_Rate;
      this.ObjProductInfo.IGST_Amount = productObj[0].IGST_Amount;
      this.CalCulateTotalAmt();
-    }
    }
    GetBatchNo() {
     this.ObjProductInfo.Batch_Number = undefined;
@@ -1555,6 +1560,7 @@ export class SaleBillNewComponent implements OnInit {
     }
   }
   SavePurchaseBill(valid){
+    this.popouSpinner = false;
     this.DocNo = undefined;
     this.SaleBillNewFormSubmitted = true;
     this.TCSTaxRequiredValidation = true;
@@ -1581,6 +1587,7 @@ export class SaleBillNewComponent implements OnInit {
       // this.Spinner = true;
       // this.ngxService.start();
       // this.DataForSavePurchaseBill();
+      this.popouSpinner = true;
       var reportname = this.editDocNo ? "Update_Sale_Bill" : "Create_Sale_Bill";
       const obj = {
       "SP_String": "SP_Sale_Bill_New",
@@ -1590,11 +1597,13 @@ export class SaleBillNewComponent implements OnInit {
       this.GlobalAPI.postData(obj).subscribe(async (data:any)=>{
     //  this.validatation.required = false;
      //console.log(data);
+     this.popouSpinner = false;
      var tempID = data[0].Column1;
     //  this.Objcustomerdetail.Bill_No = data[0].Column1;
      if(data[0].Column1 != "Total Dr Amt And Cr Amt Not matched" && data[0].Success != "False"){
         const mgs = this.buttonname === 'Create' ? "Created" : "updated";
         this.Spinner = false;
+        this.popouSpinner = false;
         this.ngxService.stop();
         this.compacctToast.clear();
         this.compacctToast.add({
@@ -1625,6 +1634,7 @@ export class SaleBillNewComponent implements OnInit {
       // }
      }
     else if (data[0].Column1 === "Total Dr Amt And Cr Amt Not matched") {
+      this.popouSpinner = false;
       this.Spinner = false;
       this.ngxService.stop();
       this.compacctToast.clear();
@@ -1636,6 +1646,7 @@ export class SaleBillNewComponent implements OnInit {
       });
     }
     else{
+      this.popouSpinner = false;
       this.Spinner = false;
       this.ngxService.stop();
       this.compacctToast.clear();
@@ -1722,6 +1733,9 @@ export class SaleBillNewComponent implements OnInit {
     this.SearchSaleBillNewFormSubmitted = false;
    // console.log("Get All Data",this.SerarchsaleBillNewList);
   })
+  }
+  else {
+    this.seachSpinner = false;
   }
   }
   EditSaleBill(col){

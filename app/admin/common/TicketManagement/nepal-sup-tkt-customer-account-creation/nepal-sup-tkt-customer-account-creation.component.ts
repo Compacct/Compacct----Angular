@@ -58,6 +58,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
   @ViewChild("pvrcDoc", { static: false }) pvrcDoc!: FileUpload;
   @ViewChild("cwDoc", { static: false }) cwDoc!: FileUpload;
   @ViewChild("LargeDoc", { static: false }) LargeDoc!: FileUpload;
+  ApproveKye1: any =[];
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -95,7 +96,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
           xy['value'] = xy.Member_ID
         });
         this.ExecutiveList = data
-        //console.log("VendorList==",this.ExecutiveList)
+        ////console.log("VendorList==",this.ExecutiveList)
       }
      });
   }
@@ -168,12 +169,12 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
     this.$http.get('/Master_Acctonting_Subledger/Get_Sub_Ledger_Cat_Name_List?cat_type=Customer')
     .pipe(map((data:any) => data ? JSON.parse(data) : []))
     .subscribe((data:any)=>{
-      console.log(data)
+      //console.log(data)
       this.companyNatureList = [...data]
     })
   }
   async Savecusacccre(valid:any){
-    console.log("valid",valid)
+    //console.log("valid",valid)
    this.cusacccreationFormsSubmitted =true
    
    if(valid){
@@ -193,7 +194,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
         "Report_Name_String": "Create_Customer_Account",
         "Json_Param_String": JSON.stringify(this.objcusacccre)
       }
-      console.log("data",this.objcusacccre)
+      //console.log("data",this.objcusacccre)
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
        if(data[0].Column1){
         this.compacctToast.clear();
@@ -245,7 +246,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
       formData.append("frontfile", file);
       const httpOptions = { headers: new HttpHeaders({ 'x-functions-key':'9WkvVXtG259qhyTIQ9iB81FGEOJ4IV2fRza7i9A3KxM7AzFu5LiQZQ=='}) };
       const data:any = await this.$http.post(`https://sgnepalemailaz.azurewebsites.net/api/Common_File_Upload?`, formData, httpOptions).toPromise()
-      console.log("1")
+      //console.log("1")
       return await data.file_url
   }
   else {
@@ -259,7 +260,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
        formData.append("frontfile", file);
        const httpOptions = { headers: new HttpHeaders({ 'x-functions-key':'9WkvVXtG259qhyTIQ9iB81FGEOJ4IV2fRza7i9A3KxM7AzFu5LiQZQ=='}) };
       const data1:any = await this.$http.post(`https://sgnepalemailaz.azurewebsites.net/api/Common_File_Upload?`, formData, httpOptions).toPromise()
-      console.log("2")
+      //console.log("2")
       return await data1.file_url
 
     }
@@ -274,7 +275,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
        formData.append("frontfile", file);
        const httpOptions = { headers: new HttpHeaders({ 'x-functions-key':'9WkvVXtG259qhyTIQ9iB81FGEOJ4IV2fRza7i9A3KxM7AzFu5LiQZQ=='}) };
       const data2:any = await this.$http.post(`https://sgnepalemailaz.azurewebsites.net/api/Common_File_Upload?`, formData, httpOptions).toPromise()
-     console.log("3")
+     //console.log("3")
       return await data2.file_url
     }
     else {
@@ -288,7 +289,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
        formData.append("frontfile", file);
        const httpOptions = { headers: new HttpHeaders({ 'x-functions-key':'9WkvVXtG259qhyTIQ9iB81FGEOJ4IV2fRza7i9A3KxM7AzFu5LiQZQ=='}) };
       const data2:any = await this.$http.post(`https://sgnepalemailaz.azurewebsites.net/api/Common_File_Upload?`, formData, httpOptions).toPromise()
-     console.log("4")
+     //console.log("4")
       return await data2.file_url
     }
     else {
@@ -297,7 +298,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
   }
   async upload(event:any){
     const file = event;
-    console.log("file",file);
+    //console.log("file",file);
      const formData: FormData = new FormData();
     formData.append("frontfile", file);
     
@@ -309,7 +310,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
      body: formData ,// This is your file object
    });
    let responseText = await response.text();
-   console.log("responseText",responseText);
+   //console.log("responseText",responseText);
    return responseText
   }
 
@@ -332,7 +333,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
        
         if (data.length) {
-          console.log("Searchedlist", data)
+          //console.log("Searchedlist", data)
           this.SearchedBrowselist = [...data]
           this.SearchedBrowselistHeader = data.length ? Object.keys(data[0]) : []
           this.SearchedBrowselist.forEach((y: any) => {
@@ -340,7 +341,12 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
             y.Trn_Date = this.DateNepalConvertService.convertNewEngToNepaliDateObj(y.Trn_Date);
             }
           });
-     
+           this.SearchedBrowselistHeader.forEach((element:any) => {
+            this.ApproveKye1.push({
+            header : element
+          })
+           });
+          //console.log(this.ApproveKye1)
         }
         this.ngxService.stop();
       })
@@ -389,7 +395,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
       this.objcusacccre = data[0]
       this.objupdate = data[0]
       this.TicketStatus = data[0].Ticket_Status
-      console.log(this.objupdate)
+      //console.log(this.objupdate)
       this.imageCitizenshipOwner = data[0].URL_Citizenship_Owner
       this.imageCompRegistration = data[0].URL_Comp_Registration
       this.imagePANVATRegistration = data[0].URL_PAN_VAT_Registration
@@ -435,7 +441,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
       this.TicketStatus = ""
       this.UpdateSpinner = false
       this.UpdatecusacccreationFormsSubmitted = false
-      console.log(" update col",col)
+      //console.log(" update col",col)
     }
   }
   Updatecusacccre(valid:any){
@@ -450,7 +456,7 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
         "Json_Param_String": JSON.stringify([this.objupdate])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        console.log("data",data)
+        //console.log("data",data)
         if(data[0].Column1 == 'Done'){
           this.getbrowseData(true)
           this.updateModal = false
@@ -474,10 +480,10 @@ export class NepalSupTktCustomerAccountCreationComponent implements OnInit {
   }
 
   selectTypeOfCompany(){
-    // console.log('select works type of company');
+    // //console.log('select works type of company');
     if(this.objcusacccre.Type_of_company=='Proprietorship' || this.objcusacccre.Type_of_company=='Others'){
       this.ProductLdoc = {};
-      // console.log('select defined',this.ProductLdoc );
+      // //console.log('select defined',this.ProductLdoc );
     }
   }
 }

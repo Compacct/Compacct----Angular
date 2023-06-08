@@ -53,7 +53,7 @@
                                     <p-table [value]="BrowseData" [paginator]="BrowseData.length ? true : false" [rows]="100"
                                         [rowHover]="true" [autoLayout]="true" sortMode="multiple"
                                         [rowsPerPageOptions]="[100,200,300]" *ngIf="NoDataFound == false"
-                                        [globalFilterFields]="['Emp_Name','Visitor_Name','Date','Lunch_No_Of_Coupon','Lunch_Total_Amount','BF_No_Of_Coupon','BF_Total_Amount','Dinner_No_Of_Coupon','Dinner_Total_Amount']"
+                                        [globalFilterFields]="DynamicHeaderforBrowseData"
                                         [rowHover]="true" #dt>
                                         <ng-template pTemplate="caption">
                                             <div class="row">
@@ -110,7 +110,7 @@
                                                         </ul>
                                                     </div>
                                                 </td>
-                                                <td>{{col.Date ? (col.Date|date:"dd/MMM/yyyy") : '-'}}</td>
+                                                <td>{{col.Date ? col.Date : '-'}}</td>
                                                 <td>{{col.Issue_Type ? col.Issue_Type : '-'}}</td>
                                                 <td>{{col.Emp_Name ? col.Emp_Name : '-'}}</td>
                                                 <td>{{col.Contractor_Emp_Name ? col.Contractor_Emp_Name : '-'}}</td>

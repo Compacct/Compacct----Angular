@@ -57,8 +57,8 @@
                                 </div>
                             </form>
                             <div class="table-responsive no-padding">
-                                <p-table #dt [value]="SearchedBrowselist"
-                                    [globalFilterFields]="SearchedBrowselistHeader"
+                                <p-table #dt [value]="SearchedBrowselist" [columns]="ApproveKye1"
+                                    [globalFilterFields]="SearchedBrowselistHeader" *ngIf="SearchedBrowselist.length"
                                     [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true"
                                     sortMode="multiple" [rowsPerPageOptions]="[100,300,500]" [rowHover]="true">
                                     <ng-template pTemplate="caption">
@@ -71,17 +71,49 @@
                                         </div>
 
                                     </ng-template>
-                                    <ng-template pTemplate="header">
+                                    <ng-template pTemplate="header" let-columns>
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th>Support Ticket No</th>
-                                            <th>Date</th>
-                                            <th>User Name</th>
-                                            <th>Executive Name</th>
-                                            <th>Type of company</th>
-                                            <th>Nature of Company</th>
-                                            <th>Registered Company Name</th>
-                                            <th>Ticket Status</th>
+                                            <th [pSortableColumn]="columns[0].header">Support Ticket No
+                                                <p-sortIcon [field]="columns[0].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th [pSortableColumn]="columns[2].header">Date
+                                                <p-sortIcon [field]="columns[2].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th [pSortableColumn]="columns[11].header">User Name
+                                                <p-sortIcon [field]="columns[11].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th [pSortableColumn]="columns[1].header">Executive Name
+                                                <p-sortIcon [field]="columns[1].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th [pSortableColumn]="columns[4].header">Type of company
+                                                <p-sortIcon [field]="columns[4].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th [pSortableColumn]="columns[5].header">Nature of Company
+                                                <p-sortIcon [field]="columns[5].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th [pSortableColumn]="columns[3].header">Registered Company Name
+                                                <p-sortIcon [field]="columns[3].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th [pSortableColumn]="columns[13].header">Ticket Status
+                                                <p-sortIcon [field]="columns[13].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
                                             <th>Company Registration Certificate</th>
                                             <th>Pan or Vat Registration Certificate</th>
                                             <th>Citizenship of Owner/Director</th>

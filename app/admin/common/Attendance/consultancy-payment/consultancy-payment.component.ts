@@ -1,9 +1,11 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { MessageService } from 'primeng/api';
+import { FileUpload } from "primeng/primeng";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-consultancy-payment',
@@ -38,12 +40,18 @@ export class ConsultancyPaymentComponent implements OnInit {
   emplist:any = [];
   editlist:any = [];
   SL_No: any;
+  ProductPDFFile:any = {}
+  file: boolean = false;
+  upload: boolean = true;
+
+  @ViewChild("UploadFile", { static: false }) UploadFile!: FileUpload;
   constructor(
     private GlobalAPI: CompacctGlobalApiService,
     private Header: CompacctHeader,
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -79,6 +87,16 @@ export class ConsultancyPaymentComponent implements OnInit {
     this.Payment_Date = new Date();
 
     this.objPayment=new Payment();
+    // if (this.fileInput) {
+    //   this.fileInput.clear();
+    // }
+    // this.documenturllink = undefined;
+    // this.ProductPDFFile = {};
+    this.file = false;
+    this.upload = true;
+    if (this.UploadFile) {
+      this.UploadFile.clear();
+    }
   }
 
   GetCandidate(){
@@ -196,7 +214,76 @@ export class ConsultancyPaymentComponent implements OnInit {
     });
   }
 
-  SaveData(valid:any){
+  ClearUploadInpt(elem: any) {
+    if (this.objPayment.File_Upload) {
+      this.upload = true;
+      this.objPayment.File_Upload = undefined;
+    }
+    else {
+      this.UploadFile.clear();
+      this.file = false;
+    }
+  }
+
+  fileSelect() {
+    this.file = true;
+  }
+  onBasicUpload(elem: any) {
+    if (elem._files.length) {
+      this.UploadDoc(elem);
+    }
+  }
+  UploadDoc(elem: any) {
+    const upfile = elem._files[0];
+    // console.log('file elem', upfile);
+    if (upfile['size']) {
+      this.ngxService.start();
+      this.GlobalAPI.CommonFileUpload(upfile)
+        .subscribe((data: any) => {
+          // console.log('upload response', data);
+          this.objPayment.File_Upload = data.file_url ? data.file_url : null;
+          this.ngxService.stop();
+          this.upload = false;
+        })
+    }
+  }
+
+  // UploadDoc(){
+  //   // this.ApproveFormSubmit = true;
+   
+  //   if(this.ProductPDFFile['size']){
+  //   this.GlobalAPI.CommonFileUpload(this.ProductPDFFile)
+  //   .subscribe((data : any)=>
+  //   {
+  //     this.documenturllink = data.file_url;
+  //     if(this.documenturllink){
+  //       this.SaveData()
+  //     }
+  //     else {
+  //       this.ngxService.stop();
+  //       this.compacctToast.clear();
+  //       this.compacctToast.add({
+  //       key: "compacct-toast",
+  //       severity: "error",
+  //       summary: "Error",
+  //       detail: "Fail to upload file"
+  //     });
+  //     }
+  //   }) 
+  //   }
+  //   else {
+  //     this.ngxService.stop();
+  //     this.compacctToast.clear();
+  //     this.compacctToast.add({
+  //     key: "compacct-toast",
+  //     severity: "error",
+  //     summary: "Error",
+  //     detail: "No File Found"
+  //   });
+  //   }
+   
+  // }
+  SaveData(valid: any){
     this.PaymentFormSubmitted=true;
     // console.log('PaymentFormSubmitted',valid);
     if(valid){
@@ -261,6 +348,19 @@ export class ConsultancyPaymentComponent implements OnInit {
 
     }
   }
+  // SaveConsultancyPayment(valid:any){
+  //   this.PaymentFormSubmitted = true;
+  //   if (valid){
+  //     if(this.ProductPDFFile['size']){
+  //       this.UploadDoc();
+  //       console.log("UploadDoc")
+  //   }
+  //   else {
+  //     this.SaveData();
+  //     console.log("SaveData")
+  //   }
+  //   }
+  // }
 
   EditData(col:any){
     this.clearData();
@@ -286,8 +386,15 @@ export class ConsultancyPaymentComponent implements OnInit {
       this.Joining_Date=new Date(data[0].Joining_Date);
       this.Invoice_Date=new Date(data[0].Invoice_Date);
       this.Payment_Date=new Date(data[0].Payment_Date);
+      if (data[0].File_Upload) {
+        this.file = true;
+        this.upload = false;
+      }
     })
    }
+   showDoc() {
+    window.open(this.objPayment.File_Upload);
+  }
 
   onConfirm(){
 
@@ -322,6 +429,7 @@ class Payment{
   Reference_Name:any;
   Reference_Details_ID:any;
   Reference_Details:any;
+  File_Upload:any;
 }
 
 
