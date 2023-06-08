@@ -67,5 +67,8 @@ div.label-t {
 }
 .custombutton1 {
     margin-top: 2px;
-    margin-left: 700px;
+    margin-left: 680px;
+}
+.text-red-active > td {
+    color:red;
 }
