@@ -479,6 +479,7 @@ import { BLTxnProductReturnFromProjectComponent } from './common/Harbauer/bl-txn
 import { MasterCompanyUpdateComponent } from './common/FinancialManagement/Master/master-company-update/master-company-update.component';
 import { BlTxnProjectwiseReportComponent } from './common/FinancialManagement/Report/bl-txn-projectwise-report/bl-txn-projectwise-report.component';
 import { K4cAcceptRawMaterialStockTransferComponent } from './common/MaterialManagement/k4c-accept-raw-material-stock-transfer/k4c-accept-raw-material-stock-transfer.component';
+import { AttendanceRegularizationComponent } from './common/Attendance/attendance-regularization/attendance-regularization.component';
 
 @NgModule({
   declarations: [
@@ -874,7 +875,8 @@ import { K4cAcceptRawMaterialStockTransferComponent } from './common/MaterialMan
     BLTxnProductReturnFromProjectComponent,
     MasterCompanyUpdateComponent,
     BlTxnProjectwiseReportComponent,
-    K4cAcceptRawMaterialStockTransferComponent
+    K4cAcceptRawMaterialStockTransferComponent,
+    AttendanceRegularizationComponent
   ],
   imports: [
     CommonModule,
