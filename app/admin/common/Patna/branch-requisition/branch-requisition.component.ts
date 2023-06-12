@@ -38,7 +38,7 @@ export class BranchRequisitionComponent implements OnInit {
   DOCNo:any = undefined;
   ViewProTypeModal :boolean =false;
   BranchRequisitionBrowseFormSubmit:boolean = false
-  DeliveryRemarksObj: any = { Status: undefined, DOC_No: undefined }
+  DeliveryRemarksObj: any = { Status: undefined, DOC_No: undefined ,Remarks_From_HO :undefined}
   ViewPoTypeModal: boolean = false;
   POD_Date :Date = new Date();
   Recieve_Date: Date = new Date();
@@ -67,7 +67,7 @@ export class BranchRequisitionComponent implements OnInit {
     this.getCostCenter()
     this.getProduct()
     this.searchData(true)
-    console.log(this.objBrowseData.Cost_Cent_ID)
+    //console.log(this.objBrowseData.Cost_Cent_ID)
   }
   TabClick(e:any) {
     this.tabIndexToView = e.index;
@@ -87,7 +87,7 @@ export class BranchRequisitionComponent implements OnInit {
     this.DOCNo = undefined
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Create";
-    this.DeliveryRemarksObj = {Status: undefined , DOC_No:undefined}
+    this.DeliveryRemarksObj = {Status: undefined , DOC_No:undefined, Remarks_From_HO :undefined}
     this.ViewProTypeModal = false;
     this.BranchRequisitionBrowseFormSubmit = false
   }
@@ -99,7 +99,7 @@ export class BranchRequisitionComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.costCenterList = data
      
-     console.log("costCenterList",this.costCenterList)
+     //console.log("costCenterList",this.costCenterList)
     })
   }
   getProduct(){
@@ -108,7 +108,7 @@ export class BranchRequisitionComponent implements OnInit {
       "Report_Name_String": "DropDown_for_Product"
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      console.log(data)
+      //console.log(data)
       if(data.length){
         data.forEach(ele => {
           ele['label'] = ele.Product_Description,
@@ -130,13 +130,15 @@ export class BranchRequisitionComponent implements OnInit {
      this.ObjbranchREQ.Delivery_Remarks = ""
      this.ObjbranchREQ.DOC_No = this.DOCNo ? this.DOCNo : ""
      this.ObjbranchREQ.Cost_Cent_ID = Number(this.ObjbranchREQ.Cost_Cent_ID)
-     this.ObjbranchREQ.Fin_Year_ID = this.$CompacctAPI.CompacctCookies.Fin_Year_ID
-     this.AddBranchReqList.push(this.ObjbranchREQ)
+    this.ObjbranchREQ.Fin_Year_ID = this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
+    this.ObjbranchREQ.Reffered_By = this.ObjbranchREQ.Reffered_By ? this.ObjbranchREQ.Reffered_By : '',
+    this.ObjbranchREQ.Remarks = this.ObjbranchREQ.Remarks ? this.ObjbranchREQ.Remarks : '',
+    this.AddBranchReqList.push(this.ObjbranchREQ)
      const temoObj = {...this.ObjbranchREQ}
      this.ObjbranchREQ = new branchREQ()
      this.ObjbranchREQ.Cost_Cent_ID = temoObj.Cost_Cent_ID
      this.BranchRequisitionFormSubmit = false
-     console.log("AddBranchReqList",this.AddBranchReqList)
+    // //console.log("AddBranchReqList",this.AddBranchReqList)
   }
   }
   DeleteAddBranchReq(index:any){
@@ -169,7 +171,7 @@ export class BranchRequisitionComponent implements OnInit {
       "Json_Param_String": JSON.stringify([tempobj])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-       console.log(data)
+       //console.log(data)
        this.BranchRequisitionBrowseFormSubmit = false
        if(data.length){
         this.DynamicHeader = Object.keys(data[0])
@@ -194,7 +196,7 @@ export class BranchRequisitionComponent implements OnInit {
         "Json_Param_String": JSON.stringify(this.AddBranchReqList)
         }
         this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-          console.log(data)
+          //console.log(data)
           if(data[0].Response == "Done"){
             this.compacctToast.clear();
             this.compacctToast.add({
@@ -276,10 +278,10 @@ export class BranchRequisitionComponent implements OnInit {
     this.compacctToast.clear('c');
   }
   UpdateBotton(col){
-    console.log("col",col)
+    //console.log("col",col)
    if(col.DOC_No){
-    this.DeliveryRemarksObj = {Status: undefined , DOC_No:undefined}
-    this.DeliveryRemarksObj = {Status: undefined , DOC_No: col.DOC_No}
+    this.DeliveryRemarksObj = {Status: undefined , DOC_No:undefined, Remarks_From_HO:undefined}
+    this.DeliveryRemarksObj = {Status: undefined , DOC_No: col.DOC_No,Remarks_From_HO:undefined}
     this.ViewProTypeModal = true
    }
   
@@ -363,7 +365,9 @@ class branchREQ{
     Status:any
     Delivery_Remarks:any
     Created_By:any
-    Fin_Year_ID:any
+  Fin_Year_ID: any
+  Reffered_By: any
+  Remarks:any
 }
 class BrowseData {
   From_Date: string;

@@ -1689,8 +1689,1369 @@ export class ExportExcelService {
         let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         fs.saveAs(blob, daterange.StartDate+'_To_'+daterange.EndDate+'_Coupon_Report'+'.xlsx');
       })
-  } 
- colName(n:any) {
+  }
+  DownloadExcelReportHB(excelData ,FRdate ,ToDate ,purchase ,Expense ,Sale ,inflow ,outflow ,purTotal ,ExTotal ,Saletotal ,InfTotal ,outFlow) {
+    const Project = excelData;
+    const From = FRdate
+    const To = ToDate;
+   //Create a workbook with a worksheet
+    let workbook = new Workbook();
+    let worksheetProject = workbook.addWorksheet('Project_PL');
+    let worksheetInflow = workbook.addWorksheet('Inflow_outflow');
+
+    let ProjectSTATEMENTRow = worksheetProject.addRow([]);
+    ProjectSTATEMENTRow.getCell(1).value = "PROJECT WISE PROFIT AND LOSS STATEMENT";
+    ProjectSTATEMENTRow.getCell(1).font={
+      size: 11,
+      bold: true,
+      color: { argb: '4775d8' },
+      name :  'Calibri' ,
+    }
+    ProjectSTATEMENTRow.getCell(1).alignment = {
+      horizontal:'center'
+    }
+    worksheetProject.mergeCells('A1', 'F1');
+
+    let ProjectPERIODRow = worksheetProject.addRow([]);
+     ProjectPERIODRow.getCell(1).value = "FOR THE PERIOD OF / AS ON DATE"+"( " + `${From} - ${To}` + " )";
+     ProjectPERIODRow.getCell(1).font={
+            size: 11,
+            color: { argb: '4775d8' },
+            name :  'Calibri' ,
+    }
+    ProjectPERIODRow.getCell(1).alignment = {
+      horizontal:'center'
+    }
+    worksheetProject.mergeCells('A2', 'F2');
+
+    let ProjectNameRow = worksheetProject.addRow([]);
+     ProjectNameRow.getCell(1).value = "Project :  "+ `${Project}`;
+     ProjectNameRow.getCell(1).font={
+       size: 11,
+       bold: true,
+       color: { argb: '4775d8' },
+       name :  'Calibri' ,
+    }
+    ProjectNameRow.getCell(1).alignment = {
+      horizontal: 'left',
+      vertical : "middle"
+    }
+    worksheetProject.getRow(3).height = 19.50;
+    worksheetProject.mergeCells('A3', 'F3');
+
+    let EXPENSESRow = worksheetProject.addRow([]);
+    EXPENSESRow.getCell(1).value = "EXPENSES";
+    EXPENSESRow.getCell(1).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    EXPENSESRow.getCell(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'ed7d31' },
+      bgColor: { argb: '' },
+    }
+    EXPENSESRow.getCell(1).border = {
+      top: { style: 'medium' },
+      left: { style: 'medium' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    EXPENSESRow.getCell(1).alignment = {
+      horizontal:'center'
+    }
+    worksheetProject.mergeCells('A4', 'C4');
+
+    EXPENSESRow.getCell(4).value = "";
+    EXPENSESRow.getCell(4).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '2f75b5' },
+      bgColor: { argb: '' }
+    }
+    EXPENSESRow.getCell(4).border = {
+      top: { style: 'medium' },
+      left: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+
+    EXPENSESRow.getCell(5).value = "INCOMES";
+    EXPENSESRow.getCell(5).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    EXPENSESRow.getCell(5).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '70ad47'},
+      bgColor: { argb: '' }
+    }
+    EXPENSESRow.getCell(5).border = {
+      top: { style: 'medium' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'medium' },
+    };
+    EXPENSESRow.getCell(5).alignment = {
+      horizontal:'center'
+    }
+    worksheetProject.getColumn(1).width = 31.14;
+    worksheetProject.getColumn(2).width = 34.43;
+    worksheetProject.getColumn(3).width = 12.14;
+    worksheetProject.getColumn('D').width = 1;
+    worksheetProject.getColumn(5).width = 45.29;
+    worksheetProject.getColumn(6).width = 14.14;
+    worksheetProject.mergeCells('E4', 'F4');
+
+    let PurchaseBillRow = worksheetProject.addRow([]);
+    PurchaseBillRow.getCell(1).value = "Purchase Bill";
+    PurchaseBillRow.getCell(1).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    PurchaseBillRow.getCell(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'f8cbad' },
+      bgColor: { argb: '' }
+    }
+    PurchaseBillRow.getCell(1).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    PurchaseBillRow.getCell(1).alignment = {
+      horizontal:'center'
+    }
+    worksheetProject.mergeCells('A5', 'C5');
+
+    PurchaseBillRow.getCell(4).value = "";
+    PurchaseBillRow.getCell(4).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '2f75b5' },
+      bgColor: { argb: '' }
+    }
+    PurchaseBillRow.getCell(4).border = {
+      left: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+
+    PurchaseBillRow.getCell(5).value = "Sale Bill";
+    PurchaseBillRow.getCell(5).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    PurchaseBillRow.getCell(5).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'c6e0b4' },
+      bgColor: { argb: '' }
+    }
+    PurchaseBillRow.getCell(5).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'medium' },
+    };
+    PurchaseBillRow.getCell(5).alignment = {
+      horizontal:'center'
+    }
+    worksheetProject.getRow(5).height = 12.50;
+    worksheetProject.mergeCells('E5', 'F5');
+
+    let SiteNameRow = worksheetProject.addRow([]);
+    SiteNameRow.getCell(1).value = "Site Name";
+    SiteNameRow.getCell(1).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    SiteNameRow.getCell(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'bdd7ee' },
+      bgColor: { argb: '' }
+    }
+    SiteNameRow.getCell(1).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    SiteNameRow.getCell(1).alignment = {
+      horizontal:'center'
+    }
+
+    SiteNameRow.getCell(2).value = "Product Group";
+    SiteNameRow.getCell(2).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    SiteNameRow.getCell(2).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'bdd7ee' },
+      bgColor: { argb: '' }
+    }
+    SiteNameRow.getCell(2).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    SiteNameRow.getCell(2).alignment = {
+      horizontal:'center'
+    }
+
+    SiteNameRow.getCell(3).value = "Amount";
+    SiteNameRow.getCell(3).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    SiteNameRow.getCell(3).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'bdd7ee' },
+      bgColor: { argb: '' }
+    }
+    SiteNameRow.getCell(3).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    SiteNameRow.getCell(3).alignment = {
+      horizontal:'center'
+    }
+
+    SiteNameRow.getCell(4).value = "";
+    SiteNameRow.getCell(4).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '2f75b5' },
+      bgColor: { argb: '' }
+    }
+    SiteNameRow.getCell(4).border = {
+      left: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+
+    SiteNameRow.getCell(5).value = "Work Details";
+    SiteNameRow.getCell(5).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    SiteNameRow.getCell(5).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'bdd7ee' },
+      bgColor: { argb: '' }
+    }
+    SiteNameRow.getCell(5).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    SiteNameRow.getCell(5).alignment = {
+      horizontal:'center'
+    }
+    SiteNameRow.getCell(6).value = "Amount";
+    SiteNameRow.getCell(6).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    SiteNameRow.getCell(6).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'bdd7ee' },
+      bgColor: { argb: '' }
+    }
+    SiteNameRow.getCell(6).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'medium' },
+    };
+    SiteNameRow.getCell(6).alignment = {
+      horizontal:'center'
+    }
+    const data:any = [];
+    purchase.forEach((ele:any) => {
+      data.push(Object.values(ele))
+    });
+
+    const data1:any = [];
+    Sale.forEach((ele:any) => {
+    data1.push(Object.values(ele))
+    });
+    const ExpenseTb2: any = [
+    {
+      pos:'E'
+    },
+    {
+      pos:'F'
+    },
+    ]
+    data.forEach(d => {
+    const row= worksheetProject.addRow(d);
+    for( let i= 0; i< d.length;i++ ){
+      row.getCell(i + 1).border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+      }
+      row.getCell(i + 1).alignment = {
+        horizontal: 'center',
+        vertical: 'middle',
+        wrapText:true
+      } 
+      row.getCell(2).alignment = {
+        horizontal: 'left',
+        vertical: 'middle',
+        wrapText:true
+      }
+      row.getCell(3).alignment = {
+        horizontal: 'right',
+         vertical: 'middle',
+      }
+      row.getCell(i+1).font = {
+        size:10
+      }
+      row.getCell(4).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: '2f75b5' },
+          bgColor: { argb: '' }
+        }
+      row.getCell(4).border = {
+        left: { style: 'thin' },
+        right: { style: 'thin' },
+        };
+      row.getCell(6).border = {
+         right: { style: 'medium' },
+      }
+    }
+    }
+    );
+
+    data1.forEach((ele,i) => {
+    ExpenseTb2.forEach((e,inx) => {
+      let row: any = worksheetProject.getCell(`${e.pos}${i + 7}`)
+      row.value = ele[inx]
+        worksheetProject.getCell(`${e.pos}${i+7}`).border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        }
+        worksheetProject.getCell(`${e.pos}${i+7}`).alignment = {
+            horizontal: "left",
+            wrapText:true
+        }
+        worksheetProject.getCell(`${e.pos}${i+7}`).font = {
+          size:10
+        }
+      if (e.pos == 'F') {
+            row.border = {
+              top: { style: 'thin' },
+              left: { style: 'thin' },
+              bottom: { style: 'thin' },
+              right: { style: 'medium' }, 
+            }
+            row.alignment = {
+                horizontal: "right",
+                vertical : 'middle'
+          }
+      }
+     });
+    });
+    // Blank Row
+   let BlankRow =worksheetProject.addRow([])
+    BlankRow.getCell(1).value = "";
+    BlankRow.getCell(2).value = "";
+    BlankRow.getCell(3).value = "";
+    BlankRow.getCell(4).value = "";
+    BlankRow.getCell(4).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '2f75b5' },
+      bgColor: { argb: '' }
+    }
+    BlankRow.getCell(4).border = {
+      left: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    BlankRow.getCell(6).border = {
+         right: { style: 'medium' },
+    }
+
+    let TotalPurchaseBillRow = worksheetProject.addRow([])
+    TotalPurchaseBillRow.getCell(1).value = "Total Purchase Bill";
+    TotalPurchaseBillRow.getCell(1).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    TotalPurchaseBillRow.getCell(1).alignment = {
+      horizontal:'right'
+    }
+    TotalPurchaseBillRow.getCell(1).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    TotalPurchaseBillRow.getCell(3).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };                                                      
+    TotalPurchaseBillRow.getCell(3).value = Number(purTotal);
+    TotalPurchaseBillRow.getCell(3).alignment = {
+      horizontal:'right'
+    }
+    TotalPurchaseBillRow.getCell(4).value = "";
+    TotalPurchaseBillRow.getCell(4).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '2f75b5' },
+      bgColor: { argb: '' }
+    }
+    TotalPurchaseBillRow.getCell(4).border = {
+      left: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    TotalPurchaseBillRow.getCell(6).border = {
+         right: { style: 'medium' },
+    }
+    worksheetProject.mergeCells(`A${data.length + 8}`, `B${data.length + 8}`);
+    
+    let BlankRow2 = worksheetProject.addRow([])
+        BlankRow2.getCell(1).value = "";
+        BlankRow2.getCell(2).value = "";
+        BlankRow2.getCell(3).value = "";
+        BlankRow2.getCell(4).value = "";
+        BlankRow2.getCell(4).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: '2f75b5' },
+          bgColor: { argb: '' }
+        }
+        BlankRow2.getCell(4).border = {
+          left: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+        BlankRow2.getCell(6).border = {
+         right: { style: 'medium' },
+        }
+    
+    let DirectExpensesRow = worksheetProject.addRow([])
+    DirectExpensesRow.height = 12.75;
+    DirectExpensesRow.getCell(1).value = "Direct Expenses";
+    DirectExpensesRow.getCell(1).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    DirectExpensesRow.getCell(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'f8cbad' },
+      bgColor: { argb: '' }
+    }
+    DirectExpensesRow.getCell(1).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    DirectExpensesRow.getCell(1).alignment = {
+      horizontal:'center'
+    }
+    DirectExpensesRow.getCell(4).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: '2f75b5' },
+          bgColor: { argb: '' }
+    }
+    DirectExpensesRow.getCell(4).border = {
+          left: { style: 'thin' },
+          right: { style: 'thin' },
+    };
+    DirectExpensesRow.getCell(6).border = {
+      right: { style: 'medium' },
+    }
+    worksheetProject.mergeCells(`A${data.length + 10}`, `C${data.length + 10}`);
+
+    let DirectSiteNameRow = worksheetProject.addRow([])
+    DirectSiteNameRow.height = 12.75
+    DirectSiteNameRow.getCell(1).value = "Site Name";
+    DirectSiteNameRow.getCell(1).alignment = {
+      horizontal:'center'
+    }
+    DirectSiteNameRow.getCell(1).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    DirectSiteNameRow.getCell(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'bdd7ee' },
+      bgColor: { argb: '' }
+    }
+    DirectSiteNameRow.getCell(1).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    DirectSiteNameRow.getCell(2).value = "Ledger";
+    DirectSiteNameRow.getCell(2).alignment = {
+      horizontal:'center'
+    }
+    DirectSiteNameRow.getCell(2).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    DirectSiteNameRow.getCell(2).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'bdd7ee' },
+      bgColor: { argb: '' }
+    }
+    DirectSiteNameRow.getCell(2).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    DirectSiteNameRow.getCell(3).value = "Amount";
+    DirectSiteNameRow.getCell(3).alignment = {
+      horizontal:'center'
+    }
+    DirectSiteNameRow.getCell(3).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    DirectSiteNameRow.getCell(3).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'bdd7ee' },
+      bgColor: { argb: '' }
+    }
+    DirectSiteNameRow.getCell(3).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    DirectSiteNameRow.getCell(3).alignment = {
+      horizontal:'center'
+    }
+    DirectSiteNameRow.getCell(4).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: '2f75b5' },
+          bgColor: { argb: '' }
+    }
+    DirectSiteNameRow.getCell(4).border = {
+          left: { style: 'thin' },
+          right: { style: 'thin' },
+    };
+    DirectSiteNameRow.getCell(6).border = {
+      right: { style: 'medium' },
+    }
+
+    const data3:any = [];
+    Expense.forEach((ele:any) => {
+      data3.push(Object.values(ele))
+    });
+    data3.forEach(f => {
+    const row1= worksheetProject.addRow(f);
+    for( let i= 0; i< f.length;i++ ){
+      row1.getCell(i + 1).border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+      }
+      row1.getCell(i + 1).alignment = {
+        horizontal: 'center',
+        vertical: 'middle',
+      }
+      row1.getCell(3).alignment = {
+        horizontal: 'right',
+        vertical: 'middle',
+      }
+      row1.getCell(2).alignment = {
+        horizontal: 'left',
+        vertical: 'middle',
+      }
+      row1.getCell(i+1).font = {
+        size:10
+      }
+      row1.getCell(4).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '2f75b5' },
+      bgColor: { argb: '' }
+      }
+      row1.getCell(4).border = {
+        left: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+      row1.getCell(6).border = {
+        right: { style: 'medium' },
+      };
+    }
+    }
+    );
+     // Blank Row
+   let BlankRow3 =worksheetProject.addRow([])
+    BlankRow3.getCell(1).value = "";
+    BlankRow3.getCell(2).value = "";
+    BlankRow3.getCell(3).value = "";
+    BlankRow3.getCell(4).value = "";
+    BlankRow3.getCell(4).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '2f75b5' },
+      bgColor: { argb: '' }
+    }
+    BlankRow3.getCell(4).border = {
+      left: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    BlankRow3.getCell(6).border = {
+      right: { style: 'medium' },
+    }
+
+    let TotalExpensesRow = worksheetProject.addRow([])
+    TotalExpensesRow.getCell(1).value = "Total Direct Expenses";
+    TotalExpensesRow.getCell(1).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    TotalExpensesRow.getCell(1).alignment = {
+      horizontal:'right'
+    }
+    TotalExpensesRow.getCell(1).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    TotalExpensesRow.getCell(3).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    TotalExpensesRow.getCell(3).value = Number(ExTotal);
+    TotalExpensesRow.getCell(3).alignment = {
+      horizontal:'right'
+    }
+    TotalExpensesRow.getCell(4).value = "";
+    TotalExpensesRow.getCell(4).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '2f75b5' },
+      bgColor: { argb: '' }
+    }
+    TotalExpensesRow.getCell(4).border = {
+      left: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    TotalExpensesRow.getCell(6).border = {
+      right: { style: 'medium' },
+    }
+    const mergeRowValue = (v:any) => {
+      return  data.length  + data3.length + v
+    }
+    worksheetProject.mergeCells('A'+mergeRowValue(13), 'B'+mergeRowValue(13));
+
+     // Blank Row
+   let BlankRow4 =worksheetProject.addRow([])
+    BlankRow4.getCell(1).value = "";
+    BlankRow4.getCell(2).value = "";
+    BlankRow4.getCell(3).value = "";
+    BlankRow4.getCell(4).value = "";
+    BlankRow4.getCell(4).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '2f75b5' },
+      bgColor: { argb: '' }
+    }
+    BlankRow4.getCell(4).border = {
+      left: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    BlankRow4.getCell(6).border = {
+      right: { style: 'medium' },
+    };
+
+    let TotalExpenses2Row = worksheetProject.addRow([])
+    TotalExpenses2Row.height = 12.75;
+    TotalExpenses2Row.getCell(1).value = "Total Expenses";
+    TotalExpenses2Row.getCell(1).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    TotalExpenses2Row.getCell(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'f8cbad' },
+      bgColor: { argb: '' }
+    }
+    TotalExpenses2Row.getCell(1).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    TotalExpenses2Row.getCell(3).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'f8cbad' },
+      bgColor: { argb: '' }
+    }
+    TotalExpenses2Row.getCell(3).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    TotalExpenses2Row.getCell(3).value = Number(ExTotal);
+    TotalExpenses2Row.getCell(3).alignment = {
+      horizontal:'right'
+    }
+
+    TotalExpenses2Row.getCell(1).alignment = {
+      horizontal:'right'
+    }
+    TotalExpenses2Row.getCell(4).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: '2f75b5' },
+          bgColor: { argb: '' }
+    }
+    TotalExpenses2Row.getCell(4).border = {
+          left: { style: 'thin' },
+          right: { style: 'thin' },
+    };
+    TotalExpenses2Row.getCell(5).value = "Total Income";
+    TotalExpenses2Row.getCell(5).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    TotalExpenses2Row.getCell(5).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'c6e0b4' },
+      bgColor: { argb: '' }
+    }
+    TotalExpenses2Row.getCell(6).value = Number(Saletotal);
+    TotalExpenses2Row.getCell(6).alignment = {
+      horizontal:'right'
+    }
+    TotalExpenses2Row.getCell(6).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'medium' },
+    };
+    TotalExpenses2Row.getCell(6).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'c6e0b4' },
+      bgColor: { argb: '' }
+    }
+    TotalExpenses2Row.getCell(5).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    TotalExpenses2Row.getCell(5).alignment = {
+      horizontal:'right'
+    }
+    worksheetProject.mergeCells('A'+mergeRowValue(15), 'B'+mergeRowValue(15));
+
+     // Blank Row
+   let BlankRow5 =worksheetProject.addRow([])
+    BlankRow5.getCell(1).value = "";
+    BlankRow5.getCell(2).value = "";
+    BlankRow5.getCell(3).value = "";
+    BlankRow5.getCell(4).value = "";
+    BlankRow5.getCell(4).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '2f75b5' },
+      bgColor: { argb: '' }
+    }
+    BlankRow5.getCell(4).border = {
+      left: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    BlankRow5.getCell(5).value = "";
+    BlankRow5.getCell(6).value = "";
+    BlankRow5.getCell(6).border = {
+      right: { style: 'medium' },
+    };
+
+    let ProfitLossRow = worksheetProject.addRow([])
+    ProfitLossRow.height = 12.75;
+    ProfitLossRow.getCell(2).value = "Profit / (-) Loss"
+    ProfitLossRow.getCell(2).font={
+       size: 10,
+       bold: true,
+       color : { argb: 'f6f7f7' },
+       name :  'Calibri' ,
+    }
+    ProfitLossRow.getCell(2).alignment = {
+      horizontal:'right'
+    }
+    ProfitLossRow.getCell(2).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '2f75b5' },
+      bgColor: { argb: '' }
+    }
+    ProfitLossRow.getCell(2).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    ProfitLossRow.getCell(3).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    ProfitLossRow.getCell(3).value = Number((Number(Saletotal) - Number(ExTotal)).toFixed(2))
+    ProfitLossRow.getCell(3).alignment = {
+      horizontal:"right"
+    }
+    ProfitLossRow.getCell(4).value = "";
+    ProfitLossRow.getCell(4).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '2f75b5' },
+      bgColor: { argb: '' }
+    }
+    ProfitLossRow.getCell(4).border = {
+      left: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    ProfitLossRow.getCell(6).value = "";
+    ProfitLossRow.getCell(6).border = {
+      right: { style: 'medium' },
+    };
+     // Blank Row
+   let BlankRowLast =worksheetProject.addRow([])
+    BlankRowLast.getCell(1).value = "";
+    BlankRowLast.getCell(1).border = {
+      bottom: { style: 'medium' },
+    };
+    BlankRowLast.getCell(2).value = "";
+    BlankRowLast.getCell(2).border = {
+     bottom: { style: 'medium' },
+    };
+    BlankRowLast.getCell(3).value = "";
+    BlankRowLast.getCell(3).border = {
+      bottom: { style: 'medium' },
+    };
+    BlankRowLast.getCell(4).value = "";
+    BlankRowLast.getCell(4).border = {
+      bottom: { style: 'medium' },
+      left: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    BlankRowLast.getCell(4).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '2f75b5' },
+      bgColor: { argb: '' }
+    }
+    BlankRowLast.getCell(5).value = "";
+    BlankRowLast.getCell(5).border = {
+      bottom: { style: 'medium' },
+    };
+    BlankRowLast.getCell(6).value = "";
+    BlankRowLast.getCell(6).border = {
+      right: { style: 'medium' },
+      bottom: { style: 'medium' },
+    };
+
+    //Inflow-OutFlow Start
+   let Project1STATEMENTRow = worksheetInflow.addRow([]);
+    Project1STATEMENTRow.getCell(1).value = "PROJECT WISE INFLOW - OUTFLOW STATEMENT";
+    Project1STATEMENTRow.getCell(1).font={
+      size: 11,
+      bold: true,
+      color: { argb: '4775d8' },
+      name :  'Calibri' ,
+    }
+    Project1STATEMENTRow.getCell(1).alignment = {
+      horizontal:'center'
+    }
+    worksheetInflow.mergeCells('A1', 'C1');
+
+    let Project1PERIODRow = worksheetInflow.addRow([]);
+     Project1PERIODRow.getCell(1).value = "FOR THE PERIOD OF / AS ON DATE"+"( " + `${From} - ${To}` + " )";
+     Project1PERIODRow.getCell(1).font={
+            size: 11,
+            color: { argb: '4775d8' },
+            name :  'Calibri' ,
+    }
+    Project1PERIODRow.getCell(1).alignment = {
+      horizontal:'center'
+    }
+    worksheetInflow.mergeCells('A2', 'C2');
+
+    let Project1NameRow = worksheetInflow.addRow([]);
+     Project1NameRow.getCell(1).value = "Project :  "+ `${Project}`;
+     Project1NameRow.getCell(1).font={
+       size: 11,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    Project1NameRow.getCell(1).alignment = {
+      horizontal: 'left',
+      vertical : "middle"
+    }
+    worksheetInflow.getRow(3).height = 19.50;
+    worksheetInflow.mergeCells('A3', 'C3'); 
+
+    let InflowRow = worksheetInflow.addRow([]);
+    InflowRow.getCell(1).value = "Inflow";
+    InflowRow.getCell(1).font={
+       size: 11,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    InflowRow.getCell(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'c6e0b4' },
+      bgColor: { argb: '' },
+    }
+    InflowRow.getCell(1).border = {
+      top: { style: 'medium' },
+      left: { style: 'medium' },
+      bottom: { style: 'thin' },
+      right: { style: 'medium' },
+    };
+    InflowRow.getCell(1).alignment = {
+      horizontal:'center'
+    }
+    worksheetInflow.mergeCells('A4', 'C4');
+
+    let SiteName1Row = worksheetInflow.addRow([]);
+    SiteName1Row.getCell(1).value = "Site Name";
+    SiteName1Row.getCell(1).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    SiteName1Row.getCell(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'bdd7ee' },
+      bgColor: { argb: '' }
+    }
+    SiteName1Row.getCell(1).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    SiteName1Row.getCell(1).alignment = {
+      horizontal:'center'
+    }
+
+    SiteName1Row.getCell(2).value = "Ledger / Sub Ledger";
+    SiteName1Row.getCell(2).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    SiteName1Row.getCell(2).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'bdd7ee' },
+      bgColor: { argb: '' }
+    }
+    SiteName1Row.getCell(2).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    SiteName1Row.getCell(2).alignment = {
+      horizontal:'center'
+    }
+
+    SiteName1Row.getCell(3).value = "Amount";
+    SiteName1Row.getCell(3).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    SiteName1Row.getCell(3).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'bdd7ee' },
+      bgColor: { argb: '' }
+    }
+    SiteName1Row.getCell(3).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'medium' },
+    };
+    SiteName1Row.getCell(3).alignment = {
+      horizontal:'center'
+    }
+    worksheetInflow.getColumn(1).width = 41.71;
+    worksheetInflow.getColumn(2).width = 57.71;
+    worksheetInflow.getColumn(3).width = 23.14;
+    worksheetInflow.getRow(5).height = 12.75;
+
+        const data4:any = [];
+        inflow .forEach((ele:any) => {
+          data4.push(Object.values(ele))
+        });
+        data4.forEach(d => {
+        const row= worksheetInflow.addRow(d);
+        for( let i= 0; i< d.length;i++ ){
+          row.getCell(i + 1).border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' },
+          }
+          row.getCell(3).border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'medium' },
+          }
+          row.getCell(i + 1).alignment = {
+            horizontal: 'left',
+            vertical: 'middle',
+            wrapText:true
+          } 
+          row.getCell(i+1).font = {
+            size:10
+          }
+          if (i == 3) {
+          row[i].alignment = {
+            horizontal: 'right',
+            vertical: 'middle',
+          }
+        }
+        }
+        }
+        );
+
+     let TotalInflowAmountBillRow = worksheetInflow.addRow([])
+      TotalInflowAmountBillRow.getCell(2).value = "Total Inflow Amount";
+      TotalInflowAmountBillRow.getCell(1).border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+      TotalInflowAmountBillRow.getCell(2).alignment = {
+        horizontal:'right'
+      }
+      TotalInflowAmountBillRow.getCell(2).font={
+        size: 10,
+        bold: true,
+        name :  'Calibri' ,
+      }
+      TotalInflowAmountBillRow.getCell(2).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'c6e0b4' },
+        bgColor: { argb: '' },
+      }
+      TotalInflowAmountBillRow.getCell(2).border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+      TotalInflowAmountBillRow.getCell(3).value = Number(InfTotal);
+      TotalInflowAmountBillRow.getCell(3).alignment = {
+          horizontal:'right'
+        }
+      TotalInflowAmountBillRow.getCell(3).border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'medium' },
+      };
+      TotalInflowAmountBillRow.getCell(3).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'c6e0b4' },
+        bgColor: { argb: '' },
+    }
+    let BlankRow6 = worksheetInflow.addRow([])
+        BlankRow6.getCell(3).border = {
+         right: { style: 'medium' },
+      }
+    let OutflowRow = worksheetInflow.addRow([])
+        OutflowRow.getCell(1).value = "Outflow";
+        OutflowRow.getCell(1).font={
+          size: 11,
+          bold: true,
+          name :  'Calibri' ,
+        }
+        OutflowRow.getCell(1).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'f8cbad' },
+          bgColor: { argb: '' },
+        }
+        OutflowRow.getCell(1).border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'medium' },
+        };
+        OutflowRow.getCell(1).alignment = {
+          horizontal:'center'
+        }
+        const mergeRowValue1 = (v:any) => {
+          return  data4.length + v
+        }
+    worksheetInflow.mergeCells('A' + mergeRowValue1(8), 'C' + mergeRowValue1(8));
+    
+    let SiteName2Row = worksheetInflow.addRow([]);
+    SiteName2Row.getCell(1).value = "Site Name";
+    SiteName2Row.getCell(1).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    SiteName2Row.getCell(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'bdd7ee' },
+      bgColor: { argb: '' }
+    }
+    SiteName2Row.getCell(1).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    SiteName2Row.getCell(1).alignment = {
+      horizontal:'center'
+    }
+
+    SiteName2Row.getCell(2).value = "Ledger / Sub Ledger";
+    SiteName2Row.getCell(2).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    SiteName2Row.getCell(2).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'bdd7ee' },
+      bgColor: { argb: '' }
+    }
+    SiteName2Row.getCell(2).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    SiteName2Row.getCell(2).alignment = {
+      horizontal:'center'
+    }
+
+    SiteName2Row.getCell(3).value = "Amount";
+    SiteName2Row.getCell(3).font={
+       size: 10,
+       bold: true,
+       name :  'Calibri' ,
+    }
+    SiteName2Row.getCell(3).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'bdd7ee' },
+      bgColor: { argb: '' }
+    }
+    SiteName2Row.getCell(3).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'medium' },
+    };
+    SiteName2Row.getCell(3).alignment = {
+      horizontal:'center'
+    }
+    SiteName2Row.height = 12.75
+
+        const data5:any = [];
+        outflow.forEach((ele:any) => {
+          data5.push(Object.values(ele))
+        });
+    data5.forEach(l => {
+      const row = worksheetInflow.addRow(l);
+      for (let i = 0; i < l.length; i++) {
+        row.getCell(i + 1).border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        }
+        row.getCell(3).border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'medium' },
+        }
+        row.getCell(i + 1).alignment = {
+          horizontal: 'left',
+          vertical: 'middle',
+          wrapText: true
+        }
+        row.getCell(i + 1).font = {
+          size: 10
+        }
+        if (i == 3) {
+          row[i].alignment = {
+            horizontal: 'right',
+            vertical: 'middle',
+          }
+        }
+      }
+    }
+    );
+    
+    let TotalOutflowAmountBillRow = worksheetInflow.addRow([])
+      TotalOutflowAmountBillRow.getCell(2).value = "Total Outflow Amount";
+      TotalOutflowAmountBillRow.getCell(1).border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+      TotalOutflowAmountBillRow.getCell(2).alignment = {
+        horizontal:'right'
+      }
+      TotalOutflowAmountBillRow.getCell(2).font={
+        size: 10,
+        bold: true,
+        name :  'Calibri' ,
+      }
+      TotalOutflowAmountBillRow.getCell(2).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'f8cbad' },
+        bgColor: { argb: '' },
+      }
+      TotalOutflowAmountBillRow.getCell(2).border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+      TotalOutflowAmountBillRow.getCell(3).value = Number(outFlow);
+      TotalOutflowAmountBillRow.getCell(3).alignment = {
+          horizontal:'right'
+        }
+      TotalOutflowAmountBillRow.getCell(3).border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'medium' },
+      };
+      TotalOutflowAmountBillRow.getCell(3).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'f8cbad' },
+        bgColor: { argb: '' },
+      }
+      let BlankRow7 = worksheetInflow.addRow([])
+          BlankRow7.getCell(3).border = {
+          right: { style: 'medium' },
+      }
+    
+    let DifferenceRow = worksheetInflow.addRow([])
+    DifferenceRow.getCell(1).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'medium' },
+      right: { style: 'thin' },
+    };
+    DifferenceRow.getCell(2).value = "Difference (Inflow - Outflow)"
+    DifferenceRow.getCell(2).font={
+       size: 10,
+       bold: true,
+       color : { argb: 'f6f7f7' },
+       name :  'Calibri' ,
+    }
+    DifferenceRow.getCell(2).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '2f75b5' },
+        bgColor: { argb: '' },
+    }
+    DifferenceRow.getCell(2).alignment = {
+      horizontal:'right'
+    }
+    DifferenceRow.getCell(2).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'medium' },
+    };
+    DifferenceRow.getCell(3).value = Number((Number(InfTotal) - Number(outFlow)).toFixed(2))
+    DifferenceRow.getCell(3).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'medium' },
+      right: { style: 'medium' },
+    };
+    DifferenceRow.getCell(3).alignment = {
+      horizontal:'right'
+    }
+    DifferenceRow.height = 13.57
+
+
+    //Generate & Save Excel File
+      workbook.xlsx.writeBuffer().then((data) => {
+        let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        fs.saveAs(blob, 'harbauer_vi'+'.xlsx');
+      })
+  }
+  colName(n:any) {
     var ordA = 'A'.charCodeAt(0);
     var ordZ = 'Z'.charCodeAt(0);
     var len = ordZ - ordA + 1;

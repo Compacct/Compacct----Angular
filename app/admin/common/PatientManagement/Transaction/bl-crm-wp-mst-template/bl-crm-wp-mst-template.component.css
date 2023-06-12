@@ -2,11 +2,6 @@ div.table-responsive.table-id>p-table>div>div {
     width: auto !important;
 }
 
-
-/* .col-sm-1 {
-    width: 40%;
-  } */
-
 .box-body {
     padding-top: 10px !important;
     padding-left: 10px !important;
@@ -24,10 +19,6 @@ textarea.form-control {
     height: auto;
 }
 
-.btn {
-    border: red;
-}
-
 .box.boxboxDivide-primary {
     border-top-color: #f3efec;
     height: 10px;
@@ -39,15 +30,8 @@ textarea.form-control {
     width: auto !important;
 }
 
-
-/* .custombutton {
+.custombutton {
     margin-top: 28px;
-    margin-left: 130px;
-  } */
-
-.custombutton1 {
-    margin-top: 28px;
-    margin-left: 85%;
 }
 
 hr {
@@ -55,20 +39,4 @@ hr {
     margin-bottom: 1rem;
     border: 0;
     border-top: 1px solid rgba(0, 0, 0, 0.2);
-}
-
-.Outlet {
-    display: inline-block !important;
-}
-
-div.label-t {
-    padding: 6px 12px;
-    background: rgb(206 216 216 / 51%);
-}
-.custombutton1 {
-    margin-top: 2px;
-    margin-left: 680px;
-}
-.text-red-active > td {
-    color:red;
 }

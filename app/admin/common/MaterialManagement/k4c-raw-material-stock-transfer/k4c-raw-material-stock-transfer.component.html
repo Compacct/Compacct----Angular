@@ -86,11 +86,12 @@
                                             <th>From Stock Point</th>
                                             <th>To Stock Point</th>
                                             <th>Total Qty</th>
+                                            <th>Accepted Qty</th>
                                             <th>Total Amount</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
-                                        <tr>
+                                        <tr [class]='col.Qty != col.Accepted_Qty ? "text-red-active" : ""'>
 
                                             <td>
                                                 <div class="dropdown">
@@ -104,12 +105,12 @@
                                                                 <i class="fa fa-fw fa-eye"></i> View
                                                             </a>
                                                         </li>
-                                                        <li>
+                                                        <li *ngIf="col.Qty != col.Accepted_Qty">
                                                             <a (click)="EditIntStock(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li>
-                                                        <li>
+                                                        <li *ngIf="col.Qty != col.Accepted_Qty">
                                                             <a (click)="DeleteIntStocktr(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
@@ -122,6 +123,7 @@
                                             <td>{{col.From_Godown_Name}}</td>
                                             <td>{{col.To_Godown_Name}}</td>
                                             <td>{{col.Qty}}</td>
+                                            <td>{{col.Accepted_Qty}}</td>
                                             <td>{{col.Total_Amount ? col.Total_Amount : '-'}}</td>
                                         </tr>
                                     </ng-template>
@@ -227,6 +229,9 @@
                                             <th>Batch Qty</th>
                                             <!-- <th >Current Stock in Department</th> -->
                                             <th>Issue Qty</th>
+                                            <th *ngIf="editList.length">Accepted Qty</th>
+                                            <th *ngIf="editList.length">Remarks</th>
+                                            <th *ngIf="editList.length" style="width: 200px;">Store Remarks</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -240,6 +245,9 @@
                                             <!-- <td>{{col.Current_Stock_In_Dept}}</td> -->
                                             <!-- <td>{{col.Qty}}</td> -->
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Issue_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                            <td *ngIf="editList.length">{{col.Accepted_Qty}}</td>
+                                            <td *ngIf="editList.length">{{col.Remarks}}</td>
+                                            <td *ngIf="editList.length"><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Store_Remarks' [disabled]="col.Accepted_Qty == col.Qty" class="form-control" style="width: 200px;" /></td>
                                         </tr>
                                     </ng-template>
 
