@@ -877,7 +877,7 @@ import { AttendanceRegularizationComponent } from './common/Attendance/attendanc
     BLTxnProductReturnFromProjectComponent,
     MasterCompanyUpdateComponent,
     BlTxnProjectwiseReportComponent,
-    BlCRMWPMSTTemplateComponent
+    BlCRMWPMSTTemplateComponent,
     K4cAcceptRawMaterialStockTransferComponent,
     AttendanceRegularizationComponent
   ],
