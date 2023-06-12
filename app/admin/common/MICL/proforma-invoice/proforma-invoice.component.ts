@@ -132,6 +132,7 @@ export class ProformaInvoiceComponent implements OnInit {
   Remarks:any;
   editlist:any = [];
   editDocNo: any;
+  editorDis:boolean = false
 
   constructor(
     private Header: CompacctHeader,
@@ -208,6 +209,7 @@ export class ProformaInvoiceComponent implements OnInit {
     this.ProductDetalist = [];
     this.LotNolist = [];
     // this.SerarchOwterBillList = [];
+    this.editorDis = true;
     this.ObjPorformaInv.Sub_Ledger_Billing_Name = '';
     this.ObjPorformaInv.Choose_Address2 = undefined;
     this.ObjPorformaInv.Choose_Address = undefined;
@@ -227,6 +229,9 @@ export class ProformaInvoiceComponent implements OnInit {
     this.ObjPorformaInv.Vehicle_No = undefined;
     this.ObjPorformaInv.Transporterr = undefined;
     this.ObjPorformaInv.LR_No = undefined;
+    setTimeout(() => {
+      this.editorDis = false
+    }, 500);
   }
   Finyear() {
     this.$http
@@ -971,6 +976,7 @@ export class ProformaInvoiceComponent implements OnInit {
       this.GetCosCenAddress();
       this.DocDate = new Date(data[0].Doc_Date);
       this.Remarks = data[0].Remarks;
+      this.editorDis = true
       // this.RDBListAdd = data[0].L_element;
       data.forEach(element => {
         const  productObj = {
@@ -1005,6 +1011,9 @@ export class ProformaInvoiceComponent implements OnInit {
           this.AddProdList.push(productObj);
           this.TotalCalculation();
         });
+        setTimeout(() => {
+          this.editorDis = false
+        }, 700);
     })
    }
   //  DynamicRedirectTo (obj){

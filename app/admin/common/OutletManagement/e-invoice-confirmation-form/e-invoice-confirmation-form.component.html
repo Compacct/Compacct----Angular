@@ -430,6 +430,11 @@
                                                                 <i class="fa fa-fw fa-print" aria-hidden="true"></i> Print Challan
                                                             </a>
                                                         </li>
+                                                        <li *ngIf="databaseName === 'MICL'">
+                                                            <a (click)="PrintEwayBill(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-print" aria-hidden="true"></i> Print E Way Bill
+                                                            </a>
+                                                        </li>
                                                         <li *ngIf="col.E_Invoice_Ewb_PDF_Link"> <!-- *ngIf="col.E_Invoice_Ewb_PDF_Link" -->
                                                             <a (click)="DownloadEINV(col.E_Invoice_Ewb_PDF_Link)">
                                                                 <i class="fa fa-fw fa-download"></i> Download E Way Bill

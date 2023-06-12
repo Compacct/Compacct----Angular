@@ -382,6 +382,8 @@ import { BLTxnProductReturnFromProjectComponent } from "./common/Harbauer/bl-txn
 import { MasterCompanyUpdateComponent } from "./common/FinancialManagement/Master/master-company-update/master-company-update.component";
 import { BlTxnProjectwiseReportComponent } from "./common/FinancialManagement/Report/bl-txn-projectwise-report/bl-txn-projectwise-report.component";
 import { BlCRMWPMSTTemplateComponent } from "./common/PatientManagement/Transaction/bl-crm-wp-mst-template/bl-crm-wp-mst-template.component";
+import { K4cAcceptRawMaterialStockTransferComponent } from './common/MaterialManagement/k4c-accept-raw-material-stock-transfer/k4c-accept-raw-material-stock-transfer.component';
+import { AttendanceRegularizationComponent } from './common/Attendance/attendance-regularization/attendance-regularization.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2909,6 +2911,20 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: BlCRMWPMSTTemplateComponent,
         data: {
           title: 'Bl CRM WP MST Template'
+    }
+    },
+    {
+      path: 'Accept_Raw_Material_Stock_Transfer',
+        component: K4cAcceptRawMaterialStockTransferComponent,
+        data: {
+          title: 'Accept Raw Material Stock Transfer'
+    }
+    },
+    {
+      path: 'Attendance_Regularization',
+        component: AttendanceRegularizationComponent,
+        data: {
+          title: 'Attendance Regularization'
     }
     },
     
