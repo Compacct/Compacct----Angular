@@ -478,6 +478,7 @@ import { PendingOutcomesComponent } from './common/PatientManagement/pending-out
 import { BLTxnProductReturnFromProjectComponent } from './common/Harbauer/bl-txn-product-return-from-project/bl-txn-product-return-from-project.component';
 import { MasterCompanyUpdateComponent } from './common/FinancialManagement/Master/master-company-update/master-company-update.component';
 import { BlTxnProjectwiseReportComponent } from './common/FinancialManagement/Report/bl-txn-projectwise-report/bl-txn-projectwise-report.component';
+import { BlCRMWPMSTTemplateComponent } from './common/PatientManagement/Transaction/bl-crm-wp-mst-template/bl-crm-wp-mst-template.component';
 
 @NgModule({
   declarations: [
@@ -872,7 +873,8 @@ import { BlTxnProjectwiseReportComponent } from './common/FinancialManagement/Re
     PendingOutcomesComponent,
     BLTxnProductReturnFromProjectComponent,
     MasterCompanyUpdateComponent,
-    BlTxnProjectwiseReportComponent
+    BlTxnProjectwiseReportComponent,
+    BlCRMWPMSTTemplateComponent
   ],
   imports: [
     CommonModule,
