@@ -429,6 +429,35 @@ GetProductType(){
    return flag;
   }
   // SAVE AND UPDATE
+  CheckRemarks(col) {
+      if (Number(col.Issue_Qty) === 0 && !col.Store_Remarks) {
+        return true;
+      } else {
+        return false;
+      }
+    
+  }
+  ValidRemarksCheck() {
+  let ValidFlag = false;
+  for (let index = 0; index < this.ProductList.length; index++) {
+    const element = this.ProductList[index];
+    if (this.CheckRemarks(element)) {
+      ValidFlag = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "warn",
+        summary: "Validation",
+        detail: "Enter Remarks."
+      });
+      return ValidFlag;
+    } else {
+      ValidFlag = true;
+    }
+
+  }
+  return ValidFlag;
+}
   showDialog() {
     if(this.saveqty()){
     this.filteredData = [];
@@ -440,11 +469,28 @@ GetProductType(){
   //   }
   //  })
    this.ProductList.forEach(obj => {
+    if (this.buttonname === "Update"){
+      if(this.ValidRemarksCheck()) {
+      this.filteredData.push(obj);
+      this.displaysavepopup = true;
+    } 
+    // else {
+    //   this.compacctToast.clear();
+    //     this.compacctToast.add({
+    //       key: "compacct-toast",
+    //       severity: "error",
+    //       summary: "Warn Message",
+    //       detail: "Something Wrong."
+    //     });
+    // }
+    }
+    else {
     if(obj.Issue_Qty && Number(obj.Issue_Qty) !== 0){  //   && Number(obj.Delivery_Qty) !== 0
     //  console.log(filteredData.push(obj.Product_ID));
     this.filteredData.push(obj);
     this.displaysavepopup = true;
      // console.log("this.filteredData===",this.filteredData);
+  }
   }
  })
   }
@@ -466,6 +512,40 @@ GetProductType(){
   
     return Total ? Total.toFixed(2) : '-';
   }
+  dataforSaveRawMaterialIssueforEdit(){
+    // console.log(this.DateService.dateConvert(new Date(this.myDate)))
+     this.ObjRawMateriali.Doc_Date = this.DateService.dateConvert(new Date(this.todayDate));
+    if(this.ProductList.length) {
+      let tempArr:any =[]
+      this.ProductList.forEach(item => {
+     const TempObj = {
+            Doc_No:  this.ObjRawMateriali.Doc_No ?  this.ObjRawMateriali.Doc_No : "A",
+            Doc_Date: this.ObjRawMateriali.Doc_Date,
+            From_Cost_Cen_ID :this.ObjRawMateriali.From_Cost_Cen_ID,
+            From_godown_id	: this.ObjRawMateriali.From_godown_id,
+            To_Cost_Cen_ID	: this.ObjRawMateriali.To_Cost_Cen_ID,
+            To_godown_id	: this.ObjRawMateriali.To_godown_id,
+            Product_ID	: item.Product_ID,
+            Product_Description	: item.Product_Description,
+            Product_Type_ID	: item.Product_Type_ID,
+            Qty	: item.Issue_Qty,
+            Accepted_Qty: Number(item.Accepted_Qty),
+            UOM	: item.UOM,
+            User_ID	: this.$CompacctAPI.CompacctCookies.User_ID,
+            Accepted_By : item.Accepted_By,
+            Batch_No : item.Batch_No,
+            Remarks : Number(item.Qty) === Number(item.Accepted_Qty) ? 'NA' : item.Remarks ,
+            Store_Remarks : item.Store_Remarks,
+            Total_Qty : Number(this.getTotalValue('Qty')),
+            Total_Accepted_Qty : Number(this.getTotalValue('Accepted_Qty'))
+         }
+        tempArr.push(TempObj)
+      });
+      console.log("Save Data ===", tempArr)
+      return JSON.stringify(tempArr);
+
+    }
+  }
   dataforSaveRawMaterialIssue(){
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
      this.ObjRawMateriali.Doc_Date = this.DateService.dateConvert(new Date(this.todayDate));
@@ -486,7 +566,8 @@ GetProductType(){
             Qty	: item.Issue_Qty,
             Accepted_Qty: Number(item.Accepted_Qty),
             UOM	: item.UOM,
-            User_ID	:this.$CompacctAPI.CompacctCookies.User_ID,
+            User_ID	: this.$CompacctAPI.CompacctCookies.User_ID,
+            Accepted_By : item.Accepted_By,
             Batch_No : item.Batch_No,
             Remarks : Number(item.Qty) === Number(item.Accepted_Qty) ? 'NA' : item.Remarks ,
             Store_Remarks : item.Store_Remarks,
@@ -521,7 +602,7 @@ GetProductType(){
       const obj = {
         "SP_String": "SP_Raw_Material_Stock_Transfer",
         "Report_Name_String" : "Save Raw Material Stock Transfer",
-       "Json_Param_String": this.dataforSaveRawMaterialIssue()
+       "Json_Param_String": this.buttonname === "Update" ? this.dataforSaveRawMaterialIssueforEdit() : this.dataforSaveRawMaterialIssue()
 
       }
       this.GlobalAPI.postData(obj).subscribe((data:any)=>{
