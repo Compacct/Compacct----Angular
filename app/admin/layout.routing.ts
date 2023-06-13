@@ -384,6 +384,7 @@ import { BlTxnProjectwiseReportComponent } from "./common/FinancialManagement/Re
 import { BlCRMWPMSTTemplateComponent } from "./common/PatientManagement/Transaction/bl-crm-wp-mst-template/bl-crm-wp-mst-template.component";
 import { K4cAcceptRawMaterialStockTransferComponent } from './common/MaterialManagement/k4c-accept-raw-material-stock-transfer/k4c-accept-raw-material-stock-transfer.component';
 import { AttendanceRegularizationComponent } from './common/Attendance/attendance-regularization/attendance-regularization.component';
+import { ApproveAttendanceRegularizationComponent } from './common/Attendance/approve-attendance-regularization/approve-attendance-regularization.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2927,6 +2928,15 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
           title: 'Attendance Regularization'
     }
     },
+    {
+      path: 'Approve_Attendance_Regularization',
+        component: ApproveAttendanceRegularizationComponent,
+        data: {
+          title: 'Approve Attendance Regularization'
+    }
+    },
+
+    
     
     /*{
 
