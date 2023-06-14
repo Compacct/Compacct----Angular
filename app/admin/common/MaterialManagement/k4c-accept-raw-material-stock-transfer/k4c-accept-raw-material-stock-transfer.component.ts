@@ -237,13 +237,13 @@ geteditmaster(Doc_No){
     this.ViewPoppup = this.view ? true : false; 
     this.AcceptChallanPoppup = this.accept ? true : false; 
     if (this.AcceptChallanPoppup) {
-    // for(let i = 0; i < this.editList.length ; i++){
-    // if(this.editList[i].Accepted_Qty === 0){
-    //     this.editList[i].Accepted_Qty = this.editList[i].Qty;
-    //     } else {
-    //       this.editList[i].Accepted_Qty = this.editList[i].Accepted_Qty
-    //     }
-    //   }
+    for(let i = 0; i < this.editList.length ; i++){
+    if(this.editList[i].Remarks == " "){
+        this.editList[i].Remarks = null;
+        } else {
+          this.editList[i].Remarks = this.editList[i].Remarks;
+        }
+      }
     }
   })
 }

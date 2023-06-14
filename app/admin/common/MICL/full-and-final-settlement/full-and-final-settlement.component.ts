@@ -42,6 +42,7 @@ export class FullAndFinalSettlementComponent implements OnInit {
   FullFinalSettlementBrowseList:any = [];
   DynamicHeaderforFullFinalBrowseList:any = [];
   Editlist:any = [];
+  currentmonth: any;
 
   constructor(
     private http : HttpClient,
@@ -68,6 +69,14 @@ export class FullAndFinalSettlementComponent implements OnInit {
     this.ObjFullAndFinalSettlement.Total_Deduction = 0;
     this.ObjFullAndFinalSettlement.Total_Statutory_Earnings = 0;
     this.ObjFullAndFinalSettlement.Net_Payable = 0;
+
+    const currentdate = new Date();
+    const month = currentdate.getMonth();
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"];
+
+    this.currentmonth = monthNames[month].toUpperCase();
+    console.log('monthNames====',monthNames[month]);
   }
   TabClick(e){
     // console.log(e)
@@ -165,7 +174,7 @@ export class FullAndFinalSettlementComponent implements OnInit {
         this.ObjFullAndFinalSettlement.Total_Children_Allowance = data[0].Earnings_Children_Education_Allowance ? data[0].Earnings_Children_Education_Allowance : 0;
         this.ObjFullAndFinalSettlement.Total_Medical_Allowance = data[0].Earnings_Medical_Allownce ? data[0].Earnings_Medical_Allownce : 0;
         this.ObjFullAndFinalSettlement.Total_Washing_Allowance = data[0].Earnings_Washing_Allowance ? data[0].Earnings_Washing_Allowance : 0;
-        this.ObjFullAndFinalSettlement.Total_Days = data[0].Total_Payable_Days ? data[0].Total_Payable_Days : 0;
+        // this.ObjFullAndFinalSettlement.Total_Days = data[0].Total_Payable_Days ? data[0].Total_Payable_Days : 0;
         var Total_Gross_Amount = Number(this.ObjFullAndFinalSettlement.Total_Basic_Amount) + Number(this.ObjFullAndFinalSettlement.Total_HRA_Amount) +
                                  Number(this.ObjFullAndFinalSettlement.Total_Conv_Allowance) + Number(this.ObjFullAndFinalSettlement.Total_Children_Allowance) +
                                  Number(this.ObjFullAndFinalSettlement.Total_Medical_Allowance) + Number(this.ObjFullAndFinalSettlement.Total_Washing_Allowance)

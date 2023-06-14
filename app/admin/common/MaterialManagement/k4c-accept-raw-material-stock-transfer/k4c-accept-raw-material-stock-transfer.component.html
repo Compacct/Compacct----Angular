@@ -269,7 +269,7 @@
                     <td>{{col.Product_Description}}</td>
                     <td>{{col.UOM}}</td>
                     <td>{{col.Qty}}</td>
-                    <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Accepted_Qty' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                    <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Accepted_Qty' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                     <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Remarks' [disabled]="col.Accepted_Qty == col.Qty" [ngClass]="{'clearance': CheckRemarks(col)}" class="form-control" style="width: 200px;" /></td>
                     <td>{{col.Store_Remarks}}</td>
                 </tr>
