@@ -30,13 +30,10 @@ textarea.form-control {
     width: auto !important;
 }
 
-.custombutton {
+.customb {
     margin-top: 28px;
+    margin-left: -12px;
 }
-
-hr {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    border: 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.2);
+.text-red-active>td {
+    color: red;
 }
