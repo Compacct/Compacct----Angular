@@ -67,6 +67,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
   displaysavepopup = false;
   filteredData:any = [];
   ShowPopupSpinner = false;
+  editList:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -79,22 +80,29 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     private compacctToast: MessageService,
     private ngxService: NgxUiLoaderService
   ) {
-      this.route.queryParams.subscribe(params => {
-       //console.log("params",params);
-      this.Param_Flag = params['Name'];
-      this.CostCentId_Flag = params['Cost_Cen_ID'];
-      this.MaterialType_Flag = params['Material_Type']
-       console.log (this.CostCentId_Flag);
-  })
+  //     this.route.queryParams.subscribe(params => {
+  //      //console.log("params",params);
+  //     this.Param_Flag = params['Name'];
+  //     this.CostCentId_Flag = params['Cost_Cen_ID'];
+  //     this.MaterialType_Flag = params['Material_Type']
+  //      console.log (this.CostCentId_Flag);
+  // })
   }
 
   ngOnInit() {
+    this.route.queryParams.subscribe(params => {
     this.items = ["BROWSE", "CREATE"];
     this.clearData();
     this.Searchedlist = [];
     this.BackupIndentList = [];
     this.TIndentList = [];
     this.SelectedIndent = [];
+    this.editList = [];
+      //console.log("params",params);
+     this.Param_Flag = params['Name'];
+     this.CostCentId_Flag = params['Cost_Cen_ID'];
+     this.MaterialType_Flag = params['Material_Type']
+      console.log (this.CostCentId_Flag);
     this.Header.pushHeader({
       Header: this.MaterialType_Flag + " Stock Transfer - " + this.Param_Flag,
       Link: " Material Management -> " + this.MaterialType_Flag + " Stock Transfer - " + this.Param_Flag
@@ -103,6 +111,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     this.GetToCostCen();
     this.GetBToCostCen();
     this.GetProductType();
+  })
   }
   TabClick(e){
     // console.log(e)
@@ -113,6 +122,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
      this.BackupIndentList = [];
      this.TIndentList = [];
      this.SelectedIndent = [];
+     this.editList = [];
    }
    onReject() {
     this.compacctToast.clear("c");
@@ -199,6 +209,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.ToGodownList = data;
   // this.ObjRawMateriali.To_godown_id = this.ToGodownList.length === 1 ? this.ToGodownList[0].godown_id : undefined;
+      if(this.buttonname === "Save"){
        if(this.ToGodownList.length === 1){
         this.ObjRawMateriali.To_godown_id = this.ToGodownList[0].godown_id;
          this.TGdisableflag = true;
@@ -206,6 +217,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
         this.ObjRawMateriali.To_godown_id = undefined;
          this.TGdisableflag = false;
        }
+      }
        //console.log("To Godown List ===",this.ToGodownList);
       })
     //}
@@ -472,10 +484,14 @@ GetProductType(){
             Product_Description	: item.Product_Description,
             Product_Type_ID	: item.Product_Type_ID,
             Qty	: item.Issue_Qty,
+            Accepted_Qty: Number(item.Accepted_Qty),
             UOM	: item.UOM,
-            Remarks	: " ",
             User_ID	:this.$CompacctAPI.CompacctCookies.User_ID,
-            Batch_No : item.Batch_No
+            Batch_No : item.Batch_No,
+            Remarks : Number(item.Qty) === Number(item.Accepted_Qty) ? 'NA' : item.Remarks ,
+            Store_Remarks : item.Store_Remarks,
+            Total_Qty : Number(this.getTotalValue('Qty')),
+            Total_Accepted_Qty : Number(this.getTotalValue('Accepted_Qty'))
          }
         tempArr.push(TempObj)
       }
@@ -532,6 +548,7 @@ GetProductType(){
          this.ShowPopupSpinner = false;
          this.ProductList =[];
          this.IndentListFormSubmitted = false;
+         this.editList = [];
         } else{
           this.ShowPopupSpinner = false;
           this.ngxService.stop();
@@ -576,6 +593,7 @@ const end = this.ObjBrowse.end_date
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.end_date))
   : this.DateService.dateConvert(new Date());
 
+  this.seachSpinner = true;
   this.RawMaterialIssueSearchFormSubmitted = true;
   if (valid){
 const tempobj = {
@@ -699,6 +717,7 @@ exportoexcel(Arr,fileName): void {
   }
 // Edit
 EditIntStock(col){
+  this.editList = [];
   this.ObjRawMateriali.Doc_No = undefined;
   if(col.Doc_No){
    this.ObjRawMateriali = col.Doc_No;
@@ -719,14 +738,17 @@ geteditmaster(Doc_No){
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     console.log("Edit",data);
+    this.editList = data;
     this.Viewlist = data;
     const TempData = data;
     this.todayDate = new Date(data[0].Doc_Date);
     this.ObjRawMateriali = data[0];
+    this.GetToGodown();
     TempData.forEach(element => {
       this.ProductList.push({
         Current_Stock_In_Dept:element.Current_Stock_In_Dept,
         Issue_Qty:element.Qty,
+        Accepted_Qty:element.Accepted_Qty,
         Product_Description:element.Product_Description,
         Product_ID:element.Product_ID,
         Product_Type:element.Product_Type,
@@ -734,7 +756,9 @@ geteditmaster(Doc_No){
         Stock_Qty:element.Stock_Qty,
         UOM : element.UOM,
         Batch_No : element.Batch_No,
-        Batch_Qty : element.Batch_Qty
+        Batch_Qty : element.Batch_Qty,
+        Remarks: element.Remarks,
+        Store_Remarks: element.Store_Remarks
       })
      });
      this.BackupIndentList = this.ProductList;

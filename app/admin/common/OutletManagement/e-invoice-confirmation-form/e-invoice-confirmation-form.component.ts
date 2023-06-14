@@ -509,6 +509,11 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       })
     }
   }
+  PrintEwayBill(obj) {
+    if (obj) {
+      window.open("/Report/Crystal_Files/Finance/SaleBill/Print_E_Way_Bill.aspx?Doc_No="+ obj, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    }
+  }
   Cancel(docno){
     this.invoice_no = undefined;
     if (docno) {
