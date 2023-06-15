@@ -482,6 +482,7 @@ import { BlCRMWPMSTTemplateComponent } from './common/PatientManagement/Transact
 import { K4cAcceptRawMaterialStockTransferComponent } from './common/MaterialManagement/k4c-accept-raw-material-stock-transfer/k4c-accept-raw-material-stock-transfer.component';
 import { AttendanceRegularizationComponent } from './common/Attendance/attendance-regularization/attendance-regularization.component';
 import { ApproveAttendanceRegularizationComponent } from './common/Attendance/approve-attendance-regularization/approve-attendance-regularization.component';
+import { EmployeeTransferComponent } from './common/Attendance/employee-transfer/employee-transfer.component';
 
 
 @NgModule({
@@ -881,7 +882,8 @@ import { ApproveAttendanceRegularizationComponent } from './common/Attendance/ap
     BlCRMWPMSTTemplateComponent,
     K4cAcceptRawMaterialStockTransferComponent,
     AttendanceRegularizationComponent,
-    ApproveAttendanceRegularizationComponent
+    ApproveAttendanceRegularizationComponent,
+    EmployeeTransferComponent
   ],
   imports: [
     CommonModule,
