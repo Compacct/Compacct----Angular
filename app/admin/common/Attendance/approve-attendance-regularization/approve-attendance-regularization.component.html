@@ -7,28 +7,28 @@
          <p>{{message.detail}}</p>
       </div>
       <form name="disapprovedForm" #disapprovedForm="ngForm">
-      <div class="ui-g ui-fluid">
-         <div class="ui-g-12" *ngIf="EmpID==Report_Manager_ID">
-            
+         <div class="ui-g ui-fluid">
+            <div class="ui-g-12" *ngIf="EmpID==Report_Manager_ID">
                <label class="control-label">Remarks Of Approval 1<sup class="text-danger">*</sup></label>
                <input type="text" class="form-control" placeholder="Remarks Of Approval 1" name="Remarks_Of_disApproval"
                   #Remarks_Of_disApproval="ngModel" [(ngModel)]="Approved_Note_Reporting_Manager"
                   [ngClass]="{clearance: (disApprovedFormSubmit && Remarks_Of_disApproval?.errors?.required) }"
                   [required]="EmpID==Report_Manager_ID">
-            
-            <div class="ui-g-12" *ngIf="EmpID==Business_Manager_ID">
-               <label class="control-label">Remarks Of Approval 2<sup class="text-danger">*</sup></label>
-               <input type="text" class="form-control" placeholder="Remarks Of Approval 2" name="Remarks_Of_disApproval2"
-                  #Remarks_Of_disApproval2="ngModel" [(ngModel)]="Approved_Note_Business_Manager"
-                  [ngClass]="{clearance: (remarksFormSubmit && Remarks_Of_disApproval2?.errors?.required) }"
-                  [required]="EmpID==Business_Manager_ID">
+               <div class="ui-g-12" *ngIf="EmpID==Business_Manager_ID">
+                  <label class="control-label">Remarks Of Approval 2<sup class="text-danger">*</sup></label>
+                  <input type="text" class="form-control" placeholder="Remarks Of Approval 2"
+                     name="Remarks_Of_disApproval2" #Remarks_Of_disApproval2="ngModel"
+                     [(ngModel)]="Approved_Note_Business_Manager"
+                     [ngClass]="{clearance: (remarksFormSubmit && Remarks_Of_disApproval2?.errors?.required) }"
+                     [required]="EmpID==Business_Manager_ID">
+               </div>
             </div>
          </div>
-      </div>
-   </form>
+      </form>
       <div class="ui-g ui-fluid">
          <div class="ui-g-6">
-            <button type="button" pButton (click)="onConfirm(disapprovedForm.form.valid)" label="Yes" class="ui-button-success"></button>
+            <button type="button" pButton (click)="onConfirm(disapprovedForm.form.valid)" label="Yes"
+               class="ui-button-success"></button>
          </div>
          <div class="ui-g-6">
             <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
@@ -46,9 +46,10 @@
                      leftIcon="glyphicon glyphicon-hourglass">
                      <div class="row">
                         <div class="col-sm-4">
-                           <p-multiSelect [options]="Pending_EmployeeList" defaultLabel="Select Employee" [filter]="true"
-                              filterBy="label,value.name" name="emp_list"
-                              [(ngModel)]="SelectedPendingEmployeeList" (onChange)='FilterPending()' [styleClass]="'compacct-multiselect'">
+                           <p-multiSelect [options]="Pending_EmployeeList" defaultLabel="Select Employee"
+                              [filter]="true" filterBy="label,value.name" name="emp_list"
+                              [(ngModel)]="SelectedPendingEmployeeList" (onChange)='FilterPending()'
+                              [styleClass]="'compacct-multiselect'">
                            </p-multiSelect>
                         </div>
                      </div>
@@ -95,7 +96,7 @@
                                     <ul class="dropdown-menu">
                                        <li>
                                           <a (click)="ApproveAndDisapprove(col)">
-                                             <i class="glyphicon glyphicon-ok"></i>Approve/Disapproved
+                                             <i class="glyphicon glyphicon-ok"></i>Approve/Disapprove
                                           </a>
                                        </li>
                                     </ul>
@@ -129,9 +130,10 @@
                      <!-- Approved Table Data -->
                      <div class="row">
                         <div class="col-sm-4">
-                           <p-multiSelect [options]="Approve_EmployeeList" defaultLabel="Select Employee" [filter]="true"
-                              filterBy="label,value.name" name="emp_list"
-                              [(ngModel)]="SelectedApproveEmployeeList" (onChange)='FilterApprove()' [styleClass]="'compacct-multiselect'">
+                           <p-multiSelect [options]="Approve_EmployeeList" defaultLabel="Select Employee"
+                              [filter]="true" filterBy="label,value.name" name="emp_list"
+                              [(ngModel)]="SelectedApproveEmployeeList" (onChange)='FilterApprove()'
+                              [styleClass]="'compacct-multiselect'">
                            </p-multiSelect>
                         </div>
                      </div>
@@ -177,7 +179,7 @@
                                     <ul class="dropdown-menu">
                                        <li>
                                           <a (click)="disapproveApproval(col)">
-                                             <i class="glyphicon glyphicon-remove"></i>Disapproved
+                                             <i class="glyphicon glyphicon-remove"></i>Disapprove
                                           </a>
                                        </li>
                                     </ul>
@@ -212,9 +214,10 @@
                      <!-- DisApprove Table -->
                      <div class="row">
                         <div class="col-sm-4">
-                           <p-multiSelect [options]="DisApprove_EmployeeList" defaultLabel="Select Employee" [filter]="true"
-                              filterBy="label,value.name" name="emp_list"
-                              [(ngModel)]="SelectedDisApproveEmployeeList" (onChange)='FilterDisApprove()' [styleClass]="'compacct-multiselect'">
+                           <p-multiSelect [options]="DisApprove_EmployeeList" defaultLabel="Select Employee"
+                              [filter]="true" filterBy="label,value.name" name="emp_list"
+                              [(ngModel)]="SelectedDisApproveEmployeeList" (onChange)='FilterDisApprove()'
+                              [styleClass]="'compacct-multiselect'">
                            </p-multiSelect>
                         </div>
                      </div>
@@ -249,7 +252,6 @@
                         </ng-template>
                         <ng-template pTemplate="body" let-col>
                            <tr>
-                              
                               <td style="text-align: center ;" nowrap>{{col.Emp_Name ? col.Emp_Name : '-'}}</td>
                               <td style="text-align: center ;" nowrap>{{col.Dept_Name ? col.Dept_Name : '-'}}</td>
                               <td style="text-align: center ;" nowrap>{{col.Apply_Date | date: "dd/MMM/yyyy"}}</td>
@@ -406,13 +408,13 @@
          <i *ngIf="!Disapprove_Spinner" class="glyphicon glyphicon-ban-circle"></i>
          <p-progressSpinner *ngIf="Disapprove_Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
             animationDuration=".5s"></p-progressSpinner>
-         DisApproved</button>
+         Disapprove</button>
       <button type="button" (click)="Approved(remarksForm.form.valid)" class="btn btn-success"
          [disabled]="Approve_Spinner || Disapprove_Spinner">
          <i *ngIf="!Approve_Spinner" class="glyphicon glyphicon-ok"></i>
          <p-progressSpinner *ngIf="Approve_Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
             animationDuration=".5s"></p-progressSpinner>
-         Approved</button>
+         Approve</button>
       <button type="button" (click)="ClosePopUp()" class="btn btn-primary"
          [disabled]="Approve_Spinner || Disapprove_Spinner"><i class="glyphicon glyphicon-remove"></i>Close</button>
    </p-footer>
