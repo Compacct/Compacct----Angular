@@ -36,12 +36,12 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
   Disapprove_Spinner: boolean = false;
   approvedTableData: any = [];
   approvedTableFilterData: any = [];
-  Approve_EmployeeList:any = [];
-  SelectedApproveEmployeeList:any = [];
+  Approve_EmployeeList: any = [];
+  SelectedApproveEmployeeList: any = [];
   disApprovedTableData: any = [];
   disApprovedTableFilterData: any = [];
-  DisApprove_EmployeeList:any = [];
-  SelectedDisApproveEmployeeList:any = [];
+  DisApprove_EmployeeList: any = [];
+  SelectedDisApproveEmployeeList: any = [];
   disApprovedFormSubmit: boolean = false;
 
   constructor(
@@ -78,6 +78,7 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
   }
 
   getPendingApproval(id) {
+    this.Pending_EmployeeList = [];
     const obj = {
       "SP_String": "SP_HR_Txn_Attendance_Regularization",
       "Report_Name_String": "PENDING APPROVAL",
@@ -106,18 +107,18 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
         let filterData = backupTableData.filter((data: any) => {
           return data.Emp_Name == ele;
         });
-        console.log('filterData',filterData);
+        console.log('filterData', filterData);
         if (filterData.length) {
           filterData.forEach((e: any) => {
             this.pendingTableData.push(e);
-            console.log('pendingTableData',this.pendingTableData);
+            console.log('pendingTableData', this.pendingTableData);
           })
         }
       });
     }
     else {
       this.pendingTableData = [...backupTableData];
-      console.log('backupTableData',backupTableData,this.pendingTableData);
+      console.log('backupTableData', backupTableData, this.pendingTableData);
     }
   }
 
@@ -129,8 +130,6 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
       this.Business_Manager_ID = col.Business_Manager;
       console.log('ids', this.Report_Manager_ID, this.Business_Manager_ID);
       console.log('empId', this.EmpID);
-
-
       const obj = {
         "SP_String": "SP_HR_Txn_Attendance_Regularization",
         "Report_Name_String": "Last_one_month_Attendance_Regularization",
@@ -185,7 +184,21 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
       this.GlobalAPI.postData(obj).subscribe((data) => {
         console.log('approve Res', data);
         this.Approve_Spinner = false;
-
+        this.DisplayPopup = false;
+        if (data[0].Column1 == "Done") {
+          this.CompacctToast.clear();
+          this.CompacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Regularization Approve Succesfully",
+            detail: "Succesfully Approve"
+          });
+          this.tabIndexToView = 1;
+          this.getPendingApproval(this.EmpID);
+          this.getApproveTableData(this.EmpID);
+          this.getDisapproveTableData(this.EmpID);
+          this.clearData();
+        }
       });
     }
   }
@@ -229,6 +242,21 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
       this.GlobalAPI.postData(obj).subscribe((data) => {
         console.log('disapprove Res', data);
         this.Disapprove_Spinner = false;
+        this.DisplayPopup = false;
+        if (data[0].Column1 == "Done") {
+          this.CompacctToast.clear();
+          this.CompacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Regularization Dispprove Succesfully",
+            detail: "Succesfully Dispprove"
+          });
+          this.tabIndexToView = 2;
+          this.getPendingApproval(this.EmpID);
+          this.getApproveTableData(this.EmpID);
+          this.getDisapproveTableData(this.EmpID);
+          this.clearData();
+        }
       });
     }
   }
@@ -236,12 +264,15 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
   ClosePopUp() {
     this.DisplayPopup = false;
     this.disabled_Obj = {};
+    this.Report_Manager_ID = 0;
+    this.Business_Manager_ID = 0;
     this.Approved_Note_Reporting_Manager = undefined;
     this.Approved_Note_Business_Manager = undefined;
     this.remarksFormSubmit = false;
   }
 
   getApproveTableData(id) {
+    this.Approve_EmployeeList = [];
     const obj = {
       "SP_String": "SP_HR_Txn_Attendance_Regularization",
       "Report_Name_String": "APPROVED APPROVAL",
@@ -270,22 +301,23 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
         let filterData = backupTableData.filter((data: any) => {
           return data.Emp_Name == ele;
         });
-        console.log('filterData',filterData);
+        console.log('filterData', filterData);
         if (filterData.length) {
           filterData.forEach((e: any) => {
             this.approvedTableData.push(e);
-            console.log('ApproveTableData',this.approvedTableData);
+            console.log('ApproveTableData', this.approvedTableData);
           })
         }
       });
     }
     else {
       this.approvedTableData = [...backupTableData];
-      console.log('backupTableData',backupTableData,this.approvedTableData);
+      console.log('backupTableData', backupTableData, this.approvedTableData);
     }
   }
 
   getDisapproveTableData(id) {
+    this.DisApprove_EmployeeList = [];
     const obj = {
       "SP_String": "SP_HR_Txn_Attendance_Regularization",
       "Report_Name_String": "DISAPPROVED APPROVAL",
@@ -314,18 +346,18 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
         let filterData = backupTableData.filter((data: any) => {
           return data.Emp_Name == ele;
         });
-        console.log('filterData',filterData);
+        console.log('filterData', filterData);
         if (filterData.length) {
           filterData.forEach((e: any) => {
             this.disApprovedTableData.push(e);
-            console.log('disapproveTableData',this.disApprovedTableData);
+            console.log('disapproveTableData', this.disApprovedTableData);
           })
         }
       });
     }
     else {
       this.disApprovedTableData = [...backupTableData];
-      console.log('backupTableData',backupTableData,this.disApprovedTableData);
+      console.log('backupTableData', backupTableData, this.disApprovedTableData);
     }
   }
 
@@ -346,11 +378,17 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
 
   TabClick(e: any) {
     this.tabIndexToView = e.index;
+    this.clearData();
+  }
+
+  clearData() {
     this.disabled_Obj = {};
     this.Report_Manager_ID = 0;
     this.Business_Manager_ID = 0;
     this.Approved_Note_Reporting_Manager = undefined;
     this.Approved_Note_Business_Manager = undefined;
+    this.remarksFormSubmit = false;
+    this.disApprovedFormSubmit = false;
   }
 
   onConfirm(valid) {
@@ -391,7 +429,20 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
       this.GlobalAPI.postData(obj).subscribe((data) => {
         console.log('again disapprove Res', data);
         if (data) {
-          this.CompacctToast.clear("c");
+          if (data[0].Column1 == "Done") {
+            this.CompacctToast.clear("c");
+            this.CompacctToast.clear();
+            this.CompacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: "Regularization Dispprove Succesfully",
+              detail: "Succesfully Dispprove"
+            });
+            this.getPendingApproval(this.EmpID);
+            this.getApproveTableData(this.EmpID);
+            this.getDisapproveTableData(this.EmpID);
+            this.clearData();
+          }
         }
       });
     }
@@ -399,11 +450,6 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
 
   onReject() {
     this.CompacctToast.clear("c");
-    this.disabled_Obj = {};
-    this.Report_Manager_ID = 0;
-    this.Business_Manager_ID = 0;
-    this.disApprovedFormSubmit = false;
-    this.Approved_Note_Reporting_Manager = undefined;
-    this.Approved_Note_Business_Manager = undefined;
+    this.clearData();
   }
 }
