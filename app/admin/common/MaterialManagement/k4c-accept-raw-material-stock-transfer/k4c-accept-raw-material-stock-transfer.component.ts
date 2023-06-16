@@ -238,10 +238,10 @@ geteditmaster(Doc_No){
     this.AcceptChallanPoppup = this.accept ? true : false; 
     if (this.AcceptChallanPoppup) {
     for(let i = 0; i < this.editList.length ; i++){
-    if(this.editList[i].Accepted_Qty === 0){
-        this.editList[i].Accepted_Qty = this.editList[i].Qty;
+    if(this.editList[i].Remarks == " "){
+        this.editList[i].Remarks = null;
         } else {
-          this.editList[i].Accepted_Qty = this.editList[i].Accepted_Qty
+          this.editList[i].Remarks = this.editList[i].Remarks;
         }
       }
     }
@@ -271,6 +271,36 @@ changeRemarks(col){
   })
 console.log(this.editList)
 }
+CheckRemarks(col) {
+  if (Number(col.Accepted_Qty) === 0 && !col.Remarks) {
+    return true;
+  } 
+  else {
+    return false;
+  }
+
+}
+ValidRemarksCheck() {
+  let ValidFlag = false;
+  for (let index = 0; index < this.editList.length; index++) {
+    const element = this.editList[index];
+    if (this.CheckRemarks(element)) {
+      ValidFlag = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "warn",
+        summary: "Validation",
+        detail: "Enter Remarks."
+      });
+      return ValidFlag;
+    } else {
+      ValidFlag = true;
+    }
+
+  }
+  return ValidFlag;
+}
 AcceptRMST(){
   if(this.editList.length){
     let updateData:any = [];
@@ -289,7 +319,8 @@ AcceptRMST(){
           Qty	: Number(el.Qty),
           Accepted_Qty: Number(el.Accepted_Qty),
           UOM	: el.UOM,
-          User_ID	:this.$CompacctAPI.CompacctCookies.User_ID,
+          User_ID	: el.User_ID,
+          Accepted_By : this.$CompacctAPI.CompacctCookies.User_ID,
           Batch_No : el.Batch_No,
           Remarks : Number(el.Qty) === Number(el.Accepted_Qty) ? 'NA' : el.Remarks ,
           Store_Remarks : el.Store_Remarks,
@@ -301,6 +332,7 @@ AcceptRMST(){
 
     })
   //}
+  // if(this.ValidRemarksCheck()){
     if(updateData.length){
      // console.log("this.updateData",this.updateData);
       const obj = {
@@ -344,7 +376,7 @@ AcceptRMST(){
             detail: "Something Wrong"
           });
     }
-
+  // }
   }
   else{
     this.ngxService.stop();
@@ -355,6 +387,11 @@ AcceptRMST(){
           summary: "Warn Message",
           detail: "Something Wrong"
         });
+  }
+ }
+ Accept(){
+  if(this.ValidRemarksCheck()){
+    this.AcceptRMST();
   }
  }
 

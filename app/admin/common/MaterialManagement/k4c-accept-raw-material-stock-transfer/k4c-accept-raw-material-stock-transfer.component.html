@@ -87,6 +87,8 @@
                                             <th>Total Qty</th>
                                             <th>Accepted Qty</th>
                                             <th>Total Amount</th>
+                                            <th>Created By</th>
+                                            <th>Accepted By</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -104,7 +106,7 @@
                                                                 <i class="fa fa-fw fa-eye"></i> View
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.Qty != col.Accepted_Qty">
+                                                        <li *ngIf="col.Qty != col.Accepted_Qty && $CompacctAPI.CompacctCookies.User_Type === 'A' && $CompacctAPI.CompacctCookies.Del_Right === 'Y'">
                                                             <a (click)="AcceptST(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Accept stock transfer
                                                             </a>
@@ -119,6 +121,8 @@
                                             <td>{{col.Qty}}</td>
                                             <td>{{col.Accepted_Qty}}</td>
                                             <td>{{col.Total_Amount ? col.Total_Amount : '-'}}</td>
+                                            <td>{{col.Store_User ? col.Store_User : '-'}}</td>
+                                            <td>{{col.Accept_User ? col.Accept_User : '-'}}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -265,8 +269,8 @@
                     <td>{{col.Product_Description}}</td>
                     <td>{{col.UOM}}</td>
                     <td>{{col.Qty}}</td>
-                    <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Accepted_Qty' (ngModelChange)='changeRemarks(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
-                    <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Remarks' [disabled]="col.Accepted_Qty == col.Qty" class="form-control" style="width: 200px;" /></td>
+                    <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Accepted_Qty' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                    <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Remarks' [disabled]="col.Accepted_Qty == col.Qty" [ngClass]="{'clearance': CheckRemarks(col)}" class="form-control" style="width: 200px;" /></td>
                     <td>{{col.Store_Remarks}}</td>
                 </tr>
                 <tr *ngIf='i === (editList.length - 1)'>
@@ -281,7 +285,7 @@
 
 
     <p-footer>
-        <button type="button" (click)="AcceptRMST()" class="btn btn-success">
+        <button type="button" (click)="Accept()" class="btn btn-success">
        <i class="fa fa-check"></i>&nbsp;  Update
      </button>
     </p-footer>

@@ -867,7 +867,7 @@ export class ExportExcelService {
      
        
     });
-    const DataHeaderRowList:any = ['DATE','OP.BAL','RECEIVED','SALE','CL.BAL.','OP.BAL','RECEIVED','SALE','CL.BAL.','STAFF','WORKERS','TOTAL','AMOUNT','STAFF','WORKERS','TOTAL','AMOUNT','AMOUNT','VEGETABLE','GROCERY','MISC/OTHERS(NON VEG ITEMS)','FUEL','TOTAL']
+    const DataHeaderRowList:any = ['DATE','OP.BAL','RECEIVED','SALE','CL.BAL.','OP.BAL','RECEIVED','SALE','CL.BAL.','STAFF','CONTRACTOR','TOTAL','AMOUNT','STAFF','CONTRACTOR','TOTAL','AMOUNT','AMOUNT','VEGETABLE','GROCERY','MISC/OTHERS(NON VEG ITEMS)','FUEL','TOTAL']
     
     const DataHeaderRow = worksheet.addRow(DataHeaderRowList)
     DataHeaderRow.eachCell((cell,Number)=>{

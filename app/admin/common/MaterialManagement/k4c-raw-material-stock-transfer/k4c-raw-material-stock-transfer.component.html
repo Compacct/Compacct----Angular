@@ -88,6 +88,8 @@
                                             <th>Total Qty</th>
                                             <th>Accepted Qty</th>
                                             <th>Total Amount</th>
+                                            <th>Created By</th>
+                                            <th>Accepted By</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -125,6 +127,8 @@
                                             <td>{{col.Qty}}</td>
                                             <td>{{col.Accepted_Qty}}</td>
                                             <td>{{col.Total_Amount ? col.Total_Amount : '-'}}</td>
+                                            <td>{{col.Store_User ? col.Store_User : '-'}}</td>
+                                            <td>{{col.Accept_User ? col.Accept_User : '-'}}</td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
@@ -167,7 +171,7 @@
                                                 </div>
                                                 <div class="col-sm-2">
                                                     <label class="control-label">To Cost Cent<sup class="text-danger">*</sup></label>
-                                                    <select class="form-control" name="To_Cost_Cen_ID" #To_Cost_Cen_ID="ngModel" [(ngModel)]="ObjRawMateriali.To_Cost_Cen_ID" [ngClass]="{'clearance': RawMaterialIssueFormSubmitted && To_Cost_Cen_ID?.errors?.required}" (change)="GetToGodown()" [disabled]="TCdisableflag"
+                                                    <select class="form-control" name="ToCostCenID" #ToCostCenID="ngModel" [(ngModel)]="ObjRawMateriali.To_Cost_Cen_ID" [ngClass]="{'clearance': RawMaterialIssueFormSubmitted && ToCostCenID?.errors?.required}" (change)="GetToGodown()" [disabled]="TCdisableflag"
                                                         [attr.disabled]="ProductList.length? true : null">
                                         <option  [ngValue]="undefined">Select</option>
                                         <option  *ngFor="let option of Tocostcenlist" value="{{option.Cost_Cen_ID}}">
@@ -247,7 +251,7 @@
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Issue_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <td *ngIf="editList.length">{{col.Accepted_Qty}}</td>
                                             <td *ngIf="editList.length">{{col.Remarks}}</td>
-                                            <td *ngIf="editList.length"><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Store_Remarks' [disabled]="col.Accepted_Qty == col.Qty" class="form-control" style="width: 200px;" /></td>
+                                            <td *ngIf="editList.length"><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Store_Remarks' [disabled]="col.Accepted_Qty == col.Qty" [ngClass]="{'clearance': CheckRemarks(col)}" class="form-control" style="width: 200px;" /></td>
                                         </tr>
                                     </ng-template>
 

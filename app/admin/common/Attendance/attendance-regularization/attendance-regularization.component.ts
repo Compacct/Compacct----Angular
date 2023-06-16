@@ -18,7 +18,7 @@ export class AttendanceRegularizationComponent implements OnInit {
   tabIndexToView: number = 0;
   Items: any = ['BROWSE', 'CREATE'];
   Spinner: boolean = false;
-  buttonName: string = 'Save';
+  buttonName: string = 'Apply';
   User_ID: number = 0;
   user_type: string = "";
   AttendenceFormSubmitted: boolean = false;
@@ -221,7 +221,7 @@ export class AttendanceRegularizationComponent implements OnInit {
     this.disabled_OutTime = undefined;
     this.Changed_In_Time = undefined;
     this.Changed_Out_Time = undefined;
-    this.buttonName = "Save";
+    this.buttonName = "Apply";
     this.Items = ["BROWSE", "CREATE"];
   }
 
