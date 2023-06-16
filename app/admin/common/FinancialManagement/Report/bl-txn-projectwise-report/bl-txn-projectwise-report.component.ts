@@ -157,7 +157,7 @@ export class BlTxnProjectwiseReportComponent implements OnInit {
       }
       const obj = {
       "SP_String": "SP_Project_PL",
-       "Report_Name_String": "Get_Outflow",
+       "Report_Name_String": "Get_Inflow",
       "Json_Param_String": JSON.stringify([File2]),
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
