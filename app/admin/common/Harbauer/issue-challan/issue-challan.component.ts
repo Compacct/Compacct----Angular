@@ -223,6 +223,7 @@ clearData(){
     this.openTab = false
     this.validatationBatch_No = false
     this.DOCNo = ""
+    this.compacctToast.clear();
 }
 getDateRange(dateRangeObj:any) {
     if (dateRangeObj.length) {
@@ -464,37 +465,84 @@ saveData(valid:any){
   let tempDataSave:any = []
   console.log(this.validatationBatch_No)
  if(valid ){
-  this.ngxService.start()
+ 
     this.buttonList.forEach((ele:any) => {
-      if(!ele.Batch_No){
+      this.showTost = false
+    
+      if(ele.Del_Qty > ele.Batch_Qty){
+        this.showTost = false
         this.validatationBatch_No = true
+        this.ngxService.stop()
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          sticky: true,
+          summary: "Warn Message ",
+          detail:"Issue QTY Must be equal or less than Batch QTY "
+        });
        return
       }
-      
+      if( Number(ele.Del_Qty) >  Number(ele.Ori_Req_Qty))
+      {
+        this.showTost = false
+        this.validatationBatch_No = true
+        this.ngxService.stop()
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          sticky: true,
+          summary: "Warn Message ",
+          detail:"Issue QTY Must be equal or less than Requisition QTY"
+        });
+       return
+      }
+      if(!ele.Batch_No){
+        this.validatationBatch_No = true
+        this.ngxService.stop()
+       return
+      }
+      if( !(Number(ele.Del_Qty)))
+      {
+        this.validatationBatch_No = true
+        this.showTost = false
+        this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            sticky: true,
+            summary: "Warn Message ",
+            detail:"Issue QTY Must be required"
+          });
+        return
+      }
     });
     if(!this.validatationBatch_No){
+      this.compacctToast.clear();
+      this.ngxService.start()
       this.showTost = true
-  const costCenter:any = this.costCenterList.filter((el:any)=> Number(el.Cost_Cen_ID) == Number(this.objproject.Cost_Cen_ID))
-  tempDataSave = {
-      DOC_No: "NA",
-      DOC_Date: this.DateService.dateConvert(new Date(this.DOC_Date)),
-      Req_No: this.createListObj.Req_No,
-      Cost_Cen_ID: Number(this.objproject.Cost_Cen_ID) ,
-      Cost_Cen_Name	: costCenter.length ? costCenter[0].Cost_Cen_Name : "NA",
-      Godown_ID: Number(this.objproject.Godown_ID),
-      Inv_Type_ID: 84,	
-      User_ID: this.$CompacctAPI.CompacctCookies.User_ID ,	
-      DOC_TYPE: "ISSUE CHALLAN",
-      PROJECT_ID: Number(this.createListObj.PROJECT_ID),
-      Remarks : this.objproject.Remarks,
-      Delivery_By: this.objproject.Delivery_By,
-      bottom : this.bottomData()
-     } 
-   const obj = {
-        "SP_String": "Sp_Issue_Challan",
-        "Report_Name_String": 'Bl_Txn_Issue_Challan_Create',
-        "Json_Param_String": JSON.stringify([tempDataSave])
-       }
+      const costCenter:any = this.costCenterList.filter((el:any)=> Number(el.Cost_Cen_ID) == Number(this.objproject.Cost_Cen_ID))
+      tempDataSave = {
+          DOC_No: "NA",
+          DOC_Date: this.DateService.dateConvert(new Date(this.DOC_Date)),
+          Req_No: this.createListObj.Req_No,
+          Cost_Cen_ID: Number(this.objproject.Cost_Cen_ID) ,
+          Cost_Cen_Name	: costCenter.length ? costCenter[0].Cost_Cen_Name : "NA",
+          Godown_ID: Number(this.objproject.Godown_ID),
+          Inv_Type_ID: 84,	
+          User_ID: this.$CompacctAPI.CompacctCookies.User_ID ,	
+          DOC_TYPE: "ISSUE CHALLAN",
+          PROJECT_ID: Number(this.createListObj.PROJECT_ID),
+          Remarks : this.objproject.Remarks,
+          Delivery_By: this.objproject.Delivery_By,
+          bottom : this.bottomData()
+        } 
+      const obj = {
+            "SP_String": "Sp_Issue_Challan",
+            "Report_Name_String": 'Bl_Txn_Issue_Challan_Create',
+            "Json_Param_String": JSON.stringify([tempDataSave])
+          }
        this.GlobalAPI.getData(obj)
        .subscribe((data:any)=>{
         console.log("Final save data ==",data);
@@ -563,16 +611,43 @@ QTYCheck(col:any){
  // this.GetTotalIssue();
   this.showTost = true
   this.buttonList.forEach((ele:any) => {
+    if( Number(ele.Del_Qty) >  Number(ele.Batch_Qty))
+    {
+      this.showTost = false
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          sticky: true,
+          summary: "Warn Message ",
+          detail:"Issue QTY Must be equal or less than Batch QTY "
+        });
+      return
+    }
     if( Number(ele.Del_Qty) >  Number(ele.Ori_Req_Qty))
     {
       this.showTost = false
       this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "c",
-        sticky: true,
-        severity: "error",
-        detail: "Issue QTY can't be more than Requisition QTY"
-      });
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          sticky: true,
+          summary: "Warn Message ",
+          detail:"Issue QTY Must be equal or less than Requisition QTY"
+        });
+      return
+    }
+    if( !(Number(ele.Del_Qty)))
+    {
+      this.showTost = false
+      this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          sticky: true,
+          summary: "Warn Message ",
+          detail:"Issue QTY required"
+        });
       return
     }
     });
@@ -648,6 +723,9 @@ GetEditData(DOCNo){
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{ 
       console.log("Data",data)
     })
+}
+Deletebutton(i:any){
+  this.buttonList.splice(i,1);
 }
 }
 class project{
