@@ -380,6 +380,12 @@ import { AppraisalFormComponent } from "./common/Attendance/appraisal-form/appra
 import { PendingOutcomesComponent } from "./common/PatientManagement/pending-outcomes/pending-outcomes.component";
 import { BLTxnProductReturnFromProjectComponent } from "./common/Harbauer/bl-txn-product-return-from-project/bl-txn-product-return-from-project.component";
 import { MasterCompanyUpdateComponent } from "./common/FinancialManagement/Master/master-company-update/master-company-update.component";
+import { BlTxnProjectwiseReportComponent } from "./common/FinancialManagement/Report/bl-txn-projectwise-report/bl-txn-projectwise-report.component";
+import { BlCRMWPMSTTemplateComponent } from "./common/PatientManagement/Transaction/bl-crm-wp-mst-template/bl-crm-wp-mst-template.component";
+import { K4cAcceptRawMaterialStockTransferComponent } from './common/MaterialManagement/k4c-accept-raw-material-stock-transfer/k4c-accept-raw-material-stock-transfer.component';
+import { AttendanceRegularizationComponent } from './common/Attendance/attendance-regularization/attendance-regularization.component';
+import { ApproveAttendanceRegularizationComponent } from './common/Attendance/approve-attendance-regularization/approve-attendance-regularization.component';
+import { EmployeeTransferComponent } from './common/Attendance/employee-transfer/employee-transfer.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2895,6 +2901,50 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
           title: 'Master Company Update'
     }
     },
+    {
+      path: 'BL_Txn_Projectwise_Report',
+        component: BlTxnProjectwiseReportComponent,
+        data: {
+          title: 'Project wise Report'
+    }
+    },
+     {
+      path: 'Bl_CRM_WP_MST_Template',
+        component: BlCRMWPMSTTemplateComponent,
+        data: {
+          title: 'Bl CRM WP MST Template'
+    }
+    },
+    {
+      path: 'Accept_Raw_Material_Stock_Transfer',
+        component: K4cAcceptRawMaterialStockTransferComponent,
+        data: {
+          title: 'Accept Raw Material Stock Transfer'
+    }
+    },
+    {
+      path: 'Attendance_Regularization',
+        component: AttendanceRegularizationComponent,
+        data: {
+          title: 'Attendance Regularization'
+    }
+    },
+    {
+      path: 'Approve_Attendance_Regularization',
+        component: ApproveAttendanceRegularizationComponent,
+        data: {
+          title: 'Approve Attendance Regularization'
+    }
+    },
+    {
+      path: 'Employee_Transfer',
+        component: EmployeeTransferComponent,
+        data: {
+          title: 'Employee Transfer'
+    }
+    },
+
+    
     
     /*{
 

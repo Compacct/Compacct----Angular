@@ -119,10 +119,15 @@
                                                                         <span class="caret"></span>
                                                                     </button>
                                                         <ul class="dropdown-menu">
-                                                                <li>
-                                                                    <a (click)="Print(col.Doc_No)">
-                                                                        <i class="fa fa-fw fa-print"></i> Print
-                                                                    </a>
+                                                            <li>
+                                                                <a (click)="Edit(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="Print(col.Doc_No)">
+                                                                    <i class="fa fa-fw fa-print"></i> Print
+                                                                </a>
                                                                 </li>
                                                             <li>
                                                                 <a (click)="Delete(col)">
@@ -507,11 +512,11 @@
                               <td>{{ TermTableList.Rate }}</td>
                               <td>{{ TermTableList.Taxable_unt}}</td>
                             <td>{{ TermTableList.CGST_Rate }}</td>
-                            <td>{{ TermTableList.CGST_Amt }}</td>
+                            <td>{{ TermTableList.CGST_Amount }}</td>
                             <td>{{ TermTableList.SGST_Rate }}</td>
-                            <td>{{ TermTableList.SGST_Amt }}</td>
+                            <td>{{ TermTableList.SGST_Amount }}</td>
                             <td>{{ TermTableList.IGST_Rate }}</td>
-                            <td>{{ TermTableList.IGST_Amt }}</td>
+                            <td>{{ TermTableList.IGST_Amount }}</td>
                             <td>{{ TermTableList.Line_Total_Amount }}</td>
                             <td><button (click)="Deteteaddlist(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                             </tr>

@@ -242,7 +242,7 @@
                                         <!-- LAST MONTH BASIC -->
                                         <tr style="background-color:#64889d;color:white;">
                                             <th></th>
-                                            <th class="text-center" style="vertical-align:middle">SALARY OF LAST MONTH</th>
+                                            <th class="text-center" style="vertical-align:middle">SALARY OF CURRENT MONTH</th>
                                             <th class="text-center" style="vertical-align:middle">DAYS</th>
                                             <th class="text-center" style="vertical-align:middle">AMOUNT</th>
                                         </tr>
@@ -250,45 +250,45 @@
                                             <td class="text-center" style="vertical-align:middle">1</td>
                                             <td>BASIC</td>
                                             <td class="text-center" style="vertical-align:middle">{{ObjFullAndFinalSettlement.Last_Month_Payable_Days}}</td>
-                                            <td><input type="text" name="basicamt" #basicamt="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_Basic_Amount' class="form-control" CompacctDigitonly="true"
-                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basicamt.errors?.required}" required/>
+                                            <td><input type="text" name="lastbasicamt" #lastbasicamt="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_Basic_Amount' class="form-control" CompacctDigitonly="true"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && lastbasicamt.errors?.required}" required/>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td class="text-center" style="vertical-align:middle">2</td>
                                             <td>HRA</td>
                                             <td></td>
-                                            <td><input type="text" name="basichra" #basichra="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_HRA_Amount' class="form-control" CompacctDigitonly="true"
-                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basichra.errors?.required}" required/>
+                                            <td><input type="text" name="lastbasichra" #lastbasichra="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_HRA_Amount' class="form-control" CompacctDigitonly="true"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && lastbasichra.errors?.required}" required/>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td class="text-center" style="vertical-align:middle">3</td>
                                             <td>CON.ALLOWANCE</td>
                                             <td></td>
-                                            <td><input type="text" name="basiccon" #basiccon="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_Conv_Allowance' CompacctDigitonly="true" class="form-control" 
-                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basiccon.errors?.required}" required/></td>
+                                            <td><input type="text" name="conallowbasiccon" #conallowbasiccon="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_Conv_Allowance' CompacctDigitonly="true" class="form-control" 
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && conallowbasiccon.errors?.required}" required/></td>
                                         </tr>
                                         <tr>
                                             <td class="text-center" style="vertical-align:middle">4</td>
                                             <td>CHILDREN ALLOWANCE</td>
                                             <td></td>
-                                            <td><input type="text" name="basicchildren" #basicchildren="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_Children_Allowance' CompacctDigitonly="true" class="form-control"
-                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basicchildren.errors?.required}" required/></td>
+                                            <td><input type="text" name="lastbasicchildren" #lastbasicchildren="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_Children_Allowance' CompacctDigitonly="true" class="form-control"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && lastbasicchildren.errors?.required}" required/></td>
                                         </tr>
                                         <tr>
                                             <td class="text-center" style="vertical-align:middle">5</td>
                                             <td>MEDICAL ALLOWANCE</td>
                                             <td></td>
-                                            <td><input type="text" name="basicmedical" #basicmedical="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_Medical_Allowance' CompacctDigitonly="true" class="form-control"
-                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basicmedical.errors?.required}" required/></td>
+                                            <td><input type="text" name="lastbasicmedical" #lastbasicmedical="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_Medical_Allowance' CompacctDigitonly="true" class="form-control"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && lastbasicmedical.errors?.required}" required/></td>
                                         </tr>
                                         <tr>
                                             <td class="text-center" style="vertical-align:middle">6</td>
                                             <td>WASHING ALLOWANCE</td>
                                             <td></td>
-                                            <td><input type="text" name="basicwashing" #basicwashing="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_Washing_Allowance' CompacctDigitonly="true" class="form-control"
-                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basicwashing.errors?.required}" required/></td>
+                                            <td><input type="text" name="lastbasicwashing" #lastbasicwashing="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_Washing_Allowance' CompacctDigitonly="true" class="form-control"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && lastbasicwashing.errors?.required}" required/></td>
                                         </tr>
                                         <tr>
                                             <th class="text-center" style="vertical-align:middle"></th>
@@ -316,16 +316,16 @@
                                             <td class="text-center" style="vertical-align:middle">2</td>
                                             <td>PL/EL ENCASHMENT (Balance as an date)</td>
                                             <td class="text-center" style="vertical-align:middle">{{ObjFullAndFinalSettlement.Leave_Balance}}</td>
-                                            <td><input type="text" name="basichra" #basichra="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Leave_Encashment' class="form-control" CompacctDigitonly="true"
-                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basichra.errors?.required}" required/>
+                                            <td><input type="text" name="encashmentbasichra" #encashmentbasichra="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Leave_Encashment' class="form-control" CompacctDigitonly="true"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && encashmentbasichra.errors?.required}" required/>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td class="text-center" style="vertical-align:middle">3</td>
                                             <td>GRATUITY</td>
                                             <td></td>
-                                            <td><input type="text" name="basiccon" #basiccon="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Gratuity' CompacctDigitonly="true" class="form-control" 
-                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basiccon.errors?.required}" required/></td>
+                                            <td><input type="text" name="gratuitybasiccon" #gratuitybasiccon="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Gratuity' CompacctDigitonly="true" class="form-control" 
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && gratuitybasiccon.errors?.required}" required/></td>
                                         </tr>
                                         <tr>
                                             <th class="text-center" style="vertical-align:middle"></th>

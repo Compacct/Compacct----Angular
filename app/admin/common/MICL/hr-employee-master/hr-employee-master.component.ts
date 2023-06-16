@@ -115,6 +115,9 @@ export class HREmployeeMasterComponent implements OnInit {
   objconsultancy : Consultancy = new Consultancy();
   consultancyFormSubmitted:Boolean = false;
   GSTvalidFlag:boolean=false;
+  LocationModal:boolean = false;
+  locationsubmitted:boolean = false;
+  Location:any;
   constructor(
     private http : HttpClient,
     private commonApi : CompacctCommonApi,
@@ -382,6 +385,66 @@ getLocation(){
    })
 
 }
+CreateLocation(){
+  this.Location = "";
+  this.locationsubmitted = false;
+  setTimeout(() => {
+    this.LocationModal = true;
+  }, 200);
+  }
+
+  SaveLocation(loc){
+  this.locationsubmitted = true;
+  if(loc){
+  this.Spinner = true;
+  
+  console.log(loc);
+  const tempObj = {
+    
+    Location : loc
+  }
+  const obj = {
+    "SP_String": "Sp_HR_Employee_Master",
+    "Report_Name_String": "Create_Location",
+    "Json_Param_String": JSON.stringify([tempObj])
+  }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log('data=',data);
+    if(data[0].Column1)
+       {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Location",
+        detail: "Succesfully Created"
+      });
+      this.ngxService.stop();
+      this.Spinner = false;
+      this.Location = undefined;
+      this.LocationModal = false;
+      this.getLocation();
+      this.locationsubmitted = false;
+      
+    }
+    else{
+      this.compacctToast.clear();
+      this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Error",
+      detail: "Something Wrong"
+    });
+    this.ngxService.stop();
+    this.Spinner = false;
+    this.ViewProTypeModal4 = false
+    }
+     
+   });
+   
+  }
+
+  }
 
 // getEmployee(){
 //   const obj = {

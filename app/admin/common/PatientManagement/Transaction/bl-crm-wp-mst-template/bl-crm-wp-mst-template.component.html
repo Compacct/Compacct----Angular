@@ -1,0 +1,239 @@
+<p-toast key="compacct-toast" baseZIndex="99999999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" baseZIndex="99999999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="d" (onClose)="onReject()" [modal]="true" baseZIndex="99999999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm1()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]"leftIcon="glyphicon glyphicon-list-alt">
+                          <div class=" no-padding">
+                                <p-table [value]="AllData" [paginator]="true" [rows]="100" [rowHover]="true"
+                                    [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]"
+                                    [globalFilterFields]="AllDataDyn"
+                                    [rowHover]="true" #dt>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search"
+                                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                    class="searchInput form-control">
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th>Event Description</th>
+                                            <th>Template Text</th>
+                                            <th>Attachment</th>
+                                            <th>Attachment Field</th>
+                                            <th>Button One</th>
+                                            <th>Button One Link</th>
+                                            <th>Button One Text</th>
+                                            <th>Button Two</th>
+                                            <th>Button Two Link</th>
+                                            <th>Button Two Text</th>
+                                            <th>Trigger Table</th>
+                                         </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr [class]='col.Is_Active === "N" ? "text-red-active" : ""'>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                        type="button" data-toggle="dropdown" style="height:27px">
+                                                        <i class="fa fa-fw fa-bars"></i>
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                            <li *ngIf="col.Is_Active == 'Y'">
+                                                                <a (click)="Edit(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li>
+                                                            
+                                                            <li *ngIf="col.Is_Active == 'Y'">
+                                                                <a (click)="Dactive(col)">
+                                                                    <i class="fa fa-fw fa-trash"></i> Dactive
+                                                                </a>
+                                                            </li>
+                                                            
+                                                            <li *ngIf="col.Is_Active == 'N'">
+                                                                <a (click)="Active(col)">
+                                                                    <i class="fa fa-power-off"></i> Active
+                                                                </a>
+                                                            </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td>{{col.Event_Description ? col.Event_Description : '-' }}</td>
+                                            <td>{{col.Template_Text ? col.Template_Text : '-'}}</td>
+                                            <td>{{col.Attachment == 'Y' ? 'Yes' : 'No'}}</td>
+                                            <td>{{col.Attachment_Field ? col.Attachment_Field : '-'}}</td>
+                                            <td>{{col.Button_One_Enabled == 'Y' ? 'Yes' : 'No'}}</td>
+                                            <td>{{col.Button_One_Link ? col.Button_One_Link : '-'}}</td>
+                                            <td>{{col.Button_One_Text ? col.Button_One_Text : '-'}}</td>
+                                            <td>{{col.Button_Two_Enabled == 'Y' ? 'Yes' : 'No'}}</td>
+                                            <td>{{col.Button_Two_Link ? col.Button_Two_Link : '-'}}</td>
+                                            <td>{{col.Button_Two_Text ? col.Button_Two_Text : '-'}}</td>
+                                            <td>{{col.Trigger_Table ? col.Trigger_Table : '-'}}</td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                                        {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]"leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="WhatsAppForm" #WhatsAppForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Event<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"  placeholder="Event" name="Event" #Event="ngModel" [(ngModel)]="ObjWhatsap.Event_Description"
+                                            [ngClass]="{'clearance ': WhatsAppFormSubmit && Event.errors?.required}"required>
+                                    </div>                                   
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-5" >
+                                        <label class="control-label">Template text<sup class="text-danger"></sup></label>                               
+                                    <textarea class="form-control" name="Template" #Template="ngModel"
+                                        [(ngModel)]="ObjWhatsap.Template_Text"rows="5"></textarea>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Variable<sup class="text-danger"></sup></label>
+                                        <p-dropdown [options]="VariableList" name="Variable" #Variable="ngModel" [(ngModel)]="variable_Name"
+                                            [showClear]="true" [emptyFilterMessage]="'No Variable'" [filter]="true" filterBy="label,value.name"
+                                            [resetFilterOnHide]="true" [placeholder]="'Select Variable'" [virtualScroll]="true" itemSize="30">
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="row">
+                                        <button type="button" class="btn btn-primary customb" (click)="getValue()">
+                                            <i class="fa fa-arrow-down" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">If Attachment<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Attachment" #Attachment="ngModel" [(ngModel)]="ObjWhatsap.Attachment"
+                                        (change)="ChangeDef()"
+                                        [ngClass]="{'clearance ': WhatsAppFormSubmit && Attachment.errors?.required}" required>
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option value="N">NO</option>
+                                            <option value="Y">YES</option>
+                                        </select>
+                                    </div>
+                                <div class="col-sm-5" *ngIf="ObjWhatsap.Attachment == 'Y'">
+                                    <label class="control-label">Attachment Field Name<sup class="text-danger">*</sup></label>
+                                    <input class="form-control"name="Field" #Field="ngModel" [(ngModel)]="ObjWhatsap.Attachment_Field" placeholder="Attachment Field Name"
+                                        [ngClass]="{'clearance ': WhatsAppFormSubmit && Field.errors?.required}" required>
+                                </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Button One<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Button_1" #Button_1="ngModel" [(ngModel)]="ObjWhatsap.Button_One_Enabled"
+                                        (change)="ChangeDef()" [ngClass]="{'clearance ': WhatsAppFormSubmit && Button_1.errors?.required}" required>
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option value="N">NO</option>
+                                            <option value="Y">YES</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3" *ngIf="ObjWhatsap.Button_One_Enabled == 'Y'">
+                                        <label class="control-label">Button One Text<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="Button_1_text" #Button_1_text="ngModel" [(ngModel)]="ObjWhatsap.Button_One_Text" placeholder="button One Text"
+                                            [ngClass]="{'clearance ': WhatsAppFormSubmit && Button_1_text.errors?.required}" required>
+                                    </div>
+                                    <div class="col-sm-5" *ngIf="ObjWhatsap.Button_One_Enabled == 'Y'">
+                                        <label class="control-label">Button One link<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="Button_1_link" #Button_1_link="ngModel" [(ngModel)]="ObjWhatsap.Button_One_Link" placeholder="button One link"
+                                            [ngClass]="{'clearance ': WhatsAppFormSubmit && Button_1_link.errors?.required}" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Button Two<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Button_2" #Button_2="ngModel" [(ngModel)]="ObjWhatsap.Button_Two_Enabled"
+                                         (change)="ChangeDef()" [ngClass]="{'clearance ': WhatsAppFormSubmit && Button_2.errors?.required}" required>
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option value="N">NO</option>
+                                            <option value="Y">YES</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3" *ngIf="ObjWhatsap.Button_Two_Enabled == 'Y'">
+                                        <label class="control-label">Button Two Text<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="Button_2_text" #Button_2_text="ngModel"
+                                            [(ngModel)]="ObjWhatsap.Button_Two_Text" placeholder="button Two Text"
+                                            [ngClass]="{'clearance ': WhatsAppFormSubmit && Button_2_text.errors?.required}" required>
+                                    </div>
+                                    <div class="col-sm-5" *ngIf="ObjWhatsap.Button_Two_Enabled == 'Y'">
+                                        <label class="control-label">Button Two link<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="Button_2_link" #Button_2_link="ngModel"
+                                            [(ngModel)]="ObjWhatsap.Button_Two_Link" placeholder="button Two link"
+                                            [ngClass]="{'clearance ': WhatsAppFormSubmit && Button_2_link.errors?.required}" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                <div class="col-sm-5">
+                                    <label class="control-label">Trigger Table<sup class="text-danger"></sup></label>
+                                    <input class="form-control" name="Trigger" #Trigger="ngModel" [(ngModel)]="ObjWhatsap.Trigger_Table"
+                                        placeholder="Trigger Table">
+                                </div>
+                                </div>
+                                <div class="box-footer">
+                                     <button class="btn btn-primary pull-right "
+                                        (click)="SaveWhatsapp(WhatsAppForm.form.valid)">
+                                         <span  class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                    </button>
+                                </div>
+                            </form>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
