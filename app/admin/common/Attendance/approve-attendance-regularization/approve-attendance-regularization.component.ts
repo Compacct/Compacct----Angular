@@ -68,9 +68,8 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{ "User_ID": this.UserID }])
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
-      console.log('emp data', data);
+      // console.log('emp data', data);
       this.EmpID = data[0].Emp_ID;
-      // let id: any = data[0].Emp_ID;
       this.getPendingApproval(this.EmpID);
       this.getApproveTableData(this.EmpID);
       this.getDisapproveTableData(this.EmpID);
@@ -79,22 +78,27 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
 
   getPendingApproval(id) {
     this.Pending_EmployeeList = [];
+    let tempArray: any = [];
     const obj = {
       "SP_String": "SP_HR_Txn_Attendance_Regularization",
       "Report_Name_String": "PENDING APPROVAL",
       "Json_Param_String": JSON.stringify([{ "Emp_ID": id }])
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
-      console.log('pending table data', data);
+      // console.log('pending table data', data);
       this.pendingTableData = data;
       if (data.length) {
         this.pendingTableFilterList = Object.keys(data[0]);
+        // console.log('pendingTableFilterList',this.pendingTableFilterList);
       }
       data.forEach(element => {
-        this.Pending_EmployeeList.push({
-          "label": element.Emp_Name,
-          "value": element.Emp_Name
-        })
+        if (tempArray.indexOf(element.Emp_Name) == -1) {
+          tempArray.push(element.Emp_Name);
+          this.Pending_EmployeeList.push({
+            "label": element.Emp_Name,
+            "value": element.Emp_Name
+          })
+        }
       });
     });
   }
@@ -107,18 +111,18 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
         let filterData = backupTableData.filter((data: any) => {
           return data.Emp_Name == ele;
         });
-        console.log('filterData', filterData);
+        // console.log('filterData', filterData);
         if (filterData.length) {
           filterData.forEach((e: any) => {
             this.pendingTableData.push(e);
-            console.log('pendingTableData', this.pendingTableData);
+            // console.log('pendingTableData', this.pendingTableData);
           })
         }
       });
     }
     else {
       this.pendingTableData = [...backupTableData];
-      console.log('backupTableData', backupTableData, this.pendingTableData);
+      // console.log('backupTableData', backupTableData, this.pendingTableData);
     }
   }
 
@@ -128,15 +132,15 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
       this.disabled_Obj = col;
       this.Report_Manager_ID = col.Report_Manager;
       this.Business_Manager_ID = col.Business_Manager;
-      console.log('ids', this.Report_Manager_ID, this.Business_Manager_ID);
-      console.log('empId', this.EmpID);
+      // console.log('ids', this.Report_Manager_ID, this.Business_Manager_ID);
+      // console.log('empId', this.EmpID);
       const obj = {
         "SP_String": "SP_HR_Txn_Attendance_Regularization",
         "Report_Name_String": "Last_one_month_Attendance_Regularization",
         "Json_Param_String": JSON.stringify([{ "Emp_ID": col.Emp_ID, "Atten_Date": this.DateService.dateConvert(col.Atten_Date) }])
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
-        console.log('popup table data', data);
+        // console.log('popup table data', data);
         this.popupTableData = data;
         if (data.length) {
           this.popupTableSearchField = Object.keys(data[0]);
@@ -175,14 +179,14 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
           "Changed_Out_Time": this.DateService.dateTimeConvert(new Date(this.disabled_Obj.Changed_Out_Time))
         }
       }
-      console.log('approve Object', saveObj);
+      // console.log('approve Object', saveObj);
       const obj = {
         "SP_String": "SP_HR_Txn_Attendance_Regularization",
         "Report_Name_String": "Approve_Attendance_Regularization",
         "Json_Param_String": JSON.stringify([saveObj])
       }
       this.GlobalAPI.postData(obj).subscribe((data) => {
-        console.log('approve Res', data);
+        // console.log('approve Res', data);
         this.Approve_Spinner = false;
         this.DisplayPopup = false;
         if (data[0].Column1 == "Done") {
@@ -233,14 +237,14 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
           "Changed_Out_Time": this.DateService.dateTimeConvert(new Date(this.disabled_Obj.Changed_Out_Time))
         }
       }
-      console.log('disapproved obj', saveObj);
+      // console.log('disapproved obj', saveObj);
       const obj = {
         "SP_String": "SP_HR_Txn_Attendance_Regularization",
         "Report_Name_String": "Approve_Attendance_Regularization",
         "Json_Param_String": JSON.stringify([saveObj])
       }
       this.GlobalAPI.postData(obj).subscribe((data) => {
-        console.log('disapprove Res', data);
+        // console.log('disapprove Res', data);
         this.Disapprove_Spinner = false;
         this.DisplayPopup = false;
         if (data[0].Column1 == "Done") {
@@ -273,22 +277,28 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
 
   getApproveTableData(id) {
     this.Approve_EmployeeList = [];
+    let tempArray: any = [];
     const obj = {
       "SP_String": "SP_HR_Txn_Attendance_Regularization",
       "Report_Name_String": "APPROVED APPROVAL",
       "Json_Param_String": JSON.stringify([{ "Emp_ID": id }])
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
-      console.log('Approve Table Data', data);
+      // console.log('Approve Table Data', data);
       this.approvedTableData = data;
       if (data.length) {
         this.approvedTableFilterData = Object.keys(data[0]);
+        // console.log('approvedTableFilterData',this.approvedTableFilterData);
+        
       }
       data.forEach(element => {
-        this.Approve_EmployeeList.push({
-          "label": element.Emp_Name,
-          "value": element.Emp_Name
-        })
+        if (tempArray.indexOf(element.Emp_Name) == -1) {
+          tempArray.push(element.Emp_Name);
+          this.Approve_EmployeeList.push({
+            "label": element.Emp_Name,
+            "value": element.Emp_Name
+          })
+        }
       });
     })
   }
@@ -301,39 +311,45 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
         let filterData = backupTableData.filter((data: any) => {
           return data.Emp_Name == ele;
         });
-        console.log('filterData', filterData);
+        // console.log('filterData', filterData);
         if (filterData.length) {
           filterData.forEach((e: any) => {
             this.approvedTableData.push(e);
-            console.log('ApproveTableData', this.approvedTableData);
+            // console.log('ApproveTableData', this.approvedTableData);
           })
         }
       });
     }
     else {
       this.approvedTableData = [...backupTableData];
-      console.log('backupTableData', backupTableData, this.approvedTableData);
+      // console.log('backupTableData', backupTableData, this.approvedTableData);
     }
   }
 
   getDisapproveTableData(id) {
     this.DisApprove_EmployeeList = [];
+    let tempArray: any = [];
     const obj = {
       "SP_String": "SP_HR_Txn_Attendance_Regularization",
       "Report_Name_String": "DISAPPROVED APPROVAL",
       "Json_Param_String": JSON.stringify([{ "Emp_ID": id }])
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
-      console.log('Disapprove Table Data', data);
+      // console.log('Disapprove Table Data', data);
       this.disApprovedTableData = data;
       if (data.length) {
         this.disApprovedTableFilterData = Object.keys(data[0]);
+        // console.log('disApprovedTableFilterData',this.disApprovedTableFilterData);
+        
       }
-      data.forEach(element => {
-        this.DisApprove_EmployeeList.push({
-          "label": element.Emp_Name,
-          "value": element.Emp_Name
-        })
+      data.forEach((element: any) => {
+        if (tempArray.indexOf(element.Emp_Name) == -1) {
+          tempArray.push(element.Emp_Name);
+          this.DisApprove_EmployeeList.push({
+            "label": element.Emp_Name,
+            "value": element.Emp_Name
+          });
+        }
       });
     })
   }
@@ -346,18 +362,18 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
         let filterData = backupTableData.filter((data: any) => {
           return data.Emp_Name == ele;
         });
-        console.log('filterData', filterData);
+        // console.log('filterData', filterData);
         if (filterData.length) {
           filterData.forEach((e: any) => {
             this.disApprovedTableData.push(e);
-            console.log('disapproveTableData', this.disApprovedTableData);
+            // console.log('disapproveTableData', this.disApprovedTableData);
           })
         }
       });
     }
     else {
       this.disApprovedTableData = [...backupTableData];
-      console.log('backupTableData', backupTableData, this.disApprovedTableData);
+      // console.log('backupTableData', backupTableData, this.disApprovedTableData);
     }
   }
 
@@ -420,14 +436,14 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
           "Changed_Out_Time": this.DateService.dateTimeConvert(new Date(this.disabled_Obj.Changed_Out_Time))
         }
       }
-      console.log('disapproved obj', saveObj);
+      // console.log('disapproved obj', saveObj);
       const obj = {
         "SP_String": "SP_HR_Txn_Attendance_Regularization",
         "Report_Name_String": "Approve_Attendance_Regularization",
         "Json_Param_String": JSON.stringify([saveObj])
       }
       this.GlobalAPI.postData(obj).subscribe((data) => {
-        console.log('again disapprove Res', data);
+        // console.log('again disapprove Res', data);
         if (data) {
           if (data[0].Column1 == "Done") {
             this.CompacctToast.clear("c");
