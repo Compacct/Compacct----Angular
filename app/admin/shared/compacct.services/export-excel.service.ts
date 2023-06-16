@@ -2439,7 +2439,7 @@ export class ExportExcelService {
       bottom: { style: 'thin' },
       right: { style: 'thin' },
     };
-    TotalExpenses2Row.getCell(3).value = Number(ExTotal);
+    TotalExpenses2Row.getCell(3).value = Number(purTotal) + Number(ExTotal);
     TotalExpenses2Row.getCell(3).alignment = {
       horizontal:'right'
     }
@@ -2548,7 +2548,7 @@ export class ExportExcelService {
       bottom: { style: 'thin' },
       right: { style: 'thin' },
     };
-    ProfitLossRow.getCell(3).value = Number((Number(Saletotal) - Number(ExTotal)).toFixed(2))
+    ProfitLossRow.getCell(3).value = Number(Number(Saletotal) - Number( Number(purTotal) + Number(ExTotal))).toFixed(2)
     ProfitLossRow.getCell(3).alignment = {
       horizontal:"right"
     }
