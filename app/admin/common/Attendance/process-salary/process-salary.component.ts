@@ -9,7 +9,9 @@ import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.
 import * as XLSX from 'xlsx';
 import { formatDate } from '@angular/common';
 import { format } from 'url';
-declare var $:any;
+declare var $: any;
+import { jsPDF } from "jspdf";
+import 'jspdf-autotable';
 
 @Component({
   selector: 'app-process-salary',
@@ -324,10 +326,11 @@ export class ProcessSalaryComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{StartDate : this.DateService.dateConvert(new Date(firstDate))}])
 
     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
-      XLSX.writeFile(workbook, fileName+'.xlsx');
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        this.converttoPDF(data);
+      // const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      // const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      // XLSX.writeFile(workbook, fileName+'.xlsx');
       
     })
     }
@@ -340,6 +343,87 @@ export class ProcessSalaryComponent implements OnInit {
           detail: this.CheckFinalizedOrNot
         });
     }
+  }
+  // imgToBase64(url, callback) {
+  //   if (!window.FileReader) {
+  //     callback(null);
+  //     return;
+  //   }
+  //   const xhr = new XMLHttpRequest();
+  //   xhr.responseType = 'blob';
+  //   xhr.onload = function () {
+  //     const reader = new FileReader();
+  //     reader.onloadend = function () {
+  //       callback((reader.result as string).replace('text/xml', 'image/jpeg'));
+  //     };
+  //     reader.readAsDataURL(xhr.response);
+  //   };
+  //   xhr.open('GET', url);
+  //   xhr.send();
+  // }
+  converttoPDF(itemNew) {
+    var style:any = itemNew[0].orientation
+    var doc:any = new jsPDF();
+    var rows:any = [];
+
+/* The following array of object as response from the API req  */
+    var column = itemNew.length ? Object.keys(itemNew[0]): []
+
+itemNew.forEach(element => {
+    // var temp = [element.id,element.name,element.id1,element.name1,element.id2,element.name2,element.id3,element.name3,element.id4,element.name4];
+    rows.push(Object.values(element))
+
+});
+// var body = rows.alternateRowStyles= {fillColor : [231, 215, 252]}
+
+     var base64Img;
+
+  // Convert the image to base64
+  // this.imgToBase64("https://Compacct/src/assets/adminSB/dist/img/Kashvi.jpeg", function(base64) {
+  //   base64Img = base64;
+  //   console.log('img----',base64Img)
+  // });
+    // Static base64 for example purposes
+    // base64Img = 
+    
+  
+    doc.autoTable({
+      theme: "plain",
+      head:[column],
+      body:rows,
+      headStyles :{fillColor : [255, 255, 255],lineColor:[255,0,0],textColor:[0, 0, 0]},
+      alternateRowStyles: {lineColor:[255,0,0],},
+      tableLineColor: [0, 0, 0],
+      tableLineWidth: 0.1,
+      
+      didDrawPage: function (data) {
+        // Header
+        // doc.setFontSize(20);
+        // doc.setTextColor(40);
+        // doc.setFontStyle('normal');
+        if (base64Img) {
+            doc.addImage(base64Img, 'JPEG', data.settings.margin.left, 15, 10, 15);
+        }
+        doc.text(50, 21, "MODERN INDIA CON-CAST LIMITED", 'center')
+        // doc.text('MODERN INDIA CON-CAST LIMITED', 40, 250, 'center');
+        // doc.text(str, pageWidth / 2, pageHeight  - 10, {align: 'center'});
+
+        // // Footer
+        // var str = "Page " + doc.internal.getNumberOfPages()
+        // // Total page number plugin only available in jspdf v1.0+
+        // if (typeof doc.putTotalPages === 'function') {
+        //     str = str + " of " + totalPagesExp;
+        // }
+        // doc.setFontSize(10);
+
+        // // jsPDF 1.4+ uses getWidth, <1.4 uses .width
+        // var pageSize = doc.internal.pageSize;
+        // var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+        // doc.text(str, data.settings.margin.left, pageHeight - 10);
+      },
+      margin: {top: 40}
+    });
+    doc.save('Bank-Statement.pdf');
   }
   salaryregforAdmin(fileName){
     var firstDate = this.Month_Name+'-'+'01'
