@@ -365,6 +365,9 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="control-label">Current Location<sup class="text-danger">*</sup></label>
+                                        <div class="pull-right" *ngIf="databaseName === 'GN_JOH_HR'">
+                                            <span (click)="CreateLocation()" class="btn-vk createPatient" style="cursor: pointer;"><i class="fa fa-fw fa-plus"></i> Create</span>
+                                        </div>
                                         <select class="form-control" name="Current" #Current="ngModel" [(ngModel)]="objemployee.Location_ID" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Current.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
                                         <option  *ngFor="let option of LocationList" value="{{option.Location_ID}}">
@@ -1059,6 +1062,29 @@ CLOSE
     <p-footer>
         <button type="button" pButton icon="pi pi-check" (click)="SaveConsultancy(consultancyForm.form.valid)" label="Create"></button>
         <button type="button" (click)="CreateConsulModal = false" class="btn btn-default">
+  CLOSE
+</button>
+    </p-footer>
+</p-dialog>
+
+<!-- LOCATION CREATE -->
+<p-dialog [header]="'Create'" [appendTo]="'body'" [visible]="LocationModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '300px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">Location<sup class="text-danger">*</sup></label>
+                <input class="form-control" name="locationcreate" [(ngModel)]="Location" placeholder="Location" [ngClass]="{'clearance': locationsubmitted && !Location}" required>
+            </div>
+        </div>
+
+
+
+    </div>
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" (click)="SaveLocation(Location)" label="Create"></button>
+        <button type="button" (click)="LocationModal = false" class="btn btn-default">
   CLOSE
 </button>
     </p-footer>

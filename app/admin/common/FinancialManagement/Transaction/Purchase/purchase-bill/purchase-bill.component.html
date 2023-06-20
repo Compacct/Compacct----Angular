@@ -1129,12 +1129,20 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Sub Ledger <sup class="text-danger">*</sup></label>
-                                        <p-dropdown [options]="SubLedgerList" name="subledger" [(ngModel)]="ObjTDS.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Sub Ledger'"
-                                                        [virtualScroll]="true" itemSize="30" #subledger="ngModel"  [required]="true" [ngClass]="{'clearance':TDSFormSubmitted && subledger?.errors?.required}" required>
+                                        <p-dropdown [options]="SubLedgerList" name="subledger" 
+                                        [(ngModel)]="ObjTDS.Sub_Ledger_ID" 
+                                        [showClear]="true"
+                                         [emptyFilterMessage]="' No Product Found'" 
+                                         [filter]="true" 
+                                         filterBy="label,value.name" 
+                                         [resetFilterOnHide]="true"
+                                          [placeholder]="'Select Sub Ledger'"
+                                         [virtualScroll]="true" itemSize="30" #subledger="ngModel" 
+                                          [ngClass]="{'clearance':TDSFormSubmitted && subledger?.errors?.required}" [required]="true" >
                                         </p-dropdown>
                                 </div>
                                 <div class="col-sm-2">
-                                    <label class="control-label">Taxable Amount<sup class="text-danger"></sup></label>
+                                    <label class="control-label">Taxable Amount<sup class="text-danger">*</sup></label>
                                         <input type="text"
                                     class="form-control"
                                     name="taxableamt"
@@ -1142,18 +1150,21 @@
                                     [(ngModel)]="ObjTDS.Taxable_Amount"
                                     CompacctDigitonly="true"
                                     placeholder="Taxable AMT"
+                                    [ngClass]="{'clearance':TDSFormSubmitted && tdsper?.errors?.required}"
+                                    required
+                                    readonly
                                     >
                                 </div>
                                 <div class="col-sm-1">
                                     <label class="control-label">TDS % </label>
-                                    <input class="form-control" name="tdsper" #tdsper="ngModel" [(ngModel)]="ObjTDS.TDS_Percentage" (ngModelChange)="CalculateTDSAmt()" placeholder="TDS %" CompacctDigitonly="true" [ngClass]="{'clearance':TDSFormSubmitted && tdsper?.errors?.required}" >
+                                    <input class="form-control" name="tdsper" #tdsper="ngModel" [(ngModel)]="ObjTDS.TDS_Percentage" (ngModelChange)="CalculateTDSAmt()" placeholder="TDS %" CompacctDigitonly="true" [ngClass]="{'clearance':TDSFormSubmitted && tdsper?.errors?.required}" required >
                                 </div>
                                 <div class="col-sm-2">
-                                    <label class="control-label">TDS Amount </label>
-                                    <input class="form-control" name="tdsamt" #tdsamt="ngModel" [(ngModel)]="ObjTDS.TDS_Amount" placeholder="TDS Amount" [ngClass]="{'clearance':TDSFormSubmitted && tdsamt?.errors?.required}" >
+                                    <label class="control-label">TDS Amount <sup class="text-danger">*</sup></label>
+                                    <input class="form-control" name="tdsamt" #tdsamt="ngModel" [(ngModel)]="ObjTDS.TDS_Amount" placeholder="TDS Amount" [ngClass]="{'clearance':TDSFormSubmitted && tdsamt?.errors?.required}" required readonly >
                                 </div>
                                 <div class="col-sm-1">
-                                    <button type="button" class="btn btn-primary pull-right" style="margin-top: 28px;" (click)="AddTDS(TDSForm.form.valid)" id="load" [disabled]="SpinnerShow" [disabled]="inputBoxDisabled">
+                                    <button type="button" class="btn btn-primary pull-right" style="margin-top: 28px;" (click)="AddTDS(TDSForm.form.valid)"  [disabled]="SpinnerShow" [disabled]="inputBoxDisabled">
                                             <p-progressSpinner *ngIf="SpinnerShow" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                          <span *ngIf="!SpinnerShow" class="glyphicon glyphicon-plus"></span> Add 
                                     </button>

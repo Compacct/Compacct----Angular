@@ -451,7 +451,7 @@ export class HarbProjectBillComponent implements OnInit {
     return Number(Number(key).toFixed(2))
    }
    saveProject(){
-     if(this.addProductList){
+     if(this.addProductList.length){
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "c",
@@ -460,6 +460,15 @@ export class HarbProjectBillComponent implements OnInit {
         summary: "Are you sure?",
         detail: "Confirm to proceed"
       });
+     }
+     else{
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "At Least Add 1 Billing Item "
+      })
      }
    }
   createProjectBill(){
