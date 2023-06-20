@@ -19,7 +19,10 @@ export class PendingOutcomesComponent implements OnInit {
 
   seachSpinner: boolean=false;
   StartDate:any=undefined;
-  EndDate:any=undefined;
+  EndDate: any = undefined;
+  AudiologistList: any = [];
+  CokkUiD: any = undefined;
+  DoctorID: any = undefined;
 
   constructor(
     private GlobalAPI: CompacctGlobalApiService,
@@ -30,10 +33,38 @@ export class PendingOutcomesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.CokkUiD = this.$CompacctAPI.CompacctCookies.User_ID;
+    //console.log('this.CokkUiD',this.CokkUiD)
     this.Header.pushHeader({
       Header: "Pending Outcomes",
       Link: " Patient Management -> Pending Outcomes"
     });
+    this.GetAudiologist();
+  }
+   GetAudiologist(){
+    this.AudiologistList = [];
+    const obj = {
+      "SP_String": "Sp_Pending_Outcome",
+      "Report_Name_String": "Get_Audiologist",
+       "Json_Param_String": JSON.stringify([{User_ID :this.CokkUiD}])
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //  console.log("Get AudiologistList",data);
+      if(data.length) {
+          data.forEach(element => {
+            element['label'] = element.Name,
+            element['value'] = element.Doctor_ID
+          });
+        this.AudiologistList = data;
+        if (this.$CompacctAPI.CompacctCookies.User_Type === 'U') {
+          this.DoctorID = this.AudiologistList[0].Doctor_ID
+        }        
+      }
+      else {
+        this.AudiologistList = [];
+        this.DoctorID = undefined;
+      }
+   });
   }
 
   getDateRange(dateRangeObj:any){
@@ -58,9 +89,10 @@ export class PendingOutcomesComponent implements OnInit {
 
       const tempobj = {
         FromDate: start,
-        ToDate: end
+        ToDate: end,
+        Doctor_ID : this.DoctorID ? this.DoctorID : 0
       }
-      // console.log("tempobj",tempobj);
+       //console.log("tempobj",tempobj);
 
       const obj = {
         "SP_String": "Sp_Pending_Outcome",

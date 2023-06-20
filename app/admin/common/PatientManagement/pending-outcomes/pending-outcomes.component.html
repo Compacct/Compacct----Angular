@@ -32,6 +32,13 @@
                                 </app-compacct-daterangepicker>
                             </div>
                             <div class="col-sm-4">
+                                <label class="control-label">Audiologist</label>
+                                <p-dropdown [options]="AudiologistList" name="Audiologist" #Audiologist="ngModel" [(ngModel)]="DoctorID"
+                                    [showClear]="true" [emptyFilterMessage]="' No Audiologist Found'" [filter]="true" filterBy="label,value.name"
+                                    [resetFilterOnHide]="true" [placeholder]="'Select Audiologist'" [virtualScroll]="true" itemSize="30">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-sm-4">
                                 <button class="btn btn-primary" style="margin-top: 30px;" (click)="getPatientDetailsList()" [disabled]="seachSpinner">
                                     <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                     <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
