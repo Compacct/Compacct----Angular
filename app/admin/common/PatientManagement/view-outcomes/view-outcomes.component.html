@@ -90,6 +90,9 @@
                                     <th style="width:5em">Action</th>
                                     <th nowrap>Appointment Date</th>
                                     <th nowrap>Centre</th>
+                                    <th nowrap>Patient Name</th>
+                                    <th nowrap>Patient ID</th>
+                                    <th nowrap>Patient Mobile No.</th>
                                     <th nowrap>Audiologist</th>
                                     <th nowrap>Consultancy Type</th>
                                     <th nowrap>Consultancy Name</th>
@@ -105,6 +108,9 @@
                                     </td>
                                     <td nowrap>{{col.Appo_Dt | date: "dd/MMM/yyyy"}}</td>
                                     <td nowrap>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
+                                    <td nowrap>{{col.Patient_Name1 ? col.Patient_Name1 : '-'}}</td>
+                                    <td nowrap>{{col.Patient_Name ? col.Patient_Name : '-'}}</td>
+                                    <td nowrap>{{col.Mobile ? col.Mobile : '-'}}</td>
                                     <td nowrap>{{col.Name ? col.Name : '-'}}</td>
                                     <td nowrap>{{col.Consultancy_Type ? col.Consultancy_Type : '-'}}</td>
                                     <td nowrap>{{col.Consultancy_Descr ? col.Consultancy_Descr : '-'}}</td>
@@ -119,7 +125,7 @@
                         <div *ngIf="OpenDiagnosis" style="margin-top: 20px;">
 
                             <div class="panel panel-primary">
-                                <div class="panel-heading" style="font-size: 17px;">Provisional Diagnosis against first appointment date {{objAppointment.Appo_Dt | date: "dd/MMM/yyyy"}} in centre {{objAppointment.Cost_Cen_Name}} by Audiologist {{objAppointment.Name}} for Consultancy Type {{objAppointment.Consultancy_Type}}</div>
+                                <div class="panel-heading" style="font-size: 17px;">Provisional Diagnosis against {{objAppointment.Patient_Name1}} first appointment date {{objAppointment.Appo_Dt | date: "dd/MMM/yyyy"}} in centre {{objAppointment.Cost_Cen_Name}} by Audiologist {{objAppointment.Name}} for Consultancy Type {{objAppointment.Consultancy_Type}}</div>
                                 <div class="panel-body">
 
                                     <h5 style="background: #c1c1c185;
