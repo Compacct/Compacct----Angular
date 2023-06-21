@@ -10,6 +10,7 @@ import * as XLSX from 'xlsx';
 import { formatDate } from '@angular/common';
 import { format } from 'url';
 declare var $: any;
+import html2canvas from 'html2canvas';
 import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
 
@@ -40,6 +41,7 @@ export class ProcessSalaryComponent implements OnInit {
 
   processSalarydisabled = false;
   bankregdisabled = false;
+  currentmonth: any;
 
   constructor(
     private route : ActivatedRoute,
@@ -104,7 +106,18 @@ export class ProcessSalaryComponent implements OnInit {
       console.log('this.BrowseList',this.BrowseList)
       this.CheckBackRegister();
   })
+    
   }
+  }
+  getcurrentmonth(){
+    var firstDate = this.Month_Name+'-'+'01'
+    const currentdate = new Date(firstDate);
+    const month = currentdate.getMonth();
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"];
+
+    this.currentmonth = monthNames[month];
+    console.log('monthNames====',this.currentmonth);
   }
   Print(DocNo) {
     if(DocNo) {
@@ -318,6 +331,7 @@ export class ProcessSalaryComponent implements OnInit {
     })
   }
   exportoexcel2(fileName){
+    this.getcurrentmonth();
     var firstDate = this.Month_Name+'-'+'01'
     if (this.CheckFinalizedOrNot === "Finalized") {
     const obj = {
@@ -327,10 +341,10 @@ export class ProcessSalaryComponent implements OnInit {
 
     }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      XLSX.writeFile(workbook, fileName+'.xlsx');
         this.converttoPDF(data);
-      // const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-      // const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
-      // XLSX.writeFile(workbook, fileName+'.xlsx');
       
     })
     }
@@ -344,25 +358,10 @@ export class ProcessSalaryComponent implements OnInit {
         });
     }
   }
-  // imgToBase64(url, callback) {
-  //   if (!window.FileReader) {
-  //     callback(null);
-  //     return;
-  //   }
-  //   const xhr = new XMLHttpRequest();
-  //   xhr.responseType = 'blob';
-  //   xhr.onload = function () {
-  //     const reader = new FileReader();
-  //     reader.onloadend = function () {
-  //       callback((reader.result as string).replace('text/xml', 'image/jpeg'));
-  //     };
-  //     reader.readAsDataURL(xhr.response);
-  //   };
-  //   xhr.open('GET', url);
-  //   xhr.send();
-  // }
+  
   converttoPDF(itemNew) {
     var style:any = itemNew[0].orientation
+    var currentmonth = this.currentmonth;
     var doc:any = new jsPDF();
     var rows:any = [];
 
@@ -374,9 +373,8 @@ itemNew.forEach(element => {
     rows.push(Object.values(element))
 
 });
-// var body = rows.alternateRowStyles= {fillColor : [231, 215, 252]}
 
-     var base64Img;
+    //  var base64Img;
 
   // Convert the image to base64
   // this.imgToBase64("https://Compacct/src/assets/adminSB/dist/img/Kashvi.jpeg", function(base64) {
@@ -385,29 +383,34 @@ itemNew.forEach(element => {
   // });
     // Static base64 for example purposes
     // base64Img = 
-    
+    var imgData;
+    imgData = "../../../../Content/dist/img/Kashvi.jpeg"
   
     doc.autoTable({
-      theme: "plain",
+      theme: "grid",
       head:[column],
       body:rows,
-      headStyles :{fillColor : [255, 255, 255],lineColor:[255,0,0],textColor:[0, 0, 0]},
-      alternateRowStyles: {lineColor:[255,0,0],},
-      tableLineColor: [0, 0, 0],
-      tableLineWidth: 0.1,
+      headStyles :{fillColor : [255, 255, 255],lineWidth: 0.1,lineColor:[0,0,0],textColor:[0, 0, 0]},
+      bodyStyles: {lineWidth: 0.1,lineColor:[0,0,0]},
+      // alternateRowStyles: {lineColor:[255,0,0],},
+      //tableLineColor: [0, 0, 0],
+      // tableLineWidth: 0.1,
       
       didDrawPage: function (data) {
         // Header
         // doc.setFontSize(20);
         // doc.setTextColor(40);
         // doc.setFontStyle('normal');
-        if (base64Img) {
-            doc.addImage(base64Img, 'JPEG', data.settings.margin.left, 15, 10, 15);
+        var width = doc.internal.pageSize.getWidth()
+        // var height = doc.internal.pageSize.getHeight();
+        if (imgData) {   
+            doc.addImage(imgData, 'JPEG', data.settings.margin.left,10,30,25);  // for add image
         }
-        doc.text(50, 21, "MODERN INDIA CON-CAST LIMITED", 'center')
-        // doc.text('MODERN INDIA CON-CAST LIMITED', 40, 250, 'center');
-        // doc.text(str, pageWidth / 2, pageHeight  - 10, {align: 'center'});
-
+        doc.text('MODERN INDIA CON-CAST LIMITED', width/2, 17, { align: 'center' },{fontSize: 12})
+        doc.setFontSize(10);
+        doc.text('(A unit of Kasvi Group)', width/2, 22, { align: 'center' },{fontSize: 3})
+        doc.text('Bhuniaraichak, J.L No-122, Haldia-721635, Purba Medinipur, West Bengal', width/2, 27, { align: 'center' },{fontSize: 0.4})
+        doc.text('Salary for The Month of ' + currentmonth, width/2, 32, { align: 'center' },{styles: { fontSize: 3 }})
         // // Footer
         // var str = "Page " + doc.internal.getNumberOfPages()
         // // Total page number plugin only available in jspdf v1.0+
