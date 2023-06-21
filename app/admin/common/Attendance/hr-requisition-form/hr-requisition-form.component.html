@@ -1,0 +1,513 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="row">
+   <div class="col-xs-12">
+      <div class="box box-primary">
+         <div class="form-horizontal">
+            <div class="box-body">
+               <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                  <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[0]"
+                     leftIcon="glyphicon glyphicon-list-alt">
+                     <p-table [value]="tableData" [paginator]="true" [rows]="10" [rowHover]="true" [autoLayout]="true"
+                        sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100,200,300]"
+                        [globalFilterFields]="tableSearchField" [rowHover]="true" #dt>
+                        <ng-template pTemplate="caption">
+                           <div class="row">
+                              <div class="col-sm-3 pull-right" style="text-align: right">
+                                 <input type="text" pInputText size="50" placeholder="Search"
+                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                    class="searchInput form-control">
+                              </div>
+                           </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                           <tr>
+                              <th style="width:5em">Action</th>
+                              <th style="text-align: center ;" nowrap>Created By</th>
+                              <th style="text-align: center ;" nowrap>Created On</th>
+                              <th style="text-align: center ;" nowrap>Position Title</th>
+                              <th style="text-align: center ;" nowrap>Position Type</th>
+                              <th style="text-align: center ;" nowrap>Source</th>
+                              <th style="text-align: center ;" nowrap>Position Details</th>
+                              <th style="text-align: center ;" nowrap>Department</th>
+                              <th style="text-align: center ;" nowrap>Clinic Type</th>
+                              <th style="text-align: center ;" nowrap>Location</th>
+                              <th style="text-align: center ;" nowrap>Region</th>
+                              <th style="text-align: center ;" nowrap>Needed For</th>
+                              <th style="text-align: center ;" nowrap>Recruitment Urgency</th>
+                              <th style="text-align: center ;" nowrap>Remarks</th>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-col>
+                           <tr>
+                              <td>
+                                 <div class="dropdown">
+                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button"
+                                       data-toggle="dropdown" style="height:27px">
+                                       <i class="fa fa-fw fa-bars"></i>
+                                       <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                       <li
+                                          *ngIf="col.Approved_Note_Business_Manager==null&&col.Approved_Note_Reporting_Manager==null&&col.Approved_Status_Business_Manager==null&&col.Approved_Status_Reporting_Manager==null">
+                                          <a (click)="Edit(col)">
+                                             <i class="fa fa-fw fa-edit"></i> Edit
+                                          </a>
+                                       </li>
+                                    </ul>
+                                 </div>
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Created_By1 ? col.Created_By1 : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Created_By_Dept ? col.Created_By_Dept :
+                                 '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Position_Title ? col.Position_Title : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Position_Type ? col.Position_Type : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Source ? col.Source : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Position_Details ? col.Position_Details :
+                                 '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Dept_Name ? col.Dept_Name : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Clinic_Type ? col.Clinic_Type : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Location ? col.Location : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Region ? col.Region : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Needed_For ? col.Needed_For : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Recruitment_Urgency ?
+                                 col.Recruitment_Urgency : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Remarks ? col.Remarks : '-'}}</td>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorright" let-state>
+                           Showing {{state.first+1}} of {{(state.first) + state.rows}} of {{state.totalRecords}}
+                        </ng-template>
+                     </p-table>
+                  </p-tabPanel>
+                  <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[1]"
+                     leftIcon="glyphicon glyphicon-floppy-save">
+                     <form name="RequisitionForm" #RequisitionForm="ngForm" novalidate>
+                        <!-- First Panel -->
+                        <div class="panel panel-primary">
+                           <div class="panel-heading">POSITION SPECIFICATION</div>
+                           <div class="panel-body">
+                              <div class="row">
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Position Title<sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="PositionList" name="PositionLists" #PositionLists="ngModel"
+                                       [(ngModel)]="objRequisition.Position_Title" [showClear]="true"
+                                       [emptyFilterMessage]="'No Position Found'" [filter]="true" filterBy="label,value"
+                                       [resetFilterOnHide]="true" [placeholder]="'Select Position'"
+                                       [virtualScroll]="true" itemSize="30"
+                                       [styleClass]="requisitionFormSubmitted && PositionLists.errors?.required ? 'clearance' :''"
+                                       [required]="true">
+                                    </p-dropdown>
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Position Type<sup class="text-danger">*</sup></label>
+                                    <select name="Position_Type" class="form-control" #Position_Type="ngModel"
+                                       [(ngModel)]="objRequisition.Position_Type"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && Position_Type?.errors?.required) }"
+                                       required>
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="New">New</option>
+                                       <option value="Replacement">Replacement</option>
+                                       <option value="Reorganization">Reorganization</option>
+                                    </select>
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Source<sup class="text-danger">*</sup></label>
+                                    <select name="source" class="form-control" #source="ngModel"
+                                       [(ngModel)]="objRequisition.Source"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && source?.errors?.required) }"
+                                       required>
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Internal Candidates">Internal Candidates</option>
+                                       <option value="External Candidates">External Candidates</option>
+                                       <option value="Internal and External Candidates">Internal and External Candidates
+                                       </option>
+                                    </select>
+                                 </div>
+
+                              </div>
+                              <div class="row">
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Position Details<sup
+                                          class="text-danger">*</sup></label>
+                                    <select name="Position_Details" class="form-control" #Position_Details="ngModel"
+                                       [(ngModel)]="objRequisition.Position_Details"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && Position_Details?.errors?.required) }"
+                                       required>
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Permanent">Permanent</option>
+                                       <option value="Temp">Temp</option>
+                                       <option value="Intern">Intern</option>
+                                       <option value="Consultant">Consultant</option>
+                                    </select>
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Department<sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="DepartmentList" name="DepartmentLists"
+                                       #DepartmentLists="ngModel" [(ngModel)]="objRequisition.Dept_ID"
+                                       [showClear]="true" [emptyFilterMessage]="'No Department Found'" [filter]="true"
+                                       filterBy="label,value" [resetFilterOnHide]="true"
+                                       [placeholder]="'Select Department'" [virtualScroll]="true" itemSize="30"
+                                       (onChange)="departMentChange()"
+                                       [styleClass]="requisitionFormSubmitted &&  DepartmentLists.errors?.required ? 'clearance' :''"
+                                       [required]="true">
+                                    </p-dropdown>
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Clinic Type<sup class="text-danger">*</sup></label>
+                                    <select name="Clinic_Type" class="form-control" #Clinic_Type="ngModel"
+                                       [(ngModel)]="objRequisition.Clinic_Type" (change)="clinicChange()"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && Clinic_Type?.errors?.required) }"
+                                       required>
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="New Clinic">New Clinic</option>
+                                       <option value="Existing Clinic">Existing Clinic</option>
+                                    </select>
+                                 </div>
+
+                              </div>
+                              <div class="row">
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Cost Centre Detail In case of Existing</label>
+                                    <p-dropdown [options]="CostCenterList" name="CostCenterLists"
+                                       #CostCenterLists="ngModel" [(ngModel)]="objRequisition.Cost_Cen_ID"
+                                       [showClear]="true" [emptyFilterMessage]="'No Cost Center Found'" [filter]="true"
+                                       filterBy="label,value" [resetFilterOnHide]="true"
+                                       [placeholder]="'Select Cost Center'" [virtualScroll]="true" itemSize="30"
+                                       [styleClass]="requisitionFormSubmitted &&  CostCenterLists.errors?.required ? 'clearance' :''"
+                                       [required]="true">
+                                    </p-dropdown>
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Location<sup class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Location" name="Location"
+                                       #Location="ngModel" [(ngModel)]="objRequisition.Location"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && Location?.errors?.required) }"
+                                       required>
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Region<sup class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Region" name="Region"
+                                       #Region="ngModel" [(ngModel)]="objRequisition.Region"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && Region?.errors?.required) }"
+                                       required>
+                                 </div>
+
+                              </div>
+                              <div class="row">
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Needed For<sup class="text-danger">*</sup></label>
+                                    <select name="Needed_For" class="form-control" #Needed_For="ngModel"
+                                       [(ngModel)]="objRequisition.Needed_For"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && Needed_For?.errors?.required) }"
+                                       required>
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Clinic">Clinic</option>
+                                       <option value="HO">HO</option>
+                                       <option value="Field work">Field work</option>
+                                       <option value="Other">Other</option>
+                                    </select>
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Recruitment Urgency<sup
+                                          class="text-danger">*</sup></label>
+                                    <select name="Recruitment_urgency" class="form-control"
+                                       #Recruitment_urgency="ngModel" [(ngModel)]="objRequisition.Recruitment_Urgency"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && Recruitment_urgency?.errors?.required) }"
+                                       required>
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Immediate hiring">Immediate hiring</option>
+                                       <option value="Normal">Normal</option>
+                                       <option value="Succession planning">Succession planning</option>
+                                       <option value="Talent acquisition competition">Talent acquisition competition
+                                       </option>
+                                       <option value="Expansion or growth">Expansion or growth</option>
+                                       <option value="Emergency">Emergency</option>
+                                       <option value="replacement">replacement</option>
+                                       <option value="Mergers and acquisitions">Mergers and acquisitions</option>
+                                    </select>
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Reporting Manager of the Position</label>
+                                    <p-dropdown [options]="RepManPosList" name="RepManPosLists"
+                                       #RepManPosLists="ngModel" [(ngModel)]="objRequisition.Report_manager"
+                                       [showClear]="true" [emptyFilterMessage]="'No Reporting Manager Found'"
+                                       [filter]="true" filterBy="label,value" [resetFilterOnHide]="true"
+                                       [placeholder]="'Select Reporting Manager'" [virtualScroll]="true" itemSize="30"
+                                       [styleClass]="requisitionFormSubmitted &&  RepManPosLists.errors?.required ? 'clearance' :''"
+                                       [required]="true">
+                                    </p-dropdown>
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Remarks<sup class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Remarks" name="Remarks"
+                                       #Remarks="ngModel" [(ngModel)]="objRequisition.Note"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && Remarks?.errors?.required) }"
+                                       required>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <!-- Second Panel -->
+                        <div class="panel panel-primary">
+                           <div class="panel-heading">INTERVIEW PANEL</div>
+                           <div class="panel-body">
+                              <div class="row">
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Level 1<sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="level1EmpList" name="level1EmpLists"
+                                       #level1EmpLists="ngModel" [(ngModel)]="objRequisition.Interviewer_Level_1"
+                                       [showClear]="true" [emptyFilterMessage]="'No Employee Found'" [filter]="true"
+                                       filterBy="label,value" [resetFilterOnHide]="true"
+                                       [placeholder]="'Select Employee'" [virtualScroll]="true" itemSize="30"
+                                       [styleClass]="requisitionFormSubmitted &&  level1EmpLists.errors?.required ? 'clearance' :''"
+                                       [required]="true">
+                                    </p-dropdown>
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Level 2<sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="level2EmpList" name="level2EmpLists"
+                                       #level2EmpLists="ngModel" [(ngModel)]="objRequisition.Interviewer_Level_2"
+                                       [showClear]="true" [emptyFilterMessage]="'No Employee Found'" [filter]="true"
+                                       filterBy="label,value" [resetFilterOnHide]="true"
+                                       [placeholder]="'Select Employee'" [virtualScroll]="true" itemSize="30"
+                                       [styleClass]="requisitionFormSubmitted &&  level2EmpLists.errors?.required ? 'clearance' :''"
+                                       [required]="true">
+                                    </p-dropdown>
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Level 3<sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="level3EmpList" name="level3EmpLists"
+                                       #level3EmpLists="ngModel" [(ngModel)]="objRequisition.Interviewer_Level_3"
+                                       [showClear]="true" [emptyFilterMessage]="'No Employee Found'" [filter]="true"
+                                       filterBy="label,value" [resetFilterOnHide]="true"
+                                       [placeholder]="'Select Employee'" [virtualScroll]="true" itemSize="30"
+                                       [styleClass]="requisitionFormSubmitted &&  level3EmpLists.errors?.required ? 'clearance' :''"
+                                       [required]="true">
+                                    </p-dropdown>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <!-- Third Panel-->
+                        <div class="panel panel-primary">
+                           <div class="panel-heading">CLINIC INFORMATION </div>
+                           <div class="panel-body">
+                              <div class="row">
+                                 <div class="col-sm-2">
+                                    <label class="control-label">Setup<sup class="text-danger">*</sup></label>
+                                 </div>
+                                 <div class="col-sm-2">
+                                    <input type="radio" id="SIS" name="Setup" value="SIS"
+                                       [(ngModel)]="objRequisition.Setup_Type">
+                                    <label for="SIS">SIS</label>
+                                 </div>
+                                 <div class="col-sm-2">
+                                    <input type="radio" id="Hospital" name="Setup" value="Hospital"
+                                       [(ngModel)]="objRequisition.Setup_Type">
+                                    <label for="Hospital">Hospital</label>
+                                 </div>
+                                 <div class="col-sm-2">
+                                    <input type="radio" id="Corporate" name="Setup" value="Corporate"
+                                       [(ngModel)]="objRequisition.Setup_Type">
+                                    <label for="Corporate">Corporate</label>
+                                 </div>
+                                 <div class="col-sm-2">
+                                    <input type="radio" id="Visiting" name="Setup" value="Visiting"
+                                       [(ngModel)]="objRequisition.Setup_Type">
+                                    <label for="Visiting">Visiting</label>
+                                 </div>
+                                 <div class="col-sm-2">
+                                    <input type="radio" id="RoamingProfile" name="Setup" value="Roaming Profile"
+                                       [(ngModel)]="objRequisition.Setup_Type">
+                                    <label for="RoamingProfile">Roaming Profile</label>
+                                 </div>
+                              </div>
+                              <hr style="background-color: lightgray; height: 2px;">
+                              <div class="row" *ngIf="this.objRequisition.Clinic_Type=='New Clinic'">
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Clinic Opening Date<sup
+                                          class="text-danger">*</sup></label>
+                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]="ClinicOpeningDate"
+                                       [(ngModel)]='ClinicOpeningDate' name="ClinicOpeningDate"
+                                       #ClinicOpenDate="ngModel"
+                                       [required]="this.objRequisition.Clinic_Type=='New Clinic'"
+                                       [cssClass]="requisitionFormSubmitted && ClinicOpenDate.errors?.required ? 'clearance' :''">
+                                    </ejs-datepicker>
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Clinic Opening Timings<sup
+                                          class="text-danger">*</sup></label>
+                                    <ejs-timepicker placeholder='Select Opening time' [(value)]="ClinicOpeningTimings"
+                                       name="ClinicOpeningTimings" [format]="'hh:mm a'"
+                                       [(ngModel)]='ClinicOpeningTimings' #ClinicOpeningTiming="ngModel"
+                                       [required]="this.objRequisition.Clinic_Type=='New Clinic'"
+                                       [cssClass]="requisitionFormSubmitted && ClinicOpeningTiming.errors?.required ? 'clearance' :''"></ejs-timepicker>
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Clinic Closing Timings<sup
+                                          class="text-danger">*</sup></label>
+                                    <ejs-timepicker placeholder='Select Closing time' [(value)]="ClinicClosingTimings"
+                                       name="ClinicClosingTimings" [format]="'hh:mm a'"
+                                       [(ngModel)]='ClinicClosingTimings' #ClinicClosingTiming="ngModel"
+                                       [required]="this.objRequisition.Clinic_Type=='New Clinic'"
+                                       [cssClass]="requisitionFormSubmitted && ClinicClosingTiming.errors?.required ? 'clearance' :''"></ejs-timepicker>
+                                 </div>
+                              </div>
+                              <div class="row" *ngIf="this.objRequisition.Clinic_Type=='New Clinic'">
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Week Off<sup class="text-danger">*</sup></label>
+                                    <select name="week_off" class="form-control" #week_off="ngModel"
+                                       [(ngModel)]="objRequisition.Weekly_Off_Day"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && week_off?.errors?.required) }"
+                                       [required]="this.objRequisition.Clinic_Type=='New Clinic'">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Sunday">Sunday</option>
+                                       <option value="Monday">Monday</option>
+                                       <option value="Tuesday">Tuesday</option>
+                                       <option value="Thursday">Thursday</option>
+                                       <option value="Friday">Friday</option>
+                                       <option value="Saturday">Saturday</option>
+                                    </select>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <!-- Fourth Panel -->
+                        <div class="panel panel-primary">
+                           <div class="panel-heading">JOB SPECIFICATION</div>
+                           <div class="panel-body">
+                              <div class="row">
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Educational & Professional Qualifications<sup
+                                          class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control"
+                                       placeholder="Educational & Professional Qualifications" name="Qualifications"
+                                       #Qualifications="ngModel" [(ngModel)]="objRequisition.Highest_Qualification"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && Qualifications?.errors?.required) }"
+                                       required>
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Years of Experience<sup
+                                          class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Years of Experience"
+                                       name="Experience" #Experience="ngModel"
+                                       [(ngModel)]="objRequisition.Year_Of_Experience" pattern="^[0-9]{1,}(|.[0-9]{1})$"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && Experience?.errors?.required) || Experience?.errors?.pattern}"
+                                       required CompacctDigitonly="true">
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Industry/Company Benchmark for Sourcing<sup
+                                          class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control"
+                                       placeholder="Industry/Company Benchmark for Sourcing" name="Sourcing"
+                                       #Sourcing="ngModel" [(ngModel)]="objRequisition.Sourcing_Benchmark"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && Sourcing?.errors?.required) }"
+                                       required>
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <div class="col-sm-6">
+                                    <label class="control-label">Preferred Companies to hire from (At least 3 names)<sup
+                                          class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control"
+                                       placeholder="Preferred Companies to hire from (At least 3 names)"
+                                       name="Preferred_Companies" #Preferred_Companies="ngModel"
+                                       [(ngModel)]="objRequisition.Hire_From_Companies"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && Preferred_Companies?.errors?.required) }"
+                                       required>
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Additional Specifications<sup
+                                          class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Additional Specifications"
+                                       name="Specifications" #Specifications="ngModel"
+                                       [(ngModel)]="objRequisition.Additional_Spec"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && Specifications?.errors?.required) }"
+                                       required>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <!-- Fifth Panel -->
+                        <div class="panel panel-primary">
+                           <div class="panel-heading">BELOW SECTION TO BE FILLED BY TA / HR Manager</div>
+                           <div class="panel-body">
+                              <div class="row">
+                                 <div class="col-sm-4">
+                                    <label class="control-label">CTC as per Budget<sup
+                                          class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="CTC as per Budget"
+                                       name="Budget" #Budget="ngModel" [(ngModel)]="objRequisition.CTC_As_Per_Budget"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && Budget?.errors?.required) }"
+                                       required CompacctDigitonly="true">
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Proposed fixed CTC Band<sup
+                                          class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Proposed fixed CTC Band"
+                                       name="CTCBand" #CTCBand="ngModel" [(ngModel)]="objRequisition.Proposed_CTC_Bond"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && CTCBand?.errors?.required) }"
+                                       required CompacctDigitonly="true">
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Max CTC Variation (Justification)<sup
+                                          class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control"
+                                       placeholder="Max CTC Variation (Justification)" name="Justification"
+                                       #Justification="ngModel" [(ngModel)]="objRequisition.Max_CTC_Varience"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && Justification?.errors?.required) }"
+                                       required CompacctDigitonly="true">
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Grade as per Budget<sup
+                                          class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Grade as per Budget"
+                                       name="GradeBudget" #GradeBudget="ngModel"
+                                       [(ngModel)]="objRequisition.Grade_As_Per_Budget"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && GradeBudget?.errors?.required) }"
+                                       required CompacctDigitonly="true">
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Proposed Grade Range & Designation<sup
+                                          class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control"
+                                       placeholder="Proposed Grade Range & Designation" name="Designation"
+                                       #Designation="ngModel"
+                                       [(ngModel)]="objRequisition.Proposed_Grade_Range_Designation"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && Designation?.errors?.required) }"
+                                       required CompacctDigitonly="true">
+                                 </div>
+                                 <div class="col-sm-4"><label class="control-label">Remarks<sup
+                                          class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Remarks" name="Remarks2"
+                                       #Remarks2="ngModel" [(ngModel)]="objRequisition.Remarks"
+                                       [ngClass]="{clearance: (requisitionFormSubmitted && Remarks2?.errors?.required) }"
+                                       required>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="form-group">
+                           <button class="btn btn-primary pull-right" (click)="SaveForm(RequisitionForm.form.valid)"
+                              [disabled]="Spinner" id="load" style="margin-right: 15px;">
+                              <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}"
+                                 strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+                              <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                           </button>
+                        </div>
+                     </form>
+                  </p-tabPanel>
+               </p-tabView>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
