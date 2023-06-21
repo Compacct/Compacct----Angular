@@ -125,7 +125,7 @@ export class DoctorAppointmentComponent implements OnInit {
     {'Consultancy_Type_id': 128}, {'Consultancy_Type_id': 129}, {'Consultancy_Type_id': 131},
     {'Consultancy_Type_id': 132}, {'Consultancy_Type_id': 133}, {'Consultancy_Type_id': 134},
     {'Consultancy_Type_id': 135}, {'Consultancy_Type_id': 136}, {'Consultancy_Type_id': 140},
-    { 'Consultancy_Type_id': 141}, { 'Consultancy_Type_id': 142 }, 
+    { 'Consultancy_Type_id': 141 }, { 'Consultancy_Type_id': 142 },{'Consultancy_Type_id': 143 }, 
   ]
   constructor(    
     private $http: HttpClient,

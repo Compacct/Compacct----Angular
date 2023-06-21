@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MessageService } from "primeng/api";
+import { HttpClient } from '@angular/common/http';
 import { CompacctCommonApi } from "../../../shared/compacct.services/common.api.service";
 import { CompacctHeader } from "../../../shared/compacct.services/common.header.service";
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
@@ -18,6 +19,7 @@ export class EmployeeTransferComponent implements OnInit {
   tabIndexToView: number = 0;
   buttonname: string = "Save";
   items: any = [];
+  initDate:any = [];
   Spinner: boolean = false;
   seachSpinner: boolean = false;
   ObjEmpTransfer: EmpTransfer = new EmpTransfer();
@@ -38,7 +40,8 @@ export class EmployeeTransferComponent implements OnInit {
   SerarchEmpTransferListHeader:any = [];
 
   constructor(
-    private compact: CompacctCommonApi,
+    private $http : HttpClient,
+    public $CompacctAPI: CompacctCommonApi,
     private header: CompacctHeader,
     private GlobalAPI: CompacctGlobalApiService,
     private compacctToast: MessageService,
@@ -56,6 +59,7 @@ export class EmployeeTransferComponent implements OnInit {
     this.ReasonForTransferList = ["Requested ", "Skills and talent utilization", "Career development", "Employee retention",
                                  "Succession planning", "Business needs and resource allocation", "Performance improvement or disciplinary reasons",
                                  "Organizational restructuring"];
+    this.Finyear();
     this.GetEmployee();
     this.GetTransferFrom();
     this.GetTransferTo();
@@ -84,6 +88,14 @@ export class EmployeeTransferComponent implements OnInit {
     if (this.UploadFile) {
       this.UploadFile.clear();
     }
+  }
+  Finyear() {
+    this.$http
+      .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
+      .subscribe((res: any) => {
+      let data = JSON.parse(res)
+     this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
+      });
   }
   GetEmployee(){
     this.EmployeeList = [];
@@ -193,7 +205,7 @@ export class EmployeeTransferComponent implements OnInit {
         msg = "Save"
       }
       this.ObjEmpTransfer.Transfer_Date = this.DateService.dateConvert(new Date(this.Transfer_Date));
-      this.ObjEmpTransfer.Created_By = this.compact.CompacctCookies.User_ID;
+      this.ObjEmpTransfer.Created_By = this.$CompacctAPI.CompacctCookies.User_ID;
       // console.log('save obj', this, this.ObjAppraisal);
       const obj = {
         "SP_String": "SP_HR_Txn_Employee_Transfer_Module",

@@ -246,7 +246,7 @@ onConfirm(){
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       // console.log("del Data===", data[0].Column1)
-      if (data[0].Column1){
+      if (data[0].message == 'Update done'){
         this.onReject();
         this.GetPendingSearchedList();
         this.Approved = false;
