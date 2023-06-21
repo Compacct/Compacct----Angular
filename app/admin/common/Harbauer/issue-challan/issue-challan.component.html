@@ -362,7 +362,7 @@
                             <fieldset class="col-md-12">
                                 <legend>Filter</legend>
                                 <div class="form-group" >
-                                   <div class="col-sm-3">
+                                   <div class="col-sm-4">
                                       <label class="control-label">Site Description<span class="text-danger"></span></label>
                                       <p-multiSelect [options]="DistSite"  
                                         itemSize="30" [styleClass]="'compacct-multiselect'"  
@@ -370,7 +370,7 @@
                                         name="SiteDescription"
                                         (onChange)='FilterDistbuttonList()'></p-multiSelect>
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-4">
                                         <label class="control-label">Budget Group Name<span class="text-danger"></span></label>
                                         <p-multiSelect [options]="DistBudgetGroup"  
                                           itemSize="30" [styleClass]="'compacct-multiselect'"  
@@ -378,22 +378,14 @@
                                           name="BudgetGroupName"
                                           (onChange)='FilterDistbuttonList()'></p-multiSelect>
                                       </div>
-                                      <div class="col-sm-3">
-                                        <label class="control-label">Budget Sub Group Name<span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="DistBudgetSubGroup"  
-                                          itemSize="30" [styleClass]="'compacct-multiselect'"  
-                                          [(ngModel)]="SelectedBudgetSubGroup"
-                                          name="BudgetSubGroupName"
-                                          (onChange)='FilterDistbuttonList()'></p-multiSelect>
-                                      </div>
-                                      <div class="col-sm-3">
-                                        <label class="control-label">Work Details<span class="text-danger"></span></label>
-                                        <p-multiSelect [options]="DistWorkDetails"  
-                                          itemSize="30" [styleClass]="'compacct-multiselect'" 
-                                          [(ngModel)]="SelectedDistWorkDetails"
-                                          name="WorkDetails"
-                                          (onChange)='FilterDistbuttonList()'></p-multiSelect>
-                                      </div>
+                                    <div class="col-sm-4">
+                                    <label class="control-label">Budget Sub Group Name<span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="DistBudgetSubGroup"  
+                                        itemSize="30" [styleClass]="'compacct-multiselect'"  
+                                        [(ngModel)]="SelectedBudgetSubGroup"
+                                        name="BudgetSubGroupName"
+                                        (onChange)='FilterDistbuttonList()'></p-multiSelect>
+                                    </div>
                                 </div>
                             </fieldset>
                         </div>
@@ -412,10 +404,11 @@
                                             <th  style="width: 11%;" >Batch No</th>
                                             <th nowrap>Batch QTY</th>
                                             <th style="width: 15%;">Issue QTY</th>
+                                            <th> Delete </th>
                                        </tr>
                                   </thead>
                                    <tbody>
-                                    <tr *ngFor="let optt of buttonList">
+                                    <tr *ngFor="let optt of buttonList;let i = index">
                                         <td>{{optt.Site_Description}}</td>
                                         <td>{{optt.Budget_Group_Name}}</td>
                                         <td>{{optt.Budget_Sub_Group_Name}}</td>
@@ -431,7 +424,12 @@
                                         <td>{{getToFix(optt.Batch_Qty)}}</td>
                                         <td>
                                             <input class="form-control"  CompacctDigitonly="true" [name]="optt.Product_ID"
-                                            [(ngModel)]="optt.Del_Qty" (ngModelChange)="QTYCheck(optt)">
+                                            [(ngModel)]="optt.Del_Qty" (ngModelChange)="QTYCheck(optt)" [ngClass]="{'clearance': validatationBatch_No && !optt.Del_Qty }" >
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-sm btn-danger" (click)="Deletebutton(i)"
+                                                ><div><i class="fa fa-fw fa-trash"> </i></div>
+                                              </a>
                                         </td>
                                     </tr>
                                    <tr *ngIf="buttonList.length" >

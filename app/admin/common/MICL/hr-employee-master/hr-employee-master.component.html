@@ -285,6 +285,10 @@
                                     <label class="control-label">Spouse Name</label>
                                     <input class="form-control" placeholder="Spouse Name" name="Husband" #Husband="ngModel" [(ngModel)]="objemployee.Spouse_Wife_Name" [disabled]="userdisabled">
                                 </div>
+                                <div class="col-sm-3" *ngIf="databaseName === 'GN_JOH_HR'">
+                                    <label class="control-label">Date Of Anniversary</label>
+                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Date_Of_Anniversary' name="doanni" [enabled]="userdatedisabled"></ejs-datepicker>
+                                </div>
                                 <div class="col-sm-2" style="margin-top: 17px;" *ngIf="databaseName === 'GN_JOH_HR'">
                                     <label class="control-label">Child Details</label>
                                     <p-checkbox [(ngModel)]="objemployee.Child_Details" name="childdetails" [disabled]="userdisabled" [binary]="true" (onChange)="clearchilddetails()"></p-checkbox>
@@ -447,7 +451,11 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Bank Account No<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" placeholder="Type Bank Account No" name="AcNo" #AcNo="ngModel" [(ngModel)]="objemployee.Bank_Ac_No" [disabled]="isdiabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && AcNo.errors?.required}" required>
+                                        <input class="form-control" type="password" placeholder="Type Bank Account No" name="AcNo" #AcNo="ngModel" [(ngModel)]="objemployee.Bank_Ac_No" (ngModelChange)="checkbankacno()" [disabled]="isdiabled" CompacctDigitonly="true" [ngClass]="{'clearance ': (EmployeeFormSubmitted && AcNo.errors?.required) || bankacnoflag}" required>
+                                    </div>
+                                    <div class="col-sm-4" *ngIf="databaseName === 'GN_JOH_HR'">
+                                        <label class="control-label">Re-enter Bank A/C No<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" placeholder="Re-enter Bank Account No" name="reenterbankacno" #reenterbankacno="ngModel" [(ngModel)]="objemployee.Re_Enter_Bank_Ac_No" (ngModelChange)="checkbankacno()" [disabled]="isdiabled" CompacctDigitonly="true" [ngClass]="{'clearance ': (EmployeeFormSubmitted && reenterbankacno.errors?.required) || bankacnoflag}" required>
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Bank Name<sup class="text-danger">*</sup></label>

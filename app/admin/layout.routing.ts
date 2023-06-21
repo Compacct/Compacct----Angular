@@ -386,7 +386,9 @@ import { K4cAcceptRawMaterialStockTransferComponent } from './common/MaterialMan
 import { AttendanceRegularizationComponent } from './common/Attendance/attendance-regularization/attendance-regularization.component';
 import { ApproveAttendanceRegularizationComponent } from './common/Attendance/approve-attendance-regularization/approve-attendance-regularization.component';
 import { EmployeeTransferComponent } from './common/Attendance/employee-transfer/employee-transfer.component';
+import { HearingCRMLeadFollowupComponent } from "./common/CRM/Followup/hearing-crm-lead-followup/hearing-crm-lead-followup.component";
 import { HrRequisitionFormComponent } from './common/Attendance/hr-requisition-form/hr-requisition-form.component';
+
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2945,12 +2947,20 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
     }
     },
     {
+      path: 'Hearing_CRM_Lead_Followup',
+        component: HearingCRMLeadFollowupComponent,
+        data: {
+          title: 'Hearing CRM Lead Followup'
+    }
+    },
+      {
       path: 'HR_Requisition_Form',
         component: HrRequisitionFormComponent,
         data: {
           title: 'Hr Requisition Form'
     }
     },
+
     
     
     /*{

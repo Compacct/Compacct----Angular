@@ -483,6 +483,7 @@ import { K4cAcceptRawMaterialStockTransferComponent } from './common/MaterialMan
 import { AttendanceRegularizationComponent } from './common/Attendance/attendance-regularization/attendance-regularization.component';
 import { ApproveAttendanceRegularizationComponent } from './common/Attendance/approve-attendance-regularization/approve-attendance-regularization.component';
 import { EmployeeTransferComponent } from './common/Attendance/employee-transfer/employee-transfer.component';
+import { HearingCRMLeadFollowupComponent } from './common/CRM/Followup/hearing-crm-lead-followup/hearing-crm-lead-followup.component';
 import { HrRequisitionFormComponent } from './common/Attendance/hr-requisition-form/hr-requisition-form.component';
 
 
@@ -885,7 +886,8 @@ import { HrRequisitionFormComponent } from './common/Attendance/hr-requisition-f
     AttendanceRegularizationComponent,
     ApproveAttendanceRegularizationComponent,
     EmployeeTransferComponent,
-    HrRequisitionFormComponent
+    HearingCRMLeadFollowupComponent,
+     HrRequisitionFormComponent
   ],
   imports: [
     CommonModule,

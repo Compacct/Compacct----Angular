@@ -191,7 +191,7 @@
                                         <tr>
                                             <td class="text-center" style="vertical-align:middle">1</td>
                                             <td>BASIC</td>
-                                            <td class="text-center" style="vertical-align:middle">{{ObjFullAndFinalSettlement.Total_Days}}</td>
+                                            <td class="text-center" style="vertical-align:middle"></td> <!-- {{ObjFullAndFinalSettlement.Total_Days}} -->
                                             <td><input type="text" name="basicamt" #basicamt="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Total_Basic_Amount' class="form-control" CompacctDigitonly="true"
                                                 [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && basicamt.errors?.required}" required/>
                                             </td>
@@ -249,7 +249,9 @@
                                         <tr>
                                             <td class="text-center" style="vertical-align:middle">1</td>
                                             <td>BASIC</td>
-                                            <td class="text-center" style="vertical-align:middle">{{ObjFullAndFinalSettlement.Last_Month_Payable_Days}}</td>
+                                            <td><input type="text" name="lastmpd" #lastmpd="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_Month_Payable_Days' CompacctDigitonly="true" class="form-control" style="width: 71px;"
+                                                (ngModelChange)="getEmployeeLastMonthEarningDetails()" [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && lastmpd.errors?.required}"/></td>
+                                            <!-- <td class="text-center" style="vertical-align:middle">{{ObjFullAndFinalSettlement.Last_Month_Payable_Days}}</td> -->
                                             <td><input type="text" name="lastbasicamt" #lastbasicamt="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Last_Basic_Amount' class="form-control" CompacctDigitonly="true"
                                                 [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && lastbasicamt.errors?.required}" required/>
                                             </td>
@@ -374,7 +376,7 @@
                                         <tr>
                                             <td class="text-center" style="vertical-align:middle">5</td>
                                             <td>Notice Period Deduction</td>
-                                            <td><input type="text" name="npddays" #npddays="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Notice_Period_Day' CompacctDigitonly="true" class="form-control" style="width: 71px;"
+                                            <td class="text-center" style="vertical-align:middle"><input type="text" name="npddays" #npddays="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Notice_Period_Day' CompacctDigitonly="true" class="form-control" style="width: 71px;"
                                                 (ngModelChange)="CalculateNoticePeriod()" [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && npddays.errors?.required}"/></td>
                                             <td><input type="text" name="npd" #npd="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Notice_Period_Amount' CompacctDigitonly="true" class="form-control" disabled="true"
                                                 [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && npd.errors?.required}" required/></td>

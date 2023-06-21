@@ -9,7 +9,10 @@ import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.
 import * as XLSX from 'xlsx';
 import { formatDate } from '@angular/common';
 import { format } from 'url';
-declare var $:any;
+declare var $: any;
+import html2canvas from 'html2canvas';
+import { jsPDF } from "jspdf";
+import 'jspdf-autotable';
 
 @Component({
   selector: 'app-process-salary',
@@ -38,6 +41,7 @@ export class ProcessSalaryComponent implements OnInit {
 
   processSalarydisabled = false;
   bankregdisabled = false;
+  currentmonth: any;
 
   constructor(
     private route : ActivatedRoute,
@@ -102,7 +106,18 @@ export class ProcessSalaryComponent implements OnInit {
       console.log('this.BrowseList',this.BrowseList)
       this.CheckBackRegister();
   })
+    
   }
+  }
+  getcurrentmonth(){
+    var firstDate = this.Month_Name+'-'+'01'
+    const currentdate = new Date(firstDate);
+    const month = currentdate.getMonth();
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"];
+
+    this.currentmonth = monthNames[month];
+    console.log('monthNames====',this.currentmonth);
   }
   Print(DocNo) {
     if(DocNo) {
@@ -316,6 +331,7 @@ export class ProcessSalaryComponent implements OnInit {
     })
   }
   exportoexcel2(fileName){
+    this.getcurrentmonth();
     var firstDate = this.Month_Name+'-'+'01'
     if (this.CheckFinalizedOrNot === "Finalized") {
     const obj = {
@@ -324,10 +340,11 @@ export class ProcessSalaryComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{StartDate : this.DateService.dateConvert(new Date(firstDate))}])
 
     }
-    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
       const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
       const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
       XLSX.writeFile(workbook, fileName+'.xlsx');
+        this.converttoPDF(data);
       
     })
     }
@@ -340,6 +357,76 @@ export class ProcessSalaryComponent implements OnInit {
           detail: this.CheckFinalizedOrNot
         });
     }
+  }
+  
+  converttoPDF(itemNew) {
+    var style:any = itemNew[0].orientation
+    var currentmonth = this.currentmonth;
+    var doc:any = new jsPDF();
+    var rows:any = [];
+
+/* The following array of object as response from the API req  */
+    var column = itemNew.length ? Object.keys(itemNew[0]): []
+
+itemNew.forEach(element => {
+    // var temp = [element.id,element.name,element.id1,element.name1,element.id2,element.name2,element.id3,element.name3,element.id4,element.name4];
+    rows.push(Object.values(element))
+
+});
+
+    //  var base64Img;
+
+  // Convert the image to base64
+  // this.imgToBase64("https://Compacct/src/assets/adminSB/dist/img/Kashvi.jpeg", function(base64) {
+  //   base64Img = base64;
+  //   console.log('img----',base64Img)
+  // });
+    // Static base64 for example purposes
+    // base64Img = 
+    var imgData;
+    imgData = "../../../../Content/dist/img/Kashvi.jpeg"
+  
+    doc.autoTable({
+      theme: "grid",
+      head:[column],
+      body:rows,
+      headStyles :{fillColor : [255, 255, 255],lineWidth: 0.1,lineColor:[0,0,0],textColor:[0, 0, 0]},
+      bodyStyles: {lineWidth: 0.1,lineColor:[0,0,0]},
+      // alternateRowStyles: {lineColor:[255,0,0],},
+      //tableLineColor: [0, 0, 0],
+      // tableLineWidth: 0.1,
+      
+      didDrawPage: function (data) {
+        // Header
+        // doc.setFontSize(20);
+        // doc.setTextColor(40);
+        // doc.setFontStyle('normal');
+        var width = doc.internal.pageSize.getWidth()
+        // var height = doc.internal.pageSize.getHeight();
+        if (imgData) {   
+            doc.addImage(imgData, 'JPEG', data.settings.margin.left,10,30,25);  // for add image
+        }
+        doc.text('MODERN INDIA CON-CAST LIMITED', width/2, 17, { align: 'center' },{fontSize: 12})
+        doc.setFontSize(10);
+        doc.text('(A unit of Kasvi Group)', width/2, 22, { align: 'center' },{fontSize: 3})
+        doc.text('Bhuniaraichak, J.L No-122, Haldia-721635, Purba Medinipur, West Bengal', width/2, 27, { align: 'center' },{fontSize: 0.4})
+        doc.text('Salary for The Month of ' + currentmonth, width/2, 32, { align: 'center' },{styles: { fontSize: 3 }})
+        // // Footer
+        // var str = "Page " + doc.internal.getNumberOfPages()
+        // // Total page number plugin only available in jspdf v1.0+
+        // if (typeof doc.putTotalPages === 'function') {
+        //     str = str + " of " + totalPagesExp;
+        // }
+        // doc.setFontSize(10);
+
+        // // jsPDF 1.4+ uses getWidth, <1.4 uses .width
+        // var pageSize = doc.internal.pageSize;
+        // var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+        // doc.text(str, data.settings.margin.left, pageHeight - 10);
+      },
+      margin: {top: 40}
+    });
+    doc.save('Bank-Statement.pdf');
   }
   salaryregforAdmin(fileName){
     var firstDate = this.Month_Name+'-'+'01'

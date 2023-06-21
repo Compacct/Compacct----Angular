@@ -179,15 +179,28 @@ export class FullAndFinalSettlementComponent implements OnInit {
                                  Number(this.ObjFullAndFinalSettlement.Total_Conv_Allowance) + Number(this.ObjFullAndFinalSettlement.Total_Children_Allowance) +
                                  Number(this.ObjFullAndFinalSettlement.Total_Medical_Allowance) + Number(this.ObjFullAndFinalSettlement.Total_Washing_Allowance)
         this.ObjFullAndFinalSettlement.Total_Gross_Amount = Number(Total_Gross_Amount).toFixed(2);
-        this.getEmployeeLastMonthEarningDetails();
+        // this.getEmployeeLastMonthEarningDetails();
+        this.GetBonusDetails();
+        this.CalculateNoticePeriod(); 
+
+        this.ObjFullAndFinalSettlement.EPF_Deduction = data[0].EPF ? data[0].EPF : 0;
+        this.ObjFullAndFinalSettlement.ESI_Deduction = data[0].ESIC ? data[0].ESIC : 0;
+        this.ObjFullAndFinalSettlement.P_Tax_Deduction = data[0].P_TAX ? data[0].P_TAX : 0;
+        this.ObjFullAndFinalSettlement.TDS_Deduction = data[0].TDS ? data[0].TDS : 0;
+        this.GetTotalDeduction();
       })
   }
   getEmployeeLastMonthEarningDetails(){
     this.LastMonthEarningList = [];
+    if(this.ObjFullAndFinalSettlement.Last_Month_Payable_Days){
+    const senddata = {
+      Emp_ID : this.Emp_ID,
+      Days : this.ObjFullAndFinalSettlement.Last_Month_Payable_Days
+    }
       const obj = {
         "SP_String": "SP_HR_Full_And_Final_Settlement",
         "Report_Name_String":"Get_Last_Month_Earning_Details",
-        "Json_Param_String": JSON.stringify([{Emp_ID : this.Emp_ID }])
+        "Json_Param_String": JSON.stringify([senddata])
        }
        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.LastMonthEarningList = data;
@@ -198,7 +211,7 @@ export class FullAndFinalSettlementComponent implements OnInit {
         this.ObjFullAndFinalSettlement.Last_Children_Allowance = data[0].Earnings_Children_Education_Allowance ? data[0].Earnings_Children_Education_Allowance : 0;
         this.ObjFullAndFinalSettlement.Last_Medical_Allowance = data[0].Earnings_Medical_Allownce ? data[0].Earnings_Medical_Allownce : 0;
         this.ObjFullAndFinalSettlement.Last_Washing_Allowance = data[0].Earnings_Washing_Allowance ? data[0].Earnings_Washing_Allowance : 0;
-        this.ObjFullAndFinalSettlement.Last_Month_Payable_Days = data[0].Total_Payable_Days ? data[0].Total_Payable_Days : 0;
+        // this.ObjFullAndFinalSettlement.Last_Month_Payable_Days = data[0].Total_Payable_Days ? data[0].Total_Payable_Days : 0;
         var Last_Gross_Amount = Number(this.ObjFullAndFinalSettlement.Last_Basic_Amount) + Number(this.ObjFullAndFinalSettlement.Last_HRA_Amount) +
                                  Number(this.ObjFullAndFinalSettlement.Last_Conv_Allowance) + Number(this.ObjFullAndFinalSettlement.Last_Children_Allowance) +
                                  Number(this.ObjFullAndFinalSettlement.Last_Medical_Allowance) + Number(this.ObjFullAndFinalSettlement.Last_Washing_Allowance)
@@ -213,6 +226,7 @@ export class FullAndFinalSettlementComponent implements OnInit {
         this.ObjFullAndFinalSettlement.TDS_Deduction = data[0].TDS ? data[0].TDS : 0;
         this.GetTotalDeduction();
       })
+    }
   }
   GetBonusDetails(){
     this.BonusList = [];
@@ -259,8 +273,9 @@ export class FullAndFinalSettlementComponent implements OnInit {
     if(this.ObjFullAndFinalSettlement.Notice_Period_Day){
         const date = new Date(this.Leave_Dt);
         const totaldays =  new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-      // console.log("totaldays====",totaldays);
-      var result = Number(this.ObjFullAndFinalSettlement.Last_Gross_Amount / totaldays).toFixed(2);
+      console.log("totaldays====",totaldays);
+      // var result = Number(this.ObjFullAndFinalSettlement.Last_Gross_Amount / totaldays).toFixed(2);
+      var result = Number(this.ObjFullAndFinalSettlement.Total_Basic_Amount / totaldays).toFixed(2);
       var noticeperioddeduction = Number(this.ObjFullAndFinalSettlement.Notice_Period_Day * Number(result)).toFixed(2);
       this.ObjFullAndFinalSettlement.Notice_Period_Amount = Number(noticeperioddeduction);
       // Notice Period Deduction--->

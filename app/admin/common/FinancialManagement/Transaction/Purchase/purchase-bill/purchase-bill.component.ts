@@ -1127,7 +1127,7 @@ export class PurchaseBillComponent implements OnInit {
     this.Del = false;
     this.PurchaseBillFormSubmitted = true;
     this.validatation.required = true
-    if(valid){
+    if(valid && this.AddProductDetails.length){
       this.Save = true;
       this.Del = false;
       this.Spinner = true;
@@ -1141,6 +1141,15 @@ export class PurchaseBillComponent implements OnInit {
        summary: "Are you sure?",
        detail: "Confirm to proceed"
      });
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: !valid ? "Fill All Required Fields" : "At Least Add 1 Product"
+      });
     }
    }
   async onConfirmSave(){
