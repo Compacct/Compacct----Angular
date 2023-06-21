@@ -386,6 +386,7 @@ import { K4cAcceptRawMaterialStockTransferComponent } from './common/MaterialMan
 import { AttendanceRegularizationComponent } from './common/Attendance/attendance-regularization/attendance-regularization.component';
 import { ApproveAttendanceRegularizationComponent } from './common/Attendance/approve-attendance-regularization/approve-attendance-regularization.component';
 import { EmployeeTransferComponent } from './common/Attendance/employee-transfer/employee-transfer.component';
+import { HrRequisitionFormComponent } from './common/Attendance/hr-requisition-form/hr-requisition-form.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2943,7 +2944,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
           title: 'Employee Transfer'
     }
     },
-
+    {
+      path: 'HR_Requisition_Form',
+        component: HrRequisitionFormComponent,
+        data: {
+          title: 'Hr Requisition Form'
+    }
+    },
     
     
     /*{

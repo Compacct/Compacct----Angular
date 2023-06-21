@@ -483,6 +483,7 @@ import { K4cAcceptRawMaterialStockTransferComponent } from './common/MaterialMan
 import { AttendanceRegularizationComponent } from './common/Attendance/attendance-regularization/attendance-regularization.component';
 import { ApproveAttendanceRegularizationComponent } from './common/Attendance/approve-attendance-regularization/approve-attendance-regularization.component';
 import { EmployeeTransferComponent } from './common/Attendance/employee-transfer/employee-transfer.component';
+import { HrRequisitionFormComponent } from './common/Attendance/hr-requisition-form/hr-requisition-form.component';
 
 
 @NgModule({
@@ -883,7 +884,8 @@ import { EmployeeTransferComponent } from './common/Attendance/employee-transfer
     K4cAcceptRawMaterialStockTransferComponent,
     AttendanceRegularizationComponent,
     ApproveAttendanceRegularizationComponent,
-    EmployeeTransferComponent
+    EmployeeTransferComponent,
+    HrRequisitionFormComponent
   ],
   imports: [
     CommonModule,
