@@ -486,6 +486,7 @@ import { EmployeeTransferComponent } from './common/Attendance/employee-transfer
 import { HearingCRMLeadFollowupComponent } from './common/CRM/Followup/hearing-crm-lead-followup/hearing-crm-lead-followup.component';
 import { HrRequisitionFormComponent } from './common/Attendance/hr-requisition-form/hr-requisition-form.component';
 import { ApproveHrRequisitionFormComponent } from './common/Attendance/approve-hr-requisition-form/approve-hr-requisition-form.component';
+import { RetailAdvanceOrderComponent } from './common/FinancialManagement/Retail/retail-advance-order/retail-advance-order.component';
 
 
 @NgModule({
@@ -889,7 +890,8 @@ import { ApproveHrRequisitionFormComponent } from './common/Attendance/approve-h
     EmployeeTransferComponent,
     HearingCRMLeadFollowupComponent,
      HrRequisitionFormComponent,
-     ApproveHrRequisitionFormComponent
+     ApproveHrRequisitionFormComponent,
+     RetailAdvanceOrderComponent
   ],
   imports: [
     CommonModule,
