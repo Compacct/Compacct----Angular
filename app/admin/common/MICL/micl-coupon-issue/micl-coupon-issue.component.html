@@ -24,6 +24,7 @@
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" [disabled]="AddList.length && buttonname === 'Save'">
+                            <form name="pdfForm" #pdfForm="ngForm" novalidate>
                             <div class="form-group">
                                 <!-- <div class="col-sm-2">
                                     <ejs-datepicker [(value)]="CouponDateBrowseFirst" [format]="'dd/MMM/yyyy'"></ejs-datepicker>
@@ -37,16 +38,32 @@
                                     </app-compacct-daterangepicker>
                                 </div>
                                 <div class="col-sm-2">
+                                    <label class="control-label">Issue To<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" name="issuetobrowse" #issuetobrowse="ngModel" [(ngModel)]="Issue_To_Browse"
+                                    [ngClass]="{clearance: pdfFormSubmitted && issuetobrowse.errors?.required}" required>
+                                        <option [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of IssuetoList" value="{{ option}}">
+                                            {{ option }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
                                 <button class="btn btn-primary custombutton" data-toggle="modal" (click)="SearchData()">
                                     <span class="fa fa-search"></span>Search
                                 </button>
                                 </div>
-                                <div class="col-sm-4 pull-right" *ngIf="BrowseData.length">
+                                <div class="col-sm-2 custombutton">
+                                    <button class="btn btn-warning" data-toggle="modal" (click)="downloadpdf(pdfForm.form.valid)">
+                                        <span class="fa fa-download"></span>&nbsp;Download Statement
+                                    </button>
+                                </div>
+                                <div class="col-sm-2 custombutton" *ngIf="BrowseData.length">
                                     <button class="btn btn-success" data-toggle="modal" (click)="exportExcelbrowse(BrowseData,'Coupon Issue List')">
                                         <span class="fa fa-file-excel-o"></span>&nbsp;Export to excel
                                     </button>
                                 </div>
                             </div>
+                            </form>
                             <span *ngIf="NoDataFound == true" style="font-size: 20px;">No Data Found</span>
                             <div class="table-responsive no-padding">
                                 <div class="table-responsive no-padding">
