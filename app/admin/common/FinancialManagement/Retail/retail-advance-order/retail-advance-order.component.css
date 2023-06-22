@@ -1,0 +1,84 @@
+.custombutton {
+    margin-top: 25px;
+}
+div.label-t {
+  padding: 6px 12px;
+  background: rgb(206 216 216 / 51%);
+}
+#ui-tabpanel-0>div>p-table>div>div.ui-table-wrapper.ng-star-inserted {
+  width: auto !important;
+}
+div.table-responsive.table-id>p-table>div>div {
+  width: auto !important;
+}
+.ui-table-auto-layout > .ui-table-wrapper{
+  width: auto !important;
+}
+.box-body {
+  padding-top: 10px !important;
+  padding-left: 10px !important;
+}
+body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+  border-bottom: 1px solid #c1c1c1 !important;
+  margin-bottom: 0px;
+}
+
+textarea.form-control {
+  height: auto;
+}
+
+.btn {
+  border: red;
+}
+
+.box.boxboxDivide-primary {
+  border-top-color: #f3efec;
+  height: 10px;
+  border: 0;
+  box-shadow: 0 10px 10px -10px #8c8b8b inset;
+}
+.pull-right {
+  float: right!important;
+}
+
+.custombutton {
+  margin-top: 28px;
+  /* margin-left: 130px; */
+}
+
+.table-header {
+  color: #ffffff !important;
+  background-color: #3c8dbc !important;
+}
+
+.Foot{
+  font-weight: bolder;
+  font-size: 15px;
+  text-align: right;
+}
+.clearance {
+  border: 1px solid red !important;
+}
+
+.aTage{
+  display: inline-block;
+  position: relative;
+  color: #1133c9;
+  font-size: 14px;
+  }
+  .aTage:after{
+      content: '';
+      position: absolute;
+      width: 100%;
+      transform: scaleX(0);
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: #1133c9;
+      transform-origin: bottom right;
+      transition: transform 0.25s ease-out;
+  }
+  .aTage:hover:after{
+      transform: scaleX(1);
+      transform-origin: bottom left;
+  }
