@@ -29,7 +29,8 @@
 
         <div class="ui-g ui-fluid">
           <div class="ui-g-6">
-            <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
+            <button type="button" pButton (click)="onConfirmSave()" [disabled]="popouSpinner" label="Yes" class="ui-button-success">
+            </button>
         </div>
           <div class="ui-g-6">
               <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
@@ -68,20 +69,6 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                             <form name="SearchSaleBillNewForm" #SearchSaleBillNewForm="ngForm" novalidate>
                                 <div class="form-group">
-                                    <!-- <div class="col-sm-3">
-                                        <label class="control-label">Company<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" 
-                                        name="browsecompany" 
-                                        #browsecompany="ngModel" 
-                                        [(ngModel)]="ObjBrowseSaleBillNew.Company_ID"
-                                        [ngClass]="{'clearance': SearchSaleBillNewFormSubmitted && browsecompany?.errors?.required}"
-                                        required>
-                                        <option  [ngValue]="undefined">Select</option>
-                                           <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
-                                              {{option.Company_Name}}
-                                            </option>
-                                      </select>
-                                    </div> -->
                                     <div class="col-sm-3">
                                         <label class="control-label">Date</label>
                                          <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate"> <!-- [minmaxValid]= "initDateValid" required -->
@@ -89,7 +76,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">CostCenter Name</label>
-                                        <select class="form-control" name="browsecostcenter" #browsecostcenter="ngModel" [(ngModel)]="ObjBrowseSaleBillNew.Cost_Cen_ID" [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'" 
+                                        <select class="form-control" name="browsecostcenter" #browsecostcenter="ngModel" [(ngModel)]="ObjBrowseSaleBillNew.Cost_Cen_ID" [attr.disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'" 
                                              [ngClass]="{'clearance': SearchSaleBillNewFormSubmitted && browsecostcenter?.errors?.required}" >
                                               <option  [ngValue]="undefined">Select</option>
                                               <option  *ngFor="let option of CostCenterList" value="{{option.Cost_Cen_ID}}">
@@ -268,16 +255,12 @@
                                                           <option  [ngValue]="undefined">Select</option>
                                                           <option value="true">Yes</option>
                                                           <option value="false">No</option>
-                                                          <!-- <option  *ngFor="let option of CostCenterlist" value="{{option.Cost_Cen_ID}}">
-                                                            {{option.Cost_Cen_Name}}
-                                                          </option> -->
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label class="control-label">Choose Address<sup class="text-danger">*</sup></label>
                                                     <select class="form-control" name="chooseaddress" #chooseaddress="ngModel" (change)="ChooseAddressChange()" [(ngModel)]="ObjSaleBillNew.Choose_Address" [ngClass]="{'clearance': SaleBillNewFormSubmitted && chooseaddress?.errors?.required}" required>
                                                           <option  [ngValue]="undefined">Select</option>
-                                                          <!-- <option value="MAIN">MAIN</option> -->
                                                           <option  *ngFor="let option of ChooseAddressList" value="{{option.Address_Caption}}">
                                                             {{option.Address_Caption}}
                                                           </option>
@@ -543,14 +526,18 @@
                                                   [(ngModel)]="ObjProductInfo.Product_ID"
                                                   [showClear]="true"
                                                   [emptyFilterMessage]="' No Product Found'"
-                                                  (onChange)="GetProductDetailsChange()"
-                                                  [filter]="true"
+                                                   [filter]="true"
                                                   filterBy="label,value.name"
                                                   [placeholder]="'Select Product'"
                                                   [virtualScroll]="true"
                                                   itemSize="30"
                                                   #product="ngModel"
                                                   [styleClass]="ProductInfoSubmitted && product.errors?.required ? 'clearance': ''"[required]="true">
+                                                  <ng-template let-col pTemplate="item">
+                                                    <div (click)="GetProductDetailsChange(col)" class="ui-helper-clearfix"  >
+                                                        <div  style="font-size:14px;margin-top:4px">{{col.label}}</div>
+                                                    </div>
+                                                </ng-template>
                                                 </p-dropdown>
                                               </div>
                                               <div class="col-sm-2">

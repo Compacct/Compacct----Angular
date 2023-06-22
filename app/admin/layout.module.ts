@@ -475,6 +475,17 @@ import { CandidateInterviewProcessComponent } from './common/Attendance/candidat
 import { ConsultancyPaymentComponent } from './common/Attendance/consultancy-payment/consultancy-payment.component';
 import { AppraisalFormComponent } from './common/Attendance/appraisal-form/appraisal-form.component';
 import { PendingOutcomesComponent } from './common/PatientManagement/pending-outcomes/pending-outcomes.component';
+import { BLTxnProductReturnFromProjectComponent } from './common/Harbauer/bl-txn-product-return-from-project/bl-txn-product-return-from-project.component';
+import { MasterCompanyUpdateComponent } from './common/FinancialManagement/Master/master-company-update/master-company-update.component';
+import { BlTxnProjectwiseReportComponent } from './common/FinancialManagement/Report/bl-txn-projectwise-report/bl-txn-projectwise-report.component';
+import { BlCRMWPMSTTemplateComponent } from './common/PatientManagement/Transaction/bl-crm-wp-mst-template/bl-crm-wp-mst-template.component';
+import { K4cAcceptRawMaterialStockTransferComponent } from './common/MaterialManagement/k4c-accept-raw-material-stock-transfer/k4c-accept-raw-material-stock-transfer.component';
+import { AttendanceRegularizationComponent } from './common/Attendance/attendance-regularization/attendance-regularization.component';
+import { ApproveAttendanceRegularizationComponent } from './common/Attendance/approve-attendance-regularization/approve-attendance-regularization.component';
+import { EmployeeTransferComponent } from './common/Attendance/employee-transfer/employee-transfer.component';
+import { HearingCRMLeadFollowupComponent } from './common/CRM/Followup/hearing-crm-lead-followup/hearing-crm-lead-followup.component';
+import { HrRequisitionFormComponent } from './common/Attendance/hr-requisition-form/hr-requisition-form.component';
+
 
 @NgModule({
   declarations: [
@@ -866,7 +877,17 @@ import { PendingOutcomesComponent } from './common/PatientManagement/pending-out
     CandidateInterviewProcessComponent,
     ConsultancyPaymentComponent,
     AppraisalFormComponent,
-    PendingOutcomesComponent
+    PendingOutcomesComponent,
+    BLTxnProductReturnFromProjectComponent,
+    MasterCompanyUpdateComponent,
+    BlTxnProjectwiseReportComponent,
+    BlCRMWPMSTTemplateComponent,
+    K4cAcceptRawMaterialStockTransferComponent,
+    AttendanceRegularizationComponent,
+    ApproveAttendanceRegularizationComponent,
+    EmployeeTransferComponent,
+    HearingCRMLeadFollowupComponent,
+     HrRequisitionFormComponent
   ],
   imports: [
     CommonModule,

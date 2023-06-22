@@ -119,14 +119,13 @@ export class DoctorAppointmentComponent implements OnInit {
   RetvComelist: any = [];
   OtherOutcom: boolean = false;
   ConsultancyMlist = [
-    {'Consultancy_Type': 'Tympanometry'}, {'Consultancy_Type': 'Speech Audiometery'}, {'Consultancy_Type': 'Tympanometry + Reflexometry'},
-    {'Consultancy_Type': 'OAE'}, {'Consultancy_Type': 'Adjustment and Fine Tuning of Hearing Aids'}, {'Consultancy_Type': 'Home Visit'},
-    {'Consultancy_Type': 'SISI'}, {'Consultancy_Type': 'Tinnitus Therapy (Per Session)'}, {'Consultancy_Type': 'Speech Therapy Per Session'},
-    {'Consultancy_Type': 'Eustachian Tube Function Test (ETF)'}, {'Consultancy_Type': 'Reflex Decay Test'}, {'Consultancy_Type': 'VEMP'},
-    {'Consultancy_Type': 'Glycerol Test'}, {'Consultancy_Type': 'Tone Decay'}, {'Consultancy_Type': 'Stenger'},
-    {'Consultancy_Type': 'Audiology Consultation'}, {'Consultancy_Type': 'Hearing Aid Repair/Servicing Charges'}, {'Consultancy_Type': 'SPIN'},
-    { 'Consultancy_Type': 'Fitting' }, { 'Consultancy_Type': 'Review' }, { 'Consultancy_Type': 'Speech Therapy (5 Sessions)' },
-    { 'Consultancy_Type': 'Speech Therapy (25 Sessions)' }, { 'Consultancy_Type': 'Speech Therapy (10 Sessions)' },
+    {'Consultancy_Type_id': 82}, {'Consultancy_Type_id': 85}, {'Consultancy_Type_id': 86},
+    {'Consultancy_Type_id': 89}, {'Consultancy_Type_id': 95}, {'Consultancy_Type_id': 96},
+    {'Consultancy_Type_id': 97}, {'Consultancy_Type_id': 101}, {'Consultancy_Type_id': 103},
+    {'Consultancy_Type_id': 128}, {'Consultancy_Type_id': 129}, {'Consultancy_Type_id': 131},
+    {'Consultancy_Type_id': 132}, {'Consultancy_Type_id': 133}, {'Consultancy_Type_id': 134},
+    {'Consultancy_Type_id': 135}, {'Consultancy_Type_id': 136}, {'Consultancy_Type_id': 140},
+    { 'Consultancy_Type_id': 141 }, { 'Consultancy_Type_id': 142 },{'Consultancy_Type_id': 143 }, 
   ]
   constructor(    
     private $http: HttpClient,
@@ -1651,7 +1650,7 @@ export class DoctorAppointmentComponent implements OnInit {
     let pairs = this.allDetalis;
      arry.forEach(ele => {
        pairs.forEach(el => { 
-         if (ele.Consultancy_Type === el.Consultancy_Descr) {
+         if (ele.Consultancy_Type_id === el.Cons_ID) {
            el['Check_Other'] = true;
          }
        })

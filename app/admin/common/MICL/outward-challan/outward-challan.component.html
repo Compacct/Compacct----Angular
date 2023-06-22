@@ -119,7 +119,12 @@
                                                                         <span class="caret"></span>
                                                                     </button>
                                                         <ul class="dropdown-menu">
-                                                                <li>
+                                                            <li *ngIf="!col.Bill_No">
+                                                                <a (click)="Edit(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li>
+                                                            <li>
                                                                     <a (click)="Print(col.Doc_No)">
                                                                         <i class="fa fa-fw fa-print"></i> Print
                                                                     </a>
@@ -272,7 +277,7 @@
                                                     [(ngModel)]="ObjPurChaseBill.Sub_Ledger_State_2"   [disabled]="DisableField || pindisabled"
                                                      [ngClass]="{'clearance': PurchaseBillFormSubmitted && shipstate?.errors?.required}" required>
                                                         <option  [ngValue]="undefined">Select</option>
-                                                            <option  *ngFor="let option of StateList" value="{{option.state}}">
+                                                            <option  *ngFor="let option of StateList2" value="{{option.state}}">
                                                             {{option.state}}
                                                             </option>
                                                     </select>
@@ -455,7 +460,7 @@
                                                 <div class="col-sm-3">
                                                     <label class="control-label">Transporter Name<sup class="text-danger">*</sup> </label>
                                                     <input class="form-control" name="Transporter" #Transporter="ngModel"
-                                                    [(ngModel)]="ObjPurChaseBill.Transporterr" placeholder="Transporter" 
+                                                    [(ngModel)]="ObjPurChaseBill.Transporter" placeholder="Transporter" 
                                                     [ngClass]="{'clearance':PurchaseBillFormSubmitted && Transporter?.errors?.required}" required>
                                                 </div>
                                                 <div class="col-sm-3">
@@ -490,6 +495,13 @@
                                                 [(ngModel)]="ObjPurChaseBill.Delivery_Point"
                                                 placeholder="Delivery Point" 
                                                 [ngClass]="{'clearance':PurchaseBillFormSubmitted && Point?.errors?.required}"required>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Delivery Terms </label>
+                                                <input class="form-control" name="delterm" #delterm="ngModel" 
+                                                [(ngModel)]="ObjPurChaseBill.Delivery_Terms"
+                                                placeholder="Delivery Terms" 
+                                                [ngClass]="{'clearance':PurchaseBillFormSubmitted && delterm?.errors?.required}">
                                             </div>
                                             </div> 
                                             </div>

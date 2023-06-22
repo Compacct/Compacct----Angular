@@ -456,18 +456,19 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="control-label">Work Details <sup class="text-danger">*</sup> </label>
-                                        <select class="form-control" 
-                                        name="Work_Details" 
-                                        #Work_Details="ngModel" 
-                                        [(ngModel)]="ObjProductDetalis.Work_Details_ID"
-                                        (change)="getProduct()" 
-                                        [ngClass]="{'clearance': ProductDetailsFormSubmit && Work_Details?.errors?.required }"
-                                        required>
-                                            <option  [ngValue]="undefined">Select</option>
-                                            <option *ngFor="let option of WorkDetalisList" [ngValue]="option.Work_Details_ID" >
-                                                {{option.Work_Details}}
-                                            </option>
-                                         </select>
+                                         <p-dropdown [options]="WorkDetalisList" name="Work_Details"
+                                              [(ngModel)]="ObjProductDetalis.Work_Details_ID" [showClear]="true"
+                                              [emptyFilterMessage]="' No Work Details Found'"
+                                              [filter]="true"
+                                              filterBy="label,value.name" [placeholder]="'Select Work Details'" [virtualScroll]="true"
+                                              itemSize="30" #Work_Details="ngModel"
+                                              (onChange)="getProduct()" [styleClass]="
+                                              ProductDetailsFormSubmit && Work_Details.errors?.required? 'clearance': ''"
+                                              [required]="true">
+                                            </p-dropdown>
+
+
+
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Actual Billing item<sup class="text-danger">*</sup></label>
@@ -661,7 +662,7 @@
                                         <tr *ngFor='let col of addProductList let i = index' >
                                             <td>{{i + 1}}</td>
                                             <td>{{col.Project_Description}}</td>
-                                            <td>{{col.Work_Details}}</td>
+                                            <td><div (click)="selectWork($event,col.Work_Details,op)" [ngClass]="stringShort(col.Work_Details ,'css')">{{stringShort(col.Work_Details ,'ff')}}</div></td>
                                             <td>{{col.Product_Name ? col.Product_Name : '-'}}</td>
                                             <td>{{col.HSL_No ? col.HSL_No : '-'}}</td>
                                             <td>{{col.MRP}}</td>
@@ -730,3 +731,13 @@
         </div>
     </div>
 </div>
+
+<p-overlayPanel [dismissable]="true" [showCloseIcon]="true" [appendTo]="'body'" [baseZIndex]="9999999" #op>
+    <ul style="width: 215px; padding: 5px" class="overpaneltext" >
+              <li *ngFor="let ovtext of overlayPanelText.split('#')" >
+                  {{ovtext}}
+              </li>
+          </ul>
+      
+  
+  </p-overlayPanel>

@@ -724,7 +724,7 @@ export class PurchaseBillComponent implements OnInit {
         }
       } 
       this.ObjProductInfo.CESS_AMT = this.ObjProductInfo.CESS_AMT ? Number(this.ObjProductInfo.CESS_AMT) : 0;
-      var netamount = (Number(this.ObjProductInfo.CGST_Amount) + Number(this.ObjProductInfo.SGST_Amount) 
+      var netamount = (Number(this.ObjProductInfo.Taxable_Amount) + Number(this.ObjProductInfo.CGST_Amount) + Number(this.ObjProductInfo.SGST_Amount) 
                     + Number(this.ObjProductInfo.IGST_Amount) + Number(this.ObjProductInfo.CESS_AMT)).toFixed(2);
 
       var stockpoint = this.GodownList.filter(item=> Number(item.godown_id) === Number(this.ObjProductInfo.Godown_Id))
@@ -1127,7 +1127,7 @@ export class PurchaseBillComponent implements OnInit {
     this.Del = false;
     this.PurchaseBillFormSubmitted = true;
     this.validatation.required = true
-    if(valid){
+    if(valid && this.AddProductDetails.length){
       this.Save = true;
       this.Del = false;
       this.Spinner = true;
@@ -1141,6 +1141,15 @@ export class PurchaseBillComponent implements OnInit {
        summary: "Are you sure?",
        detail: "Confirm to proceed"
      });
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: !valid ? "Fill All Required Fields" : "At Least Add 1 Product"
+      });
     }
    }
   async onConfirmSave(){

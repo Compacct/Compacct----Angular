@@ -63,6 +63,8 @@ export class HarbProjectBillComponent implements OnInit {
   seleteDistCustomerName:any = []
   DistProjectDescription:any =[]
   seleteDistProjectDescription:any = []
+  ObjCol = {}
+  overlayPanelText= ""
   constructor(
     public $http: HttpClient,
     public commonApi: CompacctCommonApi,
@@ -207,7 +209,11 @@ export class HarbProjectBillComponent implements OnInit {
         "Json_Param_String": JSON.stringify([{Project_ID : this.ObjProductDetalis.Project_ID}])
       }
       this.GlobalAPI.postData(obj).subscribe((data:any)=>{
-         this.WorkDetalisList = data
+      data.forEach(el => {
+          el['label'] = el.Work_Details;
+          el['value'] = el.Work_Details_ID;
+        });
+        this.WorkDetalisList = data
          // console.log("WorkDetalisList",this.WorkDetalisList)
        })
        this.getProduct()
@@ -445,7 +451,7 @@ export class HarbProjectBillComponent implements OnInit {
     return Number(Number(key).toFixed(2))
    }
    saveProject(){
-     if(this.addProductList){
+     if(this.addProductList.length){
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "c",
@@ -454,6 +460,15 @@ export class HarbProjectBillComponent implements OnInit {
         summary: "Are you sure?",
         detail: "Confirm to proceed"
       });
+     }
+     else{
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "At Least Add 1 Billing Item "
+      })
      }
    }
   createProjectBill(){
@@ -695,6 +710,35 @@ export class HarbProjectBillComponent implements OnInit {
     })
     }
   }
+  stringShort(str,wh) {
+    let retuObj:any = {}
+    if(str){
+      if (str.length > 30) {
+        retuObj = {
+          field: str.substring(0, 30) + " ...",
+          cssClass : "txt"
+        }
+      }
+      else {
+         retuObj = {
+          field: str,
+          cssClass : ""
+        }
+      }
+    }
+   
+  return wh == "css" ? retuObj.cssClass : retuObj.field
+  }
+  selectWork(event,text, overlaypanel) {
+    //console.log("col",col)
+    if (text.length > 30) {
+      this.ObjCol = {}
+      this.overlayPanelText= ""
+     this.overlayPanelText = text
+     overlaypanel.toggle(event); 
+    }
+   
+    }
 }
 class ProjectBill{
       Doc_Date:any

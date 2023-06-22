@@ -80,6 +80,8 @@ export class FinancialVoucherComponent implements OnInit {
   costCenterList:any = [];
   DynamicHeader:any = [];
   getAllDataList:any = [];
+  ObjCol:any = {}
+  overlayPanelText:string = ""
   @ViewChild("project", { static: false })
   ProjectInput: CompacctProjectComponent;
   constructor(
@@ -211,9 +213,11 @@ export class FinancialVoucherComponent implements OnInit {
     this.getDocType();
     if(this.objjournal.DrCrdata === "DR" && this.objjournal.Amount){
       this.totalDR = Number(Number((this.objjournal.Amount)).toFixed(2));
+      this.objjournalloweer.DrCrdataLower = "CR"
      }
      else if(this.objjournal.DrCrdata === "CR" && this.objjournal.Amount){
       this.totalCR = Number(Number((this.objjournal.Amount)).toFixed(2));
+      this.objjournalloweer.DrCrdataLower = "DR"
      }
      else {
        //console.error("objjournal.DrCrdata Not Found",this.objjournal.DrCrdata);
@@ -840,7 +844,35 @@ export class FinancialVoucherComponent implements OnInit {
     return this.openProject == 'Y' ? 10 : 5
                         
   }
-
+  stringShort(str,wh) {
+    let retuObj:any = {}
+    if(str){
+      if (str.length > 30) {
+        retuObj = {
+          field: str.substring(0, 30) + " ...",
+          cssClass : "txt"
+        }
+      }
+      else {
+         retuObj = {
+          field: str,
+          cssClass : ""
+        }
+      }
+    }
+   
+  return wh == "css" ? retuObj.cssClass : retuObj.field
+  }
+  selectWork(event,text, overlaypanel) {
+   
+    if (text.length > 30) {
+      this.ObjCol = {}
+      this.overlayPanelText= ""
+     this.overlayPanelText = text
+     overlaypanel.toggle(event); 
+    }
+   
+    }
 }
 class journalTopper{
   Amount:any

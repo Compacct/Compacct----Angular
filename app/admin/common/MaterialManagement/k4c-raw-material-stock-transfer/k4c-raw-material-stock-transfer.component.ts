@@ -67,6 +67,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
   displaysavepopup = false;
   filteredData:any = [];
   ShowPopupSpinner = false;
+  editList:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -79,22 +80,29 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     private compacctToast: MessageService,
     private ngxService: NgxUiLoaderService
   ) {
-      this.route.queryParams.subscribe(params => {
-       //console.log("params",params);
-      this.Param_Flag = params['Name'];
-      this.CostCentId_Flag = params['Cost_Cen_ID'];
-      this.MaterialType_Flag = params['Material_Type']
-       console.log (this.CostCentId_Flag);
-  })
+  //     this.route.queryParams.subscribe(params => {
+  //      //console.log("params",params);
+  //     this.Param_Flag = params['Name'];
+  //     this.CostCentId_Flag = params['Cost_Cen_ID'];
+  //     this.MaterialType_Flag = params['Material_Type']
+  //      console.log (this.CostCentId_Flag);
+  // })
   }
 
   ngOnInit() {
+    this.route.queryParams.subscribe(params => {
     this.items = ["BROWSE", "CREATE"];
     this.clearData();
     this.Searchedlist = [];
     this.BackupIndentList = [];
     this.TIndentList = [];
     this.SelectedIndent = [];
+    this.editList = [];
+      //console.log("params",params);
+     this.Param_Flag = params['Name'];
+     this.CostCentId_Flag = params['Cost_Cen_ID'];
+     this.MaterialType_Flag = params['Material_Type']
+      console.log (this.CostCentId_Flag);
     this.Header.pushHeader({
       Header: this.MaterialType_Flag + " Stock Transfer - " + this.Param_Flag,
       Link: " Material Management -> " + this.MaterialType_Flag + " Stock Transfer - " + this.Param_Flag
@@ -103,6 +111,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     this.GetToCostCen();
     this.GetBToCostCen();
     this.GetProductType();
+  })
   }
   TabClick(e){
     // console.log(e)
@@ -113,6 +122,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
      this.BackupIndentList = [];
      this.TIndentList = [];
      this.SelectedIndent = [];
+     this.editList = [];
    }
    onReject() {
     this.compacctToast.clear("c");
@@ -199,6 +209,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.ToGodownList = data;
   // this.ObjRawMateriali.To_godown_id = this.ToGodownList.length === 1 ? this.ToGodownList[0].godown_id : undefined;
+      if(this.buttonname === "Save"){
        if(this.ToGodownList.length === 1){
         this.ObjRawMateriali.To_godown_id = this.ToGodownList[0].godown_id;
          this.TGdisableflag = true;
@@ -206,6 +217,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
         this.ObjRawMateriali.To_godown_id = undefined;
          this.TGdisableflag = false;
        }
+      }
        //console.log("To Godown List ===",this.ToGodownList);
       })
     //}
@@ -417,6 +429,35 @@ GetProductType(){
    return flag;
   }
   // SAVE AND UPDATE
+  CheckRemarks(col) {
+      if (Number(col.Issue_Qty) === 0 && !col.Store_Remarks) {
+        return true;
+      } else {
+        return false;
+      }
+    
+  }
+  ValidRemarksCheck() {
+  let ValidFlag = false;
+  for (let index = 0; index < this.ProductList.length; index++) {
+    const element = this.ProductList[index];
+    if (this.CheckRemarks(element)) {
+      ValidFlag = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "warn",
+        summary: "Validation",
+        detail: "Enter Remarks."
+      });
+      return ValidFlag;
+    } else {
+      ValidFlag = true;
+    }
+
+  }
+  return ValidFlag;
+}
   showDialog() {
     if(this.saveqty()){
     this.filteredData = [];
@@ -428,11 +469,28 @@ GetProductType(){
   //   }
   //  })
    this.ProductList.forEach(obj => {
+    if (this.buttonname === "Update"){
+      if(this.ValidRemarksCheck()) {
+      this.filteredData.push(obj);
+      this.displaysavepopup = true;
+    } 
+    // else {
+    //   this.compacctToast.clear();
+    //     this.compacctToast.add({
+    //       key: "compacct-toast",
+    //       severity: "error",
+    //       summary: "Warn Message",
+    //       detail: "Something Wrong."
+    //     });
+    // }
+    }
+    else {
     if(obj.Issue_Qty && Number(obj.Issue_Qty) !== 0){  //   && Number(obj.Delivery_Qty) !== 0
     //  console.log(filteredData.push(obj.Product_ID));
     this.filteredData.push(obj);
     this.displaysavepopup = true;
      // console.log("this.filteredData===",this.filteredData);
+  }
   }
  })
   }
@@ -454,6 +512,40 @@ GetProductType(){
   
     return Total ? Total.toFixed(2) : '-';
   }
+  dataforSaveRawMaterialIssueforEdit(){
+    // console.log(this.DateService.dateConvert(new Date(this.myDate)))
+     this.ObjRawMateriali.Doc_Date = this.DateService.dateConvert(new Date(this.todayDate));
+    if(this.ProductList.length) {
+      let tempArr:any =[]
+      this.ProductList.forEach(item => {
+     const TempObj = {
+            Doc_No:  this.ObjRawMateriali.Doc_No ?  this.ObjRawMateriali.Doc_No : "A",
+            Doc_Date: this.ObjRawMateriali.Doc_Date,
+            From_Cost_Cen_ID :this.ObjRawMateriali.From_Cost_Cen_ID,
+            From_godown_id	: this.ObjRawMateriali.From_godown_id,
+            To_Cost_Cen_ID	: this.ObjRawMateriali.To_Cost_Cen_ID,
+            To_godown_id	: this.ObjRawMateriali.To_godown_id,
+            Product_ID	: item.Product_ID,
+            Product_Description	: item.Product_Description,
+            Product_Type_ID	: item.Product_Type_ID,
+            Qty	: item.Issue_Qty,
+            Accepted_Qty: Number(item.Accepted_Qty),
+            UOM	: item.UOM,
+            User_ID	: this.$CompacctAPI.CompacctCookies.User_ID,
+            Accepted_By : item.Accepted_By,
+            Batch_No : item.Batch_No,
+            Remarks : Number(item.Qty) === Number(item.Accepted_Qty) ? 'NA' : item.Remarks ,
+            Store_Remarks : item.Store_Remarks,
+            Total_Qty : Number(this.getTotalValue('Qty')),
+            Total_Accepted_Qty : Number(this.getTotalValue('Accepted_Qty'))
+         }
+        tempArr.push(TempObj)
+      });
+      console.log("Save Data ===", tempArr)
+      return JSON.stringify(tempArr);
+
+    }
+  }
   dataforSaveRawMaterialIssue(){
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
      this.ObjRawMateriali.Doc_Date = this.DateService.dateConvert(new Date(this.todayDate));
@@ -472,10 +564,15 @@ GetProductType(){
             Product_Description	: item.Product_Description,
             Product_Type_ID	: item.Product_Type_ID,
             Qty	: item.Issue_Qty,
+            Accepted_Qty: Number(item.Accepted_Qty),
             UOM	: item.UOM,
-            Remarks	: " ",
-            User_ID	:this.$CompacctAPI.CompacctCookies.User_ID,
-            Batch_No : item.Batch_No
+            User_ID	: this.$CompacctAPI.CompacctCookies.User_ID,
+            Accepted_By : item.Accepted_By,
+            Batch_No : item.Batch_No,
+            Remarks : Number(item.Qty) === Number(item.Accepted_Qty) ? 'NA' : item.Remarks ,
+            Store_Remarks : item.Store_Remarks,
+            Total_Qty : Number(this.getTotalValue('Qty')),
+            Total_Accepted_Qty : Number(this.getTotalValue('Accepted_Qty'))
          }
         tempArr.push(TempObj)
       }
@@ -505,7 +602,7 @@ GetProductType(){
       const obj = {
         "SP_String": "SP_Raw_Material_Stock_Transfer",
         "Report_Name_String" : "Save Raw Material Stock Transfer",
-       "Json_Param_String": this.dataforSaveRawMaterialIssue()
+       "Json_Param_String": this.buttonname === "Update" ? this.dataforSaveRawMaterialIssueforEdit() : this.dataforSaveRawMaterialIssue()
 
       }
       this.GlobalAPI.postData(obj).subscribe((data:any)=>{
@@ -532,6 +629,7 @@ GetProductType(){
          this.ShowPopupSpinner = false;
          this.ProductList =[];
          this.IndentListFormSubmitted = false;
+         this.editList = [];
         } else{
           this.ShowPopupSpinner = false;
           this.ngxService.stop();
@@ -576,6 +674,7 @@ const end = this.ObjBrowse.end_date
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.end_date))
   : this.DateService.dateConvert(new Date());
 
+  this.seachSpinner = true;
   this.RawMaterialIssueSearchFormSubmitted = true;
   if (valid){
 const tempobj = {
@@ -699,6 +798,7 @@ exportoexcel(Arr,fileName): void {
   }
 // Edit
 EditIntStock(col){
+  this.editList = [];
   this.ObjRawMateriali.Doc_No = undefined;
   if(col.Doc_No){
    this.ObjRawMateriali = col.Doc_No;
@@ -719,14 +819,17 @@ geteditmaster(Doc_No){
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     console.log("Edit",data);
+    this.editList = data;
     this.Viewlist = data;
     const TempData = data;
     this.todayDate = new Date(data[0].Doc_Date);
     this.ObjRawMateriali = data[0];
+    this.GetToGodown();
     TempData.forEach(element => {
       this.ProductList.push({
         Current_Stock_In_Dept:element.Current_Stock_In_Dept,
         Issue_Qty:element.Qty,
+        Accepted_Qty:element.Accepted_Qty,
         Product_Description:element.Product_Description,
         Product_ID:element.Product_ID,
         Product_Type:element.Product_Type,
@@ -734,7 +837,9 @@ geteditmaster(Doc_No){
         Stock_Qty:element.Stock_Qty,
         UOM : element.UOM,
         Batch_No : element.Batch_No,
-        Batch_Qty : element.Batch_Qty
+        Batch_Qty : element.Batch_Qty,
+        Remarks: element.Remarks,
+        Store_Remarks: element.Store_Remarks
       })
      });
      this.BackupIndentList = this.ProductList;

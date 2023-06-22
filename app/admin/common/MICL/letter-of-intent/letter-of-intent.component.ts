@@ -126,6 +126,8 @@ export class LetterOfIntentComponent implements OnInit {
   pindisabled:boolean = false;
   Reference_Doc_No:any;
   Reference_Doc_Date:Date;
+  editlist:any = [];
+  editDocNo: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -179,6 +181,7 @@ export class LetterOfIntentComponent implements OnInit {
     this.ObjLetterOfIntent.Vehicle_Type = "Regular";
     this.Reference_Doc_No = undefined;
     this.Reference_Doc_Date = new Date();
+    this.editDocNo = undefined;
   }
   clearData() { 
     this.LetterOfIntentFormSubmitted = false;
@@ -536,16 +539,10 @@ export class LetterOfIntentComponent implements OnInit {
   AddProduct(valid: any) {
     this.TermFormSubmitted = true;
     if (valid) {
-      // const LotNoArry: any = this.LotNolist.filter((el: any) => el.Batch_No == this.ObjProductInfo.Batch_Number);
-      // this.BatchQtyCheck = LotNoArry[0].Batch_Qty;
-      // if(this.BatchQtyCheck >= this.ObjProductInfo.Qty) {
-        const CostMatch: any = this.CenterList.filter((el: any) => Number(el.Cost_Cen_ID) === Number(this.ObjProductInfo.Cost_Cen_ID));
+      
       const ProductDArry: any = this.ProductDetalist.filter((el: any) => Number(el.value) === Number(this.ObjProductInfo.Product_Specification));
       const TaxCatArry: any = this.TaxCategoryList.filter((el: any) => Number(el.Cat_ID) === Number(this.Tax_Category));
-      this.ObjProductInfo.Cost_Cen_State = CostMatch[0].Cost_Cen_State;
-      // this.ObjProductInfo.CGST_Rate = ProductDArry[0].CGST_Rate;
-      // this.ObjProductInfo.SGST_Rate = ProductDArry[0].SGST_Rate;
-      // this.ObjProductInfo.IGST_Rate = ProductDArry[0].IGST_Rate;
+      
       var gstper = Number(TaxCatArry[0].GST_Tax_Per / 2).toFixed(2);
       this.ObjProductInfo.CGST_Rate = Number(gstper);
       this.ObjProductInfo.SGST_Rate = Number(gstper);
@@ -578,26 +575,28 @@ export class LetterOfIntentComponent implements OnInit {
       const ProductArry: any = this.ProductType.filter((el: any) => Number(el.Product_Type_ID) === Number(this.ObjProductInfo.Product_Type_ID));
       const ProductSubArry: any = this.ProductSub.filter((el: any) => Number(el.Product_Sub_Type_ID) === Number(this.ObjProductInfo.Product_Sub_Type_ID));
       const TemopArry = {
-        // Cost_Cen_Name: CostMatch.length ? CostMatch[0].Cost_Cen_Name : undefined,
-        // godown_name: GdwonArry.legth ? GdwonArry[0].godown_name : undefined,
-        // godown_id: this.ObjProductInfo.godown_id,
         Product_ID :this.ObjProductInfo.Product_Specification,
-        Product_Type: ProductArry[0].Product_Type,
-        HSN_No : ProductDArry[0].HSN_No,
-        Product_Sub_Type: ProductSubArry[0].Product_Sub_Type,
+        Product_Name : ProductDArry[0].label,
+        HSL_No : ProductDArry[0].HSN_No,
         Product_Specification: ProductDArry[0].label,
-        // Batch_No :this.ObjProductInfo.Batch_Number,
-        // Batch_No_Show: LotNoArry[0].Batch_No_Show,
-        Qty: this.ObjProductInfo.Qty,
+        HSN_No : ProductDArry[0].HSN_No,
+        Product_Type_ID : this.ObjProductInfo.Product_Type_ID,
+        Product_Type: ProductArry[0].Product_Type,
+        Product_Sub_Type_ID : this.ObjProductInfo.Product_Sub_Type_ID,
+        Product_Sub_Type: ProductSubArry[0].Product_Sub_Type,
         UOM: this.UomList,
+        Qty: this.ObjProductInfo.Qty,
+        MRP: this.ObjProductInfo.Rate,
         Rate: this.ObjProductInfo.Rate,
+        Amount: Number(this.ObjProductInfo.Taxable_Amount).toFixed(2),
+        Taxable_Amount: Number(this.ObjProductInfo.Taxable_Amount).toFixed(2),
         Taxable_unt: Number(this.ObjProductInfo.Taxable_Amount).toFixed(2),
         CGST_Rate: this.ObjProductInfo.CGST_Rate,
+        CGST_Amount: Number(this.ObjProductInfo.CGST_Amount).toFixed(2),
         SGST_Rate: this.ObjProductInfo.SGST_Rate,
+        SGST_Amount: Number(this.ObjProductInfo.SGST_Amount).toFixed(2),
         IGST_Rate: this.ObjProductInfo.IGST_Rate,
-        CGST_Amt: Number(this.ObjProductInfo.CGST_Amount).toFixed(2),
-        SGST_Amt: Number(this.ObjProductInfo.SGST_Amount).toFixed(2),
-        IGST_Amt: Number(this.ObjProductInfo.IGST_Amount).toFixed(2),
+        IGST_Amount: Number(this.ObjProductInfo.IGST_Amount).toFixed(2),
         Line_Total_Amount: Number(this.ObjProductInfo.Net_Amt).toFixed(2),
         Cat_ID : this.Tax_Category
       };
@@ -616,15 +615,6 @@ export class LetterOfIntentComponent implements OnInit {
       this.ObjProductInfo.Rate = undefined;
       this.ObjProductInfo.Taxable_Amount = undefined;
       this.Tax_Category = undefined;
-      // }
-      // else {
-      //    this.compacctToast.clear();
-      //    this.compacctToast.add({
-      //   key: "compacct-toast",
-      //   severity: "error",
-      //    summary: "Quantity can't be more than in batch available quantity"                   
-      //     });
-      // }
     }
   }
   Deteteaddlist(index){
@@ -644,9 +634,9 @@ export class LetterOfIntentComponent implements OnInit {
     let count5 = 0;
     this.AddProdList.forEach(item => {
       count1 = count1 + Number(item.Taxable_unt);
-      count2= count2 + Number(item.CGST_Amt);
-      count3 = count3 + Number(item.SGST_Amt);
-      count4= count4 + Number(item.IGST_Amt);
+      count2= count2 + Number(item.CGST_Amount);
+      count3 = count3 + Number(item.SGST_Amount);
+      count4= count4 + Number(item.IGST_Amount);
       count5 = count5 + Number(item.Line_Total_Amount);
     });
     this.Tax = count1.toFixed(2);
@@ -670,57 +660,13 @@ export class LetterOfIntentComponent implements OnInit {
     }
   }
   onConfirmSave() {
-    // this.SaveLowerData = [];
-    // this.PurchaseBillFormSubmitted = true;
-    // if (valid && this.AddProdList.length) {
-      this.AddProdList.forEach(element => {
-        this.SaveLowerData.push({
-          Product_ID: element.Product_ID,
-          Product_Name: element.Product_Specification,
-          godown_id: element.godown_id,
-          HSL_No: element.HSN_No,
-          Batch_Number: element.Batch_No,
-          UOM: element.UOM,
-          Qty: element.Qty,
-          MRP: element.Rate,
-          Rate: element.Rate,
-          Amount: element.Taxable_unt,
-          Taxable_Amount: element.Taxable_unt,
-          CGST_Rate: element.CGST_Rate,
-          CGST_Amount: element.CGST_Amt,
-          SGST_Rate: element.SGST_Rate,
-          SGST_Amount: element.SGST_Amt,
-          IGST_Rate: element.IGST_Rate,
-          IGST_Amount: element.IGST_Amt,
-          Line_Total_Amount: element.Line_Total_Amount,
-          Cat_ID : element.Cat_ID
-        })
-      });
+      let savedata:any = [];
       const T_Elemnts = {
-        Doc_No: 'A',
+        Doc_No: this.editDocNo ? this.editDocNo : 'A',
         Doc_Date: this.DateService.dateConvert(this.DocDate),
-        Sub_Ledger_ID: this.ObjLetterOfIntent.Sub_Ledger_ID,
-        Sub_Ledger_Name: this.ObjLetterOfIntent.Sub_Ledger_Name,
-        Sub_Ledger_Billing_Name: this.ObjLetterOfIntent.Sub_Ledger_Billing_Name,
-        Sub_Ledger_Address_1: this.ObjLetterOfIntent.Sub_Ledger_Address_1,
-        Sub_Ledger_Pin: this.ObjLetterOfIntent.Sub_Ledger_Pin,
-        Sub_Ledger_District: this.ObjLetterOfIntent.Sub_Ledger_District,
-        Sub_Ledger_State: this.ObjLetterOfIntent.Sub_Ledger_State,
-        Sub_Ledger_GST_No: this.ObjLetterOfIntent.Sub_Ledger_GST_No,
           
+        Address_Type: this.Choose_Address,
         Cost_Cen_ID: this.Cost_Cen_ID,
-        Cost_Cen_Name: this.Objcostcenter.Cost_Cen_Name,
-        Cost_Cen_Address1: this.Objcostcenter.Cost_Cen_Address1,
-        Cost_Cen_Address2: this.Objcostcenter.Cost_Cen_Address2,
-        Cost_Cen_Location: this.Objcostcenter.Cost_Cen_Location,
-        Cost_Cen_District: this.Objcostcenter.Cost_Cen_District,
-        Cost_Cen_State: this.Objcostcenter.Cost_Cen_State,
-        Cost_Cen_Country: this.Objcostcenter.Cost_Cen_Country,
-        Cost_Cen_PIN: this.Objcostcenter.Cost_Cen_PIN,
-        Cost_Cen_Mobile: this.Objcostcenter.Cost_Cen_Mobile,
-        Cost_Cen_Phone: this.Objcostcenter.Cost_Cen_Phone,
-        Cost_Cen_Email: this.Objcostcenter.Cost_Cen_Email,
-        Cost_Cen_GST_No: this.Objcostcenter.Cost_Cen_GST_No,
           
         Bill_Net_Amt: this.NetAMT,
         User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
@@ -737,12 +683,13 @@ export class LetterOfIntentComponent implements OnInit {
         Transporter: this.ObjLetterOfIntent.Transporterr,
         LR_No: this.ObjLetterOfIntent.LR_No,
         LR_Date: this.DateService.dateConvert(this.SupplierBillDate),
-        L_element: this.SaveLowerData
+        L_element: this.AddProdList
       }
+      savedata = {...this.ObjLetterOfIntent,...this.Objcostcenter,...T_Elemnts};
       const obj = {
         "SP_String": "SP_BL_Txn_Letter_Of_Intent",
         "Report_Name_String": "Create_BL_Txn_Letter_Of_Intent",
-        "Json_Param_String": JSON.stringify(T_Elemnts)
+        "Json_Param_String": JSON.stringify([savedata])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         var tempID = data[0].Column1;
@@ -770,8 +717,12 @@ export class LetterOfIntentComponent implements OnInit {
       this.Reference_Doc_No = undefined;
       this.Reference_Doc_Date = new Date();
       this.LetterOfIntentFormSubmitted = false
-      // this.tabIndexToView = 0;
-      this.items = ["BROWSE", "CREATE"];
+      if(this.buttonname = "Update"){
+        this.tabIndexToView = 0;
+        this.items = ["BROWSE", "CREATE"];
+        this.buttonname = "Create";
+        this.editDocNo = undefined;
+      }
       this.Tax = undefined;
       this.CGST = undefined;
       this.SGST = undefined;
@@ -783,6 +734,7 @@ export class LetterOfIntentComponent implements OnInit {
       this.LotNolist = [];
       this.ObjLetterOfIntent.Vehicle_Type = "Regular";
       this.Choose_Address = undefined;
+      this.GetSerarchBrowse(true);
      }
     }); 
      
@@ -841,6 +793,77 @@ export class LetterOfIntentComponent implements OnInit {
        detail: "Confirm to proceed"
      });
     }
+   }
+
+   Edit(col){
+    this.clearData();
+    this.editDocNo = undefined;
+    if(col.Doc_No){
+      this.editDocNo = col.Doc_No;
+      this.tabIndexToView = 1;
+      this.items = ["BROWSE", "UPDATE"];
+      this.buttonname = "Update";
+      this.getedit(col.Doc_No);
+     }
+   }
+   getedit(Dno){
+    this.editlist = [];
+    const obj = {
+      "SP_String": "SP_BL_Txn_Letter_Of_Intent",
+      "Report_Name_String": "Get_Edit_BL_Txn_Letter_Of_Intent_Data",
+      "Json_Param_String": JSON.stringify([{Doc_No : Dno}])
+  
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.editlist = data;
+      this.ObjLetterOfIntent.Sub_Ledger_ID = data[0].Sub_Ledger_ID;
+      this.VenderNameChange();
+      this.Choose_Address = data[0].Address_Type;
+      setTimeout(() => {
+      this.onChangeAdd();
+      }, 300);
+      this.Cost_Cen_ID = data[0].Cost_Cen_ID;
+      this.GetCosCenAddress();
+      this.Reference_Doc_No = data[0].Ref_Doc_No;
+      this.Reference_Doc_Date = new Date(data[0].Ref_Doc_Date);
+      this.DocDate = new Date(data[0].Doc_Date);
+      // this.RDBListAdd = data[0].L_element;
+      data.forEach(element => {
+        const  productObj = {
+            Product_Type_ID : element.Product_Type_ID,
+            Product_Type: element.Product_Type,
+            Product_Sub_Type_ID : element.Product_Sub_Type_ID,
+            Product_Sub_Type: element.Product_Sub_Type,
+            Ref_Doc_No : element.Ref_Doc_No,
+            Ref_Doc_Date : element.Ref_Doc_No ? element.Ref_Doc_Date : undefined,
+            Product_ID: Number(element.Product_ID),
+            Product_Name: element.Product_Name,
+            Product_Specification: element.Product_Name,
+            HSL_No: element.HSL_No,
+            UOM: element.UOM,
+            LI_Qty: Number(element.LI_Qty),
+            Qty: Number(element.Qty),
+            Sale_Order_Qty: Number(element.Sale_Order_Qty),
+            Sale_Bill_Qty: Number(element.Sale_Bill_Qty),
+            MRP: Number(element.MRP),
+            Rate: Number(element.Rate),
+            Amount: Number(element.Amount),
+            Taxable_unt: Number(element.Taxable_Amount),
+            Taxable_Amount: Number(element.Taxable_Amount),
+            CGST_Rate: Number(element.CGST_Rate),
+            CGST_Amount: Number(element.CGST_Amount),
+            SGST_Rate: Number(element.SGST_Rate),
+            SGST_Amount: Number(element.SGST_Amount),
+            IGST_Rate: Number(element.IGST_Rate),
+            IGST_Amount: Number(element.IGST_Amount),
+            Line_Total_Amount: (element.Line_Total_Amount),
+            Cat_ID : Number(element.Cat_ID)
+          };
+    
+          this.AddProdList.push(productObj);
+          this.TotalCalculation();
+        });
+    })
    }
   //  DynamicRedirectTo (obj){
   //   const navigationExtras: NavigationExtras = {

@@ -486,10 +486,19 @@ getProduct(id?,uom?,psc?){
       this.objaddPurchacse.Unit = undefined
       let tempData:any = {}
       tempData = this.objaddPurchacse.Req_No ? {Req_No : this.objaddPurchacse.Req_No} : {Product_Type_ID : this.objaddPurchacse.Product_Type_ID}
+      const sentData = {
+        Req_No:this.objaddPurchacse.Req_No,
+        PROJECT_ID:this.objproject.PROJECT_ID,
+        Budget_Group_ID	:this.objproject.Budget_Group_ID,
+        Budget_Sub_Group_ID:this.objproject.Budget_Sub_Group_ID,
+        SITE_ID	:this.objproject.SITE_ID,
+        Work_Details_ID:this.objproject.Work_Details_ID
+      }
+     
       const obj = {
         "SP_String": "Sp_Purchase_Order_Harbauer_Only",
         "Report_Name_String": "Get_Product_Against_Requisition_No",
-        "Json_Param_String": Object.keys(this.objProjectRequi).length ? JSON.stringify([{...this.objProjectRequi,...{Req_No : this.objaddPurchacse.Req_No}}]) : JSON.stringify([{Req_No : this.objaddPurchacse.Req_No}])
+        "Json_Param_String": JSON.stringify([sentData]) 
        }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         //console.log(data);

@@ -129,6 +129,9 @@ export class OutwardChallanComponent implements OnInit {
   Pending_Sub_Ledger_ID:any;
   PendingSalesOrderList:any = [];
   PendingSalesOrderListHeader:any = [];
+  editlist:any = [];
+  editDocNo: any;
+  StateList2:any =[];
   constructor(
     private Header: CompacctHeader,
     private router: Router,
@@ -183,6 +186,8 @@ export class OutwardChallanComponent implements OnInit {
     this.Tax_Category = undefined;
     this.ObjProductInfo.Sale_Order_No = undefined;
     this.SalesOrderNoList = [];
+    this.ObjPurChaseBill.Transporter_ID = undefined;
+    this.editDocNo = undefined;
   }
   clearData() { 
     this.PurchaseBillFormSubmitted = false;
@@ -201,7 +206,7 @@ export class OutwardChallanComponent implements OnInit {
     this.ProductSub = [];
     this.ProductDetalist = [];
     this.LotNolist = [];
-    this.SerarchOwterBillList = [];
+    // this.SerarchOwterBillList = [];
     this.ObjPurChaseBill.Sub_Ledger_Billing_Name = '';
     this.ObjPurChaseBill.Choose_Address2 = undefined;
     this.ObjPurChaseBill.Choose_Address = undefined;
@@ -219,7 +224,7 @@ export class OutwardChallanComponent implements OnInit {
     this.ObjPurChaseBill.Mode_Of_Delivery = undefined;
     this.ObjPurChaseBill.Delivery_Point = undefined;
     this.ObjPurChaseBill.Vehicle_No = undefined;
-    this.ObjPurChaseBill.Transporterr = undefined;
+    this.ObjPurChaseBill.Transporter = undefined;
     this.ObjPurChaseBill.LR_No = undefined;
   }
   Finyear() {
@@ -337,6 +342,9 @@ export class OutwardChallanComponent implements OnInit {
       console.log("GetChooseAddress  ===", data);
       this.SaveAddress = data;
       this.SaveAddress1 = data;
+      if(this.buttonname === "Update"){
+        this.onChangeAdd();
+      }
     })
 
   }
@@ -352,7 +360,7 @@ export class OutwardChallanComponent implements OnInit {
     }
    
     if (this.ObjPurChaseBill.Choose_Address2) {
-      const address2 = this.SaveAddress.filter(item=> item.Address_Caption == this.ObjPurChaseBill.Choose_Address2)
+      const address2 = this.SaveAddress1.filter(item=> item.Address_Caption == this.ObjPurChaseBill.Choose_Address2)
       this.ObjPurChaseBill.Sub_Ledger_Address_2 = address2.length ? address2[0].Address_1 : undefined;
         this.ObjPurChaseBill.Sub_Ledger_District_2 = address2.length ? address2[0].District : undefined;
         this.ObjPurChaseBill.Sub_Ledger_State_2 = address2.length ? address2[0].State : undefined;
@@ -369,6 +377,7 @@ export class OutwardChallanComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       this.StateList = data;
+      this.StateList2 = data;
       console.log('StateList', this.StateList)
     })
   }
@@ -682,14 +691,32 @@ export class OutwardChallanComponent implements OnInit {
             key: "compacct-toast",
             severity: "error",
             summary: "Warn Message",
-            detail: "Can't add Same Product with same batch and with same Sale order no."
+            detail: "Can't add Same Product with same batch no. and with same Sale order no."
           });
       return false;
     }
     else {
       return true;
     }
+  }
+  checksamebatchandpro () {
+    if(!this.ObjProductInfo.Sale_Order_No) {
+    const SameProductbach = this.AddProdList.filter(item=> item.Batch_No === this.ObjProductInfo.Batch_Number && item.Product_ID === this.ObjProductInfo.Product_Specification );
+    if(SameProductbach.length) {
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Can't add Same Product with same batch no."
+          });
+      return false;
     }
+    else {
+      return true;
+    }
+  }
+  }
   AddProduct(valid: any) {
     this.TermFormSubmitted = true;
     if (valid && this.checksamebatch()) {
@@ -740,8 +767,10 @@ export class OutwardChallanComponent implements OnInit {
         godown_name: GdwonArry.length ? GdwonArry[0].godown_name : undefined,
         godown_id: this.ObjProductInfo.godown_id,
         Product_ID :this.ObjProductInfo.Product_Specification,
+        Product_Type_ID: this.ObjProductInfo.Product_Type_ID,
         Product_Type: ProductArry.length ? ProductArry[0].Product_Type : undefined,
         HSN_No : ProductDArry.length ? ProductDArry[0].HSN_No : undefined,
+        Product_Sub_Type_ID: this.ObjProductInfo.Product_Sub_Type_ID,
         Product_Sub_Type: ProductSubArry.length ? ProductSubArry[0].Product_Sub_Type : undefined,
         Product_Specification: ProductDArry.length ? ProductDArry[0].label : undefined,
         Batch_No : this.ObjProductInfo.Batch_Number,
@@ -837,6 +866,10 @@ export class OutwardChallanComponent implements OnInit {
           Product_ID: element.Product_ID,
           Product_Name: element.Product_Specification,
           godown_id: element.godown_id,
+          Product_Type_ID: element.Product_Type_ID,
+          Product_Type: element.Product_Type,
+          Product_Sub_Type_ID: element.Product_Sub_Type_ID,
+          Product_Sub_Type: element.Product_Sub_Type,
           HSL_No: element.HSN_No,
           Batch_Number: element.Batch_No,
           UOM: element.UOM,
@@ -857,11 +890,12 @@ export class OutwardChallanComponent implements OnInit {
         })
       });
       const T_Elemnts = {
-        Doc_No: 'A',
+        Doc_No: this.editDocNo ? this.editDocNo : 'A',
         Doc_Date: this.DateService.dateConvert(this.DocDate),
         Sub_Ledger_ID: this.ObjPurChaseBill.Sub_Ledger_ID,
         Sub_Ledger_Name: this.ObjPurChaseBill.Sub_Ledger_Name,
         Sub_Ledger_Billing_Name: this.ObjPurChaseBill.Sub_Ledger_Billing_Name,
+        Buyer_Address_Type: this.Choose_Address,
         Sub_Ledger_Address_1: this.ObjPurChaseBill.Sub_Ledger_Address_1,
         Sub_Ledger_Pin: this.ObjPurChaseBill.Sub_Ledger_Pin,
         Sub_Ledger_District: this.ObjPurChaseBill.Sub_Ledger_District,
@@ -869,6 +903,7 @@ export class OutwardChallanComponent implements OnInit {
         Sub_Ledger_GST_No: this.ObjPurChaseBill.Sub_Ledger_GST_No,
           
         Consignee__Billing_Name: this.ObjPurChaseBill.Sub_Ledger_Billing_Name,
+        Ship_To_Address_Type: this.ObjPurChaseBill.Choose_Address2,
         Consignee_Address_1: this.ObjPurChaseBill.Sub_Ledger_Address_2,
         Consignee_Pin: this.ObjPurChaseBill.Sub_Ledger_Pin_2,
         Consignee_District: this.ObjPurChaseBill.Sub_Ledger_District_2,
@@ -898,8 +933,9 @@ export class OutwardChallanComponent implements OnInit {
         Transportation_Distance : this.ObjPurChaseBill.Transportation_Distance,
         Transporter_ID: this.ObjPurChaseBill.Transporter_ID,
         Delivery_Point: this.ObjPurChaseBill.Delivery_Point,
+        Delivery_Terms: this.ObjPurChaseBill.Delivery_Terms,
         Vehicle_No: this.ObjPurChaseBill.Vehicle_No,
-        Transporter: this.ObjPurChaseBill.Transporterr,
+        Transporter: this.ObjPurChaseBill.Transporter,
         LR_No: this.ObjPurChaseBill.LR_No,
         LR_Date: this.DateService.dateConvert(this.SupplierBillDate),
         L_element: this.SaveLowerData
@@ -931,12 +967,20 @@ export class OutwardChallanComponent implements OnInit {
             detail: "Confirm to proceed"
           });
       this.ObjPurChaseBill = new PurChaseBill();
-      this.Choose_Address = undefined;
+      this.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.GetCosCenAddress();
+      this.ObjPurChaseBill.Transporter_ID = undefined;
+      // this.Choose_Address = undefined;
       this.DocDate = new Date();
       this.SupplierBillDate = new Date();
       this.PurchaseBillFormSubmitted = false
-      // this.tabIndexToView = 0;
-      this.items = ["BROWSE", "CREATE", "PENDING SALES ORDER"];
+      if(this.buttonname === "Update"){
+        this.tabIndexToView = 0;
+        this.items = ["BROWSE", "CREATE", "PENDING SALES ORDER"];
+        this.buttonname = "Create";
+      }
+      this.editDocNo = undefined;
+      this.GetSerarchBrowse(true);
       this.Tax = undefined;
       this.CGST = undefined;
       this.SGST = undefined;
@@ -952,6 +996,7 @@ export class OutwardChallanComponent implements OnInit {
       this.GetCosCenAddress();
       this.ObjProductInfo.Sale_Order_No = undefined;
       this.SalesOrderNoList = [];
+      this.ObjProductInfo.Cost_Cen_ID = this.CenterList[0].Cost_Cen_ID ? this.CenterList[0].Cost_Cen_ID : undefined;
      }
     }); 
      
@@ -962,6 +1007,77 @@ export class OutwardChallanComponent implements OnInit {
     this.compacctToast.clear("s");
     this.compacctToast.clear("bill");
   }
+  Edit(col){
+    this.clearData();
+    this.ObjProductInfo.Cost_Cen_ID = this.CenterList[0].Cost_Cen_ID ? this.CenterList[0].Cost_Cen_ID : undefined;
+    this.GetGodown();
+    this.editDocNo = undefined;
+    if(col.Doc_No){
+      this.editDocNo = col.Doc_No;
+      this.tabIndexToView = 1;
+      this.items = ["BROWSE", "UPDATE", "PENDING SALES ORDER"];
+      this.buttonname = "Update";
+      this.getedit(col.Doc_No);
+     }
+   }
+   getedit(Dno){
+    this.editlist = [];
+    const obj = {
+      "SP_String": "SP_MICL_Sale_Bill",
+      "Report_Name_String": "Get_Sale_Challan_Data_For_Edit",
+      "Json_Param_String": JSON.stringify([{Doc_No : Dno}])
+  
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.editlist = data;
+      console.log("Edit data",data);
+      this.ObjPurChaseBill = data[0];
+      this.ObjPurChaseBill.Sub_Ledger_ID = data[0].Sub_Ledger_ID;
+      this.GetChooseAddress();
+      this.GetSaleOrderNo();
+      this.Choose_Address = data[0].Buyer_Address_Type;
+      // this.onChangeAdd();
+      this.ObjPurChaseBill.Choose_Address2 = data[0].Ship_To_Address_Type;
+      // this.onChangeAdd();
+      this.Cost_Cen_ID = data[0].Cost_Cen_ID;
+      this.GetCosCenAddress();
+      this.DocDate = new Date(data[0].Doc_Date);
+      this.SupplierBillDate = new Date(data[0].LR_Date);
+      data.forEach(element => {
+        const  productObj = {
+            Product_ID: Number(element.Product_ID),
+            Product_Specification: element.Product_Name,
+            godown_id: Number(element.godown_id),
+            godown_name: element.godown_name,
+            Cost_Cen_Name: "Finish Product",
+            Product_Type_ID: element.Product_Type_ID,
+            Product_Type: element.Product_Type,
+            Product_Sub_Type_ID: element.Product_Sub_Type_ID,
+            Product_Sub_Type: element.Product_Sub_Type,
+            HSL_No: element.HSL_No,
+            Batch_No: element.Batch_Number,
+            UOM: element.UOM,
+            Qty: Number(element.Qty),
+            MRP: Number(element.MRP),
+            Rate: Number(element.Rate),
+            Amount: Number(element.Amount),
+            Taxable_unt: Number(element.Taxable_Amount),
+            CGST_Rate: Number(element.CGST_Rate),
+            CGST_Amt: Number(element.CGST_Amount),
+            SGST_Rate: Number(element.SGST_Rate),
+            SGST_Amt: Number(element.SGST_Amount),
+            IGST_Rate: Number(element.IGST_Rate),
+            IGST_Amt: Number(element.IGST_Amount),
+            Line_Total_Amount: (element.Line_Total_Amount),
+            Cat_ID : Number(element.Cat_ID),
+            Sale_Order_No : element.Sale_Order_No
+          };
+    
+          this.AddProdList.push(productObj);
+          this.TotalCalculation();
+        });
+    })
+   }
   Print(DocNo) {
     if (DocNo) {
       const objtemp = {
@@ -1124,11 +1240,12 @@ class PurChaseBill {
   Cost_Cen_GST_No : any;
 
   Delivery_Point : any;
+  Delivery_Terms : any;
   Mode_Of_Delivery : any;
   Transportation_Distance :any;
   Vehicle_Type : any;
   Vehicle_No : any;
-  Transporterr : any;
+  Transporter : any;
   Transporter_ID : any;
   Supp_Ref_Date : any;
   LR_No : any;

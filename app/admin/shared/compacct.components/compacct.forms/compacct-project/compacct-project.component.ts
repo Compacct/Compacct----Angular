@@ -177,6 +177,7 @@ export class CompacctProjectComponent implements OnInit,OnChanges {
       return this.ProjectList.filter((el:any)=> Number(el.Project_ID) == fieldValue)[0]
     }
     if(fieldName == "SITE_ID"){
+      console.log("SiteList",this.SiteList)
       return this.SiteList.filter((el:any)=> Number(el.Site_ID) == fieldValue)[0]
     }
     if(fieldName == "Budget_Group_ID"){
@@ -211,7 +212,7 @@ ProjectEdit(editData){
     this.getWork(editData[0].Work_Details_ID)
     console.log("objproject",this.objproject);
     this.ngxService.stop();
-   }, 3000);
+   }, 3100);
  }
   else {
     this.fieldDis = false

@@ -54,7 +54,7 @@ export class AttendanceSheetComponent implements OnInit {
   seachSpinner:boolean = false;
   employeelist:any = [];
   MonthdayDatelist = [];
-  AttenTypelist = [];
+  AttenTypelist:any = [];
   currentdate = new Date();
   Attendance_Status = undefined;
   attendancestatusFormSubmitted = false;
@@ -96,6 +96,7 @@ export class AttendanceSheetComponent implements OnInit {
   DetailsModal = false;
   PMAttnSheet:boolean = false;
   CheckFinalizedOrNot:any;
+  databaseName: any;
   constructor(
     private route : ActivatedRoute,
     private Header: CompacctHeader,
@@ -378,6 +379,7 @@ export class AttendanceSheetComponent implements OnInit {
       Header: "Attendance Sheet",
       Link: " HR -> Transaction -> Attendance Sheet"
     });
+    this.getDatabase();
     this.getAttendanceType();
     const d = new Date();
     let month = d.getMonth() + 1;
@@ -390,6 +392,15 @@ export class AttendanceSheetComponent implements OnInit {
     // this.getmonthdaydate();
     this.callapi();
     // this.getAttendanceData();
+  }
+  getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log(data)
+        });
   }
   getAttendanceType(){
     const obj = {

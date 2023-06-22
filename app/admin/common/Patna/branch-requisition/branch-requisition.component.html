@@ -40,10 +40,7 @@
                                         name="Cost_Cen_ID_Browse" 
                                         #Cost_Cen_ID_Browse='ngModel' 
                                         [(ngModel)]="objBrowseData.Cost_Cent_ID"
-                                        [ngClass]="{'clearance': BranchRequisitionBrowseFormSubmit && Cost_Cen_ID.errors?.required}" 
-                                        required
-                                        [attr.disabled]="userType != 'A' ? true :null"
-                                        >
+                                        [attr.disabled]="userType != 'A' ? true :null">
                                             <option  [ngValue]="undefined">Select</option>
                                             <option *ngFor="let option of costCenterList" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
                                       </select>
@@ -104,7 +101,7 @@
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="userType == 'A'">
+                                                        <li>
                                                             <a (click)="PodUpdate(col)">
                                                                 <i class="fa fa-fw  fa-cab"></i> POD Update
                                                             </a>
@@ -201,6 +198,17 @@
                                     </textarea>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Referred By<sup class="text-danger"></sup></label>
+                                        <input class="form-control" name="Reffered" #Reffered="ngModel" [(ngModel)]="ObjbranchREQ.Reffered_By" placeholder="Reffered By">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Remarks<sup class="text-danger"></sup></label>
+                                        <textarea class="form-control" name="Remarks" #Remarks="ngModel" rows='2'[(ngModel)]="ObjbranchREQ.Remarks">
+                                        </textarea>
+                                    </div>
+                                </div>
                                 <div class="box-footer">
                                     <button class="btn btn-primary pull-right" 
                                             (click)="AddBranchReq(BranchRequisitionForm.form.valid)" 
@@ -230,6 +238,8 @@
                                             <th>Qty</th>
                                             <th>Product Remarks</th>
                                             <th>Status</th>
+                                            <th>Referred By</th>
+                                            <th>Remarks</th>
                                             <th>Delete</th>
                                         </tr>
                                     </ng-template>
@@ -238,8 +248,10 @@
                                             <td>{{rowIndex+1}}</td>
                                             <td>{{col.Product_Description}}</td>
                                             <td>{{col.Qty}}</td>
-                                            <td>{{col.Product_Remarks}}</td>
+                                            <td>{{col.Product_Remarks ? col.Product_Remarks : '-'}}</td>
                                             <td>{{col.Status}}</td>
+                                            <td>{{col.Reffered_By ?col.Reffered_By : '-'}}</td>
+                                            <td>{{col.Remarks ? col.Remarks : '-'}}</td>
                                             <td> <a class="btn btn-sm btn-danger" (click)="DeleteAddBranchReq(rowIndex)"
                                                 ><div><i class="fa fa-fw fa-trash"> </i></div>
                                               </a></td>
@@ -274,7 +286,7 @@
 <p-dialog header="Approved / DisApproved Po " appendTo="body" [(visible)]="ViewProTypeModal" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" 
 [maximizable]="true" [baseZIndex]="10000">
 <div class="form-group">
-    <div class="col-sm-12">
+    <div class="col-sm-5">
         <label class="control-label">Delivery Remarks<span class="text-danger">*</span></label>
         <select class="form-control" 
         name="Delivery_Remarks" 
@@ -285,6 +297,11 @@
             <option value="Complete" >Complete</option>
             <option Invalid="Invalid" >Invalid</option>
         </select>
+    </div>
+    <div class="col-sm-7">
+        <label class="control-label">Remarks From HO<span class="text-danger"></span></label>
+        <input class="form-control" name="Remarks_From_HO" #Remarks_From_HO="ngModel" [(ngModel)]="DeliveryRemarksObj.Remarks_From_HO"
+            placeholder="Remarks From HO">
     </div>
 </div>
     <p-footer> 

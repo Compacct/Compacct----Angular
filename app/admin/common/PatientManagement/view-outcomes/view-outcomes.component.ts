@@ -28,6 +28,7 @@ export class ViewOutcomesComponent implements OnInit {
   FinalDetailsList: any=[];
   FinalDetailsListHeader: any=[];
   OpenFinal: boolean = false;
+  CokkUiD: any = undefined;
 
   objDiagonisis: Diagonisis = new Diagonisis();
   objAppointment: Appointment = new Appointment();
@@ -41,6 +42,7 @@ export class ViewOutcomesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.CokkUiD = this.$CompacctAPI.CompacctCookies.User_ID;
     this.Header.pushHeader({
       Header: "View Outcomes",
       Link: " Patient Management -> View Outcomes"
@@ -74,7 +76,8 @@ export class ViewOutcomesComponent implements OnInit {
     this.AudiologistList = [];
     const obj = {
       "SP_String": "Sp_View_Outcomes",
-      "Report_Name_String": "Get_Audiologist"
+      "Report_Name_String": "Get_Audiologist",
+       "Json_Param_String": JSON.stringify([{User_ID :this.CokkUiD}])
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
   //  console.log("Get AudiologistList",data);
@@ -84,9 +87,13 @@ export class ViewOutcomesComponent implements OnInit {
             element['value'] = element.Doctor_ID
           });
         this.AudiologistList = data;
+          if (this.$CompacctAPI.CompacctCookies.User_Type === 'U') {
+          this.AudiologistID = this.AudiologistList[0].Doctor_ID
+        }   
       }
       else {
-          this.AudiologistList = [];
+        this.AudiologistList = [];
+        this.AudiologistID = undefined;
       }
    });
   }
