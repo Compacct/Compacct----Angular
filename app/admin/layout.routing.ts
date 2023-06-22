@@ -388,6 +388,7 @@ import { ApproveAttendanceRegularizationComponent } from './common/Attendance/ap
 import { EmployeeTransferComponent } from './common/Attendance/employee-transfer/employee-transfer.component';
 import { HearingCRMLeadFollowupComponent } from "./common/CRM/Followup/hearing-crm-lead-followup/hearing-crm-lead-followup.component";
 import { HrRequisitionFormComponent } from './common/Attendance/hr-requisition-form/hr-requisition-form.component';
+import { ApproveHrRequisitionFormComponent } from './common/Attendance/approve-hr-requisition-form/approve-hr-requisition-form.component';
 import { RetailAdvanceOrderComponent } from "./common/FinancialManagement/Retail/retail-advance-order/retail-advance-order.component";
 
 
@@ -2954,9 +2955,16 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
           title: 'Hearing CRM Lead Followup'
     }
     },
-      {
+    {
       path: 'HR_Requisition_Form',
         component: HrRequisitionFormComponent,
+        data: {
+          title: 'Hr Requisition Form'
+    }
+    },
+    {
+      path: 'Approve_HR_Requisition_Form',
+        component: ApproveHrRequisitionFormComponent,
         data: {
           title: 'Hr Requisition Form'
     }
