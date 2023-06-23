@@ -17,6 +17,8 @@ export class ApproveHrRequisitionFormComponent implements OnInit {
   Items: any = ['PENDING APPROVAL', 'APPROVED APPROVAL', 'DISAPPROVE APPROVAL'];
   Spinner: boolean = false;
   buttonname: string = 'Create';
+  pendingTableData: any = [];
+  pendingTableDataSearch: any = [];
   constructor(
     private Header: CompacctHeader,
     private CompacctToast: MessageService,
@@ -40,7 +42,8 @@ export class ApproveHrRequisitionFormComponent implements OnInit {
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
       console.log('pending List', data);
-
+      this.pendingTableData = data;
+      this.pendingTableDataSearch = Object.keys(data[0]);
     })
   }
 
