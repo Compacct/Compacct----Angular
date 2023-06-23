@@ -783,7 +783,7 @@ onConfirmSave(){
      this.AddTermList = [];
      if (this.buttonname === "Update") {
       this.tabIndexToView = 0;
-      this.items = ["BROWSE", "CREATE", "PENDING RDB", "PENDING RDB PRODUCT WISE", "GRN REGISTER"];
+      this.items = ["BROWSE", "CREATE", "PENDING RDB"];
       this.buttonname = "Save";
       this.DocNo = undefined;
      }
@@ -820,7 +820,7 @@ Edit(col){
   if(col.GRN_No){
     this.DocNo = col.GRN_No;
     this.tabIndexToView = 1;
-    this.items = ["BROWSE", "UPDATE", "PENDING RDB", "PENDING RDB PRODUCT WISE", "GRN REGISTER"];
+    this.items = ["BROWSE", "UPDATE", "PENDING RDB"];
     this.buttonname = "Update";
     this.getedit(col.GRN_No);
     setTimeout(() => {
@@ -1135,6 +1135,7 @@ Printrdb(DocNo) {
   })
   }
 }
+
 }
 class Browse {
   Company_ID : any;

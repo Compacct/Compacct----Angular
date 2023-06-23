@@ -113,6 +113,9 @@ export class CouponExpensesComponent implements OnInit {
     }
     });
     }
+    else {
+      this.seachSpinner = false;
+    }
   }
 
   
