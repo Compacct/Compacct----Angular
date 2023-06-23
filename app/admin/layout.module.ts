@@ -487,6 +487,7 @@ import { HearingCRMLeadFollowupComponent } from './common/CRM/Followup/hearing-c
 import { HrRequisitionFormComponent } from './common/Attendance/hr-requisition-form/hr-requisition-form.component';
 import { ApproveHrRequisitionFormComponent } from './common/Attendance/approve-hr-requisition-form/approve-hr-requisition-form.component';
 import { RetailAdvanceOrderComponent } from './common/FinancialManagement/Retail/retail-advance-order/retail-advance-order.component';
+import { SalesmanTargetComponent } from './common/PatientManagement/Audiologist/salesman-target/salesman-target.component';
 
 
 @NgModule({
@@ -891,7 +892,8 @@ import { RetailAdvanceOrderComponent } from './common/FinancialManagement/Retail
     HearingCRMLeadFollowupComponent,
      HrRequisitionFormComponent,
      ApproveHrRequisitionFormComponent,
-     RetailAdvanceOrderComponent
+     RetailAdvanceOrderComponent,
+     SalesmanTargetComponent
   ],
   imports: [
     CommonModule,
