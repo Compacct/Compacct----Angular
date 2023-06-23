@@ -67,7 +67,6 @@ import {DataViewModule} from 'primeng/dataview';
 import {PanelModule} from 'primeng/panel';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
 import {SliderModule} from 'primeng/slider';
-
 // SPINNER
 import { NgxUiLoaderModule } from "ngx-ui-loader";
 // SYN
@@ -488,8 +487,9 @@ import { HrRequisitionFormComponent } from './common/Attendance/hr-requisition-f
 import { ApproveHrRequisitionFormComponent } from './common/Attendance/approve-hr-requisition-form/approve-hr-requisition-form.component';
 import { RetailAdvanceOrderComponent } from './common/FinancialManagement/Retail/retail-advance-order/retail-advance-order.component';
 import { SalesmanTargetComponent } from './common/PatientManagement/Audiologist/salesman-target/salesman-target.component';
-
-
+import { HRAttnDetalisComponent } from './common/HR/hr-attn-detalis/hr-attn-detalis.component';
+import {GMapModule} from 'primeng/gmap';
+import { AgmCoreModule } from '@agm/core';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -890,10 +890,11 @@ import { SalesmanTargetComponent } from './common/PatientManagement/Audiologist/
     ApproveAttendanceRegularizationComponent,
     EmployeeTransferComponent,
     HearingCRMLeadFollowupComponent,
-     HrRequisitionFormComponent,
-     ApproveHrRequisitionFormComponent,
-     RetailAdvanceOrderComponent,
-     SalesmanTargetComponent
+    HrRequisitionFormComponent,
+    ApproveHrRequisitionFormComponent,
+    RetailAdvanceOrderComponent,
+    SalesmanTargetComponent,
+    HRAttnDetalisComponent
   ],
   imports: [
     CommonModule,
@@ -941,7 +942,13 @@ import { SalesmanTargetComponent } from './common/PatientManagement/Audiologist/
     NpDatepickerModule,
     SplitButtonModule,
     SliderModule,
-    
+    GMapModule,
+    AgmCoreModule.forRoot({
+      // please get your own API key here:
+      // https://developers.google.com/maps/documentation/javascript/get-api-key?hl=en
+      apiKey: 'AIzaSyDSloRmchjfZhHX2u-vXo1i9uGX7Qj7AV0'
+    })
+  
   ],
   exports: [],
   providers: [

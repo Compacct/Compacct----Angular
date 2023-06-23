@@ -390,7 +390,7 @@ import { HearingCRMLeadFollowupComponent } from "./common/CRM/Followup/hearing-c
 import { HrRequisitionFormComponent } from './common/Attendance/hr-requisition-form/hr-requisition-form.component';
 import { ApproveHrRequisitionFormComponent } from './common/Attendance/approve-hr-requisition-form/approve-hr-requisition-form.component';
 import { RetailAdvanceOrderComponent } from "./common/FinancialManagement/Retail/retail-advance-order/retail-advance-order.component";
-
+import { HRAttnDetalisComponent } from "./common/HR/hr-attn-detalis/hr-attn-detalis.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2971,12 +2971,18 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
     },
     {
       path: 'Hearing_Advance_Order_V3',
-      component: RetailAdvanceOrderComponent,
-      data: {
-        title: 'Advance Order'
-      }
+        component: RetailAdvanceOrderComponent,
+        data: {
+          title: 'Advance Order'
+    }
     },
-
+    {
+      path: 'HR_ATTN_DETAILS',
+        component: HRAttnDetalisComponent,
+        data: {
+          title: 'Attendance Detalis'
+    }
+    },
     
     
     /*{
