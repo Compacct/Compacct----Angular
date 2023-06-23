@@ -593,7 +593,12 @@ export class FinancialVoucherComponent implements OnInit {
         Sub_Ledger_ID: Number(this.objjournalloweer.Sub_Ledger_ID),
         Company_ID: Number(this.objjournal.Company_ID),
         Voucher_Type_ID: Number(this.objjournalloweer.Voucher_Type_ID),
-        txn_type: this.objjournal.DrCrdata
+        txn_type: this.objjournal.DrCrdata,
+        PROJECT_ID: this.objProject.PROJECT_ID,  
+        Budget_Group_ID : this.objProject.Budget_Group_ID,
+        Budget_Sub_Group_ID : this.objProject.Budget_Sub_Group_ID, 
+        SITE_ID	: this.objProject.SITE_ID,
+        Work_Details_ID	: this.objProject.Work_Details_ID
       }
       const obj = {
       "SP_String": "SP_Financial_Voucher",

@@ -67,7 +67,6 @@ import {DataViewModule} from 'primeng/dataview';
 import {PanelModule} from 'primeng/panel';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
 import {SliderModule} from 'primeng/slider';
-
 // SPINNER
 import { NgxUiLoaderModule } from "ngx-ui-loader";
 // SYN
@@ -484,8 +483,9 @@ import { AttendanceRegularizationComponent } from './common/Attendance/attendanc
 import { ApproveAttendanceRegularizationComponent } from './common/Attendance/approve-attendance-regularization/approve-attendance-regularization.component';
 import { EmployeeTransferComponent } from './common/Attendance/employee-transfer/employee-transfer.component';
 import { HearingCRMLeadFollowupComponent } from './common/CRM/Followup/hearing-crm-lead-followup/hearing-crm-lead-followup.component';
-
-
+import { HRAttnDetalisComponent } from './common/HR/hr-attn-detalis/hr-attn-detalis.component';
+import {GMapModule} from 'primeng/gmap';
+import { AgmCoreModule } from '@agm/core';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -885,7 +885,8 @@ import { HearingCRMLeadFollowupComponent } from './common/CRM/Followup/hearing-c
     AttendanceRegularizationComponent,
     ApproveAttendanceRegularizationComponent,
     EmployeeTransferComponent,
-    HearingCRMLeadFollowupComponent
+    HearingCRMLeadFollowupComponent,
+    HRAttnDetalisComponent
   ],
   imports: [
     CommonModule,
@@ -933,7 +934,13 @@ import { HearingCRMLeadFollowupComponent } from './common/CRM/Followup/hearing-c
     NpDatepickerModule,
     SplitButtonModule,
     SliderModule,
-    
+    GMapModule,
+    AgmCoreModule.forRoot({
+      // please get your own API key here:
+      // https://developers.google.com/maps/documentation/javascript/get-api-key?hl=en
+      apiKey: 'AIzaSyDSloRmchjfZhHX2u-vXo1i9uGX7Qj7AV0'
+    })
+  
   ],
   exports: [],
   providers: [
