@@ -99,7 +99,10 @@ export class CouponUtilizationComponent implements OnInit {
       this.seachSpinner = false;
     }
     });
-  }
+    }
+    else {
+      this.seachSpinner = false;
+    }
   }
 
   

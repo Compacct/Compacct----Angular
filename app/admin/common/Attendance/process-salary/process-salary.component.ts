@@ -420,9 +420,9 @@ itemNew.forEach(element => {
 
     }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
-      XLSX.writeFile(workbook, fileName+'.xlsx');
+      // const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      // const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      // XLSX.writeFile(workbook, fileName+'.xlsx');
         this.converttoPDFbankstatement(data);
       
     })
@@ -469,8 +469,8 @@ itemNew.forEach(element => {
       theme: "grid",
       head:[column],
       body:rows,
-      headStyles :{fillColor : [255, 255, 255],lineWidth: 0.1,lineColor:[0,0,0],textColor:[0, 0, 0]},
-      bodyStyles: {lineWidth: 0.1,lineColor:[0,0,0]},
+      headStyles :{fillColor : [255, 255, 255],lineWidth: 0.1,lineColor:[0,0,0],textColor:[0, 0, 0],fontSize: 7},
+      bodyStyles: {lineWidth: 0.1,lineColor:[0,0,0],fontSize: 7},
       // alternateRowStyles: {lineColor:[255,0,0],},
       //tableLineColor: [0, 0, 0],
       // tableLineWidth: 0.1,
