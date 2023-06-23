@@ -35,6 +35,10 @@
                               <th style="text-align: center ;" nowrap>Needed For</th>
                               <th style="text-align: center ;" nowrap>Recruitment Urgency</th>
                               <th style="text-align: center ;" nowrap>Remarks</th>
+                              <th style="text-align: center ;" nowrap>Approved Note Business Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Note Reporting Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Status Business Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Status Reporting Manager</th>
                            </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-col>
@@ -76,6 +80,18 @@
                               <td style="text-align: center ;" nowrap>{{col.Recruitment_Urgency ?
                                  col.Recruitment_Urgency : '-'}}</td>
                               <td style="text-align: center ;" nowrap>{{col.Remarks ? col.Remarks : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Note_Business_Manager ?
+                                 col.Approved_Note_Business_Manager : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Note_Reporting_Manager ?
+                                 col.Approved_Note_Reporting_Manager : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Status_Business_Manager ?
+                                 col.Approved_Status_Business_Manager : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Status_Reporting_Manager ?
+                                 col.Approved_Status_Reporting_Manager : '-'}}
+                              </td>
                            </tr>
                         </ng-template>
                         <ng-template pTemplate="paginatorright" let-state>
