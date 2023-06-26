@@ -22,11 +22,26 @@
          <div class="form-horizontal">
             <div class="box-body">
                <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
-                  <div class="row">
-                     <button style="margin-right: 10px;" class="btn btn-primary pull-right" (click)="showPopup()"
-                        id="load"><span class="glyphicon glyphicon-save"></span>Create</button>
+               <div class="form-group">
+                  <!-- <br> -->
+                  <div class="col-sm-3">
+                     <label class="control-label">Date</label>
+                     <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                     </app-compacct-daterangepicker>
+                 </div>
+                  <div class="col-sm-2">
+                      <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getBrowseData()" id="load" [disabled]="seachSpinner">
+                       <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                        <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                     </button>
                   </div>
-                  <br>
+                  <div class="col-sm-2">
+                     <!-- <div class="row" style="margin-right: 10px;"> -->
+                        <button  class="btn btn-primary custombutton1" (click)="showPopup()"
+                           id="load"><span class="glyphicon glyphicon-save"></span>Create</button>
+                     <!-- </div> -->
+                  </div>
+               </div>   
                   <p-table *ngIf="allDataList.length" [value]="allDataList" [paginator]="true" [rows]="50" [rowHover]="true" [autoLayout]="true"
                      sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100,200,300]"
                      [globalFilterFields]="DynamicHeader" [rowHover]="true" #dt>

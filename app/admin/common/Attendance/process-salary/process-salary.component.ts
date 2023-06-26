@@ -106,7 +106,7 @@ export class ProcessSalaryComponent implements OnInit {
       console.log('this.BrowseList',this.BrowseList)
       this.CheckBackRegister();
   })
-    
+  this.getcurrentmonth();
   }
   }
   getcurrentmonth(){
@@ -259,8 +259,88 @@ export class ProcessSalaryComponent implements OnInit {
       const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
       const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
       XLSX.writeFile(workbook, fileName+'.xlsx');
+      this.converttoPDFsalaryregister(data);
       
     })
+  }
+  converttoPDFsalaryregister(itemNew) {
+    //var style:any ='landscape'; //'l', 'mm', [297, 297]
+    var currentmonth = this.currentmonth;
+    var doc:any = new jsPDF('l', 'mm', 'legal');
+    var rows:any = [];
+
+/* The following array of object as response from the API req  */
+    var column = itemNew.length ? Object.keys(itemNew[0]): []
+
+itemNew.forEach(element => {
+    // var temp = [element.id,element.name,element.id1,element.name1,element.id2,element.name2,element.id3,element.name3,element.id4,element.name4];
+    rows.push(Object.values(element))
+
+});
+
+    var imgData;
+    imgData = "../../../../Content/dist/img/Kashvi.jpeg"
+  
+    doc.autoTable({
+      //startY:50,
+      theme: "grid",
+      head:[column],
+      body:rows,
+      headStyles :{fillColor : [255, 255, 255],lineWidth: 0.1,lineColor:[0,0,0],textColor:[0, 0, 0],fontSize: 6},
+      bodyStyles: {lineWidth: 0.1,lineColor:[0,0,0],fontSize: 6},
+      //columnStyles: {2: {halign: 'right'}, 3: {halign: 'right'}},
+      // styles: { cellWidth: "wrap" },
+      // columnStyles: {
+      //   0: {cellWidth: 5},
+      //   1: {cellWidth: 8},
+      //   2: {cellWidth: 15},
+      //   3: {cellWidth: 15},
+      //   4: {cellWidth: 5},
+      //   5: {cellWidth: 5},
+      //   6: {cellWidth: 5},
+      //   7: {cellWidth: 7},
+      //   8: {cellWidth: 7},
+      //   9: {cellWidth: 7},
+      //   10: {cellWidth: 5},
+      //   11: {cellWidth: 5},
+      //   12: {cellWidth: 7},
+      //   13: {cellWidth: 7},
+      //   14: {cellWidth: 7},
+      //   15: {cellWidth: 7},
+      //   16: {cellWidth: 5},
+      //   17: {cellWidth: 5},
+      //   18: {cellWidth: 5},
+      //   19: {cellWidth: 7},
+      //   20: {cellWidth: 5},
+      //   21: {cellWidth: 7},
+      //   22: {cellWidth: 5},
+      //   23: {cellWidth: 7},
+      //   24: {cellWidth: 8},
+      //   // etc
+      // },
+      
+      didDrawPage: function (data) {
+        // Header
+        // doc.setFontSize(20);
+        // doc.setTextColor(40);
+        // doc.setFontStyle('normal');
+        var width = doc.internal.pageSize.getWidth();
+        // console.log('width---',width)
+        // var height = doc.internal.pageSize.getHeight();
+        // console.log('height---',height)
+        if (imgData) {   
+            doc.addImage(imgData, 'JPEG', data.settings.margin.left,10,35,20);  // for add image
+        }
+        doc.text('MODERN INDIA CON-CAST LIMITED', width/2, 17, { align: 'center' },{fontSize: 12})
+        doc.setFontSize(10);
+        doc.text('(A unit of Kasvi Group)', width/2, 22, { align: 'center' },{fontSize: 3})
+        doc.text('Bhuniaraichak, J.L No-122, Haldia-721635, Purba Medinipur, West Bengal', width/2, 27, { align: 'center' },{fontSize: 0.4})
+        doc.text('Salary for The Month of ' + currentmonth, width/2, 32, { align: 'center' },{styles: { fontSize: 3 }})
+        
+      },
+      margin: {top: 40, right: 6, bottom: 4, left: 6}
+    });
+    doc.save('Salary-Statement.pdf');
   }
   Finalized(){
     var firstDate = this.Month_Name+'-'+'01'
@@ -331,7 +411,6 @@ export class ProcessSalaryComponent implements OnInit {
     })
   }
   exportoexcel2(fileName){
-    this.getcurrentmonth();
     var firstDate = this.Month_Name+'-'+'01'
     if (this.CheckFinalizedOrNot === "Finalized") {
     const obj = {
@@ -341,10 +420,10 @@ export class ProcessSalaryComponent implements OnInit {
 
     }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
-      XLSX.writeFile(workbook, fileName+'.xlsx');
-        this.converttoPDF(data);
+      // const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      // const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      // XLSX.writeFile(workbook, fileName+'.xlsx');
+        this.converttoPDFbankstatement(data);
       
     })
     }
@@ -359,8 +438,8 @@ export class ProcessSalaryComponent implements OnInit {
     }
   }
   
-  converttoPDF(itemNew) {
-    var style:any = itemNew[0].orientation
+  converttoPDFbankstatement(itemNew) {
+    //var style:any = ;
     var currentmonth = this.currentmonth;
     var doc:any = new jsPDF();
     var rows:any = [];
@@ -390,8 +469,8 @@ itemNew.forEach(element => {
       theme: "grid",
       head:[column],
       body:rows,
-      headStyles :{fillColor : [255, 255, 255],lineWidth: 0.1,lineColor:[0,0,0],textColor:[0, 0, 0]},
-      bodyStyles: {lineWidth: 0.1,lineColor:[0,0,0]},
+      headStyles :{fillColor : [255, 255, 255],lineWidth: 0.1,lineColor:[0,0,0],textColor:[0, 0, 0],fontSize: 7},
+      bodyStyles: {lineWidth: 0.1,lineColor:[0,0,0],fontSize: 7},
       // alternateRowStyles: {lineColor:[255,0,0],},
       //tableLineColor: [0, 0, 0],
       // tableLineWidth: 0.1,

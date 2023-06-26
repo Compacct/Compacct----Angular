@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
@@ -22,8 +23,13 @@ export class CouponExpensesComponent implements OnInit {
   couponExpensesFormSubmit: boolean = false;
 
   objExpenses = new Expenses();
+  From_date: any;
+  To_date: any;
+  initDate:any = [];
+  seachSpinner:boolean = false;
   constructor(
     private Header: CompacctHeader,
+    private $http : HttpClient,
     private CompacctToast: MessageService,
     private GlobalAPI: CompacctGlobalApiService,
     private commonApi: CompacctCommonApi,
@@ -36,7 +42,16 @@ export class CouponExpensesComponent implements OnInit {
       Header: "Canteen Expenses",
       Link: "MICL --> Canteen Expenses"
     });
-    this.getBrowseData()
+    this.Finyear();
+    // this.getBrowseData()
+  }
+  Finyear() {
+    this.$http
+      .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.commonApi.CompacctCookies.Fin_Year_ID)
+      .subscribe((res: any) => {
+      let data = JSON.parse(res)
+     this.initDate =  [new Date(data[0].Fin_Year_Start) , new Date(data[0].Fin_Year_End)]
+      });
   }
 
   showPopup() {
@@ -63,10 +78,29 @@ export class CouponExpensesComponent implements OnInit {
    }
   }
   onReject(){}
+  getDateRange(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.From_date = dateRangeObj[0];
+      this.To_date = dateRangeObj[1];
+    }
+  }
   getBrowseData() {
+    this.seachSpinner = true;
+    const From_date = this.From_date
+    ? this.DateService.dateConvert(new Date(this.From_date))
+    : this.DateService.dateConvert(new Date());
+    const To_date = this.To_date
+    ? this.DateService.dateConvert(new Date(this.To_date))
+    : this.DateService.dateConvert(new Date());
+    if(From_date && To_date) {
+    const tempobj = {
+      From_Date : From_date,
+      To_Date : To_date
+    }
     const obj = {
       "SP_String": "SP_Master_Coupon_Receive",
-      "Report_Name_String": "Get_Master_Coupon_Canteen_Expenses"
+      "Report_Name_String": "Get_Master_Coupon_Canteen_Expenses",
+      "Json_Param_String": JSON.stringify([tempobj])
 
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
@@ -75,8 +109,13 @@ export class CouponExpensesComponent implements OnInit {
       this.allDataList = data;
       this.DynamicHeader = Object.keys(this.allDataList[0]);
       console.log('Dynamic Header',this.DynamicHeader);
+      this.seachSpinner = false;
     }
     });
+    }
+    else {
+      this.seachSpinner = false;
+    }
   }
 
   

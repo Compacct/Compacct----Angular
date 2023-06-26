@@ -6,6 +6,8 @@ import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import * as XLSX from 'xlsx';
+import { jsPDF } from "jspdf";
+import 'jspdf-autotable';
 @Component({
   selector: 'app-micl-coupon-issue',
   templateUrl: './micl-coupon-issue.component.html',
@@ -47,6 +49,9 @@ export class MICLCouponIssueComponent implements OnInit {
   contractorEmpList:any = [];
   IssuetoList:any = [] ;
   DynamicHeaderforBrowseData:any = [];
+  Issue_To_Browse:any;
+  pdfFormSubmitted:boolean = false;
+  currentmonth: any;
   
   constructor(
     private http: HttpClient,
@@ -381,10 +386,11 @@ export class MICLCouponIssueComponent implements OnInit {
   SearchData() {
     this.BrowseData = [];
     this.DynamicHeaderforBrowseData = [];
-    if (this.From_date && this.To_date) {
+  if (this.From_date && this.To_date) {
       const Data = {
         From_Date: this.DateService.dateConvert(this.From_date) ,
-        To_Date: this.DateService.dateConvert(this.To_date) 
+        To_Date: this.DateService.dateConvert(this.To_date) ,
+        Issue_Type: this.Issue_To_Browse ? this.Issue_To_Browse : ''
       }
       const obj = {
         "SP_String": "SP_Master_Coupon_Receive",
@@ -405,13 +411,128 @@ export class MICLCouponIssueComponent implements OnInit {
          this.NoDataFound = true; 
          this.DynamicHeaderforBrowseData = [];
         }
-      })       
+      })      
    } 
   }
   exportExcelbrowse(Arr,fileName): void {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
     const workbook: XLSX.WorkBook = {Sheets: {[fileName]: worksheet}, SheetNames: [fileName]};
     XLSX.writeFile(workbook, fileName+'.xlsx');
+  }
+  getcurrentmonth(){
+    var firstDate = this.From_date;
+    const currentdate = new Date(firstDate);
+    const month = currentdate.getMonth();
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"];
+
+    this.currentmonth = monthNames[month].toUpperCase();
+    console.log('monthNames====',this.currentmonth);
+  }
+  downloadpdf(valid){
+    this.pdfFormSubmitted = true;
+    if (valid && this.From_date && this.To_date) {
+      this.getcurrentmonth();
+    const Data = {
+      From_Date: this.DateService.dateConvert(this.From_date) ,
+      To_Date: this.DateService.dateConvert(this.To_date) ,
+      Issue_Type: this.Issue_To_Browse
+    }
+    const obj = {
+      "SP_String": "SP_Master_Coupon_Receive",
+      "Report_Name_String": "Coupon_Statement_For_PDF",
+      "Json_Param_String": JSON.stringify([Data])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.converttoPDFcoupon(data);
+      this.pdfFormSubmitted = false;
+    })
+    }
+  }
+  converttoPDFcoupon(itemNew) {
+    //var style:any = ;
+    var fromdate = this.From_date;
+    var month = this.currentmonth
+    var year = fromdate.getFullYear();
+    var currentmonthyear = month + '-' + year;
+    var doc:any = new jsPDF();
+    var rows:any = [];
+    var header:any = [];
+
+/* The following array of object as response from the API req  */
+    var column = itemNew.length ? Object.keys(itemNew[0]): [];
+    header = 
+      [{
+      content: "MEAL & BREAKFAST COUPON STATEMENT OF MICL STAFF FOR THE MONTH OF "+ currentmonthyear,
+      colSpan: 10,
+      styles: {
+      halign: 'center',
+      fillColor: [255, 255, 255] //[211, 211, 211]
+      }
+      }];
+    // var head = [{...header,...column}]
+    let head = [header,column]
+
+itemNew.forEach(element => {
+    // var temp = [element.id,element.name,element.id1,element.name1,element.id2,element.name2,element.id3,element.name3,element.id4,element.name4];
+    rows.push(Object.values(element))
+
+});
+
+    //  var base64Img;
+
+  // Convert the image to base64
+  // this.imgToBase64("https://Compacct/src/assets/adminSB/dist/img/Kashvi.jpeg", function(base64) {
+  //   base64Img = base64;
+  //   console.log('img----',base64Img)
+  // });
+    // Static base64 for example purposes
+    // base64Img = 
+    var imgData;
+    imgData = "../../../../Content/dist/img/Kashvi.jpeg"
+  
+    doc.autoTable({
+      theme: "grid",
+      head:head,
+      body:rows,
+      headStyles :{fillColor : [255, 255, 255],lineWidth: 0.1,lineColor:[0,0,0],textColor:[0, 0, 0],fontSize: 7},
+      bodyStyles: {lineWidth: 0.1,lineColor:[0,0,0],fontSize: 7},
+      // alternateRowStyles: {lineColor:[255,0,0],},
+      //tableLineColor: [0, 0, 0],
+      // tableLineWidth: 0.1,
+      
+      didDrawPage: function (data) {
+        // Header
+        // doc.setFontSize(20);
+        // doc.setTextColor(40);
+        // doc.setFontStyle('normal');
+        var width = doc.internal.pageSize.getWidth()
+        // var height = doc.internal.pageSize.getHeight();
+        if (imgData) {   
+            doc.addImage(imgData, 'JPEG', data.settings.margin.left,10,30,25);  // for add image
+        }
+        doc.text('MODERN INDIA CON-CAST LIMITED', width/2, 17, { align: 'center' },{fontSize: 12})
+        doc.setFontSize(10);
+        doc.text('(A unit of Kasvi Group)', width/2, 22, { align: 'center' },{fontSize: 3})
+        doc.text('Bhuniaraichak, J.L No-122, Haldia-721635, Purba Medinipur, West Bengal', width/2, 27, { align: 'center' },{fontSize: 0.4})
+        // doc.text('Salary for The Month of ' + currentmonth, width/2, 32, { align: 'center' },{styles: { fontSize: 3 }})
+        // // Footer
+        // var str = "Page " + doc.internal.getNumberOfPages()
+        // // Total page number plugin only available in jspdf v1.0+
+        // if (typeof doc.putTotalPages === 'function') {
+        //     str = str + " of " + totalPagesExp;
+        // }
+        // doc.setFontSize(10);
+
+        // // jsPDF 1.4+ uses getWidth, <1.4 uses .width
+        // var pageSize = doc.internal.pageSize;
+        // var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+        // doc.text(str, data.settings.margin.left, pageHeight - 10);
+      },
+      margin: {top: 40}
+    });
+    doc.save('Coupon-Statement.pdf');
   }
   EditCoupon(col) {
     this.clearData();
