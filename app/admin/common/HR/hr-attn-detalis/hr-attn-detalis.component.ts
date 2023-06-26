@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { ActivatedRoute } from '@angular/router';
@@ -28,6 +28,7 @@ export class HRAttnDetalisComponent implements OnInit {
   seachSpinnerFetch:boolean = false
   loading:boolean = false
   markerObj:any = {}
+  @ViewChild('gmap', {static: false}) gmap: ElementRef;
   constructor(
     private commonApi: CompacctCommonApi,
     private Header: CompacctHeader,
@@ -43,7 +44,7 @@ export class HRAttnDetalisComponent implements OnInit {
       Header: "Attendance Detalis",
       Link: "Hr -> Attendance Detalis"
     })
-    this.options = {lat: 22.5822732, lng: 88.4555348};
+    this.options = {lat: 24.1041139, lng: 86.1255543};
 
 this.infoWindow = new google.maps.InfoWindow();
   }
@@ -122,9 +123,10 @@ this.infoWindow = new google.maps.InfoWindow();
     this.imgUrl = data.Photo
   }
   openMap(col){
+    google.maps.event.trigger(this.gmap, 'resize');
     this.options = {
       center: {lat: col.LAT, lng: col.Long},
-      zoom: 12
+      zoom: 6
   };
     // this.overlays = [ 
     //   new google.maps.Marker({position: {lat: col.LAT, lng: col.Long}, title:"Konyaalti"})
