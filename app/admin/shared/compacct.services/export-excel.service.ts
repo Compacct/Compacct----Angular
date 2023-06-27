@@ -1713,7 +1713,7 @@ export class ExportExcelService {
     worksheetProject.mergeCells('A1', 'F1');
 
     let ProjectPERIODRow = worksheetProject.addRow([]);
-     ProjectPERIODRow.getCell(1).value = "FOR THE PERIOD OF / AS ON DATE"+"( " + `${From} - ${To}` + " )";
+    // ProjectPERIODRow.getCell(1).value = "FOR THE PERIOD OF / AS ON DATE"+"( " + `${From} - ${To}` + " )";
      ProjectPERIODRow.getCell(1).font={
             size: 11,
             color: { argb: '4775d8' },
@@ -2038,10 +2038,10 @@ export class ExportExcelService {
       row.getCell(4).border = {
         left: { style: 'thin' },
         right: { style: 'thin' },
-        };
+      };
       row.getCell(6).border = {
-         right: { style: 'medium' },
-      }
+        right: { style: 'medium' },
+        };
     }
     }
     );
@@ -2062,7 +2062,17 @@ export class ExportExcelService {
         }
         worksheetProject.getCell(`${e.pos}${i+7}`).font = {
           size:10
+      }
+      worksheetProject.getCell(`D${i+7}`).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: '2f75b5' },
+          bgColor: { argb: '' }
         }
+      worksheetProject.getCell(`D${i+7}`).border = {
+        left: { style: 'thin' },
+        right: { style: 'thin' },
+        };
       if (e.pos == 'F') {
             row.border = {
               top: { style: 'thin' },
@@ -2137,8 +2147,10 @@ export class ExportExcelService {
     TotalPurchaseBillRow.getCell(6).border = {
          right: { style: 'medium' },
     }
-    worksheetProject.mergeCells(`A${data.length + 8}`, `B${data.length + 8}`);
-    
+    const dataSizeCheck = () => {
+      return data.length > data1.length ? data.length : data1.length
+    }
+    worksheetProject.mergeCells(`A${dataSizeCheck() + 8}`, `B${dataSizeCheck() + 8}`);
     let BlankRow2 = worksheetProject.addRow([])
         BlankRow2.getCell(1).value = "";
         BlankRow2.getCell(2).value = "";
@@ -2194,7 +2206,8 @@ export class ExportExcelService {
     DirectExpensesRow.getCell(6).border = {
       right: { style: 'medium' },
     }
-    worksheetProject.mergeCells(`A${data.length + 10}`, `C${data.length + 10}`);
+    
+    worksheetProject.mergeCells(`A${dataSizeCheck() + 10}`, `C${dataSizeCheck() + 10}`);
 
     let DirectSiteNameRow = worksheetProject.addRow([])
     DirectSiteNameRow.height = 12.75
@@ -2383,7 +2396,7 @@ export class ExportExcelService {
       right: { style: 'medium' },
     }
     const mergeRowValue = (v:any) => {
-      return  data.length  + data3.length + v
+      return data.length > data1.length  ? data.length  + data3.length + v : data1.length  + data3.length + v
     }
     worksheetProject.mergeCells('A'+mergeRowValue(13), 'B'+mergeRowValue(13));
 
@@ -2548,7 +2561,7 @@ export class ExportExcelService {
       bottom: { style: 'thin' },
       right: { style: 'thin' },
     };
-    ProfitLossRow.getCell(3).value = Number(Number(Saletotal) - Number( Number(purTotal) + Number(ExTotal))).toFixed(2)
+    ProfitLossRow.getCell(3).value = Number((Number(Saletotal) -  Number(purTotal) + Number(ExTotal)).toFixed(2))
     ProfitLossRow.getCell(3).alignment = {
       horizontal:"right"
     }
@@ -2618,7 +2631,7 @@ export class ExportExcelService {
     worksheetInflow.mergeCells('A1', 'C1');
 
     let Project1PERIODRow = worksheetInflow.addRow([]);
-     Project1PERIODRow.getCell(1).value = "FOR THE PERIOD OF / AS ON DATE"+"( " + `${From} - ${To}` + " )";
+     //Project1PERIODRow.getCell(1).value = "FOR THE PERIOD OF / AS ON DATE"+"( " + `${From} - ${To}` + " )";
      Project1PERIODRow.getCell(1).font={
             size: 11,
             color: { argb: '4775d8' },
@@ -2742,37 +2755,36 @@ export class ExportExcelService {
         inflow .forEach((ele:any) => {
           data4.push(Object.values(ele))
         });
-        data4.forEach(d => {
-        const row= worksheetInflow.addRow(d);
-        for( let i= 0; i< d.length;i++ ){
-          row.getCell(i + 1).border = {
-                top: { style: 'thin' },
-                left: { style: 'thin' },
-                bottom: { style: 'thin' },
-                right: { style: 'thin' },
-          }
-          row.getCell(3).border = {
-                top: { style: 'thin' },
-                left: { style: 'thin' },
-                bottom: { style: 'thin' },
-                right: { style: 'medium' },
-          }
-          row.getCell(i + 1).alignment = {
-            horizontal: 'left',
-            vertical: 'middle',
-            wrapText:true
-          } 
-          row.getCell(i+1).font = {
-            size:10
-          }
-          if (i == 3) {
-          row[i].alignment = {
-            horizontal: 'right',
-            vertical: 'middle',
-          }
+    data4.forEach(d => {
+      const row = worksheetInflow.addRow(d);
+      for (let i = 0; i < d.length; i++) {
+        row.getCell(i + 1).border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
         }
+        row.getCell(3).border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'medium' },
         }
+        row.getCell(i + 1).alignment = {
+          horizontal: 'left',
+          vertical: 'middle',
+          wrapText: true
         }
+        row.getCell(i + 1).font = {
+          size: 10
+        }
+      }
+      row.getCell(3).alignment = {
+        horizontal: 'right',
+        vertical: 'middle',
+        wrapText: true
+      }
+    }
         );
 
      let TotalInflowAmountBillRow = worksheetInflow.addRow([])
@@ -2944,13 +2956,12 @@ export class ExportExcelService {
         }
         row.getCell(i + 1).font = {
           size: 10
-        }
-        if (i == 3) {
-          row[i].alignment = {
-            horizontal: 'right',
-            vertical: 'middle',
-          }
-        }
+        }       
+      }
+      row.getCell(3).alignment = {
+        horizontal: 'right',
+        vertical: 'middle',
+        wrapText: true
       }
     }
     );
