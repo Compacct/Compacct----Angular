@@ -450,7 +450,7 @@ export class MICLCouponIssueComponent implements OnInit {
     })
     }
   }
-  converttoPDFcoupon(itemNew) {
+  converttoPDFcoupon(itemNew:any) {
     //var style:any = ;
     var fromdate = this.From_date;
     var month = this.currentmonth
@@ -461,7 +461,9 @@ export class MICLCouponIssueComponent implements OnInit {
     var header:any = [];
 
 /* The following array of object as response from the API req  */
-    var column = itemNew.length ? Object.keys(itemNew[0]): [];
+    var column = itemNew.length ? Object.keys(itemNew[0]).slice(1) : [];
+    // console.log('column----',Object.keys(itemNew[0]).slice(1))
+    // var column = ['SL No', 'Emp Code', 'Emp Name', 'Meal', 'Rate', 'Amount Rs', 'Breakfast', 'Rate1', 'Amount Rs.1', 'Grand Total Amount'];
     header = 
       [{
       content: "MEAL & BREAKFAST COUPON STATEMENT OF MICL STAFF FOR THE MONTH OF "+ currentmonthyear,
@@ -474,9 +476,10 @@ export class MICLCouponIssueComponent implements OnInit {
     // var head = [{...header,...column}]
     let head = [header,column]
 
-itemNew.forEach(element => {
-    // var temp = [element.id,element.name,element.id1,element.name1,element.id2,element.name2,element.id3,element.name3,element.id4,element.name4];
-    rows.push(Object.values(element))
+itemNew.forEach((element) => {
+    // var temp = [element.SL_No,element.Emp_Code,element.Emp_Name,element.Meal,element.Rate,element.Amount_Rs,element.Breakfast,element.Rate1,element.Amount_Rs,element.Grand_Total_Amount];
+    rows.push(Object.values(element).slice(1))
+    // rows.push(temp)
 
 });
 
@@ -518,19 +521,13 @@ itemNew.forEach(element => {
         doc.text('Bhuniaraichak, J.L No-122, Haldia-721635, Purba Medinipur, West Bengal', width/2, 27, { align: 'center' },{fontSize: 0.4})
         // doc.text('Salary for The Month of ' + currentmonth, width/2, 32, { align: 'center' },{styles: { fontSize: 3 }})
         // // Footer
-        // var str = "Page " + doc.internal.getNumberOfPages()
-        // // Total page number plugin only available in jspdf v1.0+
-        // if (typeof doc.putTotalPages === 'function') {
-        //     str = str + " of " + totalPagesExp;
-        // }
-        // doc.setFontSize(10);
-
-        // // jsPDF 1.4+ uses getWidth, <1.4 uses .width
-        // var pageSize = doc.internal.pageSize;
-        // var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
-        // doc.text(str, data.settings.margin.left, pageHeight - 10);
+        var pageSize = doc.internal.pageSize;
+        var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+        doc.text("Prepared By", data.settings.margin.left, pageHeight - 10);
+        doc.text('Checked By', width/2, pageHeight - 10, { align: 'center' })
+        doc.text("Authorised By", 196, pageHeight - 10, { align: 'right' });
       },
-      margin: {top: 40}
+      margin: {top: 40, bottom: 30}
     });
     doc.save('Coupon-Statement.pdf');
   }

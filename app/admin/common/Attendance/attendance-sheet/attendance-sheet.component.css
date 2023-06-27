@@ -182,7 +182,8 @@ div.table-responsive.table-id>p-table>div>div {
   } 
   
    .A,
-   .L {
+   .L,
+   .ES {
     background-color: #ff4141 !important;
     color: #ffff;
     text-align: center;

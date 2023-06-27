@@ -313,6 +313,10 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-2">
+                                                    <label class="control-label">Rate <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="rate" #rate="ngModel" [(ngModel)]="ObjGRN.Rate" placeholder="Rate" CompacctDigitonly="true" [ngClass]="{'clearance':GRNFormSubmitted && rate?.errors?.required}" >
+                                                </div>
+                                                <div class="col-sm-2">
                                                     <label class="control-label">Unit <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="unit" #unit="ngModel" [(ngModel)]="ObjGRN.Unit" placeholder="Unit" [disabled]="disabledflaguom" [ngClass]="{'clearance':GRNFormSubmitted && unit?.errors?.required}" required>
                                                 </div>
@@ -324,12 +328,12 @@
                                                     <label class="control-label">Challan Qty <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="chanllan" #chanllan="ngModel" [(ngModel)]="ObjGRN.Challan_Qty" placeholder="Challan" CompacctDigitonly="true" [ngClass]="{'clearance':GRNFormSubmitted && chanllan?.errors?.required}" required>
                                                 </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <div class="col-sm-2">
                                                     <label class="control-label">Received Qty <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="rec" #rec="ngModel" [(ngModel)]="ObjGRN.Received_Qty" (ngModelChange)="RecQtyValidation()" placeholder="Received" CompacctDigitonly="true" [ngClass]="{'clearance':GRNFormSubmitted && rec?.errors?.required}" required>
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
                                                 <div class="col-sm-2">
                                                     <label class="control-label">Accepted Qty <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="accept" #accept="ngModel" [(ngModel)]="ObjGRN.Accepted_Qty" placeholder="Accepted" (ngModelChange)="Calculate()" CompacctDigitonly="true" [ngClass]="{'clearance':GRNFormSubmitted && accept?.errors?.required}" required>
