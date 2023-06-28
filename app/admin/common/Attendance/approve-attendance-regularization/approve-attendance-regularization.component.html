@@ -8,19 +8,26 @@
       </div>
       <form name="disapprovedForm" #disapprovedForm="ngForm">
          <div class="ui-g ui-fluid">
-            <div class="ui-g-12" *ngIf="EmpID==Report_Manager_ID">
+            <div class="ui-g-12" *ngIf="EmpID==Report_Manager_ID&&EmpID==Business_Manager_ID">
+               <label class="control-label">Remarks Of Approval<sup class="text-danger">*</sup></label>
+               <input type="text" class="form-control" placeholder="Remarks Of Approval" name="Remarks_Of_Approval"
+                  #Remarks_Of_Approval="ngModel" [(ngModel)]="Approved_Note_inGeneral"
+                  [ngClass]="{clearance: (disApprovedFormSubmit && Remarks_Of_Approval?.errors?.required) }"
+                  [required]="EmpID==Report_Manager_ID&&EmpID==Business_Manager_ID">
+            </div>
+            <div class="ui-g-12" *ngIf="EmpID==Report_Manager_ID&&EmpID!=Business_Manager_ID">
                <label class="control-label">Remarks Of Approval 1<sup class="text-danger">*</sup></label>
                <input type="text" class="form-control" placeholder="Remarks Of Approval 1" name="Remarks_Of_disApproval"
                   #Remarks_Of_disApproval="ngModel" [(ngModel)]="Approved_Note_Reporting_Manager"
                   [ngClass]="{clearance: (disApprovedFormSubmit && Remarks_Of_disApproval?.errors?.required) }"
-                  [required]="EmpID==Report_Manager_ID">
-               <div class="ui-g-12" *ngIf="EmpID==Business_Manager_ID">
+                  [required]="EmpID==Report_Manager_ID&&EmpID!=Business_Manager_ID">
+               <div class="ui-g-12" *ngIf="EmpID==Business_Manager_ID&&EmpID!=Report_Manager_ID">
                   <label class="control-label">Remarks Of Approval 2<sup class="text-danger">*</sup></label>
                   <input type="text" class="form-control" placeholder="Remarks Of Approval 2"
                      name="Remarks_Of_disApproval2" #Remarks_Of_disApproval2="ngModel"
                      [(ngModel)]="Approved_Note_Business_Manager"
-                     [ngClass]="{clearance: (remarksFormSubmit && Remarks_Of_disApproval2?.errors?.required) }"
-                     [required]="EmpID==Business_Manager_ID">
+                     [ngClass]="{clearance: (disApprovedFormSubmit && Remarks_Of_disApproval2?.errors?.required) }"
+                     [required]="EmpID==Business_Manager_ID&&EmpID!=Report_Manager_ID">
                </div>
             </div>
          </div>
@@ -386,19 +393,26 @@
    </p-table>
    <form name="remarksForm" #remarksForm="ngForm">
       <div class="row">
-         <div class="col-sm-4" *ngIf="EmpID==Report_Manager_ID">
+         <div class="col-sm-4" *ngIf="EmpID==Report_Manager_ID&&EmpID==Business_Manager_ID">
+            <label class="control-label">Remarks Of Approval<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" placeholder="Remarks Of Approval" name="Remarks_Of_Approval"
+               #Remarks_Of_Approval="ngModel" [(ngModel)]="Approved_Note_inGeneral"
+               [ngClass]="{clearance: (remarksFormSubmit && Remarks_Of_Approval?.errors?.required) }"
+               [required]="EmpID==Report_Manager_ID&&EmpID==Business_Manager_ID">
+         </div>
+         <div class="col-sm-4" *ngIf="EmpID==Report_Manager_ID&&EmpID!=Business_Manager_ID">
             <label class="control-label">Remarks Of Approval 1<sup class="text-danger">*</sup></label>
             <input type="text" class="form-control" placeholder="Remarks Of Approval 1" name="Remarks_Of_Approval1"
                #Remarks_Of_Approval1="ngModel" [(ngModel)]="Approved_Note_Reporting_Manager"
                [ngClass]="{clearance: (remarksFormSubmit && Remarks_Of_Approval1?.errors?.required) }"
-               [required]="EmpID==Report_Manager_ID">
+               [required]="EmpID==Report_Manager_ID&&EmpID!=Business_Manager_ID">
          </div>
-         <div class="col-sm-4" *ngIf="EmpID==Business_Manager_ID">
+         <div class="col-sm-4" *ngIf="EmpID==Business_Manager_ID&&EmpID!=Report_Manager_ID">
             <label class="control-label">Remarks Of Approval 2<sup class="text-danger">*</sup></label>
             <input type="text" class="form-control" placeholder="Remarks Of Approval 2" name="Remarks_Of_Approval2"
                #Remarks_Of_Approval2="ngModel" [(ngModel)]="Approved_Note_Business_Manager"
                [ngClass]="{clearance: (remarksFormSubmit && Remarks_Of_Approval2?.errors?.required) }"
-               [required]="EmpID==Business_Manager_ID">
+               [required]="EmpID==Business_Manager_ID&&EmpID!=Report_Manager_ID">
          </div>
       </div>
    </form>
