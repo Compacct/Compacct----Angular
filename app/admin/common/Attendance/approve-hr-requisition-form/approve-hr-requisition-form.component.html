@@ -6,7 +6,7 @@
             <div class="box-body">
                <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                   <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[0]"
-                     leftIcon="glyphicon glyphicon-list-alt">
+                     leftIcon="glyphicon glyphicon-hourglass">
                      <p-table [value]="pendingTableData" [paginator]="true" [rows]="10" [rowHover]="true"
                         [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100,200,300]"
                         [globalFilterFields]="pendingTableDataSearch" [rowHover]="true" #dt>
@@ -366,8 +366,8 @@
    <form name="remarksForm" #remarksForm="ngForm">
       <div class="row">
          <div class="col-sm-4" *ngIf="EmpID==Report_Manager_ID&&EmpID==Business_Manager_ID">
-            <label class="control-label">Remarks Of Approval 1<sup class="text-danger">*</sup></label>
-            <input type="text" class="form-control" placeholder="Remarks Of Approval 1" name="Remarks_Of_Approval"
+            <label class="control-label">Remarks Of Approval<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" placeholder="Remarks Of Approval" name="Remarks_Of_Approval"
                #Remarks_Of_Approval="ngModel" [(ngModel)]="Approved_Note_inGeneral"
                [ngClass]="{clearance: (remarksFormSubmit && Remarks_Of_Approval?.errors?.required) }"
                [required]="EmpID==Report_Manager_ID&&EmpID==Business_Manager_ID">
