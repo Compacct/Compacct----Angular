@@ -75,7 +75,7 @@ export class BlTxnProjectwiseReportComponent implements OnInit {
   //   }
   // }
   getFin() {
-    this.$http.get('http://localhost:50063/Common/Get_Fin_Year').subscribe((Res:any) => {
+    this.$http.get('/Common/Get_Fin_Year').subscribe((Res:any) => {
      // console.log(Res)
       this.FinyearList = JSON.parse(Res);
     })
