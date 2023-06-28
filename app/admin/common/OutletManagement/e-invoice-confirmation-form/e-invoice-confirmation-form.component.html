@@ -435,12 +435,12 @@
                                                                 <i class="fa fa-fw fa-print" aria-hidden="true"></i> Print E Way Bill
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.E_Invoice_Ewb_PDF_Link"> <!-- *ngIf="col.E_Invoice_Ewb_PDF_Link" -->
+                                                        <li *ngIf="col.E_Invoice_Ewb_PDF_Link && databaseName != 'MICL'"> <!-- *ngIf="col.E_Invoice_Ewb_PDF_Link" -->
                                                             <a (click)="DownloadEINV(col.E_Invoice_Ewb_PDF_Link)">
                                                                 <i class="fa fa-fw fa-download"></i> Download E Way Bill
                                                             </a>
                                                         </li>
-                                                         <li *ngIf="col.E_Invoice_PDF_Link"> <!-- *ngIf="col.E_Invoice_PDF_Link" -->
+                                                         <li *ngIf="col.E_Invoice_PDF_Link && databaseName != 'MICL'"> <!-- *ngIf="col.E_Invoice_PDF_Link" -->
                                                             <a (click)="DownloadEINV(col.E_Invoice_PDF_Link)">
                                                                 <i class="fa fa-fw fa-download"></i> Download E-INV
                                                             </a>

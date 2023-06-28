@@ -518,7 +518,7 @@ export class GrnComponent implements OnInit {
           this.productaddSubmit[i].Product_Name = this.ObjGRN.Product_Details
           this.productaddSubmit[i].Unit = this.ObjGRN.Unit
           this.productaddSubmit[i].HSN_Code = this.ObjGRN.HSN_Code
-          // this.productaddSubmit[i].Rate = Number(productFilter.Rate),
+          this.productaddSubmit[i].Rate = Number(this.ObjGRN.Rate),
           this.productaddSubmit[i].Challan  = Number(this.ObjGRN.Challan_Qty)
           this.productaddSubmit[i].Received = Number(this.ObjGRN.Received_Qty)
           this.productaddSubmit[i].Accepted  = Number(this.ObjGRN.Accepted_Qty)

@@ -256,9 +256,9 @@ export class ProcessSalaryComponent implements OnInit {
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
-      XLSX.writeFile(workbook, fileName+'.xlsx');
+      // const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      // const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      // XLSX.writeFile(workbook, fileName+'.xlsx');
       this.converttoPDFsalaryregister(data);
       
     })
@@ -337,8 +337,13 @@ itemNew.forEach(element => {
         doc.text('Bhuniaraichak, J.L No-122, Haldia-721635, Purba Medinipur, West Bengal', width/2, 27, { align: 'center' },{fontSize: 0.4})
         doc.text('Salary for The Month of ' + currentmonth, width/2, 32, { align: 'center' },{styles: { fontSize: 3 }})
         
+        var pageSize = doc.internal.pageSize;
+        var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+        doc.text("Prepared By", data.settings.margin.left, pageHeight - 10);
+        doc.text('Checked By', width/2, pageHeight - 10, { align: 'center' })
+        doc.text("Authorised By", width - 10, pageHeight - 10, { align: 'right' });
       },
-      margin: {top: 40, right: 6, bottom: 4, left: 6}
+      margin: {top: 40, right: 6, bottom: 30, left: 6}
     });
     doc.save('Salary-Statement.pdf');
   }
@@ -496,14 +501,18 @@ itemNew.forEach(element => {
         // if (typeof doc.putTotalPages === 'function') {
         //     str = str + " of " + totalPagesExp;
         // }
-        // doc.setFontSize(10);
+        doc.setFontSize(10);
 
-        // // jsPDF 1.4+ uses getWidth, <1.4 uses .width
-        // var pageSize = doc.internal.pageSize;
-        // var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
-        // doc.text(str, data.settings.margin.left, pageHeight - 10);
+        // jsPDF 1.4+ uses getWidth, <1.4 uses .width
+        var pageSize = doc.internal.pageSize;
+        var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+        // doc.setLineDash([10, 10], 0);
+        // doc.line(20, 25, 60, 25);
+        doc.text("Prepared By", data.settings.margin.left, pageHeight - 10);
+        doc.text('Checked By', width/2, pageHeight - 10, { align: 'center' })
+        doc.text("Authorised By", 196, pageHeight - 10, { align: 'right' });
       },
-      margin: {top: 40}
+      margin: {top: 40, bottom : 40}
     });
     doc.save('Bank-Statement.pdf');
   }

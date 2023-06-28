@@ -104,7 +104,7 @@
                      <form name="RequisitionForm" #RequisitionForm="ngForm" novalidate>
                         <!-- First Panel -->
                         <div class="panel panel-primary">
-                           <div class="panel-heading">POSITION SPECIFICATION</div>
+                           <div class="panel-heading">POSITION SPECIFICATION [TO BE FILLED BY REQUISITIONING MANAGER]</div>
                            <div class="panel-body">
                               <div class="row">
                                  <div class="col-sm-4">
@@ -396,7 +396,7 @@
                         </div>
                         <!-- Fourth Panel -->
                         <div class="panel panel-primary">
-                           <div class="panel-heading">JOB SPECIFICATION</div>
+                           <div class="panel-heading">JOB SPECIFICATION [TO BE FILLED BY REQUISITIONING MANAGER]</div>
                            <div class="panel-body">
                               <div class="row">
                                  <div class="col-sm-4">
@@ -478,7 +478,7 @@
                                        placeholder="Max CTC Variation (Justification)" name="Justification"
                                        #Justification="ngModel" [(ngModel)]="objRequisition.Max_CTC_Varience"
                                        [ngClass]="{clearance: (requisitionFormSubmitted && Justification?.errors?.required) }"
-                                       required CompacctDigitonly="true">
+                                       required>
                                  </div>
                               </div>
                               <div class="row">
@@ -489,7 +489,7 @@
                                        name="GradeBudget" #GradeBudget="ngModel"
                                        [(ngModel)]="objRequisition.Grade_As_Per_Budget"
                                        [ngClass]="{clearance: (requisitionFormSubmitted && GradeBudget?.errors?.required) }"
-                                       required CompacctDigitonly="true">
+                                       required >
                                  </div>
                                  <div class="col-sm-4">
                                     <label class="control-label">Proposed Grade Range & Designation<sup
@@ -499,7 +499,7 @@
                                        #Designation="ngModel"
                                        [(ngModel)]="objRequisition.Proposed_Grade_Range_Designation"
                                        [ngClass]="{clearance: (requisitionFormSubmitted && Designation?.errors?.required) }"
-                                       required CompacctDigitonly="true">
+                                       required>
                                  </div>
                                  <div class="col-sm-4"><label class="control-label">Remarks<sup
                                           class="text-danger">*</sup></label>

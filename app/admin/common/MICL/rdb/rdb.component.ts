@@ -570,7 +570,7 @@ export class RdbComponent implements OnInit {
         // var discountamt = Number(Number(qtydis) * this.ObjRdb1.Received_Qty).toFixed(2);
         // var amount = Number(Number(this.ObjRdb1.Received_Qty) * Number(productFilter.Rate)).toFixed(2);
         var discountamt = Number(Number(qtydis) * this.ObjRdb1.Challan_Qty).toFixed(2);
-        var amount = Number(Number(this.ObjRdb1.Challan_Qty) * Number(productFilter.Rate)).toFixed(2);
+        var amount = Number(Number(this.ObjRdb1.Challan_Qty) * Number(this.ObjRdb1.Rate)).toFixed(2);
         var FreightPFCharges = (Number(amount) * (Number(FreightPFPerc) / 100)).toFixed(2);
         var amtwithfreightcharges = (Number(amount) + Number(FreightPFCharges)).toFixed(2);
         var taxable = Number(amtwithfreightcharges) - Number(discountamt); //Number(this.totalRate) + Number(this.objaddPurchacse.Excise_Tax)
@@ -596,7 +596,7 @@ export class RdbComponent implements OnInit {
                     Pending_PO_QTY : this.ObjRdb1.Pending_PO_QTY,
                     Challan_Qty : Number(this.ObjRdb1.Challan_Qty),
                     Received_Qty : Number(this.ObjRdb1.Received_Qty),
-                    Rate : productFilter.Rate,
+                    Rate : this.ObjRdb1.Rate,
                     Freight_PF_Perc : Number(FreightPFPerc).toFixed(2),
                     Freight_PF_Charges : Number(FreightPFCharges).toFixed(2),
                     Discount_Amount : Number(discountamt).toFixed(2),
@@ -616,7 +616,7 @@ export class RdbComponent implements OnInit {
                   this.RDBListAdd[i].Product_Name = productFilter.Product_Name
                   this.RDBListAdd[i].UOM = this.ObjRdb1.UOM
                   this.RDBListAdd[i].HSN_Code = this.ObjRdb1.HSN_Code
-                  this.RDBListAdd[i].Rate = Number(productFilter.Rate),
+                  this.RDBListAdd[i].Rate = Number(this.ObjRdb1.Rate),
                   this.RDBListAdd[i].Challan_Qty  = Number(this.ObjRdb1.Challan_Qty)
                   this.RDBListAdd[i].Received_Qty = Number(this.ObjRdb1.Received_Qty)
                   this.RDBListAdd[i].Discount_Amount = Number(discountamt).toFixed(2)
@@ -686,12 +686,13 @@ export class RdbComponent implements OnInit {
              value : this.RDBListAdd[inx].Product_ID,
              Product_Name : this.RDBListAdd[inx].Product_Name,
              Product_ID : this.RDBListAdd[inx].Product_ID,
-             Rate : this.RDBListAdd[inx].Rate,
+             //Rate : this.RDBListAdd[inx].Rate,
              Discount_Amount : Number(this.RDBListAdd[inx].PO_Discount_Amount),
              GST_Percentage : this.RDBListAdd[inx].Tax_Percentage
            });
    this.ObjRdb1.Product_ID = this.RDBListAdd[inx].Product_ID
   //  this.objaddPurchacse = {...this.addPurchaseList[inx]}
+   this.ObjRdb1.Rate = this.RDBListAdd[inx].Rate;
    this.ObjRdb1.UOM = this.RDBListAdd[inx].UOM
    this.ObjRdb1.HSN_Code = this.RDBListAdd[inx].HSN_Code;
    this.addPurchaseListInput = true
@@ -1148,6 +1149,7 @@ addClear(){
     this.ObjRdb1.PO_QTY = undefined;
     const productFilter = this.ProductList.filter(el=> Number(el.Product_ID) === Number(productID))[0];
     console.log(productFilter);
+    this.ObjRdb1.Rate = productFilter.Rate ? productFilter.Rate : " ";
     this.ObjRdb1.UOM = productFilter.UOM ? productFilter.UOM : " ";
     this.ObjRdb1.HSN_Code = productFilter.HSN_NO ? productFilter.HSN_NO : " ";
     this.ObjRdb1.PO_QTY = productFilter.PO_Qty ? productFilter.PO_Qty : " ";
@@ -1156,6 +1158,7 @@ addClear(){
     // this.ObjRdb1.Received_Qty = productFilter.PO_Qty;
    }
    else {
+    this.ObjRdb1.Rate = undefined;
      this.ObjRdb1.UOM = undefined;
      this.ObjRdb1.HSN_Code = undefined;
      this.ObjRdb1.PO_QTY = undefined;
@@ -1345,6 +1348,7 @@ addClear(){
   }
   class RDB1{
     Product_ID : any;
+    Rate : any;
     UOM : any;
     HSN_Code : any;
     PO_QTY:any;

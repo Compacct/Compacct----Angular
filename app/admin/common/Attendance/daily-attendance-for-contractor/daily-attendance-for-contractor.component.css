@@ -43,7 +43,8 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav {
     margin-top: 28px;
 }
 .A,
-   .L {
+.L,
+.ES {
     background-color: #ff4141 !important;
     color: #ffff;
     text-align: center;

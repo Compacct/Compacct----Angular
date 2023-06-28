@@ -90,6 +90,7 @@ export class MiclRequisitionComponent implements OnInit {
   GodownReqStatusList:any = [];
   currentstocklist:any = [];
   Current_Stock:any;
+  Consumption:any;
   backUpReqStatusDataList:any = [];
   SelectedDistDepartment:any = [];
   SelectedDistProductType:any = [];
@@ -184,6 +185,7 @@ export class MiclRequisitionComponent implements OnInit {
     this.buttonname = "Save";
     this.clearData();
     this.Current_Stock = undefined;
+    this.Consumption = undefined;
     this.reqDocNo = undefined;
   }
   clearData(){
@@ -382,11 +384,13 @@ export class MiclRequisitionComponent implements OnInit {
         Product_Type : productTypeFilter[0].Product_Type,
         Product_Category : this.objmaterial.Product_Category,
         Challan_No : null,
+        Consumption : this.Consumption ? this.Consumption : null,
         Parameter_Details: this.ParameterList.length ? this.paramarr : null
       })
       this.requisitionmaterialFormSubmit = false;
       this.objmaterial = new material();
       this.Current_Stock = undefined;
+      this.Consumption = undefined;
       this.productList = [];
       this.productListview = [];
       this.projectDisable = true;
@@ -558,6 +562,7 @@ export class MiclRequisitionComponent implements OnInit {
          Requisiton_Type : this.Requisition_ID,
          Material_Type : this.Material_Type_ID,
          Challan_No : el.Challan_No,
+         Consumption : el.Consumption,
          Parameter_Details : el.Parameter_Details
         }
         saveData.push(save)
@@ -902,6 +907,7 @@ export class MiclRequisitionComponent implements OnInit {
       this.productFilterObj = ProductFilter[0];
        this.objmaterial.UOM = ProductFilter[0].UOM
        this.GetCurrentStock();
+       this.Getconsumption();
        this.GetParamDetailsforProduct();
     }
     else {
@@ -911,6 +917,7 @@ export class MiclRequisitionComponent implements OnInit {
   GetCurrentStock(){
     this.currentstocklist = [];
     this.Current_Stock = undefined;
+    this.Consumption = undefined;
     const obj = {
       "SP_String": "SP_Txn_Requisition",
       "Report_Name_String": "Get_Current_Stock_Inside_Store",
@@ -920,6 +927,22 @@ export class MiclRequisitionComponent implements OnInit {
       this.currentstocklist = data;
       this.Current_Stock = data[0].Bln_Qty;
      //console.log("ProductCatList",this.ProductCatList);
+     })
+  }
+  Getconsumption(){
+    this.Consumption = undefined;
+    const sendobj = {
+      Product_ID : this.objmaterial.Product_ID,
+      Req_Date:this.DateService.dateConvert(new Date(this.requi_Date))
+    }
+    const obj = {
+      "SP_String": "SP_Txn_Requisition",
+      "Report_Name_String": "Get_Consumption",
+      "Json_Param_String": JSON.stringify([sendobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // this.currentstocklist = data;
+      this.Consumption = data.length ? data[0].Consumption : null;
      })
   }
   reqiValid(id:any){
@@ -1174,6 +1197,7 @@ export class MiclRequisitionComponent implements OnInit {
       // this.objmaterial.Product_ID = data[0].Product_ID;
       this.getUOM();
       this.Current_Stock = data[0].Current_Stock;
+      this.Consumption = data[0].Consumption;
       // this.getreq();
       // this.AddMaterialsList = data[0];
       data.forEach(element => {
