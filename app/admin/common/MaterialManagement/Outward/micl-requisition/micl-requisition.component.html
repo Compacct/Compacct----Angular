@@ -374,6 +374,16 @@
                                                 disabled
                                                 >
                                         </div>
+                                        <div class="col-sm-2" *ngIf="headerText === 'Purchase Indent'">
+                                            <label class="control-label">Consumption<sup class="text-danger">*</sup></label>
+                                            <input class="form-control" 
+                                                name="consp" 
+                                                #consp="ngModel" 
+                                                [(ngModel)]="Consumption" 
+                                                placeholder="Current Stock"
+                                                disabled
+                                                >
+                                        </div>
                                         <!-- <div class="clearfix"  *ngIf="openProject == 'N'"></div> -->
                                         <div class="col-sm-2">
                                             <label class="control-label">Purpose<sup class="text-danger"></sup></label>

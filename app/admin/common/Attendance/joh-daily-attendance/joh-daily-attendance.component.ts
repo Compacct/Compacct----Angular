@@ -543,7 +543,11 @@ export class JohDailyAttendanceComponent implements OnInit {
             OT_Minutes : item.OT_Minutes,
             OT_Avail	: item.OT_Avail,
             Amount : item.Amount,
-            Remarks	: item.Remarks
+            Remarks	: item.Remarks,
+            OT_Hours : item.OT_Hours,
+            Per_Hours : item.Per_Hours,
+            Add_Custom_Salary_Multiple : item.Add_Custom_Salary_Multiple,
+            Overtime_Rate : item.Overtime_Rate
          }
         tempArr.push(TempObj)
       // }
@@ -640,20 +644,26 @@ information() {
 }
 
 OTpopup(otdata){
-  this.OT_Hours = undefined;
-  this.OtEmpid = undefined;
-  this.OtEmpname = undefined;
-  this.otattntype = undefined;
-  this.Per_Hours = undefined;
-  this.Add_Custom_Salary_Multiple = undefined;
-  this.Total_Amount = undefined;
+  // this.OT_Hours = undefined;
+  // this.OtEmpid = undefined;
+  // this.OtEmpname = undefined;
+  // this.otattntype = undefined;
+  // this.Per_Hours = undefined;
+  // this.Add_Custom_Salary_Multiple = undefined;
+  // this.Total_Amount = undefined;
   if(otdata.Emp_ID && otdata.Atten_Type_ID) {
     this.OtEmpid = otdata.Emp_ID;
     this.OtEmpname = otdata.Emp_Name;
     this.otattntype = otdata.Atten_Type_ID
     
-    this.Overtime_Rate = "Fixed_Amount";
+    this.Overtime_Rate = otdata.Overtime_Rate ? otdata.Overtime_Rate : "Fixed_Amount";
+    console.log('this.Overtime_Rate----',this.Overtime_Rate)
     this.GetPerHour();
+
+    this.OT_Hours = otdata.OT_Hours;
+    this.Per_Hours = otdata.Per_Hours;
+    this.Add_Custom_Salary_Multiple = otdata.Add_Custom_Salary_Multiple;
+    this.Total_Amount = otdata.Amount;
   }
   this.OTPopup = true;
 }
@@ -715,6 +725,10 @@ SaveOT(){
         if(Number(el.Emp_ID )== Number(this.OtEmpid)){
          el.OT_Minutes = this.ottotalmin ?  this.ottotalmin : 0;
          el.Amount = this.Total_Amount ? this.Total_Amount : 0;
+         el.OT_Hours = this.OT_Hours;
+         el.Per_Hours = this.Per_Hours;
+         el.Add_Custom_Salary_Multiple = this.Add_Custom_Salary_Multiple;
+         el.Overtime_Rate = this.Overtime_Rate;
         }
       })
       this.OTPopup = false;

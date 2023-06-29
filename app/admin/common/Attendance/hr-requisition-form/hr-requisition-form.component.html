@@ -35,6 +35,10 @@
                               <th style="text-align: center ;" nowrap>Needed For</th>
                               <th style="text-align: center ;" nowrap>Recruitment Urgency</th>
                               <th style="text-align: center ;" nowrap>Remarks</th>
+                              <th style="text-align: center ;" nowrap>Approved Note Business Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Note Reporting Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Status Business Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Status Reporting Manager</th>
                            </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-col>
@@ -76,6 +80,18 @@
                               <td style="text-align: center ;" nowrap>{{col.Recruitment_Urgency ?
                                  col.Recruitment_Urgency : '-'}}</td>
                               <td style="text-align: center ;" nowrap>{{col.Remarks ? col.Remarks : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Note_Business_Manager ?
+                                 col.Approved_Note_Business_Manager : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Note_Reporting_Manager ?
+                                 col.Approved_Note_Reporting_Manager : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Status_Business_Manager ?
+                                 col.Approved_Status_Business_Manager : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Status_Reporting_Manager ?
+                                 col.Approved_Status_Reporting_Manager : '-'}}
+                              </td>
                            </tr>
                         </ng-template>
                         <ng-template pTemplate="paginatorright" let-state>
@@ -88,7 +104,7 @@
                      <form name="RequisitionForm" #RequisitionForm="ngForm" novalidate>
                         <!-- First Panel -->
                         <div class="panel panel-primary">
-                           <div class="panel-heading">POSITION SPECIFICATION</div>
+                           <div class="panel-heading">POSITION SPECIFICATION [TO BE FILLED BY REQUISITIONING MANAGER]</div>
                            <div class="panel-body">
                               <div class="row">
                                  <div class="col-sm-4">
@@ -380,7 +396,7 @@
                         </div>
                         <!-- Fourth Panel -->
                         <div class="panel panel-primary">
-                           <div class="panel-heading">JOB SPECIFICATION</div>
+                           <div class="panel-heading">JOB SPECIFICATION [TO BE FILLED BY REQUISITIONING MANAGER]</div>
                            <div class="panel-body">
                               <div class="row">
                                  <div class="col-sm-4">
@@ -462,7 +478,7 @@
                                        placeholder="Max CTC Variation (Justification)" name="Justification"
                                        #Justification="ngModel" [(ngModel)]="objRequisition.Max_CTC_Varience"
                                        [ngClass]="{clearance: (requisitionFormSubmitted && Justification?.errors?.required) }"
-                                       required CompacctDigitonly="true">
+                                       required>
                                  </div>
                               </div>
                               <div class="row">
@@ -473,7 +489,7 @@
                                        name="GradeBudget" #GradeBudget="ngModel"
                                        [(ngModel)]="objRequisition.Grade_As_Per_Budget"
                                        [ngClass]="{clearance: (requisitionFormSubmitted && GradeBudget?.errors?.required) }"
-                                       required CompacctDigitonly="true">
+                                       required >
                                  </div>
                                  <div class="col-sm-4">
                                     <label class="control-label">Proposed Grade Range & Designation<sup
@@ -483,7 +499,7 @@
                                        #Designation="ngModel"
                                        [(ngModel)]="objRequisition.Proposed_Grade_Range_Designation"
                                        [ngClass]="{clearance: (requisitionFormSubmitted && Designation?.errors?.required) }"
-                                       required CompacctDigitonly="true">
+                                       required>
                                  </div>
                                  <div class="col-sm-4"><label class="control-label">Remarks<sup
                                           class="text-danger">*</sup></label>

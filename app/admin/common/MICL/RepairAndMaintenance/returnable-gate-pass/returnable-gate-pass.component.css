@@ -54,3 +54,7 @@ background-color: #ffffff;
 .Othercolor {
     color: black;
 } */
+body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+    border-bottom: 1px solid #c1c1c1 !important;
+    margin-bottom: 0px;
+}

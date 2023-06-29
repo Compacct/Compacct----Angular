@@ -57,6 +57,7 @@ export class K4cAcceptRawMaterialStockTransferComponent implements OnInit {
   To_Godown_ID: any;
   view:boolean = false;
   accept:boolean = false;
+  editIndentList:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -218,6 +219,7 @@ AcceptST(DocNo){
     this.From_outlet = DocNo.From_Godown_Name;
     this.To_Godown_ID = DocNo.To_Godown_Name;
     this.geteditmaster(DocNo.Doc_No);
+    this.getIndentForEdit(DocNo.Doc_No);
   }
 
 }
@@ -246,6 +248,41 @@ geteditmaster(Doc_No){
       }
     }
   })
+}
+getIndentForEdit(masterProduct){
+  this.editIndentList = [];
+  const obj = {
+    "SP_String": "SP_Raw_Material_Stock_Transfer",
+    "Report_Name_String": "Get Indent No For Edit",
+    "Json_Param_String": JSON.stringify([{Doc_No : masterProduct}])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.editIndentList = data;
+  })
+}
+getReqNo(){
+  let Rarr:any =[]
+  if(this.editIndentList.length) {
+    this.editIndentList.forEach(el => {
+      if(el){
+        const Dobj = {
+          Indent_No : el
+          }
+          Rarr.push(Dobj)
+      }
+
+  });
+    // console.log("Table Data ===", Rarr)
+    // return Rarr.length ? JSON.stringify(Rarr) : '';
+  }
+  else {
+    const Dobj = {
+      Indent_No : 'NA'
+      }
+      Rarr.push(Dobj)
+  }
+  console.log("Table Data ===", Rarr)
+  return Rarr.length ? JSON.stringify(Rarr) : '';
 }
 getTotalValue(key){
   let Total = 0;
@@ -338,7 +375,8 @@ AcceptRMST(){
       const obj = {
         "SP_String": "SP_Raw_Material_Stock_Transfer",
         "Report_Name_String" : "Save Raw Material Stock Transfer",
-        "Json_Param_String": JSON.stringify(updateData)
+        "Json_Param_String": JSON.stringify(updateData),
+        "Json_1_String" : this.getReqNo()
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         // this.RTFchallanno = data[0].Column1;

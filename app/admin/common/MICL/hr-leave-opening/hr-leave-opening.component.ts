@@ -65,6 +65,8 @@ export class HrLeaveOpeningComponent  implements OnInit {
   CheckStatusData:any;
   AutoUpdateleaveFormSubmitted:boolean = false;
   APCheckStatusData: any;
+  SelectedEmployee:any = [];
+  EmployeeAutoUpdateLeaveList:any = [];
 
   constructor(
     public $http: HttpClient,
@@ -190,7 +192,16 @@ employeeData(){
    this.GlobalAPI.getData(obj)
    .subscribe((data:any)=>{
     this.empDataList = data;
-    this.AutoUpdateempDataList = data;
+    if(data.length){
+      data.forEach(element => {
+        element['label'] = element.Emp_Name
+        element['value'] = element.Emp_ID
+      });
+      this.AutoUpdateempDataList = data;
+     }
+     else {
+      this.AutoUpdateempDataList = [];
+     }
     console.log("employee==",this.empDataList);
     });
 }
@@ -351,6 +362,8 @@ onReject(){
     this.compacctToast.clear("c");
     this.compacctToast.clear("joh");
     this.compacctToast.clear("johAU");
+    this.SelectedEmployee = [];
+    this.EmployeeAutoUpdateLeaveList = [];
 }
 EditLeave(leave:any){
     this.leaveId = undefined;
@@ -562,6 +575,8 @@ onConfirmjoh(){
 }
 AutoUpdatePopup(){
   this.AutoUpdateleaveFormSubmitted = false;
+  this.SelectedEmployee = [];
+  this.EmployeeAutoUpdateLeaveList = [];
   this.ObjAutoUpdateleave = new AutoUpdateleave();
   this.leaveId = undefined;
   this.initDate =[];
@@ -621,13 +636,25 @@ onConfirmjohAutoUp(){
     // if(this.$CompacctAPI.CompacctCookies.User_Type === "A") {
     this.ObjAutoUpdateleave.From_Date = this.Objleave.From_Date ? this.DateService.dateConvert(new Date(this.Objleave.From_Date)): this.DateService.dateConvert(new Date());
     this.ObjAutoUpdateleave.To_Date = this.Objleave.To_Date ? this.DateService.dateConvert(new Date(this.Objleave.To_Date)): this.DateService.dateConvert(new Date());
-   this.ObjAutoUpdateleave.Emp_ID = this.Objleave.Emp_ID ? this.Objleave.Emp_ID : 0
+  //  this.ObjAutoUpdateleave.Emp_ID = this.Objleave.Emp_ID ? this.Objleave.Emp_ID : 0
    this.ObjAutoUpdateleave.Transaction_Date = this.Objleave.Transaction_Date ? this.DateService.dateConvert(new Date(this.Transaction_Date)) : this.DateService.dateConvert(new Date());
     // }
+    if(this.SelectedEmployee.length) {
+    this.SelectedEmployee.forEach(el => {
+      const employeeidFilter = this.AutoUpdateempDataList.filter((ele:any)=>Number(ele.Emp_ID) === Number(el));
+    this.EmployeeAutoUpdateLeaveList.push({
+      From_Date : this.ObjAutoUpdateleave.From_Date,
+      To_Date : this.ObjAutoUpdateleave.To_Date,
+      Emp_ID : employeeidFilter.length ? employeeidFilter[0].Emp_ID : undefined,
+      Transaction_Date : this.ObjAutoUpdateleave.Transaction_Date
+    });
+    
+  });
+  
       const obj = {
         "SP_String": "SP_HR_Leave_Opening_Issue_Balance",
         "Report_Name_String": 'Auto_Update_HR_Leave_Opening_Issue_Balance',
-        "Json_Param_String": JSON.stringify([this.ObjAutoUpdateleave])
+        "Json_Param_String": JSON.stringify(this.EmployeeAutoUpdateLeaveList)
        }
        this.GlobalAPI.getData(obj)
        .subscribe((data:any)=>{
@@ -647,6 +674,8 @@ onConfirmjohAutoUp(){
           this.ObjAutoUpdateleave = new AutoUpdateleave();
           this.hryear = undefined;
           this.AutoUpdateModal = false;
+          this.SelectedEmployee = [];
+          this.EmployeeAutoUpdateLeaveList = [];
         } 
         else {
           this.compacctToast.clear();
@@ -660,6 +689,15 @@ onConfirmjohAutoUp(){
         });
     
       
+    } else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error Message",
+        detail: "Select Employee"
+      });
+    }
 }
 } 
 class leave{

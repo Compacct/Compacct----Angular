@@ -327,13 +327,15 @@
             </div>
         </div>
         <div class="col-sm-12">
-            <label class="control-label">Employees</label>
-                <select class="form-control" name="AU_Emp_Name"
+            <label class="control-label">Employees<sup class="text-danger">*</sup></label>
+                <!-- <select class="form-control" name="AU_Emp_Name"
                 #AU_Emp_Name ="ngModel"
                 [(ngModel)]="ObjAutoUpdateleave.Emp_ID" >
                 <option [ngValue]="undefined">All</option>
                 <option  *ngFor="let Emp of AutoUpdateempDataList"  value ={{Emp.Emp_ID}}>{{Emp.Emp_Name}}</option>
-             </select>
+             </select> -->
+            <p-multiSelect itemSize="30" [options]="AutoUpdateempDataList" [styleClass]="'compacct-multiselect'" name="AU_Emp_Name" [(ngModel)]="SelectedEmployee" [virtualScroll]="true" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true">
+            </p-multiSelect>
         </div>
                
          <hr>
