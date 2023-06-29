@@ -53,6 +53,8 @@ export class DailyAttendanceSheetComponent implements OnInit {
   Total_Late:any;
   Half_Day: any;
   Annual_Leave: any;
+  Out_Side_Duty: any;
+  ESI:any;
   DistWorkLocation:any = [];
   SelectedDistWorkLocation:any = [];
   SearchFields:any = [];
@@ -309,7 +311,12 @@ export class DailyAttendanceSheetComponent implements OnInit {
 
     var annualleave = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "AL")
     this.Annual_Leave = annualleave.length ? annualleave.length : undefined;
-    // console.log("this.Half_Day===",this.Half_Day);
+
+    var outsideduty = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "OD")
+    this.Out_Side_Duty = outsideduty.length ? outsideduty.length : undefined;
+
+    var esi = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "ES")
+    this.ESI = esi.length ? esi.length : undefined;
   }
   getAttenTypedropdown(atnid){
     const obj = {

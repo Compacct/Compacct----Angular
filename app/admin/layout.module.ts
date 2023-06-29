@@ -67,7 +67,6 @@ import {DataViewModule} from 'primeng/dataview';
 import {PanelModule} from 'primeng/panel';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
 import {SliderModule} from 'primeng/slider';
-
 // SPINNER
 import { NgxUiLoaderModule } from "ngx-ui-loader";
 // SYN
@@ -484,8 +483,14 @@ import { AttendanceRegularizationComponent } from './common/Attendance/attendanc
 import { ApproveAttendanceRegularizationComponent } from './common/Attendance/approve-attendance-regularization/approve-attendance-regularization.component';
 import { EmployeeTransferComponent } from './common/Attendance/employee-transfer/employee-transfer.component';
 import { HearingCRMLeadFollowupComponent } from './common/CRM/Followup/hearing-crm-lead-followup/hearing-crm-lead-followup.component';
-
-
+import { HrRequisitionFormComponent } from './common/Attendance/hr-requisition-form/hr-requisition-form.component';
+import { ApproveHrRequisitionFormComponent } from './common/Attendance/approve-hr-requisition-form/approve-hr-requisition-form.component';
+import { RetailAdvanceOrderComponent } from './common/FinancialManagement/Retail/retail-advance-order/retail-advance-order.component';
+import { SalesmanTargetComponent } from './common/PatientManagement/Audiologist/salesman-target/salesman-target.component';
+import { HRAttnDetalisComponent } from './common/HR/hr-attn-detalis/hr-attn-detalis.component';
+import {GMapModule} from 'primeng/gmap';
+import { AgmCoreModule } from '@agm/core';
+import { EmployeeBonusComponent } from './common/MICL/employee-bonus/employee-bonus.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -885,7 +890,13 @@ import { HearingCRMLeadFollowupComponent } from './common/CRM/Followup/hearing-c
     AttendanceRegularizationComponent,
     ApproveAttendanceRegularizationComponent,
     EmployeeTransferComponent,
-    HearingCRMLeadFollowupComponent
+    HearingCRMLeadFollowupComponent,
+    HrRequisitionFormComponent,
+    ApproveHrRequisitionFormComponent,
+    RetailAdvanceOrderComponent,
+    SalesmanTargetComponent,
+    HRAttnDetalisComponent,
+    EmployeeBonusComponent
   ],
   imports: [
     CommonModule,
@@ -933,7 +944,13 @@ import { HearingCRMLeadFollowupComponent } from './common/CRM/Followup/hearing-c
     NpDatepickerModule,
     SplitButtonModule,
     SliderModule,
-    
+    GMapModule,
+    AgmCoreModule.forRoot({
+      // please get your own API key here:
+      // https://developers.google.com/maps/documentation/javascript/get-api-key?hl=en
+      apiKey: 'AIzaSyDSloRmchjfZhHX2u-vXo1i9uGX7Qj7AV0'
+    })
+  
   ],
   exports: [],
   providers: [

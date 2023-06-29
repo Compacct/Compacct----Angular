@@ -266,7 +266,8 @@ export class MICLRawMaterialQAComponent implements OnInit {
         Min_Tolerance_Level: element.Min_Tolerance_Level,
         Max_Tolerance_Level: element.Max_Tolerance_Level,
         QA_Value: Number(element.QA_Value),
-        Remarks: element.Remarks
+        Remarks: element.Remarks,
+        Deduction_Perc: element.Deduction_Perc
       }
       this.newAllDetails.push(TempObj);
     });

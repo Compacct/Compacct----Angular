@@ -300,11 +300,14 @@ export class FullAndFinalSettlementComponent implements OnInit {
   GetNetPayble(){
     var TotalAB = (Number(this.ObjFullAndFinalSettlement.Last_Gross_Amount) + Number(this.ObjFullAndFinalSettlement.Total_Statutory_Earnings)).toFixed(2);
     var Net_Payable = Number(TotalAB) - Number(this.ObjFullAndFinalSettlement.Total_Deduction)
-        this.ObjFullAndFinalSettlement.Net_Payable = Number(Net_Payable).toFixed(2);
+        this.ObjFullAndFinalSettlement.Net_Payable = Number(this.RoundOff(Net_Payable)).toFixed(2);
   }
   getTofix(key){
     return Number(Number(key).toFixed(2))
    }
+  RoundOff(key:any){
+    return Math.round(Number(Number(key).toFixed(2)))
+  }
   SaveFullAndFinalSettlement(valid){
     this.FullAndFinalSettlementFormSubmitted = true;
     this.Spinner=true;

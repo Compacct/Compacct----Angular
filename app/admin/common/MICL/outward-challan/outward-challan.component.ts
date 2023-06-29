@@ -933,6 +933,7 @@ export class OutwardChallanComponent implements OnInit {
         Transportation_Distance : this.ObjPurChaseBill.Transportation_Distance,
         Transporter_ID: this.ObjPurChaseBill.Transporter_ID,
         Delivery_Point: this.ObjPurChaseBill.Delivery_Point,
+        Delivery_Terms: this.ObjPurChaseBill.Delivery_Terms,
         Vehicle_No: this.ObjPurChaseBill.Vehicle_No,
         Transporter: this.ObjPurChaseBill.Transporter,
         LR_No: this.ObjPurChaseBill.LR_No,
@@ -1239,6 +1240,7 @@ class PurChaseBill {
   Cost_Cen_GST_No : any;
 
   Delivery_Point : any;
+  Delivery_Terms : any;
   Mode_Of_Delivery : any;
   Transportation_Distance :any;
   Vehicle_Type : any;

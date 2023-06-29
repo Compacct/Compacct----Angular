@@ -569,14 +569,15 @@ export class TenderViewDetailsCompComponent implements OnInit {
         }),
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
-        if (data.length && data[0].Status) {
+         if (data.length && data[0].Status) {
+          
           if (data[0].Status === 'AWARDING THE TENDER' && data[0].Agreement_Number) {
             this.ObjBidOpening.Financial_Bid_Status = data[0].Status;
             this.AgreementList = data;
             this.ObjAgreement = data[0];
             this.CompletionDate = new Date(data[0].Date_of_Completion);
             this.CommencementDate = new Date(data[0].Date_of_Commencement);
-            this.ObjAgreement.Tender_Negotiated_Value = data[0].Agreement_Number;
+            this.ObjAgreement.Tender_Negotiated_Value = data[0].Tender_Negotiated_Value;
             this.ObjAgreement.Tender_Doc_ID = this._TenderId;
           }
           if (data[0].Status === 'NOT- AWARDING THE TENDER' && data[0].Not_Awarding_Reason) {

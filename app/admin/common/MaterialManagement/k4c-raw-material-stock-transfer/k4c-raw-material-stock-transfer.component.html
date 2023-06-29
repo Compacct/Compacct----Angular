@@ -182,7 +182,7 @@
                                                 <div class="col-sm-3">
                                                     <label class="control-label">To Stock Point<sup class="text-danger">*</sup></label>
                                                     <select class="form-control" name="To_godown_id" #To_godown_id="ngModel" [(ngModel)]="ObjRawMateriali.To_godown_id" [ngClass]="{'clearance': RawMaterialIssueFormSubmitted && To_godown_id?.errors?.required}" [disabled]="TGdisableflag" [attr.disabled]="ProductList.length? true : null"
-                                                        required>
+                                                        (change)="getIndent()" required>
                               <option  [ngValue]="undefined">Select</option>
                               <option  *ngFor="let option of ToGodownList" value="{{option.godown_id}}">
                                 {{option.godown_name}}
@@ -192,7 +192,7 @@
                                             </div>
                                         </form>
                                         <div class="box-footer">
-                                            <button class="btn btn-primary pull-right" (click)="GetIndentList(RawMaterialIssueForm.form.valid)" id="load" [disabled]="ProductList.length" [disabled]="ShowSpinner">
+                                            <button *ngIf="!IndentList.length" class="btn btn-primary pull-right" (click)="getspecificgodownproduct(RawMaterialIssueForm.form.valid)" id="load" [disabled]="ProductList.length" [disabled]="ShowSpinner">
                              <p-progressSpinner *ngIf="ShowSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                          <span *ngIf="!ShowSpinner" class="glyphicon glyphicon-save"></span>&nbsp;Show Products In Stock
                      </button>
@@ -200,10 +200,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <div class="col-sm-3">
-                                    <label class="control-label">Select Product Type</label>
-                                    <p-multiSelect [options]="productListFilter" [(ngModel)]="SelectedProductType" [styleClass]="'compacct-multiselect'" name="ProductTypefilter" (onChange)="filterProduct()"></p-multiSelect>
+                            <div class="form-group" *ngIf="IndentList.length">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Indent List<sup class="text-danger">*</sup> &nbsp;</label>
+                                    <p-multiSelect itemSize="30" [options]="IndentList" [styleClass]="'compacct-multiselect'" name="indentn" [(ngModel)]="SelectedIndent" [filter]="true" filterBy="label,value.name" (onChange)="GetIndentProductList()" [resetFilterOnHide]="true">
+                                    </p-multiSelect>
                                 </div>
                             </div>
                             <div class="table-responsive no-padding">
@@ -216,6 +217,10 @@
                                         </button>
                                         </div>
                                         <div class="row">
+                                        <div class="col-sm-3" style="margin-left: 495px;">
+                                            <!-- <label class="control-label">Select Product Type</label> -->
+                                            <p-multiSelect [options]="productListFilter" defaultLabel="Select Product Type" itemSize="30" [(ngModel)]="SelectedProductType" [styleClass]="'compacct-multiselect'" name="ProductTypefilter" (onChange)="filterProduct()"></p-multiSelect>
+                                        </div>
                                             <div class="col-sm-3 pull-right" style="text-align: right">
                                                 <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                             </div>
@@ -228,7 +233,8 @@
                                             <th>Product Type</th>
                                             <th>Product Description</th>
                                             <th>UOM</th>
-                                            <th>Stock Qty</th>
+                                            <th *ngIf="!IndentList.length">Stock Qty</th>
+                                            <th *ngIf="IndentList.length">Req Qty</th>
                                             <th>Batch No</th>
                                             <th>Batch Qty</th>
                                             <!-- <th >Current Stock in Department</th> -->
@@ -243,7 +249,8 @@
                                             <td>{{col.Product_Type}}</td>
                                             <td>{{col.Product_Description }}</td>
                                             <td>{{col.UOM}}</td>
-                                            <td>{{col.Stock_Qty}}</td>
+                                            <td *ngIf="!IndentList.length">{{col.Stock_Qty}}</td>
+                                            <td *ngIf="IndentList.length">{{col.Requisition_Qty}}</td>
                                             <td>{{col.Batch_No}}</td>
                                             <td>{{col.Batch_Qty}}</td>
                                             <!-- <td>{{col.Current_Stock_In_Dept}}</td> -->

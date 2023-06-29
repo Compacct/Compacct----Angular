@@ -90,3 +90,24 @@
     background-color: #19770d;
     border-color: #335232;
 }
+
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li a {
+  float: none;
+  display: inline-block;
+  /* color: #333333; 
+       padding: 0.571em 1em; 
+       font-weight: 700; */
+  margin-left: -25px;
+}
+body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+  margin-bottom: 0px;
+}
+.ui-tabview .ui-tabview-nav {
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+.ui-tabview .ui-tabview-nav li {
+  display: inline-block;
+  float: none;
+}

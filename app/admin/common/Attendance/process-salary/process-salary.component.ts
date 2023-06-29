@@ -10,6 +10,7 @@ import * as XLSX from 'xlsx';
 import { formatDate } from '@angular/common';
 import { format } from 'url';
 declare var $: any;
+import html2canvas from 'html2canvas';
 import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
 
@@ -40,6 +41,7 @@ export class ProcessSalaryComponent implements OnInit {
 
   processSalarydisabled = false;
   bankregdisabled = false;
+  currentmonth: any;
 
   constructor(
     private route : ActivatedRoute,
@@ -104,7 +106,18 @@ export class ProcessSalaryComponent implements OnInit {
       console.log('this.BrowseList',this.BrowseList)
       this.CheckBackRegister();
   })
+  this.getcurrentmonth();
   }
+  }
+  getcurrentmonth(){
+    var firstDate = this.Month_Name+'-'+'01'
+    const currentdate = new Date(firstDate);
+    const month = currentdate.getMonth();
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"];
+
+    this.currentmonth = monthNames[month];
+    console.log('monthNames====',this.currentmonth);
   }
   Print(DocNo) {
     if(DocNo) {
@@ -243,11 +256,96 @@ export class ProcessSalaryComponent implements OnInit {
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
-      XLSX.writeFile(workbook, fileName+'.xlsx');
+      // const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      // const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      // XLSX.writeFile(workbook, fileName+'.xlsx');
+      this.converttoPDFsalaryregister(data);
       
     })
+  }
+  converttoPDFsalaryregister(itemNew) {
+    //var style:any ='landscape'; //'l', 'mm', [297, 297]
+    var currentmonth = this.currentmonth;
+    var doc:any = new jsPDF('l', 'mm', 'legal');
+    var rows:any = [];
+
+/* The following array of object as response from the API req  */
+    var column = itemNew.length ? Object.keys(itemNew[0]): []
+
+itemNew.forEach(element => {
+    // var temp = [element.id,element.name,element.id1,element.name1,element.id2,element.name2,element.id3,element.name3,element.id4,element.name4];
+    rows.push(Object.values(element))
+
+});
+
+    var imgData;
+    imgData = "../../../../Content/dist/img/Kashvi.jpeg"
+  
+    doc.autoTable({
+      //startY:50,
+      theme: "grid",
+      head:[column],
+      body:rows,
+      headStyles :{fillColor : [255, 255, 255],lineWidth: 0.1,lineColor:[0,0,0],textColor:[0, 0, 0],fontSize: 6},
+      bodyStyles: {lineWidth: 0.1,lineColor:[0,0,0],fontSize: 6},
+      //columnStyles: {2: {halign: 'right'}, 3: {halign: 'right'}},
+      // styles: { cellWidth: "wrap" },
+      // columnStyles: {
+      //   0: {cellWidth: 5},
+      //   1: {cellWidth: 8},
+      //   2: {cellWidth: 15},
+      //   3: {cellWidth: 15},
+      //   4: {cellWidth: 5},
+      //   5: {cellWidth: 5},
+      //   6: {cellWidth: 5},
+      //   7: {cellWidth: 7},
+      //   8: {cellWidth: 7},
+      //   9: {cellWidth: 7},
+      //   10: {cellWidth: 5},
+      //   11: {cellWidth: 5},
+      //   12: {cellWidth: 7},
+      //   13: {cellWidth: 7},
+      //   14: {cellWidth: 7},
+      //   15: {cellWidth: 7},
+      //   16: {cellWidth: 5},
+      //   17: {cellWidth: 5},
+      //   18: {cellWidth: 5},
+      //   19: {cellWidth: 7},
+      //   20: {cellWidth: 5},
+      //   21: {cellWidth: 7},
+      //   22: {cellWidth: 5},
+      //   23: {cellWidth: 7},
+      //   24: {cellWidth: 8},
+      //   // etc
+      // },
+      
+      didDrawPage: function (data) {
+        // Header
+        // doc.setFontSize(20);
+        // doc.setTextColor(40);
+        // doc.setFontStyle('normal');
+        var width = doc.internal.pageSize.getWidth();
+        // console.log('width---',width)
+        // var height = doc.internal.pageSize.getHeight();
+        // console.log('height---',height)
+        if (imgData) {   
+            doc.addImage(imgData, 'JPEG', data.settings.margin.left,10,35,20);  // for add image
+        }
+        doc.text('MODERN INDIA CON-CAST LIMITED', width/2, 17, { align: 'center' },{fontSize: 12})
+        doc.setFontSize(10);
+        doc.text('(A unit of Kasvi Group)', width/2, 22, { align: 'center' },{fontSize: 3})
+        doc.text('Bhuniaraichak, J.L No-122, Haldia-721635, Purba Medinipur, West Bengal', width/2, 27, { align: 'center' },{fontSize: 0.4})
+        doc.text('Salary for The Month of ' + currentmonth, width/2, 32, { align: 'center' },{styles: { fontSize: 3 }})
+        
+        var pageSize = doc.internal.pageSize;
+        var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+        doc.text("Prepared By", data.settings.margin.left, pageHeight - 10);
+        doc.text('Checked By', width/2, pageHeight - 10, { align: 'center' })
+        doc.text("Authorised By", width - 10, pageHeight - 10, { align: 'right' });
+      },
+      margin: {top: 40, right: 6, bottom: 30, left: 6}
+    });
+    doc.save('Salary-Statement.pdf');
   }
   Finalized(){
     var firstDate = this.Month_Name+'-'+'01'
@@ -327,10 +425,10 @@ export class ProcessSalaryComponent implements OnInit {
 
     }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        this.converttoPDF(data);
       // const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
       // const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
       // XLSX.writeFile(workbook, fileName+'.xlsx');
+        this.converttoPDFbankstatement(data);
       
     })
     }
@@ -344,25 +442,10 @@ export class ProcessSalaryComponent implements OnInit {
         });
     }
   }
-  // imgToBase64(url, callback) {
-  //   if (!window.FileReader) {
-  //     callback(null);
-  //     return;
-  //   }
-  //   const xhr = new XMLHttpRequest();
-  //   xhr.responseType = 'blob';
-  //   xhr.onload = function () {
-  //     const reader = new FileReader();
-  //     reader.onloadend = function () {
-  //       callback((reader.result as string).replace('text/xml', 'image/jpeg'));
-  //     };
-  //     reader.readAsDataURL(xhr.response);
-  //   };
-  //   xhr.open('GET', url);
-  //   xhr.send();
-  // }
-  converttoPDF(itemNew) {
-    var style:any = itemNew[0].orientation
+  
+  converttoPDFbankstatement(itemNew) {
+    //var style:any = ;
+    var currentmonth = this.currentmonth;
     var doc:any = new jsPDF();
     var rows:any = [];
 
@@ -374,9 +457,8 @@ itemNew.forEach(element => {
     rows.push(Object.values(element))
 
 });
-// var body = rows.alternateRowStyles= {fillColor : [231, 215, 252]}
 
-     var base64Img;
+    //  var base64Img;
 
   // Convert the image to base64
   // this.imgToBase64("https://Compacct/src/assets/adminSB/dist/img/Kashvi.jpeg", function(base64) {
@@ -385,43 +467,52 @@ itemNew.forEach(element => {
   // });
     // Static base64 for example purposes
     // base64Img = 
-    
+    var imgData;
+    imgData = "../../../../Content/dist/img/Kashvi.jpeg"
   
     doc.autoTable({
-      theme: "plain",
+      theme: "grid",
       head:[column],
       body:rows,
-      headStyles :{fillColor : [255, 255, 255],lineColor:[255,0,0],textColor:[0, 0, 0]},
-      alternateRowStyles: {lineColor:[255,0,0],},
-      tableLineColor: [0, 0, 0],
-      tableLineWidth: 0.1,
+      headStyles :{fillColor : [255, 255, 255],lineWidth: 0.1,lineColor:[0,0,0],textColor:[0, 0, 0],fontSize: 7},
+      bodyStyles: {lineWidth: 0.1,lineColor:[0,0,0],fontSize: 7},
+      // alternateRowStyles: {lineColor:[255,0,0],},
+      //tableLineColor: [0, 0, 0],
+      // tableLineWidth: 0.1,
       
       didDrawPage: function (data) {
         // Header
         // doc.setFontSize(20);
         // doc.setTextColor(40);
         // doc.setFontStyle('normal');
-        if (base64Img) {
-            doc.addImage(base64Img, 'JPEG', data.settings.margin.left, 15, 10, 15);
+        var width = doc.internal.pageSize.getWidth()
+        // var height = doc.internal.pageSize.getHeight();
+        if (imgData) {   
+            doc.addImage(imgData, 'JPEG', data.settings.margin.left,10,30,25);  // for add image
         }
-        doc.text(50, 21, "MODERN INDIA CON-CAST LIMITED", 'center')
-        // doc.text('MODERN INDIA CON-CAST LIMITED', 40, 250, 'center');
-        // doc.text(str, pageWidth / 2, pageHeight  - 10, {align: 'center'});
-
+        doc.text('MODERN INDIA CON-CAST LIMITED', width/2, 17, { align: 'center' },{fontSize: 12})
+        doc.setFontSize(10);
+        doc.text('(A unit of Kasvi Group)', width/2, 22, { align: 'center' },{fontSize: 3})
+        doc.text('Bhuniaraichak, J.L No-122, Haldia-721635, Purba Medinipur, West Bengal', width/2, 27, { align: 'center' },{fontSize: 0.4})
+        doc.text('Salary for The Month of ' + currentmonth, width/2, 32, { align: 'center' },{styles: { fontSize: 3 }})
         // // Footer
         // var str = "Page " + doc.internal.getNumberOfPages()
         // // Total page number plugin only available in jspdf v1.0+
         // if (typeof doc.putTotalPages === 'function') {
         //     str = str + " of " + totalPagesExp;
         // }
-        // doc.setFontSize(10);
+        doc.setFontSize(10);
 
-        // // jsPDF 1.4+ uses getWidth, <1.4 uses .width
-        // var pageSize = doc.internal.pageSize;
-        // var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
-        // doc.text(str, data.settings.margin.left, pageHeight - 10);
+        // jsPDF 1.4+ uses getWidth, <1.4 uses .width
+        var pageSize = doc.internal.pageSize;
+        var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+        // doc.setLineDash([10, 10], 0);
+        // doc.line(20, 25, 60, 25);
+        doc.text("Prepared By", data.settings.margin.left, pageHeight - 10);
+        doc.text('Checked By', width/2, pageHeight - 10, { align: 'center' })
+        doc.text("Authorised By", 196, pageHeight - 10, { align: 'right' });
       },
-      margin: {top: 40}
+      margin: {top: 40, bottom : 40}
     });
     doc.save('Bank-Statement.pdf');
   }
