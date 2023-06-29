@@ -8,6 +8,8 @@ import { CompacctCommonApi } from '../../../../shared/compacct.services/common.a
 import { CompacctHeader } from '../../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
 import { NgxUiLoaderService } from "ngx-ui-loader";
+import { jsPDF } from "jspdf";
+import 'jspdf-autotable';
 
 @Component({
   selector: 'app-returnable-gate-pass',
@@ -72,7 +74,10 @@ Requlist:any = [];
 deldocno: undefined;
 editdocno: any;
 addReturnGatePassInputField:any = {};
-addPurchaseListInput:boolean = false
+addPurchaseListInput:boolean = false;
+start_date: any;
+end_date: any;
+RegisterSpinner:boolean = false;
 
 constructor(
     private header:CompacctHeader,
@@ -87,7 +92,7 @@ constructor(
 ){}
 
 ngOnInit() {
-this.items = ["BROWSE", "CREATE", "PENDING MAINTENANCE INDENT"];
+this.items = ["BROWSE", "CREATE", "PENDING MAINTENANCE INDENT", "RGP REGISTER"];
 this.header.pushHeader({
       Header: "Returnable Gate Pass",
       Link: "Material Management -> Repair & Maintenance -> Returnable Gate Pass"
@@ -99,7 +104,7 @@ this.header.pushHeader({
 }
 TabClick(e) {
   this.tabIndexToView = e.index;
-  this.items = ["BROWSE", "CREATE", "PENDING MAINTENANCE INDENT"];
+  this.items = ["BROWSE", "CREATE", "PENDING MAINTENANCE INDENT", "RGP REGISTER"];
   this.buttonname = "Save";
   this.clearData();
   this.addPurchaseListInput = false;
@@ -468,7 +473,7 @@ createIssue(DocnoObj:any){
   // this.clearData();
   if (DocnoObj.Doc_No) {
     this.tabIndexToView = 1;
-    this.items = ["BROWSE", "CREATE", "PENDING MAINTENANCE INDENT"];
+    this.items = ["BROWSE", "CREATE", "PENDING MAINTENANCE INDENT", "RGP REGISTER"];
     this.buttonname = "Save";
     this.DocNoId = DocnoObj.Doc_No;
     // var costcenid = this.costCenterList.filter(item=> item.Cost_Cen_Name === DocnoObj.Cost_Cen_Name);
@@ -713,7 +718,7 @@ onConfirmSave(){
         this.addPurchaseListInput = false;
         if(this.buttonname === "Update") {
           this.tabIndexToView = 0;
-          this.items = ["BROWSE", "CREATE", "PENDING MAINTENANCE INDENT"];
+          this.items = ["BROWSE", "CREATE", "PENDING MAINTENANCE INDENT", "RGP REGISTER"];
         }
         }
         else {
@@ -800,7 +805,7 @@ Edit(col){
   if(col.Doc_No){
     this.editdocno = col.Doc_No;
     this.tabIndexToView = 1;
-    this.items = ["BROWSE", "UPDATE", "PENDING MAINTENANCE INDENT"];
+    this.items = ["BROWSE", "UPDATE", "PENDING MAINTENANCE INDENT", "RGP REGISTER"];
     this.buttonname = "Update";
     this.geteditmaster();
    
@@ -859,6 +864,116 @@ Edit(col){
   //  this.ObjGatePass.Product_ID = this.lowerAddList[inx].Product_Description
    this.addPurchaseListInput = true;
   //  this.disable = false
+}
+
+getDateRangeForRegister(dateRangeObjRegister) {
+  if (dateRangeObjRegister.length) {
+    this.start_date = dateRangeObjRegister[0];
+    this.end_date = dateRangeObjRegister[1];
+  }
+}
+PDFGRNRegister(){
+  this.RegisterSpinner = true;
+      const start = this.start_date
+      ? this.DateService.dateConvert(new Date(this.start_date))
+      : this.DateService.dateConvert(new Date());
+      const end = this.end_date
+      ? this.DateService.dateConvert(new Date(this.end_date))
+      : this.DateService.dateConvert(new Date());
+    if(start && end) {
+      const sendobj= {
+        From_date : start,
+        To_date : end
+      }
+  const obj = {
+    "SP_String": "Sp_Returnable_Gate_Pass",
+    "Report_Name_String": "Returnable Gate Pass Register",
+    "Json_Param_String": JSON.stringify([sendobj])
+
+  }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      this.converttoPDFGRNregister(data,start,end);
+      this.RegisterSpinner = false;
+    
+  })
+  }
+  else {
+    this.RegisterSpinner = false;
+  }
+}
+converttoPDFGRNregister(itemNew,start,end) {
+  //var style:any = ;
+  var startdate = start;
+  var enddate = end;
+  var formtodate = startdate + '-' + enddate;
+  var doc:any = new jsPDF('l', 'mm', 'legal');
+  var rows:any = [];
+  var header:any = [];
+
+/* The following array of object as response from the API req  */
+  // var column = itemNew.length ? Object.keys(itemNew[0]): [];
+  var column = ['G.P No.','Date','W.O No./ Date','Material Descriptions','Unit','Qnty.','Destination (Vendor'+'S Name)',
+               'Mode Of Transport','Vehicle No.','Purpose','Bill No./ Date','Amount (Rs.)','Remarks'];
+  // header = 
+  //   [{
+  //   content: "RETURNABLE GATE PASS REGISTER",
+  //   colSpan: 10,
+  //   styles: {
+  //   halign: 'center',
+  //   fillColor: [255, 255, 255] //[211, 211, 211]
+  //   }
+  //   }];
+  // let head = [header,column]
+
+itemNew.forEach(element => {
+  // element.Work_Order_No = element.Work_Order_No ? element.Work_Order_No : '';
+  // element.Work_Order_Date = element.Work_Order_Date ? element.Work_Order_Date : '';
+  var ordernodate = element.Work_Order_No || element.Work_Order_Date ? element.Work_Order_No +'/'+ element.Work_Order_Date : '';
+  // element.Bill_No = element.Bill_No ? element.Bill_No : '';
+  // element.Bill_Date = element.Bill_Date ? element.Bill_Date : '';
+  var billnodate = element.Bill_No || element.Bill_Date ? element.Bill_No +'/'+ element.Bill_Date : '';
+  // element.Amount = element.Amount ? element.Amount : '';
+
+
+  var temp = [element.Gate_Pass_No,element.Gate_Pass_Date,ordernodate,element.Material_Description,element.Unit,element.Qnty,
+              element.Destination_Vendor_Name,element.Mode_Of_Transport,element.Vehicle_No,element.Purpose,billnodate,
+              element.Amount,element.Remarks];
+  rows.push(Object.values(temp))
+
+});
+
+  var imgData;
+  imgData = "../../../../Content/dist/img/Kashvi.jpeg"
+
+  doc.autoTable({
+    theme: "grid",
+    head:[column],
+    body:rows,
+    headStyles :{fillColor : [255, 255, 255],lineWidth: 0.1,lineColor:[0,0,0],textColor:[0, 0, 0],fontSize: 7},
+    bodyStyles: {lineWidth: 0.1,lineColor:[0,0,0],fontSize: 7},
+    // alternateRowStyles: {lineColor:[255,0,0],},
+    //tableLineColor: [0, 0, 0],
+    // tableLineWidth: 0.1,
+    
+    didDrawPage: function (data) {
+      // Header
+      // doc.setFontSize(20);
+      // doc.setTextColor(40);
+      // doc.setFontStyle('normal');
+      var width = doc.internal.pageSize.getWidth()
+      // var height = doc.internal.pageSize.getHeight();
+      // if (imgData) {   
+      //     doc.addImage(imgData, 'JPEG', data.settings.margin.left,10,30,25);  // for add image
+      // }
+      doc.text('RETURNABLE GATE PASS REGISTER', data.settings.margin.left,17)
+      doc.setFontSize(12);
+      doc.text('For the Period of: '+ formtodate, data.settings.margin.left,24,{fontSize: 3})
+      // doc.text('Bhuniaraichak, J.L No-122, Haldia-721635, Purba Medinipur, West Bengal', width/2, 27, { align: 'center' },{fontSize: 0.4})
+      
+    },
+    margin: {top: 30, right: 7, bottom: 5, left: 7}
+  });
+  doc.save('RGP-Register.pdf');
 }
 }
 class GatePass{

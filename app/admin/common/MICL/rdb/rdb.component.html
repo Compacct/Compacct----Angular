@@ -256,7 +256,7 @@
                                              </div>
                                        
                                             <div class="form-group">
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-2">
                                                      <label class="control-label">LR No. & Date<sup class="text-danger">*</sup></label>
                                                      <input class="form-control" name="LR_No" #LR_No="ngModel" [(ngModel)]="ObjRdb.LR_No_Date" [disabled]="RDBListAdd.length" placeholder="LR No. & Date" [ngClass]="{'clearance': RDBFormSubmit && LR_No.errors?.required}" required>
              
@@ -274,7 +274,11 @@
                                                         (onChange)="ProductDetailsChange(ObjRdb1.Product_ID)">
                                                     </p-dropdown>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Rate</label>
+                                                    <input class="form-control" name="rate" #rate="ngModel" [(ngModel)]="ObjRdb1.Rate" CompacctDigitonly="true" placeholder="Rate" [ngClass]="{'clearance': RDBFormSubmit && rate.errors?.required}">
+                                                </div>
+                                                <div class="col-sm-2">
                                                     <label class="control-label">Unit<sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="Unit" #Unit="ngModel" [(ngModel)]="ObjRdb1.UOM" placeholder="Unit" [ngClass]="{'clearance': RDBFormSubmit && Unit.errors?.required}" required>
                                                 </div>

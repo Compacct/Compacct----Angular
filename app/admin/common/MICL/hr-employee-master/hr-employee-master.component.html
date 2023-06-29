@@ -286,6 +286,10 @@
                                     <input class="form-control" placeholder="Spouse Name" name="Husband" #Husband="ngModel" [(ngModel)]="objemployee.Spouse_Wife_Name" [disabled]="userdisabled">
                                 </div>
                                 <div class="col-sm-3" *ngIf="databaseName === 'GN_JOH_HR'">
+                                    <label class="control-label">Spouse Date Of Birth</label>
+                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Spouse_DOB' name="spousedob" [enabled]="userdatedisabled"></ejs-datepicker>
+                                </div>
+                                <div class="col-sm-3" *ngIf="databaseName === 'GN_JOH_HR'">
                                     <label class="control-label">Date Of Anniversary</label>
                                     <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Date_Of_Anniversary' name="doanni" [enabled]="userdatedisabled"></ejs-datepicker>
                                 </div>
@@ -331,7 +335,7 @@
                                           <th class="text-center" >Name</th>
                                           <th class="text-center" >Gender</th>
                                           <th class="text-center" >D.O.B</th>
-                                          <th class="text-center" >Delete</th>
+                                          <th class="text-center" *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'">Delete</th>
                                         </tr>
                                      </thead>
                                     <tbody>
@@ -339,7 +343,7 @@
                                           <td class="text-center">{{ data.Child_Name }}</td>
                                           <td class="text-center">{{ data.Child_Gender }}</td>
                                           <td class="text-center">{{ data.Child_D_O_B }}</td>
-                                          <td class="text-center"><button (click)="DetetechildDetails(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                          <td class="text-center" *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'"><button (click)="DetetechildDetails(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                         </tr>
                                     </tbody>
                                    </table>
@@ -369,7 +373,7 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <label class="control-label">Current Location<sup class="text-danger">*</sup></label>
-                                        <div class="pull-right" *ngIf="databaseName === 'GN_JOH_HR'">
+                                        <div class="pull-right" *ngIf="databaseName === 'GN_JOH_HR' && $CompacctAPI.CompacctCookies.User_Type === 'A'">
                                             <span (click)="CreateLocation()" class="btn-vk createPatient" style="cursor: pointer;"><i class="fa fa-fw fa-plus"></i> Create</span>
                                         </div>
                                         <select class="form-control" name="Current" #Current="ngModel" [(ngModel)]="objemployee.Location_ID" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Current.errors?.required}" required>

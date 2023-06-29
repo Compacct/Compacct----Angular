@@ -68,6 +68,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
   filteredData:any = [];
   ShowPopupSpinner = false;
   editList:any = [];
+  editIndentList:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -217,6 +218,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
         this.ObjRawMateriali.To_godown_id = undefined;
          this.TGdisableflag = false;
        }
+       this.getIndent();
       }
        //console.log("To Godown List ===",this.ToGodownList);
       })
@@ -279,11 +281,91 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
 
   }
 
-  // FOR PRODUCT TABLE
-  GetIndentList(valid){
+  getIndent(){
+    this.IndentList = [];
+    const obj = {
+      "SP_String": "SP_Raw_Material_Stock_Transfer",
+      "Report_Name_String": "Get Indent Nos",
+      "Json_Param_String": JSON.stringify([{Cost_Cen_ID:this.ObjRawMateriali.To_Cost_Cen_ID, Godown_ID : this.ObjRawMateriali.To_godown_id}])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data.length){
+        data.forEach(element => {
+          element['value'] = element.Doc_No;
+          element['label'] = element.Doc_No + '(' + this.DateService.dateConvert(new Date(element.Doc_Date)) + ')';
+        });
+        this.IndentList = data;
+      } else {
+        this.IndentList = [];
+      }
+    })
+  }
+  GetIndentProductList(){
+    this.ProductList = [];
+    this.productListFilter = [];
+    this.SelectedProductType = [];
+    if(this.SelectedIndent.length) {
+      let Arr:any =[]
+      this.SelectedIndent.forEach(el => {
+        if(el){
+          const Dobj = {
+            Indent_No : el,
+            Cost_Cen_ID : this.ObjRawMateriali.To_Cost_Cen_ID,
+            Godown_ID : this.ObjRawMateriali.To_godown_id
+            }
+      Arr.push(Dobj)
+        }
+
+    });
+   const obj = {
+    "SP_String": "SP_Raw_Material_Stock_Transfer",
+    "Report_Name_String" : "Stock of Product list in Indent",
+   "Json_Param_String": JSON.stringify(Arr)
+
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+   const tempData = data
+   tempData.forEach(element => {
+    element['Issue_Qty'] = undefined;
+ });
+   this.ProductList = tempData;
+   this.ShowSpinner = false;
+   this.BackupIndentList = tempData;
+    this.RawMaterialIssueFormSubmitted = false;
+    this.GetProductType();
+   console.log("this.ProductList======",this.ProductList);
+   })
+  }
+  }
+  getspecificgodownproduct(valid){
     this.RawMaterialIssueFormSubmitted = true;
+    this.ShowSpinner = true;
     if(valid){
-      this.ShowSpinner = true;
+    if((Number(this.ObjRawMateriali.To_godown_id) === 42) || (Number(this.ObjRawMateriali.To_godown_id) === 43) ||
+      (Number(this.ObjRawMateriali.To_godown_id) === 46) || (Number(this.ObjRawMateriali.To_godown_id) === 72) ||
+      (Number(this.ObjRawMateriali.To_godown_id) === 73)) {
+    this.GetProductList();
+    }
+  else {
+    this.RawMaterialIssueFormSubmitted = true;
+    this.ShowSpinner = true;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "There is No Indent. "
+      });
+  }
+  }
+  }
+
+  // FOR PRODUCT TABLE
+  GetProductList(){
+    // if (this.IndentList.length) {
+    // this.RawMaterialIssueFormSubmitted = true;
+    // if(valid){
+      // this.ShowSpinner = true;
     const TempObj = {
       Cost_Cen_ID : this.ObjRawMateriali.From_Cost_Cen_ID,
       Godown_ID : this.ObjRawMateriali.From_godown_id,
@@ -307,7 +389,17 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     this.GetProductType();
    console.log("this.ProductList======",this.ProductList);
    })
-  }
+  // }
+  // }
+  // else {
+  //   this.compacctToast.clear();
+  //   this.compacctToast.add({
+  //       key: "compacct-toast",
+  //       severity: "error",
+  //       summary: "Warn Message",
+  //       detail: "There is No Indent. "
+  //     });
+  // }
   }
   // product Filter
 
@@ -582,13 +674,37 @@ GetProductType(){
 
     }
   }
+  getReqNo(){
+    let Rarr:any =[]
+    if(this.SelectedIndent.length) {
+      this.SelectedIndent.forEach(el => {
+        if(el){
+          const Dobj = {
+            Indent_No : el
+            }
+            Rarr.push(Dobj)
+        }
+
+    });
+      // console.log("Table Data ===", Rarr)
+      // return Rarr.length ? JSON.stringify(Rarr) : '';
+    }
+    else {
+      const Dobj = {
+        Indent_No : 'NA'
+        }
+        Rarr.push(Dobj)
+    }
+    console.log("Table Data ===", Rarr)
+    return Rarr.length ? JSON.stringify(Rarr) : '';
+  }
   SaveRawMaterialIssue(){
     this.ShowPopupSpinner = true;
     this.ngxService.start();
     if(this.ObjRawMateriali.From_Cost_Cen_ID == this.ObjRawMateriali.To_Cost_Cen_ID &&
       this.ObjRawMateriali.From_godown_id == this.ObjRawMateriali.To_godown_id){
         this.ShowPopupSpinner = false;
-        this.ngxService.start();
+        this.ngxService.stop();
       this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -602,7 +718,8 @@ GetProductType(){
       const obj = {
         "SP_String": "SP_Raw_Material_Stock_Transfer",
         "Report_Name_String" : "Save Raw Material Stock Transfer",
-       "Json_Param_String": this.buttonname === "Update" ? this.dataforSaveRawMaterialIssueforEdit() : this.dataforSaveRawMaterialIssue()
+       "Json_Param_String": this.buttonname === "Update" ? this.dataforSaveRawMaterialIssueforEdit() : this.dataforSaveRawMaterialIssue(),
+       "Json_1_String" : this.getReqNo()
 
       }
       this.GlobalAPI.postData(obj).subscribe((data:any)=>{
@@ -770,6 +887,7 @@ exportoexcel(Arr,fileName): void {
     this.SelectedIndent = [];
     this.IndentFilter = [];
     // Product Filter
+    this.productListFilter = [];
     this.SelectedProductType = [];
     this.ShowSpinner = false;
     this.ObjRawMateriali.Doc_No = undefined;
@@ -808,6 +926,7 @@ EditIntStock(col){
    this.items = ["BROWSE", "UPDATE"];
    this.buttonname = "Update";
    this.geteditmaster(col.Doc_No)
+   this.getIndentForEdit(col.Doc_No);
   }
 
 }
@@ -835,6 +954,7 @@ geteditmaster(Doc_No){
         Product_Type:element.Product_Type,
         Product_Type_ID:element.Product_Type_ID,
         Stock_Qty:element.Stock_Qty,
+        Requisition_Qty:element.Requisition_Qty,
         UOM : element.UOM,
         Batch_No : element.Batch_No,
         Batch_Qty : element.Batch_Qty,
@@ -845,6 +965,32 @@ geteditmaster(Doc_No){
      this.BackupIndentList = this.ProductList;
      this.GetProductType();
   })
+}
+getIndentForEdit(masterProduct){
+  this.editIndentList = [];
+  const obj = {
+    "SP_String": "SP_Raw_Material_Stock_Transfer",
+    "Report_Name_String": "Get Indent No For Edit",
+    "Json_Param_String": JSON.stringify([{Doc_No : masterProduct}])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.editIndentList = data;
+    this.GeteditIndentdist();
+  })
+}
+GeteditIndentdist(){
+  let DIndentBy:any = [];
+  this.IndentList = [];
+  this.SelectedIndent =[];
+  //this.SelectedDistOrderBy1 = [];
+  this.editIndentList.forEach((item) => {
+    if (DIndentBy.indexOf(item.Indent_No) === -1) {
+      DIndentBy.push(item.Indent_No);
+       this.IndentList.push({ label: item.Indent_No, value: item.Indent_No });
+       this.SelectedIndent.push(item.Indent_No);
+      console.log("this.TimerangeFilter", this.IndentList);
+    }
+  });
 }
 // Delete
 DeleteIntStocktr(col){
