@@ -490,6 +490,7 @@ import { SalesmanTargetComponent } from './common/PatientManagement/Audiologist/
 import { HRAttnDetalisComponent } from './common/HR/hr-attn-detalis/hr-attn-detalis.component';
 import {GMapModule} from 'primeng/gmap';
 import { AgmCoreModule } from '@agm/core';
+import { EmployeeBonusComponent } from './common/MICL/employee-bonus/employee-bonus.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -894,7 +895,8 @@ import { AgmCoreModule } from '@agm/core';
     ApproveHrRequisitionFormComponent,
     RetailAdvanceOrderComponent,
     SalesmanTargetComponent,
-    HRAttnDetalisComponent
+    HRAttnDetalisComponent,
+    EmployeeBonusComponent
   ],
   imports: [
     CommonModule,

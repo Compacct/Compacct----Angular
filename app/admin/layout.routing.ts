@@ -392,6 +392,7 @@ import { ApproveHrRequisitionFormComponent } from './common/Attendance/approve-h
 import { RetailAdvanceOrderComponent } from "./common/FinancialManagement/Retail/retail-advance-order/retail-advance-order.component";
 import { SalesmanTargetComponent } from "./common/PatientManagement/Audiologist/salesman-target/salesman-target.component";
 import { HRAttnDetalisComponent } from "./common/HR/hr-attn-detalis/hr-attn-detalis.component";
+import { EmployeeBonusComponent } from './common/MICL/employee-bonus/employee-bonus.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2989,6 +2990,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: HRAttnDetalisComponent,
         data: {
           title: 'Attendance Detalis'
+    }
+    },
+    {
+      path: 'Employee_Bonus',
+        component: EmployeeBonusComponent,
+        data: {
+          title: 'Employee Bonus'
     }
     },
     
