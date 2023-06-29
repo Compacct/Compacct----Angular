@@ -62,6 +62,7 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
     });
     this.getUsertype();
   }
+  onReject(){}
   getUsertype() {
     this.userList = []
     const obj = {

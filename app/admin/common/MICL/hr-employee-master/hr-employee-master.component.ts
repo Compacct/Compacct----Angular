@@ -67,6 +67,7 @@ export class HREmployeeMasterComponent implements OnInit {
   Resign_On = new Date();
   Leave_Dt:any = new Date();
   DOB = new Date();
+  Spouse_DOB: any;
   Date_Of_Anniversary : any;
   Child_D_O_B = new Date();
   checkcode : any;
@@ -208,6 +209,7 @@ Bankinfo(){
   {
     this.isdiabled = true;
     this.objemployee.Bank_Ac_No = undefined;
+    this.objemployee.Re_Enter_Bank_Ac_No = undefined;
     this.objemployee.Bank_ID = undefined;
     this.objemployee.Bank_Ac_Type = undefined;
     this.objemployee.Bank_IFSC_Code = undefined;
@@ -529,6 +531,7 @@ getEmployeeDetails(Emp_ID){
          this.objemployee.Personal_Area = (this.databaseName === 'MICL_Demo' || this.databaseName === 'MICL') ? data[0].Personal_Area ? data[0].Personal_Area : "HALDIA" : data[0].Personal_Area ? data[0].Personal_Area : undefined;
         //  this.objemployee.Personal_Area = data[0].Personal_Area ? data[0].Personal_Area : "HALDIA";
          this.objemployee.Bank_Ac_Type = data[0].Bank_Ac_Type ? data[0].Bank_Ac_Type : undefined;
+         this.objemployee.Re_Enter_Bank_Ac_No = data[0].Bank_Ac_No;
          this.objemployee.Physically_Chalanged = data[0].Physically_Chalanged === 1 ? 'YES' : 'NO';
          this.objemployee.Is_Biometric = data[0].Is_Biometric == "Y"? true : false;
          this.objemployee.Late_Ded_Tag = data[0].Late_Ded_Tag == "Y"? true : false; 
@@ -541,6 +544,7 @@ getEmployeeDetails(Emp_ID){
                              this.objemployee.Present_Status === "SUSPENDED" || 
                              this.objemployee.Present_Status === "ABSCONDED" ? true : false;
          this.DOB = new Date(data[0].D_O_B);
+         this.Spouse_DOB = new Date(data[0].Spouse_DOB);
          this.Date_Of_Anniversary = new Date(data[0].Date_Of_Anniversary);
          this.imagePath = data[0].Person_Photo ? data[0].Person_Photo : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu3_qIHtXBZ7vZeMQhyD8qLC1VRB9ImHadL09KET_iSQEX6ags4ICknfmqEKz8Nf6IOsA&usqp=CAU "
          this.ProductViewFalg = data[0].Person_Photo ? true : false
@@ -554,6 +558,7 @@ getEmployeeDetails(Emp_ID){
         else {
           this.objemployee = new Employee();
           this.Date_Of_Anniversary = undefined;
+          this.Spouse_DOB = undefined;
           this.clearchilddetails();
           this.cleanPreView();
         }
@@ -563,6 +568,7 @@ getEmployeeDetails(Emp_ID){
       else {
         this.objemployee = new Employee();
         this.Date_Of_Anniversary = undefined;
+        this.Spouse_DOB = undefined;
         this.clearchilddetails();
         this.cleanPreView();
       }
@@ -758,6 +764,7 @@ saveEmp(){
     this.objemployee.Off_In_Time = this.objemployee.Off_In_Time ? this.DateService.dateTimeConvert(new Date(this.objemployee.Off_In_Time)) : undefined;
     this.objemployee.Off_Out_Time = this.objemployee.Off_Out_Time ? this.DateService.dateTimeConvert(new Date(this.objemployee.Off_Out_Time)) : undefined;
     this.objemployee.OT_Avail = this.objemployee.OT_Avail === true ? 1 : 0;
+    this.objemployee.Spouse_DOB = this.Spouse_DOB ? this.DateService.dateConvert(new Date(this.Spouse_DOB)) : undefined;
     this.objemployee.Date_Of_Anniversary = this.Date_Of_Anniversary ? this.DateService.dateConvert(new Date(this.Date_Of_Anniversary)) : undefined;
      if(this.Employeeid){
      console.log("Update");
@@ -904,6 +911,7 @@ AddressCopy(){
 GetNewEmployee(){
   this.objemployee = new Employee();
   this.Date_Of_Anniversary = undefined;
+  this.Spouse_DOB = undefined;
   this.objselect = new Select();
   this.Employeeid = undefined;
   this.objemployee.Bank_ID = 1;
@@ -1370,6 +1378,7 @@ clearData(){
   this.leftdatechange();
   this.DOB = new Date();
   this.Date_Of_Anniversary = undefined;
+  this.Spouse_DOB = undefined;
   this.objemployee.Present_Country = "India";
   this.objemployee.Perm_Country = "India";
   this.objemployee.Personal_Area = (this.databaseName === 'MICL_Demo' || this.databaseName === 'MICL') ? "HALDIA" : undefined;
@@ -1697,6 +1706,7 @@ class Employee{
   Resign_On : any;
   Emp_Joining_Dt : any;
   D_O_B : any;
+  Spouse_DOB : any;
   Date_Of_Anniversary : any;
   PF_Avail : any= false;
   ESI_Avail : any = false;
