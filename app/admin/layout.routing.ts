@@ -393,6 +393,7 @@ import { RetailAdvanceOrderComponent } from "./common/FinancialManagement/Retail
 import { SalesmanTargetComponent } from "./common/PatientManagement/Audiologist/salesman-target/salesman-target.component";
 import { HRAttnDetalisComponent } from "./common/HR/hr-attn-detalis/hr-attn-detalis.component";
 import { EmployeeBonusComponent } from './common/MICL/employee-bonus/employee-bonus.component';
+import { HrRecruitmentTrackerComponent } from './common/Attendance/hr-recruitment-tracker/hr-recruitment-tracker.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2997,6 +2998,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: EmployeeBonusComponent,
         data: {
           title: 'Employee Bonus'
+    }
+    },
+    {
+      path: 'HR_Recruitment_Tracker',
+        component: HrRecruitmentTrackerComponent,
+        data: {
+          title: 'HR Recruitment Tracker'
     }
     },
     
