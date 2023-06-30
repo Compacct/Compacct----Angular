@@ -44,7 +44,7 @@ export class HRAttnDetalisComponent implements OnInit {
       Header: "Attendance Detalis",
       Link: "Hr -> Attendance Detalis"
     })
-    this.options = {lat: 24.1041139, lng: 86.1255543};
+    this.options = {lat: 24.1041139, lng: 86.1255543,zoom:15};
 
 this.infoWindow = new google.maps.InfoWindow();
   }
@@ -123,11 +123,10 @@ this.infoWindow = new google.maps.InfoWindow();
     this.imgUrl = data.Photo
   }
   openMap(col){
-    google.maps.event.trigger(this.gmap, 'resize');
-    this.options = {
-      center: {lat: col.LAT, lng: col.Long},
-      zoom: 6
-  };
+   this.options.lat = col.LAT
+  this.options.lng = col.Long
+  this.options.zoom = 15
+
     // this.overlays = [ 
     //   new google.maps.Marker({position: {lat: col.LAT, lng: col.Long}, title:"Konyaalti"})
     // ];
