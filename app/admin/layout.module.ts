@@ -492,6 +492,7 @@ import {GMapModule} from 'primeng/gmap';
 import { AgmCoreModule } from '@agm/core';
 import { EmployeeBonusComponent } from './common/MICL/employee-bonus/employee-bonus.component';
 import { HrRecruitmentTrackerComponent } from './common/Attendance/hr-recruitment-tracker/hr-recruitment-tracker.component';
+import { EmployeeSynchroniseWithAppComponent } from './common/HR/employee-synchronise-with-app/employee-synchronise-with-app.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -898,7 +899,8 @@ import { HrRecruitmentTrackerComponent } from './common/Attendance/hr-recruitmen
     SalesmanTargetComponent,
     HRAttnDetalisComponent,
     EmployeeBonusComponent,
-    HrRecruitmentTrackerComponent
+    HrRecruitmentTrackerComponent,
+    EmployeeSynchroniseWithAppComponent
   ],
   imports: [
     CommonModule,

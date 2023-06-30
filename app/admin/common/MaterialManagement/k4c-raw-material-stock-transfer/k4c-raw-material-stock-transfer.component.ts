@@ -347,8 +347,8 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     this.GetProductList();
     }
   else {
-    this.RawMaterialIssueFormSubmitted = true;
-    this.ShowSpinner = true;
+    this.RawMaterialIssueFormSubmitted = false;
+    this.ShowSpinner = false;
     this.compacctToast.clear();
     this.compacctToast.add({
         key: "compacct-toast",

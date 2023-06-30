@@ -394,6 +394,7 @@ import { SalesmanTargetComponent } from "./common/PatientManagement/Audiologist/
 import { HRAttnDetalisComponent } from "./common/HR/hr-attn-detalis/hr-attn-detalis.component";
 import { EmployeeBonusComponent } from './common/MICL/employee-bonus/employee-bonus.component';
 import { HrRecruitmentTrackerComponent } from './common/Attendance/hr-recruitment-tracker/hr-recruitment-tracker.component';
+import { EmployeeSynchroniseWithAppComponent } from './common/HR/employee-synchronise-with-app/employee-synchronise-with-app.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3005,6 +3006,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: HrRecruitmentTrackerComponent,
         data: {
           title: 'HR Recruitment Tracker'
+    }
+    },
+    {
+      path: 'Employee_Synchronise_With_App',
+        component: EmployeeSynchroniseWithAppComponent,
+        data: {
+          title: 'Employee Synchronise With App'
     }
     },
     
