@@ -115,7 +115,7 @@ export class EmployeeBonusComponent implements OnInit {
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.EmpBonuslist = data;
      this.EmpBonuslist.forEach(element => {
-      var Bonus_Amount = Number(element.Total_Earning_Basic) * Number(this.Bonus_Per);
+      var Bonus_Amount = Number(Number(element.Total_Earning_Basic) * Number(this.Bonus_Per)) / 100;
       element['Bonus_Amount'] = Number(this.RoundOff(Number(Bonus_Amount)));
      });
      this.ngxService.stop();
