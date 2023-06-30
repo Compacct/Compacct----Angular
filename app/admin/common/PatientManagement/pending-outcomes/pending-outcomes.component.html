@@ -27,11 +27,6 @@
 
                         <div class="row">
                             <div class="col-sm-4">
-                                <label class="control-label">Date Range</label>
-                                <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)">
-                                </app-compacct-daterangepicker>
-                            </div>
-                            <div class="col-sm-4">
                                 <label class="control-label">Audiologist</label>
                                 <p-dropdown [options]="AudiologistList" name="Audiologist" #Audiologist="ngModel" [(ngModel)]="DoctorID"
                                     [showClear]="true" [emptyFilterMessage]="' No Audiologist Found'" [filter]="true" filterBy="label,value.name"

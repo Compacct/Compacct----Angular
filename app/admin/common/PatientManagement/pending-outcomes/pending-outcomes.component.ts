@@ -18,8 +18,6 @@ export class PendingOutcomesComponent implements OnInit {
   PatientDetailsListHeader: any=[];
 
   seachSpinner: boolean=false;
-  StartDate:any=undefined;
-  EndDate: any = undefined;
   AudiologistList: any = [];
   CokkUiD: any = undefined;
   DoctorID: any = undefined;
@@ -43,83 +41,65 @@ export class PendingOutcomesComponent implements OnInit {
   }
    GetAudiologist(){
     this.AudiologistList = [];
-    const obj = {
-      "SP_String": "Sp_Pending_Outcome",
-      "Report_Name_String": "Get_Audiologist",
-       "Json_Param_String": JSON.stringify([{User_ID :this.CokkUiD}])
-   }
-   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-  //  console.log("Get AudiologistList",data);
-      if(data.length) {
-          data.forEach(element => {
-            element['label'] = element.Name,
-            element['value'] = element.Doctor_ID
-          });
-        this.AudiologistList = data;
-        if (this.$CompacctAPI.CompacctCookies.User_Type === 'U') {
-          this.DoctorID = this.AudiologistList[0].Doctor_ID
-        }        
+      const obj = {
+        "SP_String": "Sp_Pending_Outcome",
+        "Report_Name_String": "Get_Audiologist",
+        "Json_Param_String": JSON.stringify([{User_ID :this.CokkUiD}])
       }
-      else {
-        this.AudiologistList = [];
-        this.DoctorID = undefined;
-      }
-   });
-  }
-
-  getDateRange(dateRangeObj:any){
-    if(dateRangeObj.length){
-      this.StartDate = dateRangeObj[0];
-      this.EndDate = dateRangeObj[1];
-    }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      //  console.log("Get AudiologistList",data);
+          if(data.length) {
+              data.forEach(element => {
+                element['label'] = element.Name,
+                element['value'] = element.Doctor_ID
+              });
+            this.AudiologistList = data;
+            if (this.$CompacctAPI.CompacctCookies.User_Type === 'U') {
+              this.DoctorID = this.AudiologistList[0].Doctor_ID
+            }        
+          }
+          else {
+            this.AudiologistList = [];
+            this.DoctorID = undefined;
+          }
+      });
   }
 
   getPatientDetailsList(){
-    const start = this.StartDate
-    ? this.DateService.dateTimeConvert(new Date(this.StartDate))
-    : this.DateService.dateConvert(new Date());
-    const end = this.EndDate
-    ? this.DateService.dateTimeConvert(new Date(this.EndDate))
-    : this.DateService.dateConvert(new Date());
-
     this.PatientDetailsList=[];
+    this.seachSpinner=true;
 
-    if(start && end){
-      this.seachSpinner=true;
+    const tempobj = {
+      Doctor_ID : this.DoctorID ? this.DoctorID : 0
+    }  
+    // console.log("tempobj",tempobj);
 
-      const tempobj = {
-        FromDate: start,
-        ToDate: end,
-        Doctor_ID : this.DoctorID ? this.DoctorID : 0
-      }
-       //console.log("tempobj",tempobj);
-
-      const obj = {
-        "SP_String": "Sp_Pending_Outcome",
-        "Report_Name_String": "Get_Pending_Outcome",
-        "Json_Param_String": JSON.stringify(tempobj)
-      }
-      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        // console.log("getPatientDetailsList",data);
-        this.seachSpinner= false;
-
-        this.PatientDetailsList = data;
-        // console.log('PatientDetailsList=====',this.PatientDetailsList);
-        if (this.PatientDetailsList.length) {
-          this.PatientDetailsListHeader = Object.keys(data[0]);
-          // console.log('PatientDetailsListHeader=====',this.PatientDetailsListHeader);
-        }
-        else{
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "error",
-            summary: "No Appointment Found",
-            detail:" "
-          });
-        }
-      })
+    const obj = {
+      "SP_String": "Sp_Pending_Outcome",
+      "Report_Name_String": "Get_Pending_Outcome",
+      "Json_Param_String": JSON.stringify(tempobj)
     }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // console.log("getPatientDetailsList",data);
+      this.seachSpinner= false;
+      
+      this.PatientDetailsList = data;
+      // console.log('PatientDetailsList=====',this.PatientDetailsList);
+      if (this.PatientDetailsList.length) {
+        this.PatientDetailsListHeader = Object.keys(data[0]);
+        // console.log('PatientDetailsListHeader=====',this.PatientDetailsListHeader);
+      }
+      else{
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "No Appointment Found",
+          detail:" "
+        });
+      }
+    })  
+    
   }
 
   onConfirm(){
