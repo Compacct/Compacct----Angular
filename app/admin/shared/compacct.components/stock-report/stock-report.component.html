@@ -32,9 +32,9 @@
             (change)="reportTypeChange()"
             [ngClass]="{'clearance': StockSearchFormSubmitted && ReportType?.errors?.required}" required>
                     <option  value="Cost_Center_Wise">Cost Center Wise</option>
-                    <option  value="GET_STOCK_With_Value">Cost Center Wise Value</option>
-                    <option  value="Product_Wise">Product Wise</option>
-                    <option  value="Product_Type_Wise_Stock">Product Type Wise Stock</option>
+                    <option  value="GET_STOCK_With_Value" *ngIf="databaseName != 'Harbauer'">Cost Center Wise Value</option>
+                    <option  value="Product_Wise" *ngIf="databaseName != 'Harbauer'">Product Wise</option>
+                    <option  value="Product_Type_Wise_Stock" *ngIf="databaseName != 'Harbauer'">Product Type Wise Stock</option>
             </select>
         </div>
         <div class="col-sm-3">
@@ -129,7 +129,8 @@
                 <p-multiSelect [options]="DistStockPoint" [(ngModel)]="SelectedDistStockPoint" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Stock_Point"></p-multiSelect>
             </div>
             <div class="col-sm-3">
-                <label class="control-label">Material Type <span class="text-danger"></span></label>
+                <label class="control-label" *ngIf="databaseName != 'Harbauer'">Material Type <span class="text-danger"></span></label>
+                <label class="control-label" *ngIf="databaseName == 'Harbauer'">Product classification <span class="text-danger"></span></label>
                 <p-multiSelect [options]="DistMaterialType" [(ngModel)]="SelectedDistMaterial" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Material_Type"></p-multiSelect>
             </div>
             <div class="col-sm-3" *ngIf="report_Type == 'Cost_Center_Wise' || report_Type == 'Product_Type_Wise_Stock'">
@@ -146,6 +147,13 @@
             </div>
         </div>
 
+        <div class="form-group">
+            <div class="col-sm-3" *ngIf="report_Type == 'Cost_Center_Wise' && databaseName == 'Harbauer'">
+                <label class="control-label">Material-Type <span class="text-danger"></span></label>
+                <p-multiSelect [options]="DistMaterial_Type_Harbauer" [(ngModel)]="SelectedMaterial_Type_Harbauer" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="DistMaterial_Type"></p-multiSelect>
+            </div>
+        </div>
+
     </fieldset>
 </div>
 <div class="table-responsive no-padding">
@@ -157,7 +165,7 @@
     sortMode="multiple" 
     [rowsPerPageOptions]="[100,200,300]" 
     [rowHover]="true" 
-    [globalFilterFields]='["Stock_Point","Type_Of_Product","Product_Type","Product_Sub_Type","PRODUCT_DESCRIPTION","OPENING_QTY","RECV_QTY","ISSUE_QTY","CLOSING_QTY"]'>
+    [globalFilterFields]='["Stock_Point","Type_Of_Product","Materials_Type","Product_Type","Product_Sub_Type","PRODUCT_DESCRIPTION","UOM","OPENING_QTY","RECV_QTY","ISSUE_QTY","CLOSING_QTY"]'>
         <ng-template pTemplate="caption">
             <div class="row">
                 <div class="col-sm-6 pull-right" style="text-align: right">
@@ -188,19 +196,22 @@
             <tr>
                 <th *ngIf="report_Type == 'Product_Wise'">Cost Center Name</th>
                 <th *ngIf="report_Type != 'Product_Type_Wise_Stock'">Stock Point</th>
-                <th *ngIf="report_Type != 'Product_Type_Wise_Stock'">Material Type</th>
+                <th *ngIf="report_Type != 'Product_Type_Wise_Stock' && databaseName != 'Harbauer'">Material Type</th>
+                <th *ngIf="report_Type != 'Product_Type_Wise_Stock' && databaseName == 'Harbauer'">Product classification</th>
+                <th *ngIf="report_Type == 'Cost_Center_Wise' && databaseName == 'Harbauer'">Material-Type</th>
                 <th>Product Type</th>
                 <th *ngIf="report_Type != 'Product_Type_Wise_Stock'">Product Sub Type</th>
                 <th *ngIf="report_Type != 'Product_Type_Wise_Stock'">Product Name</th>
                 <!-- <th *ngIf="report_Type === 'Cost_Center_Wise'">Rate</th> -->
+                <th *ngIf="databaseName == 'Harbauer'">UOM</th>
                 <th>Opening</th>
                 <th>Recieve</th>
                 <th>Issue/Used</th>
                 <th>Closing</th>
-                <th nowrap *ngIf="report_Type === 'Cost_Center_Wise'">Opening Amount</th>
-                <th nowrap *ngIf="report_Type === 'Cost_Center_Wise'">RECV Amount</th>
-                <th nowrap *ngIf="report_Type === 'Cost_Center_Wise'">Issue Amount</th>
-                <th nowrap *ngIf="report_Type === 'Cost_Center_Wise'">Closing Amount</th>
+                <th nowrap *ngIf="report_Type === 'Cost_Center_Wise' && databaseName != 'Harbauer'">Opening Amount</th>
+                <th nowrap *ngIf="report_Type === 'Cost_Center_Wise' && databaseName != 'Harbauer'">RECV Amount</th>
+                <th nowrap *ngIf="report_Type === 'Cost_Center_Wise' && databaseName != 'Harbauer'">Issue Amount</th>
+                <th nowrap *ngIf="report_Type === 'Cost_Center_Wise' && databaseName != 'Harbauer'">Closing Amount</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-col>
@@ -208,10 +219,12 @@
                 <td *ngIf="report_Type == 'Product_Wise'">{{col.Cost_Cen_Name}}</td>
                 <td *ngIf="report_Type != 'Product_Type_Wise_Stock'">{{col.Stock_Point}}</td>
                 <td *ngIf="report_Type != 'Product_Type_Wise_Stock'">{{col.Type_Of_Product}}</td>
+                <td *ngIf="report_Type == 'Cost_Center_Wise' && databaseName == 'Harbauer'">{{col.Materials_Type}}</td> 
                 <td>{{col.Product_Type }}</td>
                 <td *ngIf="report_Type != 'Product_Type_Wise_Stock'">{{col.Product_Sub_Type}}</td>
                 <td *ngIf="report_Type != 'Product_Type_Wise_Stock'">{{col.PRODUCT_DESCRIPTION}}</td>
                 <!-- <td style="text-align: center;" *ngIf="report_Type === 'Cost_Center_Wise'">{{col.Rate}}</td> -->
+                <td style="text-align: center;" *ngIf="databaseName == 'Harbauer'">{{col.UOM}}</td>
                 <td style="text-align: center;">
                     <a *ngIf="col.OPENING_QTY" style="cursor: pointer;" (click)="qtyDetalis(col,'Get_Opening')" >
                         {{col.OPENING_QTY}}
@@ -240,10 +253,10 @@
                     </a>
                     <span *ngIf="!col.CLOSING_QTY"> {{col.CLOSING_QTY}}</span>
                 </td>
-                <td style="text-align: center;" *ngIf="report_Type === 'Cost_Center_Wise'">{{col.OPENING_Amt}}</td>
-                <td style="text-align: center;" *ngIf="report_Type === 'Cost_Center_Wise'">{{col.RECV_Amt}}</td>
-                <td style="text-align: center;" *ngIf="report_Type === 'Cost_Center_Wise'">{{col.ISSUE_Amt}}</td>
-                <td style="text-align: center;" *ngIf="report_Type === 'Cost_Center_Wise'">{{col.CLOSING_Amt}}</td>
+                <td style="text-align: center;" *ngIf="report_Type === 'Cost_Center_Wise' && databaseName != 'Harbauer'">{{col.OPENING_Amt}}</td>
+                <td style="text-align: center;" *ngIf="report_Type === 'Cost_Center_Wise' && databaseName != 'Harbauer'">{{col.RECV_Amt}}</td>
+                <td style="text-align: center;" *ngIf="report_Type === 'Cost_Center_Wise' && databaseName != 'Harbauer'">{{col.ISSUE_Amt}}</td>
+                <td style="text-align: center;" *ngIf="report_Type === 'Cost_Center_Wise' && databaseName != 'Harbauer'">{{col.CLOSING_Amt}}</td>
             </tr>
         </ng-template>
         <ng-template pTemplate="paginatorright" let-state>
@@ -274,7 +287,7 @@
       </table>
 </div>
 </p-tabPanel>
-<p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt">
+<p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt" *ngIf="databaseName != 'Harbauer'">
     <form name="ClosingReportSearchForm" #ClosingReportSearchForm="ngForm" novalidate>
         <div class="form-group">
             <div class="col-sm-2">
@@ -506,7 +519,7 @@
           </table>
     </div>
 </p-tabPanel>
-<p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-list-alt">
+<p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-list-alt" *ngIf="databaseName != 'Harbauer'">
     <div class="table-responsive no-padding">
         <p-table [value]="AgeingList" #dt4
         [paginator]="true" 
