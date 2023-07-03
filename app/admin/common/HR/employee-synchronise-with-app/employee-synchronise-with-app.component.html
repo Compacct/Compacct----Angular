@@ -62,11 +62,12 @@
                                                 <td width="20%">{{col.EmailID}}</td>
                                                 <td>{{col.Mobile}}</td>
                                                 <td width="10%">
-                                                    <input type="text" [name]="col.Password" [(ngModel)]='col.Password' class="form-control" style="width: 95px;" />
+                                                    <input type="text" [name]="col.Password" [(ngModel)]='col.Password' style="width: 110px; height: 28px; border: solid 1px #c2bdbd;" 
+                                                     [class]='col.Emp_ID ? "" : "textcolor"' />
                                                 </td>
                                                 <!-- <td width="12%"><ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='col.Effective_From' [ngClass]="{'clearance' : flag}"></ejs-datepicker></td> -->
                                                 <td>
-                                                    <select style="width: 71px;" class="form-control" 
+                                                    <select style="width: 71px; height: 28px; border: solid 1px #c2bdbd;" [class]='col.Emp_ID ? "" : "text-red-active"' 
                                                     name="col.Approved_Photo" 
                                                     [(ngModel)]="col.Approved_Photo">
                                                       <option  [ngValue]="undefined">Select</option>
@@ -75,7 +76,7 @@
                                                    </select>
                                                 </td>
                                                 <td> 
-                                                    <select style="width: 71px;" class="form-control" 
+                                                    <select style="width: 71px; height: 28px; border: solid 1px #c2bdbd;" [class]='col.Emp_ID ? "" : "text-red-active"'  
                                                     name="col.Allow_Field_Attn" 
                                                     [(ngModel)]="col.Allow_Field_Attn">
                                                       <option  [ngValue]="undefined">Select</option>
@@ -84,7 +85,7 @@
                                                    </select>
                                                 </td>
                                                 <td>
-                                                    <select style="width: 71px;" class="form-control" 
+                                                    <select style="width: 71px; height: 28px; border: solid 1px #c2bdbd;" [class]='col.Emp_ID ? "" : "text-red-active"'  
                                                     name="col.On_Board" 
                                                     [(ngModel)]="col.On_Board">
                                                       <option  [ngValue]="undefined">Select</option>
@@ -93,7 +94,7 @@
                                                    </select>
                                                 </td>
                                                 <td>
-                                                    <select style="width: 71px;" class="form-control" 
+                                                    <select style="width: 71px; height: 28px; border: solid 1px #c2bdbd;" [class]='col.Emp_ID ? "" : "text-red-active"'  
                                                     name="col.Is_Active" 
                                                     [(ngModel)]="col.Is_Active">
                                                       <option  [ngValue]="undefined">Select</option>
