@@ -52,3 +52,9 @@ div.table-responsive.table-id>p-table>div>div {
   .pull-right3 {
     margin-left: -90px;
   }
+  .text-red-active > td {
+    color:rgb(215 52 52);
+  }
+  .textcolor {
+    color:rgb(215 52 52);
+  }
