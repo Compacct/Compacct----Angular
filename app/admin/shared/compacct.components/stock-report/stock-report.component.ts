@@ -32,6 +32,8 @@ export class StockReportComponent implements OnInit {
   backUpstockList:any = [];
   DistProductType:any =[];
   SelectedDistProduct:any = [];
+  DistMaterial_Type_Harbauer:any=[];
+  SelectedMaterial_Type_Harbauer: any=[];
   DistProductSubType:any = [];
   SelectedDistProductSubType:any = [];
   DistMaterialType:any = [];
@@ -75,6 +77,7 @@ export class StockReportComponent implements OnInit {
   clst_Godown_ID:any = undefined;
   costCenterClStkList:any = [];
   GodownClstkList:any = [];
+  databaseName: any=undefined;
   constructor(
     private Header: CompacctHeader,
     private router : Router,
@@ -87,6 +90,7 @@ export class StockReportComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.getDatabase();
     this.items = ["STOCK REPORT", "CLOSING REPORT","STOCK AGEING REPORT"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
@@ -99,6 +103,17 @@ export class StockReportComponent implements OnInit {
    this.Finyear()
    this.getAgeingList()
   }
+
+  getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log('databaseName',data);
+        });
+  }
+
   TabClick(e) {
     this.tabIndexToView = e.index;
     this.items = ["STOCK REPORT", "CLOSING REPORT","STOCK AGEING REPORT"];
@@ -213,7 +228,7 @@ export class StockReportComponent implements OnInit {
         "Json_Param_String": this.report_Type === 'Product_Wise'?JSON.stringify([PtempObj]) : JSON.stringify([CCTempobj])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-         console.log(data)
+         console.log('seacrching datas',data)
          this.stockList = data;
          this.backUpstockList = data;
          this.GetDistinct();
@@ -226,6 +241,7 @@ export class StockReportComponent implements OnInit {
     let materialType:any = [];
     let productType:any = [];
     let productSubType:any = [];
+    let materialTypeHarbauer:any=[];
     let productName:any = [];
     let CostCenterName:any = [];
     let stockPoint:any = [];
@@ -241,6 +257,10 @@ export class StockReportComponent implements OnInit {
   if (this.SelectedDistProductSubType.length) {
     SearchFields.push('Product_Sub_Type');
     productSubType = this.SelectedDistProductSubType;
+  }
+  if (this.SelectedMaterial_Type_Harbauer.length) {
+    SearchFields.push('Materials_Type');
+    materialTypeHarbauer = this.SelectedMaterial_Type_Harbauer;
   }
   if (this.SelectedDistProductName.length) {
     SearchFields.push('PRODUCT_DESCRIPTION');
@@ -260,6 +280,7 @@ export class StockReportComponent implements OnInit {
       return (materialType.length ? materialType.includes(e['Type_Of_Product']) : true)
       && (productType.length ? productType.includes(e['Product_Type']) : true)
       && (productSubType.length ? productSubType.includes(e['Product_Sub_Type']) : true)
+      && (materialTypeHarbauer.length ? materialTypeHarbauer.includes(e['Materials_Type']) : true)
       && (productName.length ? productName.includes(e['PRODUCT_DESCRIPTION']) : true)
       && (CostCenterName.length ? CostCenterName.includes(e['Cost_Cen_Name']) : true)
       && (stockPoint.length ? stockPoint.includes(e['Stock_Point']) : true)
@@ -288,7 +309,7 @@ export class StockReportComponent implements OnInit {
             'Closing': ele.CLOSING_QTY
             })
         }
-        else if( this.report_Type == 'Cost_Center_Wise'){
+        else if( this.report_Type == 'Cost_Center_Wise' && this.databaseName!='Harbauer'){
           excelData.push({
             'Stock Point': ele.Stock_Point,
             'Material Type': ele.Type_Of_Product,
@@ -304,6 +325,22 @@ export class StockReportComponent implements OnInit {
             'RECV Amount': ele.RECV_Amt,
             'Issue Amount': ele.ISSUE_Amt,
             'Closing Amount': ele.CLOSING_Amt
+            })
+        }
+        else if( this.report_Type == 'Cost_Center_Wise' && this.databaseName=='Harbauer'){
+          excelData.push({
+            'Stock Point': ele.Stock_Point,
+            'Product classification': ele.Type_Of_Product,
+            'Material-Type': ele.Materials_Type,
+            'Product Type': ele.Product_Type,
+            'Product Sub Type': ele.Product_Sub_Type,
+            'Product Name': ele.PRODUCT_DESCRIPTION,
+            'UOM': ele.UOM,
+            // 'Rate': ele.Rate,
+            'Opening': ele.OPENING_QTY,
+            'Recieve': ele.RECV_QTY,
+            'Issue/Used': ele.ISSUE_QTY,
+            'Closing': ele.CLOSING_QTY
             })
         }
         else {
@@ -340,6 +377,7 @@ export class StockReportComponent implements OnInit {
     let materialType:any = [];
     let productType:any = [];
     let productSubType:any = [];
+    let materialTypeHarbauer:any=[];
     let productName:any = [];
     let costCenterName:any = []
     let stockPoint:any = []
@@ -349,6 +387,8 @@ export class StockReportComponent implements OnInit {
     this.SelectedDistProduct =[];
     this.DistProductSubType =[];
     this.SelectedDistProductSubType =[];
+    this.DistMaterial_Type_Harbauer=[];
+    this.SelectedMaterial_Type_Harbauer=[];
     this.DistProductName = [];
     this.SelectedDistProductName = [];
     this.DistCostCen = [];
@@ -364,6 +404,10 @@ export class StockReportComponent implements OnInit {
     productSubType.push(item.Product_Sub_Type);
     this.DistProductSubType.push({ label: item.Product_Sub_Type, value: item.Product_Sub_Type });
     }
+  if (materialTypeHarbauer.indexOf(item.Materials_Type) === -1) {
+    materialTypeHarbauer.push(item.Materials_Type);
+      this.DistMaterial_Type_Harbauer.push({ label: item.Materials_Type, value: item.Materials_Type });
+    }  
   if (materialType.indexOf(item.Type_Of_Product) === -1) {
     materialType.push(item.Type_Of_Product);
     this.DistMaterialType.push({ label: item.Type_Of_Product, value: item.Type_Of_Product });
@@ -390,6 +434,8 @@ export class StockReportComponent implements OnInit {
     this.SelectedDistProduct =[];
     this.DistProductSubType =[];
     this.SelectedDistProductSubType =[];
+    this.DistMaterial_Type_Harbauer=[];
+    this.SelectedMaterial_Type_Harbauer=[];
     this.DistProductName = [];
     this.SelectedDistProductName = [];
     this.DistCostCen = [];
