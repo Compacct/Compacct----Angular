@@ -20,7 +20,6 @@
     </ng-template>
 </p-toast>
 <p-tabView [activeIndex]="tabIndexToView">
-    <p-tabPanel headerStyleClass="compacct-tabs"  leftIcon="glyphicon glyphicon-list-alt">
         <form name="StockSearchForm" #StockSearchForm="ngForm" novalidate>
             <div class="form-group">
                 <div class="col-sm-2">
@@ -56,7 +55,7 @@
                     </select>
                 </div>
             </div>
-            <div class="box-footer" style="padding: 0px;" >
+            <div class="box-footer">
                 <button class="btn btn-primary pull-right custombutton" data-toggle="modal"
                     (click)="searchData(StockSearchForm.form.valid)">
                     <span class="glyphicon glyphicon-search"></span>&nbsp;Search
@@ -88,7 +87,7 @@
                     </div>                   
                 </div>
                 <div class="form-group">
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                         <label class="control-label">Product Name <span class="text-danger"></span></label>
                         <p-multiSelect [options]="DistProductName" [(ngModel)]="SelectedDistProductName" [virtualScroll]="true"
                             itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'"
@@ -113,7 +112,7 @@
                         <div class="col-sm-6 pull-right" style="text-align: right">
                             <div class="col-sm-6">
                              
-                                <button *ngIf="stockList.length" class="btn btn-success custombutton"
+                                <button *ngIf="stockList.length" class="btn btn-success custombutton1"
                                     data-toggle="modal" (click)="exportexcel(stockList)" id="load1"
                                     [disabled]="EXCELSpinner">
                                     <p-progressSpinner *ngIf="EXCELSpinner" [style]="{width: '15px', height: '15px'}"
@@ -212,7 +211,6 @@
 
             </table>
         </div>
-    </p-tabPanel>
 </p-tabView>
 
 <p-dialog [header]="viewHeader" [appendTo]="'body'" [visible]="DetalisView" [closeOnEscape]="true" [closable]="false"
@@ -220,14 +218,14 @@
     [minY]="70" [maximizable]="true" [baseZIndex]="10000">
     <div class="form-horizontal">
         <div class="no-padding">
-            <p-table [value]="popUpList" #dt2 [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true"
-                sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [rowHover]="true"
+            <p-table [value]="popUpList" #dt2 [paginator]="true" [rows]="10" [rowHover]="true" [autoLayout]="true"
+                sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [rowHover]="true"
                 [globalFilterFields]='popUpListHeader'>
                 <ng-template pTemplate="caption">
                     <div class="row">
                         <div class="col-sm-6 pull-right" style="text-align: right">
                             <div class="col-sm-6">
-                                <button *ngIf="popUpList.length" class="btn btn-success custombutton"
+                                <button *ngIf="popUpList.length" class="btn btn-success custombutton1"
                                     data-toggle="modal" (click)="exportexcelpopup(popUpList)" id="load1"
                                     [disabled]="EXCELpopSpinner">
                                     <p-progressSpinner *ngIf="EXCELpopSpinner" [style]="{width: '15px', height: '15px'}"
