@@ -395,6 +395,7 @@ import { HRAttnDetalisComponent } from "./common/HR/hr-attn-detalis/hr-attn-deta
 import { EmployeeBonusComponent } from './common/MICL/employee-bonus/employee-bonus.component';
 import { HrRecruitmentTrackerComponent } from './common/Attendance/hr-recruitment-tracker/hr-recruitment-tracker.component';
 import { EmployeeSynchroniseWithAppComponent } from './common/HR/employee-synchronise-with-app/employee-synchronise-with-app.component';
+import { REPStockReportHBRComponent } from "./common/Harbauer/rep-stock-report-hbr/rep-stock-report-hbr.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3013,6 +3014,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: EmployeeSynchroniseWithAppComponent,
         data: {
           title: 'Employee Synchronise With App'
+    }
+    },
+    {
+      path: 'REP_Stock_Report_HBR',
+        component: REPStockReportHBRComponent,
+        data: {
+          title: 'REP Stock Report Harbauer'
     }
     },
     

@@ -493,6 +493,7 @@ import { AgmCoreModule } from '@agm/core';
 import { EmployeeBonusComponent } from './common/MICL/employee-bonus/employee-bonus.component';
 import { HrRecruitmentTrackerComponent } from './common/Attendance/hr-recruitment-tracker/hr-recruitment-tracker.component';
 import { EmployeeSynchroniseWithAppComponent } from './common/HR/employee-synchronise-with-app/employee-synchronise-with-app.component';
+import { REPStockReportHBRComponent } from './common/Harbauer/rep-stock-report-hbr/rep-stock-report-hbr.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -900,7 +901,8 @@ import { EmployeeSynchroniseWithAppComponent } from './common/HR/employee-synchr
     HRAttnDetalisComponent,
     EmployeeBonusComponent,
     HrRecruitmentTrackerComponent,
-    EmployeeSynchroniseWithAppComponent
+    EmployeeSynchroniseWithAppComponent,
+    REPStockReportHBRComponent
   ],
   imports: [
     CommonModule,

@@ -1,0 +1,275 @@
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+
+    </ng-template>
+</p-toast>
+<p-tabView [activeIndex]="tabIndexToView">
+    <p-tabPanel headerStyleClass="compacct-tabs"  leftIcon="glyphicon glyphicon-list-alt">
+        <form name="StockSearchForm" #StockSearchForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-2">
+                    <label class="control-label">Report Type<sup class="text-danger">*</sup></label>
+                    <select class="form-control" name="ReportType" #ReportType="ngModel" [(ngModel)]="report_Type"         
+                        [ngClass]="{'clearance': StockSearchFormSubmitted && ReportType?.errors?.required}" required>
+                        <option value="Cost_Center_Wise">Cost Center Wise</option>   
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Date</label>
+                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"
+                        [HardCodeDateOpt]="initDate"></app-compacct-daterangepicker>
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">Cost Center<sup class="text-danger"></sup></label>             
+                    <p-dropdown [options]="costCenterList" name="browsecostcenter" [(ngModel)]="ObjBrowse.Cost_Cen_ID"
+                        [showClear]="true" [emptyFilterMessage]="' No cost center Found'" [filter]="true"
+                        filterBy="label,value" [resetFilterOnHide]="true" [placeholder]="'Select cost center'"
+                        [virtualScroll]="true" #browsecostcenter="ngModel"
+                        (ngModelChange)="GetgodownBrowse(ObjBrowse.Cost_Cen_ID)"
+                        [styleClass]="StockSearchFormSubmitted && browsecostcenter.errors?.required ? 'clearance': ''"
+                        [disabled]="userType != 'A'">
+                    </p-dropdown>
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Stock Point&nbsp;<sup class="text-danger"></sup></label>
+                    <select class="form-control" name="Godown_ID_Browse" #Godown_ID_Browse="ngModel"
+                        [(ngModel)]="ObjBrowse.Godown_ID">
+                        <option [ngValue]="undefined">Select</option>
+                        <option *ngFor="let option of GodownList" [value]="option.Godown_ID">{{option.godown_name}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="box-footer" style="padding: 0px;" >
+                <button class="btn btn-primary pull-right custombutton" data-toggle="modal"
+                    (click)="searchData(StockSearchForm.form.valid)">
+                    <span class="glyphicon glyphicon-search"></span>&nbsp;Search
+                </button>
+            </div>
+        </form>
+        <div class="form-group" style="padding:15px">
+
+            <fieldset class="col-md-12">
+                <legend>Filter</legend>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        <label class="control-label">Product classification <span class="text-danger"></span></label>
+                        <p-multiSelect [options]="DistMaterialType" [(ngModel)]="SelectedDistMaterial" itemSize="30"
+                            (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'"
+                            name="Material_Type"></p-multiSelect>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="control-label">Product Type <span class="text-danger"></span></label>
+                        <p-multiSelect [options]="DistProductType" [(ngModel)]="SelectedDistProduct" itemSize="30"
+                            (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'"
+                            name="Product_Type"></p-multiSelect>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="control-label">Product Sub Type <span class="text-danger"></span></label>
+                        <p-multiSelect [options]="DistProductSubType" [(ngModel)]="SelectedDistProductSubType"
+                            itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'"
+                            name="Product_Sub_Type"></p-multiSelect>
+                    </div>                   
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        <label class="control-label">Product Name <span class="text-danger"></span></label>
+                        <p-multiSelect [options]="DistProductName" [(ngModel)]="SelectedDistProductName" [virtualScroll]="true"
+                            itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'"
+                            name="Product_Name"></p-multiSelect>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="control-label">Material-Type <span class="text-danger"></span></label>
+                        <p-multiSelect [options]="DistMaterial_Type_Harbauer"
+                            [(ngModel)]="SelectedMaterial_Type_Harbauer" itemSize="30" (onChange)='FilterDist()'
+                            [styleClass]="'compacct-multiselect'" name="DistMaterial_Type"></p-multiSelect>
+                    </div>
+                </div>
+
+            </fieldset>
+        </div>
+        <div class="table-responsive no-padding" style="margin-top: 163px;">
+            <p-table [value]="stockList" #dt1 [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true"
+                sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [rowHover]="true"
+                [globalFilterFields]='["Stock_Point","Type_Of_Product","Materials_Type","Product_Type","Product_Sub_Type","PRODUCT_DESCRIPTION","UOM","OPENING_QTY","RECV_QTY","ISSUE_QTY","CLOSING_QTY"]'>
+                <ng-template pTemplate="caption">
+                    <div class="row">
+                        <div class="col-sm-6 pull-right" style="text-align: right">
+                            <div class="col-sm-6">
+                             
+                                <button *ngIf="stockList.length" class="btn btn-success custombutton"
+                                    data-toggle="modal" (click)="exportexcel(stockList)" id="load1"
+                                    [disabled]="EXCELSpinner">
+                                    <p-progressSpinner *ngIf="EXCELSpinner" [style]="{width: '15px', height: '15px'}"
+                                        strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!EXCELSpinner" class="fa fa-file-excel-o"></span>&nbsp;EXPORT TO EXCEL
+                                </button>
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="text" pInputText size="50" style="margin-top:25px;" placeholder="Search"
+                                    (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                    class="searchInput form-control">
+                            </div>
+
+                        </div>
+                    </div>
+
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Stock Point</th>                       
+                        <th>Product classification</th>
+                        <th>Material-Type</th>
+                        <th>Product Type</th>
+                        <th>Product Sub Type</th>
+                        <th>Product Name</th>
+                        <th>UOM</th>
+                        <th>Opening</th>
+                        <th>Recieve</th>
+                        <th>Issue/Used</th>
+                        <th>Closing</th>                       
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-col>
+                    <tr>
+                        <td>{{col.Stock_Point}}</td>
+                        <td>{{col.Type_Of_Product}}</td>
+                        <td>{{col.Materials_Type}}</td>
+                        <td>{{col.Product_Type }}</td>
+                        <td>{{col.Product_Sub_Type}}</td>
+                        <td>{{col.PRODUCT_DESCRIPTION}}</td>
+                        <td style="text-align: center;">{{col.UOM}}</td>
+                        <td style="text-align: center;">
+                            <a *ngIf="col.OPENING_QTY" style="cursor: pointer;" (click)="qtyDetalis(col,'Get_Opening')">
+                                {{col.OPENING_QTY}}
+                            </a>
+                            <span *ngIf="!col.OPENING_QTY">
+                                {{col.OPENING_QTY}}
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <a *ngIf="col.RECV_QTY" style="cursor: pointer;" (click)="qtyDetalis(col,'Get_Receive')">
+                                {{col.RECV_QTY}}
+                            </a>
+                            <span *ngIf="!col.RECV_QTY">{{col.RECV_QTY}}</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <a *ngIf="col.ISSUE_QTY" style="cursor: pointer;" (click)="qtyDetalis(col,'Get_Issue')">
+                                {{col.ISSUE_QTY}}
+                            </a>
+                            <span *ngIf="!col.ISSUE_QTY">
+                                {{col.ISSUE_QTY}}
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <a *ngIf="col.CLOSING_QTY" style="cursor: pointer;" (click)="qtyDetalis(col,'Get_Closing')">
+                                {{col.CLOSING_QTY}}
+                            </a>
+                            <span *ngIf="!col.CLOSING_QTY"> {{col.CLOSING_QTY}}</span>
+                        </td>                      
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="paginatorright" let-state>
+                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                </ng-template>
+            </p-table>
+        </div>
+        <div class="table-responsive no-padding">
+            <table class="table bidopen table-bordered" *ngIf="stockList.length">
+                <thead>
+                    <tr>
+                        <th style=" width: 60% ;"></th>
+                        <th style=" width: 10% ;">Total Opening </th>
+                        <th style=" width: 10% ;">Total Recieve </th>
+                        <th style=" width: 10% ;">Total Issue/Used</th>
+                        <th style=" width: 10% ;">Total Closing</th>
+                    </tr>
+                    <tr>
+                        <th style=" width: 60% ;"></th>
+                        <th style=" width: 10% ;">{{allTotalObj.Total_Opening ? allTotalObj.Total_Opening : 0}}</th>
+                        <th style=" width: 10% ;">{{allTotalObj.Total_Recieve ? allTotalObj.Total_Recieve : 0}}</th>
+                        <th style=" width: 10% ;">{{allTotalObj.Total_IssueUsed ? allTotalObj.Total_IssueUsed : 0}}</th>
+                        <th style=" width: 10% ;">{{allTotalObj.Total_Closing ? allTotalObj.Total_Closing : 0}}</th>
+                    </tr>
+
+                </thead>
+
+            </table>
+        </div>
+    </p-tabPanel>
+</p-tabView>
+
+<p-dialog [header]="viewHeader" [appendTo]="'body'" [visible]="DetalisView" [closeOnEscape]="true" [closable]="false"
+    [modal]="true" [responsive]="true" [style]="{ width: '58%', minWidth: '200px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <div class="no-padding">
+            <p-table [value]="popUpList" #dt2 [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true"
+                sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [rowHover]="true"
+                [globalFilterFields]='popUpListHeader'>
+                <ng-template pTemplate="caption">
+                    <div class="row">
+                        <div class="col-sm-6 pull-right" style="text-align: right">
+                            <div class="col-sm-6">
+                                <button *ngIf="popUpList.length" class="btn btn-success custombutton"
+                                    data-toggle="modal" (click)="exportexcelpopup(popUpList)" id="load1"
+                                    [disabled]="EXCELpopSpinner">
+                                    <p-progressSpinner *ngIf="EXCELpopSpinner" [style]="{width: '15px', height: '15px'}"
+                                        strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!EXCELpopSpinner" class="fa fa-file-excel-o"></span>&nbsp;EXPORT TO
+                                    EXCEL
+                                </button>
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="text" pInputText size="50" style="margin-top:25px;" placeholder="Search"
+                                    (input)="dt2.filterGlobal($event.target.value, 'contains')"
+                                    class="searchInput form-control">
+                            </div>
+
+                        </div>
+                    </div>
+
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th *ngFor="let option of popUpListHeader" nowrap="nowrap">{{option.replaceAll('_',' ')}}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-col>
+                    <tr>
+                        <ng-container *ngFor="let option of popUpListHeader">
+                            <td nowrap="nowrap">{{col[option]}}</td>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="paginatorright" let-state>
+                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                </ng-template>
+            </p-table>
+        </div>
+
+    </div>
+    <p-footer>
+        <button type="button" (click)="DetalisView = false" class="btn btn-default"><span
+                class="glyphicon glyphicon-remove"></span>
+            CLOSE
+        </button>
+
+    </p-footer>
+</p-dialog>
