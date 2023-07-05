@@ -412,13 +412,13 @@ export class K4cRawMaterialIndentComponent implements OnInit {
       this.GetAllDataList = this.backUpGetAllDataList;
     }
   }
-  // Print(obj){
-  //   if (obj.Doc_No) {
-  //     window.open("/Report/Crystal_Files/K4C/K4C_Raw_Material_Indent.aspx?DocNo=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+  Print(obj){
+    if (obj.Doc_No) {
+      window.open("/Report/Crystal_Files/K4C/Raw_Material_Indent_Print.aspx?Doc_No=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
 
-  //     );
-  //   }
-  // }
+      );
+    }
+  }
   editraw(col){
    this.DocNo = undefined;
    if(col.Doc_No){

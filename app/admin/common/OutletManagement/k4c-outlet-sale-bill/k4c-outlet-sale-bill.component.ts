@@ -96,6 +96,8 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
   isservice = undefined;
   Regeneratelist:any = [];
   contactname = undefined;
+  canbilldate: any;
+  cancelCostCenID: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -459,17 +461,27 @@ autoaFranchiseBill() {
     //   Doc_Type : "Sale_Bill",
     //   Doc_Date : this.Objcustomerdetail.Doc_Date
     //  }
+    // const TempObj = {
+    //     User_ID:this.$CompacctAPI.CompacctCookies.User_ID,
+    //     Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+    //     Doc_Type : "Sale_Bill",
+    //     Product_Type_ID : 0,
+    //     bill_type : this.QueryStringObj.Ledger_Name ? 'Online' : ''
+    //    }
+    //  const obj = {
+    //   "SP_String": "SP_Controller_Master",
+    //   "Report_Name_String" : "Get Sale Requisition Product",
+    //  "Json_Param_String": JSON.stringify([TempObj])
+
+    // }
     const TempObj = {
-        User_ID:this.$CompacctAPI.CompacctCookies.User_ID,
-        Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-        Doc_Type : "Sale_Bill",
-        Product_Type_ID : 0,
-        bill_type : this.QueryStringObj.Ledger_Name ? 'Online' : ''
-       }
-     const obj = {
-      "SP_String": "SP_Controller_Master",
-      "Report_Name_String" : "Get Sale Requisition Product",
-     "Json_Param_String": JSON.stringify([TempObj])
+      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      Bill_Type : this.QueryStringObj.Ledger_Name ? 'Online' : ''
+     }
+    const obj = {
+      "SP_String": "SP_For_POS_Current_Stock",
+      "Report_Name_String" : "Get Products",
+      "Json_Param_String": JSON.stringify([TempObj])
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -499,6 +511,31 @@ autoaFranchiseBill() {
 
 
 }
+// INSERT STOCK
+InsertStock(){
+  this.ngxService.start();
+  const sendonj = {
+    Cost_Cen_ID : this.cancelCostCenID ? this.cancelCostCenID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+  }
+  const obj = {
+    "SP_String": "SP_For_POS_Current_Stock",
+    "Report_Name_String": "Insert_Stock",
+    "Json_Param_String": JSON.stringify([sendonj])
+
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    if (data[0].Column1 === "Done") {
+      this.getselectitem();
+      this.ngxService.stop();
+      this.canbilldate = "";
+      this.cancelCostCenID = "";
+    } else {
+      this.ngxService.stop();
+      this.canbilldate = "";
+      this.cancelCostCenID = "";
+    }
+  })
+}
 //
 getgodownid(){
   const TempObj = {
@@ -527,7 +564,8 @@ getBatchNo(){
     //Product_ID : 3383
    }
   const obj = {
-    "SP_String": "SP_Controller_Master",
+    // "SP_String": "SP_Controller_Master",
+    "SP_String": "SP_For_POS_Current_Stock",
     "Report_Name_String": "Get_Product_Wise_Batch",
     "Json_Param_String": JSON.stringify([TempObj])
    }
@@ -615,9 +653,9 @@ if(this.ObjaddbillForm.Product_ID) {
   //this.rate = productObj.Sale_rate;
   this.ObjaddbillForm.Product_Description = productObj.label;
   //this.ObjaddbillForm.Stock_Qty = productObj.Stock_Qty;
-  this.ObjaddbillForm.Sale_rate =  productObj.Sale_rate;
+  this.ObjaddbillForm.Sale_rate = productObj.Sale_rate;
   //this.ObjaddbillForm.Sale_rate_Online = productObj.Sale_rate_Online;
-  this.ObjaddbillForm.GST_Tax_Per =  productObj.GST_Tax_Per;
+  this.ObjaddbillForm.GST_Tax_Per = productObj.GST_Tax_Per;
   this.CGST_Ledger_Id = productObj.CGST_Output_Ledger_ID;
   this.SGST_Ledger_Id = productObj.SGST_Output_Ledger_ID;
   this.IGST_Ledger_Id = productObj.IGST_Output_Ledger_ID;
@@ -1347,6 +1385,7 @@ saveprintAndUpdate(){
     var tempID = data[0].Column1;
     this.Objcustomerdetail.Bill_No = data[0].Column1;
     if(data[0].Column1){
+      this.UpdateStock();
       if (this.FranchiseBill != "Y") {
         this.SaveFranSaleBill();
         this.SaveNPrintBill();
@@ -1409,6 +1448,17 @@ saveprintAndUpdate(){
   // this.cleartotalamount();
 
 }
+// UPDATE STOCK
+UpdateStock(){
+  const obj = {
+    "SP_String": "SP_For_POS_Current_Stock",
+    "Report_Name_String": "Update_Stock",
+    "Json_Param_String": this.getDataForSaveEdit()
+
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  })
+}
 getDataForSaveEdit(){
   if(this.ObjcashForm.Wallet_Ac_ID){
       this.walletlist.forEach(el => {
@@ -1443,27 +1493,27 @@ this.ObjcashForm.Credit_To_Ac = this.ObjcashForm.Credit_To_Ac ? this.ObjcashForm
           Product_Modifier : item.Modifier,
           Product_Type : item.product_type,
           Is_Service : item.is_service,
-          Rate : item.Net_Price,
+          Rate : Number(item.Net_Price),
           Delivery_Charge : item.Delivery_Charge,
           Batch_No : item.Batch_No,
-          Qty : item.Stock_Qty,
-          Taxable : item.Amount_berore_Tax,
-          Amount : item.Amount,
-          Discount_Per : item.Max_Discount,
-          Discount_Amt : item.Dis_Amount,
+          Qty : Number(item.Stock_Qty),
+          Taxable : Number(item.Amount_berore_Tax),
+          Amount : Number(item.Amount),
+          Discount_Per : Number(item.Max_Discount),
+          Discount_Amt : Number(item.Dis_Amount),
           // Gross_Amt : item.Gross_Amount,
-          Gross_Amt : item.Amount_berore_Tax,
-          SGST_Per : item.SGST_Per,
-          SGST_Amt : item.SGST_Amount,
-          CGST_Per : item.CGST_Per,
-          CGST_Amt : item.CGST_Amount,
-          IGST_Per : item.GST_Tax_Per,
-          IGST_Amt : item.GST_Tax_Per_Amt,
-          Net_Amount : item.Net_Amount,
-          Taxable_Amonut : item.Taxable_Amount,
-          CGST_OUTPUT_LEDGER_ID : item.CGST_Output_Ledger_ID,
-          SGST_OUTPUT_LEDGER_ID : item.SGST_Output_Ledger_ID,
-          IGST_OUTPUT_LEDGER_ID : item.IGST_Output_Ledger_ID,
+          Gross_Amt : Number(item.Amount_berore_Tax),
+          SGST_Per : Number(item.SGST_Per),
+          SGST_Amt : Number(item.SGST_Amount),
+          CGST_Per : Number(item.CGST_Per),
+          CGST_Amt : Number(item.CGST_Amount),
+          IGST_Per : Number(item.GST_Tax_Per),
+          IGST_Amt : Number(item.GST_Tax_Per_Amt),
+          Net_Amount : Number(item.Net_Amount),
+          Taxable_Amonut : Number(item.Taxable_Amount),
+          CGST_OUTPUT_LEDGER_ID : Number(item.CGST_Output_Ledger_ID),
+          SGST_OUTPUT_LEDGER_ID : Number(item.SGST_Output_Ledger_ID),
+          IGST_OUTPUT_LEDGER_ID : Number(item.IGST_Output_Ledger_ID),
       }
 
     const TempObj = {
@@ -1695,6 +1745,8 @@ PrintBill(obj) {
 Cancle(row){
   //console.log(this.Objcustomerdetail.Bill_No)
   this.Cancle_Remarks = "";
+  this.canbilldate = "";
+  this.cancelCostCenID = "";
   this.cancleFormSubmitted = false;
   this.Objcustomerdetail.Bill_No = undefined ;
   if(row.Bill_No){
@@ -1702,6 +1754,8 @@ Cancle(row){
   //this.CanRemarksPoppup = true;
   this.Can_Remarks = true;
   this.Objcustomerdetail.Bill_No = row.Bill_No;
+  this.canbilldate = new Date(row.Bill_Date);
+  this.cancelCostCenID = row.Cost_Cent_ID;
   this.compacctToast.clear();
   this.compacctToast.add({
     key: "c",
@@ -1740,6 +1794,14 @@ Cancle(row){
         detail:  "Succesfully Cancle"
       });
 
+    var billdate = new Date(this.myDate);
+    var cacelcilldate = new Date(this.canbilldate);
+    // console.log("billdate=====",billdate)
+    // console.log("cancelbilldate=====",cacelcilldate)
+    // console.log("comparedate=====",billdate.toISOString() === cacelcilldate.toISOString())
+    if(billdate.toISOString() === cacelcilldate.toISOString()){
+      this.InsertStock();
+    }
     } else{
       this.compacctToast.clear();
       this.compacctToast.add({

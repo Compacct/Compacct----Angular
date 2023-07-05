@@ -232,7 +232,9 @@
                                         <div class="col-sm-4">
                                             <label class="control-label">Product <sup class="text-danger">*</sup> &nbsp;
                                     </label>
-
+                                    <div class="pull-right" style="margin-top: 5px;">
+                                        <span (click)="InsertStock()" class="btn-vk createPatient" style="cursor: pointer;"><i class="fa fa-fw fa-refresh"></i> Refresh Stock</span>
+                                    </div>
                                             <p-dropdown [options]="selectitemView" name="Product" #Product2 [(ngModel)]="ObjaddbillForm.Product_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="ProductChange()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                                 [placeholder]="'Select Product'" [virtualScroll]="true" (onHide)="enableButton($event)" [disabled]="selectitem.length === 0" itemSize="30" #Product="ngModel" [required]="true" [ngClass]="{'clearance':addbillFormSubmitted && Product?.errors?.required}"
                                                 required>
