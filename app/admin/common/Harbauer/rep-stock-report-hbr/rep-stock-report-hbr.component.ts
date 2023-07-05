@@ -87,7 +87,11 @@ export class REPStockReportHBRComponent implements OnInit {
 
   ngOnInit() {
    this.report_Type = 'Cost_Center_Wise';
-   this.userType =this.$CompacctAPI.CompacctCookies.User_Type
+    this.userType = this.$CompacctAPI.CompacctCookies.User_Type,
+      this.Header.pushHeader({
+      Header: "Stock Report",
+      Link: " Material Management -> Report -> Stock Report"
+    })
    this.getCosCenter();
    this.Finyear()
   }
