@@ -143,20 +143,20 @@
                             <ul class="timeline ">
                                 <li class="time-label" style="margin-bottom: -20px"
                                     *ngFor="let objMain of FollowUpList">
-                                    <span class="" style="background-color:rgb(236, 205, 51)">{{objMain.Entry_Date}}</span>
+                                    <span class="" style="background-color:rgb(236, 205, 51)">{{objMain.Posted_On_C}}</span>
                                     <ul class="timeline" style="margin: 7px 0 30px 0">
                                         <li>
                                             <i class="fa fa-user bg-blue"></i>
                                             <div class="timeline-item">
-                                                <h3 class="timeline-header"><a href="#">{{objMain.SentTo_Name}}</a>{{objMain.Followup_Action}}
+                                                <h3 class="timeline-header"><a href="#">{{objMain.SentTo}}</a>{{objMain.Followup_Action}}
                                                 </h3>
                                                 <div class="timeline-body">
-                                                    {{objMain.Last_Remarks}}
+                                                    {{objMain.Followup_Details}}
                                                 </div>
                                                 <div class="timeline-footer" style="padding-bottom: 10px">
                                                     <a class="btn btn-primary btn-social  btn-xs"
-                                                        *ngIf="objMain.CreatedBy != objMain.SentTo_Name">
-                                                        <i class="fa fa-user"></i>&nbsp;{{objMain.SentTo_Name}}
+                                                        *ngIf="objMain.PostedBy != objMain.SentTo">
+                                                        <i class="fa fa-user"></i>&nbsp;{{objMain.SentTo}}
                                                     </a>
                                                     <a class="btn btn-danger btn-social  btn-xs">
                                                         Action Taken :<i class="fa fa-angle-double-right"></i>&nbsp;{{objMain.Current_Action}} On {{objMain.Next_Followup}}
