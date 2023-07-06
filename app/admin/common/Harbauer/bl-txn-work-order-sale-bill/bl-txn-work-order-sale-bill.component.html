@@ -189,6 +189,10 @@
                                             
                                             <td><button (click)="DeleteWorkOrder(i)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                         </tr>
+                                        <tr *ngIf="WorkOrderAdd.length">
+                                            <td colspan="5" style="font-weight: bold;text-align: right;">Total Amount:-</td>
+                                            <td style="font-weight: bold;">{{ProjectedAmountTotal()}}</td>
+                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
