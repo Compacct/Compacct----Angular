@@ -132,7 +132,7 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
   this.WorkOrderAdd.forEach((x:any)=>{
     flg = (Number(flg) + Number(x.Amount))
   })
-  return flg
+  return flg.toFixed(2)
 }
   validcheck(){
     return this.WorkDetailsList.length ? true : false
