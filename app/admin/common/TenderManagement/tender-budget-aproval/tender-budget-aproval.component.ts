@@ -157,10 +157,13 @@ viewModel = false;
       }
   }
   getPurchaseAmt(){
-    return this.ShowAddedEstimateProductList.reduce((n, {Amount}) => n + Number(Amount), 0)
+    return this.ShowAddedEstimateProductList.reduce((n, {Amount}) => n + Number(Amount), 0).toFixed(2)
   }
   getTotalPurchaseAmt(){
     return this.ShowAddedEstimateProductList.length ? Number(this.ShowAddedEstimateProductList[0].No_of_Site) * this.getPurchaseAmt() : '-';
+  }
+  getTotalSaleAmt(){
+    return this.ShowAddedEstimateProductList.reduce((n, {Sale_Amount}) => n + Number(Sale_Amount), 0).toFixed(2)
   }
   GetEditSingleScheme(){
     this.ShowAddedEstimateProductList = [];
