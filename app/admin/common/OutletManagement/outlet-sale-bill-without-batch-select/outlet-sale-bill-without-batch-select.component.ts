@@ -10,7 +10,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import { NgxUiLoaderService } from "ngx-ui-loader";
 declare var $:any;
-
 @Component({
   selector: 'app-outlet-sale-bill-without-batch-select',
   templateUrl: './outlet-sale-bill-without-batch-select.component.html',
@@ -481,7 +480,7 @@ autoaFranchiseBill() {
     //  }
     const TempObj = {
       Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-      Bill_Type : this.QueryStringObj.Ledger_Name ? 'Online' : ''
+      Bill_Type : this.ObjaddbillForm.Ledger_Name ? 'Online' : ''
      }
      const obj = {
       "SP_String": "SP_For_POS_Current_Stock",

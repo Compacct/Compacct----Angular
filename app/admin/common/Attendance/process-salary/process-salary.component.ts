@@ -287,7 +287,7 @@ itemNew.forEach(element => {
       head:[column],
       body:rows,
       headStyles :{fillColor : [255, 255, 255],lineWidth: 0.1,lineColor:[0,0,0],textColor:[0, 0, 0],fontSize: 6},
-      bodyStyles: {lineWidth: 0.1,lineColor:[0,0,0],fontSize: 6},
+      bodyStyles: {lineWidth: 0.1,lineColor:[0,0,0],textColor:[0, 0, 0],fontSize: 6,fontStyle: 'bold'},
       //columnStyles: {2: {halign: 'right'}, 3: {halign: 'right'}},
       // styles: { cellWidth: "wrap" },
       // columnStyles: {
