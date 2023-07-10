@@ -52,6 +52,9 @@ export class MICLCouponIssueComponent implements OnInit {
   Issue_To_Browse:any;
   pdfFormSubmitted:boolean = false;
   currentmonth: any;
+  UndercontractorList:any = [];
+  Sub_Ledger_ID:any;
+  Sub_Ledger_Name = undefined;
   
   constructor(
     private http: HttpClient,
@@ -75,6 +78,7 @@ export class MICLCouponIssueComponent implements OnInit {
     this.getContractorEmp();
     this.getCoupontype();
     this.IssuetoData();
+    this.getUnderContractorList();
     this.Issue_To = "Employee";
   }
   TabClick(e) {
@@ -377,6 +381,35 @@ export class MICLCouponIssueComponent implements OnInit {
       })
     }
   }
+  getUnderContractorList() {
+    const obj = {
+      "SP_String": "Sp_HR_Employee_Master_Contractor",
+      "Report_Name_String": "Get_Contractor_List"
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      console.log('Contractor List>>', data);
+      if (data.length) {
+        data.forEach((ele) => {
+          this.UndercontractorList.push({
+            'label': ele.Sub_Ledger_Name,
+            'value': ele.Sub_Ledger_ID
+          })
+        });
+      }
+    });
+  }
+  clearsubledger(){
+    this.Sub_Ledger_ID = undefined;
+  }
+  getsubledgername(){
+    this.Sub_Ledger_Name = undefined;
+    if(this.Sub_Ledger_ID){
+      const subledgername = this.UndercontractorList.filter(item=>Number(item.value) === Number(this.Sub_Ledger_ID))
+      this.Sub_Ledger_Name = (subledgername[0].label).toUpperCase();
+      console.log("this.Sub_Ledger_Name===",this.Sub_Ledger_Name)
+    }
+  }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
       this.From_date = dateRangeObj[0];
@@ -436,7 +469,8 @@ export class MICLCouponIssueComponent implements OnInit {
     const Data = {
       From_Date: this.DateService.dateConvert(this.From_date) ,
       To_Date: this.DateService.dateConvert(this.To_date) ,
-      Issue_Type: this.Issue_To_Browse
+      Issue_Type: this.Issue_To_Browse,
+      Sub_Ledger_ID: this.Sub_Ledger_ID
     }
     const obj = {
       "SP_String": "SP_Master_Coupon_Receive",
@@ -466,7 +500,7 @@ export class MICLCouponIssueComponent implements OnInit {
     // var column = ['SL No', 'Emp Code', 'Emp Name', 'Meal', 'Rate', 'Amount Rs', 'Breakfast', 'Rate1', 'Amount Rs.1', 'Grand Total Amount'];
     header = 
       [{
-      content: "MEAL & BREAKFAST COUPON STATEMENT OF MICL STAFF FOR THE MONTH OF "+ currentmonthyear,
+      content: "MEAL & BREAKFAST COUPON STATEMENT OF " + this.Sub_Ledger_Name + " FOR THE MONTH OF " + currentmonthyear,
       colSpan: 10,
       styles: {
       halign: 'center',

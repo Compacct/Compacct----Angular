@@ -495,6 +495,7 @@ import { HrRecruitmentTrackerComponent } from './common/Attendance/hr-recruitmen
 import { EmployeeSynchroniseWithAppComponent } from './common/HR/employee-synchronise-with-app/employee-synchronise-with-app.component';
 import { REPStockReportHBRComponent } from './common/Harbauer/rep-stock-report-hbr/rep-stock-report-hbr.component';
 import { SlagToRmStockTransferComponent } from './common/MICL/RawMaterial/slag-to-rm-stock-transfer/slag-to-rm-stock-transfer.component';
+import { CommonStockTransferComponent } from './common/MICL/RawMaterial/common-stock-transfer/common-stock-transfer.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -904,7 +905,8 @@ import { SlagToRmStockTransferComponent } from './common/MICL/RawMaterial/slag-t
     HrRecruitmentTrackerComponent,
     EmployeeSynchroniseWithAppComponent,
     REPStockReportHBRComponent,
-    SlagToRmStockTransferComponent
+    SlagToRmStockTransferComponent,
+    CommonStockTransferComponent
   ],
   imports: [
     CommonModule,

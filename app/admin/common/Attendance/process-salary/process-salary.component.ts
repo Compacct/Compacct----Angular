@@ -113,10 +113,11 @@ export class ProcessSalaryComponent implements OnInit {
     var firstDate = this.Month_Name+'-'+'01'
     const currentdate = new Date(firstDate);
     const month = currentdate.getMonth();
+    const year = currentdate.getFullYear();
     const monthNames = ["January", "February", "March", "April", "May", "June",
                         "July", "August", "September", "October", "November", "December"];
 
-    this.currentmonth = monthNames[month];
+    this.currentmonth = monthNames[month] + '-'+ year;
     console.log('monthNames====',this.currentmonth);
   }
   Print(DocNo) {
@@ -329,21 +330,21 @@ itemNew.forEach(element => {
         // var height = doc.internal.pageSize.getHeight();
         // console.log('height---',height)
         if (imgData) {   
-            doc.addImage(imgData, 'JPEG', data.settings.margin.left,10,35,20);  // for add image
+            doc.addImage(imgData, 'JPEG', data.settings.margin.left,4,30,20);  // for add image
         }
-        doc.text('MODERN INDIA CON-CAST LIMITED', width/2, 17, { align: 'center' },{fontSize: 12})
+        doc.text('MODERN INDIA CON-CAST LIMITED', width/2, 8, { align: 'center' },{fontSize: 12})
         doc.setFontSize(10);
-        doc.text('(A unit of Kasvi Group)', width/2, 22, { align: 'center' },{fontSize: 3})
-        doc.text('Bhuniaraichak, J.L No-122, Haldia-721635, Purba Medinipur, West Bengal', width/2, 27, { align: 'center' },{fontSize: 0.4})
-        doc.text('Salary for The Month of ' + currentmonth, width/2, 32, { align: 'center' },{styles: { fontSize: 3 }})
+        doc.text('(A unit of Kasvi Group)', width/2, 13, { align: 'center' },{fontSize: 3})
+        doc.text('Bhuniaraichak, J.L No-122, Haldia-721635, Purba Medinipur, West Bengal', width/2, 18, { align: 'center' },{fontSize: 0.4})
+        doc.text('Salary for The Month of ' + currentmonth, width/2, 23, { align: 'center' },{styles: { fontSize: 3 }})
         
         var pageSize = doc.internal.pageSize;
         var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
-        doc.text("Prepared By", data.settings.margin.left, pageHeight - 10);
-        doc.text('Checked By', width/2, pageHeight - 10, { align: 'center' })
-        doc.text("Authorised By", width - 10, pageHeight - 10, { align: 'right' });
+        doc.text("Prepared By", data.settings.margin.left, pageHeight - 4);
+        doc.text('Checked By', width/2, pageHeight - 4, { align: 'center' })
+        doc.text("Authorised By", width - 10, pageHeight - 4, { align: 'right' });
       },
-      margin: {top: 40, right: 6, bottom: 30, left: 6}
+      margin: {top: 30, right: 6, bottom: 20, left: 6}
     });
     doc.save('Salary-Statement.pdf');
   }

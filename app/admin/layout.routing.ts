@@ -397,6 +397,7 @@ import { HrRecruitmentTrackerComponent } from './common/Attendance/hr-recruitmen
 import { EmployeeSynchroniseWithAppComponent } from './common/HR/employee-synchronise-with-app/employee-synchronise-with-app.component';
 import { REPStockReportHBRComponent } from "./common/Harbauer/rep-stock-report-hbr/rep-stock-report-hbr.component";
 import { SlagToRmStockTransferComponent } from './common/MICL/RawMaterial/slag-to-rm-stock-transfer/slag-to-rm-stock-transfer.component';
+import { CommonStockTransferComponent } from './common/MICL/RawMaterial/common-stock-transfer/common-stock-transfer.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3029,6 +3030,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: SlagToRmStockTransferComponent,
         data: {
           title: 'Slag To RM Stock Transfer'
+    }
+    },
+    {
+      path: 'Common_Stock_Transfer',
+        component: CommonStockTransferComponent,
+        data: {
+          title: 'Stock Transfer'
     }
     },
     
