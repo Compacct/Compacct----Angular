@@ -11,6 +11,7 @@ import { CompacctCommonApi } from "../../../shared/compacct.services/common.api.
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service";
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { CompacctHeader } from "../../../shared/compacct.services/common.header.service";
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-k4c-raw-material-indent',
@@ -399,6 +400,32 @@ export class K4cRawMaterialIndentComponent implements OnInit {
         this.seachSpinner = false;
       })
   }
+  exportoexcel(){
+    const start = this.ObjBrowseData.req_date_B
+      ? this.DateService.dateConvert(new Date(this.ObjBrowseData.req_date_B))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjBrowseData.req_date2
+      ? this.DateService.dateConvert(new Date(this.ObjBrowseData.req_date2))
+      : this.DateService.dateConvert(new Date());
+      const tempDate = {
+        From_Date :start,
+        To_Date :end,
+        Cost_Cen_ID : this.ObjBrowseData.Cost_Cen_ID ? Number(this.ObjBrowseData.Cost_Cen_ID) : 0,
+        Godown_ID : Number(this.ObjBrowseData.Godown_ID) ? Number(this.ObjBrowseData.Godown_ID) : 0
+      }
+    const obj = {
+      "SP_String": "SP_Raw_Material_Indent",
+      "Report_Name_String": "Export Raw Material Indent",
+      "Json_Param_String": JSON.stringify([tempDate])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      XLSX.writeFile(workbook, "Indent_List"+'.xlsx');
+      
+    })
+  }
   onFilterChange(eve: any){
     this.GetAllDataList = []
      if(eve){
@@ -412,13 +439,13 @@ export class K4cRawMaterialIndentComponent implements OnInit {
       this.GetAllDataList = this.backUpGetAllDataList;
     }
   }
-  // Print(obj){
-  //   if (obj.Doc_No) {
-  //     window.open("/Report/Crystal_Files/K4C/K4C_Raw_Material_Indent.aspx?DocNo=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+  Print(obj){
+    if (obj.Doc_No) {
+      window.open("/Report/Crystal_Files/K4C/Raw_Material_Indent_Print.aspx?Doc_No=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
 
-  //     );
-  //   }
-  // }
+      );
+    }
+  }
   editraw(col){
    this.DocNo = undefined;
    if(col.Doc_No){

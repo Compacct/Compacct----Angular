@@ -19,29 +19,29 @@ declare var $:any;
   encapsulation: ViewEncapsulation.None
 })
 export class BillEditFromAdminComponent implements OnInit {
-  items = [];
+  items:any = [];
   tabIndexToView = 0;
   searchObj : search = new search();
   seachSpinner = false;
-  Searchedlist = [];
+  Searchedlist:any = [];
 
   addbillFormSubmitted = false;
   ObjaddbillForm : addbillForm  = new addbillForm();
   url = window["config"];
-  billdate = [];
+  billdate:any = [];
   //Billno = false;
-  selectitem = [];
-  selectitemView = [];
+  selectitem:any = [];
+  selectitemView:any = [];
   EditDoc_No = undefined;
   dateList: any;
   myDate: Date;
-  returnedID = [];
+  returnedID:any = [];
   buttonname = "Update";
   Spinner = false;
-  addbillForm = [];
-  tempArr = [];
-  data = [];
-  productSubmit = [];
+  addbillForm:any = [];
+  tempArr:any = [];
+  data:any = [];
+  productSubmit:any = [];
   Dis_Amount : any;
   Total:any;
   withoutdisamt:any;
@@ -73,10 +73,10 @@ export class BillEditFromAdminComponent implements OnInit {
   Hold_Bill_Flag = false;
   AdvOderDetailList: any;
   godown_id: any;
-  Batch_NO = [];
+  Batch_NO:any = [];
   Adv_Order_No: any;
   IsAdvance = false;
-  ProductTypeFilterList = [];
+  ProductTypeFilterList:any = [];
   ProductTypeFilterSelected:any;
   FromCostCentId: any;
   checkSave = true;
@@ -103,6 +103,8 @@ export class BillEditFromAdminComponent implements OnInit {
   FranchiseBill: any;
   Online_Order_Date:any;
   Online_Order_No: any;
+  canbilldate: any;
+  BillDate: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -255,9 +257,12 @@ autoaFranchiseBill() {
   editmaster(eROW){
     //console.log("editmaster",eROW);
       this.clearData();
+      this.canbilldate = "";
+      this.rowCostcenter = "";
       if(eROW.Bill_No){
         this.ngxService.start();
       this.Objcustomerdetail.Bill_No = eROW.Bill_No;
+      this.canbilldate = new Date(eROW.Bill_Date);
       this.rowCostcenter = eROW.Cost_Cent_ID;
       this.ObjaddbillForm.selectitem = this.rowCostcenter;
       this.autoaFranchiseBill();
@@ -426,6 +431,7 @@ autoaFranchiseBill() {
      this.dateList = data;
    //console.log("this.dateList  ===",this.dateList);
   this.myDate =  new Date(data[0].Outlet_Bill_Date);
+  this.BillDate = new Date(data[0].Outlet_Bill_Date);
    // on save use this
   // this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));
 
@@ -578,6 +584,31 @@ if(this.ObjaddbillForm.Product_ID) {
   this.ProductType = productObj.Product_Type;
   this.isservice = productObj.Is_Service;
 }
+}
+// INSERT STOCK
+InsertStock(){
+  this.ngxService.start();
+  const sendonj = {
+    Cost_Cen_ID : this.rowCostcenter
+  }
+  const obj = {
+    "SP_String": "SP_For_POS_Current_Stock",
+    "Report_Name_String": "Insert_Stock",
+    "Json_Param_String": JSON.stringify([sendonj])
+
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    if (data[0].Column1 === "Done") {
+      this.getselectitem();
+      this.ngxService.stop();
+      this.canbilldate = "";
+      this.rowCostcenter = "";
+    } else {
+      this.ngxService.stop();
+      this.canbilldate = "";
+      this.rowCostcenter = "";
+    }
+  })
 }
 getgodownid(){
   const TempObj = {
@@ -1177,7 +1208,7 @@ checkdiscountamt(){
     this.ObjcashForm.Card_Amount = this.ObjcashForm.Card_Amount ? this.ObjcashForm.Card_Amount : 0;
     //console.log("this.ObjcashForm.Card_Ac",this.productSubmit);
     if(this.productSubmit.length) {
-      let tempArr =[]
+      let tempArr:any =[]
       this.productSubmit.forEach(item => {
         if (Number(item.Amount_berore_Tax) && Number(item.Amount_berore_Tax) != 0) {
           this.Objcustomerdetail.Doc_Date = this.DateService.dateConvert(new Date(this.myDate))
@@ -1391,6 +1422,11 @@ checkdiscountamt(){
        this.GetSearchedlist();
       // this.router.navigate(['./POS_BIll_Order']);
         }
+        var billdate = new Date(this.BillDate);
+        var cacelcilldate = new Date(this.canbilldate);
+        if(billdate.toISOString() === cacelcilldate.toISOString()){
+          this.InsertStock();
+      }
       //   this.compacctToast.clear();
       //   const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
       //   this.compacctToast.add({
