@@ -497,6 +497,7 @@ import { REPStockReportHBRComponent } from './common/Harbauer/rep-stock-report-h
 import { SlagToRmStockTransferComponent } from './common/MICL/RawMaterial/slag-to-rm-stock-transfer/slag-to-rm-stock-transfer.component';
 import { CommonStockTransferComponent } from './common/MICL/RawMaterial/common-stock-transfer/common-stock-transfer.component';
 import { BillNoChangeComponent } from './common/MICL/bill-no-change/bill-no-change.component';
+import { CostcenterTargetJohComponent } from './common/PatientManagement/Audiologist/costcenter-target-joh/costcenter-target-joh.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -908,7 +909,8 @@ import { BillNoChangeComponent } from './common/MICL/bill-no-change/bill-no-chan
     REPStockReportHBRComponent,
     SlagToRmStockTransferComponent,
     CommonStockTransferComponent,
-    BillNoChangeComponent
+    BillNoChangeComponent,
+    CostcenterTargetJohComponent
   ],
   imports: [
     CommonModule,

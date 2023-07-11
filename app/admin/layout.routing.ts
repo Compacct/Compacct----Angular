@@ -399,6 +399,7 @@ import { REPStockReportHBRComponent } from "./common/Harbauer/rep-stock-report-h
 import { SlagToRmStockTransferComponent } from './common/MICL/RawMaterial/slag-to-rm-stock-transfer/slag-to-rm-stock-transfer.component';
 import { CommonStockTransferComponent } from './common/MICL/RawMaterial/common-stock-transfer/common-stock-transfer.component';
 import { BillNoChangeComponent } from './common/MICL/bill-no-change/bill-no-change.component';
+import { CostcenterTargetJohComponent } from './common/PatientManagement/Audiologist/costcenter-target-joh/costcenter-target-joh.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3045,6 +3046,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: BillNoChangeComponent,
         data: {
           title: 'Bill Number Change'
+    }
+    },
+    {
+      path: 'BL_Txn_Costcenter_Target_For_Joh',
+        component: CostcenterTargetJohComponent,
+        data: {
+          title: 'Costcenter Target'
     }
     },
     
