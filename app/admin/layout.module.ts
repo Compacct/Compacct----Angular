@@ -496,6 +496,7 @@ import { EmployeeSynchroniseWithAppComponent } from './common/HR/employee-synchr
 import { REPStockReportHBRComponent } from './common/Harbauer/rep-stock-report-hbr/rep-stock-report-hbr.component';
 import { SlagToRmStockTransferComponent } from './common/MICL/RawMaterial/slag-to-rm-stock-transfer/slag-to-rm-stock-transfer.component';
 import { CommonStockTransferComponent } from './common/MICL/RawMaterial/common-stock-transfer/common-stock-transfer.component';
+import { BillNoChangeComponent } from './common/MICL/bill-no-change/bill-no-change.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -906,7 +907,8 @@ import { CommonStockTransferComponent } from './common/MICL/RawMaterial/common-s
     EmployeeSynchroniseWithAppComponent,
     REPStockReportHBRComponent,
     SlagToRmStockTransferComponent,
-    CommonStockTransferComponent
+    CommonStockTransferComponent,
+    BillNoChangeComponent
   ],
   imports: [
     CommonModule,
