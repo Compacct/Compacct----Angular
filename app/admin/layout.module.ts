@@ -498,6 +498,7 @@ import { SlagToRmStockTransferComponent } from './common/MICL/RawMaterial/slag-t
 import { CommonStockTransferComponent } from './common/MICL/RawMaterial/common-stock-transfer/common-stock-transfer.component';
 import { BillNoChangeComponent } from './common/MICL/bill-no-change/bill-no-change.component';
 import { CostcenterTargetJohComponent } from './common/PatientManagement/Audiologist/costcenter-target-joh/costcenter-target-joh.component';
+import { LeaveRegisterComponent } from './common/MICL/leave-register/leave-register.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -910,7 +911,8 @@ import { CostcenterTargetJohComponent } from './common/PatientManagement/Audiolo
     SlagToRmStockTransferComponent,
     CommonStockTransferComponent,
     BillNoChangeComponent,
-    CostcenterTargetJohComponent
+    CostcenterTargetJohComponent,
+    LeaveRegisterComponent
   ],
   imports: [
     CommonModule,

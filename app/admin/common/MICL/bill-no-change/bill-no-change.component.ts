@@ -25,6 +25,7 @@ export class BillNoChangeComponent implements OnInit {
   seachSpinner : any= false;
   Spinner : any = false;
   ObjSaleBillNoChange : SaleBillNoChange = new SaleBillNoChange();
+  SaleBillNoChangeFormSubmitted:boolean = false;
   SaleBillNoList:any = [];
   BillNO:any;
   SaleBillNOChanged:any;
@@ -89,7 +90,9 @@ export class BillNoChangeComponent implements OnInit {
       this.ObjSaleBillNoChange.Changed_Bill_No = undefined;
       }
   }
-  PasswordCheck(){
+  PasswordCheck(valid){
+    this.SaleBillNoChangeFormSubmitted = true;
+    if(valid){
     if(this.ObjSaleBillNoChange.Password){
      const obj = {
        "SP_String": "SP_Bill_No_Change",
@@ -98,7 +101,7 @@ export class BillNoChangeComponent implements OnInit {
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        if(data[0].Column1 === "OK"){
-         this.Buttondisabled = true;
+         this.ChangeNo();
        }
        else {   
         this.Buttondisabled = false;
@@ -114,9 +117,10 @@ export class BillNoChangeComponent implements OnInit {
        }
      })
    }
+   }
   }
-  ChangeNo(valid){
-    if(valid){
+  ChangeNo(){
+    // if(valid){
       var ChangedbillNo = this.BillNO + this.ObjSaleBillNoChange.Changed_Bill_No
       const SaveData ={
         Doc_No : this.ObjSaleBillNoChange.Sale_Bill_No,
@@ -141,6 +145,7 @@ export class BillNoChangeComponent implements OnInit {
           this.SaleBillNOChanged = undefined;
           this.BillNO = undefined;
           this.ObjSaleBillNoChange.Changed_Bill_No = undefined;
+          this.SaleBillNoChangeFormSubmitted = false;
           this.GetSaleBillNoChange();
         }
         else {
@@ -155,7 +160,7 @@ export class BillNoChangeComponent implements OnInit {
           });
         }
       }); 
-    }
+    // }
   }
 
 }

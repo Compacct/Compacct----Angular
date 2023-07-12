@@ -400,6 +400,7 @@ import { SlagToRmStockTransferComponent } from './common/MICL/RawMaterial/slag-t
 import { CommonStockTransferComponent } from './common/MICL/RawMaterial/common-stock-transfer/common-stock-transfer.component';
 import { BillNoChangeComponent } from './common/MICL/bill-no-change/bill-no-change.component';
 import { CostcenterTargetJohComponent } from './common/PatientManagement/Audiologist/costcenter-target-joh/costcenter-target-joh.component';
+import { LeaveRegisterComponent } from './common/MICL/leave-register/leave-register.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3053,6 +3054,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: CostcenterTargetJohComponent,
         data: {
           title: 'Costcenter Target'
+    }
+    },
+    {
+      path: 'Leave_Register',
+        component: LeaveRegisterComponent,
+        data: {
+          title: 'Leave Register'
     }
     },
     
