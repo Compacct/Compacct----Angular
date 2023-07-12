@@ -1281,9 +1281,12 @@ geteditmaster(Dno){
     this.AddTermList = data[0].Term_element ? data[0].Term_element : [] ;
     this.UpdatePurchaseOrderTermsList = data[0].L_element_Terms ? data[0].L_element_Terms : []
     this.editorDis = true
-    // console.log("addPurchaseList",this.addPurchaseList)
-    if(this.addPurchaseList.length || this.AddTermList.length){
+     //console.log("addPurchaseList",this.addPurchaseList)
+    if (this.addPurchaseList.length || this.AddTermList.length) {
+      setTimeout(() => {
       this.getAllTotal()
+    }, 700);
+     
     }
     setTimeout(() => {
       this.editorDis = false
@@ -1425,7 +1428,7 @@ getAllTotal(){
   this.GrGstTermAmt = 0
   this.grNetTerm = 0
   if(this.addPurchaseList.length){
-    this.addPurchaseList.forEach(ele => {
+    this.addPurchaseList.forEach((ele:any) => {
       this.grTotal += Number(ele.Gross_Amt) ? Number(ele.Gross_Amt) : 0
       this.taxAblTotal += Number(ele.Taxable_Amount) ? Number(ele.Taxable_Amount) : 0
       this.disTotal += Number(ele.Discount_Amount) ?  Number(ele.Discount_Amount) : 0
@@ -1433,6 +1436,9 @@ getAllTotal(){
       this.GSTTotal += Number(ele.GST_Amount) ? Number(ele.GST_Amount) : 0
       this.NetTotal += Number(ele.Total_Amount) ? Number(ele.Total_Amount)  :0
     });
+    console.log('this.grTotal', this.grTotal)
+    console.log('this.taxAblTotal', this.taxAblTotal)
+    console.log('this.disTotal',this.disTotal)
   }
   
 if(this.AddTermList.length){
@@ -1444,8 +1450,11 @@ if(this.AddTermList.length){
 }
 
 }
-getTofix(key){
+getTofix(key:any){
  return Number(Number(key).toFixed(2))
+  }
+getTofix2(keyy:any){
+ return Number(Number(keyy).toFixed(2))
 }
 RoundOff(key:any){
   return Math.round(Number(Number(key).toFixed(2)))

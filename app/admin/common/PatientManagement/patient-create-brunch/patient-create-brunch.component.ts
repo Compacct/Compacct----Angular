@@ -55,12 +55,12 @@ export class PatientCreateBrunchComponent implements OnInit {
   }
 
   checkMobile(mobile: any) {
-    console.log(mobile);
+    //console.log(mobile);
     if (mobile.length == 10) {
-      console.log('10 digit Complete')
+      //console.log('10 digit Complete')
       this.$http.get(`/Hearing_BL_CRM_Appointment/Get_Name_From_Mobile_Hearing?Mobile=` + mobile).subscribe((data: any) => {
         if (data.length) {
-          console.log(data);
+          //console.log(data);
           this.CompacctToast.clear();
           this.CompacctToast.add({
             key: "compacct-toast",
@@ -77,15 +77,15 @@ export class PatientCreateBrunchComponent implements OnInit {
   getCountryList() {
     this.$http.get(`/Common/Get_Country_List`).subscribe((data: any) => {
       let CountryList = JSON.parse(data);
-      console.log('Country List ==>', CountryList);
+      //console.log('Country List ==>', CountryList);
       this.countryList = CountryList
     });
   }
 
   getSateList() {
     this.$http.get(`/Common/Get_State_List`).subscribe((data: any) => {
-      console.log(data);
-      console.log('State List==>', data);
+      //console.log(data);
+      //console.log('State List==>', data);
       this.stateList = data
     });
   }
@@ -93,16 +93,16 @@ export class PatientCreateBrunchComponent implements OnInit {
   getDistrictList(State: any) {
     this.districtList = undefined;
     this.objPatient.District = undefined;
-    console.log('District works', State);
+    //console.log('District works', State);
     this.$http.get(`/Common/Get_District_List?StateName=` + State).subscribe((data: any) => {
-      console.log(data);
+      //console.log(data);
       this.districtList = data;
     });
   }
 
   getEnqSource() {
     this.$http.get(`/DIPL_CRM_Lead/Get_Enq_Source`).subscribe((data: any) => {
-      console.log('Enq src List==>', data);
+      //console.log('Enq src List==>', data);
       this.enqSourceList = data
     });
   }
@@ -116,7 +116,7 @@ export class PatientCreateBrunchComponent implements OnInit {
           "value": ele.Enq_Source_Sub_ID
         })
       })
-      console.log('ref Doctor List List==>', this.refDoctorList);
+      //console.log('ref Doctor List List==>', this.refDoctorList);
     });
   }
 
@@ -143,7 +143,7 @@ export class PatientCreateBrunchComponent implements OnInit {
       this.objPatient.Details_Problem_Observerd = "";
       this.objPatient.Reference_Patient_ID = null;
 
-      console.log(this.objPatient);
+      //console.log(this.objPatient);
       this.Spinner = true;
       const obj = {
         "SP_String": "SP_BL_Txn_Patient_Create_Branch",
@@ -186,14 +186,14 @@ export class PatientCreateBrunchComponent implements OnInit {
       "Json_Param_String": JSON.stringify({ User_ID: this.userID }),
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      console.log('Browse Data==>', data);
+      //console.log('Browse Data==>', data);
       this.allDataList = data;
     })
   }
 
   getAddressOnChange(e) {
     this.objPatient.Location = undefined;
-    console.log(e);
+    //console.log(e);
     if (e) {
       this.objPatient.Location = e;
     }
@@ -258,4 +258,8 @@ class Patient {
   Consultancy_Type: any;
   Reference_Patient_ID: any;
   Age_Unit: any;
+
+  Occupation: any;
+  accompanied: any;
+  Reason_visit: any;
 }
