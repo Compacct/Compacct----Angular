@@ -39,6 +39,7 @@
                   <ng-template pTemplate="header">
                     <tr style="width: 100%;">
                       <!-- <th style="width:5em">Action</th> -->
+                      <th style="text-align: center ;" nowrap>Patient ID</th>
                       <th style="text-align: center ;" nowrap>Patient Name</th>
                       <th style="text-align: center ;" nowrap>Mobile No.</th>
                       <th style="text-align: center ;" nowrap>Age</th>
@@ -63,6 +64,7 @@
                         </ul>
                     </div>
                 </td> -->
+                      <td style="text-align: center ;" nowrap>{{col.Foot_Fall_ID ? col.Foot_Fall_ID : '-'}}</td>
                       <td style="text-align: center ;" nowrap>{{col.Contact_Name ? col.Contact_Name : '-'}}</td>
                       <td style="text-align: center ;" nowrap>{{col.Mobile ? col.Mobile : '-'}}</td>
                       <td style="text-align: center ;" nowrap>{{col.Age ? col.Age : '-'}}</td>
@@ -151,6 +153,16 @@
                 </div>
                 <div class="row">
                   <div class="col-sm-4">
+                    <label class="control-label">Occupation<sup class="text-danger"></sup></label>
+                    <select name="Occupation" class="form-control" [(ngModel)]="objPatient.Occupation" #Occupation="ngModel">
+                      <option [ngValue]="undefined">Select</option>
+                      <option value="Govt. Employee">Govt. Employee</option>
+                      <option value=" Pvt. Sector Employee">Pvt. Sector Employee</option>
+                      <option value="Retired">Retired</option>
+                      <option value="Home Maker">Home Maker</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-4">
                     <label class="control-label">Location</label>
                     <input type="text" class="form-control" Compacct-Place (setAddress)="getAddressOnChange($event)"
                       placeholder="Location" name="Location" #Location="ngModel" [(ngModel)]="objPatient.Location">
@@ -162,6 +174,8 @@
                       <option *ngFor="let option of countryList" value="{{option.country}}">{{option.country}}</option>
                     </select>
                   </div>
+                </div>
+                <div class="row">
                   <div class="col-sm-4">
                     <label class="control-label">State</label>
                     <select name="State" class="form-control" [(ngModel)]="objPatient.State" #State="ngModel"
@@ -170,8 +184,6 @@
                       <option *ngFor="let option of stateList" value="{{option.State}}">{{option.State}}</option>
                     </select>
                   </div>
-                </div>
-                <div class="row">
                   <div class="col-sm-4">
                     <label class="control-label">District</label>
                     <select name="District" class="form-control" [(ngModel)]="objPatient.District" #District="ngModel">
@@ -186,6 +198,8 @@
                       [(ngModel)]="objPatient.Address" rows="2">
                     </textarea>
                   </div>
+                </div>
+                <div class="row">
                   <div class="col-sm-4">
                     <label class="control-label">Enquiry Source<sup class="text-danger">*</sup></label>
                     <select name="Source" class="form-control" [(ngModel)]="objPatient.Enq_Source_ID" #Source="ngModel"
@@ -195,8 +209,6 @@
                         {{option.Enq_Source_Name}}</option>
                     </select>
                   </div>
-                </div>
-                <div class="row">
                   <div class="col-sm-4">
                     <label class="control-label">Reference Doctor</label>
                     <p-dropdown [options]="refDoctorList" name="RefDoctor" #RefDoctor="ngModel"
@@ -216,9 +228,26 @@
                       <option value="Speech">Speech</option>
                     </select>
                   </div>
-                  <div class="col-sm-4">  
-                     
+                </div>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <label class="control-label">Who has accompanied you<sup class="text-danger"></sup></label>
+                    <select name="accompanied" class="form-control" [(ngModel)]="objPatient.accompanied"
+                      #accompanied="ngModel">
+                      <option [ngValue]="undefined">Select</option>
+                      <option value="Parent">Parent</option>
+                      <option value="Guardian">Guardian</option>
+                      <option value="Friend">Friend</option>
+                      <option value="Spouse">Spouse</option>
+                      <option value="Children">Children</option>
+                      <option value="Self">Self</option>
+                    </select>
                   </div>
+                    <div class="col-sm-4">
+                      <label class="control-label">Reason for visiting today</label>
+                      <input type="text" class="form-control" name="Reason_visit" #Reason_visit="ngModel" [(ngModel)]="objPatient.Reason_visit"
+                        placeholder="Reason for visiting today">
+                    </div>
                 </div>
                 <div class="row">
                   <button class="btn btn-primary pull-right" (click)="saveDocAppo(PatientCreation.form.valid)" id="load"

@@ -63,8 +63,8 @@
                                     <span class="fa fa-search"></span>Search
                                 </button>
                                 </div>
-                                <div class="col-sm-2 custombutton">
-                                    <button class="btn btn-warning" data-toggle="modal" (click)="downloadpdf(pdfForm.form.valid)">
+                                <div class="col-sm-1 custombutton">
+                                    <button class="btn btn-primary" data-toggle="modal" (click)="downloadpdf(pdfForm.form.valid)">
                                         <span class="fa fa-download"></span>&nbsp;Download Statement
                                     </button>
                                 </div>
@@ -81,8 +81,13 @@
                                         <ng-template pTemplate="caption">
                                             <div class="row">
                                                 <div class="col-sm-3" *ngIf="BrowseData.length">
-                                                    <button style="margin-left: 650px;" class="btn btn-success" data-toggle="modal" (click)="exportExcelbrowse(BrowseData,'Coupon Issue List')">
+                                                    <button style="margin-left: 545px;" class="btn btn-success" data-toggle="modal" (click)="exportExcelbrowse(BrowseData,'Coupon Issue List')">
                                                         <span class="fa fa-file-excel-o"></span>&nbsp;Export to excel
+                                                    </button>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <button [class]="BrowseData.length ? 'buttonleft1' : 'buttonleft2'" data-toggle="modal" (click)="pdfCantStatementSumm()">
+                                                        <span class="fa fa-download"></span>&nbsp;Canteen Statement Summary
                                                     </button>
                                                 </div>
                                                 <div class="col-sm-3 pull-right" style="text-align: right">

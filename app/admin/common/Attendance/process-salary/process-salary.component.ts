@@ -42,6 +42,7 @@ export class ProcessSalaryComponent implements OnInit {
   processSalarydisabled = false;
   bankregdisabled = false;
   currentmonth: any;
+  ButtonShowOrNot: any;
 
   constructor(
     private route : ActivatedRoute,
@@ -67,6 +68,7 @@ export class ProcessSalaryComponent implements OnInit {
     //this.startdate = this.Month_Name+'-'+'01'
     console.log('Month_Name',this.Month_Name)
    // this.Month_Name = new Date();
+    this.GetButtonshownData();
     this.GetEmpId();
     this.GetBrowseData();
   }
@@ -76,6 +78,7 @@ export class ProcessSalaryComponent implements OnInit {
     console.log('firstDate',firstDate)
     const AtObj = {
       StartDate : this.DateService.dateConvert(new Date(firstDate)),
+      User_ID : this.$CompacctAPI.CompacctCookies.User_ID
     }
     if (this.Month_Name) {
     const obj = {
@@ -108,6 +111,18 @@ export class ProcessSalaryComponent implements OnInit {
   })
   this.getcurrentmonth();
   }
+  }
+  GetButtonshownData(){
+    this.ButtonShowOrNot = undefined;
+    const obj = {
+      "SP_String": "SP_Process_Monthly_Attendance_Sheet",
+      "Report_Name_String": "Buttons Show Or Not",
+      "Json_Param_String": JSON.stringify([{User_ID : this.$CompacctAPI.CompacctCookies.User_ID}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.ButtonShowOrNot = data[0].Column1;
+    })
   }
   getcurrentmonth(){
     var firstDate = this.Month_Name+'-'+'01'
