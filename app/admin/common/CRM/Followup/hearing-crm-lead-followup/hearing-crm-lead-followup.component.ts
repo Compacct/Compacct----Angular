@@ -62,6 +62,7 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
     });
     this.getUsertype();
   }
+  onReject(){}
   getUsertype() {
     this.userList = []
     const obj = {
@@ -151,11 +152,15 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
     this.getPatatentFlow(col.Foot_Fall_ID) 
     } 
   }
-  getPatatentFlow(FootId :any) {
-    this.$http.get('/Common/CRM_Get_Followup?FootFallID='+FootId).subscribe((data: any) => {
-      //console.log('Data', data)
-      this.FollowUpList = data
-   }) 
+  getPatatentFlow(FootId: any) {
+    const obj = {
+        "SP_String": "sp_Followup_Details",
+        "Report_Name_String":"Get_followup_details_Into_Tree",
+        "Json_Param_String": JSON.stringify([{Foot_Fall_ID : FootId}]) 
+       }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => { 
+       this.FollowUpList = data
+    })
   }
   saveFollowUp(valid: any) {
     this.folloupFormSubmit = true;

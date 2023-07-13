@@ -172,8 +172,8 @@
                                                 <div class="form-group">
                                                     <div class="col-sm-2">
                                                         <label class="control-label">Date</label>
-                                                        <ejs-datepicker strictMode='true' [format]="'dd/MMM/yyyy'" [(value)]='BillDate' [min]='minDate' [max]='maxDate'></ejs-datepicker>
-                                                        <!-- <input class="form-control" name="Date" [disabled]="true" [ngModel]='BillDate  | date :"dd-MMM-yyyy"'> -->
+                                                        <ejs-datepicker *ngIf="!editList.length" strictMode='true' [format]="'dd/MMM/yyyy'" [(value)]='BillDate' [min]='minDate' [max]='maxDate'></ejs-datepicker>
+                                                        <input *ngIf="editList.length" class="form-control" name="Date" [disabled]="true" [ngModel]='docdate  | date :"dd-MMM-yyyy"'>
                                                     </div>
                                                     <!-- <div class="col-sm-3">
                                                         <label class="control-label"> Brand<sup class="text-danger">*</sup></label>

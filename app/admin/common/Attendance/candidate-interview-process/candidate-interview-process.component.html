@@ -850,8 +850,22 @@
                                           (onSelect)="fileSelect()" *ngIf="upload"
                                           (uploadHandler)="onBasicUpload(UploadFile)">
                                        </p-fileUpload>
-                                       <button name="pan" *ngIf="!upload" pButton pRipple type="button"
-                                          label="Show Document" (click)="showDoc()"></button>
+                                       <button  *ngIf="!upload" pButton pRipple type="button"
+                                          label="Show Document" (click)="showDoc(objInterview.File_Upload)"></button>
+                                    </div>
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Upload Document</label>
+                                    <span class="btn btn-xs btn-danger pull-right" (click)="ClearUploadInpt2(UploadFile2)"
+                                       *ngIf="file2"><i class="fa fa-close"></i></span>
+                                    <div>
+                                       <p-fileUpload mode="basic" name="filedoc2" #UploadFile2 chooseLabel="BROWSE"
+                                          uploadLabel="UPLOAD" accept="image/*" [customUpload]="true"
+                                          (onSelect)="fileSelect2()" *ngIf="upload2"
+                                          (uploadHandler)="onBasicUpload2(UploadFile2)">
+                                       </p-fileUpload>
+                                       <button  *ngIf="!upload2" pButton pRipple type="button"
+                                          label="Show Document" (click)="showDoc(objInterview.File_Upload2)"></button>
                                     </div>
                                  </div>
                               </div>

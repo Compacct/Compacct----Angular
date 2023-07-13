@@ -11,6 +11,7 @@ import { CompacctCommonApi } from "../../../shared/compacct.services/common.api.
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service";
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { CompacctHeader } from "../../../shared/compacct.services/common.header.service";
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-k4c-raw-material-indent',
@@ -20,7 +21,7 @@ import { CompacctHeader } from "../../../shared/compacct.services/common.header.
   encapsulation: ViewEncapsulation.None
 })
 export class K4cRawMaterialIndentComponent implements OnInit {
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
@@ -28,22 +29,37 @@ export class K4cRawMaterialIndentComponent implements OnInit {
 
 
   showSpinner = false;
-  deptList = [];
-  browsedeptList = [];
-  productListFilter = [];
+  deptList:any = [];
+  browsecostcenlist: any = [];
+  browsedeptList:any = [];
+  productListFilter:any = [];
   SelectedProductType :any = [];
   RawIndentFormSubmit = false;
   godownId = undefined;
-  productList = [];
-  backUpproductList = [];
+  productList:any = [];
+  backUpproductList:any = [];
   rawDate:Date;
-  GetAllDataList = [];
-  backUpGetAllDataList = [];
+  GetAllDataList:any = [];
+  backUpGetAllDataList:any = [];
   DocNo = undefined;
   display = false;
-  filteredData = [];
-  editDataList = [];
+  filteredData:any = [];
+  editDataList:any = [];
   ObjBrowseData: BrowseData = new BrowseData();
+  Cost_Cen_ID = undefined;
+  costcenlist:any = [];
+  RawMateIndent_Date: Date;
+  mattypelist:any = [];
+  Material_Type = undefined;
+  mindate: Date;
+  maxdate: Date;
+  SearchFields:any = [];
+  DistProductType:any = [];
+  ViewPoppup:boolean = false;
+  viewlist:any = [];
+  Doc_date: any;
+  To_Godown_ID: any;
+  Doc_no: any;
   constructor(
     private Header: CompacctHeader,
     private compacctToast: MessageService,
@@ -61,8 +77,11 @@ export class K4cRawMaterialIndentComponent implements OnInit {
         Header: "Raw Material Indent",
         Link: " Material Management -> Raw Material Indent"
       });
-      this.getDept();
+      this.GetToCostCen();
+      // this.getDept();
       this.getdate();
+      this.getMaterialType();
+      this.maxdate = new Date();
   }
   TabClick(e){
     //console.log(e)
@@ -70,6 +89,8 @@ export class K4cRawMaterialIndentComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.clearData();
+    this.DistProductType = [];
+    this.SelectedProductType = [];
    }
   onReject() {
     this.compacctToast.clear("c");
@@ -84,18 +105,40 @@ export class K4cRawMaterialIndentComponent implements OnInit {
     this.getdate();
     this.editDataList = [];
     this.productListFilter = [];
+    this.Cost_Cen_ID = undefined;
+    this.Material_Type = undefined;
+    this.browsedeptList = [];
+    this.deptList = [];
 
   }
-  getDept(){
+  GetToCostCen(){
+    const obj = {
+      "SP_String": "SP_Raw_Material_Indent",
+      "Report_Name_String": "Get Cost Centre Non outlet",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.costcenlist = data;
+      this.browsecostcenlist = data;
+    })
+  }
+  getDept(costcenid){
+    this.browsedeptList = [];
+    this.deptList = [];
+    if(costcenid) {
     const obj = {
       "SP_String": "SP_Raw_Material_Indent",
       "Report_Name_String": "Get - Department",
-      "Json_Param_String": JSON.stringify([{ Cost_Cen_ID: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID }])
+      "Json_Param_String": JSON.stringify([{ Cost_Cen_ID: costcenid }])
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      this.deptList = data;
-      console.log("deptList",this.deptList);
+      if(this.ObjBrowseData.Cost_Cen_ID) {
+        this.browsedeptList = data;
+      } else{
+        this.deptList = data;
+      }
+      // console.log("deptList",this.deptList);
     })
+    }
   }
   getdate(){
     const obj = {
@@ -106,30 +149,44 @@ export class K4cRawMaterialIndentComponent implements OnInit {
      this.GlobalAPI.getData(obj).subscribe((data: any) => {
        console.log("date",data);
        this.rawDate = new Date(data[0].Column1);
+       var currentdate:any = new Date(data[0].Column1);
+       var mindate = currentdate.setDate(currentdate.getDate() - 5);
+       this.mindate = new Date(mindate);
+      //  var maxdate = new Date();
+       this.maxdate = new Date();
      })
   }
-  GetProductType(){
-    this.SelectedProductType = [];
-    let TempData = [];
+  getMaterialType() {
     const obj = {
       "SP_String": "SP_Raw_Material_Indent",
-      "Report_Name_String": "Get - Product Type List Raw Material",
-      "Json_Param_String":'[{}]',
+      "Report_Name_String": "Get Material Type",
     }
-    this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      TempData = data;
-      console.log("Product Type",TempData)
-      TempData.forEach(el => {
-        this.SelectedProductType.push(el.Product_Type_ID);
-        this.productListFilter.push(
-          {
-            label: el.Product_Type,
-            value: el.Product_Type_ID
-          }
-        )
-      })
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.mattypelist = data;
     })
   }
+  // GetProductType(){
+  //   this.SelectedProductType = [];
+  //   let TempData:any = [];
+  //   const obj = {
+  //     "SP_String": "SP_Raw_Material_Indent",
+  //     "Report_Name_String": "Get - Product Type List Raw Material",
+  //     // "Json_Param_String": JSON.stringify([{Material_Type : this.Material_Type}]),
+  //   }
+  //   this.GlobalAPI.getData(obj).subscribe((data: any) => {
+  //     TempData = data;
+  //     console.log("Product Type",TempData)
+  //     TempData.forEach(el => {
+  //       this.SelectedProductType.push(el.Product_Type_ID);
+  //       this.productListFilter.push(
+  //         {
+  //           label: el.Product_Type,
+  //           value: el.Product_Type_ID
+  //         }
+  //       )
+  //     })
+  //   })
+  // }
   showProduct(valid){
     console.log(valid);
     this.RawIndentFormSubmit = true;
@@ -138,7 +195,8 @@ export class K4cRawMaterialIndentComponent implements OnInit {
       const TempObj = {
         Cost_Cen_ID:this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
         Godown_ID:this.godownId,
-        Product_Type_ID:0
+        Product_Type_ID:0,
+        Material_Type : this.Material_Type
       }
       const obj = {
         "SP_String": "SP_Raw_Material_Indent",
@@ -153,15 +211,47 @@ export class K4cRawMaterialIndentComponent implements OnInit {
         this.productList = tempData;
         this.showSpinner = false;
         this.backUpproductList = tempData;
-        this.GetProductType();
+        // this.GetProductType();
+        this.GetDistinct()
         this.RawIndentFormSubmit = false;
         console.log("productList",this.productList);
       })
     }
   }
+  GetDistinct() {
+    let DProductType:any = [];
+    this.DistProductType =[];
+    this.SelectedProductType =[];
+    this.SearchFields =[];
+    this.productList.forEach((item) => {
+  if (DProductType.indexOf(item.Product_Type_ID) === -1) {
+    DProductType.push(item.Product_Type_ID);
+    this.DistProductType.push({ label: item.Product_Type, value: item.Product_Type_ID });
+    }
+  });
+     this.backUpproductList = [...this.productList];
+  }
+  // filterProduct() {
+  //   console.log(true)
+  //   let DProductType:any = [];
+  //   this.SearchFields =[];
+  // if (this.SelectedProductType.length) {
+  //   this.SearchFields.push('Product_Type_ID');
+  //   DProductType = this.SelectedProductType;
+  // }
+  // this.productList = [];
+  // if (this.SearchFields.length) {
+  //   let LeadArr = this.backUpproductList.filter(function (e) {
+  //     (DProductType.length ? DProductType.includes(e['Product_Type_ID']) : true)
+  //   });
+  // this.productList = LeadArr.length ? LeadArr : [];
+  // } else {
+  // this.productList = [...this.backUpproductList] ;
+  // }
+  // }
   filterProduct(){
     if(this.SelectedProductType.length){
-      let tempProduct = [];
+      let tempProduct:any = [];
       this.SelectedProductType.forEach(item => {
         this.backUpproductList.forEach((el,i)=>{
 
@@ -201,7 +291,7 @@ export class K4cRawMaterialIndentComponent implements OnInit {
     }
   }
   SaveRawindent(){
-    let Savedata = [];
+    let Savedata:any = [];
     if(this.filteredData.length){
       this.filteredData.forEach(el=>{
         if(this.DocNo){
@@ -209,13 +299,14 @@ export class K4cRawMaterialIndentComponent implements OnInit {
             Doc_No: this.DocNo,
             Doc_Date: this.DateService.dateConvert(new Date (this.rawDate)),
             Product_Type_ID: el.Product_Type_ID,
-            Cost_Cen_ID: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+            Cost_Cen_ID: this.Cost_Cen_ID,
             Product_ID: el.Product_ID,
             Product_Description: el.Product_Description,
             UOM: el.UOM,
             Requisition_Qty: Number(el.Requisition_Qty),
             User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
-            Godown_ID : Number(this.godownId)
+            Godown_ID : Number(this.godownId),
+            Material_Type : this.Material_Type
           }
           Savedata.push(tempData)
         }
@@ -224,13 +315,14 @@ export class K4cRawMaterialIndentComponent implements OnInit {
             Doc_No: "A",
             Doc_Date: this.DateService.dateConvert(new Date (this.rawDate)),
             Product_Type_ID: el.Product_Type_ID,
-            Cost_Cen_ID: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+            Cost_Cen_ID: this.Cost_Cen_ID,
             Product_ID: el.Product_ID,
             Product_Description: el.Product_Description,
             UOM: el.UOM,
             Requisition_Qty: Number(el.Requisition_Qty),
             User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
-            Godown_ID : Number(this.godownId)
+            Godown_ID : Number(this.godownId),
+            Material_Type : this.Material_Type
           }
           Savedata.push(tempData)
         }
@@ -266,7 +358,8 @@ export class K4cRawMaterialIndentComponent implements OnInit {
             detail: "Raw Material Indent Succesfully Save"
           });
           }
-
+          this.DistProductType = [];
+          this.SelectedProductType = [];
           this.GetAllData();
           this.clearData();
           this.getdate();
@@ -292,6 +385,7 @@ export class K4cRawMaterialIndentComponent implements OnInit {
       const tempDate = {
         From_Date :start,
         To_Date :end,
+        Cost_Cen_ID : this.ObjBrowseData.Cost_Cen_ID ? Number(this.ObjBrowseData.Cost_Cen_ID) : 0,
         Godown_ID : Number(this.ObjBrowseData.Godown_ID) ? Number(this.ObjBrowseData.Godown_ID) : 0
       }
       const objj = {
@@ -306,6 +400,32 @@ export class K4cRawMaterialIndentComponent implements OnInit {
         this.seachSpinner = false;
       })
   }
+  exportoexcel(){
+    const start = this.ObjBrowseData.req_date_B
+      ? this.DateService.dateConvert(new Date(this.ObjBrowseData.req_date_B))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjBrowseData.req_date2
+      ? this.DateService.dateConvert(new Date(this.ObjBrowseData.req_date2))
+      : this.DateService.dateConvert(new Date());
+      const tempDate = {
+        From_Date :start,
+        To_Date :end,
+        Cost_Cen_ID : this.ObjBrowseData.Cost_Cen_ID ? Number(this.ObjBrowseData.Cost_Cen_ID) : 0,
+        Godown_ID : Number(this.ObjBrowseData.Godown_ID) ? Number(this.ObjBrowseData.Godown_ID) : 0
+      }
+    const obj = {
+      "SP_String": "SP_Raw_Material_Indent",
+      "Report_Name_String": "Export Raw Material Indent",
+      "Json_Param_String": JSON.stringify([tempDate])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      XLSX.writeFile(workbook, "Indent_List"+'.xlsx');
+      
+    })
+  }
   onFilterChange(eve: any){
     this.GetAllDataList = []
      if(eve){
@@ -319,13 +439,13 @@ export class K4cRawMaterialIndentComponent implements OnInit {
       this.GetAllDataList = this.backUpGetAllDataList;
     }
   }
-  // Print(obj){
-  //   if (obj.Doc_No) {
-  //     window.open("/Report/Crystal_Files/K4C/K4C_Raw_Material_Indent.aspx?DocNo=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+  Print(obj){
+    if (obj.Doc_No) {
+      window.open("/Report/Crystal_Files/K4C/Raw_Material_Indent_Print.aspx?Doc_No=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
 
-  //     );
-  //   }
-  // }
+      );
+    }
+  }
   editraw(col){
    this.DocNo = undefined;
    if(col.Doc_No){
@@ -336,6 +456,17 @@ export class K4cRawMaterialIndentComponent implements OnInit {
     this.geteditmaster(col.Doc_No)
    }
   }
+  View(col){
+    this.Doc_no = undefined;
+    this.Doc_date = undefined;
+    this.To_Godown_ID = undefined;
+    if(col.Doc_No){
+     this.Doc_no = col.Doc_No;
+     this.Doc_date = col.Doc_Date;
+     this.To_Godown_ID = col.Department;
+     this.geteditmaster(col.Doc_No)
+    }
+   }
   geteditmaster(Doc_No){
     const objj = {
       "SP_String": "SP_Raw_Material_Indent",
@@ -344,6 +475,7 @@ export class K4cRawMaterialIndentComponent implements OnInit {
     }
     this.GlobalAPI.getData(objj).subscribe((data:any)=>{
       console.log("data",data);
+      this.viewlist = data;
       this.editDataList = data;
       this.rawDate = new Date(data[0].Doc_Date);
       this.godownId = data[0].Godown_ID;
@@ -359,6 +491,7 @@ export class K4cRawMaterialIndentComponent implements OnInit {
         })
         this.backUpproductList = this.productList;
         this.Gettypedist();
+        this.ViewPoppup = true;
       })
 
     })
@@ -416,6 +549,7 @@ export class K4cRawMaterialIndentComponent implements OnInit {
 class BrowseData {
   req_date_B: string;
   req_date2: string;
+  Cost_Cen_ID: any;
   Godown_ID: number;
 
 }

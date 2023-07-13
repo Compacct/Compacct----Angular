@@ -51,6 +51,7 @@ export class NonSaleableClosingStockComponent implements OnInit {
   minDate:Date;
   maxDate:Date;
   EODstatus: any;
+  docdate: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -205,10 +206,10 @@ export class NonSaleableClosingStockComponent implements OnInit {
   }
   GetDataForSave(){
     if(this.productlist.length) {
-      let tempArr =[];
+      let tempArr:any =[];
       const TempObj = {
         Doc_No	 : this.Doc_No ? this.Doc_No : "A",
-        Doc_Date : this.DateService.dateConvert(new Date(this.BillDate)),
+        Doc_Date : this.docdate ? this.DateService.dateConvert(new Date(this.docdate)) : this.DateService.dateConvert(new Date(this.BillDate)),
         Cost_Cen_ID	: this.ObjNsOTclosingStock.Cost_Cen_ID,
         Godown_ID	: this.ObjNsOTclosingStock.godown_id,
         //Narration	: this.ObjOTclosingwithbatch.Remarks,
@@ -329,6 +330,8 @@ const obj = {
      this.productlist = [];
      this.items = ["BROWSE", "UPDATE"];
      this.buttonname = "Update";
+     this.BillDate = new Date(DocNo.Doc_Date);
+     this.docdate = new Date(DocNo.Doc_Date);
      // console.log("this.EditDoc_No ==", this.Objproduction.Doc_No);
      this.GetdataforEdit(this.Doc_No);
      }
@@ -346,8 +349,11 @@ const obj = {
        this.editList = data;
           this.ObjNsOTclosingStock.Brand_ID = data[0].Brand_ID;
             this.ObjNsOTclosingStock.Cost_Cen_ID = data[0].Cost_Cen_ID;
+            this.getGodown();
             this.ObjNsOTclosingStock.godown_id = data[0].godown_id;
-            this.BillDate = data[0].Doc_Date;
+            // this.minDate = undefined;
+            // this.maxDate = undefined;
+            // this.BillDate = new Date(data[0].Doc_Date);
             data.forEach(element => {
               const  productObj = {
                Product_Type_ID : element.Product_Type_ID,
@@ -449,7 +455,7 @@ const obj = {
      this.compacctToast.clear("c");
    }
    exportoexcel(Arr,fileName): void {
-     let temp = [];
+     let temp:any = [];
      Arr.forEach(element => {
        const obj = {
         Product_Type : element.Product_Type,
@@ -494,7 +500,10 @@ const obj = {
     this.ObjNsOTclosingStock.Remarks = [];
     this.productlist = [];
     this.editList = [];
+    this.docdate = undefined;
     this.getbilldate();
+    this.items = ["BROWSE", "CREATE"];
+    this.buttonname = "Save";
   }
 
 }

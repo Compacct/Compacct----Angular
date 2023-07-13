@@ -22,6 +22,7 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
   Pending_EmployeeList: any = [];
   SelectedPendingEmployeeList: any = [];
   pendingTableData: any = [];
+  backupPendingTableData: any = [];
   pendingTableFilterList: any = [];
   DisplayPopup: boolean = false;
   disabled_Obj: any = {};
@@ -31,14 +32,17 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
   Report_Manager_ID = 0;
   Approved_Note_Reporting_Manager: any;
   Approved_Note_Business_Manager: any;
+  Approved_Note_inGeneral: any;
   remarksFormSubmit: boolean = false;
   Approve_Spinner: boolean = false;
   Disapprove_Spinner: boolean = false;
   approvedTableData: any = [];
+  backupApprovedTableData: any = [];
   approvedTableFilterData: any = [];
   Approve_EmployeeList: any = [];
   SelectedApproveEmployeeList: any = [];
   disApprovedTableData: any = [];
+  backupdDisApprovedTableData: any = [];
   disApprovedTableFilterData: any = [];
   DisApprove_EmployeeList: any = [];
   SelectedDisApproveEmployeeList: any = [];
@@ -87,6 +91,7 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
       // console.log('pending table data', data);
       this.pendingTableData = data;
+      this.backupPendingTableData = data;
       if (data.length) {
         this.pendingTableFilterList = Object.keys(data[0]);
         // console.log('pendingTableFilterList',this.pendingTableFilterList);
@@ -104,14 +109,14 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
   }
 
   FilterPending() {
-    let backupTableData = this.pendingTableData;
-    this.pendingTableData = [];
     if (this.SelectedPendingEmployeeList.length) {
+      // console.log("SelectedPendingEmployeeList",this.SelectedPendingEmployeeList);
+      this.pendingTableData = [];
       this.SelectedPendingEmployeeList.forEach((ele: any) => {
-        let filterData = backupTableData.filter((data: any) => {
+        let filterData = this.backupPendingTableData.filter((data: any) => {
           return data.Emp_Name == ele;
         });
-        // console.log('filterData', filterData);
+        console.log('filterData', filterData);
         if (filterData.length) {
           filterData.forEach((e: any) => {
             this.pendingTableData.push(e);
@@ -121,8 +126,9 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
       });
     }
     else {
-      this.pendingTableData = [...backupTableData];
-      // console.log('backupTableData', backupTableData, this.pendingTableData);
+      // console.log("SelectedPendingEmployeeList",this.SelectedPendingEmployeeList);
+      this.pendingTableData = [...this.backupPendingTableData];
+      // console.log('backupTableData', this.backupPendingTableData,);
     }
   }
 
@@ -155,7 +161,20 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
       this.remarksFormSubmit = false;
       this.Approve_Spinner = true;
       let saveObj = {};
-      if (this.EmpID == this.Report_Manager_ID) {
+
+      if (this.EmpID == this.Report_Manager_ID && this.EmpID == this.Business_Manager_ID) {
+        saveObj = {
+          "Emp_ID": this.disabled_Obj.Emp_ID,
+          "Atten_Date": this.DateService.dateConvert(this.disabled_Obj.Atten_Date),
+          "Approved_Status_Reporting_Manager": "Y",
+          "Approved_Note_Reporting_Manager": this.Approved_Note_inGeneral,
+          "Approved_Status_Business_Manager": "Y",
+          "Approved_Note_Business_Manager": this.Approved_Note_inGeneral,
+          "Changed_In_Time": this.DateService.dateTimeConvert(new Date(this.disabled_Obj.Changed_In_Time)),
+          "Changed_Out_Time": this.DateService.dateTimeConvert(new Date(this.disabled_Obj.Changed_Out_Time))
+        }
+      }
+      else if (this.EmpID == this.Report_Manager_ID) {
         saveObj = {
           "Emp_ID": this.disabled_Obj.Emp_ID,
           "Atten_Date": this.DateService.dateConvert(this.disabled_Obj.Atten_Date),
@@ -167,7 +186,7 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
           "Changed_Out_Time": this.DateService.dateTimeConvert(new Date(this.disabled_Obj.Changed_Out_Time))
         }
       }
-      if (this.EmpID == this.Business_Manager_ID) {
+      else if (this.EmpID == this.Business_Manager_ID) {
         saveObj = {
           "Emp_ID": this.disabled_Obj.Emp_ID,
           "Atten_Date": this.DateService.dateConvert(this.disabled_Obj.Atten_Date),
@@ -213,7 +232,20 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
       this.remarksFormSubmit = false;
       this.Disapprove_Spinner = true;
       let saveObj = {};
-      if (this.EmpID == this.Report_Manager_ID) {
+
+      if (this.EmpID == this.Report_Manager_ID && this.EmpID == this.Business_Manager_ID) {
+        saveObj = {
+          "Emp_ID": this.disabled_Obj.Emp_ID,
+          "Atten_Date": this.DateService.dateConvert(this.disabled_Obj.Atten_Date),
+          "Approved_Status_Reporting_Manager": "N",
+          "Approved_Note_Reporting_Manager": this.Approved_Note_inGeneral,
+          "Approved_Status_Business_Manager": "N",
+          "Approved_Note_Business_Manager": this.Approved_Note_inGeneral,
+          "Changed_In_Time": this.DateService.dateTimeConvert(new Date(this.disabled_Obj.Changed_In_Time)),
+          "Changed_Out_Time": this.DateService.dateTimeConvert(new Date(this.disabled_Obj.Changed_Out_Time))
+        }
+      }
+     else if (this.EmpID == this.Report_Manager_ID) {
         saveObj = {
           "Emp_ID": this.disabled_Obj.Emp_ID,
           "Atten_Date": this.DateService.dateConvert(this.disabled_Obj.Atten_Date),
@@ -225,7 +257,7 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
           "Changed_Out_Time": this.DateService.dateTimeConvert(new Date(this.disabled_Obj.Changed_Out_Time))
         }
       }
-      if (this.EmpID == this.Business_Manager_ID) {
+     else if (this.EmpID == this.Business_Manager_ID) {
         saveObj = {
           "Emp_ID": this.disabled_Obj.Emp_ID,
           "Atten_Date": this.DateService.dateConvert(this.disabled_Obj.Atten_Date),
@@ -267,12 +299,7 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
 
   ClosePopUp() {
     this.DisplayPopup = false;
-    this.disabled_Obj = {};
-    this.Report_Manager_ID = 0;
-    this.Business_Manager_ID = 0;
-    this.Approved_Note_Reporting_Manager = undefined;
-    this.Approved_Note_Business_Manager = undefined;
-    this.remarksFormSubmit = false;
+   this.clearData();
   }
 
   getApproveTableData(id) {
@@ -289,7 +316,7 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
       if (data.length) {
         this.approvedTableFilterData = Object.keys(data[0]);
         // console.log('approvedTableFilterData',this.approvedTableFilterData);
-        
+
       }
       data.forEach(element => {
         if (tempArray.indexOf(element.Emp_Name) == -1) {
@@ -304,11 +331,10 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
   }
 
   FilterApprove() {
-    let backupTableData = this.approvedTableData;
-    this.approvedTableData = [];
     if (this.SelectedApproveEmployeeList.length) {
+      this.approvedTableData = [];
       this.SelectedApproveEmployeeList.forEach((ele: any) => {
-        let filterData = backupTableData.filter((data: any) => {
+        let filterData = this.backupApprovedTableData.filter((data: any) => {
           return data.Emp_Name == ele;
         });
         // console.log('filterData', filterData);
@@ -321,7 +347,7 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
       });
     }
     else {
-      this.approvedTableData = [...backupTableData];
+      this.approvedTableData = [...this.backupApprovedTableData];
       // console.log('backupTableData', backupTableData, this.approvedTableData);
     }
   }
@@ -337,10 +363,11 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
       // console.log('Disapprove Table Data', data);
       this.disApprovedTableData = data;
+      this.backupdDisApprovedTableData = data;
       if (data.length) {
         this.disApprovedTableFilterData = Object.keys(data[0]);
         // console.log('disApprovedTableFilterData',this.disApprovedTableFilterData);
-        
+
       }
       data.forEach((element: any) => {
         if (tempArray.indexOf(element.Emp_Name) == -1) {
@@ -355,11 +382,10 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
   }
 
   FilterDisApprove() {
-    let backupTableData = this.disApprovedTableData;
-    this.disApprovedTableData = [];
     if (this.SelectedDisApproveEmployeeList.length) {
+      this.disApprovedTableData = [];
       this.SelectedDisApproveEmployeeList.forEach((ele: any) => {
-        let filterData = backupTableData.filter((data: any) => {
+        let filterData = this.backupdDisApprovedTableData.filter((data: any) => {
           return data.Emp_Name == ele;
         });
         // console.log('filterData', filterData);
@@ -372,7 +398,7 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
       });
     }
     else {
-      this.disApprovedTableData = [...backupTableData];
+      this.disApprovedTableData = [...this.backupdDisApprovedTableData];
       // console.log('backupTableData', backupTableData, this.disApprovedTableData);
     }
   }
@@ -403,6 +429,7 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
     this.Business_Manager_ID = 0;
     this.Approved_Note_Reporting_Manager = undefined;
     this.Approved_Note_Business_Manager = undefined;
+    this.Approved_Note_inGeneral = undefined;
     this.remarksFormSubmit = false;
     this.disApprovedFormSubmit = false;
   }
@@ -412,7 +439,19 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
     if (valid) {
       this.disApprovedFormSubmit = false;
       let saveObj = {};
-      if (this.EmpID == this.Report_Manager_ID) {
+      if (this.EmpID == this.Report_Manager_ID && this.EmpID == this.Business_Manager_ID) {
+        saveObj = {
+          "Emp_ID": this.disabled_Obj.Emp_ID,
+          "Atten_Date": this.DateService.dateConvert(this.disabled_Obj.Atten_Date),
+          "Approved_Status_Reporting_Manager": "N",
+          "Approved_Note_Reporting_Manager": this.Approved_Note_inGeneral,
+          "Approved_Status_Business_Manager": "N",
+          "Approved_Note_Business_Manager": this.Approved_Note_inGeneral,
+          "Changed_In_Time": this.DateService.dateTimeConvert(new Date(this.disabled_Obj.Changed_In_Time)),
+          "Changed_Out_Time": this.DateService.dateTimeConvert(new Date(this.disabled_Obj.Changed_Out_Time))
+        }
+      }
+     else if (this.EmpID == this.Report_Manager_ID) {
         saveObj = {
           "Emp_ID": this.disabled_Obj.Emp_ID,
           "Atten_Date": this.DateService.dateConvert(this.disabled_Obj.Atten_Date),
@@ -424,7 +463,7 @@ export class ApproveAttendanceRegularizationComponent implements OnInit {
           "Changed_Out_Time": this.DateService.dateTimeConvert(new Date(this.disabled_Obj.Changed_Out_Time))
         }
       }
-      if (this.EmpID == this.Business_Manager_ID) {
+     else if (this.EmpID == this.Business_Manager_ID) {
         saveObj = {
           "Emp_ID": this.disabled_Obj.Emp_ID,
           "Atten_Date": this.DateService.dateConvert(this.disabled_Obj.Atten_Date),

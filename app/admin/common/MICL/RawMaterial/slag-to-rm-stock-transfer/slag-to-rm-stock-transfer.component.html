@@ -1,0 +1,418 @@
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+            <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+        </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="s" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+            <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
+        </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="SearchSlagtoRMForm" #SearchSlagtoRMForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+                                         <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                            <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetSerarchBrowse()" id="load" [disabled]="seachSpinner">
+                                          <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                          <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                       </button>
+                                    </div>
+                                </div>
+                                </form>
+                               
+                                <div class="table-id">
+                                    <p-table [value]="SerarchSearchSlagtoRMList"
+                                    *ngIf = "SerarchSearchSlagtoRMList.length"
+                                    [paginator]="true" [rows]="100" 
+                                    [loading]="seachSpinner" [rowHover]="true" 
+                                    [autoLayout]="true" sortMode="multiple" 
+                                    [rowsPerPageOptions]="[100, 300, 500]"  
+                                    [globalFilterFields]='SerarchSearchSlagtoRMListHeader'
+                                        [rowHover]="true" #dt2>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+        
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th *ngFor="let option of SerarchSearchSlagtoRMListHeader">{{option.replaceAll('_',' ')}}</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                 <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                        <i class="fa fa-fw fa-bars"></i>
+                                                                        <span class="caret"></span>
+                                                                    </button>
+                                                        <ul class="dropdown-menu">
+                                                            <!-- <li *ngIf="!col.Bill_No">
+                                                                <a (click)="Edit(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li> -->
+                                                            <li>
+                                                                <a (click)="View(col)">
+                                                                    <i class="fa fa-fw fa-eye"></i> View
+                                                                </a>
+                                                            </li>
+                                                            <!-- <li>
+                                                                <a (click)="Delete(col)">
+                                                                    <i class="fa fa-fw fa-trash"></i> Delete
+                                                                </a>
+                                                            </li> -->
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                    <ng-container *ngFor="let option of SerarchSearchSlagtoRMListHeader">
+                                                        <td nowrap="nowrap">{{col[option]}}</td>
+                                                    </ng-container>
+                                                
+                                            </tr>
+                                        </ng-template>                                      
+                                    </p-table>
+                                </div>
+                         </p-tabPanel>
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save"> 
+                        <form name="SlagtToRMForm" #SlagtToRMForm="ngForm" novalidate>
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                <label class="control-label">Date <sup class="text-danger">*</sup></label>
+                                <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='DocDate'></ejs-datepicker>
+                            </div>
+                        </div>
+                        <hr class="box boxboxDivide-primary ng-scope">
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                 <label class="control-label">From Cost Center<sup class="text-danger">*</sup></label>
+                                 <select class="form-control" name="fromcostCenter" #fromcostCenter="ngModel" 
+                                    [(ngModel)]="ObjSlagtToRM.F_Cost_Cen_ID" 
+                                    [ngClass]="{clearance: SlagtToRMFormSubmitted && fromcostCenter?.errors?.required}"
+                                    (change)="GetFromGodown()" required >
+                                 <option [ngValue]="undefined">Select</option>
+                                <option *ngFor="let Data of FromCostCenterList" [value]="Data.Cost_Cen_ID">
+                                    {{Data.Cost_Cen_Name}}
+                                </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">From Stock Point<sup class="text-danger">*</sup></label>
+                              <select class="form-control"name="fromgodownid" #fromgodownid="ngModel" 
+                                [(ngModel)]="ObjSlagtToRM.F_Godown_ID" (change)="GetFromProduct()"
+                                [ngClass]="{clearance: SlagtToRMFormSubmitted && fromgodownid?.errors?.required}"
+                                required>
+                                  <option [ngValue]="undefined">Select</option>
+                                  <option *ngFor="let data of FromGodownlist" [value]="data.Godown_ID">
+                                      {{data.godown_name}}
+                                  </option>
+                              </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">To Cost Center<sup class="text-danger">*</sup></label>
+                                <select class="form-control" name="tocostCenter" #tocostCenter="ngModel" 
+                                   [(ngModel)]="ObjSlagtToRM.To_Cost_Cen_ID" 
+                                   [ngClass]="{clearance: SlagtToRMFormSubmitted && tocostCenter?.errors?.required}"
+                                   (change)="GetToGodown()" required >
+                                <option [ngValue]="undefined">Select</option>
+                               <option *ngFor="let Data of ToCostCenterList" [value]="Data.Cost_Cen_ID">
+                                   {{Data.Cost_Cen_Name}}
+                               </option>
+                               </select>
+                           </div>
+                           <div class="col-sm-3">
+                               <label class="control-label">To Stock Point<sup class="text-danger">*</sup></label>
+                             <select class="form-control"name="togodownid" #togodownid="ngModel" 
+                               [(ngModel)]="ObjSlagtToRM.To_Godown_ID"
+                               [ngClass]="{clearance: SlagtToRMFormSubmitted && togodownid?.errors?.required}"
+                               required>
+                                 <option [ngValue]="undefined">Select</option>
+                                 <option *ngFor="let data of ToGodownlist" [value]="data.Godown_ID">
+                                     {{data.godown_name}}
+                                 </option>
+                             </select>
+                           </div>
+                        </div>
+                        <div class="form-group">
+                             <div class="col-sm-4">
+                                 <label>From Product<sup class="text-danger">*</sup></label>
+                                 <p-dropdown [options]="FromProductList" name="fromproduct" #fromproduct="ngModel"  
+                                     [(ngModel)]="ObjSlagtToRM.F_Product_ID" 
+                                     [showClear]="true" [emptyFilterMessage]="' No Product Found'" 
+                                     (onChange)="GetBatchNo()" [filter]="true" filterBy="label,value.name"
+                                     [resetFilterOnHide]="true" [placeholder]="'Select Product'"
+                                     [virtualScroll]="true" itemSize="30" 
+                                     [ngClass]="{'clearance':SlagtToRMFormSubmitted && fromproduct?.errors?.required}" [required]="true">
+                                 </p-dropdown>
+                             </div>
+                             <div class="col-sm-4">
+                                <label>To Product<sup class="text-danger">*</sup></label>
+                                <p-dropdown [options]="ToProductList" name="toproduct" #toproduct="ngModel"  
+                                    [(ngModel)]="ObjSlagtToRM.To_Product_ID" 
+                                    [showClear]="true" [emptyFilterMessage]="' No Product Found'" 
+                                    [filter]="true" filterBy="label,value.name"
+                                    [resetFilterOnHide]="true" [placeholder]="'Select Product'"
+                                    [virtualScroll]="true" itemSize="30" 
+                                    [ngClass]="{'clearance':SlagtToRMFormSubmitted && toproduct?.errors?.required}" [required]="true">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Batch No <sup class="text-danger">*</sup></label>
+                                <select class="form-control" name="BatchNo" #BatchNo="ngModel" 
+                                [(ngModel)]="ObjSlagtToRM.Batch_No"
+                                [ngClass]="{clearance: SlagtToRMFormSubmitted && BatchNo?.errors?.required}"
+                                   required>
+                                    <option [ngValue]="undefined">Select</option>
+                                  <option *ngFor="let option of BatchNolist" [value]="option.Batch_No">
+                                    {{option.Batch_No_Show}}
+                                </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                <label class="control-label">Qty <sup class="text-danger">*</sup></label>
+                                <!-- <div class="input-group">                                   -->
+                                <input class="form-control"  name="Qty" #Qty="ngModel" 
+                                [(ngModel)]="ObjSlagtToRM.Qty"
+                                placeholder="Qty"
+                                (ngModelChange)="GetTaxAmt()"
+                                CompacctDigitonly="true"
+                                [ngClass]="{clearance: SlagtToRMFormSubmitted && Qty?.errors?.required}"
+                                required>
+                                      <!-- <span class="input-group-addon">
+                                        {{UomList}}
+                                    </span>   
+                                </div> -->
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Rate<sup class="text-danger">*</sup></label>
+                                <input class="form-control"name="Rate" #Rate="ngModel" 
+                                [(ngModel)]="ObjSlagtToRM.Rate"
+                                 placeholder="Rate"
+                                 (ngModelChange)="GetTaxAmt()"
+                                  CompacctDigitonly="true"
+                                [ngClass]="{clearance: SlagtToRMFormSubmitted && Rate?.errors?.required}" required>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Amount <sup class="text-danger">*</sup></label>
+                                <input class="form-control"  name="amt" #amt="ngModel" 
+                                [(ngModel)]="ObjSlagtToRM.Amount"
+                                CompacctDigitonly="true" disabled>
+                            </div>
+                           <div class="col-sm-2">
+                            <button type="submit" class="btn btn-primary custombutton" (click)="AddProduct(SlagtToRMForm.form.valid)">
+                                <span class="glyphicon glyphicon-plus"></span> Add
+                            </button>
+                           </div>
+                        </div>
+                    <br>
+                    <div class="table-responsive no-padding">
+                        <table class="table table-bordered">
+                         <thead style="background-color:#3c8dbc;color:white;">
+                            <tr style="background-color:#3c8dbc;color:white;">
+                              <!-- <th>Sl. No.</th> -->
+                              <th>From Product</th>
+                              <th>To Product</th>
+                              <th>Batch No</th>
+                              <th>QTY</th>
+                              <th>UOM</th>
+                              <th>Rate</th>
+                              <th>Amount</th>
+                              <th>Detete</th>
+                            </tr>
+                         </thead>
+                        <tbody>
+                            <tr *ngFor=" let obj of AddProductList; let ind = index;">
+                              <!-- <td>{{ ind + 1  }}</td> -->
+                              <td>{{ obj.F_Product_Description ? obj.F_Product_Description : "-" }}</td>
+                              <td>{{ obj.To_Product_Description ? obj.To_Product_Description : "-" }}</td>
+                              <td>{{ obj.Batch_No }}</td>
+                              <td>{{ obj.Qty }}</td>
+                              <td>{{ obj.UOM }}</td>
+                              <td>{{ obj.Rate }}</td>
+                              <td>{{ obj.Amount}}</td>
+                              <td><button (click)="DeleteProductList(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                            </tr>
+                        </tbody>
+                       </table>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="col-sm-4">
+                            <label class="control-label">Remarks<sup class="text-danger"></sup></label>
+                            <textarea class="form-control" name="Remarks" #Remarks="ngModel" [(ngModel)]="ObjSlagtToRM.Remarks" rows="2" placeholder="Remarks"></textarea>
+                        </div>
+                     </div>
+                        </form>
+
+            <!-- <div class="col-xs-12">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th>Taxable Amount :</th>
+                                <td class="amt-td ng-binding">{{Tax}}</td>
+                             </tr>
+                             <tr>
+                                <th>CGST Amount :</th>
+                                <td class="amt-td ng-binding">{{CGST}}</td>
+                                <th>SGST Amount :</th>
+                                <td class="amt-td ng-binding">{{SGST}}</td>
+                                <th>IGST Amount :</th>
+                                <td class="amt-td ng-binding">{{IGST}}</td>
+                            </tr>
+                             <tr>
+                                <th>Net Amount : </th>
+                                <td class="amt-td ng-binding">{{NetAMT}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> -->
+
+                            <hr class="box boxboxDivide-primary ng-scope">
+                            <div class="box-footer">
+                                <button class="btn btn-primary pull-right" (click)="SaveSlagToRM()" id="load" [disabled]="Spinner">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                              </button>
+                            </div>                           
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- VIEW POPUP -->
+<p-dialog header="Details" [appendTo]="'body'" [(visible)]="ViewPoppup" [modal]="true" [responsive]="true" [minY]="70" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '80%', minWidth: '300px'}">
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Date</label>
+            <div class="label-t">{{View_Doc_date | date :"dd/MMM/yyyy"}}</div>
+
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Doc No</label>
+            <div class="label-t">{{View_Doc_no}}</div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <hr class="box boxboxDivide-primary ng-scope">
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">From Cost Center</label>
+            <div class="label-t">{{View_F_Cost_Cen_ID}}</div>
+
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">From Stock Point</label>
+            <div class="label-t">{{View_F_Godown_ID}}</div>
+
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">To Cost Center</label>
+            <div class="label-t">{{View_To_Cost_Cen_ID}}</div>
+
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">To Stock Point</label>
+            <div class="label-t">{{View_To_Godown_ID}}</div>
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+        <p-table [value]="ViewList" [globalFilterFields]='["F_Product_Description","To_Product_Description","Batch_No","Qty","UOM","Rate","Amount"]' [rowHover]="true" [autoLayout]="true" #dt2>
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                    </div>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>From Product</th>
+                    <th>To Product</th>
+                    <th>Batch No</th>
+                    <th>QTY</th>
+                    <th>UOM</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{ col.F_Product_Description ? col.F_Product_Description : "-" }}</td>
+                    <td>{{ col.To_Product_Description ? col.To_Product_Description : "-" }}</td>
+                    <td>{{ col.Batch_No }}</td>
+                    <td>{{ col.Qty }}</td>
+                    <td>{{ col.UOM }}</td>
+                    <td>{{ col.Rate }}</td>
+                    <td>{{ col.Amount }}</td>           
+
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+
+    <p-footer>
+        <button type="button" (click)="ViewPoppup = false" class="btn btn-default">
+       <i class="fa fa-close"></i>&nbsp;  Close
+     </button>
+    </p-footer>
+</p-dialog>
+
+

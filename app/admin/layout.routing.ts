@@ -390,7 +390,18 @@ import { HearingCRMLeadFollowupComponent } from "./common/CRM/Followup/hearing-c
 import { HrRequisitionFormComponent } from './common/Attendance/hr-requisition-form/hr-requisition-form.component';
 import { ApproveHrRequisitionFormComponent } from './common/Attendance/approve-hr-requisition-form/approve-hr-requisition-form.component';
 import { RetailAdvanceOrderComponent } from "./common/FinancialManagement/Retail/retail-advance-order/retail-advance-order.component";
+import { SalesmanTargetComponent } from "./common/PatientManagement/Audiologist/salesman-target/salesman-target.component";
 import { HRAttnDetalisComponent } from "./common/HR/hr-attn-detalis/hr-attn-detalis.component";
+import { EmployeeBonusComponent } from './common/MICL/employee-bonus/employee-bonus.component';
+import { HrRecruitmentTrackerComponent } from './common/Attendance/hr-recruitment-tracker/hr-recruitment-tracker.component';
+import { EmployeeSynchroniseWithAppComponent } from './common/HR/employee-synchronise-with-app/employee-synchronise-with-app.component';
+import { REPStockReportHBRComponent } from "./common/Harbauer/rep-stock-report-hbr/rep-stock-report-hbr.component";
+import { SlagToRmStockTransferComponent } from './common/MICL/RawMaterial/slag-to-rm-stock-transfer/slag-to-rm-stock-transfer.component';
+import { CommonStockTransferComponent } from './common/MICL/RawMaterial/common-stock-transfer/common-stock-transfer.component';
+import { BillNoChangeComponent } from './common/MICL/bill-no-change/bill-no-change.component';
+import { CostcenterTargetJohComponent } from './common/PatientManagement/Audiologist/costcenter-target-joh/costcenter-target-joh.component';
+import { LeaveRegisterComponent } from './common/MICL/leave-register/leave-register.component';
+import { HrReportsComponent } from './common/Attendance/hr-reports/hr-reports.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -2977,13 +2988,89 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
     }
     },
     {
+      path: 'CR_Salesman_Target',
+      component: SalesmanTargetComponent,
+      data: {
+        title: 'Salesman Target'
+      }
+    },
+    {
       path: 'HR_ATTN_DETAILS',
         component: HRAttnDetalisComponent,
         data: {
           title: 'Attendance Detalis'
     }
     },
-    
+    {
+      path: 'Employee_Bonus',
+        component: EmployeeBonusComponent,
+        data: {
+          title: 'Employee Bonus'
+    }
+    },
+    {
+      path: 'HR_Recruitment_Tracker',
+        component: HrRecruitmentTrackerComponent,
+        data: {
+          title: 'HR Recruitment Tracker'
+    }
+    },
+    {
+      path: 'Employee_Synchronise_With_App',
+        component: EmployeeSynchroniseWithAppComponent,
+        data: {
+          title: 'Employee Synchronise With App'
+    }
+    },
+    {
+      path: 'REP_Stock_Report_HBR',
+        component: REPStockReportHBRComponent,
+        data: {
+          title: 'REP Stock Report Harbauer'
+    }
+    },
+    {
+      path: 'Slag_To_RM_Stock_Transfer',
+        component: SlagToRmStockTransferComponent,
+        data: {
+          title: 'Slag To RM Stock Transfer'
+    }
+    },
+    {
+      path: 'Common_Stock_Transfer',
+        component: CommonStockTransferComponent,
+        data: {
+          title: 'Stock Transfer'
+    }
+    },
+    {
+      path: 'Bill_No_Change',
+        component: BillNoChangeComponent,
+        data: {
+          title: 'Bill Number Change'
+    }
+    },
+    {
+      path: 'BL_Txn_Costcenter_Target_For_Joh',
+        component: CostcenterTargetJohComponent,
+        data: {
+          title: 'Costcenter Target'
+    }
+    },
+    {
+      path: 'Leave_Register',
+        component: LeaveRegisterComponent,
+        data: {
+          title: 'Leave Register'
+    }
+    },
+    {
+      path: 'HR_Reports',
+        component: HrReportsComponent,
+        data: {
+          title: 'HR Reports'
+    }
+    },
     
     /*{
 

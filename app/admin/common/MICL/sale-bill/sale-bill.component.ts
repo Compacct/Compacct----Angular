@@ -37,7 +37,9 @@ export class SaleBillComponent implements OnInit {
   CGST:any = undefined;
   SGST:any = undefined;
   IGST:any = undefined;
-  NetAMT: any = undefined;
+  NetAMT:any = undefined;
+  Total_Amount:any = undefined;
+  Rounded_Off:any = undefined;
   initDate: any = [];
   SerarchSaleBill: any = [];
   SerarchSaleBillHeader: any = [];
@@ -118,6 +120,8 @@ export class SaleBillComponent implements OnInit {
     this.SGST = undefined;
     this.IGST = undefined;
     this.NetAMT = undefined;
+    this.Rounded_Off = undefined;
+    this.Total_Amount = undefined;
     // this.SerarchSaleBill = [];
   
   }
@@ -339,6 +343,8 @@ export class SaleBillComponent implements OnInit {
     this.SGST = undefined;
     this.IGST = undefined;
     this.NetAMT = undefined;
+    this.Rounded_Off = undefined;
+    this.Total_Amount = undefined;
     this.ngxService.start();
     // this.ObjTopSale.Bill_No.forEach(element => {
     this.SelectedChallanNo.forEach(element => {
@@ -378,6 +384,8 @@ export class SaleBillComponent implements OnInit {
     this.CGST = undefined;
     this.SGST = undefined;
     this.IGST = undefined;
+    this.Total_Amount = undefined;
+    this.Rounded_Off = undefined;
     this.NetAMT = undefined;
     let count1 = 0;
     let count2 = 0;
@@ -395,7 +403,12 @@ export class SaleBillComponent implements OnInit {
     this.CGST = count2.toFixed(2);
     this.SGST = count3.toFixed(2);
     this.IGST = count4.toFixed(2);
-    this.NetAMT = count5.toFixed(2);
+    this.Total_Amount = count5.toFixed(2);
+    this.Rounded_Off = Number(Math.round(Number(this.Total_Amount)) - Number(this.Total_Amount)).toFixed(2); 
+    this.NetAMT = this.RoundOff(this.Total_Amount);
+  }
+  RoundOff(key:any){
+    return Math.round(Number(Number(key).toFixed(2)))
   }
   SaveSaleBill(valid:any) {
     this.SaleBillFormSubmitted = true;
@@ -434,11 +447,12 @@ export class SaleBillComponent implements OnInit {
 			  CGST_Amt:	this.CGST,					
 			  SGST_Amt: this.SGST	,					
 			  IGST_Amt:	this.IGST	,					
-			  Gross_Amt: this.NetAMT,					
+			  Gross_Amt: this.Total_Amount,					
 			  Tax_Amt	: this.Tax,								
 			  Net_Amt: this.NetAMT,								
 			  User_ID	:	this.$CompacctAPI.CompacctCookies.User_ID	,									
-			  Cost_Cen_ID	:this.ObjTopSale.Cost_Cen_ID,																							
+			  Cost_Cen_ID	:this.ObjTopSale.Cost_Cen_ID,	
+        Rounded_Off : this.Rounded_Off,																						
         Grand_Total: this.NetAMT,
         Fin_Year_ID : this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
         Address_Type : this.ObjTopSale.Choose_Address
@@ -476,6 +490,8 @@ export class SaleBillComponent implements OnInit {
       this.SGST = undefined;
       this.IGST = undefined;
       this.NetAMT = undefined;
+      this.Rounded_Off = undefined;
+      this.Total_Amount = undefined;
       this.GridList = [];
       this.SelectedChallanNo = [];
       this.router.navigate(['./MICL_Sale_Bill']);

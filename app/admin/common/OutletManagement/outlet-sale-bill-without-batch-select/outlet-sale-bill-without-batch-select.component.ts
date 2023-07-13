@@ -10,7 +10,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import { NgxUiLoaderService } from "ngx-ui-loader";
 declare var $:any;
-
 @Component({
   selector: 'app-outlet-sale-bill-without-batch-select',
   templateUrl: './outlet-sale-bill-without-batch-select.component.html',
@@ -466,19 +465,29 @@ autoaFranchiseBill() {
      //   Doc_Type : "Sale_Bill",
      //   Doc_Date : this.Objcustomerdetail.Doc_Date
      //  }
-     const TempObj = {
-         User_ID:this.$CompacctAPI.CompacctCookies.User_ID,
-         Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-         Doc_Type : "Sale_Bill",
-         Product_Type_ID : 0,
-         bill_type : this.ObjaddbillForm.Ledger_Name ? 'Online' : ''
-        }
-      const obj = {
-       "SP_String": "SP_Controller_Master",
-       "Report_Name_String" : "Get Sale Requisition Product",
-      "Json_Param_String": JSON.stringify([TempObj])
+    //  const TempObj = {
+    //      User_ID:this.$CompacctAPI.CompacctCookies.User_ID,
+    //      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+    //      Doc_Type : "Sale_Bill",
+    //      Product_Type_ID : 0,
+    //      bill_type : this.ObjaddbillForm.Ledger_Name ? 'Online' : ''
+    //     }
+    //   const obj = {
+    //    "SP_String": "SP_Controller_Master",
+    //    "Report_Name_String" : "Get Sale Requisition Product",
+    //   "Json_Param_String": JSON.stringify([TempObj])
  
+    //  }
+    const TempObj = {
+      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      Bill_Type : this.ObjaddbillForm.Ledger_Name ? 'Online' : ''
      }
+     const obj = {
+      "SP_String": "SP_For_POS_Current_Stock",
+      "Report_Name_String" : "Get Products",
+      "Json_Param_String": JSON.stringify([TempObj])
+
+    }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
          this.selectitem = data;
          this.selectitemView = data;
@@ -494,6 +503,25 @@ autoaFranchiseBill() {
  
  
  }
+ // INSERT STOCK
+ InsertStock(){
+  this.ngxService.start();
+  const sendonj = {
+    Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+  }
+  const obj = {
+    "SP_String": "SP_For_POS_Current_Stock",
+    "Report_Name_String": "Insert_Stock",
+    "Json_Param_String": JSON.stringify([sendonj])
+
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    if (data[0].Column1 === "Done") {
+      this.getselectitem();
+      this.ngxService.stop();
+    }
+  })
+}
  //
  getgodownid(){
    const TempObj = {
@@ -522,7 +550,8 @@ autoaFranchiseBill() {
      //Product_ID : 3383
     }
    const obj = {
-     "SP_String": "SP_Controller_Master",
+    //  "SP_String": "SP_Controller_Master",
+     "SP_String": "SP_For_POS_Current_Stock",
      "Report_Name_String": "Get_Product_Wise_Batch",
      "Json_Param_String": JSON.stringify([TempObj])
     }
@@ -1377,6 +1406,7 @@ checkdiscountamt(){
      var tempID = data[0].Column1;
      this.Objcustomerdetail.Bill_No = data[0].Column1;
      if(data[0].Column1){
+      this.UpdateStock();
       if (this.FranchiseBill != "Y") {
         this.SaveFranSaleBill();
         this.SaveNPrintBill();
@@ -1436,6 +1466,17 @@ checkdiscountamt(){
    // this.cleartotalamount();
  
  }
+ // UPDATE STOCK
+UpdateStock(){
+  const obj = {
+    "SP_String": "SP_For_POS_Current_Stock",
+    "Report_Name_String": "Update_Stock",
+    "Json_Param_String": this.getDataForSaveEdit()
+
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  })
+}
  getDataForSaveEdit(){
    if(this.ObjcashForm.Wallet_Ac_ID){
        this.walletlist.forEach(el => {
@@ -1461,32 +1502,32 @@ checkdiscountamt(){
    this.ObjcashForm.Card_Amount = this.ObjcashForm.Card_Amount ? this.ObjcashForm.Card_Amount : 0;
    //console.log("this.ObjcashForm.Card_Ac",this.productSubmit);
    if(this.productSubmit.length) {
-     let tempArr =[]
+     let tempArr:any =[]
      this.productSubmit.forEach(item => {
       if (Number(item.Amount_berore_Tax) && Number(item.Amount_berore_Tax) != 0) {
        const obj = {
            Product_ID : item.Product_ID,
            Product_Description : item.Product_Description,
            Product_Modifier : item.Modifier,
-           Rate : item.Net_Price,
+           Rate : Number(item.Net_Price),
            Batch_No : item.Batch_No,
-           Qty : item.Stock_Qty,
-           Taxable : item.Amount_berore_Tax,
-           Amount : item.Amount,
-           Discount_Per : item.Max_Discount,
-           Discount_Amt : item.Dis_Amount,
-           Gross_Amt : item.Amount_berore_Tax,
-           SGST_Per : item.SGST_Per,
-           SGST_Amt : item.SGST_Amount,
-           CGST_Per : item.CGST_Per,
-           CGST_Amt : item.CGST_Amount,
-           IGST_Per : item.GST_Tax_Per,
-           IGST_Amt : item.GST_Tax_Per_Amt,
-           Net_Amount : item.Net_Amount,
-           Taxable_Amount : item.Taxable_Amount,
-           CGST_OUTPUT_LEDGER_ID : item.CGST_Output_Ledger_ID,
-           SGST_OUTPUT_LEDGER_ID : item.SGST_Output_Ledger_ID,
-           IGST_OUTPUT_LEDGER_ID : item.IGST_Output_Ledger_ID,
+           Qty : Number(item.Stock_Qty),
+           Taxable : Number(item.Amount_berore_Tax),
+           Amount : Number(item.Amount),
+           Discount_Per : Number(item.Max_Discount),
+           Discount_Amt : Number(item.Dis_Amount),
+           Gross_Amt : Number(item.Amount_berore_Tax),
+           SGST_Per : Number(item.SGST_Per),
+           SGST_Amt : Number(item.SGST_Amount),
+           CGST_Per : Number(item.CGST_Per),
+           CGST_Amt : Number(item.CGST_Amount),
+           IGST_Per : Number(item.GST_Tax_Per),
+           IGST_Amt : Number(item.GST_Tax_Per_Amt),
+           Net_Amount : Number(item.Net_Amount),
+           Taxable_Amount : Number(item.Taxable_Amount),
+           CGST_OUTPUT_LEDGER_ID : Number(item.CGST_Output_Ledger_ID),
+           SGST_OUTPUT_LEDGER_ID : Number(item.SGST_Output_Ledger_ID),
+           IGST_OUTPUT_LEDGER_ID : Number(item.IGST_Output_Ledger_ID),
        }
        var onlineno = "";
        var onlinedate;

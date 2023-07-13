@@ -41,9 +41,12 @@ export class CandidateInterviewProcessComponent implements OnInit {
   updateCandidate_Id = 0;
   file: boolean = false;
   upload: boolean = true;
+  file2: boolean = false;
+  upload2: boolean = true;
   objInterview = new Interview();
 
   @ViewChild("UploadFile", { static: false }) UploadFile!: FileUpload;
+  @ViewChild("UploadFile2", { static: false }) UploadFile2!: FileUpload;
 
   constructor(
     private Header: CompacctHeader,
@@ -227,6 +230,10 @@ export class CandidateInterviewProcessComponent implements OnInit {
           this.file = true;
           this.upload = false;
         }
+        if (data[0].File_Upload2) {
+          this.file2 = true;
+          this.upload2 = false;
+        }
       });
     }
   }
@@ -317,8 +324,13 @@ export class CandidateInterviewProcessComponent implements OnInit {
     this.Joining_date_2_time = new Date();
     this.file = false;
     this.upload = true;
+    this.file2 = false;
+    this.upload2 = true;
     if (this.UploadFile) {
       this.UploadFile.clear();
+    }
+    if (this.UploadFile2) {
+      this.UploadFile2.clear();
     }
   }
   TabClick(e) {
@@ -331,6 +343,7 @@ export class CandidateInterviewProcessComponent implements OnInit {
   ClearUploadInpt(elem: any) {
     if (this.objInterview.File_Upload) {
       this.upload = true;
+      this.file = false;
       this.objInterview.File_Upload = undefined;
     }
     else {
@@ -339,17 +352,39 @@ export class CandidateInterviewProcessComponent implements OnInit {
     }
   }
 
+  ClearUploadInpt2(elem: any) {
+    if (this.objInterview.File_Upload2) {
+      this.upload2 = true;
+      this.file2 = false;
+      this.objInterview.File_Upload2 = undefined;
+    }
+    else {
+      this.UploadFile2.clear();
+      this.file2 = false;
+    }
+  }
+
   fileSelect() {
     this.file = true;
   }
 
-  showDoc() {
-    window.open(this.objInterview.File_Upload);
+  fileSelect2() {
+    this.file2 = true;
+  }
+
+  showDoc(file) {
+    window.open(file);
   }
 
   onBasicUpload(elem: any) {
     if (elem._files.length) {
       this.UploadDocApprove(elem);
+    }
+  }
+
+  onBasicUpload2(elem: any) {
+    if (elem._files.length) {
+      this.UploadDocApprove2(elem);
     }
   }
 
@@ -364,6 +399,30 @@ export class CandidateInterviewProcessComponent implements OnInit {
           this.objInterview.File_Upload = data.file_url;
           this.ngxService.stop();
           this.upload = false;
+          if (data.file_url) {
+            this.CompacctToast.clear();
+            this.CompacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: "File Uploaded Succesfully",
+              detail: "Succesfully Uploaded"
+            });
+          }
+        })
+    }
+  }
+
+  UploadDocApprove2(elem: any) {
+    const upfile = elem._files[0];
+    // console.log('file elem', upfile);
+    if (upfile['size']) {
+      this.ngxService.start();
+      this.GlobalAPI.CommonFileUpload(upfile)
+        .subscribe((data: any) => {
+          // console.log('upload response', data);
+          this.objInterview.File_Upload2 = data.file_url;
+          this.ngxService.stop();
+          this.upload2 = false;
           if (data.file_url) {
             this.CompacctToast.clear();
             this.CompacctToast.add({
@@ -476,4 +535,5 @@ class Interview {
   Remarks_blacklist: any;
   // file upload
   File_Upload: any;
+  File_Upload2: any;
 }

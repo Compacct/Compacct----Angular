@@ -780,7 +780,7 @@
                                           <tbody>
                                             <tr>
                                             <th>Total Amount:</th>
-                                            <td class="amt-td ng-binding">{{getTofix(grTotal) ? getTofix(grTotal) : 0}}</td>
+                                            <td class="amt-td ng-binding">{{grTotal ? getTofix2(grTotal) : 0}}</td>
                                             <th>Term Amount :</th>
                                             <td class="amt-td ng-binding">{{ GrTermAmount ? getTofix(GrTermAmount) : 0}}</td>
                                             <th></th>
@@ -788,7 +788,7 @@
                                              </tr>
                                             <tr>
                                             <th>Discount Amount :</th>
-                                            <td class="amt-td ng-binding">{{disTotal ? getTofix(disTotal) : 0}}</td>
+                                            <td class="amt-td ng-binding">{{disTotal ? getTofix2(disTotal) : 0}}</td>
                                             <th>Total GST :</th>
                                             <td class="amt-td ng-binding">{{getTofix(GSTTotal + GrGstTermAmt)}}</td>
                                             <th>Net Amount</th>
@@ -796,7 +796,7 @@
                                             </tr>
                                             <tr>
                                             <th>Taxable Amount :</th>
-                                            <td class="amt-td ng-binding">{{ taxAblTotal ? getTofix(taxAblTotal) : 0}}</td>
+                                            <td class="amt-td ng-binding">{{ taxAblTotal ? getTofix2(taxAblTotal) : 0}}</td>
                                             <th>Rounded Off :</th>
                                             <td class="amt-td ng-binding">{{getRoundedOff()}}</td>
                                             <th></th>

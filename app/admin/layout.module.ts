@@ -490,6 +490,16 @@ import { SalesmanTargetComponent } from './common/PatientManagement/Audiologist/
 import { HRAttnDetalisComponent } from './common/HR/hr-attn-detalis/hr-attn-detalis.component';
 import {GMapModule} from 'primeng/gmap';
 import { AgmCoreModule } from '@agm/core';
+import { EmployeeBonusComponent } from './common/MICL/employee-bonus/employee-bonus.component';
+import { HrRecruitmentTrackerComponent } from './common/Attendance/hr-recruitment-tracker/hr-recruitment-tracker.component';
+import { EmployeeSynchroniseWithAppComponent } from './common/HR/employee-synchronise-with-app/employee-synchronise-with-app.component';
+import { REPStockReportHBRComponent } from './common/Harbauer/rep-stock-report-hbr/rep-stock-report-hbr.component';
+import { SlagToRmStockTransferComponent } from './common/MICL/RawMaterial/slag-to-rm-stock-transfer/slag-to-rm-stock-transfer.component';
+import { CommonStockTransferComponent } from './common/MICL/RawMaterial/common-stock-transfer/common-stock-transfer.component';
+import { BillNoChangeComponent } from './common/MICL/bill-no-change/bill-no-change.component';
+import { CostcenterTargetJohComponent } from './common/PatientManagement/Audiologist/costcenter-target-joh/costcenter-target-joh.component';
+import { LeaveRegisterComponent } from './common/MICL/leave-register/leave-register.component';
+import { HrReportsComponent } from './common/Attendance/hr-reports/hr-reports.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -894,7 +904,17 @@ import { AgmCoreModule } from '@agm/core';
     ApproveHrRequisitionFormComponent,
     RetailAdvanceOrderComponent,
     SalesmanTargetComponent,
-    HRAttnDetalisComponent
+    HRAttnDetalisComponent,
+    EmployeeBonusComponent,
+    HrRecruitmentTrackerComponent,
+    EmployeeSynchroniseWithAppComponent,
+    REPStockReportHBRComponent,
+    SlagToRmStockTransferComponent,
+    CommonStockTransferComponent,
+    BillNoChangeComponent,
+    CostcenterTargetJohComponent,
+    LeaveRegisterComponent,
+    HrReportsComponent
   ],
   imports: [
     CommonModule,
