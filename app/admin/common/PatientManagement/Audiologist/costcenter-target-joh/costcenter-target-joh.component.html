@@ -276,7 +276,33 @@
 										required
 										CompacctDigitonly="true" />
 								</div>
-								<div class="col-sm-9">
+								<div class="col-sm-3">
+									<label class="control-label">Speech Revenue<sup class="text-danger">*</sup></label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="Speech Revenue"
+										name="Speech_Revenue"
+										#Speech_Revenue="ngModel"
+										[(ngModel)]="ObjcostCenter.Speech_Revenue"
+										[ngClass]="{ clearance: costCenterFormSubmit && Speech_Revenue?.errors?.required }"
+										required
+										CompacctDigitonly="true" />
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">Speech Revenue Achievement<sup class="text-danger">*</sup></label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="Speech Revenue Achievement"
+										name="Speech_Revenue_Achievement"
+										#Speech_Revenue_Achievement="ngModel"
+										[(ngModel)]="ObjcostCenter.Speech_Revenue_Achievement"
+										[ngClass]="{ clearance: costCenterFormSubmit && Speech_Revenue_Achievement?.errors?.required }"
+										required
+										CompacctDigitonly="true" />
+								</div>
+								<div class="col-sm-3">
 									<button
 										class="btn btn-primary pull-right"
 										id="load"
@@ -338,6 +364,8 @@
 									<th style="text-align: center" nowrap>RAF Achievement</th>
 									<th style="text-align: center" nowrap>RAF Revenue</th>
 									<th style="text-align: center" nowrap>RAF Revenue Achievement</th>
+									<th style="text-align: center" nowrap>Speech Revenue</th>
+									<th style="text-align: center" nowrap>Speech Revenue Achievement</th>
 								</tr>
 							</ng-template>
 							<ng-template pTemplate="body" let-col>
@@ -455,6 +483,20 @@
 										[(ngModel)]="col.RAF_Revenue_Achievement"
 										CompacctDigitonly="true" />
 									</td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.Speech_Revenue"
+										CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.Speech_Revenue_Achievement"
+										CompacctDigitonly="true" />
+									</td>
 								</tr>
 							</ng-template>
 							<ng-template pTemplate="footer">
@@ -476,6 +518,8 @@
 								   <td>{{calRAF_Achievement()}}</td>
 								   <td>{{calRAF_Revenue()}}</td>
 								   <td>{{calRAF_Revenue_Achievement()}}</td>
+								   <td>{{calSpeech_Revenue()}}</td>
+								   <td>{{calSpeech_Revenue_Achievement()}}</td>
 								</tr>
 							 </ng-template>
 							<ng-template pTemplate="paginatorright" let-state>

@@ -131,6 +131,8 @@ export class CostcenterTargetJohComponent implements OnInit {
         "RAF_Achievement": col.RAF_Achievement,
         "RAF_Revenue": col.RAF_Revenue,
         "RAF_Revenue_Achievement": col.RAF_Revenue_Achievement,
+        "Speech_Revenue": col.Speech_Revenue,
+        "Speech_Revenue_Achievement": col.Speech_Revenue_Achievement,
       };
       console.log('update obj', updateObj);
 
@@ -393,6 +395,26 @@ export class CostcenterTargetJohComponent implements OnInit {
     return total;
   }
 
+  calSpeech_Revenue(){
+    let total = 0;
+    if (this.TableData.length) {
+      this.TableData.forEach((ele: any) => {
+        total += Number(ele.Speech_Revenue);
+      })
+    }
+    return total;
+  }
+
+  calSpeech_Revenue_Achievement(){
+    let total = 0;
+    if (this.TableData.length) {
+      this.TableData.forEach((ele: any) => {
+        total += Number(ele.Speech_Revenue_Achievement);
+      })
+    }
+    return total;
+  }
+
 }
 
 class costCenter {
@@ -415,4 +437,6 @@ class costCenter {
   RAF_Achievement: any;
   RAF_Revenue: any;
   RAF_Revenue_Achievement: any;
+  Speech_Revenue: any;
+  Speech_Revenue_Achievement: any;
 }
