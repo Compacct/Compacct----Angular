@@ -734,8 +734,11 @@ export class OutwardChallanComponent implements OnInit {
       this.ObjProductInfo.CGST_Rate = Number(gstper);
       this.ObjProductInfo.SGST_Rate = Number(gstper);
       this.ObjProductInfo.IGST_Rate = Number(TaxCatArry[0].GST_Tax_Per);
-      const SubLedgerState = this.ObjPurChaseBill.Sub_Ledger_State_2
-        ? this.ObjPurChaseBill.Sub_Ledger_State_2.toUpperCase()
+      // const SubLedgerState = this.ObjPurChaseBill.Sub_Ledger_State_2
+      //   ? this.ObjPurChaseBill.Sub_Ledger_State_2.toUpperCase()
+      //   : undefined;
+        const SubLedgerState = this.ObjPurChaseBill.Sub_Ledger_State
+        ? this.ObjPurChaseBill.Sub_Ledger_State.toUpperCase()
         : undefined;
       const CostCenterState = this.ObjPurChaseBill.Cost_Cen_State
         ? this.ObjPurChaseBill.Cost_Cen_State.toUpperCase()
