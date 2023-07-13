@@ -36,23 +36,23 @@
                             <!-- </div>
                             <br>
                             <div class="form-group"> -->
-                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U'">
+                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U' && $CompacctAPI.CompacctCookies.Del_Right === 'Y' && ButtonShowOrNot === 'YES'">
                                     <label></label>
                                     <button  class="btn btn-warning" (click)="UpdateSPBrowseData()" [disabled]="processSalarydisabled" >Process salary</button>
                                 </div>
-                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U'">
+                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U' && $CompacctAPI.CompacctCookies.Del_Right === 'Y' && ButtonShowOrNot === 'YES'">
                                     <button  class="btn btn-success" (click)="exportoexcel('Process_Salary')" [disabled]="!BrowseList.length">Salary Register</button>
                                 </div>
-                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U'">
+                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U' && $CompacctAPI.CompacctCookies.Del_Right === 'Y' && ButtonShowOrNot === 'YES'">
                                     <button  class="btn btn-primary" (click)="Finalized()" [disabled]="processSalarydisabled">Finalized</button>
                                 </div>
-                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U'">
+                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U' && $CompacctAPI.CompacctCookies.Del_Right === 'Y' && ButtonShowOrNot === 'YES'">
                                     <button  class="btn btn-success" (click)="exportoexcel2('Bank_Register')" [disabled]="bankregdisabled">Bank Register</button>
                                 </div>
-                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'U'">
+                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'U' && $CompacctAPI.CompacctCookies.Del_Right === 'Y' && ButtonShowOrNot === 'YES'">
                                     <button  class="btn btn-success" (click)="SalarySlip()">Print Salary Slip</button>
                                 </div>
-                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'">
+                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A' && $CompacctAPI.CompacctCookies.Del_Right === 'Y' && ButtonShowOrNot === 'YES'">
                                     <button  class="btn btn-success" (click)="salaryregforAdmin('Salary_Register')" [disabled]="!BrowseList.length">Salary Register For Admin</button>
                                 </div>
                             </div>

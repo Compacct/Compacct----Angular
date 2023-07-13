@@ -96,6 +96,19 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
   isservice = undefined;
   Regeneratelist:any = [];
   contactname = undefined;
+  canbilldate: any;
+  cancelCostCenID: any;
+
+  AfterSavePoppup:boolean = false;
+  CustomerDetailsPopUpFlag:boolean = false;
+  ObjPopupCustDetails : PopupCustDetails = new PopupCustDetails();
+  namedisabledsalebill:boolean = false;
+  ObjLead : Lead = new Lead();
+  GSTvalidFlagcustpopup:boolean = false;
+  CustomerDetailsFormSubmitted:boolean = false;
+  keypressmsg:any;
+  Order_No:any;
+  Order_Date:any
 
   constructor(
     private Header: CompacctHeader,
@@ -111,7 +124,7 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
     
    console.log('constr');
     this.route.queryParamMap.subscribe((val:any) => {
-      this.CustomerDisabledFlag = false;
+      // this.CustomerDisabledFlag = false;
       this.ObjaddbillForm.Ledger_Name = '';
       console.log('constr --2');
       if(val.params) {
@@ -459,17 +472,27 @@ autoaFranchiseBill() {
     //   Doc_Type : "Sale_Bill",
     //   Doc_Date : this.Objcustomerdetail.Doc_Date
     //  }
+    // const TempObj = {
+    //     User_ID:this.$CompacctAPI.CompacctCookies.User_ID,
+    //     Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+    //     Doc_Type : "Sale_Bill",
+    //     Product_Type_ID : 0,
+    //     bill_type : this.QueryStringObj.Ledger_Name ? 'Online' : ''
+    //    }
+    //  const obj = {
+    //   "SP_String": "SP_Controller_Master",
+    //   "Report_Name_String" : "Get Sale Requisition Product",
+    //  "Json_Param_String": JSON.stringify([TempObj])
+
+    // }
     const TempObj = {
-        User_ID:this.$CompacctAPI.CompacctCookies.User_ID,
-        Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-        Doc_Type : "Sale_Bill",
-        Product_Type_ID : 0,
-        bill_type : this.QueryStringObj.Ledger_Name ? 'Online' : ''
-       }
-     const obj = {
-      "SP_String": "SP_Controller_Master",
-      "Report_Name_String" : "Get Sale Requisition Product",
-     "Json_Param_String": JSON.stringify([TempObj])
+      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+      Bill_Type : this.ObjaddbillForm.Ledger_Name ? 'Online' : ''
+     }
+    const obj = {
+      "SP_String": "SP_For_POS_Current_Stock",
+      "Report_Name_String" : "Get Products",
+      "Json_Param_String": JSON.stringify([TempObj])
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -499,6 +522,31 @@ autoaFranchiseBill() {
 
 
 }
+// INSERT STOCK
+InsertStock(){
+  this.ngxService.start();
+  const sendonj = {
+    Cost_Cen_ID : this.cancelCostCenID ? this.cancelCostCenID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+  }
+  const obj = {
+    "SP_String": "SP_For_POS_Current_Stock",
+    "Report_Name_String": "Insert_Stock",
+    "Json_Param_String": JSON.stringify([sendonj])
+
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    if (data[0].Column1 === "Done") {
+      this.getselectitem();
+      this.ngxService.stop();
+      this.canbilldate = "";
+      this.cancelCostCenID = "";
+    } else {
+      this.ngxService.stop();
+      this.canbilldate = "";
+      this.cancelCostCenID = "";
+    }
+  })
+}
 //
 getgodownid(){
   const TempObj = {
@@ -527,7 +575,8 @@ getBatchNo(){
     //Product_ID : 3383
    }
   const obj = {
-    "SP_String": "SP_Controller_Master",
+    // "SP_String": "SP_Controller_Master",
+    "SP_String": "SP_For_POS_Current_Stock",
     "Report_Name_String": "Get_Product_Wise_Batch",
     "Json_Param_String": JSON.stringify([TempObj])
    }
@@ -560,7 +609,7 @@ getcredittoaccount(){
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.creditlist = data;
-       if (!this.QueryStringObj.Ledger_Name) {
+       if (!this.ObjaddbillForm.Ledger_Name) {
         this.creditlist = data;
        } else {
         var couponid = this.creditlist.filter(function(value, index, arr){
@@ -572,6 +621,33 @@ getcredittoaccount(){
   //}
 }
 
+// getwalletamount(){
+//   this.walletlist = [];
+//   if(this.QueryStringObj && this.QueryStringObj.Txn_ID) {
+//     const obj = {
+//       "SP_String": "SP_Controller_Master",
+//       "Report_Name_String": "Get - Online Ledger"
+//      }
+//      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+//        this.walletlist = data;
+//        this.walletlist = this.walletlist.filter(item => item.Txn_ID.toString() === this.QueryStringObj.Txn_ID.toString());
+//        this.ObjcashForm.Wallet_Ac_ID = this.QueryStringObj.Txn_ID;
+//        console.log('wallet ==', this.walletlist)
+//      })
+//   } else {
+//     const obj = {
+//       "SP_String": "SP_Controller_Master",
+//       "Report_Name_String": "Get - Data for Card to Amount",
+//     }
+//     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+//       this.walletlist = data;
+//     //  if(this.QueryStringObj.Txn_ID) {
+//     //   this.cardlist = this.cardlist.filter(item => item.Txn_ID.toString() === this.QueryStringObj.Txn_ID.toString());
+//     //  }
+//      //console.log('card=====',this.cardlist)
+//    })
+//   }
+// }
 getwalletamount(){
   this.walletlist = [];
   if(this.QueryStringObj && this.QueryStringObj.Txn_ID) {
@@ -585,7 +661,19 @@ getwalletamount(){
        this.ObjcashForm.Wallet_Ac_ID = this.QueryStringObj.Txn_ID;
        console.log('wallet ==', this.walletlist)
      })
-  } else {
+  }
+  else if(this.ObjaddbillForm.Ledger_Name) {
+   const obj = {
+     "SP_String": "SP_Controller_Master",
+     "Report_Name_String": "Get - Online Ledger"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.walletlist = data;
+      this.walletlist = this.walletlist.filter(item => item.Ledger_Name == this.ObjaddbillForm.Ledger_Name);
+      this.ObjcashForm.Wallet_Ac_ID = this.walletlist[0].Txn_ID;
+      console.log('wallet ==', this.walletlist)
+    })
+ } else {
     const obj = {
       "SP_String": "SP_Controller_Master",
       "Report_Name_String": "Get - Data for Card to Amount",
@@ -615,9 +703,9 @@ if(this.ObjaddbillForm.Product_ID) {
   //this.rate = productObj.Sale_rate;
   this.ObjaddbillForm.Product_Description = productObj.label;
   //this.ObjaddbillForm.Stock_Qty = productObj.Stock_Qty;
-  this.ObjaddbillForm.Sale_rate =  productObj.Sale_rate;
+  this.ObjaddbillForm.Sale_rate = productObj.Sale_rate;
   //this.ObjaddbillForm.Sale_rate_Online = productObj.Sale_rate_Online;
-  this.ObjaddbillForm.GST_Tax_Per =  productObj.GST_Tax_Per;
+  this.ObjaddbillForm.GST_Tax_Per = productObj.GST_Tax_Per;
   this.CGST_Ledger_Id = productObj.CGST_Output_Ledger_ID;
   this.SGST_Ledger_Id = productObj.SGST_Output_Ledger_ID;
   this.IGST_Ledger_Id = productObj.IGST_Output_Ledger_ID;
@@ -1347,6 +1435,7 @@ saveprintAndUpdate(){
     var tempID = data[0].Column1;
     this.Objcustomerdetail.Bill_No = data[0].Column1;
     if(data[0].Column1){
+      this.UpdateStock();
       if (this.FranchiseBill != "Y") {
         this.SaveFranSaleBill();
         this.SaveNPrintBill();
@@ -1364,7 +1453,10 @@ saveprintAndUpdate(){
      this.cleartotalamount();
      this.SaveNPrintBill();
      this.clearData();
-     this.router.navigate(['./POS_BIll_Order']);
+    //  this.router.navigate(['./POS_BIll_Order']);
+     this.router.navigate(['./K4C_Outlet_Sale_Bill']);
+      this.CustomerDisabledFlag = true;
+      this.AfterSavePoppup = true;
       }
       this.compacctToast.clear();
       const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
@@ -1409,6 +1501,17 @@ saveprintAndUpdate(){
   // this.cleartotalamount();
 
 }
+// UPDATE STOCK
+UpdateStock(){
+  const obj = {
+    "SP_String": "SP_For_POS_Current_Stock",
+    "Report_Name_String": "Update_Stock",
+    "Json_Param_String": this.getDataForSaveEdit()
+
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  })
+}
 getDataForSaveEdit(){
   if(this.ObjcashForm.Wallet_Ac_ID){
       this.walletlist.forEach(el => {
@@ -1443,28 +1546,38 @@ this.ObjcashForm.Credit_To_Ac = this.ObjcashForm.Credit_To_Ac ? this.ObjcashForm
           Product_Modifier : item.Modifier,
           Product_Type : item.product_type,
           Is_Service : item.is_service,
-          Rate : item.Net_Price,
+          Rate : Number(item.Net_Price),
           Delivery_Charge : item.Delivery_Charge,
           Batch_No : item.Batch_No,
-          Qty : item.Stock_Qty,
-          Taxable : item.Amount_berore_Tax,
-          Amount : item.Amount,
-          Discount_Per : item.Max_Discount,
-          Discount_Amt : item.Dis_Amount,
+          Qty : Number(item.Stock_Qty),
+          Taxable : Number(item.Amount_berore_Tax),
+          Amount : Number(item.Amount),
+          Discount_Per : Number(item.Max_Discount),
+          Discount_Amt : Number(item.Dis_Amount),
           // Gross_Amt : item.Gross_Amount,
-          Gross_Amt : item.Amount_berore_Tax,
-          SGST_Per : item.SGST_Per,
-          SGST_Amt : item.SGST_Amount,
-          CGST_Per : item.CGST_Per,
-          CGST_Amt : item.CGST_Amount,
-          IGST_Per : item.GST_Tax_Per,
-          IGST_Amt : item.GST_Tax_Per_Amt,
-          Net_Amount : item.Net_Amount,
-          Taxable_Amonut : item.Taxable_Amount,
-          CGST_OUTPUT_LEDGER_ID : item.CGST_Output_Ledger_ID,
-          SGST_OUTPUT_LEDGER_ID : item.SGST_Output_Ledger_ID,
-          IGST_OUTPUT_LEDGER_ID : item.IGST_Output_Ledger_ID,
+          Gross_Amt : Number(item.Amount_berore_Tax),
+          SGST_Per : Number(item.SGST_Per),
+          SGST_Amt : Number(item.SGST_Amount),
+          CGST_Per : Number(item.CGST_Per),
+          CGST_Amt : Number(item.CGST_Amount),
+          IGST_Per : Number(item.GST_Tax_Per),
+          IGST_Amt : Number(item.GST_Tax_Per_Amt),
+          Net_Amount : Number(item.Net_Amount),
+          Taxable_Amonut : Number(item.Taxable_Amount),
+          CGST_OUTPUT_LEDGER_ID : Number(item.CGST_Output_Ledger_ID),
+          SGST_OUTPUT_LEDGER_ID : Number(item.SGST_Output_Ledger_ID),
+          IGST_OUTPUT_LEDGER_ID : Number(item.IGST_Output_Ledger_ID),
       }
+      var onlineno = "";
+       var onlinedate;
+       if (this.QueryStringObj.Order_No || this.QueryStringObj.Order_Date) {
+        onlineno = this.QueryStringObj.Order_No;
+        onlinedate = this.QueryStringObj.Order_Date
+       }
+       if (this.Order_No || this.Order_Date) {
+        onlineno = this.Order_No;
+        onlinedate = this.DateService.dateConvert(new Date(this.Order_Date));
+       }
 
     const TempObj = {
       Created_By : this.$CompacctAPI.CompacctCookies.User_ID,
@@ -1481,8 +1594,8 @@ this.ObjcashForm.Credit_To_Ac = this.ObjcashForm.Credit_To_Ac ? this.ObjcashForm
       Hold_Bill  : this.Hold_Bill_Flag ? "Y" : "N",
       Order_Txn_ID : 0,
       Adv_Order_No : this.Adv_Order_No != null ? this.Adv_Order_No : "" ,
-      Online_Order_No : this.QueryStringObj.Order_No ? this.QueryStringObj.Order_No : null,
-      Online_Order_Date : this.QueryStringObj.Order_Date ? this.QueryStringObj.Order_Date : null,
+      Online_Order_No : onlineno ? onlineno : null,
+       Online_Order_Date : onlinedate ? onlinedate : null,
 
       Total_CGST_Amt : this.CGST_Amount,
       Total_SGST_Amt : this.SGST_Amount,
@@ -1551,7 +1664,10 @@ SaveFranSaleBill(){
      this.cleartotalamount();
      this.SaveNPrintBill();
      this.clearData();
-     this.router.navigate(['./POS_BIll_Order']);
+    //  this.router.navigate(['./POS_BIll_Order']);
+     this.router.navigate(['./K4C_Outlet_Sale_Bill']);
+     this.CustomerDisabledFlag = true;
+     this.AfterSavePoppup = true;
     } else{
       this.Spinner = false;
       this.ngxService.stop();
@@ -1583,6 +1699,368 @@ SaveNPrintBill() {
   }
   }
   console.log('Doc_No ==', this.Objcustomerdetail.Bill_No)
+}
+//AFTER SAVE
+Cancelpopup(){
+  this.router.navigate(['./POS_BIll_Order']);
+ }
+ TakeAway(val){
+  if(val === "bill") {
+    this.Order_No = undefined;
+    this.AfterSavePoppup = false;
+    this.ObjPopupCustDetails = new PopupCustDetails();
+    this.CustomerDetailsPopUpFlag = true;
+    this.getselectitem();
+    this.getcredittoaccount();
+  }
+ }
+ SwiggyZomato(val){
+  this.AfterSavePoppup = false;
+  this.keypressmsg = undefined;
+  this.Order_No = undefined;
+  this.Order_Date = new Date();
+  if(val === "SWIGGY"){
+    this.ObjaddbillForm.Ledger_Name = val;
+    this.getselectitem();
+    this.getcredittoaccount();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "OrderNo",
+      sticky: true,
+      severity: "info",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+      });
+  }
+  if(val === "ZOMATO"){
+    this.ObjaddbillForm.Ledger_Name = val;
+    this.getselectitem();
+    this.getcredittoaccount();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "OrderNoZ",
+      sticky: true,
+      severity: "info",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+    });
+  }
+ }
+ onKeydownMainsb(event,nextElemID): void {
+  if (event.key === "Enter" && nextElemID){
+        const elem  = document.getElementById(nextElemID);
+        elem.focus();
+        event.preventDefault();
+      }
+}
+ GetCustomerDetails() {
+  this.ObjPopupCustDetails.Foot_Fall_ID = undefined;
+  this.ObjPopupCustDetails.Contact_Name = undefined;
+  this.ObjPopupCustDetails.Address = undefined;
+  this.ObjPopupCustDetails.DOB = undefined;
+  this.ObjPopupCustDetails.DOA = undefined;
+  this.ObjPopupCustDetails.Cost_Cen_ID = undefined;
+  this.ObjPopupCustDetails.GST_No = undefined;
+  if(this.ObjPopupCustDetails.Mobile && this.ObjPopupCustDetails.Mobile.length === 10) {
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "GET_OUTLET_CUSTOMER_DETAILS",
+      "Json_Param_String" : JSON.stringify([{'Costomer_Mobile' : this.ObjPopupCustDetails.Mobile}])
+    }
+    this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+         console.log("get customer details" ,data);
+         const ReturnObj = data.length ? data[0] : {};
+         if(ReturnObj.Foot_Fall_ID) {
+          this.ObjPopupCustDetails.Foot_Fall_ID = ReturnObj.Foot_Fall_ID;
+          this.ObjPopupCustDetails.Contact_Name = ReturnObj.Contact_Name;
+            this.namedisabledsalebill = this.ObjPopupCustDetails.Contact_Name.length > 5 ? true : false;
+          this.ObjPopupCustDetails.Cost_Cen_ID = ReturnObj.Cost_Cen_ID;
+          this.ObjPopupCustDetails.Address = ReturnObj.Address;
+          console.log(ReturnObj)
+          // const dob = ReturnObj.DOB ? this.DateService.dateConvert(ReturnObj.DOB) : undefined;
+          // const doa = ReturnObj.DOA ? this.DateService.dateConvert(ReturnObj.DOA) : undefined;
+
+          // this.Objcustomerdetail.DOB = dob && dob.split('/', 1)[0].length === 1 ? '0'+ dob : dob;
+          // this.Objcustomerdetail.DOA = doa && doa.split('/', 1)[0].length === 1 ? '0'+ doa : doa;
+         if(ReturnObj.DOB) {
+          var dateObj = new Date(ReturnObj.DOB);
+          var month:any = (dateObj.getMonth() + 1).toString().length == 1 ? '0' + (dateObj.getMonth() + 1).toString() : dateObj.getMonth() + 1;
+          var day:any = dateObj.getDate().toString().length == 1 ? '0' + dateObj.getDate().toString() : dateObj.getDate();
+          var year = dateObj.getFullYear();
+          this.ObjPopupCustDetails.DOB =  day + "/" + month + "/" + year;
+         }
+         if(ReturnObj.DOA) {
+          var dateObj = new Date(ReturnObj.DOA);
+          var month:any = (dateObj.getMonth() + 1).toString().length == 1 ? '0' + (dateObj.getMonth() + 1).toString() : dateObj.getMonth() + 1;
+          var day:any = dateObj.getDate().toString().length == 1 ? '0' + dateObj.getDate().toString() : dateObj.getDate();
+          var year = dateObj.getFullYear();
+          this.ObjPopupCustDetails.DOA =  day + "/" + month + "/" + year;
+         }
+          this.ObjPopupCustDetails.Remarks = ReturnObj.Bill_Remarks;
+          this.ObjPopupCustDetails.GST_No = ReturnObj.GST_No;
+          }
+         else {
+          this.ObjPopupCustDetails.Foot_Fall_ID = '0';
+          this.ObjPopupCustDetails.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+         }
+    });
+  }
+}
+getAddressOnChange(e) {
+  this.ObjLead.Location = undefined;
+  if (e) {
+    this.ObjLead.Location = e;
+  }
+}
+IsNumeric(input)
+  {
+     return (input - 0) == input && input.length > 0;
+  }
+checkDOB(){
+  console.log(this.ObjPopupCustDetails.DOB)
+  if(this.ObjPopupCustDetails.DOB){
+    const DateArr =  this.ObjPopupCustDetails.DOB.split("/");
+    const day:any  = DateArr[0] ,month:any  = DateArr[1] , year:any  = DateArr[2];
+    if (!this.IsNumeric(day) || day < 1) {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "DOB Date Format Invalid.",
+        detail: "Date Format Must Be - dd/mm/yyyy"
+      });
+      return false;
+    }
+    if (!this.IsNumeric(month) || (month < 1) || (month > 12))  {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "DOB Date Format Invalid.",
+        detail: "Date Format Must Be - dd/mm/yyyy"
+      });
+      return false;
+    }
+    if (!this.IsNumeric(year) || (year < 1900) || (year > 2100))  {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "DOB Date Format Invalid.",
+        detail: "Date Format Must Be - dd/mm/yyyy"
+      });
+      return false;
+    }
+    return true;
+  } else {
+    return true;
+  }
+
+
+}
+checkAnniversary(){
+  console.log(this.ObjPopupCustDetails.DOA)
+  if(this.ObjPopupCustDetails.DOA) {
+      const DateArr =  this.ObjPopupCustDetails.DOA.split("/");
+      const day:any  = DateArr[0] ,month:any  = DateArr[1] , year:any  = DateArr[2];
+      if (!this.IsNumeric(day) || day < 1) {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "DOB Date Format Invalid.",
+          detail: "Date Format Must Be - dd/mm/yyyy"
+        });
+        return false;
+      }
+      if (!this.IsNumeric(month) || (month < 1) || (month > 12))  {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "DOB Date Format Invalid.",
+          detail: "Date Format Must Be - dd/mm/yyyy"
+        });
+        return false;
+      }
+      if (!this.IsNumeric(year) || (year < 1900) || (year > 2100))  {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "DOB Date Format Invalid.",
+          detail: "Date Format Must Be - dd/mm/yyyy"
+        });
+        return false;
+      }
+      return true;
+  } else {
+    return true;
+  }
+}
+CheckValidDateGlobal(){
+  let flag = true;
+  if(!this.checkDOB()) {
+    flag = false;
+  }
+  if(!this.checkAnniversary()) {
+    flag = false;
+  }
+  return flag;
+
+}
+checkGSTvalidcustPopup(g){
+  this.GSTvalidFlagcustpopup = false;
+  if(g) {
+    let regTest = /\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}/.test(g)
+    if(regTest){
+      let a = 65,b = 55, c =36;
+      let p;
+      return Array['from'](g).reduce((i:any,j:any,k:any,g:any)=>{
+         p =(p=(j.charCodeAt(0)<a?parseInt(j):j.charCodeAt(0)-b)*(k%2+1))>c?1+(p-c):p;
+         return k<14?i+p:j==((c=(c-(i%c)))<10?c:String.fromCharCode(c+b));
+      },0);
+    }
+    this.GSTvalidFlagcustpopup = !regTest;
+  }
+
+}
+onKeydownMain2sb(event,nextElemID): void {
+  if (event.key === "Enter" &&  this.ObjPopupCustDetails.Mobile && this.ObjPopupCustDetails.Contact_Name ){
+        this.OnCustomerDetailsSubmit(true)
+      }
+}
+OnCustomerDetailsSubmit(valid) {
+  this.CustomerDetailsFormSubmitted = true;
+  this.ngxService.start();
+  if(this.GSTvalidFlagcustpopup){
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "GST No. is not valid."
+    });
+    return false;
+  }
+
+  if(valid && this.CheckValidDateGlobal()) {
+    this.CustomerDetailsFormSubmitted = false;
+    this.ObjPopupCustDetails.User_ID = this.$CompacctAPI.CompacctCookies.User_ID;
+    if(this.ObjPopupCustDetails.DOB) {
+      const DOB:any = this.ObjPopupCustDetails.DOB.split("/");
+      var dateObject1 = this.DateService.dateConvert(new Date(+DOB[2], DOB[1] - 1, +DOB[0]));
+      this.ObjPopupCustDetails.DOB = dateObject1;
+    } else {
+      this.ObjPopupCustDetails.DOB = '01/Jan/1900';
+    }
+    if(this.ObjPopupCustDetails.DOA) {
+      const DOA:any = this.ObjPopupCustDetails.DOA.split("/");
+      const dateObject2 = this.DateService.dateConvert(new Date(+DOA[2], DOA[1] - 1, +DOA[0]));
+      this.ObjPopupCustDetails.DOA = dateObject2;
+    } else {
+      this.ObjPopupCustDetails.DOA = '01/Jan/1900';
+    }
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "SAVE_OUTLET_CUSTOMER_DETAILS",
+      "Json_Param_String" : JSON.stringify([this.ObjPopupCustDetails])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data[0].Foot_Fall_ID) {
+        this.ngxService.stop();
+        console.log("save customer details" ,data);
+        data[0].Mobile_No = this.ObjPopupCustDetails.Mobile;
+        // data[0].Sub_Ledger_ID = this.ObjPopupCustDetails.Sub_Ledger_ID;
+        // data[0].Redirect_To = this.ObjPopupCustDetails.Redirect_To;
+        // data[0].Sub_Ledger_State = this.ObjPopupCustDetails.Sub_Ledger_State;
+        // this.ObjPopupCustDetails = new PopupCustDetails();
+        // this.getselectitem();
+        this.getwalletamount();
+        this.UpdateCustomerDetails(data[0]);
+        this.GSTvalidFlagcustpopup = false;
+        this.CustomerDetailsPopUpFlag = false;
+        this.CustomerDisabledFlag = true;
+      } else{
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+    })
+  }
+}
+onKeydownMain3(event,nextElemID): void {
+  if (event.key === "Enter" ){
+        this.onConfirm()
+      }
+}
+onKeypressEvent(event: any){
+  this.keypressmsg = undefined;
+  if (event){
+    this.keypressmsg = "*Copy paste from document.";
+    return false;
+  }
+  // console.log(event.target.value);
+}
+onConfirmSwiggyZomato(val) {
+  this.ngxService.start();
+  if (val === "SWIGGY") {
+  if(this.Order_No && this.Order_Date) {
+    if (this.Order_No.length === 12) {
+    this.Order_Date = this.DateService.dateConvert(new Date(this.Order_Date));
+    this.compacctToast.clear('OrderNo');
+    this.compacctToast.clear('OrderNoZ');
+    this.ObjaddbillForm.Advance = this.Order_No;
+    this.ObjaddbillForm.Order_Date = this.Order_Date;
+    this.ObjaddbillForm.Ledger_Name = val;
+    // this.getselectitem();
+    this.getwalletamount();
+    this.AfterSavePoppup = false;
+    this.ngxService.stop();
+  }
+  else {
+        this.ngxService.stop();
+        // this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message ",
+          detail: "Order no. should be 12 digit. "
+        })
+  }
+  }
+  }
+  if (val === "ZOMATO")  {
+    if(this.Order_No && this.Order_Date) {
+      if (this.Order_No.length === 10) {
+      this.Order_Date = this.DateService.dateConvert(new Date(this.Order_Date));
+      this.compacctToast.clear('OrderNo');
+      this.compacctToast.clear('OrderNoZ');
+      this.ObjaddbillForm.Advance = this.Order_No;
+      this.ObjaddbillForm.Order_Date = this.Order_Date;
+      this.ObjaddbillForm.Ledger_Name = val;
+      // this.getselectitem();
+      this.getwalletamount();
+      this.ngxService.stop();
+      }
+      else {
+        this.ngxService.stop();
+        // this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message ",
+          detail: "Order no. should be 10 digit. "
+        })
+      }
+    }
+  }
 }
 
 editmaster(eROW){
@@ -1695,6 +2173,8 @@ PrintBill(obj) {
 Cancle(row){
   //console.log(this.Objcustomerdetail.Bill_No)
   this.Cancle_Remarks = "";
+  this.canbilldate = "";
+  this.cancelCostCenID = "";
   this.cancleFormSubmitted = false;
   this.Objcustomerdetail.Bill_No = undefined ;
   if(row.Bill_No){
@@ -1702,6 +2182,8 @@ Cancle(row){
   //this.CanRemarksPoppup = true;
   this.Can_Remarks = true;
   this.Objcustomerdetail.Bill_No = row.Bill_No;
+  this.canbilldate = new Date(row.Bill_Date);
+  this.cancelCostCenID = row.Cost_Cent_ID;
   this.compacctToast.clear();
   this.compacctToast.add({
     key: "c",
@@ -1740,6 +2222,14 @@ Cancle(row){
         detail:  "Succesfully Cancle"
       });
 
+    var billdate = new Date(this.myDate);
+    var cacelcilldate = new Date(this.canbilldate);
+    // console.log("billdate=====",billdate)
+    // console.log("cancelbilldate=====",cacelcilldate)
+    // console.log("comparedate=====",billdate.toISOString() === cacelcilldate.toISOString())
+    if(billdate.toISOString() === cacelcilldate.toISOString()){
+      this.InsertStock();
+    }
     } else{
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -2129,6 +2619,25 @@ class customerdetail{
   Cuppon_No : string;
   Cuppon_OTP : string;
 
+}
+class PopupCustDetails{
+  Sub_Ledger_ID : any;
+  Mobile : any;
+  Contact_Name : any;
+  DOB : any;
+  DOA : any;
+  GST_No : any;
+  Remarks : string;
+  Foot_Fall_ID:any = '0';
+  Cost_Cen_ID : any;
+  User_ID : any;
+  Posted_On : any;
+  Address : any;
+  Redirect_To : any;
+  Sub_Ledger_State : any;
+ }
+class Lead{
+  Location : string;
 }
 
 

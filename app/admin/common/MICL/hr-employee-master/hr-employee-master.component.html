@@ -238,7 +238,11 @@
                                     <input class="form-control" placeholder="Mobile No" name="Mobile" #Mobile="ngModel" [(ngModel)]="objemployee.Contact_Mobile" [disabled]="userdisabled" CompacctDigitonly="true" minlength="10" maxlength="10" [ngClass]="{'clearance ': EmployeeFormSubmitted && Mobile.errors?.required}"
                                         required>
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-sm-3" *ngIf="databaseName === 'GN_JOH_HR'">
+                                    <label class="control-label">Emergency Contact<sup class="text-danger">*</sup></label>
+                                    <input class="form-control" placeholder="Emergency Contact" name="Emergency" #Emergency="ngModel" [(ngModel)]="objemployee.Emergency_Contact" [disabled]="userdisabled" [ngClass]="{'clearance ': EmployeeFormSubmitted && Emergency.errors?.required}" required>
+                                </div>
+                                <div class="col-sm-3" *ngIf="databaseName != 'GN_JOH_HR'">
                                     <label class="control-label">Emergency Contact<sup class="text-danger">*</sup></label>
                                     <input class="form-control" placeholder="Emergency Contact" name="Emergency" #Emergency="ngModel" [(ngModel)]="objemployee.Emergency_Contact" [disabled]="userdisabled" CompacctDigitonly="true" [ngClass]="{'clearance ': EmployeeFormSubmitted && Emergency.errors?.required}" required>
                                 </div>

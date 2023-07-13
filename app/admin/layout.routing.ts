@@ -396,6 +396,12 @@ import { EmployeeBonusComponent } from './common/MICL/employee-bonus/employee-bo
 import { HrRecruitmentTrackerComponent } from './common/Attendance/hr-recruitment-tracker/hr-recruitment-tracker.component';
 import { EmployeeSynchroniseWithAppComponent } from './common/HR/employee-synchronise-with-app/employee-synchronise-with-app.component';
 import { REPStockReportHBRComponent } from "./common/Harbauer/rep-stock-report-hbr/rep-stock-report-hbr.component";
+import { SlagToRmStockTransferComponent } from './common/MICL/RawMaterial/slag-to-rm-stock-transfer/slag-to-rm-stock-transfer.component';
+import { CommonStockTransferComponent } from './common/MICL/RawMaterial/common-stock-transfer/common-stock-transfer.component';
+import { BillNoChangeComponent } from './common/MICL/bill-no-change/bill-no-change.component';
+import { CostcenterTargetJohComponent } from './common/PatientManagement/Audiologist/costcenter-target-joh/costcenter-target-joh.component';
+import { LeaveRegisterComponent } from './common/MICL/leave-register/leave-register.component';
+import { HrReportsComponent } from './common/Attendance/hr-reports/hr-reports.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3023,7 +3029,48 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
           title: 'REP Stock Report Harbauer'
     }
     },
-    
+    {
+      path: 'Slag_To_RM_Stock_Transfer',
+        component: SlagToRmStockTransferComponent,
+        data: {
+          title: 'Slag To RM Stock Transfer'
+    }
+    },
+    {
+      path: 'Common_Stock_Transfer',
+        component: CommonStockTransferComponent,
+        data: {
+          title: 'Stock Transfer'
+    }
+    },
+    {
+      path: 'Bill_No_Change',
+        component: BillNoChangeComponent,
+        data: {
+          title: 'Bill Number Change'
+    }
+    },
+    {
+      path: 'BL_Txn_Costcenter_Target_For_Joh',
+        component: CostcenterTargetJohComponent,
+        data: {
+          title: 'Costcenter Target'
+    }
+    },
+    {
+      path: 'Leave_Register',
+        component: LeaveRegisterComponent,
+        data: {
+          title: 'Leave Register'
+    }
+    },
+    {
+      path: 'HR_Reports',
+        component: HrReportsComponent,
+        data: {
+          title: 'HR Reports'
+    }
+    },
     
     /*{
 

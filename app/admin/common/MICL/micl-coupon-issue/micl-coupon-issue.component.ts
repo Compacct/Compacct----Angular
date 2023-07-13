@@ -52,6 +52,9 @@ export class MICLCouponIssueComponent implements OnInit {
   Issue_To_Browse:any;
   pdfFormSubmitted:boolean = false;
   currentmonth: any;
+  UndercontractorList:any = [];
+  Sub_Ledger_ID:any;
+  Sub_Ledger_Name = undefined;
   
   constructor(
     private http: HttpClient,
@@ -75,6 +78,7 @@ export class MICLCouponIssueComponent implements OnInit {
     this.getContractorEmp();
     this.getCoupontype();
     this.IssuetoData();
+    this.getUnderContractorList();
     this.Issue_To = "Employee";
   }
   TabClick(e) {
@@ -377,6 +381,35 @@ export class MICLCouponIssueComponent implements OnInit {
       })
     }
   }
+  getUnderContractorList() {
+    const obj = {
+      "SP_String": "Sp_HR_Employee_Master_Contractor",
+      "Report_Name_String": "Get_Contractor_List"
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      console.log('Contractor List>>', data);
+      if (data.length) {
+        data.forEach((ele) => {
+          this.UndercontractorList.push({
+            'label': ele.Sub_Ledger_Name,
+            'value': ele.Sub_Ledger_ID
+          })
+        });
+      }
+    });
+  }
+  clearsubledger(){
+    this.Sub_Ledger_ID = undefined;
+  }
+  getsubledgername(){
+    this.Sub_Ledger_Name = undefined;
+    if(this.Sub_Ledger_ID){
+      const subledgername = this.UndercontractorList.filter(item=>Number(item.value) === Number(this.Sub_Ledger_ID))
+      this.Sub_Ledger_Name = (subledgername[0].label).toUpperCase();
+      console.log("this.Sub_Ledger_Name===",this.Sub_Ledger_Name)
+    }
+  }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
       this.From_date = dateRangeObj[0];
@@ -436,7 +469,8 @@ export class MICLCouponIssueComponent implements OnInit {
     const Data = {
       From_Date: this.DateService.dateConvert(this.From_date) ,
       To_Date: this.DateService.dateConvert(this.To_date) ,
-      Issue_Type: this.Issue_To_Browse
+      Issue_Type: this.Issue_To_Browse,
+      Sub_Ledger_ID: this.Sub_Ledger_ID
     }
     const obj = {
       "SP_String": "SP_Master_Coupon_Receive",
@@ -466,7 +500,7 @@ export class MICLCouponIssueComponent implements OnInit {
     // var column = ['SL No', 'Emp Code', 'Emp Name', 'Meal', 'Rate', 'Amount Rs', 'Breakfast', 'Rate1', 'Amount Rs.1', 'Grand Total Amount'];
     header = 
       [{
-      content: "MEAL & BREAKFAST COUPON STATEMENT OF MICL STAFF FOR THE MONTH OF "+ currentmonthyear,
+      content: "MEAL & BREAKFAST COUPON STATEMENT OF " + this.Sub_Ledger_Name + " FOR THE MONTH OF " + currentmonthyear,
       colSpan: 10,
       styles: {
       halign: 'center',
@@ -530,6 +564,139 @@ itemNew.forEach((element) => {
       margin: {top: 40, bottom: 30}
     });
     doc.save('Coupon-Statement.pdf');
+  }
+  pdfCantStatementSumm(){
+    if (this.From_date && this.To_date) {
+      this.getcurrentmonth();
+    const Data = {
+      From_Date: this.DateService.dateConvert(this.From_date) ,
+      To_Date: this.DateService.dateConvert(this.To_date)
+    }
+    const obj = {
+      "SP_String": "SP_Master_Coupon_Receive",
+      "Report_Name_String": "Coupon_Statement_SUMMARY_For_PDF",
+      "Json_Param_String": JSON.stringify([Data])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.converttoPDFcanteensummary(data);
+    })
+    }
+  }
+  converttoPDFcanteensummary(itemNew:any) {
+    //var style:any = ;
+    var fromdate = this.From_date;
+    var month = this.currentmonth
+    var year = fromdate.getFullYear();
+    var currentmonthyear = month + '-' + year;
+    var doc:any = new jsPDF();
+    var rows:any = [];
+    var header:any = [];
+    var lastrow:any = [];
+
+/* The following array of object as response from the API req  */
+    var col = Object.keys(itemNew[0]);
+    var replaceunderscore = col.map((value:any) => value.replace(/_/g, ' '));
+    var replace1 = replaceunderscore.map((val:any) => val.replace(/1/g, ''))
+    var column = itemNew.length ? replace1 : [];
+    // console.log('column----',Object.keys(itemNew[0]).slice(1))
+    // var column = ['SL No', 'Emp Code', 'Emp Name', 'Meal', 'Rate', 'Amount Rs', 'Breakfast', 'Rate1', 'Amount Rs.1', 'Grand Total Amount'];
+    header = 
+      [{
+      content: "TOTAL BREAKUP MEAL & BREAKFAST COUPON STATEMENT FOR THE MONTH OF " + currentmonthyear,
+      colSpan: 7,
+      styles: {
+      halign: 'center',
+      fillColor: [255, 255, 255] //[211, 211, 211]
+      }
+      }];
+    // var head = [{...header,...column}]
+    let head = [header,column]
+
+
+    // FOR LAST ROW
+    var total = itemNew.reduce((sum, el) => sum + el.Grand_Total_Amount, 0).toFixed(2);
+    var numbertoword = this.convertNumberToWords(total);
+    lastrow = 
+          [{
+            content: numbertoword,
+            colSpan: 5,
+            styles: {
+            halign: 'center',
+            fillColor: [255, 255, 255], //[211, 211, 211]
+            textColor:[0, 0, 0],
+            fontStyle: 'bold'
+            }
+            },
+            {
+            content: "Total",
+            styles: {
+            halign: 'center',
+            fillColor: [255, 255, 255], //[211, 211, 211]
+            textColor:[0, 0, 0],
+            fontStyle: 'bold'
+            }
+            },
+            {
+              content: `${total}`,
+              styles: {
+              halign: 'center',
+              fillColor: [255, 255, 255], //[211, 211, 211]
+              textColor:[0, 0, 0],
+              fontStyle: 'bold'
+            }
+          }];
+
+    // var body = [...itemNew.map(el => [el.SL_No, el.Particular, el.Meal, el.Amount_Rs, el.Breakfast, el.Amount_Rs1, el.Grand_Total_Amount]), 
+    //   [{content: `Total = ${total}`, colSpan: 6, 
+    //     styles: { fillColor: [255, 255, 255] }
+    //   }]]
+    itemNew.forEach((element) => {
+        // var temp = [element.SL_No,element.Emp_Code,element.Emp_Name,element.Meal,element.Rate,element.Amount_Rs,element.Breakfast,element.Rate1,element.Amount_Rs,element.Grand_Total_Amount];
+        rows.push(Object.values(element));
+        // rows.push(temp)
+
+    });
+    var imgData;
+    imgData = "../../../../Content/dist/img/Kashvi.jpeg"
+   
+    rows.push(lastrow);
+    doc.autoTable({
+      theme: "grid",
+      head:head,
+      body:rows,
+      headStyles :{fillColor : [255, 255, 255],lineWidth: 0.1,lineColor:[0,0,0],textColor:[0, 0, 0],fontSize: 7,halign: 'center',},
+      bodyStyles: {lineWidth: 0.1,lineColor:[0,0,0],textColor:[0, 0, 0],fontSize: 7,halign: 'center',},
+      // alternateRowStyles: {lineColor:[255,0,0],},
+      //tableLineColor: [0, 0, 0],
+      // tableLineWidth: 0.1,
+      didDrawPage: function (data) {
+
+        // Header
+        // doc.setFontSize(20);
+        // doc.setTextColor(40);
+        // doc.setFontStyle('normal');
+        var width = doc.internal.pageSize.getWidth()
+        // var height = doc.internal.pageSize.getHeight();
+        if (imgData) {   
+            doc.addImage(imgData, 'JPEG', data.settings.margin.left,10,30,25);  // for add image
+        }
+        doc.text('MODERN INDIA CON-CAST LIMITED', width/2, 17, { align: 'center' },{fontSize: 12})
+        doc.setFontSize(10);
+        doc.text('(A unit of Kasvi Group)', width/2, 22, { align: 'center' },{fontSize: 3})
+        doc.text('Bhuniaraichak, J.L No-122, Haldia-721635, Purba Medinipur, West Bengal', width/2, 27, { align: 'center' },{fontSize: 0.4})
+        // doc.text('Salary for The Month of ' + currentmonth, width/2, 32, { align: 'center' },{styles: { fontSize: 3 }})
+
+        // // Footer
+        var pageSize = doc.internal.pageSize;
+        var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+        doc.text("Prepared By", data.settings.margin.left, pageHeight - 10);
+        doc.text('Checked By', width/2, pageHeight - 10, { align: 'center' })
+        doc.text("Authorised By", 196, pageHeight - 10, { align: 'right' });
+      },
+      margin: {top: 40, bottom: 30}
+    });
+    doc.save('Canteen-Statement-Summary.pdf');
   }
   EditCoupon(col) {
     this.clearData();
@@ -633,6 +800,87 @@ itemNew.forEach((element) => {
         });
       }
     })
+  }
+  convertNumberToWords(amount) {
+    var words = new Array();
+    words[0] = '';
+    words[1] = 'One';
+    words[2] = 'Two';
+    words[3] = 'Three';
+    words[4] = 'Four';
+    words[5] = 'Five';
+    words[6] = 'Six';
+    words[7] = 'Seven';
+    words[8] = 'Eight';
+    words[9] = 'Nine';
+    words[10] = 'Ten';
+    words[11] = 'Eleven';
+    words[12] = 'Twelve';
+    words[13] = 'Thirteen';
+    words[14] = 'Fourteen';
+    words[15] = 'Fifteen';
+    words[16] = 'Sixteen';
+    words[17] = 'Seventeen';
+    words[18] = 'Eighteen';
+    words[19] = 'Nineteen';
+    words[20] = 'Twenty';
+    words[30] = 'Thirty';
+    words[40] = 'Forty';
+    words[50] = 'Fifty';
+    words[60] = 'Sixty';
+    words[70] = 'Seventy';
+    words[80] = 'Eighty';
+    words[90] = 'Ninety';
+    amount = amount.toString();
+    var atemp = amount.split(".");
+    var number = atemp[0].split(",").join("");
+    var n_length = number.length;
+    var words_string = "";
+    if (n_length <= 9) {
+        let n_array:any = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0);
+        var received_n_array = new Array();
+        for (var i = 0; i < n_length; i++) {
+            received_n_array[i] = number.substr(i, 1);
+        }
+        for (var i = 9 - n_length, j = 0; i < 9; i++, j++) {
+            n_array[i] = received_n_array[j];
+        }
+        for (var i = 0, j = 1; i < 9; i++, j++) {
+            if (i == 0 || i == 2 || i == 4 || i == 7) {
+                if (n_array[i] == 1) {
+                    n_array[j] = 10 + Number(n_array[j]);
+                    n_array[i] = 0;
+                }
+            }
+        }
+        let value:any = "";
+        for (var i = 0; i < 9; i++) {
+            if (i == 0 || i == 2 || i == 4 || i == 7) {
+                value = n_array[i] * 10;
+            } else {
+                value = n_array[i];
+            }
+            if (value != 0) {
+                words_string += words[value] + " ";
+            }
+            if ((i == 1 && value != 0) || (i == 0 && value != 0 && n_array[i + 1] == 0)) {
+                words_string += "Crores ";
+            }
+            if ((i == 3 && value != 0) || (i == 2 && value != 0 && n_array[i + 1] == 0)) {
+                words_string += "Lakhs ";
+            }
+            if ((i == 5 && value != 0) || (i == 4 && value != 0 && n_array[i + 1] == 0)) {
+                words_string += "Thousand ";
+            }
+            if (i == 6 && value != 0 && (n_array[i + 1] != 0 && n_array[i + 2] != 0)) {
+                words_string += "Hundred and ";
+            } else if (i == 6 && value != 0) {
+                words_string += "Hundred ";
+            }
+        }
+        words_string = words_string.split("  ").join(" ") + "Only";
+    }
+    return words_string;
   }
 }
 class CouponIssue{
