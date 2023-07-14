@@ -41,6 +41,12 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
   ForwardList: any = [];
   ObjFlow: Flow = new Flow();
   FlowDate: any = undefined;
+  Disposal2nd: any = [];
+  disposalList: any = [];
+  RemarksDis:boolean = false;
+  ISused:any = undefined;
+  Followup_Type:any = undefined;
+
   constructor(
     private $http: HttpClient,  
     private Header: CompacctHeader,
@@ -53,14 +59,13 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.ActionList = [{ 'Action': 'Tele Call' }, { 'Action': 'Branch Visit' }]
-    this.ActionList2 = [{'Action':'Tele Call'} ,{'Action':'Branch Visit'}]
     this.userid = this.$CompacctAPI.CompacctCookies.User_ID
     this.Header.pushHeader({
       Header: "Patient Followup",
       Link: "Patient Followup"
     });
     this.getUsertype();
+    this.getDisposial();
   }
   onReject(){}
   getUsertype() {
@@ -87,6 +92,7 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
     this.FormSubmittedBRwFl = true;
     this.userListTable = [];  
     this.userListTableBackup = [];
+    this.userListTableDynmic = [];
     if (valid) {
       this.ngxService.start();
      const RegObj ={
@@ -102,6 +108,7 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
       if (data.length) {
         //console.log("RegObj ==", data)
         this.userListTable = data
+        this.userListTableDynmic = Object.keys(data[0]);
         this.userListTableBackup = data
         this.ngxService.stop();
         this.FormSubmittedBRwFl = false;
@@ -116,9 +123,9 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
     let Status: any = [];
     this.DistFollowup1 = [];
     this.userListTable.forEach((item) => {
-      if (Status.indexOf(item.User_Name) === -1) {
-        Status.push(item.User_Name);
-        this.DistFollowup1.push({ label: item.User_Name, value: item.User_Name });
+      if (Status.indexOf(item.Followup_Type) === -1) {
+        Status.push(item.Followup_Type);
+        this.DistFollowup1.push({ label: item.Followup_Type, value: item.Followup_Type });
       }    
     });
       this.userListTableBackup = [...this.userListTable];
@@ -127,13 +134,13 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
     let First: any = [];
     let SearchFields: any = [];
      if (this.DistFollowupSelect1.length) {
-      SearchFields.push('User_Name');
+      SearchFields.push('Followup_Type');
       First = this.DistFollowupSelect1;
     }
     this.userListTable = [];
     if (SearchFields.length) {
       let LeadArr = this.userListTableBackup.filter(function (e) {
-        return (First.length ? First.includes(e['User_Name']) : true)
+        return (First.length ? First.includes(e['Followup_Type']) : true)
       });
       this.userListTable = LeadArr.length ? LeadArr : [];
     } else {
@@ -143,12 +150,17 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
   followup(col:any) {
     this.FootFallId = undefined;
     this.FlowDate = undefined;
+    this.RemarksDis = false;
+    this.Followup_Type = undefined;
+    this.Disposal2nd = [];
     this.FollowupDateReg2 = new Date();
     if (col.Foot_Fall_ID) {
       this.Fname = col.Contact_Name+' / ('+col.Mobile+')';
        this.FootFallId = col.Foot_Fall_ID;
       this.FollowupModal = true;
+      this.Followup_Type = col.Followup_Type;
       this.ObjFlow = new Flow();
+      this.folloupFormSubmit = false;
     this.getPatatentFlow(col.Foot_Fall_ID) 
     } 
   }
@@ -166,11 +178,12 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
     this.folloupFormSubmit = true;
     if (valid) {
       this.ObjFlow.Foot_Fall_ID = this.FootFallId,
+      this.ObjFlow.Current_Action = 'Tele Call'
       this.ObjFlow.User_ID = this.userid,
       this.ObjFlow.Next_Followup = this.DateService.dateConvert(this.FollowupDateReg2),
       this.ObjFlow.Sent_To = this.userid ,
-      this.ObjFlow.Used = 'NA',
-      this.ObjFlow.Followup_Type = null,
+      this.ObjFlow.Used =  this.ISused,
+      this.ObjFlow.Followup_Type = this.Followup_Type,
       this.ObjFlow.Is_Lost = 'Y'
       //console.log(this.ObjFlow)
        const obj = {
@@ -186,6 +199,7 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
           this.folloupFormSubmit = false;
           this.FollowupModal = false;
           this.FootFallId = undefined;
+          this.Followup_Type = undefined;
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -207,7 +221,50 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
   Appointment() {
       window.open('/Hearing_BL_CRM_Appointment');
   }
-    
+  getDisposial() {
+    this.disposalList =[]
+    const obj = {
+      "SP_String": "sp_Followup_Details",
+      "Report_Name_String": "Get_Disposition_dropdown",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      if (data.length) {
+        this.disposalList = JSON.parse(data[0].AA);
+        console.log('this.disposalList',this.disposalList)
+      }
+     })
+  
+  }
+  GetSEndDispo(DispoId: any) {
+    this.Disposal2nd = []
+    this.RemarksDis = false;
+    this.ObjFlow.Followup_Details = undefined;
+    this.ObjFlow.Secondary_Desposition_ID = undefined;
+    if (DispoId == 1) {
+      this.disposalList[0].SEC_DETAIL.forEach((ele:any) => {
+          ele['label'] = ele.Secondary_Desposition_Name;
+          ele['value'] = ele.Secondary_Desposition_ID;
+        });
+        this.Disposal2nd = this.disposalList[0].SEC_DETAIL; 
+    }
+    if (DispoId == 2) {
+       this.disposalList[1].SEC_DETAIL.forEach((el:any) => {
+          el['label'] = el.Secondary_Desposition_Name;
+          el['value'] = el.Secondary_Desposition_ID;
+        });
+        this.Disposal2nd = this.disposalList[1].SEC_DETAIL;
+    }
+  }
+  getDisable() {
+    this.RemarksDis = false;
+    this.ISused = undefined;
+    if (this.ObjFlow.Secondary_Desposition_ID) {
+      let arrayfilt = this.Disposal2nd.filter((Ele: any) => { return Ele.Secondary_Desposition_ID === this.ObjFlow.Secondary_Desposition_ID });
+      this.ObjFlow.Followup_Details = arrayfilt[0].Secondary_Desposition_Name
+      this.RemarksDis = arrayfilt[0].Show_Remarks === 'Y' ? false : true;
+      this.ISused = arrayfilt[0].Is_Used;
+    }
+  }   
 }
 class Flow{
     Foot_Fall_ID: any;
@@ -219,5 +276,7 @@ class Flow{
     Used:any;                                            
     Followup_Type :any;                                    
     Next_Followup:any;                                     
-    Is_Lost:any;               
+    Is_Lost: any; 
+    Disposition_ID: any;
+    Secondary_Desposition_ID:any
 }
