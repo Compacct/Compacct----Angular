@@ -3196,4 +3196,94 @@ export class ExportExcelService {
   })
 
   }
+  exprtToExcelHR_Reports(data: any,excelName:any) {
+    let workbook = new Workbook();
+    let worksheet = workbook.addWorksheet('Sheet1');
+
+    let header = data.length ? Object.keys(data[0]) : [];
+    let newHeader: any = [];
+    header.forEach((ele: any) => {
+      newHeader.push(ele.replaceAll("_", " "));
+    })
+    let body: any = [];
+    data.forEach((ele: any) => {
+      body.push(Object.values(ele));
+    })
+    let headerRow = worksheet.addRow(newHeader);
+    headerRow.eachCell((cell, number) => {
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '4167B8' },
+        bgColor: { argb: '' }
+      }
+      cell.font = {
+        bold: true,
+        color: { argb: 'FFFFFF' },
+        size: 12
+      }
+      cell.alignment = { vertical: 'middle', horizontal: 'center' }
+    });
+    headerRow.height = 25;
+    for (let i = 1; i <= newHeader.length; i++) {
+      worksheet.getColumn(i).width = 23;
+    }
+    body.forEach((ele: any, index: number) => {
+
+      let newEle = ele.map((ele: any) => {
+        if (ele == null) {
+          return "";
+        }
+        else {
+          return ele;
+        }
+      })
+      let x = worksheet.addRow(newEle);
+      x.height = 22;
+      if (index % 2 == 0) {
+        x.eachCell((cell, number) => {
+          cell.alignment = { vertical: 'middle', horizontal: 'center' }
+          cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+          };
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'F2F1ED' },
+            bgColor: { argb: '' }
+          }
+        })
+      }
+      else {
+        x.eachCell((cell, number) => {
+          cell.alignment = { vertical: 'middle', horizontal: 'center' }
+          cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+          };
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'DEDDDC' },
+            bgColor: { argb: '' }
+          }
+        })
+      }
+    })
+    workbook.xlsx.writeBuffer().then((data) => {
+      let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      fs.saveAs(blob, excelName.report_name.replaceAll(" ","_") + '.xlsx');
+    })
+ }
 }
