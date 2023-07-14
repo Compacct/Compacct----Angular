@@ -77,6 +77,10 @@ hr {
 .btn-danger {
     background-color: #24a333;
 }
+.btn-dangerr {
+     background-color: #6450d1;
+     color: white;
+}
 fieldset {
     border: 2px solid #e9ebeb !important;
     margin: 0;
