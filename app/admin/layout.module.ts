@@ -501,6 +501,7 @@ import { CostcenterTargetJohComponent } from './common/PatientManagement/Audiolo
 import { LeaveRegisterComponent } from './common/MICL/leave-register/leave-register.component';
 import { HrReportsComponent } from './common/Attendance/hr-reports/hr-reports.component';
 import { FinsSubLedgerComponent } from './common/Finshore/fins-sub-ledger/fins-sub-ledger.component';
+import { AdvanceOrderAdjustmentComponent } from './common/OutletManagement/advance-order-adjustment/advance-order-adjustment.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -916,7 +917,8 @@ import { FinsSubLedgerComponent } from './common/Finshore/fins-sub-ledger/fins-s
     CostcenterTargetJohComponent,
     LeaveRegisterComponent,
     HrReportsComponent,
-    FinsSubLedgerComponent
+    FinsSubLedgerComponent,
+    AdvanceOrderAdjustmentComponent
   ],
   imports: [
     CommonModule,

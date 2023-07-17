@@ -214,8 +214,17 @@
                                         [virtualScroll]="true"  
                                         itemSize="30" 
                                         #ProductID="ngModel"
+                                        (onChange)="Getdatafromproduct()"
                                         [styleClass]="RawIndentFormSubmit && ProductID.errors?.required ? 'clearance': ''" [required] = "true">
                                     </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">UOM</label>
+                                        <div class="label-t">{{uom ? uom : '-'}}</div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Stock Qty</label>
+                                        <div class="label-t">{{StockQty ? StockQty : '-'}}</div>
                                     </div>
                                     <div class="col-sm-2">
                                         <label class="control-label">Qty<sup class="text-danger">*</sup></label>

@@ -63,6 +63,8 @@ export class K4cRawMaterialIndentComponent implements OnInit {
   Product_ID: any;
   DropdownproductList:any = [];
   Requisition_Qty: any;
+  uom:any;
+  StockQty: any;
   constructor(
     private Header: CompacctHeader,
     private compacctToast: MessageService,
@@ -249,6 +251,15 @@ export class K4cRawMaterialIndentComponent implements OnInit {
       })
     // }
   }
+  Getdatafromproduct(){
+    this.uom = undefined;
+    this.StockQty = undefined;
+    if(this.Product_ID){
+    const productdata = this.DropdownproductList.filter(el=> Number(el.Product_ID) === Number(this.Product_ID))
+    this.uom = productdata.length ? productdata[0].UOM : undefined;
+    this.StockQty = productdata.length ? productdata[0].Stock_Qty : undefined;
+    }
+  }
   AddProduct(valid){
     this.RawIndentFormSubmit = true;
     this.showSpinner = true;
@@ -272,6 +283,8 @@ export class K4cRawMaterialIndentComponent implements OnInit {
       this.productList.push(addData);
       this.godownId = undefined;
       this.Product_ID = undefined;
+      this.uom = undefined;
+      this.StockQty = undefined;
       this.Requisition_Qty = undefined;
       this.showSpinner = false;
       this.backUpproductList = this.productList;
