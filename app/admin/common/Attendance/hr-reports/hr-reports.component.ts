@@ -77,7 +77,7 @@ export class HrReportsComponent implements OnInit {
     this.reportFormSubmit = true;
     if (valid) {
       this.reportFormSubmit = false;
-      if (this.visibleDate == "DT2,XL") {
+      if (this.visibleDate == "MT,XL") {
         this.Spinner = true;
         let paramDate = this.currentMonth ? new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth(), 1) : new Date;
         const apiObj = {
