@@ -502,6 +502,7 @@ import { LeaveRegisterComponent } from './common/MICL/leave-register/leave-regis
 import { HrReportsComponent } from './common/Attendance/hr-reports/hr-reports.component';
 import { FinsSubLedgerComponent } from './common/Finshore/fins-sub-ledger/fins-sub-ledger.component';
 import { AdvanceOrderAdjustmentComponent } from './common/OutletManagement/advance-order-adjustment/advance-order-adjustment.component';
+import { AssetMasterComponent } from './common/MICL/asset-master/asset-master.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -918,7 +919,8 @@ import { AdvanceOrderAdjustmentComponent } from './common/OutletManagement/advan
     LeaveRegisterComponent,
     HrReportsComponent,
     FinsSubLedgerComponent,
-    AdvanceOrderAdjustmentComponent
+    AdvanceOrderAdjustmentComponent,
+    AssetMasterComponent
   ],
   imports: [
     CommonModule,
