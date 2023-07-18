@@ -402,6 +402,8 @@ import { BillNoChangeComponent } from './common/MICL/bill-no-change/bill-no-chan
 import { CostcenterTargetJohComponent } from './common/PatientManagement/Audiologist/costcenter-target-joh/costcenter-target-joh.component';
 import { LeaveRegisterComponent } from './common/MICL/leave-register/leave-register.component';
 import { HrReportsComponent } from './common/Attendance/hr-reports/hr-reports.component';
+import { FinsSubLedgerComponent } from './common/Finshore/fins-sub-ledger/fins-sub-ledger.component';
+import { AdvanceOrderAdjustmentComponent } from './common/OutletManagement/advance-order-adjustment/advance-order-adjustment.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3071,7 +3073,20 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
           title: 'HR Reports'
     }
     },
-    
+    {
+      path: 'Fins_Sub_Ledger',
+        component: FinsSubLedgerComponent,
+        data: {
+          title: 'Sub Ledger'
+    }
+    },
+    {
+      path: 'Advance_Order_Adjustment',
+        component: AdvanceOrderAdjustmentComponent,
+        data: {
+          title: 'Advance Order Adjustment'
+    }
+    },
     /*{
 
 

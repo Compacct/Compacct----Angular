@@ -545,6 +545,10 @@ export class HrLeaveApplyComponent implements OnInit {
   }
   }
   getMaxMindate(){
+    this.minFromDate = new Date();
+    this.maxFromDate = new Date();
+    this.minToDate = new Date();
+    this.maxToDate = new Date();
       if(this.ObjHrleave.HR_Year_ID){
         const HRFilterValue = this.hrYeatList.filter(el=> Number(el.HR_Year_ID) === Number(this.ObjHrleave.HR_Year_ID))[0];
         console.log("HRFilterValue",HRFilterValue)
@@ -555,6 +559,22 @@ export class HrLeaveApplyComponent implements OnInit {
         // console.log("this.maxDateTo_Time",this.maxDateTo_Time )
         // console.log("this.maxDateFrom_Time",this.minDateFrom_Time )
         this.initDate = [new Date(HRFilterValue.HR_Year_Start), new Date(HRFilterValue.HR_Year_End)];
+        var currentdate = new Date();
+        var hryear = new Date(HRFilterValue.HR_Year_Start);
+        console.log("currentdate year==",currentdate.getFullYear().toString())
+        console.log("hr year==",hryear.getFullYear().toString())
+        if (currentdate.getFullYear().toString() === hryear.getFullYear().toString()){
+          this.FromDatevalue = new Date();
+          this.ToDatevalue = new Date();
+        }
+        else {
+          this.FromDatevalue = new Date(HRFilterValue.HR_Year_Start);
+          this.ToDatevalue = new Date(HRFilterValue.HR_Year_Start);
+        }
+        this.minFromDate = new Date(HRFilterValue.HR_Year_Start);
+        this.maxFromDate = new Date(HRFilterValue.HR_Year_End);
+        this.minToDate = new Date(HRFilterValue.HR_Year_Start);
+        this.maxToDate = new Date(HRFilterValue.HR_Year_End);
         
       }
     }

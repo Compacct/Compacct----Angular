@@ -753,8 +753,8 @@ export class SaleOrderComponent implements OnInit {
       this.ObjProductInfo.CGST_Rate = Number(gstper);
       this.ObjProductInfo.SGST_Rate = Number(gstper);
       this.ObjProductInfo.IGST_Rate = Number(TaxCatArry[0].GST_Tax_Per);
-      const SubLedgerState = this.ObjSaleOrder.Sub_Ledger_State_2
-        ? this.ObjSaleOrder.Sub_Ledger_State_2.toUpperCase()
+      const SubLedgerState = this.ObjSaleOrder.Sub_Ledger_State
+        ? this.ObjSaleOrder.Sub_Ledger_State.toUpperCase()
         : undefined;
       const CostCenterState = this.Objcostcenter.Cost_Cen_State
         ? this.Objcostcenter.Cost_Cen_State.toUpperCase()
