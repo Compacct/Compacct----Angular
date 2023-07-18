@@ -750,7 +750,9 @@ export class OutwardChallanComponent implements OnInit {
       this.BatchQtyCheck = LotNoArry.length ? LotNoArry[0].Batch_Qty : "NA";
       const ProductArry: any = this.ProductType.filter((el: any) => Number(el.Product_Type_ID) === Number(this.ObjProductInfo.Product_Type_ID));
       const ProductSubArry: any = this.ProductSub.filter((el: any) => Number(el.Product_Sub_Type_ID) === Number(this.ObjProductInfo.Product_Sub_Type_ID));
-      if (ProductArry[0].Product_Type === "Packing and Forwarding Charges" && ProductSubArry[0].Product_Sub_Type === "Packing and Forwarding Charges"){
+      var producttype = ProductArry.length ? ProductArry[0].Product_Type : undefined;
+      var prosubtype = ProductSubArry.length ? ProductSubArry[0].Product_Sub_Type : undefined;
+      if (producttype === "Packing and Forwarding Charges" && prosubtype === "Packing and Forwarding Charges"){
         if(this.checksamebatchandpro()){
         this.AddProduct();
         }
@@ -1083,8 +1085,8 @@ export class OutwardChallanComponent implements OnInit {
       this.buttonname = "Update";
       this.getedit(col.Doc_No);
      }
-   }
-   getedit(Dno){
+  }
+  getedit(Dno){
     this.editlist = [];
     const obj = {
       "SP_String": "SP_MICL_Sale_Bill",
@@ -1141,7 +1143,7 @@ export class OutwardChallanComponent implements OnInit {
           this.TotalCalculation();
         });
     })
-   }
+  }
   Print(DocNo) {
     if (DocNo) {
       const objtemp = {
@@ -1191,13 +1193,13 @@ export class OutwardChallanComponent implements OnInit {
      });
     }
   }
-   DynamicRedirectTo (obj){
+  DynamicRedirectTo (obj){
     const navigationExtras: NavigationExtras = {
       queryParams: obj,
     };
     this.router.navigate([obj.Redirect_To], navigationExtras);
   }
-   RedrectEdit() {
+  RedrectEdit() {
     if (this.challanno) {
       const TempObj = {
         Redirect_To : './MICL_Sale_Bill',

@@ -361,8 +361,14 @@
                             </div>
                             <div class="col-sm-3">
                                 <label>Customer PO Date</label>
-                                <input class="form-control" name="refdate" #refdate="ngModel"
-                                [(ngModel)]="Reference_Doc_Date" placeholder="Customer PO Date">
+                                <!-- <input class="form-control" name="refdate" #refdate="ngModel"
+                                [(ngModel)]="Reference_Doc_Date" placeholder="Customer PO Date"> -->
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                     <i class="fa fa-calendar"></i>
+                                </div>
+                                <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Reference_Doc_Date'></ejs-datepicker>
+                                </div>
                             </div>
                             <div class="clearfix"></div>
                             <div class="col-sm-3">
@@ -513,8 +519,8 @@
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Stock Point</th> -->
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">LI Doc No</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">LI Doc Date</th>
-                              <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Ref Doc No</th>
-                              <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Ref Doc Date</th>
+                              <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Cust PO No.</th>
+                              <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Cust PO Date</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Description</th>
                               <!-- <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Lot No./Batch No.</th> -->
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">LI QTY</th>

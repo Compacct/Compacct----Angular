@@ -405,6 +405,7 @@ import { HrReportsComponent } from './common/Attendance/hr-reports/hr-reports.co
 import { FinsSubLedgerComponent } from './common/Finshore/fins-sub-ledger/fins-sub-ledger.component';
 import { AdvanceOrderAdjustmentComponent } from './common/OutletManagement/advance-order-adjustment/advance-order-adjustment.component';
 import { AssetMasterComponent } from './common/MICL/asset-master/asset-master.component';
+import { HrTrainingComponent } from './common/HR/hr-training/hr-training.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3093,6 +3094,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: AssetMasterComponent,
         data: {
           title: 'Asset Master'
+    }
+    },
+    {
+      path: 'HR_Training',
+        component: HrTrainingComponent,
+        data: {
+          title: 'Training'
     }
     },
     /*{
