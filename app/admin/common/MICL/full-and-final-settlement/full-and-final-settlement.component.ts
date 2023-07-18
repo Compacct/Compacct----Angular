@@ -262,12 +262,15 @@ export class FullAndFinalSettlementComponent implements OnInit {
         this.ObjFullAndFinalSettlement.Leave_Balance = Encashment.length ? Encashment[0].Leave_Days ? Encashment[0].Leave_Days : 0 : 0;
         this.ObjFullAndFinalSettlement.Leave_Encashment = Encashment.length ? Encashment[0].Leave_Amount ? Encashment[0].Leave_Amount : 0 : 0;
         this.ObjFullAndFinalSettlement.Gratuity = ggratuity.length ? ggratuity[0].Gratuity ? ggratuity[0].Gratuity : 0 : 0;
-        var Total_Statutory_Earnings = Number(this.ObjFullAndFinalSettlement.Bonus) + Number(this.ObjFullAndFinalSettlement.Leave_Encashment) +
+        this.CalculateTotalStatutoryEarnings();
+      })
+  
+  }
+  CalculateTotalStatutoryEarnings(){
+    var Total_Statutory_Earnings = Number(this.ObjFullAndFinalSettlement.Bonus) + Number(this.ObjFullAndFinalSettlement.Leave_Encashment) +
                                  Number(this.ObjFullAndFinalSettlement.Gratuity)
         this.ObjFullAndFinalSettlement.Total_Statutory_Earnings = Number(Total_Statutory_Earnings).toFixed(2);
         this.GetNetPayble();
-      })
-  
   }
   CalculateNoticePeriod(){
     if(this.ObjFullAndFinalSettlement.Notice_Period_Day){
@@ -467,6 +470,7 @@ class FullAndFinalSettlement{
   Last_Month_Payable_Days : any;
   Last_Gross_Amount : any;
 
+  Bonus_Day : any;
   Bonus : any;
   Leave_Balance : any;
   Leave_Encashment : any;

@@ -223,6 +223,7 @@ export class NonSaleableClosingStockComponent implements OnInit {
             Product_ID : item.Product_ID,
             UOM : item.UOM,
             Batch_No : item.Batch_No,
+            Batch_Qty : item.Batch_Qty,
            // System_Qty : item.batch_Qty,
             Closing_Qty	: item.Closing_Qty,
           //  Varience_Qty : item.varience_Qty,

@@ -309,9 +309,10 @@
                                         <tr>
                                             <td class="text-center" style="vertical-align:middle">1</td>
                                             <td>BONUS (8.33% of Basic)</td>
-                                            <td></td>
+                                            <td class="text-center" style="vertical-align:middle"><input type="text" name="bonusdays" #bonusdays="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Bonus_Day' CompacctDigitonly="true" class="form-control" style="width: 71px;"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && bonusdays.errors?.required}"/></td>
                                             <td><input type="text" name="bonus" #bonus="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Bonus' class="form-control" CompacctDigitonly="true"
-                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && bonus.errors?.required}" required/>
+                                                (ngModelChange)="CalculateTotalStatutoryEarnings()" [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && bonus.errors?.required}" required/>
                                             </td>
                                         </tr>
                                         <tr>

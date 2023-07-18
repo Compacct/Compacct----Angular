@@ -1,0 +1,14 @@
+
+.box-body {
+    padding-top: 10px !important;
+    padding-left: 10px !important;
+}
+.custombutton {
+    margin-top: 26px;
+}
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
