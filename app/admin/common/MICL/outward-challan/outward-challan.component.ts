@@ -110,6 +110,8 @@ export class OutwardChallanComponent implements OnInit {
   CGST: any = undefined;
   SGST: any = undefined;
   IGST: any = undefined;
+  Total_Amount:any = undefined;
+  Rounded_Off:any = undefined;
   NetAMT: any = undefined;
   BatchQtyCheck: any = undefined;
   SaveLowerData: any = [];
@@ -132,6 +134,7 @@ export class OutwardChallanComponent implements OnInit {
   editlist:any = [];
   editDocNo: any;
   StateList2:any =[];
+  godwnandbatchdisabled:boolean = false;
   constructor(
     private Header: CompacctHeader,
     private router: Router,
@@ -202,6 +205,8 @@ export class OutwardChallanComponent implements OnInit {
     this.SGST = undefined;
     this.IGST = undefined;
     this.NetAMT = undefined;
+    this.Total_Amount = undefined;
+    this.Rounded_Off = undefined;
     this.AddProdList = [];
     this.ProductSub = [];
     this.ProductDetalist = [];
@@ -513,8 +518,11 @@ export class OutwardChallanComponent implements OnInit {
     this.ProductSub = [];
     this.ObjProductInfo.Product_Sub_Type_ID = undefined;
     this.ObjProductInfo.Product_Specification = undefined;
+    this.ObjProductInfo.Qty = undefined;
+    this.ObjProductInfo.Rate = undefined;
     this.UomList = ''
-    this.ObjProductInfo.Batch_Number = undefined
+    this.ObjProductInfo.Batch_Number = undefined;
+    this.ObjProductInfo.Taxable_Amount = undefined;
     if (this.ObjProductInfo.Product_Type_ID) {
       const TempObj = {
         Product_Type_ID: this.ObjProductInfo.Product_Type_ID,
@@ -527,6 +535,7 @@ export class OutwardChallanComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         console.log("ProductSub  ===", data);
         this.ProductSub = data;
+        this.Protypesubtypecheck();
       })
     }
     
@@ -593,9 +602,22 @@ export class OutwardChallanComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         console.log("ProductDetalist  ===", data);
         this.ProductDetalist = data;
+        this.Protypesubtypecheck();
       })
     }
   
+  }
+  Protypesubtypecheck(){
+    const protypedetails = this.ProductType.filter(el=> Number(el.Product_Type_ID) === Number(this.ObjProductInfo.Product_Type_ID))
+    const prosubtypedetails = this.ProductSub.filter(el=> Number(el.Product_Sub_Type_ID) === Number(this.ObjProductInfo.Product_Sub_Type_ID))
+    var protype = protypedetails.length ? protypedetails[0].Product_Type : undefined;
+    var prosubtype = prosubtypedetails.length ? prosubtypedetails[0].Product_Sub_Type : undefined;
+    if (protype === "Packing and Forwarding Charges" &&  prosubtype === "Packing and Forwarding Charges") {
+      this.godwnandbatchdisabled = true;
+    } else {
+      this.godwnandbatchdisabled = false;
+    }
+    
   }
   ProductDetalforOrder() {
     this.ProductDetalist = [];
@@ -670,7 +692,11 @@ export class OutwardChallanComponent implements OnInit {
       const TempArry: any = this.ProductDetalist.filter((el: any) => Number(el.value) === Number(this.ObjProductInfo.Product_Specification))
       this.UomList = TempArry[0].UOM;
       this.Tax_Category = TempArry.length ? TempArry[0].Cat_ID : undefined;
-      this.ObjProductInfo.Qty = this.ObjProductInfo.Sale_Order_No ? TempArry.length ? TempArry[0].Qty : undefined : undefined;
+      if(this.godwnandbatchdisabled) {
+        this.ObjProductInfo.Qty = 1;
+      } else {
+        this.ObjProductInfo.Qty = this.ObjProductInfo.Sale_Order_No ? TempArry.length ? TempArry[0].Qty : undefined : undefined;
+      }
       this.ObjProductInfo.Rate = this.ObjProductInfo.Sale_Order_No ? TempArry.length ? TempArry[0].Rate : undefined : undefined;
       this.GetTaxAmt();
     }
@@ -701,14 +727,14 @@ export class OutwardChallanComponent implements OnInit {
   }
   checksamebatchandpro () {
     if(!this.ObjProductInfo.Sale_Order_No) {
-    const SameProductbach = this.AddProdList.filter(item=> item.Batch_No === this.ObjProductInfo.Batch_Number && item.Product_ID === this.ObjProductInfo.Product_Specification );
+    const SameProductbach = this.AddProdList.filter(item=> Number(item.Product_ID) === Number(this.ObjProductInfo.Product_Specification) );
     if(SameProductbach.length) {
       this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "error",
             summary: "Warn Message",
-            detail: "Can't add Same Product with same batch no."
+            detail: "Can't add Same Product."
           });
       return false;
     }
@@ -717,12 +743,38 @@ export class OutwardChallanComponent implements OnInit {
     }
   }
   }
-  AddProduct(valid: any) {
+  Add(valid: any){
     this.TermFormSubmitted = true;
-    if (valid && this.checksamebatch()) {
-      const LotNoArry: any = this.LotNolist.filter((el: any) => el.Batch_No == this.ObjProductInfo.Batch_Number);
-      this.BatchQtyCheck = LotNoArry[0].Batch_Qty;
+    if (valid) {
+    const LotNoArry: any = this.LotNolist.filter((el: any) => el.Batch_No == this.ObjProductInfo.Batch_Number);
+      this.BatchQtyCheck = LotNoArry.length ? LotNoArry[0].Batch_Qty : "NA";
+      const ProductArry: any = this.ProductType.filter((el: any) => Number(el.Product_Type_ID) === Number(this.ObjProductInfo.Product_Type_ID));
+      const ProductSubArry: any = this.ProductSub.filter((el: any) => Number(el.Product_Sub_Type_ID) === Number(this.ObjProductInfo.Product_Sub_Type_ID));
+      if (ProductArry[0].Product_Type === "Packing and Forwarding Charges" && ProductSubArry[0].Product_Sub_Type === "Packing and Forwarding Charges"){
+        if(this.checksamebatchandpro()){
+        this.AddProduct();
+        }
+      }else {
       if(this.BatchQtyCheck >= this.ObjProductInfo.Qty) {
+        this.AddProduct();
+      }
+      else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+        summary: "Quantity can't be more than in batch available quantity"                   
+         });
+     }
+    }
+    }
+  }
+  AddProduct() {
+    // this.TermFormSubmitted = true;
+    if (this.checksamebatch()) {
+      const LotNoArry: any = this.LotNolist.filter((el: any) => el.Batch_No == this.ObjProductInfo.Batch_Number);
+      // this.BatchQtyCheck = LotNoArry.length ? LotNoArry[0].Batch_Qty : "NA";
+      // if(this.BatchQtyCheck >= this.ObjProductInfo.Qty) {
         const CostMatch: any = this.CenterList.filter((el: any) => Number(el.Cost_Cen_ID) === Number(this.ObjProductInfo.Cost_Cen_ID));
       const ProductDArry: any = this.ProductDetalist.filter((el: any) => Number(el.value) === Number(this.ObjProductInfo.Product_Specification));
       const TaxCatArry: any = this.TaxCategoryList.filter((el: any) => Number(el.Cat_ID) === Number(this.Tax_Category));
@@ -767,8 +819,8 @@ export class OutwardChallanComponent implements OnInit {
       const TemopArry = {
         Sale_Order_No: this.ObjProductInfo.Sale_Order_No,
         Cost_Cen_Name: CostMatch.length ? CostMatch[0].Cost_Cen_Name : undefined,
-        godown_name: GdwonArry.length ? GdwonArry[0].godown_name : undefined,
-        godown_id: this.ObjProductInfo.godown_id,
+        godown_name: GdwonArry.length ? GdwonArry[0].godown_name : "NA",
+        godown_id: this.ObjProductInfo.godown_id ? this.ObjProductInfo.godown_id : 0,
         Product_ID :this.ObjProductInfo.Product_Specification,
         Product_Type_ID: this.ObjProductInfo.Product_Type_ID,
         Product_Type: ProductArry.length ? ProductArry[0].Product_Type : undefined,
@@ -776,7 +828,7 @@ export class OutwardChallanComponent implements OnInit {
         Product_Sub_Type_ID: this.ObjProductInfo.Product_Sub_Type_ID,
         Product_Sub_Type: ProductSubArry.length ? ProductSubArry[0].Product_Sub_Type : undefined,
         Product_Specification: ProductDArry.length ? ProductDArry[0].label : undefined,
-        Batch_No : this.ObjProductInfo.Batch_Number,
+        Batch_No : this.ObjProductInfo.Batch_Number ? this.ObjProductInfo.Batch_Number : "NA",
         Batch_No_Show: LotNoArry.length ? LotNoArry[0].Batch_No_Show : undefined,
         Qty: this.ObjProductInfo.Qty,
         UOM: this.UomList,
@@ -807,15 +859,15 @@ export class OutwardChallanComponent implements OnInit {
       this.ObjProductInfo.Rate = undefined;
       this.ObjProductInfo.Taxable_Amount = undefined;
       this.Tax_Category = undefined;
-      }
-      else {
-         this.compacctToast.clear();
-         this.compacctToast.add({
-        key: "compacct-toast",
-        severity: "error",
-         summary: "Quantity can't be more than in batch available quantity"                   
-          });
-      }
+      // }
+      // else {
+      //    this.compacctToast.clear();
+      //    this.compacctToast.add({
+      //   key: "compacct-toast",
+      //   severity: "error",
+      //    summary: "Quantity can't be more than in batch available quantity"                   
+      //     });
+      // }
     }
   }
   Deteteaddlist(index){
@@ -828,6 +880,8 @@ export class OutwardChallanComponent implements OnInit {
     this.SGST = undefined;
     this.IGST = undefined;
     this.NetAMT = undefined;
+    this.Rounded_Off = undefined;
+    this.Total_Amount = undefined;
     let count1 = 0;
     let count2 = 0;
     let count3 = 0;
@@ -844,7 +898,12 @@ export class OutwardChallanComponent implements OnInit {
     this.CGST = count2.toFixed(2);
     this.SGST = count3.toFixed(2);
     this.IGST = count4.toFixed(2);
-    this.NetAMT = count5.toFixed(2);
+    this.Total_Amount = count5.toFixed(2);
+    this.Rounded_Off = Number(Math.round(Number(this.Total_Amount)) - Number(this.Total_Amount)).toFixed(2);
+    this.NetAMT = this.RoundOff(this.Total_Amount);
+  }
+  RoundOff(key:any){
+    return Math.round(Number(Number(key).toFixed(2)))
   }
   SaveOutward(valid: any){
     this.SaveLowerData = [];
@@ -927,7 +986,7 @@ export class OutwardChallanComponent implements OnInit {
         Cost_Cen_Email: this.ObjPurChaseBill.Cost_Cen_Email,
         Cost_Cen_GST_No: this.ObjPurChaseBill.Cost_Cen_GST_No,
           
-        Bill_Net_Amt: this.NetAMT,
+        Bill_Net_Amt: this.Total_Amount,
         User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
         Fin_Year_ID: this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
           
@@ -989,6 +1048,8 @@ export class OutwardChallanComponent implements OnInit {
       this.SGST = undefined;
       this.IGST = undefined;
       this.NetAMT = undefined;
+      this.Rounded_Off = undefined;
+      this.Total_Amount = undefined;
       this.AddProdList = [];
       this.ProductSub = [];
       this.ProductDetalist = [];
