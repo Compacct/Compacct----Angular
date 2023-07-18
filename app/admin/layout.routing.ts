@@ -404,6 +404,7 @@ import { LeaveRegisterComponent } from './common/MICL/leave-register/leave-regis
 import { HrReportsComponent } from './common/Attendance/hr-reports/hr-reports.component';
 import { FinsSubLedgerComponent } from './common/Finshore/fins-sub-ledger/fins-sub-ledger.component';
 import { AdvanceOrderAdjustmentComponent } from './common/OutletManagement/advance-order-adjustment/advance-order-adjustment.component';
+import { AssetMasterComponent } from './common/MICL/asset-master/asset-master.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3085,6 +3086,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: AdvanceOrderAdjustmentComponent,
         data: {
           title: 'Advance Order Adjustment'
+    }
+    },
+    {
+      path: 'Asset_Master',
+        component: AssetMasterComponent,
+        data: {
+          title: 'Asset Master'
     }
     },
     /*{
