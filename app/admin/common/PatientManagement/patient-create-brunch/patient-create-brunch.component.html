@@ -38,7 +38,7 @@
                   </ng-template>
                   <ng-template pTemplate="header">
                     <tr style="width: 100%;">
-                      <!-- <th style="width:5em">Action</th> -->
+                      <th style="width:5em" *ngIf="databaseName === 'GN_Joy_Of_Hearing_Punjab'">Action</th>
                       <th style="text-align: center ;" nowrap>Patient ID</th>
                       <th style="text-align: center ;" nowrap>Patient Name</th>
                       <th style="text-align: center ;" nowrap>Mobile No.</th>
@@ -49,21 +49,21 @@
                   </ng-template>
                   <ng-template pTemplate="body" let-col>
                     <tr>
-                      <!-- <td>
-                    <div class="dropdown">
-                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
-                                    <i class="fa fa-fw fa-bars"></i>
-                                    <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a>
-                                    <i class="fa fa-fw fa-print"></i> Print
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </td> -->
+                      <td *ngIf="databaseName === 'GN_Joy_Of_Hearing_Punjab'">
+                        <div class="dropdown">
+                            <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                        <i class="fa fa-fw fa-bars"></i>
+                                        <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a (click)="PrintClick(col)">
+                                        <i class="fa fa-fw fa-print"></i> Print
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                     </td>
                       <td style="text-align: center ;" nowrap>{{col.Foot_Fall_ID ? col.Foot_Fall_ID : '-'}}</td>
                       <td style="text-align: center ;" nowrap>{{col.Contact_Name ? col.Contact_Name : '-'}}</td>
                       <td style="text-align: center ;" nowrap>{{col.Mobile ? col.Mobile : '-'}}</td>
@@ -156,10 +156,8 @@
                     <label class="control-label">Occupation<sup class="text-danger"></sup></label>
                     <select name="Occupation" class="form-control" [(ngModel)]="objPatient.Occupation" #Occupation="ngModel">
                       <option [ngValue]="undefined">Select</option>
-                      <option value="Govt. Employee">Govt. Employee</option>
-                      <option value=" Pvt. Sector Employee">Pvt. Sector Employee</option>
-                      <option value="Retired">Retired</option>
-                      <option value="Home Maker">Home Maker</option>
+                      <option *ngFor="let opt of occptionList" value="{{opt.Occupation}}">{{opt.Occupation}}</option>
+                      
                     </select>
                   </div>
                   <div class="col-sm-4">

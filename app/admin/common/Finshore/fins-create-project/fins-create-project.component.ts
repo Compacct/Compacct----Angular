@@ -164,6 +164,7 @@ export class FinsCreateProjectComponent implements OnInit {
     this.InputFiled2 = false;
     this.Objproject.Project_Purpose = undefined;
     this.Objproject.Project_Act = undefined;
+    this.Objproject.Method = undefined;
     let FilterallList = this.allList.filter((el: any) => el.Project_Type == value)
     FilterallList.forEach((ele: any) => {
       if (ele.Purpose) {
@@ -208,8 +209,9 @@ export class FinsCreateProjectComponent implements OnInit {
       this.Objproject.Engagement_Letter_Date = this.DateService.dateConvert(this.EngagmentDate);
       this.Objproject.Valuation_Date = this.DateService.dateConvert(this.ValuationDate);
       this.Objproject.User_ID = this.CokiuserId;
-      this.Objproject.Project_Act = this.SelectedProjectAct.toString();
-      this.Objproject.Method = this.SelectedMethod.toString()
+      this.Objproject.Project_Act = this.SelectedProjectAct.length ? this.SelectedProjectAct.toString() : this.Objproject.Project_Act;
+      this.Objproject.Method = this.SelectedMethod.length ? this.SelectedMethod.toString() : this.Objproject.Method;
+     //console.log('this.Objproject',this.Objproject)
       const obj = {
         "SP_String": "SP_BL_Txn_Finshore_Project",
         "Report_Name_String": 'Create_Project',
