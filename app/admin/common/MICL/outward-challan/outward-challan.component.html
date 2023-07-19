@@ -599,8 +599,9 @@
                             <select class="form-control"name="Stock" #Stock="ngModel" 
                             [(ngModel)]="ObjProductInfo.godown_id"
                             (change)="GetLot()"
+                            [disabled]="godwnandbatchdisabled"
                              [ngClass]="{clearance: TermFormSubmitted && Stock?.errors?.required}"
-                            required>
+                            [required]="godwnandbatchdisabled ? false : true">
                                 <option [ngValue]="undefined">Select</option>
                                 <option *ngFor="let data of Godownlist" [value]="data.godown_id">
                                     {{data.godown_name}}
@@ -611,8 +612,9 @@
                                 <label class="control-label">Lot No./Batch No. <sup class="text-danger">*</sup></label>
                                 <select class="form-control" name="BatchNo" #BatchNo="ngModel" 
                                 [(ngModel)]="ObjProductInfo.Batch_Number"
+                                [disabled]="godwnandbatchdisabled"
                                 [ngClass]="{clearance: TermFormSubmitted && BatchNo?.errors?.required}"
-                                   required>
+                                [required]="godwnandbatchdisabled ? false : true">
                                     <option [ngValue]="undefined">Select</option>
                                   <option *ngFor="let option of LotNolist" [value]="option.Batch_No">
                                     {{option.Batch_No_Show}}
@@ -663,7 +665,7 @@
                                 CompacctDigitonly="true" disabled>
                             </div>
                            <div class="col-sm-2">
-                            <button type="submit" class="btn btn-primary custombutton" (click)="AddProduct(TermForm.form.valid)">
+                            <button type="submit" class="btn btn-primary custombutton" (click)="Add(TermForm.form.valid)">
                                 <span class="glyphicon glyphicon-plus"></span> Add
                             </button>
                            </div>
@@ -734,19 +736,23 @@
                         <tbody>
                             <tr>
                                 <th>Taxable Amount :</th>
-                                <td class="amt-td ng-binding">{{Tax}}</td>
+                                <td class="amt-td ng-binding">{{Tax ? Tax : '-'}}</td>
+                                <th>CGST Amount :</th>
+                                <td class="amt-td ng-binding">{{CGST ? CGST : '-'}}</td>
+                                <th>SGST Amount :</th>
+                                <td class="amt-td ng-binding">{{SGST ? SGST : '-'}}</td>
                              </tr>
                              <tr>
-                                <th>CGST Amount :</th>
-                                <td class="amt-td ng-binding">{{CGST}}</td>
-                                <th>SGST Amount :</th>
-                                <td class="amt-td ng-binding">{{SGST}}</td>
                                 <th>IGST Amount :</th>
-                                <td class="amt-td ng-binding">{{IGST}}</td>
+                                <td class="amt-td ng-binding">{{IGST ? IGST : '-'}}</td>
+                                <th>Total Amount : </th>
+                                <td class="amt-td ng-binding">{{Total_Amount ? Total_Amount :"-"}}</td>
+                                <th>Rounded Off : </th>
+                                <td class="amt-td ng-binding">{{Rounded_Off ? Rounded_Off :"-"}}</td>
                             </tr>
                              <tr>
                                 <th>Net Amount : </th>
-                                <td class="amt-td ng-binding">{{NetAMT}}</td>
+                                <td class="amt-td ng-binding">{{NetAMT ? NetAMT : '-'}}</td>
                             </tr>
                         </tbody>
                     </table>

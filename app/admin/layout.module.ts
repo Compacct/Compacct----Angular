@@ -503,6 +503,7 @@ import { HrReportsComponent } from './common/Attendance/hr-reports/hr-reports.co
 import { FinsSubLedgerComponent } from './common/Finshore/fins-sub-ledger/fins-sub-ledger.component';
 import { AdvanceOrderAdjustmentComponent } from './common/OutletManagement/advance-order-adjustment/advance-order-adjustment.component';
 import { AssetMasterComponent } from './common/MICL/asset-master/asset-master.component';
+import { HrTrainingComponent } from './common/HR/hr-training/hr-training.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -920,7 +921,8 @@ import { AssetMasterComponent } from './common/MICL/asset-master/asset-master.co
     HrReportsComponent,
     FinsSubLedgerComponent,
     AdvanceOrderAdjustmentComponent,
-    AssetMasterComponent
+    AssetMasterComponent,
+    HrTrainingComponent
   ],
   imports: [
     CommonModule,

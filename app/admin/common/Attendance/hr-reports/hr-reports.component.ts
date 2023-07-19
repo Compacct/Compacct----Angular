@@ -17,6 +17,7 @@ import * as fs from 'file-saver';
   encapsulation: ViewEncapsulation.None
 })
 export class HrReportsComponent implements OnInit {
+  tabIndexToView: number = 0;
   ReportName: any;
   replist: any = [];
   visibleDate: string = "";

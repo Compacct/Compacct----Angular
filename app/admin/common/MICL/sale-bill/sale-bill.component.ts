@@ -97,6 +97,7 @@ export class SaleBillComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Create";
     this.clearData();
+    this.router.navigate(['./MICL_Sale_Bill']);
   }
   clearData() {
     this.SaleBillFormSubmitted = false;
@@ -232,16 +233,16 @@ export class SaleBillComponent implements OnInit {
       }
   }
   CustmerNameChange() {
+    this.ObjTopSale.Choose_Address = undefined;
+    // this.ObjTopSale.Bill_No = [];
+    this.SelectedChallanNo = [];
+    this.ObjTopSale.Sub_Ledger_Address_1 = undefined;
+    this.ObjTopSale.Sub_Ledger_District = undefined;
+    this.ObjTopSale.Sub_Ledger_State = undefined;
+    this.ObjTopSale.Sub_Ledger_Pin = undefined;
+    this.ObjTopSale.Sub_Ledger_GST_No = undefined;
+    this.SaveAddress = [];
     if(this.ObjTopSale.Sub_Ledger_ID){
-      this.ObjTopSale.Choose_Address = undefined;
-      // this.ObjTopSale.Bill_No = [];
-      this.SelectedChallanNo = [];
-      this.ObjTopSale.Sub_Ledger_Address_1 = undefined;
-      this.ObjTopSale.Sub_Ledger_District = undefined;
-      this.ObjTopSale.Sub_Ledger_State = undefined;
-      this.ObjTopSale.Sub_Ledger_Pin = undefined;
-      this.ObjTopSale.Sub_Ledger_GST_No = undefined;
-      this.SaveAddress = [];
       const TempObj = {
         Sub_Ledger_ID: this.ObjTopSale.Sub_Ledger_ID,
       }
@@ -360,6 +361,9 @@ export class SaleBillComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       if (data.length) {
         this.GridList = data; 
+        this.GridList.forEach(element => {
+          element.Cost_Cen_Name = "Finish Product"
+        });
          this.TotalCalculation();
          this.ngxService.stop();
       } else {
@@ -412,6 +416,7 @@ export class SaleBillComponent implements OnInit {
   }
   SaveSaleBill(valid:any) {
     this.SaleBillFormSubmitted = true;
+    if(this.SelectedChallanNo.length){
     if (valid) {
       this.compacctToast.clear();
      this.compacctToast.add({
@@ -422,6 +427,7 @@ export class SaleBillComponent implements OnInit {
        detail: "Confirm to proceed"
      });
     }
+  }
   }
   onConfirmSave(){
     const FilterSubledger = this.CustmerList.filter((el: any) => Number(el.value) === Number(this.ObjTopSale.Sub_Ledger_ID))
@@ -656,7 +662,7 @@ export class SaleBillComponent implements OnInit {
       this.editChallanList.forEach(el=>{
         this.GridList.push({
           Cost_Cen_ID : el.Cost_Cen_ID,
-          Cost_Cen_Name : el.Cost_Cen_Name,
+          Cost_Cen_Name: el.Cost_Cen_Name,
           godown_name : el.godown_name,
           Product_Type_ID : el.Product_Type_ID,
           Product_Type : el.Product_Type,
