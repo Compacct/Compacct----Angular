@@ -504,6 +504,7 @@ import { FinsSubLedgerComponent } from './common/Finshore/fins-sub-ledger/fins-s
 import { AdvanceOrderAdjustmentComponent } from './common/OutletManagement/advance-order-adjustment/advance-order-adjustment.component';
 import { AssetMasterComponent } from './common/MICL/asset-master/asset-master.component';
 import { HrTrainingComponent } from './common/HR/hr-training/hr-training.component';
+import { EvaluateForTrainingComponent } from './common/Attendance/evaluate-for-training/evaluate-for-training.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -922,7 +923,8 @@ import { HrTrainingComponent } from './common/HR/hr-training/hr-training.compone
     FinsSubLedgerComponent,
     AdvanceOrderAdjustmentComponent,
     AssetMasterComponent,
-    HrTrainingComponent
+    HrTrainingComponent,
+    EvaluateForTrainingComponent
   ],
   imports: [
     CommonModule,
