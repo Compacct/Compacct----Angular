@@ -59,8 +59,8 @@
     cursor: no-drop;
   }
 
-  .text-red-active { 
-    color: red;
+  .text-red-active>td {
+    color: red !important;
   }
 
   .custumbtn {

@@ -18,12 +18,14 @@ export class AssetMasterComponent implements OnInit {
   Items: any = ['BROWSE', 'CREATE'];
   Spinner: boolean = false;
   assetFormSubmit: boolean = false;
-  purchase_Date: Date = new Date();
   tableData: any = [];
   tableFilterFields: any = [];
+  purchase_Date: Date = new Date();
   subLedgerList: any = [];
   costCenList: any = [];
   GodownList: any = [];
+  activeID: number = 0;
+  deactiveID: number = 0;
   buttonname: string = 'Save';
   objAsset = new Asset();
 
@@ -51,9 +53,8 @@ export class AssetMasterComponent implements OnInit {
       "Report_Name_String": "Browse_Master_Asset",
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
-      console.log("Browse Data", data);
-      this.tableData = data;
       if (data.length) {
+        this.tableData = data;
         this.tableFilterFields = Object.keys(data[0]);
       }
     });
@@ -65,7 +66,6 @@ export class AssetMasterComponent implements OnInit {
       "Report_Name_String": "Get_Subledger_SC",
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
-      console.log("subledger Data", data);
       this.subLedgerList = data;
     });
   }
@@ -76,7 +76,6 @@ export class AssetMasterComponent implements OnInit {
       "Report_Name_String": "Get_Cost_Center",
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
-      console.log("cost center Data", data);
       if (data.length) {
         data.forEach((ele: any) => {
           this.costCenList.push({
@@ -90,77 +89,46 @@ export class AssetMasterComponent implements OnInit {
 
   getGodownList(id: any) {
     this.GodownList = [];
-    const obj = {
-      "SP_String": "SP_Master_Asset_Module",
-      "Report_Name_String": "Get_Godown_list",
-      "Json_Param_String": JSON.stringify([{ "Cost_Cen_ID": id }])
-    }
-    this.GlobalAPI.postData(obj).subscribe((data: any) => {
-      console.log("godown Data", data);
-      if (data.length) {
-        data.forEach((ele: any) => {
-          this.GodownList.push({
-            "label": ele.godown_name,
-            "value": ele.godown_id
-          })
-        })
-      }
-    });
-  }
-
-  getSubledgerName(id: any) {
-    this.objAsset.Sub_Ledger_Name = undefined;
-    if (id) {
-      let name = this.subLedgerList.find((ele: any) => ele.value == id);
-      if (name) {
-        console.log(name);
-        this.objAsset.Sub_Ledger_Name = name.label;
-      }
-    }
-  }
-
-  getcosCenName(id: any) {
-    this.objAsset.Cost_Cen_Name = undefined;
     this.objAsset.Godown_ID = undefined;
-    this.objAsset.Godown_Name = undefined;
     if (id) {
-      let name = this.costCenList.find((ele: any) => ele.value == id);
-      if (name) {
-        console.log(name);
-        this.objAsset.Cost_Cen_Name = name.label;
+      const obj = {
+        "SP_String": "SP_Master_Asset_Module",
+        "Report_Name_String": "Get_Godown_list",
+        "Json_Param_String": JSON.stringify([{ "Cost_Cen_ID": id }])
       }
-      this.getGodownList(id);
+      this.GlobalAPI.postData(obj).subscribe((data: any) => {
+        if (data.length) {
+          data.forEach((ele: any) => {
+            this.GodownList.push({
+              "label": ele.godown_name,
+              "value": ele.godown_id
+            })
+          })
+        }
+      });
     }
   }
-
-  getGodownName(id: any) {
-    if (id) {
-      this.objAsset.Godown_Name = undefined;
-      let name = this.GodownList.find((ele: any) => ele.value == id);
-      if (name) {
-        console.log(name);
-        this.objAsset.Godown_Name = name.label;
-      }
-    }
-  }
-
 
   SaveFormData(valid: any) {
     this.assetFormSubmit = true;
     if (valid) {
       this.assetFormSubmit = false;
       this.Spinner = true;
+      let subName = this.subLedgerList.find((ele: any) => ele.value == this.objAsset.Sub_Ledger_ID);
+      let costCenName = this.costCenList.find((ele: any) => ele.value == this.objAsset.Cost_Cen_ID);
+      let godownName = this.GodownList.find((ele: any) => ele.value == this.objAsset.Godown_ID);
+      this.objAsset.Sub_Ledger_Name = subName ? subName.label : undefined;
+      this.objAsset.Cost_Cen_Name = costCenName ? costCenName.label : undefined;
+      this.objAsset.Godown_Name = godownName ? godownName.label : undefined;
       this.objAsset.Purchase_Date = this.DateService.dateConvert(this.purchase_Date);
       if (this.buttonname === 'Update') {
-        console.log("update works", this.objAsset);
         const obj = {
           "SP_String": "SP_Master_Asset_Module",
-          "Report_Name_String": "Save_Master_Asset",
+          "Report_Name_String": "Update_Master_Asset",
           "Json_Param_String": JSON.stringify([this.objAsset])
         }
         this.GlobalAPI.postData(obj).subscribe((data: any) => {
-          console.log(data);
-          if (data[0].Column1) {
+          if (data[0].Column1=='Done') {
             this.Spinner = false;
             this.CompacctToast.clear();
             this.CompacctToast.add({
@@ -172,6 +140,16 @@ export class AssetMasterComponent implements OnInit {
             this.getBrowseData();
             this.tabIndexToView = 0;
             this.clearData();
+          }
+          else if (data[0].Column1=='Asset Code is already Available!'){
+            this.CompacctToast.clear();
+            this.CompacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Asset Code is already Available!"
+            });
+            this.Spinner = false;
           }
           else {
             this.Spinner = false;
@@ -186,15 +164,13 @@ export class AssetMasterComponent implements OnInit {
         });
       }
       else {
-        console.log("create works", this.objAsset);
         const obj = {
           "SP_String": "SP_Master_Asset_Module",
           "Report_Name_String": "Save_Master_Asset",
           "Json_Param_String": JSON.stringify([this.objAsset])
         }
         this.GlobalAPI.postData(obj).subscribe((data: any) => {
-          console.log("save response", data);
-          if (data[0].Column1) {
+          if (data[0].Column1=='Done') {
             this.Spinner = false;
             this.CompacctToast.clear();
             this.CompacctToast.add({
@@ -206,6 +182,16 @@ export class AssetMasterComponent implements OnInit {
             this.getBrowseData();
             this.tabIndexToView = 0;
             this.clearData();
+          }
+          else if (data[0].Column1=='Asset Code is already Available!'){
+            this.CompacctToast.clear();
+            this.CompacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Asset Code is already Available"
+            });
+            this.Spinner = false;
           }
           else {
             this.Spinner = false;
@@ -223,15 +209,89 @@ export class AssetMasterComponent implements OnInit {
   }
 
   Edit(col: any) {
-
+    this.tabIndexToView = 1;
+    this.buttonname = "Update";
+    this.Items = ["BROWSE", "UPDATE"];
+    if (col.Auto_ID) {
+      const obj = {
+        "SP_String": "SP_Master_Asset_Module",
+        "Report_Name_String": "Get_Master_Asset",
+        "Json_Param_String": JSON.stringify([{ "Auto_ID": col.Auto_ID }])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data: any) => {
+        if (data.length) {
+          this.getGodownList(data[0].Cost_Cen_ID);
+          setTimeout(() => {
+            this.objAsset = data[0];
+          }, 500);
+          this.purchase_Date = new Date(data[0].Purchase_Date);
+        }
+      })
+    }
   }
 
   Active(col: any) {
-
+    if (col.Auto_ID) {
+      this.activeID = col.Auto_ID;
+      this.CompacctToast.clear();
+      this.CompacctToast.add({
+        key: "d",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
   }
 
   Deactive(col: any) {
+    if (col.Auto_ID) {
+      this.deactiveID = col.Auto_ID;
+      this.CompacctToast.clear();
+      this.CompacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
 
+  onConfirm() {
+    const obj = {
+      "SP_String": "SP_Master_Asset_Module",
+      "Report_Name_String": "Deactivate_Master_Asset",
+      "Json_Param_String": JSON.stringify([{ "Auto_ID": this.deactiveID }])
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+      this.getBrowseData();
+      this.CompacctToast.clear();
+      this.CompacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Deactivated",
+        detail: "Succesfully Deactivated"
+      });
+    })
+  }
+
+  onConfirmAgain() {
+    const obj = {
+      "SP_String": "SP_Master_Asset_Module",
+      "Report_Name_String": "Activate_Master_Asset",
+      "Json_Param_String": JSON.stringify([{ "Auto_ID": this.activeID }])
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+      this.getBrowseData();
+      this.CompacctToast.clear();
+      this.CompacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Activated",
+        detail: "Succesfully Activated"
+      });
+    })
   }
 
   TabClick(e: any) {
@@ -239,16 +299,23 @@ export class AssetMasterComponent implements OnInit {
     this.clearData();
   }
 
-  onConfirm() {
-  }
-
   onReject() {
     this.CompacctToast.clear("c");
+    this.CompacctToast.clear("d");
+    this.activeID = 0;
+    this.deactiveID = 0;
   }
 
   clearData() {
     this.objAsset = new Asset();
     this.assetFormSubmit = false;
+    this.purchase_Date = new Date();
+    this.buttonname = "Save";
+    this.Items = ["BROWSE", "CREATE"];
+    this.Spinner = false;
+    this.activeID = 0;
+    this.deactiveID = 0;
+    this.GodownList = [];
   }
 
 }
