@@ -104,7 +104,7 @@
                                     <div class="col-sm-4" >
                                         <label class="control-label">Act<sup class="text-danger">*</sup></label> 
                                         <p-multiSelect [options]="ActList"  name="Act" #Act="ngModel"[(ngModel)]="SelectedProjectAct"*ngIf="Objproject.Project_Detalis !== 'Addendum'"
-                                            [styleClass]="'compacct-multiselect'"[virtualScroll]="true" itemSize="30" (onChange)="ActOtherInp()"
+                                            [styleClass]="'compacct-multiselect'"[virtualScroll]="true" itemSize="30" (onChange)="ActOtherInp()"[disabled]="Objproject.Project_Detalis === 'Others' || Objproject.Project_Detalis === 'Fairness Opinion'||Objproject.Project_Detalis === 'AIF'"
                                             [ngClass]="{'clearance': ProjectMainForm && Act?.errors?.required}" required ></p-multiSelect>
 
                                             <input type="text" class="form-control" name="Act1" #Act1="ngModel"
@@ -122,7 +122,7 @@
                                     <div class="col-sm-4">
                                         <label class="control-label">Method<sup class="text-danger">*</sup></label>
                                         <p-multiSelect [options]="MethodList" name="Method" #Method="ngModel" [(ngModel)]="SelectedMethod" *ngIf="Objproject.Project_Detalis !== 'Addendum'"
-                                            [styleClass]="'compacct-multiselect'" [virtualScroll]="true" itemSize="30"(onChange)="MethodOtherInp()"
+                                            [styleClass]="'compacct-multiselect'" [virtualScroll]="true" itemSize="30"(onChange)="MethodOtherInp()"[disabled]="Objproject.Project_Detalis === 'Others' || Objproject.Project_Detalis === 'Fairness Opinion'||Objproject.Project_Detalis === 'AIF'"
                                             [ngClass]="{'clearance': ProjectMainForm && Method?.errors?.required}" required></p-multiSelect>
 
                                             <input type="text" class="form-control" name="Method1" #Method1="ngModel"
