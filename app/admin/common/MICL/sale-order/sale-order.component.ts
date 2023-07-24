@@ -135,6 +135,8 @@ export class SaleOrderComponent implements OnInit {
   editlist:any = [];
   Product_Type: any;
   Product_Sub_Type: any;
+  editorDis:boolean = false;
+  Remarks_For_Amendment:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -192,6 +194,7 @@ export class SaleOrderComponent implements OnInit {
     this.LI_Doc_No = undefined;
     this.LI_Doc_Date = new Date();
     this.GetLiDocNo();
+    this.editlist = [];
   }
   clearData() { 
     this.SaleOrderFormSubmitted = false;
@@ -233,6 +236,10 @@ export class SaleOrderComponent implements OnInit {
     this.editDocNo = undefined;
     this.Ref_Doc_No =  undefined;
     this.Ref_Doc_Date = undefined;
+    this.editorDis = true
+    setTimeout(() => {
+      this.editorDis = false
+    }, 500);
   }
   Finyear() {
     this.$http
@@ -909,6 +916,7 @@ export class SaleOrderComponent implements OnInit {
         Customer_PO_No: this.Customer_PO_No,
         Customer_PO_Date: this.DateService.dateConvert(new Date(this.Customer_PO_Date)),
         LR_Date: this.DateService.dateConvert(this.SupplierBillDate),
+        Remarks_For_Amendment: this.Remarks_For_Amendment ? this.Remarks_For_Amendment : '',
         L_element: this.AddProdList
       }
       savedata = {...this.ObjSaleOrder,...this.Objcostcenter,...T_Elemnts}
@@ -1093,6 +1101,8 @@ export class SaleOrderComponent implements OnInit {
       this.DocDate = new Date(data[0].Doc_Date);
       this.Ref_Doc_No =  data[0].Ref_Doc_No,
       this.Ref_Doc_Date = this.DateService.dateConvert(data[0].Ref_Doc_Date)
+      this.Remarks_For_Amendment = data[0].Remarks_For_Amendment ? data[0].Remarks_For_Amendment : undefined;
+      this.editorDis = true;
       data.forEach(element => {
         const  productObj = {
             LI_Doc_No : element.LI_Doc_No,
@@ -1127,6 +1137,10 @@ export class SaleOrderComponent implements OnInit {
           this.AddProdList.push(productObj);
           this.TotalCalculation();
         });
+        
+      setTimeout(() => {
+        this.editorDis = false
+      }, 700);
     })
    }
   //  DynamicRedirectTo (obj){

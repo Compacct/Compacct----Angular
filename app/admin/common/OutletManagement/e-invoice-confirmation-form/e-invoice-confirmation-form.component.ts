@@ -44,6 +44,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   FailedInvflag = true;
   ObjSuccessInvoice : SuccessInvoice = new SuccessInvoice ();
   SuccessInvoicelist:any = [];
+  SuccessInvoicelistHeader:any = [];
   successinvoiceSpinner = false;
   ObjCancelInvoice : CancelInvoice = new CancelInvoice ();
   CancelInvoicelist:any = [];
@@ -471,6 +472,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   }
   GetSuccessInvoicelist() {
     this.SuccessInvoicelist = [];
+    this.SuccessInvoicelistHeader = [];
     this.successinvoiceSpinner = true;
     this.seachSpinner = true;
     const start = this.ObjSuccessInvoice.start_date
@@ -491,6 +493,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.SuccessInvoicelist = data;
+     this.SuccessInvoicelistHeader = data.length ? Object.keys(data[0]): []
      //console.log('Invoice list=====',this.SuccessInvoicelist)
      this.successinvoiceSpinner = false;
      this.seachSpinner = false;
@@ -586,11 +589,11 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
     this.CancelInvoicelist = [];
     this.cancelinvoiceSpinner = true;
     this.seachSpinner = true;
-    const start = this.ObjSuccessInvoice.start_date
-    ? this.DateService.dateConvert(new Date(this.ObjSuccessInvoice.start_date))
+    const start = this.ObjCancelInvoice.start_date
+    ? this.DateService.dateConvert(new Date(this.ObjCancelInvoice.start_date))
     : this.DateService.dateConvert(new Date());
-  const end = this.ObjSuccessInvoice.end_date
-    ? this.DateService.dateConvert(new Date(this.ObjSuccessInvoice.end_date))
+  const end = this.ObjCancelInvoice.end_date
+    ? this.DateService.dateConvert(new Date(this.ObjCancelInvoice.end_date))
     : this.DateService.dateConvert(new Date());
     if(start && end){
   const tempobj = {

@@ -381,7 +381,7 @@
                             </div>
                             <div class="table-responsive table-id">
                                 <p-table [value]="SuccessInvoicelist" #dt2 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" 
-                                [globalFilterFields]='["Sub_Ledger_GST","Billing_Name","STATE","POS","Doc_No","Doc_Date","Reverse_Charge","Invoice_Type","ECOMM_GSTN","Taxable_Amount","CGST_Amount","SGST_Amount","IGST_Amount","Invoice_Value"]'>
+                                [globalFilterFields]='SuccessInvoicelistHeader'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
@@ -394,8 +394,8 @@
                                         <tr>
                                             <!-- <th>Confirmation for E-INV</th> -->
                                             <th>Action</th>
-                                            <!-- <th>Sl No</th> -->
-                                            <th>Sub Ledger GST</th>
+                                            <th *ngFor="let option of SuccessInvoicelistHeader | slice:2">{{option.replaceAll('_',' ')}}</th>
+                                            <!-- <th>Sub Ledger GST</th>
                                             <th>Billing Name</th>
                                             <th>STATE</th>
                                             <th>POS</th>
@@ -408,7 +408,7 @@
                                             <th>CGST Amount</th>
                                             <th>SGST Amount</th>
                                             <th>IGST Amount</th>
-                                            <th>Invoice Value</th>
+                                            <th>Invoice Value</th> -->
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col let-i = "rowIndex">
@@ -418,7 +418,7 @@
                                                     <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
                                                             <i class="fa fa-fw fa-bars"></i>
                                                             <span class="caret"></span>
-                                                        </button>
+                                                    </button>
                                                     <ul class="dropdown-menu">
                                                         <li>
                                                             <a (click)="ViewInvoice(col.Doc_No)">
@@ -445,7 +445,7 @@
                                                                 <i class="fa fa-fw fa-download"></i> Download E-INV
                                                             </a>
                                                         </li>
-                                                        <li>
+                                                        <li *ngIf="col.Cancel_Status === 'Y'">
                                                             <a (click)="Cancel(col.Doc_No)">
                                                                 <i class="fa fa-fw fa-times"></i> Cancel
                                                             </a>
@@ -453,13 +453,10 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <!-- <td align="center">{{ i + 1 }}</td> -->
-                                            <!-- <td style="text-align:center">
-                                                <button class="btn btn-primary custombtn" (click)='ViewInvoice(col.Doc_No)' type="button" [id]="col.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
-                                                    View
-                                                </button>
-                                            </td> -->
-                                            <td>{{col.Sub_Ledger_GST}}</td>
+                                            <ng-container *ngFor="let option of SuccessInvoicelistHeader | slice:2">
+                                                <td nowrap="nowrap">{{col[option]}}</td>
+                                            </ng-container>
+                                            <!-- <td>{{col.Sub_Ledger_GST}}</td>
                                             <td>{{col.Billing_Name}}</td>
                                             <td>{{col.STATE}}</td>
                                             <td>{{col.POS}}</td>
@@ -472,7 +469,7 @@
                                             <td>{{col.CGST_Amount}}</td>
                                             <td>{{col.SGST_Amount}}</td>
                                             <td>{{col.IGST_Amount}}</td>
-                                            <td>{{col.Invoice_Value}}</td>
+                                            <td>{{col.Invoice_Value}}</td> -->
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="paginatorright" let-state>
