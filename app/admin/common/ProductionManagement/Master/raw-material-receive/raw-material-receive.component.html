@@ -156,29 +156,41 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <div class="col-sm-2">
-                                        <label class="control-label">S.E No. & Date <sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="senondate" #senondate="ngModel" [(ngModel)]="ObjRawMatRev.SE_No_Date" placeholder="S.E No. & Date" [ngClass]="{'clearance':RawMatRevFormSubmitted && senondate?.errors?.required}" required>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">S.E No. <sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="senondate" #senondate="ngModel" [(ngModel)]="ObjRawMatRev.SE_No" placeholder="S.E No." [ngClass]="{'clearance':RawMatRevFormSubmitted && senondate?.errors?.required}" required>
                                         <!-- <div class="label-t">{{SENo+" &"}} {{ObjGRN1.SE_No_Date | date : 'dd/MMM/yyyy'}} </div> -->
                                         <!-- <div class="label-t">{{SENo}} {{getDateFormat(SE_No_Date)}} </div> -->
                                         <!-- <textarea class="form-control" name="senondate" #senondate="ngModel" [(ngModel)]="ObjGRN.SE_No_Date" [ngClass]="{'clearance':GRNFormSubmitted && senondate?.errors?.required}" required></textarea> -->
                                     </div>
-                                    <div class="col-sm-2">
-                                        <label class="control-label">INV No. & Date <sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="invnodate" #invnodate="ngModel" [(ngModel)]="ObjRawMatRev.Inv_No_Date" placeholder="INV No. & Date" [ngClass]="{'clearance':RawMatRevFormSubmitted && invnodate?.errors?.required}" required>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">S.E Date <sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='SE_Date'></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">INV No. <sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="invnodate" #invnodate="ngModel" [(ngModel)]="ObjRawMatRev.Inv_No" placeholder="INV No." [ngClass]="{'clearance':RawMatRevFormSubmitted && invnodate?.errors?.required}" required>
                                         <!-- <div class="label-t">{{SENo+" &"}} {{ObjGRN1.SE_No_Date | date : 'dd/MMM/yyyy'}} </div> -->
                                         <!-- <div class="label-t">{{INVNo}} {{getDateFormat(INV_No_Date)}} </div> -->
                                         <!-- <textarea class="form-control" name="senondate" #senondate="ngModel" [(ngModel)]="ObjGRN.SE_No_Date" [ngClass]="{'clearance':GRNFormSubmitted && senondate?.errors?.required}" required></textarea> -->
                                     </div>
-                                    
-                                   
+                                    <div class="col-sm-3">
+                                        <label class="control-label">INV Date <sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Inv_Date'></ejs-datepicker>
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <div class="col-sm-3">
                                         <label class="control-label">Mode of Transport </label>
                                         <input class="form-control" name="mot" #mot="ngModel" [(ngModel)]="ObjRawMatRev.Mode_Of_transport" placeholder="Mode of Transport" [ngClass]="{'clearance':RawMatRevFormSubmitted && mot?.errors?.required}" >
                                     </div>
-                                    <div class="col-sm-2">
-                                        <label class="control-label">L.R No. & Date </label>
-                                        <input class="form-control" name="lrnondate" #lrnondate="ngModel" [(ngModel)]="ObjRawMatRev.LR_No_Date" placeholder="L.R No. & Date" [ngClass]="{'clearance':RawMatRevFormSubmitted && lrnondate?.errors?.required}" >
+                                    <div class="col-sm-3">
+                                        <label class="control-label">L.R No. </label>
+                                        <input class="form-control" name="lrnondate" #lrnondate="ngModel" [(ngModel)]="ObjRawMatRev.LR_No" placeholder="L.R No." [ngClass]="{'clearance':RawMatRevFormSubmitted && lrnondate?.errors?.required}" >
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">L.R Date <sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='LR_Date'></ejs-datepicker>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Vehicle No. </label>
@@ -186,7 +198,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-4">
                                         <label class="control-label">Material Name<sup class="text-danger">*</sup></label>
                                         <p-dropdown [options]="AllMaterialName" 
                                                 name="Product_ID"  
@@ -232,6 +244,32 @@
                                         required>
                                     </div>
                                     <div class="col-sm-2">
+                                        <label class="control-label">Challan QTY<sup class="text-danger">*</sup></label>                             
+                                        <input class="form-control" 
+                                        type="text" 
+                                        name="challanqty"  
+                                        #challanqty="ngModel"
+                                        [(ngModel)]="ObjRawMatRev.Challan_Qty"
+                                        CompacctDigitonly="true"
+                                        placeholder="Challan QTY"
+                                        [ngClass]="{'clearance': RawMatRevFormSubmitted && challanqty.errors?.required}"
+                                        required>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">W.B QTY<sup class="text-danger">*</sup></label>                             
+                                        <input class="form-control" 
+                                        type="text" 
+                                        name="wbqty"  
+                                        #wbqty="ngModel"
+                                        [(ngModel)]="ObjRawMatRev.WB_Qty"
+                                        CompacctDigitonly="true"
+                                        placeholder="W.B QTY"
+                                        [ngClass]="{'clearance': RawMatRevFormSubmitted && wbqty.errors?.required}"
+                                        required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2">
                                         <label class="control-label">Receive QTY<sup class="text-danger">*</sup></label>                             
                                         <input class="form-control" 
                                         type="text" 
@@ -243,7 +281,7 @@
                                         [ngClass]="{'clearance': RawMatRevFormSubmitted && Receive_Qty.errors?.required}"
                                         required>
                                     </div>
-                                    <div class="col-sm-1">
+                                    <div class="col-sm-2">
                                         <label class="control-label">Unit<sup class="text-danger">*</sup></label>                             
                                         <input class="form-control" 
                                         type="text" 
@@ -264,9 +302,7 @@
                                         [ngClass]="{'clearance': RawMatRevFormSubmitted && Batch_Lot_No.errors?.required}"
                                         required
                                        >
-                                    </div>
-                                </div>                                
-                                <div class="form-group">
+                                    </div> 
                                     <div class="col-sm-3">
                                         <label class="control-label">Note Description<sup class="text-danger">*</sup></label>
                                         <textarea class="form-control" name="notedes" #notedes="ngModel" [(ngModel)]="ObjRawMatRev.Note_Description" rows="2" placeholder="Note Description"
@@ -284,7 +320,7 @@
                                         required
                                        >
                                     </div> -->
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <label class="control-label">Stock Point Location<sup class="text-danger">*</sup></label>
                                         <p-dropdown [options]="StockPointList" 
                                             name="Godown_ID"  
@@ -302,6 +338,8 @@
                                             required>
                                         </p-dropdown>
                                     </div>
+                                </div>
+                                <div class="form-group">
                                     <div class="col-sm-3">
                                         <label class="control-label">Purpose<sup class="text-danger">*</sup></label>
                                         <input class="form-control"
@@ -314,7 +352,7 @@
                                         required>
                                     </div>
                                     <div class="col-sm-2">
-                                        <button type="submit" class="btn btn-primary" style="margin-top: 25px; margin-left: 25px;"
+                                        <button type="submit" class="btn btn-primary" style="margin-top: 28px; margin-left: 25px;"
                                             (click)="AddRawMatRev(RawMatRevForm.form.valid)">
                                             <span class="glyphicon glyphicon-plus"></span>Add
                                         </button>
@@ -341,6 +379,8 @@
                                                 <th>Material Name</th>
                                                 <th>PO Qty</th>
                                                 <th>Pending PO Qty</th>
+                                                <th>Challan QTY</th>
+                                                <th>W.B QTY</th>
                                                 <th>Receive QTY</th>
                                                 <th>Unit</th>
                                                 <th>Lot No</th>
@@ -375,6 +415,8 @@
                                                 </td>
                                                 <td>{{col.PO_Qty}}</td>
                                                 <td>{{col.Pending_PO_Qty}}</td>
+                                                <td>{{col.Challan_Qty}}</td>
+                                                <td>{{col.WB_Qty}}</td>
                                                 <td>{{col.Receive_Qty}}</td>
                                                 <td>{{col.UOM}}</td>
                                                 <td>{{col.Batch_Lot_No}}</td>

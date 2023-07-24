@@ -1,1 +1,52 @@
-<p>hr-reports works!</p>
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box box-primary">
+			<div class="form-horizontal">
+				<div class="box-body">
+					<p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+						<form name="rep_form" #rep_form="ngForm">
+							<div class="row">
+								<div class="col-sm-4">
+									<label class="control-label">Select Report<sup class="text-danger">*</sup></label>
+									<select
+										name="Report_Name"
+										class="form-control"
+										#Report_Name="ngModel"
+										[(ngModel)]="ReportName"
+										(change)="structureData(ReportName)"
+										[ngClass]="{ clearance: reportFormSubmit && Report_Name?.errors?.required }"
+										required>
+										<option [ngValue]="undefined">Select</option>
+										<option *ngFor="let option of replist" value="{{ option.report_name }}">
+											{{ option.report_name }}
+										</option>
+									</select>
+								</div>
+								<div class="col-sm-4" *ngIf="visibleDate == 'MT,XL'">
+									<label class="control-label">Select Date<sup class="text-danger">*</sup></label>
+									<ejs-datepicker start="Year" [(value)]="currentMonth" format="MMMM/yyyy" depth="Year"></ejs-datepicker>
+								</div>
+								<div class="col-sm-4" *ngIf="visibleDate == 'DT,XL'">
+									<label class="control-label">Select Date<sup class="text-danger">*</sup></label>
+									<app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate"></app-compacct-daterangepicker>
+								</div>
+								<div class="col-sm-4">
+									<button class="btn btn-success custom-button1" id="load" (click)="exportExcel(rep_form.form.valid)" style="margin: 27px 0 0 10px">
+										<p-progressSpinner
+											*ngIf="Spinner"
+											[style]="{ width: '15px', height: '15px' }"
+											strokeWidth="8"
+											animationDuration=".5s"></p-progressSpinner>
+										<i *ngIf="!Spinner" class="fa fa-file-excel-o"></i>
+										Export To Excel
+									</button>
+								</div>
+							</div>
+						</form>
+					</p-tabView>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

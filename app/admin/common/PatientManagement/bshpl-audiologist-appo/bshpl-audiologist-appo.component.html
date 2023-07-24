@@ -329,7 +329,7 @@
         </div>
 
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <label class="control-label">Test Done</label>
                 <p-multiSelect 
                         [options]="TestDoneList"
@@ -341,6 +341,32 @@
                 [styleClass]="'compacct-multiselect'" >
                 </p-multiSelect>
             </div>
+            <div class="col-sm-4">
+                <label class="control-label">Audiogram Remarks</label>
+                <textarea class="form-control" name="Audiogram_Remarks"  #Audiogram_Remarks="ngModel" 
+                        [(ngModel)]="objAppointment.Audiogram_Remarks" ></textarea>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Audiogram</label>
+            <p-fileUpload #FileUploadAsset name="File" [multiple]="false" accept="image/*,.pdf" [customUpload]="true"
+                [chooseLabel]="'Browse'" [showUploadButton]="true" (uploadHandler)="onBasicUpload(FileUploadAsset)">
+                <ng-template let-File pTemplate="File">
+                    <div class="ui-fileupload-row">
+                        <div>
+                            <a [href]="File.objectURL" target="_blank"><img
+                                    [src]="File.type.includes('image') ? File.objectURL :''"
+                                    width="50"></a>
+                        </div>
+                        <div>{{File.name}}</div>
+                        <div>
+                            <button type="button" class="btn btn-danger" (click)="onClear($event,File)"><i
+                                    class="fa fa-fw fa-close"></i></button>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-fileUpload>
+            </div>
+
         </div>
 
         <hr class="box boxboxDivide-primary">
@@ -854,7 +880,7 @@
    <p-footer>
       <button class="btn btn-primary pull-right" (click)="SaveAppointment(Appointment.form.valid)" [disabled]="AppoSpinner">
         <p-progressSpinner *ngIf="AppoSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
-        <span *ngIf="!AppoSpinner" class="glyphicon glyphicon-save"></span>Save
+        <span *ngIf="!AppoSpinner" class="glyphicon glyphicon-refresh"></span>Update
       </button>
       <button class="btn btn-primary" (click)="closePopupAppo()" >
         <span class="glyphicon glyphicon-remove"></span>Close
@@ -924,9 +950,20 @@
         </div>
 
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <label class="control-label">Test Done</label>
                 <div class="label-t">{{objAppointment.Test_Done ? objAppointment.Test_Done : '-'}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Audiogram Remarks</label>
+                <div class="label-t">{{objAppointment.Audiogram_Remarks ? objAppointment.Audiogram_Remarks : '-'}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Audiogram</label>
+                <div>
+                    <button type="button" class="btn btn-outline-info" (click)="getImage(objAppointment.Audiogram)">Audiogram info</button>
+                </div>
+               
             </div>
         </div>
 

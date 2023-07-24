@@ -73,6 +73,9 @@ export class RawMaterialReceiveComponent implements OnInit {
 
   TCSTaxRequiredValidation = false;
   doc_no : any;
+  SE_Date:Date = new Date();
+  Inv_Date:Date = new Date();
+  LR_Date:Date = new Date();
 
   constructor(
     private http: HttpClient,
@@ -109,6 +112,9 @@ clearData(){
  this.RawMatRevFormSubmitted = false;
  this.TCSTaxRequiredValidation = false;
  this.DocDate = new Date();
+ this.SE_Date = new Date();
+ this.LR_Date = new Date();
+ this.Inv_Date = new Date();
  this.maxDate = new Date();
  this.Spinner = false;
  this.AddRawMatRevList = [];
@@ -175,12 +181,20 @@ GetMaterialName(RefNO:any){
   this.ObjRawMatRev.Vehicle_No = undefined;
   this.ObjRawMatRev.PO_Qty = undefined;
   this.ObjRawMatRev.Pending_PO_Qty = undefined;
+  this.ObjRawMatRev.Challan_Qty = undefined;
+  this.ObjRawMatRev.WB_Qty = undefined;
   this.ObjRawMatRev.UOM = undefined;
   this.ObjRawMatRev.Receive_Qty = undefined;
   this.ObjRawMatRev.Batch_Lot_No = undefined;
   this.ObjRawMatRev.Note_Description = undefined;
   this.ObjRawMatRev.Godown_ID = undefined;
   this.ObjRawMatRev.Purpose = undefined;
+  this.ObjRawMatRev.SE_No = undefined;
+  this.SE_Date = new Date();
+  this.ObjRawMatRev.LR_No = undefined;
+  this.LR_Date = new Date();
+  this.ObjRawMatRev.Inv_No = undefined;
+  this.Inv_Date = new Date();
   console.log('RefNO===',RefNO)
   if(RefNO){
      const FilterReferenceDataList = this.ReferenceDataList.find((el:any)=> el.Production_Ref_NO == RefNO)
@@ -217,6 +231,8 @@ GetMaterialName(RefNO:any){
 changeMaterialName(ProductID:any){
   this.ObjRawMatRev.PO_Qty = undefined;
   this.ObjRawMatRev.Pending_PO_Qty = undefined;
+  this.ObjRawMatRev.Challan_Qty = undefined;
+  this.ObjRawMatRev.WB_Qty = undefined;
   this.ObjRawMatRev.UOM = undefined;
   this.ObjRawMatRev.Receive_Qty = undefined;
   this.ObjRawMatRev.Batch_Lot_No = undefined;
@@ -335,6 +351,8 @@ AddRawMatRev(valid:any){
       UOM:  this.ObjRawMatRev.UOM,
       PO_Qty: this.ObjRawMatRev.PO_Qty,
       Pending_PO_Qty:this.ObjRawMatRev.Pending_PO_Qty,
+      Challan_Qty:this.ObjRawMatRev.Challan_Qty,
+      WB_Qty:this.ObjRawMatRev.WB_Qty,
       Receive_Qty: this.ObjRawMatRev.Receive_Qty,
       Batch_Lot_No: this.ObjRawMatRev.Batch_Lot_No,
       Rate: FilterAllMaterialName ? FilterAllMaterialName.Rate : " ",
@@ -372,11 +390,15 @@ AddRawMatRev(valid:any){
   this.ObjRawMatRev.Product_ID = undefined;
   this.ObjRawMatRev.PO_Qty = undefined;
   this.ObjRawMatRev.Pending_PO_Qty = undefined;
+  this.ObjRawMatRev.Challan_Qty = undefined;
+  this.ObjRawMatRev.WB_Qty = undefined;
   this.ObjRawMatRev.Receive_Qty = undefined;
   this.ObjRawMatRev.UOM = undefined;
   this.ObjRawMatRev.Batch_Lot_No = undefined;
   // this.ObjRawMatRev.Vehicle_No = undefined;
   this.ObjRawMatRev.Note_Description = undefined;
+  this.ObjRawMatRev.Godown_ID = undefined;
+  this.ObjRawMatRev.Purpose = undefined;
   // this.AllMaterialName = []
   // this.DocDate = new Date()
   this.recdatedisabled = false;
@@ -607,6 +629,9 @@ ConfirmSave(){
   const FilterReferenceDataList = this.ReferenceDataList.find((el:any)=> el.Production_Ref_NO == this.ObjRawMatRev.Production_Ref_NO)
     this.ObjRawMatRev.Doc_No = "A";
     this.ObjRawMatRev.Doc_Date = this.DateService.dateConvert(this.DocDate);
+    this.ObjRawMatRev.SE_Date = this.DateService.dateConvert(this.SE_Date);
+    this.ObjRawMatRev.LR_Date = this.DateService.dateConvert(this.LR_Date);
+    this.ObjRawMatRev.Inv_Date = this.DateService.dateConvert(this.Inv_Date);
     this.ObjRawMatRev.Production_PO_No = FilterReferenceDataList ? FilterReferenceDataList.Doc_No : " ";
     this.ObjRawMatRev.Production_Ref_NO = this.ObjRawMatRev.Production_Ref_NO;
     this.ObjRawMatRev.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
@@ -979,6 +1004,14 @@ class RawMatRev{
   Total_GST : any;
   Rounded_Off : any;
   Total_Net_Amount : any;
+  SE_No:any;
+  SE_Date:any;
+  Inv_No:any;
+  Inv_Date:any;
+  LR_No:any;
+  LR_Date:any;
+  Challan_Qty:any;
+  WB_Qty:any;
 }
 class Term {
   DOC_No:any

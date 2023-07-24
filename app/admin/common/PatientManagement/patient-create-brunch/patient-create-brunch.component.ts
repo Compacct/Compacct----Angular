@@ -27,8 +27,9 @@ export class PatientCreateBrunchComponent implements OnInit {
   districtList: any = [];
   enqSourceList: any = [];
   refDoctorList: any = [];
-
   objPatient = new Patient();
+  occptionList: any = [];
+  databaseName; any = undefined;
   constructor(
     private Header: CompacctHeader,
     private CompacctToast: MessageService,
@@ -41,7 +42,7 @@ export class PatientCreateBrunchComponent implements OnInit {
   ngOnInit() {
     this.Header.pushHeader({
       Header: "Patient Creation",
-      Link: "PatientManagement -->Clinic --> Patient Creation"
+      Link: "PatientManagement -->Clinic --> Create Patient Form Branch"
     });
     this.Items = ["BROWSE", "CREATE"];
     this.userID = this.commonApi.CompacctCookies.User_ID;
@@ -51,6 +52,8 @@ export class PatientCreateBrunchComponent implements OnInit {
     this.getSateList();
     this.getEnqSource();
     this.getRefDoctor();
+    this.getOcption();
+    this.DataBaseCheck();
 
   }
 
@@ -204,6 +207,39 @@ export class PatientCreateBrunchComponent implements OnInit {
     this.Items = ["BROWSE", "CREATE"];
     this.clearData();
 
+  }
+  getOcption() {
+    this.occptionList = [];
+     const obj = {
+      "SP_String": "SP_BL_Txn_Patient_Create_Branch",
+      "Report_Name_String": "Get_Patient_Occupation",
+      "Json_Param_String": JSON.stringify({ User_ID: this.userID }),
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      //console.log('Browsesfs Data==>', data);
+      this.occptionList = data;
+    })
+  }
+  DataBaseCheck() {
+    this.$http.get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          //console.log(data)
+        });
+  }
+  PrintClick(print:any) {
+    if (print.Foot_Fall_ID) {
+    const obj = {
+        "SP_String": "SP_BL_Txn_Patient_Create_Branch",
+        "Report_Name_String": "Get_Patient_Print",
+        "Json_Param_String": JSON.stringify([{Foot_Fall_ID :print.Foot_Fall_ID}]),
+      }
+      this.GlobalAPI.postData(obj).subscribe((data: any) => { 
+        //console.log('printdat ', data)
+        window.open(data[0].Column1, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500')
+      })
+  } 
   }
 
   clearData() {

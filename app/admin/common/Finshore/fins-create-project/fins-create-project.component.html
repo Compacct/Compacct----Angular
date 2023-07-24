@@ -25,133 +25,177 @@
                     <p-tabView>
                         <form name="createProjectForm" #createProjectForm="ngForm" novalidate>
                             <div class="form-group">
-                              <div class="col-sm-4">
-                                <label class="control-label">Client Name<sup class="text-danger">*</sup></label>
-                                <select class="form-control"
-                                        name="clientName"
-                                         #clientName="ngModel"
-                                        [(ngModel)]="Objproject.Sub_Ledger_ID_Client"
-                                        [ngClass]="{'clearance': ProjectMainForm && clientName?.errors?.required}" required>
-                                        <option  [ngValue]="undefined">Select</option>
-                                        <option *ngFor=" let option of SubledgerList"  [ngValue]="option.Sub_Ledger_ID">{{option.Sub_Ledger_Name}}</option>
-                                 </select>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Client Name<sup class="text-danger">*</sup></label>
+                                        <select class="form-control"
+                                                name="clientName"
+                                                #clientName="ngModel"
+                                                [(ngModel)]="Objproject.Sub_Ledger_ID_Client"
+                                                [ngClass]="{'clearance': ProjectMainForm && clientName?.errors?.required}" required>
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor=" let option of SubledgerList"  [ngValue]="option.Sub_Ledger_ID">{{option.Sub_Ledger_Name}}</option>
+                                        </select>
 
-                              </div>
-                              <div class="col-sm-4">
-                                <label class="control-label">Consultant Name<sup class="text-danger">*</sup></label>
-                                <select class="form-control"
-                                        name="ConsultantName"
-                                        #ConsultantName="ngModel"
-                                        [(ngModel)]="Objproject.Sub_Ledger_ID_Consultant"
-                                        [ngClass]="{'clearance': ProjectMainForm && ConsultantName?.errors?.required}" required>
-                                        <option  [ngValue]="undefined">Select</option>
-                                        <option *ngFor=" let opt of ConsultantList"  [ngValue]="opt.Sub_Ledger_ID">{{opt.Sub_Ledger_Name}}</option>
-                                 </select>
-                              </div>
-                              <div class="col-sm-4">
-                                <label class="control-label">Engagment Letter<sup class="text-danger">*</sup></label>
-                                <select class="form-control"
-                                        name="Engagment"
-                                        #Engagment="ngModel"
-                                        [(ngModel)]="Objproject.Engagement_Letter"
-                                        (change)="changeEngagment()" 
-                                         [ngClass]="{'clearance': ProjectMainForm && Engagment?.errors?.required}" required>
-                                        <option  [ngValue]="undefined">Select</option>
-                                        <option  [ngValue]="'Y'">YES</option>
-                                        <option  [ngValue]="'N'">NO</option>
-                                 </select>
-                              </div>
-                              <div class="col-sm-4" *ngIf="Objproject.Engagement_Letter == 'Y'" >
-                                <label class="control-label">Date<sup class="text-danger">*</sup></label>
-                                <ejs-datepicker  [(value)]="EngagmentDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
-                              </div>
-                              <div class="col-sm-4" >
-                                <label class="control-label">Project Detalis<sup class="text-danger">*</sup></label>
-                                <select class="form-control"
-                                        name="Project"
-                                        #Project="ngModel"
-                                        [(ngModel)]="Objproject.Project_Detalis"
-                                        (change)="changeProject(Objproject.Project_Detalis)" 
-                                        [ngClass]="{'clearance': ProjectMainForm && Project?.errors?.required}" required>
-                                        <option  [ngValue]="undefined">Select</option>
-                                        <option *ngFor="let option of projectList" [ngValue]="option" >{{option}}</option>
-                                 </select>
-                              </div>
-                              <div class="col-sm-4" >
-                                <label class="control-label">Purpose<sup class="text-danger">*</sup></label>
-                                <select class="form-control"
-                                        name="Purpose"
-                                        #Purpose="ngModel"
-                                        [(ngModel)]="Objproject.Project_Purpose"
-                                        (change)="changePurpose(Objproject.Project_Purpose)"
-                                        [ngClass]="{'clearance': ProjectMainForm && Purpose?.errors?.required}" required 
-                                        [disabled]="!purposeList.length" >
-                                        <option  [ngValue]="undefined">Select</option>
-                                        <option *ngFor="let option of purposeList" [ngValue]="option" > {{option}}</option>
-                                 </select>
-                              </div>
-                              <div class="col-sm-4" >
-                                <label class="control-label">Act<sup class="text-danger">*</sup></label>
-                                <select class="form-control"
-                                        name="Act"
-                                        #Act="ngModel"
-                                        [(ngModel)]="Objproject.Project_Act"
-                                        [ngClass]="{'clearance': ProjectMainForm && Act?.errors?.required}" required 
-                                        [disabled]="!ActList.length" >
-                                        <option  [ngValue]="undefined">Select</option>
-                                        <option *ngFor="let option of ActList" [ngValue]="option" > {{option}}</option>
-                                 </select>
-                              </div>
-                              <div class="col-sm-4" >
-                                <label class="control-label">Valuation Date<sup class="text-danger">*</sup></label>
-                                <ejs-datepicker  [(value)]="ValuationDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
-                              </div>
-                              <div class="col-sm-4" >
-                                <label class="control-label">Bill To<sup class="text-danger">*</sup></label>
-                                <select class="form-control"
-                                        name="Bill"
-                                         #Bill="ngModel"
-                                        [(ngModel)]="Objproject.Bill_To"
-                                        [ngClass]="{'clearance': ProjectMainForm && Bill?.errors?.required}" required >
-                                        <option  [ngValue]="undefined">Select</option>
-                                        <option  [ngValue]="'Client'">Client</option>
-                                        <option  [ngValue]="'Consultant'">Consultant</option>
-                                 </select>
-                              </div>
-                            <div class="col-sm-4">
-                                <label class="control-label">Assigned To<sup class="text-danger">*</sup></label>
-                                <select class="form-control" 
-                                        name="Assigned"
-                                        #Assigned="ngModel"
-                                        [(ngModel)]="Objproject.Assigned_To"
-                                        [ngClass]="{'clearance': ProjectMainForm && Assigned?.errors?.required}" required >
-                                    <option [ngValue]="undefined">Select</option>
-                                    <option *ngFor="let User of UserList" [ngValue]="User.User_ID"> {{User.User_Name}}</option>
-                                </select>
-                            </div>
-                            <div class="col-sm-4">
-                                <label class="control-label">Status<sup class="text-danger">*</sup></label>
-                                <div class="pull-right">
-                                    <button (click)="ViewStatus()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i>
-                                        View</button>
-                                    &nbsp;
-                                    <button (click)="StatusCreatPopup()" class="btn btn-primary  createPatient"><i
-                                            class="fa fa-fw  fa-plus"></i>Create</button>
-                                </div>
-                                <select class="form-control" name="Status"
-                                        #Status="ngModel"
-                                        [(ngModel)]="Objproject.Status_ID"
-                                        [ngClass]="{'clearance': ProjectMainForm && Status?.errors?.required}" required >
-                                    <option [ngValue]="undefined">Select</option>
-                                    <option *ngFor="let status of StatusList" [ngValue]="status.Status_ID"> {{status.Status_Name}}</option>
-                                </select>
-                            </div>
-                            <div class="col-sm-4">
-                                <label class="control-label">Remarks</label>
-                                <textarea class="form-control" name='Remarks' #Remarks='ngModel'
-                                 [(ngModel)]="Objproject.Remarks">
-                                </textarea>
-                            </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Consultant Name<sup class="text-danger">*</sup></label>
+                                        <select class="form-control"
+                                                name="ConsultantName"
+                                                #ConsultantName="ngModel"
+                                                [(ngModel)]="Objproject.Sub_Ledger_ID_Consultant"
+                                                [ngClass]="{'clearance': ProjectMainForm && ConsultantName?.errors?.required}" required>
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor=" let opt of ConsultantList"  [ngValue]="opt.Sub_Ledger_ID">{{opt.Sub_Ledger_Name}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Engagment Letter<sup class="text-danger">*</sup></label>
+                                        <select class="form-control"
+                                                name="Engagment"
+                                                #Engagment="ngModel"
+                                                [(ngModel)]="Objproject.Engagement_Letter"
+                                                (change)="changeEngagment()" 
+                                                [ngClass]="{'clearance': ProjectMainForm && Engagment?.errors?.required}" required>
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  [ngValue]="'Y'">YES</option>
+                                                <option  [ngValue]="'N'">NO</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker  [(value)]="EngagmentDate" [format]="'dd/MMM/yyyy'" [enabled]="Objproject.Engagement_Letter == 'Y'" ></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-4" >
+                                        <label class="control-label">Project Detalis<sup class="text-danger">*</sup></label>
+                                        <select class="form-control"
+                                                name="Project"
+                                                #Project="ngModel"
+                                                [(ngModel)]="Objproject.Project_Detalis"
+                                                (change)="changeProject(Objproject.Project_Detalis)" 
+                                                [ngClass]="{'clearance': ProjectMainForm && Project?.errors?.required}" required>
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of projectList" [ngValue]="option" >{{option}}</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-4" >
+                                        <label class="control-label">Purpose<sup class="text-danger">*</sup></label>
+                                        <select class="form-control"
+                                                name="Purpose"
+                                                #Purpose="ngModel"
+                                                [(ngModel)]="Objproject.Project_Purpose"
+                                                (change)="getOtherInp()"                                      
+                                                [ngClass]="{'clearance': ProjectMainForm && Purpose?.errors?.required}" required 
+                                                *ngIf="purposeList.length || Objproject.Project_Detalis === undefined" >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of purposeList" [ngValue]="option" > {{option}}</option>
+                                        </select>
+                                        <input type="text" class="form-control" name="Purpose" #Purpose="ngModel" [(ngModel)]="Objproject.Project_Purpose"  *ngIf="!purposeList.length && Objproject.Project_Detalis !== undefined"
+                                            placeholder="Type Purpose" [ngClass]="{clearance: ProjectMainForm && Purpose?.errors?.required}" required />
+                                    </div>
+                                   
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Other Purpose<sup class="text-danger">*</sup></label>
+                                        <input type="text" class="form-control" name="Other_Purpose" #Other_Purpose="ngModel" [(ngModel)]="Objproject.Project_Purpose_Others"
+                                            placeholder="Type Other Purpose" [disabled]="Objproject.Project_Purpose !== 'Others'"
+                                            [ngClass]="{clearance: ProjectMainForm && Other_Purpose?.errors?.required}" required />
+                                    </div>
+                                    <div class="col-sm-4" >
+                                        <label class="control-label">Act<sup class="text-danger">*</sup></label> 
+                                        <p-multiSelect [options]="ActList"  name="Act" #Act="ngModel"[(ngModel)]="SelectedProjectAct"*ngIf="Objproject.Project_Detalis !== 'Addendum'"
+                                            [styleClass]="'compacct-multiselect'"[virtualScroll]="true" itemSize="30" (onChange)="ActOtherInp()"[disabled]="Objproject.Project_Detalis === 'Others' || Objproject.Project_Detalis === 'Fairness Opinion'||Objproject.Project_Detalis === 'AIF'"
+                                            [ngClass]="{'clearance': ProjectMainForm && Act?.errors?.required}" required ></p-multiSelect>
+
+                                            <input type="text" class="form-control" name="Act1" #Act1="ngModel"
+                                                [(ngModel)]="Objproject.Project_Act" placeholder="Type Act" *ngIf="Objproject.Project_Detalis === 'Addendum'"
+                                                [ngClass]="{clearance: ProjectMainForm && Act1?.errors?.required}" required />
+                                    </div>
+                                   
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Act Other<sup class="text-danger">*</sup></label>
+                                        <input type="text" class="form-control" name="Act_Other" #Act_Other="ngModel"
+                                            [(ngModel)]="Objproject.Project_Act_Others" placeholder="Type Act Other" [disabled]="!InputFiled1"
+                                            [ngClass]="{clearance: ProjectMainForm && Act_Other?.errors?.required}" required />
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Method<sup class="text-danger">*</sup></label>
+                                        <p-multiSelect [options]="MethodList" name="Method" #Method="ngModel" [(ngModel)]="SelectedMethod" *ngIf="Objproject.Project_Detalis !== 'Addendum'"
+                                            [styleClass]="'compacct-multiselect'" [virtualScroll]="true" itemSize="30"(onChange)="MethodOtherInp()"[disabled]="Objproject.Project_Detalis === 'Others' || Objproject.Project_Detalis === 'Fairness Opinion'||Objproject.Project_Detalis === 'AIF'"
+                                            [ngClass]="{'clearance': ProjectMainForm && Method?.errors?.required}" required></p-multiSelect>
+
+                                            <input type="text" class="form-control" name="Method1" #Method1="ngModel"
+                                                [(ngModel)]="Objproject.Method" placeholder="Type Method" *ngIf="Objproject.Project_Detalis === 'Addendum'"
+                                                [ngClass]="{clearance: ProjectMainForm && Method1?.errors?.required}" required />
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Method Other<sup class="text-danger">*</sup></label>
+                                        <input type="text" class="form-control" name="Method_Other" #Method_Other="ngModel"
+                                            [(ngModel)]="Objproject.Method_Others" placeholder="Type Method Other"[disabled]="!InputFiled2"
+                                            [ngClass]="{clearance: ProjectMainForm && Method_Other?.errors?.required}" required />
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Valuation Date<sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker  [(value)]="ValuationDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                   <div class="col-sm-4">
+                                        <label class="control-label">Bill To<sup class="text-danger">*</sup></label>
+                                        <select class="form-control"
+                                                name="Bill"
+                                                #Bill="ngModel"
+                                                [(ngModel)]="Objproject.Bill_To"
+                                                [ngClass]="{'clearance': ProjectMainForm && Bill?.errors?.required}" required >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  [ngValue]="'Client'">Client</option>
+                                                <option  [ngValue]="'Consultant'">Consultant</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Billing Amount<sup class="text-danger"></sup></label>
+                                        <input type="text" class="form-control" name="Billing_Amount" #Billing_Amount="ngModel"
+                                            [(ngModel)]="Objproject.Bill_To_PI_Amount" placeholder="Type Billing Amount" CompacctDigitonly="true">
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Assigned To<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" 
+                                                name="Assigned"
+                                                #Assigned="ngModel"
+                                                [(ngModel)]="Objproject.Assigned_To"
+                                                [ngClass]="{'clearance': ProjectMainForm && Assigned?.errors?.required}" required >
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let User of UserList" [ngValue]="User.User_ID"> {{User.User_Name}}</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Status<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Status"
+                                                #Status="ngModel"
+                                                [(ngModel)]="Objproject.Status_ID"
+                                                [ngClass]="{'clearance': ProjectMainForm && Status?.errors?.required}" required >
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let status of StatusList" [ngValue]="status.Status_ID"> {{status.Status_Name}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Payment Status<sup class="text-danger"></sup></label>
+                                        <select class="form-control" name="Payment_Status" #Payment_Status="ngModel" [(ngModel)]="Objproject.Payment_Status">
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option [ngValue]="'Advance Received'">Advance Received</option>
+                                            <option [ngValue]="'Fully Received'">Fully Received</option>
+                                            <option [ngValue]="'Pending'">Pending</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Remarks</label>
+                                        <textarea class="form-control" name='Remarks' #Remarks='ngModel'
+                                        [(ngModel)]="Objproject.Remarks">
+                                        </textarea>
+                                    </div>
                             </div>
                         </form>
                             <div class="box-footer">
@@ -166,55 +210,3 @@
     </div>
 </div>
 
-<!-- VIEWS -->
-<p-dialog [header]="'Status'" [appendTo]="'body'" [visible]="ViewStatusModal" [closeOnEscape]="true"
-    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
-    style="text-align: center;" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
-    <div class="table-responsive no-padding">
-        <p-table [value]="StatusList" [rowHover]="true">
-            <ng-template pTemplate="header">
-                <tr>
-                    <th style="width: 65px;">SL No.</th>
-                    <th>Status</th>
-                    <th>Delete</th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-col let-i="rowIndex">
-                <tr>
-                    <td>{{i+1}}</td>
-                    <td>{{col.Status_Name}}</td>
-                    <td align="center"><span (click)="deleteStatusLst(col)"><i class="fa fa-trash" id="red"></i></span></td>
-            </ng-template>
-        </p-table>
-    </div>
-    <p-footer>
-        <button type="button" (click)="ViewStatusModal = false" class="btn btn-info">
-            Cancel
-        </button>
-    </p-footer>
-</p-dialog>
-
-<!-- CREATE -->
-<p-dialog [header]="'Create Status'" [appendTo]="'body'" [visible]="CreateStatusModal" [closeOnEscape]="true"
-    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
-    style="text-align: center;" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
-    <div class="form-horizontal">
-        <form name="StatusForm" #StatusForm="ngForm" novalidate>
-            <div class="form-group">
-                <div class="col-sm-12">
-                    <label class="control-label">Status<sup class="text-danger">*</sup></label>
-                    <input type="text" class="form-control" name="Status_Creat" #Status_Creat="ngModel" [(ngModel)]="Create_Status"
-                        placeholder="Type Status"
-                        [ngClass]="{clearance: StatusFormSubmitted && Status_Creat?.errors?.required}" required />
-                </div>
-            </div>
-        </form>
-    </div>
-    <p-footer>
-        <button type="button" (click)="CreateStatusModal = false" class="btn btn-info">Cancel</button>
-        <button type="submit" class="btn btn-primary pull-right custombutton"
-            (click)="CreateStatus(StatusForm.form.valid)">
-            <span class="glyphicon glyphicon-save"></span>&nbsp;Create
-        </button>
-    </p-footer>
-</p-dialog>

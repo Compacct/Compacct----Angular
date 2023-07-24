@@ -86,10 +86,12 @@ export class LeaveRegisterComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       if(data.length){
-        this.seachSpinner = false;
         this.DownloadPDF(data);
       }
+      this.seachSpinner = false;
     })
+    } else {
+      this.seachSpinner = false;
     }
   }
   DownloadPDF(itemNew:any) {

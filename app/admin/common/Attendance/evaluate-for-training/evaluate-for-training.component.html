@@ -1,0 +1,176 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+	<ng-template let-message pTemplate="message">
+		<div style="text-align: center">
+			<i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+			<h3>{{ message.summary }}</h3>
+			<p>{{ message.detail }}</p>
+		</div>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-6">
+				<button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+			</div>
+			<div class="ui-g-6">
+				<button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+			</div>
+		</div>
+	</ng-template>
+</p-toast>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box box-primary">
+			<div class="form-horizontal">
+				<div class="box-body">
+					<p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+						<p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[0]" leftIcon="glyphicon glyphicon-list-alt"> </p-tabPanel>
+						<p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+							<form name="Evaluation_Form" #Evaluation_Form="ngForm">
+								<div class="form-group">
+									<div class="col-sm-4">
+										<label class="control-label">Evaluattion Date<sup class="text-danger">*</sup></label>
+										<ejs-datepicker
+											[format]="'dd/MMM/yyyy'"
+											[(value)]="evaluattion_Date"
+											[(ngModel)]="evaluattion_Date"
+											name="evaluattionDate"
+											#evaluattionDate="ngModel"
+											required
+											[cssClass]="evalutationFormSubmitted && evaluattionDate.errors?.required ? 'clearance' : ''">
+										</ejs-datepicker>
+									</div>
+									<div class="col-sm-4">
+										<label class="control-label">Department<sup class="text-danger">*</sup></label>
+										<p-dropdown
+											[options]="departmentList"
+											name="department_List"
+											#department_List="ngModel"
+											[(ngModel)]="objEvaluationForTraning.Dept_ID"
+											[showClear]="true"
+											[emptyFilterMessage]="'No Department Found'"
+											[filter]="true"
+											filterBy="label,value"
+											[resetFilterOnHide]="true"
+											[placeholder]="'Select Department'"
+											[virtualScroll]="true"
+											itemSize="30"
+											[styleClass]="evalutationFormSubmitted && department_List.errors?.required ? 'clearance' : ''"
+											[required]="true">
+										</p-dropdown>
+									</div>
+									<div class="col-sm-4">
+										<label class="control-label">Employee<sup class="text-danger">*</sup></label>
+										<p-dropdown
+											[options]="employeeList"
+											name="employee_List"
+											#employee_List="ngModel"
+											[(ngModel)]="objEvaluationForTraning.Emp_ID"
+											[showClear]="true"
+											[emptyFilterMessage]="'No Employee Found'"
+											[filter]="true"
+											filterBy="label,value"
+											[resetFilterOnHide]="true"
+											[placeholder]="'Select Employee'"
+											[virtualScroll]="true"
+											itemSize="30"
+											[styleClass]="evalutationFormSubmitted && employee_List.errors?.required ? 'clearance' : ''"
+											[required]="true">
+										</p-dropdown>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-4">
+										<label class="control-label">Skill<sup class="text-danger">*</sup></label>
+										<p-dropdown
+											[options]="skillList"
+											name="skill_List"
+											#skill_List="ngModel"
+											[(ngModel)]="objEvaluationForTraning.Skill_ID"
+											[showClear]="true"
+											[emptyFilterMessage]="'No Skill Found'"
+											[filter]="true"
+											filterBy="label,value"
+											[resetFilterOnHide]="true"
+											[placeholder]="'Select Skill'"
+											[virtualScroll]="true"
+											itemSize="30"
+											[styleClass]="evalutationFormSubmitted && skill_List.errors?.required ? 'clearance' : ''"
+											[required]="true">
+										</p-dropdown>
+									</div>
+									<div class="col-sm-4">
+										<label class="control-label">Grade<sup class="text-danger">*</sup></label>
+										<p-dropdown
+											[options]="gradeList"
+											name="grade_List"
+											#grade_List="ngModel"
+											[(ngModel)]="objEvaluationForTraning.Grade_ID"
+											[showClear]="true"
+											[emptyFilterMessage]="'No Grade Found'"
+											[filter]="true"
+											filterBy="label,value"
+											[resetFilterOnHide]="true"
+											[placeholder]="'Select Grade'"
+											[virtualScroll]="true"
+											itemSize="30"
+											[styleClass]="evalutationFormSubmitted && grade_List.errors?.required ? 'clearance' : ''"
+											[required]="true">
+										</p-dropdown>
+									</div>
+									<div class="col-sm-4">
+										<button class="btn btn-primary pull-right custombtn" (click)="addEvaluation(Evaluation_Form.form.valid)" id="load">
+											<span class="glyphicon glyphicon-plus"></span>Add
+										</button>
+									</div>
+								</div>
+							</form>
+                            <br>
+							<p-table
+								[value]="TableArray"
+								[paginator]="true"
+								[rows]="10"
+								[rowHover]="true"
+								[autoLayout]="true"
+								sortMode="multiple"
+								[rowHover]="true"
+								#dt>
+								<ng-template pTemplate="header">
+									<tr>
+										<th style="text-align: center" nowrap>Department</th>
+										<th style="text-align: center" nowrap>Employee</th>
+										<th style="text-align: center" nowrap>Skill</th>
+										<th style="text-align: center" nowrap>Grade</th>
+										<th style="text-align: center" nowrap>Delete</th>
+									</tr>
+								</ng-template>
+								<ng-template pTemplate="body" let-col>
+									<tr>
+										<td style="text-align: center" nowrap>{{ col.Dept_Name ? col.Dept_Name : "-" }}</td>
+										<td style="text-align: center" nowrap>{{ col.Emp_Name ? col.Emp_Name : "-" }}</td>
+										<td style="text-align: center" nowrap>{{ col.Skill_Name ? col.Skill_Name : "-" }}</td>
+										<td style="text-align: center" nowrap>{{ col.Grade ? col.Grade : "-" }}</td>
+										<td style="text-align: center" nowrap><button type="button" class="btn btn-outline-danger btn-danger" (click)="deleteEvaluation()"><span class="glyphicon glyphicon-trash"></span></button></td>
+									</tr>
+								</ng-template>
+							</p-table>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Remarks</label>
+                                    <input type="text" class="form-control" placeholder="Remarks"
+                                    [(ngModel)]="objEvaluationForTraning.Remarks"
+                                    >
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary pull-right" (click)="SaveEvaluation()" id="load">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
+                                       animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>Save
+                                 </button>
+                            </div>
+						</p-tabPanel>
+					</p-tabView>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

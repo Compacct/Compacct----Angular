@@ -2,9 +2,6 @@ div.table-responsive.table-id > p-table > div > div {
     width: auto !important;
     /* width : 50%; */
   }
-  .col-sm-1 {
-    width: 40%;
-  }
   .box-body {
     padding-top: 10px !important;
     padding-left: 10px !important;
@@ -77,4 +74,8 @@ div.table-responsive.table-id > p-table > div > div {
       .text-blue-active > td {
         color:#327CC6;
         font-weight: bold;
+      }
+      div.label-t {
+        padding: 6px 12px;
+        background: rgb(206 216 216 / 51%);
       }

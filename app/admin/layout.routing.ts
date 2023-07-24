@@ -403,6 +403,11 @@ import { CostcenterTargetJohComponent } from './common/PatientManagement/Audiolo
 import { LeaveRegisterComponent } from './common/MICL/leave-register/leave-register.component';
 import { HrReportsComponent } from './common/Attendance/hr-reports/hr-reports.component';
 import { FinsSubLedgerComponent } from './common/Finshore/fins-sub-ledger/fins-sub-ledger.component';
+import { AdvanceOrderAdjustmentComponent } from './common/OutletManagement/advance-order-adjustment/advance-order-adjustment.component';
+import { AssetMasterComponent } from './common/MICL/asset-master/asset-master.component';
+import { HrTrainingComponent } from './common/HR/hr-training/hr-training.component';
+import { EvaluateForTrainingComponent } from './common/Attendance/evaluate-for-training/evaluate-for-training.component';
+
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -3076,6 +3081,34 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         component: FinsSubLedgerComponent,
         data: {
           title: 'Sub Ledger'
+    }
+    },
+    {
+      path: 'Advance_Order_Adjustment',
+        component: AdvanceOrderAdjustmentComponent,
+        data: {
+          title: 'Advance Order Adjustment'
+    }
+    },
+    {
+      path: 'Asset_Master',
+        component: AssetMasterComponent,
+        data: {
+          title: 'Asset Master'
+    }
+    },
+    {
+      path: 'HR_Training',
+        component: HrTrainingComponent,
+        data: {
+          title: 'Training'
+    }
+    },
+    {
+      path: 'Evaluate_For_Traning',
+        component: EvaluateForTrainingComponent,
+        data: {
+          title: 'Evaluate For Traning'
     }
     },
     /*{
