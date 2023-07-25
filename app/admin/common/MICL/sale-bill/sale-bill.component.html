@@ -36,6 +36,21 @@
       </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" key="delmsg" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-12">
+              <button type="button" pButton (click)="onReject()" label="ok" class="ui-button-danger" style="font-size: 20px;"></button>
+          </div>
+      </div>
+    </ng-template>
+</p-toast>
 
 <div class="row">
     <div class="col-xs-12">
@@ -369,8 +384,7 @@
                                             [virtualScroll]="true" itemSize="30"
                                             (onChange)="getButtomTable()"
                                             [styleClass]="'compacct-multiselect'"
-                                            [ngClass]="{'clearance':SaleBillFormSubmitted && Challan?.errors?.required}"
-                                            [required]="true" >
+                                            [ngClass]="{'clearance':SaleBillFormSubmitted && Challan?.errors?.required}">
                                             </p-multiSelect>
                                         </div>
                                         <!-- <div class="col-sm-3">
@@ -405,6 +419,8 @@
                                                 <th nowrap rowspan="2" class="text-center"
                                                     style="vertical-align:middle">Product Description</th>
                                                 <th nowrap rowspan="2" class="text-center"
+                                                    style="vertical-align:middle">Product Specification</th>
+                                                <th nowrap rowspan="2" class="text-center"
                                                     style="vertical-align:middle">Lot No./Batch No.</th>
                                                 <th nowrap rowspan="2" class="text-center"
                                                     style="vertical-align:middle">QTY</th>
@@ -437,6 +453,7 @@
                                                 <td>{{ Table.Product_Type ? Table.Product_Type :"-" }}</td>
                                                 <td>{{ Table.Product_Sub_Type ? Table.Product_Sub_Type :"-" }}</td>
                                                 <td>{{ Table.Product_Description ? Table.Product_Description :"-" }}</td>
+                                                <td>{{ Table.Product_Specification ? Table.Product_Specification :"-" }}</td>
                                                 <td>{{ Table.Batch_Number ? Table.Batch_Number :"-" }}</td>
                                                 <td>{{ Table.Qty ? Table.Qty :"-" }}</td>
                                                 <td>{{ Table.UOM ? Table.UOM :"-" }}</td>

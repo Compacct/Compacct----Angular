@@ -262,12 +262,32 @@ export class FullAndFinalSettlementComponent implements OnInit {
         this.ObjFullAndFinalSettlement.Leave_Balance = Encashment.length ? Encashment[0].Leave_Days ? Encashment[0].Leave_Days : 0 : 0;
         this.ObjFullAndFinalSettlement.Leave_Encashment = Encashment.length ? Encashment[0].Leave_Amount ? Encashment[0].Leave_Amount : 0 : 0;
         this.ObjFullAndFinalSettlement.Gratuity = ggratuity.length ? ggratuity[0].Gratuity ? ggratuity[0].Gratuity : 0 : 0;
-        var Total_Statutory_Earnings = Number(this.ObjFullAndFinalSettlement.Bonus) + Number(this.ObjFullAndFinalSettlement.Leave_Encashment) +
-                                 Number(this.ObjFullAndFinalSettlement.Gratuity)
-        this.ObjFullAndFinalSettlement.Total_Statutory_Earnings = Number(Total_Statutory_Earnings).toFixed(2);
-        this.GetNetPayble();
+        this.GetNoticePeriodEarningAmount();
+        this.CalculateTotalStatutoryEarnings();
       })
   
+  }
+  // STATUTORY EARNING
+  GetNoticePeriodEarningAmount(){
+    this.ObjFullAndFinalSettlement.Notice_Period_Earning_Amount = 0;
+    if(this.ObjFullAndFinalSettlement.Notice_Period_Earning_Day) {
+    const obj = {
+      "SP_String": "SP_HR_Full_And_Final_Settlement",
+      "Report_Name_String":"Get_Notice_Periods_Earning_Amount",
+      "Json_Param_String": JSON.stringify([{Emp_ID : this.Emp_ID,  Days : Number(this.ObjFullAndFinalSettlement.Notice_Period_Earning_Day)}])
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      //  console.log("this.AllEmployeeList",this.AllEmployeeList)
+      this.ObjFullAndFinalSettlement.Notice_Period_Earning_Amount = data[0].Notice_Period_Earning_Amount ? Number(data[0].Notice_Period_Earning_Amount).toFixed(2) : 0;
+      this.CalculateTotalStatutoryEarnings();
+    })
+    }
+  }
+  CalculateTotalStatutoryEarnings(){
+    var Total_Statutory_Earnings = Number(this.ObjFullAndFinalSettlement.Bonus) + Number(this.ObjFullAndFinalSettlement.Leave_Encashment) +
+                                 Number(this.ObjFullAndFinalSettlement.Gratuity) + Number(this.ObjFullAndFinalSettlement.Notice_Period_Earning_Amount)
+        this.ObjFullAndFinalSettlement.Total_Statutory_Earnings = Number(Total_Statutory_Earnings).toFixed(2);
+        this.GetNetPayble();
   }
   CalculateNoticePeriod(){
     if(this.ObjFullAndFinalSettlement.Notice_Period_Day){
@@ -467,10 +487,13 @@ class FullAndFinalSettlement{
   Last_Month_Payable_Days : any;
   Last_Gross_Amount : any;
 
+  Bonus_Day : any;
   Bonus : any;
   Leave_Balance : any;
   Leave_Encashment : any;
   Gratuity : any;
+  Notice_Period_Earning_Day : any;
+  Notice_Period_Earning_Amount : any;
   Total_Statutory_Earnings : any;
 
   EPF_Deduction : any;

@@ -38,7 +38,7 @@
                                     </div>
                                     <div class="col-sm-2">
                                         <label class="control-label">Cost Cent</label>
-                                        <select class="form-control" name="browsecostcen" #browsecostcen="ngModel" [(ngModel)]="ObjBrowseData.Cost_Cen_ID" (change)="getDept(ObjBrowseData.Cost_Cen_ID)">
+                                        <select class="form-control" name="browsecostcen" #browsecostcen="ngModel" [(ngModel)]="ObjBrowseData.Cost_Cen_ID" (change)="getBrowseDept(ObjBrowseData.Cost_Cen_ID)">
                                               <option  [ngValue]="undefined">Select</option>
                                               <option  *ngFor="let option of browsecostcenlist" value="{{option.Cost_Cen_ID}}">
                                                 {{option.Cost_Cen_Name}}
@@ -165,15 +165,15 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                             <form name="RawIndentForm" #RawIndentForm="ngForm" novalidate>
                                 <div class="form-group">
-                                <div class="col-sm-2">
+                                <div class="col-sm-4">
                                     <label class="control-label">Date</label>
                                     <!-- <div  class="label-t">{{rawDate  | date :" dd/MMM/yyyy"}}</div> -->
-                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [min]="mindate" [max]="maxdate" [(value)]='rawDate'></ejs-datepicker>
+                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [min]="mindate" [max]="maxdate" [(value)]='rawDate' [enabled]="!productList.length"></ejs-datepicker>
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-sm-4">
                                     <label class="control-label">Cost Cent</label>
                                     <select class="form-control" name="costcen" #costcen="ngModel" [(ngModel)]="Cost_Cen_ID" (change)="getDept(Cost_Cen_ID)" [ngClass]="{'clearance': RawIndentFormSubmit && costcen?.errors?.required}" 
-                                           [disabled]="editDataList.length" required>
+                                           [disabled]="editDataList.length || productList.length" required>
                                           <option  [ngValue]="undefined">Select</option>
                                           <option  *ngFor="let option of costcenlist" value="{{option.Cost_Cen_ID}}">
                                             {{option.Cost_Cen_Name}}
@@ -181,13 +181,14 @@
                                     </select>
                                 </div>
 
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-4">
                                         <label class="control-label"  >Stock Point<sup class="text-danger">*</sup></label>
                                         <select class="form-control"
-                                        name="godown_Id"
-                                        #godown_Id="ngModel"
+                                        name="stockpoint"
+                                        #stockpoint="ngModel"
                                         [(ngModel)]="godownId"
-                                        [ngClass]="{'clearance': RawIndentFormSubmit && godown_Id?.errors?.required}"
+                                        (change)="showProduct()"
+                                        [ngClass]="{'clearance': RawIndentFormSubmit && stockpoint?.errors?.required}"
                                         required
                                         [disabled]="editDataList.length">
                                         <option  [ngValue]="undefined">Select</option>
@@ -196,7 +197,48 @@
                                         </option>
                                 </select>
                                     </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Product <sup class="text-danger">*</sup></label>
+                                        <p-dropdown 
+                                        [options]="DropdownproductList" 
+                                        name="ProductID" 
+                                        [(ngModel)]="Product_ID"
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Product Found'" 
+                                        [filter]="true" 
+                                        filterBy="label,value.name" 
+                                        [resetFilterOnHide]="true"
+                                        [placeholder]="'Product'" 
+                                        [virtualScroll]="true"  
+                                        itemSize="30" 
+                                        #ProductID="ngModel"
+                                        (onChange)="Getdatafromproduct()"
+                                        [styleClass]="RawIndentFormSubmit && ProductID.errors?.required ? 'clearance': ''" [required] = "true">
+                                    </p-dropdown>
+                                    </div>
                                     <div class="col-sm-2">
+                                        <label class="control-label">UOM</label>
+                                        <div class="label-t">{{uom ? uom : '-'}}</div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Stock Qty</label>
+                                        <div class="label-t">{{StockQty ? StockQty : '-'}}</div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                        <input type="text"
+                                        class="form-control"
+                                        name="Qty"
+                                        #Qty="ngModel"
+                                        [(ngModel)]="Requisition_Qty"
+                                        placeholder="Quantity"
+                                        CompacctDigitonly="true"
+                                        [ngClass]="{'clearance': RawIndentFormSubmit && Qty?.errors?.required }"
+                                        required>
+                                    </div>
+                                    <!-- <div class="col-sm-2">
                                         <label class="control-label">Material Type <sup class="text-danger">*</sup></label>
                                         <select class="form-control" name="mattype" #mattype="ngModel" [(ngModel)]="Material_Type" [ngClass]="{'clearance':RawIndentFormSubmit && mattype?.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
@@ -204,16 +246,16 @@
                                         {{option.Material_Type}}
                                       </option>
                                 </select>
-                                    </div>
+                                    </div> -->
                                     <div class="col-sm-2">
                                         <button class="btn btn-primary custombutton" data-toggle="modal"
-                                          (click)="showProduct(RawIndentForm.form.valid)"
+                                          (click)="AddProduct(RawIndentForm.form.valid)"
                                           id="load"
                                           [disabled]="showSpinner"
                                           [disabled]="editDataList.length"
                                           >
                                           <p-progressSpinner *ngIf="showSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                          <span *ngIf="!showSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Show Products
+                                          <span *ngIf="!showSpinner" class="glyphicon glyphicon-plus"></span>&nbsp;Add
                                        </button>
                                     </div>
                                     <!-- <div class="col-sm-3">
@@ -227,65 +269,34 @@
                                     </div> -->
                                 </div>
                             </form>
+                            <br>
+                            <br>
                             <div class="table-responsive no-padding">
-                                <p-table [value]="productList"
-                                [globalFilterFields]="['Product_Type','Product_Description','UOM','Present_Stock','Requisition_Qty']"
-                                 [rowHover]="true"
-                                 [autoLayout]="true"
-
-                                 #dt>
-                                   <ng-template pTemplate="caption">
-                                       <div class="row">
-                                        <div *ngIf="!editDataList.length" class="col-sm-3 pull-left" style="text-align: teft">
-                                            <button class="btn btn-primary pull-left"
-                                            (click)="showDialog()"
-                                             id="load"
-                                             [disabled]="Spinner"
-                                             [disabled]="!productList.length">
-                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                         <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
-                                     </button>
-                                        </div>
-                                        <div class="col-sm-3" style="margin-left: 295px;">
-                                            <!-- <label class="control-label" >Select Product Type</label> -->
-                                            <p-multiSelect
-                                            [options]="DistProductType"
-                                            defaultLabel="Select Product Type"
-                                            [(ngModel)]="SelectedProductType"
-                                            itemSize="30"
-                                            [styleClass]="'compacct-multiselect'"
-                                            name="Product_Type"
-                                            (onChange)= "filterProduct()">
-                                            </p-multiSelect>
-                                        </div>
-                                            <div class="col-sm-3 pull-right" style="text-align: right">
-                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
-                                                </div>
-                                       </div>
-
-                                    </ng-template>
-                                    <ng-template pTemplate="header">
-                                        <tr>
-                                            <th>Product Type</th>
-                                            <th>Product Drecription</th>
-                                            <th>UOM</th>
-                                            <th>Present Stock</th>
-                                            <th>Requirement</th>
-                                         </tr>
-                                    </ng-template>
-                                    <ng-template pTemplate="body" let-col let-i="rowIndex">
-                                        <tr >
-                                            <td >{{col.Product_Type}}</td>
-                                            <td>{{col.Product_Description}}</td>
-                                            <td>{{col.UOM}}</td>
-                                            <td>{{col.Present_Stock}}</td>
-                                            <td><input type="text" [name]="col.Product_ID"  [(ngModel)]='col.Requisition_Qty'
-                                                CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
-
-                                        </tr>
-                                    </ng-template>
-                            </p-table>
-                           </div>
+                                <table class="table table-bordered">
+                                 <thead style="background-color:#3c8dbc;color:white;">
+                                    <tr style="background-color:#3c8dbc;color:white;">
+                                        <th>Stock Point</th>
+                                        <th>Product Type</th>
+                                        <th>Product Drecription</th>
+                                        <th>UOM</th>
+                                        <!-- <th>Present Stock</th> -->
+                                        <th>Requirement</th>
+                                        <th>Delete</th>
+                                     </tr>
+                                 </thead>
+                                <tbody>
+                                    <tr *ngFor=" let col of productList; let ind = index;">
+                                        <td>{{col.godown_name}}</td>
+                                        <td>{{col.Product_Type}}</td>
+                                        <td>{{col.Product_Description}}</td>
+                                        <td>{{col.UOM}}</td>
+                                        <!-- <td>{{col.Present_Stock}}</td> -->
+                                        <td>{{col.Requisition_Qty}}</td>
+                                        <td><button (click)="DeteteAdd(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                    </tr>
+                                </tbody>
+                               </table>
+                            </div>
                            <div class="box-footer">
                             <button class="btn btn-primary pull-right"
                                    (click)="showDialog()"

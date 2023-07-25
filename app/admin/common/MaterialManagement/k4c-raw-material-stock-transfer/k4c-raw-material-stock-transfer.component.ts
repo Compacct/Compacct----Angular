@@ -343,7 +343,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     if(valid){
     if((Number(this.ObjRawMateriali.To_godown_id) === 42) || (Number(this.ObjRawMateriali.To_godown_id) === 43) ||
       (Number(this.ObjRawMateriali.To_godown_id) === 46) || (Number(this.ObjRawMateriali.To_godown_id) === 72) ||
-      (Number(this.ObjRawMateriali.To_godown_id) === 73)) {
+      (Number(this.ObjRawMateriali.To_godown_id) === 73) || (Number(this.ObjRawMateriali.To_godown_id) === 89)) {
     this.GetProductList();
     }
   else {

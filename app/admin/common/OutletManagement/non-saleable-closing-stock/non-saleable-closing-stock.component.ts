@@ -223,6 +223,7 @@ export class NonSaleableClosingStockComponent implements OnInit {
             Product_ID : item.Product_ID,
             UOM : item.UOM,
             Batch_No : item.Batch_No,
+            Batch_Qty : item.Batch_Qty,
            // System_Qty : item.batch_Qty,
             Closing_Qty	: item.Closing_Qty,
           //  Varience_Qty : item.varience_Qty,
@@ -464,7 +465,7 @@ const obj = {
         UOM : element.UOM,
         Batch_No : element.Batch_No,
         Expiry_Date : element.Expiry_Date,
-        batch_Qty : element.batch_Qty,
+        batch_Qty : element.batch_Qty ? element.batch_Qty : element.Batch_Qty,
         Closing_Qty : element.Closing_Qty,
         Remarks : element.Remarks,
         Total_Amount : element.Total_Amount

@@ -500,6 +500,12 @@ import { BillNoChangeComponent } from './common/MICL/bill-no-change/bill-no-chan
 import { CostcenterTargetJohComponent } from './common/PatientManagement/Audiologist/costcenter-target-joh/costcenter-target-joh.component';
 import { LeaveRegisterComponent } from './common/MICL/leave-register/leave-register.component';
 import { HrReportsComponent } from './common/Attendance/hr-reports/hr-reports.component';
+import { FinsSubLedgerComponent } from './common/Finshore/fins-sub-ledger/fins-sub-ledger.component';
+import { AdvanceOrderAdjustmentComponent } from './common/OutletManagement/advance-order-adjustment/advance-order-adjustment.component';
+import { AssetMasterComponent } from './common/MICL/asset-master/asset-master.component';
+import { HrTrainingComponent } from './common/HR/hr-training/hr-training.component';
+import { EvaluateForTrainingComponent } from './common/Attendance/evaluate-for-training/evaluate-for-training.component';
+import { SofthearAudiologistTargetComponent } from './common/PatientManagement/Audiologist/softhear-audiologist-target/softhear-audiologist-target.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -914,7 +920,13 @@ import { HrReportsComponent } from './common/Attendance/hr-reports/hr-reports.co
     BillNoChangeComponent,
     CostcenterTargetJohComponent,
     LeaveRegisterComponent,
-    HrReportsComponent
+    HrReportsComponent,
+    FinsSubLedgerComponent,
+    AdvanceOrderAdjustmentComponent,
+    AssetMasterComponent,
+    HrTrainingComponent,
+    EvaluateForTrainingComponent,
+    SofthearAudiologistTargetComponent
   ],
   imports: [
     CommonModule,

@@ -128,6 +128,8 @@ export class LetterOfIntentComponent implements OnInit {
   Reference_Doc_Date:Date;
   editlist:any = [];
   editDocNo: any;
+  editorDis:boolean = false;
+  Remarks_For_Amendment:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -182,6 +184,7 @@ export class LetterOfIntentComponent implements OnInit {
     this.Reference_Doc_No = undefined;
     this.Reference_Doc_Date = new Date();
     this.editDocNo = undefined;
+    this.editlist = [];
   }
   clearData() { 
     this.LetterOfIntentFormSubmitted = false;
@@ -220,6 +223,10 @@ export class LetterOfIntentComponent implements OnInit {
     this.ObjLetterOfIntent.Vehicle_No = undefined;
     this.ObjLetterOfIntent.Transporterr = undefined;
     this.ObjLetterOfIntent.LR_No = undefined;
+    this.editorDis = true
+    setTimeout(() => {
+      this.editorDis = false
+    }, 500);
   }
   Finyear() {
     this.$http
@@ -683,6 +690,7 @@ export class LetterOfIntentComponent implements OnInit {
         Transporter: this.ObjLetterOfIntent.Transporterr,
         LR_No: this.ObjLetterOfIntent.LR_No,
         LR_Date: this.DateService.dateConvert(this.SupplierBillDate),
+        Remarks_For_Amendment: this.Remarks_For_Amendment ? this.Remarks_For_Amendment : '',
         L_element: this.AddProdList
       }
       savedata = {...this.ObjLetterOfIntent,...this.Objcostcenter,...T_Elemnts};
@@ -827,7 +835,9 @@ export class LetterOfIntentComponent implements OnInit {
       this.Reference_Doc_No = data[0].Ref_Doc_No;
       this.Reference_Doc_Date = new Date(data[0].Ref_Doc_Date);
       this.DocDate = new Date(data[0].Doc_Date);
+      this.Remarks_For_Amendment = data[0].Remarks_For_Amendment ? data[0].Remarks_For_Amendment : undefined;
       // this.RDBListAdd = data[0].L_element;
+      this.editorDis = true
       data.forEach(element => {
         const  productObj = {
             Product_Type_ID : element.Product_Type_ID,
@@ -863,6 +873,9 @@ export class LetterOfIntentComponent implements OnInit {
           this.AddProdList.push(productObj);
           this.TotalCalculation();
         });
+        setTimeout(() => {
+          this.editorDis = false
+        }, 700);
     })
    }
   //  DynamicRedirectTo (obj){
