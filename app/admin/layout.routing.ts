@@ -407,6 +407,7 @@ import { AdvanceOrderAdjustmentComponent } from './common/OutletManagement/advan
 import { AssetMasterComponent } from './common/MICL/asset-master/asset-master.component';
 import { HrTrainingComponent } from './common/HR/hr-training/hr-training.component';
 import { EvaluateForTrainingComponent } from './common/Attendance/evaluate-for-training/evaluate-for-training.component';
+import { SofthearAudiologistTargetComponent } from "./common/PatientManagement/Audiologist/softhear-audiologist-target/softhear-audiologist-target.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3110,6 +3111,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         data: {
           title: 'Evaluate For Traning'
     }
+    },
+    {
+      path: 'CR_Softhear_Audiologist_Target',
+      component: SofthearAudiologistTargetComponent,
+      data: {
+        title: 'Audiologist Target'
+      }
     },
     /*{
 
