@@ -103,9 +103,13 @@
                                     </div>
                                     <div class="col-sm-4" >
                                         <label class="control-label">Act<sup class="text-danger">*</sup></label> 
-                                        <p-multiSelect [options]="ActList"  name="Act" #Act="ngModel"[(ngModel)]="SelectedProjectAct" 
-                                            [styleClass]="'compacct-multiselect'"[virtualScroll]="true" itemSize="30" (onChange)="ActOtherInp()"
+                                        <p-multiSelect [options]="ActList"  name="Act" #Act="ngModel"[(ngModel)]="SelectedProjectAct"*ngIf="Objproject.Project_Detalis !== 'Addendum'"
+                                            [styleClass]="'compacct-multiselect'"[virtualScroll]="true" itemSize="30" (onChange)="ActOtherInp()"[disabled]="Objproject.Project_Detalis === 'Others' || Objproject.Project_Detalis === 'Fairness Opinion'||Objproject.Project_Detalis === 'AIF'"
                                             [ngClass]="{'clearance': ProjectMainForm && Act?.errors?.required}" required ></p-multiSelect>
+
+                                            <input type="text" class="form-control" name="Act1" #Act1="ngModel"
+                                                [(ngModel)]="Objproject.Project_Act" placeholder="Type Act" *ngIf="Objproject.Project_Detalis === 'Addendum'"
+                                                [ngClass]="{clearance: ProjectMainForm && Act1?.errors?.required}" required />
                                     </div>
                                    
                                     <div class="col-sm-4">
@@ -117,9 +121,13 @@
                                     <div class="clearfix"></div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Method<sup class="text-danger">*</sup></label>
-                                        <p-multiSelect [options]="MethodList" name="Method" #Method="ngModel" [(ngModel)]="SelectedMethod"
-                                            [styleClass]="'compacct-multiselect'" [virtualScroll]="true" itemSize="30"(onChange)="MethodOtherInp()"
+                                        <p-multiSelect [options]="MethodList" name="Method" #Method="ngModel" [(ngModel)]="SelectedMethod" *ngIf="Objproject.Project_Detalis !== 'Addendum'"
+                                            [styleClass]="'compacct-multiselect'" [virtualScroll]="true" itemSize="30"(onChange)="MethodOtherInp()"[disabled]="Objproject.Project_Detalis === 'Others' || Objproject.Project_Detalis === 'Fairness Opinion'||Objproject.Project_Detalis === 'AIF'"
                                             [ngClass]="{'clearance': ProjectMainForm && Method?.errors?.required}" required></p-multiSelect>
+
+                                            <input type="text" class="form-control" name="Method1" #Method1="ngModel"
+                                                [(ngModel)]="Objproject.Method" placeholder="Type Method" *ngIf="Objproject.Project_Detalis === 'Addendum'"
+                                                [ngClass]="{clearance: ProjectMainForm && Method1?.errors?.required}" required />
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">Method Other<sup class="text-danger">*</sup></label>

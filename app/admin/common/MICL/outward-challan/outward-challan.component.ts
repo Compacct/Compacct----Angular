@@ -424,11 +424,12 @@ export class OutwardChallanComponent implements OnInit {
     this.Tax_Category = undefined;
     this.ObjProductInfo.Qty = undefined;
     this.ObjProductInfo.Rate = undefined;
+    this.ObjProductInfo.Product_Specification = undefined;
     this.Godownlist = [];
-    if (this.ObjProductInfo.Product_Specification && this.ObjProductInfo.Cost_Cen_ID) {
+    if (this.ObjProductInfo.Product_ID && this.ObjProductInfo.Cost_Cen_ID) {
       const TempObj = {
         Cost_Cen_ID: this.ObjProductInfo.Cost_Cen_ID,
-        Product_ID: this.ObjProductInfo.Product_Specification
+        Product_ID: this.ObjProductInfo.Product_ID
       }
       const obj = {
         "SP_String": "SP_MICL_Sale_Bill",
@@ -517,6 +518,7 @@ export class OutwardChallanComponent implements OnInit {
   ChangeProdoctTyp() {
     this.ProductSub = [];
     this.ObjProductInfo.Product_Sub_Type_ID = undefined;
+    this.ObjProductInfo.Product_ID = undefined;
     this.ObjProductInfo.Product_Specification = undefined;
     this.ObjProductInfo.Qty = undefined;
     this.ObjProductInfo.Rate = undefined;
@@ -566,6 +568,7 @@ export class OutwardChallanComponent implements OnInit {
   }
   ProductDetal() {
     this.ProductDetalist = [];
+    this.ObjProductInfo.Product_ID = undefined;
     this.ObjProductInfo.Product_Specification = undefined;
     this.UomList = '';
     this.ObjProductInfo.Batch_Number = undefined;
@@ -621,6 +624,7 @@ export class OutwardChallanComponent implements OnInit {
   }
   ProductDetalforOrder() {
     this.ProductDetalist = [];
+    this.ObjProductInfo.Product_ID = undefined;
     this.ObjProductInfo.Product_Specification = undefined;
     this.UomList = '';
     this.ObjProductInfo.Batch_Number = undefined;
@@ -662,15 +666,15 @@ export class OutwardChallanComponent implements OnInit {
   
   }
   GetLot() {
-    // if (this.ObjProductInfo.Product_Specification) {
+    // if (this.ObjProductInfo.Product_ID) {
     //  this.getUom(); 
     // }
     this.LotNolist = []
     this.ObjProductInfo.Batch_Number = undefined;
-    if (this.ObjProductInfo.Cost_Cen_ID && this.ObjProductInfo.Product_Specification && this.ObjProductInfo.godown_id) {
+    if (this.ObjProductInfo.Cost_Cen_ID && this.ObjProductInfo.Product_ID && this.ObjProductInfo.godown_id) {
       const TempObj = {
         Cost_Cen_ID: this.ObjProductInfo.Cost_Cen_ID,
-        Product_ID: this.ObjProductInfo.Product_Specification,
+        Product_ID: this.ObjProductInfo.Product_ID,
         Godown_ID: this.ObjProductInfo.godown_id,
       }
       const obj = {
@@ -688,8 +692,9 @@ export class OutwardChallanComponent implements OnInit {
   getUom() {
     this.UomList = '';
     this.Tax_Category = undefined;
-    if (this.ObjProductInfo.Product_Specification) {
-      const TempArry: any = this.ProductDetalist.filter((el: any) => Number(el.value) === Number(this.ObjProductInfo.Product_Specification))
+    this.ObjProductInfo.Product_Specification = undefined;
+    if (this.ObjProductInfo.Product_ID) {
+      const TempArry: any = this.ProductDetalist.filter((el: any) => Number(el.value) === Number(this.ObjProductInfo.Product_ID))
       this.UomList = TempArry[0].UOM;
       this.Tax_Category = TempArry.length ? TempArry[0].Cat_ID : undefined;
       if(this.godwnandbatchdisabled) {
@@ -698,6 +703,7 @@ export class OutwardChallanComponent implements OnInit {
         this.ObjProductInfo.Qty = this.ObjProductInfo.Sale_Order_No ? TempArry.length ? TempArry[0].Qty : undefined : undefined;
       }
       this.ObjProductInfo.Rate = this.ObjProductInfo.Sale_Order_No ? TempArry.length ? TempArry[0].Rate : undefined : undefined;
+      this.ObjProductInfo.Product_Specification = TempArry.length ? TempArry[0].label : undefined;
       this.GetTaxAmt();
     }
   }
@@ -710,7 +716,7 @@ export class OutwardChallanComponent implements OnInit {
     }
   }
   checksamebatch () {
-    const sameproductwithsameorderno = this.AddProdList.filter(item=> item.Sale_Order_No === this.ObjProductInfo.Sale_Order_No && item.Batch_No === this.ObjProductInfo.Batch_Number && item.Product_ID === this.ObjProductInfo.Product_Specification );
+    const sameproductwithsameorderno = this.AddProdList.filter(item=> item.Sale_Order_No === this.ObjProductInfo.Sale_Order_No && item.Batch_No === this.ObjProductInfo.Batch_Number && item.Product_ID === this.ObjProductInfo.Product_ID );
     if(sameproductwithsameorderno.length) {
       this.compacctToast.clear();
           this.compacctToast.add({
@@ -727,7 +733,7 @@ export class OutwardChallanComponent implements OnInit {
   }
   checksamebatchandpro () {
     if(!this.ObjProductInfo.Sale_Order_No) {
-    const SameProductbach = this.AddProdList.filter(item=> Number(item.Product_ID) === Number(this.ObjProductInfo.Product_Specification) );
+    const SameProductbach = this.AddProdList.filter(item=> Number(item.Product_ID) === Number(this.ObjProductInfo.Product_ID) );
     if(SameProductbach.length) {
       this.compacctToast.clear();
           this.compacctToast.add({
@@ -778,7 +784,7 @@ export class OutwardChallanComponent implements OnInit {
       // this.BatchQtyCheck = LotNoArry.length ? LotNoArry[0].Batch_Qty : "NA";
       // if(this.BatchQtyCheck >= this.ObjProductInfo.Qty) {
         const CostMatch: any = this.CenterList.filter((el: any) => Number(el.Cost_Cen_ID) === Number(this.ObjProductInfo.Cost_Cen_ID));
-      const ProductDArry: any = this.ProductDetalist.filter((el: any) => Number(el.value) === Number(this.ObjProductInfo.Product_Specification));
+      const ProductDArry: any = this.ProductDetalist.filter((el: any) => Number(el.value) === Number(this.ObjProductInfo.Product_ID));
       const TaxCatArry: any = this.TaxCategoryList.filter((el: any) => Number(el.Cat_ID) === Number(this.Tax_Category));
       this.ObjProductInfo.Cost_Cen_State = CostMatch[0].Cost_Cen_State;
       // this.ObjProductInfo.CGST_Rate = ProductDArry[0].CGST_Rate;
@@ -823,13 +829,14 @@ export class OutwardChallanComponent implements OnInit {
         Cost_Cen_Name: CostMatch.length ? CostMatch[0].Cost_Cen_Name : undefined,
         godown_name: GdwonArry.length ? GdwonArry[0].godown_name : "NA",
         godown_id: this.ObjProductInfo.godown_id ? this.ObjProductInfo.godown_id : 0,
-        Product_ID :this.ObjProductInfo.Product_Specification,
+        Product_ID :this.ObjProductInfo.Product_ID,
         Product_Type_ID: this.ObjProductInfo.Product_Type_ID,
         Product_Type: ProductArry.length ? ProductArry[0].Product_Type : undefined,
         HSN_No : ProductDArry.length ? ProductDArry[0].HSN_No : undefined,
         Product_Sub_Type_ID: this.ObjProductInfo.Product_Sub_Type_ID,
         Product_Sub_Type: ProductSubArry.length ? ProductSubArry[0].Product_Sub_Type : undefined,
-        Product_Specification: ProductDArry.length ? ProductDArry[0].label : undefined,
+        Product_Name: ProductDArry.length ? ProductDArry[0].label : undefined,
+        Product_Specification: this.ObjProductInfo.Product_Specification,
         Batch_No : this.ObjProductInfo.Batch_Number ? this.ObjProductInfo.Batch_Number : "NA",
         Batch_No_Show: LotNoArry.length ? LotNoArry[0].Batch_No_Show : undefined,
         Qty: this.ObjProductInfo.Qty,
@@ -855,6 +862,7 @@ export class OutwardChallanComponent implements OnInit {
       this.ProductSub = [];
       this.ProductDetalist = [];
       this.LotNolist = [];
+      this.ObjProductInfo.Product_ID = undefined;
       this.ObjProductInfo.Product_Specification = undefined;
       this.ObjProductInfo.Qty = undefined;
       this.UomList = '';
@@ -928,7 +936,8 @@ export class OutwardChallanComponent implements OnInit {
       this.AddProdList.forEach(element => {
         this.SaveLowerData.push({
           Product_ID: element.Product_ID,
-          Product_Name: element.Product_Specification,
+          Product_Name: element.Product_Name,
+          Product_Specification: element.Product_Specification,
           godown_id: element.godown_id,
           Product_Type_ID: element.Product_Type_ID,
           Product_Type: element.Product_Type,
@@ -1112,7 +1121,8 @@ export class OutwardChallanComponent implements OnInit {
       data.forEach(element => {
         const  productObj = {
             Product_ID: Number(element.Product_ID),
-            Product_Specification: element.Product_Name,
+            Product_Name: element.Product_Name,
+            Product_Specification: element.Product_Specification,
             godown_id: Number(element.godown_id),
             godown_name: element.godown_name,
             Cost_Cen_Name: "Finish Product",
@@ -1120,7 +1130,7 @@ export class OutwardChallanComponent implements OnInit {
             Product_Type: element.Product_Type,
             Product_Sub_Type_ID: element.Product_Sub_Type_ID,
             Product_Sub_Type: element.Product_Sub_Type,
-            HSL_No: element.HSL_No,
+            HSN_No: element.HSL_No,
             Batch_No: element.Batch_Number,
             UOM: element.UOM,
             Qty: Number(element.Qty),

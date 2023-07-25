@@ -524,16 +524,25 @@ export class SaleBillComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         var terd = data[0].Column1
-        if (data[0].Column1) {
+        if (data[0].Column1 === this.DocNo) {
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
-            severity: terd === "Can not delete ! Bill Already generated" ? "error" :"success" ,
+            severity: "success" ,
             summary: terd,
-            detail: terd === "Can not delete ! Bill Already generated" ? "" :  "Succesfully Delete",
+            detail: "Succesfully Delete",
           });
           this.DocNo = undefined;
           this.GetSerarchBrowse(true);
+        } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "delmsg",
+            sticky: true,
+            severity: "warn",
+            summary: terd,
+            // detail: "Confirm to proceed"
+          });
         }
       });
     }
@@ -585,6 +594,7 @@ export class SaleBillComponent implements OnInit {
   onReject() {
     this.compacctToast.clear("c");
     this.compacctToast.clear("s");
+    this.compacctToast.clear("delmsg");
   }
 
   Edit(col){
@@ -670,6 +680,7 @@ export class SaleBillComponent implements OnInit {
           Product_Sub_Type : el.Product_Sub_Type,
           Product_ID : el.Product_ID,
           Product_Description : el.Product_Description,
+          Product_Specification : el.Product_Specification,
           Batch_Number : el.Batch_Number,
           Qty : el.Qty,
           UOM : el.UOM,

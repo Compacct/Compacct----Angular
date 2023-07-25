@@ -50,6 +50,13 @@ export class SlagToRmStockTransferComponent implements OnInit {
   View_To_Godown_ID: any;
   ViewList:any = [];
   ViewPoppup:boolean = false;
+  ObjMIS : MIS = new MIS()
+  MISreportFormSubmit = false;
+  ReportNameList:any = [];
+  MISSpinner = false;
+  misReportList:any = [];
+  DynamicHeaderMISreport:any = [];
+  BackupMisReport:any = [];
 
   constructor(
     private $http: HttpClient,
@@ -64,7 +71,7 @@ export class SlagToRmStockTransferComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "MIS"];
     this.Header.pushHeader({
       Header: "Slag To RM Stock Transfer",
       Link: "Material Management -> Production -> Slag To RM Stock Transfer"
@@ -76,7 +83,7 @@ export class SlagToRmStockTransferComponent implements OnInit {
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "MIS"];
     this.buttonname = "Create";
     this.Spinner = false;
   }
@@ -386,7 +393,7 @@ export class SlagToRmStockTransferComponent implements OnInit {
           this.BatchNolist = [];
           if(this.buttonname === "Update"){
             this.tabIndexToView = 0;
-            this.items = ["BROWSE", "CREATE"];
+            this.items = ["BROWSE", "CREATE", "MIS"];
             this.buttonname = "Create";
           }
         }
@@ -474,6 +481,57 @@ export class SlagToRmStockTransferComponent implements OnInit {
     })
   }
 
+  //MIS
+getDateRangeMIS(dateRangeObj) {
+  if (dateRangeObj.length) {
+    this.ObjMIS.From_Date = dateRangeObj[0];
+    this.ObjMIS.To_Date = dateRangeObj[1];
+  }
+  }
+  GetMISreport(valid){
+    this.misReportList = [];
+    this.BackupMisReport = [];
+    this.DynamicHeaderMISreport = [];
+    this.MISreportFormSubmit = true;
+    this.MISSpinner = true;
+  const start = this.ObjMIS.From_Date
+  ? this.DateService.dateConvert(new Date(this.ObjMIS.From_Date))
+  : this.DateService.dateConvert(new Date());
+  const end = this.ObjMIS.To_Date
+  ? this.DateService.dateConvert(new Date(this.ObjMIS.To_Date))
+  : this.DateService.dateConvert(new Date());
+  const tempobj = {
+    From_Date : start,
+    To_Date : end,
+    // Company_ID : this.ObjMIS.Company_ID,
+  }
+  // console.log("valid",valid)
+  if (valid) {
+    const obj = {
+      "SP_String": "SP_BL_Txn_Slag_To_RM_Stock_Transfer",
+      "Report_Name_String": "MIS_Tab_Data",
+      "Json_Param_String": JSON.stringify([tempobj])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.misReportList = data;
+      this.BackupMisReport = data;
+      if(this.misReportList.length){
+        this.DynamicHeaderMISreport = Object.keys(data[0]);
+      }
+      this.MISSpinner = false
+      this.MISreportFormSubmit = false;
+    })
+    }
+    else {
+      this.MISSpinner = false;
+    }
+  }
+  exportoexcel(Arr,fileName): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+  }
+
 }
 class SlagtToRM {
   Doc_No : any;
@@ -494,4 +552,8 @@ class SlagtToRM {
   Remarks : any;
   Created_By : any;
   Created_On : any;
+}
+class MIS {
+  From_Date : Date;
+  To_Date : Date;
 }

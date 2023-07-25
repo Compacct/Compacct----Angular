@@ -62,3 +62,7 @@ td {
     border-radius: 3px !important;
     margin-top: 5px !important;
 }
+.ui-multiselect.ui-state-disabled .ui-multiselect-trigger,
+.ui-multiselect.ui-state-disabled .ui-multiselect-label {
+    background-color: #dfdfdf;
+}

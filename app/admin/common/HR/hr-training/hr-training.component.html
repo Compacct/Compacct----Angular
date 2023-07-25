@@ -190,7 +190,9 @@
                                                 [ngClass]="{'clearance': TrainingFormSubmitted && trainingdefard?.errors?.required}"
                                                 required>
                                             <option [ngValue]="undefined">Select</option>
-                                            <option *ngFor="let y of TrainingDefardList" value="{{y.Training_Defard}}">{{y.Training_Defard}}</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                            <!-- <option *ngFor="let y of TrainingDefardList" value="{{y.Training_Defard}}">{{y.Training_Defard}}</option> -->
                                         </select>
                                 </div>
                             <!-- <div class="col-sm-4">

@@ -23,6 +23,7 @@ export class HrTrainingComponent implements OnInit {
   menuData:any = [];
   tabIndexToView= 0;
   buttonname = "Create";
+  Spinner:Boolean = false;
   ObjTraining:Training = new Training()
   TrainingFormSubmitted:boolean = false;
   DepartmentList:any = [];
@@ -35,7 +36,7 @@ export class HrTrainingComponent implements OnInit {
   TrainingDefardList:any = [];
 
   constructor(
-    private commonApi: CompacctCommonApi,
+    private $CompacctAPI: CompacctCommonApi,
     private Header: CompacctHeader,
     private route : ActivatedRoute,
     private DateService: DateTimeConvertService,
@@ -64,6 +65,61 @@ export class HrTrainingComponent implements OnInit {
   }
   onConfirm(){}
   onReject(){}
+  GetDepartment(){
+    const obj = {
+      "SP_String":"SP_Leave_Application",
+      "Report_Name_String":"Get_HR_Year_List"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.DepartmentList = data;
+      });
+  }
+  GetTrainingName(){
+     const obj = {
+       "SP_String":"SP_Leave_Application",
+       "Report_Name_String": "Get_Employee_List",
+       "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
+     }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        if(data.length){
+          data.forEach((ele:any) => {
+            ele['label'] = ele.Emp_Name,
+            ele['value'] = ele.Emp_ID
+          });
+        this.TrainerNamelist = data;
+      //  var empname = this.empDataList.filter(el=> Number(el.User_ID) === Number(this.$CompacctAPI.CompacctCookies.User_ID))
+      //  console.log(empname)
+      //  this.ObjHrleave.Emp_ID = empname.length ? empname[0].Emp_ID : undefined;
+       console.log("TrainerNamelist==",this.TrainerNamelist);
+        } else {
+            this.TrainerNamelist = [];
+        }
+       
+       });
+  }
+  GetAttendiesName(){
+    const obj = {
+      "SP_String":"SP_Leave_Application",
+      "Report_Name_String": "Get_Employee_List",
+      "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       if(data.length){
+         data.forEach((ele:any) => {
+           ele['label'] = ele.Emp_Name,
+           ele['value'] = ele.Emp_ID
+         });
+       this.AttendiesNameList = data;
+     //  var empname = this.empDataList.filter(el=> Number(el.User_ID) === Number(this.$CompacctAPI.CompacctCookies.User_ID))
+     //  console.log(empname)
+     //  this.ObjHrleave.Emp_ID = empname.length ? empname[0].Emp_ID : undefined;
+      // console.log("AttendiesNameList==",this.AttendiesNameList);
+       } else {
+           this.AttendiesNameList = [];
+       }
+      
+      });
+ }
   getDateRangeoftrainingschedule(dateRangeObj) {
     if (dateRangeObj.length) {
       this.StartDate = dateRangeObj[0];
@@ -78,7 +134,16 @@ export class HrTrainingComponent implements OnInit {
     //   : this.DateService.dateConvert(new Date())
     // }
   }
-  saveData(){}
+  GetTraining(){
+    const obj = {
+      "SP_String":"SP_Leave_Application",
+      "Report_Name_String":"Get_HR_Year_List"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.TrainingList = data;
+      });
+  }
+  saveData(valid){}
 
 }
 class Training{
@@ -86,5 +151,6 @@ class Training{
   Emp_ID: any;
   Training_Mode: any;
   Training: any;
+  Learning_Object : any;
   Training_Defard: any;
 }

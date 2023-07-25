@@ -348,13 +348,13 @@
             </div>
             <div class="col-sm-4">
                 <label class="control-label">Audiogram</label>
-            <p-fileUpload #FileUploadAsset name="File" [multiple]="false" accept="image/*" [customUpload]="true"
+            <p-fileUpload #FileUploadAsset name="File" [multiple]="false" accept="image/*,.pdf" [customUpload]="true"
                 [chooseLabel]="'Browse'" [showUploadButton]="true" (uploadHandler)="onBasicUpload(FileUploadAsset)">
                 <ng-template let-File pTemplate="File">
                     <div class="ui-fileupload-row">
                         <div>
                             <a [href]="File.objectURL" target="_blank"><img
-                                    [src]="File.type.includes('image') ? File.objectURL :'./assets/img/PDF-logo.png'"
+                                    [src]="File.type.includes('image') ? File.objectURL :''"
                                     width="50"></a>
                         </div>
                         <div>{{File.name}}</div>

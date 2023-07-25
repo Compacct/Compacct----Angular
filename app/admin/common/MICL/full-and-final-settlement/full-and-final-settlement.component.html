@@ -331,6 +331,15 @@
                                                 [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && gratuitybasiccon.errors?.required}" required/></td>
                                         </tr>
                                         <tr>
+                                            <td class="text-center" style="vertical-align:middle">4</td>
+                                            <td>Notice Period Earning</td>
+                                            <td class="text-center" style="vertical-align:middle"><input type="text" name="notiveperiodearningdays" #notiveperiodearningdays="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Notice_Period_Earning_Day' CompacctDigitonly="true" class="form-control" style="width: 71px;"
+                                                (ngModelChange)="GetNoticePeriodEarningAmount()" [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && notiveperiodearningdays.errors?.required}"/></td>
+                                            <td><input type="text" name="noticeperiodearningamt" #noticeperiodearningamt="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Notice_Period_Earning_Amount' class="form-control" CompacctDigitonly="true"
+                                                [ngClass]="{'clearance ': FullAndFinalSettlementFormSubmitted && noticeperiodearningamt.errors?.required}" required/>
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <th class="text-center" style="vertical-align:middle"></th>
                                             <th class="text-right">EARNING</th>
                                             <th class="text-center" style="vertical-align:middle"></th>
