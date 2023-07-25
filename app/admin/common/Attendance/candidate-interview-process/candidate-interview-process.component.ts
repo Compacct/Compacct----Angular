@@ -230,6 +230,10 @@ export class CandidateInterviewProcessComponent implements OnInit {
           this.file = true;
           this.upload = false;
         }
+        if (data[0].File_Upload2) {
+          this.file2 = true;
+          this.upload2 = false;
+        }
       });
     }
   }

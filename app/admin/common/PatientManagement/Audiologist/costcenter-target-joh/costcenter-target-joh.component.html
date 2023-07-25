@@ -1,0 +1,498 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+	<ng-template let-message pTemplate="message">
+		<div style="text-align: center">
+			<i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+			<h3>{{ message.summary }}</h3>
+			<p>{{ message.detail }}</p>
+		</div>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-6">
+				<button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+			</div>
+			<div class="ui-g-6">
+				<button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+			</div>
+		</div>
+	</ng-template>
+</p-toast>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box box-primary">
+			<div class="form-horizontal">
+				<div class="box-body">
+					<p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+						<form name="costcenter_Target" #costcenter_Target="ngForm">
+							<div class="row">
+								<div class="col-sm-4">
+									<label class="control-label">Date<sup class="text-danger">*</sup></label>
+									<ejs-datepicker start="Year" [(value)]="costCenterDate" format="MMMM/yyyy" depth="Year"></ejs-datepicker>
+								</div>
+								<div class="col-sm-4">
+									<button class="btn btn-primary" style="margin: 27px 0 0 10px" id="load" [disabled]="searchSpinner" (click)="getRetriveData()">
+										<p-progressSpinner
+											*ngIf="searchSpinner"
+											[style]="{ width: '15px', height: '15px' }"
+											strokeWidth="8"
+											animationDuration=".5s"></p-progressSpinner>
+										<span *ngIf="!searchSpinner" class="glyphicon glyphicon-search"></span> Search
+									</button>
+								</div>
+							</div>
+							<hr />
+							<div class="row">
+								<div class="col-sm-3">
+									<label class="control-label">CostCenter Name<sup class="text-danger">*</sup></label>
+									<p-dropdown
+										[options]="costCeterList"
+										name="centerLists"
+										#centerLists="ngModel"
+										[(ngModel)]="ObjcostCenter.Cost_Cen_ID"
+										[showClear]="true"
+										[emptyFilterMessage]="'No CostCenter Found'"
+										[filter]="true"
+										filterBy="label,value"
+										[resetFilterOnHide]="true"
+										[placeholder]="'Select CostCenter'"
+										[virtualScroll]="true"
+										itemSize="30"
+										[styleClass]="costCenterFormSubmit && centerLists.errors?.required ? 'clearance' : ''"
+										[required]="true">
+									</p-dropdown>
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">BR Target</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="Br Target"
+										name="BrTarget"
+										#BrTarget="ngModel"
+										[(ngModel)]="ObjcostCenter.Br_Target"
+										CompacctDigitonly="true" />
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">BR Achivement</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="Br Achivement"
+										name="Br_Achivement"
+										#Br_Achivement="ngModel"
+										[(ngModel)]="ObjcostCenter.Br_Achivement"
+										CompacctDigitonly="true" />
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">Revenue Target</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="Revenue Target"
+										name="Revenue_Target"
+										#Revenue_Target="ngModel"
+										[(ngModel)]="ObjcostCenter.Revenue_Target"
+										CompacctDigitonly="true" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-3">
+									<label class="control-label">Revenue Achivement</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="Revenue Achivement"
+										name="Revenue_Achivement"
+										#Revenue_Achivement="ngModel"
+										[(ngModel)]="ObjcostCenter.Revenue_Achivement"
+										CompacctDigitonly="true" />
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">ASP Target</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="Asp Target"
+										name="Asp_Target"
+										#Asp_Target="ngModel"
+										[(ngModel)]="ObjcostCenter.Asp_Target"
+										CompacctDigitonly="true" />
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">ASP Achivement</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="Asp Achivement"
+										name="Asp_Achivement"
+										#Asp_Achivement="ngModel"
+										[(ngModel)]="ObjcostCenter.Asp_Achivement"
+										CompacctDigitonly="true" />
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">PR Target</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="Pr Target"
+										name="Pr_Target"
+										#Pr_Target="ngModel"
+										[(ngModel)]="ObjcostCenter.Pr_Target"
+										CompacctDigitonly="true" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-3">
+									<label class="control-label">PR Achivement</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="Pr Achivement"
+										name="Pr_Achivement"
+										#Pr_Achivement="ngModel"
+										[(ngModel)]="ObjcostCenter.Pr_Achivement"
+										CompacctDigitonly="true" />
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">FU Assessment</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="FU Assessment"
+										name="FU_Assessment"
+										#FU_Assessment="ngModel"
+										[(ngModel)]="ObjcostCenter.FU_Assessment"
+										CompacctDigitonly="true" />
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">FU Achievement</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="FU Achivement"
+										name="FU_Achivement"
+										#FU_Achivement="ngModel"
+										[(ngModel)]="ObjcostCenter.FU_Achivement"
+										CompacctDigitonly="true" />
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">FU Revenue</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="FU Revenue"
+										name="FU_Revenue"
+										#FU_Revenue="ngModel"
+										[(ngModel)]="ObjcostCenter.FU_Revenue"
+										CompacctDigitonly="true" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-3">
+									<label class="control-label">FU Revenue Achievement</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="FU Achievement"
+										name="FU_Achievement"
+										#FU_Achievement="ngModel"
+										[(ngModel)]="ObjcostCenter.FU_Revenue_Achievement"
+										CompacctDigitonly="true" />
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">RAF Assessment</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="RAF Issue"
+										name="RAF_Issue"
+										#RAF_Issue="ngModel"
+										[(ngModel)]="ObjcostCenter.RAF_Issue"
+										CompacctDigitonly="true" />
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">RAF Achievement</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="RAF Achievement"
+										name="RAF_Achievement"
+										#RAF_Achievement="ngModel"
+										[(ngModel)]="ObjcostCenter.RAF_Achievement"
+										CompacctDigitonly="true" />
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">RAF Revenue</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="RAF Revenue"
+										name="RAF_Revenue"
+										#RAF_Revenue="ngModel"
+										[(ngModel)]="ObjcostCenter.RAF_Revenue"
+										CompacctDigitonly="true" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-3">
+									<label class="control-label">RAF Revenue Achievement</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="RAF Revenue Achievement"
+										name="RAF_Revenue_Achievement"
+										#RAF_Revenue_Achievement="ngModel"
+										[(ngModel)]="ObjcostCenter.RAF_Revenue_Achievement"
+										CompacctDigitonly="true" />
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">Speech Revenue</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="Speech Revenue"
+										name="Speech_Revenue"
+										#Speech_Revenue="ngModel"
+										[(ngModel)]="ObjcostCenter.Speech_Revenue"
+										CompacctDigitonly="true" />
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">Speech Revenue Achievement</label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="Speech Revenue Achievement"
+										name="Speech_Revenue_Achievement"
+										#Speech_Revenue_Achievement="ngModel"
+										[(ngModel)]="ObjcostCenter.Speech_Revenue_Achievement"
+										CompacctDigitonly="true" />
+								</div>
+								<div class="col-sm-3">
+									<button
+										class="btn btn-primary pull-right"
+										id="load"
+										(click)="saveFormData(costcenter_Target.form.valid)"
+										style="margin: 27px 0 0 10px">
+										<p-progressSpinner
+											*ngIf="Spinner"
+											[style]="{ width: '15px', height: '15px' }"
+											strokeWidth="8"
+											animationDuration=".5s"></p-progressSpinner>
+										<span *ngIf="!Spinner" class="glyphicon glyphicon-plus"></span> Add
+									</button>
+								</div>
+							</div>
+						</form>
+						<br />
+						<p-table
+							[value]="TableData"
+							[paginator]="true"
+							[rows]="10"
+							[rowHover]="true"
+							[autoLayout]="true"
+							sortMode="multiple"
+							[rowsPerPageOptions]="[10, 20, 50, 100, 200, 300]"
+							[globalFilterFields]="TableSearchData"
+							[rowHover]="true"
+							#dt>
+							<ng-template pTemplate="caption">
+								<div class="row">
+									<div class="col-sm-3 pull-right" style="text-align: right">
+										<input
+											type="text"
+											pInputText
+											size="50"
+											placeholder="Search"
+											(input)="dt.filterGlobal($event.target.value, 'contains')"
+											class="searchInput form-control" />
+									</div>
+								</div>
+							</ng-template>
+							<ng-template pTemplate="header">
+								<tr>
+									<th style="width: 5em">Delete</th>
+									<th style="width: 5em">Update</th>
+									<th style="text-align: center" nowrap>Cost Center Name</th>
+									<th style="text-align: center" nowrap>Br Target</th>
+									<th style="text-align: center" nowrap>Br Achivement</th>
+									<th style="text-align: center" nowrap>Revenue Target</th>
+									<th style="text-align: center" nowrap>Revenue Achivement</th>
+									<th style="text-align: center" nowrap>Asp Target</th>
+									<th style="text-align: center" nowrap>Asp Achivement</th>
+									<th style="text-align: center" nowrap>Pr Target</th>
+									<th style="text-align: center" nowrap>Pr Achivement</th>
+									<th style="text-align: center" nowrap>FU Assessment</th>
+									<th style="text-align: center" nowrap>FU Achievement</th>
+									<th style="text-align: center" nowrap>FU Revenue</th>
+									<th style="text-align: center" nowrap>FU Revenue Achievement</th>
+									<th style="text-align: center" nowrap>RAF Assessment</th>
+									<th style="text-align: center" nowrap>RAF Achievement</th>
+									<th style="text-align: center" nowrap>RAF Revenue</th>
+									<th style="text-align: center" nowrap>RAF Revenue Achievement</th>
+									<th style="text-align: center" nowrap>Speech Revenue</th>
+									<th style="text-align: center" nowrap>Speech Revenue Achievement</th>
+								</tr>
+							</ng-template>
+							<ng-template pTemplate="body" let-col>
+								<tr>
+									<td>
+										<button class="btn btn-sm btn-danger" (click)="deleteCostCenter(col)"><span class="glyphicon glyphicon-trash"></span></button>
+									</td>
+									<td>
+										<button class="btn btn-sm btn-success" (click)="updateCostCenter(col)"><span class="glyphicon glyphicon-repeat"></span></button>
+									</td>
+									<td style="text-align: center" nowrap>{{ col.Cost_Cen_Name ? col.Cost_Cen_Name : "-" }}</td>
+									<td style="text-align: center" nowrap>
+										<input
+											type="text"
+											class="form-control"
+											[(ngModel)]="col.Br_Target"
+											CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.Br_Achivement"
+										CompacctDigitonly="true" /></td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.Revenue_Target"
+										CompacctDigitonly="true" /></td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.Revenue_Achivement"
+										CompacctDigitonly="true" /></td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.Asp_Target"
+										CompacctDigitonly="true" /></td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.Asp_Achivement"
+										CompacctDigitonly="true" /></td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.Pr_Target"
+										CompacctDigitonly="true" /></td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.Pr_Achivement"
+										CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.FU_Assessment"
+										CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.FU_Achivement"
+										CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.FU_Revenue"
+										CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.FU_Revenue_Achievement"
+										CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.RAF_Issue"
+										CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.RAF_Achievement"
+										CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.RAF_Revenue"
+										CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.RAF_Revenue_Achievement"
+										CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.Speech_Revenue"
+										CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input
+										type="text"
+										class="form-control"
+										[(ngModel)]="col.Speech_Revenue_Achievement"
+										CompacctDigitonly="true" />
+									</td>
+								</tr>
+							</ng-template>
+							<ng-template pTemplate="footer">
+								<tr *ngIf="TableData.length">
+								   <td colspan="3" style="text-align: center;">Total Target Amount</td>
+								   <td>{{calBr_Target()}}</td>
+								   <td>{{calBr_Achivement()}}</td>
+								   <td>{{calRevenue_Target()}}</td>
+								   <td>{{calRevenue_Achivement()}}</td>
+								   <td>{{calAsp_Target()}}</td>
+								   <td>{{calAsp_Achivement()}}</td>
+								   <td>{{calPr_Target()}}</td>
+								   <td>{{calPr_Achivement()}}</td>
+								   <td>{{calFU_Assessment()}}</td>
+								   <td>{{calFU_Achivement()}}</td>
+								   <td>{{calFU_Revenue()}}</td>
+								   <td>{{calFU_Revenue_Achievement()}}</td>
+								   <td>{{calRAF_Issue()}}</td>
+								   <td>{{calRAF_Achievement()}}</td>
+								   <td>{{calRAF_Revenue()}}</td>
+								   <td>{{calRAF_Revenue_Achievement()}}</td>
+								   <td>{{calSpeech_Revenue()}}</td>
+								   <td>{{calSpeech_Revenue_Achievement()}}</td>
+								</tr>
+							 </ng-template>
+							<ng-template pTemplate="paginatorright" let-state>
+								Showing {{ state.first + 1 }} of {{ state.first + state.rows }} of {{ state.totalRecords }}
+							</ng-template>
+						</p-table>
+					</p-tabView>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -352,8 +352,8 @@ export class BranchRequisitionComponent implements OnInit {
       })
     }
   }
-  browsePrint() {
-    window.open("/Report/Crystal_Files/CRM/joh_form/Branch_Requisition.aspx", 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+  browsePrint(coll:any) {
+    window.open("/Report/Crystal_Files/CRM/joh_form/Branch_Requisition.aspx?Txn_ID="+coll.Txn_ID, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
   }
 }
 

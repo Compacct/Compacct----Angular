@@ -118,7 +118,7 @@
                                     [loading]="seachSpinner" [rowHover]="true" 
                                     [autoLayout]="true" sortMode="multiple" 
                                     [rowsPerPageOptions]="[100, 300, 500]"  
-                                    [globalFilterFields]='["Doc_No","Doc_Date","Sub_Ledger_Name","Cost_Cen_Name","Bill_Net_Amt","Supp_Ref_No","Supp_Ref_Date","Document","Fin_Year_Name"]'
+                                    [globalFilterFields]='["Doc_No","Doc_Date","Sub_Ledger_Name","Cost_Cen_Name","Bill_Net_Amt","Supp_Ref_No","Supp_Ref_Date","Document","Fin_Year_Name","GRN_Type"]'
                                         [rowHover]="true" #dt2>
                                         <ng-template pTemplate="caption">
                                             <div class="row">
@@ -141,6 +141,7 @@
                                                 <th nowrap="nowrap">Supplier Bill Date</th>
                                                 <th nowrap="nowrap">Document</th>
                                                 <th nowrap="nowrap">Fin Year</th>
+                                                <th nowrap="nowrap">GRN Type</th>
                                             </tr>
                                         </ng-template>
                                         <ng-template pTemplate="body" let-col>
@@ -182,6 +183,7 @@
                                                     <td>{{col.Supp_Ref_Date | date : 'dd/MMM/yyyy'}}</td>
                                                     <td>{{col.Document ? col.Document : '-'}}</td>
                                                     <td nowrap="nowrap" >{{col.Fin_Year_Name ? col.Fin_Year_Name : '-'}}</td>
+                                                    <td>{{col.GRN_Type}}</td>
                                                 <!-- </ng-container> -->
                                                 
                                             </tr>

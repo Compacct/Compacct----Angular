@@ -82,10 +82,9 @@
                                     <th>Mobile</th>
                                     <th>Alternative No.</th>
                                     <th>WhatsApp No.</th>
-                                    <th>Next Action</th>
                                     <th>Followup For</th>
                                     <th>Followup Type</th> 
-                                    <th>Followup Details</th>
+                                    <th>Last Followup Remarks</th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-col>
@@ -116,9 +115,8 @@
                                                 class="fa fa-fw fa-phone-square" *ngIf="col.Mobile_2"></i>{{col.Mobile_2 ? col.Mobile_2
                                             :'-'}}</a></td>
                                     <td style="text-align: center;">{{col.Mobile_3_WP ? col.Mobile_3_WP : '-' }}</td>
-                                    <td>{{col.Followup_Action ? col.Followup_Action : '-'}}</td>
                                     <td>{{col.Prefered_Location ? col.Prefered_Location :'-'}}</td>
-                                    <td>{{col.User_Name ? col.User_Name :'-'}}</td>
+                                    <td>{{col.Followup_Type ? col.Followup_Type :'-'}}</td>
                                     <td>{{col.Followup_Details ? col.Followup_Details :'-'}}</td>
                                 </tr>
                             </ng-template>
@@ -143,23 +141,29 @@
                             <ul class="timeline ">
                                 <li class="time-label" style="margin-bottom: -20px"
                                     *ngFor="let objMain of FollowUpList">
-                                    <span class="" style="background-color:rgb(236, 205, 51)">{{objMain.Entry_Date}}</span>
+                                    <span class="" style="background-color:rgb(236, 205, 51)">{{objMain.Posted_On_C}}</span>
                                     <ul class="timeline" style="margin: 7px 0 30px 0">
                                         <li>
                                             <i class="fa fa-user bg-blue"></i>
                                             <div class="timeline-item">
-                                                <h3 class="timeline-header"><a href="#">{{objMain.SentTo_Name}}</a>{{objMain.Followup_Action}}
+                                                <h3 class="timeline-header"><a href="#">{{objMain.SentTo}}</a>
                                                 </h3>
-                                                <div class="timeline-body">
-                                                    {{objMain.Last_Remarks}}
+                                                <div class="timeline-body" *ngIf="objMain.Disposition_Name">
+                                                    {{objMain.Disposition_Name}} , {{objMain.Secondary_Desposition_Name}}
+                                                </div>
+                                                <div class="timeline-body" *ngIf="objMain.Followup_Details">
+                                                    Remarks :{{objMain.Followup_Details}}
                                                 </div>
                                                 <div class="timeline-footer" style="padding-bottom: 10px">
                                                     <a class="btn btn-primary btn-social  btn-xs"
-                                                        *ngIf="objMain.CreatedBy != objMain.SentTo_Name">
-                                                        <i class="fa fa-user"></i>&nbsp;{{objMain.SentTo_Name}}
+                                                        *ngIf="objMain.PostedBy != objMain.SentTo">
+                                                        <i class="fa fa-user"></i>&nbsp;{{objMain.SentTo}}
                                                     </a>
-                                                    <a class="btn btn-danger btn-social  btn-xs">
-                                                        Action Taken :<i class="fa fa-angle-double-right"></i>&nbsp;{{objMain.Current_Action}} On {{objMain.Next_Followup}}
+                                                    <a class="btn btn-danger btn-social  btn-xs" *ngIf="objMain.Current_Action">
+                                                        Action Taken :<i class="fa fa-angle-double-right"></i>&nbsp;{{objMain.Current_Action}} On {{objMain.Posted_On}}
+                                                    </a>
+                                                    <a class="btn btn-dangerr btn-social  btn-xs"  *ngIf="objMain.Next_Followup">
+                                                        Next Followup :<i class="fa fa-angle-double-right"></i>&nbsp;{{objMain.Next_Followup}}
                                                     </a>
                                                     <br>
                                                 </div>
@@ -178,37 +182,36 @@
                         <form name="followupForm" #followupForm="ngForm" novalidate>
                             <div class="form-group">
                                 <div class="col-sm-12">
-                                    <label class="control-label">Action Taken<sup class="text-danger">*</sup></label>
+                                    <label class="control-label">Primary Disposition<sup class="text-danger">*</sup></label>
                                     <select class="form-control"
                                        name="actiontakenFollowUpCreation"
                                        #actiontakenFollowUpCreation="ngModel"
-                                       [(ngModel)]="ObjFlow.Current_Action" 
+                                       [(ngModel)]="ObjFlow.Disposition_ID" 
+                                       (change)="GetSEndDispo(ObjFlow.Disposition_ID)"
                                         [ngClass]="{'clearance':folloupFormSubmit && actiontakenFollowUpCreation?.errors?.required}"
                                         required>
                                         <option [ngValue]="undefined">Select</option>
-                                        <option *ngFor=" let data of ActionList" value="{{data.Action}}">
-                                            {{data.Action}}</option>
+                                        <option *ngFor=" let data of disposalList" value="{{data.Disposition_ID}}">
+                                            {{data.Disposition_Name}}</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-12">
+                                    <label class="control-label">Secondary Disposition<sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="Disposal2nd" name="Secondary" #Secondary="ngModel" [(ngModel)]="ObjFlow.Secondary_Desposition_ID" [showClear]="true"
+                                        [emptyFilterMessage]="' No Secondary DispositionFound'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                        [placeholder]="'Select Secondary Disposition'" [virtualScroll]="true" itemSize="30" (onChange)="getDisable()"
+                                        [ngClass]="{'clearance': folloupFormSubmit && Secondary?.errors?.required }" required>
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-sm-12">
                                     <label class="control-label">Remarks<sup class="text-danger"></sup></label>
-                                    <textarea class="form-control" name="Remarks"#Remarks="ngModel"
+                                    <textarea class="form-control" name="Remarks"#Remarks="ngModel" [disabled]="RemarksDis"
                                     [(ngModel)]="ObjFlow.Followup_Details" placeholder="Remarks">
                                 </textarea>                     
                                 </div>
                                 <div class="col-sm-12">
                                     <label class="control-label">Next Followup<sup class="text-danger">*</sup></label>
-                                    <ejs-datepicker [(value)]="FollowupDateReg2" format="dd/MM/yyyy" [min]="minumeDate"></ejs-datepicker>
-                                </div>
-                                <div class="col-sm-12">
-                                    <label class="control-label">Next Action<sup class="text-danger">*</sup></label>
-                                    <select class="form-control" name="Next_Action"#Next_Action="ngModel"
-                                       [(ngModel)]="ObjFlow.Followup_Action"
-                                        [ngClass]="{'clearance':folloupFormSubmit && Next_Action?.errors?.required}" required>
-                                        <option [ngValue]="undefined">Select</option>
-                                        <option *ngFor=" let data of ActionList2" value="{{data.Action}}">
-                                            {{data.Action}}</option>
-                                    </select>
+                                    <ejs-datepicker [(value)]="FollowupDateReg2" format="dd/MM/yyyy" [min]="minumeDate" [enabled]="!RemarksDis"></ejs-datepicker>
                                 </div>
                             </div>
                             <div class="box-footer">

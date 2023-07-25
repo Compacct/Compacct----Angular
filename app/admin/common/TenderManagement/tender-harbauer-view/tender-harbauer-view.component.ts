@@ -281,7 +281,7 @@ export class TenderHarbauerViewComponent implements OnInit {
 
   ngOnInit() {
     this.Header.pushHeader({
-      Header: "Tender View (GOVT.)",
+      Header: "Tender Update",
       Link: "Tender Management -> Update"
     });
     this.filterByList = ['FINANCIAL YEAR','DEPARTMENT',"PRIVATE OR GOVT","TENDER TYPE"];

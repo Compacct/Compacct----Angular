@@ -159,6 +159,7 @@ export class MiclPurchaseBillComponent implements OnInit {
   TPOnoList:any = [];
   BackUpGRNNoProlist:any = [];
   PurchaseData:any = [];
+  DynamicHeaderSerarchPurBillList:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -1507,6 +1508,7 @@ export class MiclPurchaseBillComponent implements OnInit {
     //   } 
   GetSerarchPurBill(valid){
   this.SearchPurBillFormSubmitted = true;
+  this.DynamicHeaderSerarchPurBillList = [];
   const start = this.ObjBrowsePurBill.start_date
   ? this.DateService.dateConvert(new Date(this.ObjBrowsePurBill.start_date))
   : this.DateService.dateConvert(new Date());
@@ -1528,6 +1530,7 @@ export class MiclPurchaseBillComponent implements OnInit {
     }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     this.SerarchPurBillList = data;
+    this.DynamicHeaderSerarchPurBillList = data.lenght ? Object.keys(data[0]) : [];
     // this.BackupSearchedlist = data;
     // this.GetDistinct();
     // if(this.getAllDataList.length){

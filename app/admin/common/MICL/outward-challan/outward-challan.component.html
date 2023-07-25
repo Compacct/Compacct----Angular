@@ -573,7 +573,7 @@
                                  </select>
                              </div>
                              <div class="clearfix"></div>
-                             <div class="col-sm-4">
+                             <div class="col-sm-3">
                                  <label>Product Description<sup class="text-danger">*</sup></label>
                                  <!-- <select class="form-control" name="Description" #Description="ngModel" 
                                      [(ngModel)]="ObjProductInfo.Product_Specification"
@@ -586,7 +586,7 @@
                                      </option>
                                  </select> -->
                                  <p-dropdown [options]="ProductDetalist" name="Description" #Description="ngModel"  
-                                     [(ngModel)]="ObjProductInfo.Product_Specification" 
+                                     [(ngModel)]="ObjProductInfo.Product_ID" 
                                      [showClear]="true" [emptyFilterMessage]="' No Product Found'" 
                                      (onChange)="GetGodown()" [filter]="true" filterBy="label,value.name"
                                      [resetFilterOnHide]="true" [placeholder]="'Select Product'"
@@ -594,25 +594,35 @@
                                      [ngClass]="{'clearance':TermFormSubmitted && Description?.errors?.required}" [required]="true">
                                  </p-dropdown>
                              </div>
-                            <div class="col-sm-4">
+                             <div class="col-sm-3">
+                                <label class="control-label">Product Specification <sup class="text-danger">*</sup></label>                                 
+                                <input class="form-control"  name="prospecification" #prospecification="ngModel" 
+                                [(ngModel)]="ObjProductInfo.Product_Specification"
+                                placeholder="Product Specification"
+                                [ngClass]="{clearance: TermFormSubmitted && prospecification?.errors?.required}"
+                                required>
+                            </div>
+                            <div class="col-sm-3">
                               <label>Stock Point<sup class="text-danger">*</sup></label>
                             <select class="form-control"name="Stock" #Stock="ngModel" 
                             [(ngModel)]="ObjProductInfo.godown_id"
                             (change)="GetLot()"
+                            [disabled]="godwnandbatchdisabled"
                              [ngClass]="{clearance: TermFormSubmitted && Stock?.errors?.required}"
-                            required>
+                            [required]="godwnandbatchdisabled ? false : true">
                                 <option [ngValue]="undefined">Select</option>
                                 <option *ngFor="let data of Godownlist" [value]="data.godown_id">
                                     {{data.godown_name}}
                                 </option>
                             </select>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 <label class="control-label">Lot No./Batch No. <sup class="text-danger">*</sup></label>
                                 <select class="form-control" name="BatchNo" #BatchNo="ngModel" 
                                 [(ngModel)]="ObjProductInfo.Batch_Number"
+                                [disabled]="godwnandbatchdisabled"
                                 [ngClass]="{clearance: TermFormSubmitted && BatchNo?.errors?.required}"
-                                   required>
+                                [required]="godwnandbatchdisabled ? false : true">
                                     <option [ngValue]="undefined">Select</option>
                                   <option *ngFor="let option of LotNolist" [value]="option.Batch_No">
                                     {{option.Batch_No_Show}}
@@ -663,7 +673,7 @@
                                 CompacctDigitonly="true" disabled>
                             </div>
                            <div class="col-sm-2">
-                            <button type="submit" class="btn btn-primary custombutton" (click)="AddProduct(TermForm.form.valid)">
+                            <button type="submit" class="btn btn-primary custombutton" (click)="Add(TermForm.form.valid)">
                                 <span class="glyphicon glyphicon-plus"></span> Add
                             </button>
                            </div>
@@ -680,6 +690,7 @@
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Type</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Sub Type</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Description</th>
+                              <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Specification</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Lot No./Batch No.</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">QTY</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">UOM</th>
@@ -708,6 +719,7 @@
                               <td>{{ TermTableList.godown_name }}</td>
                               <td>{{ TermTableList.Product_Type ? TermTableList.Product_Type : "-" }}</td>
                               <td>{{ TermTableList.Product_Sub_Type ? TermTableList.Product_Sub_Type : "-" }}</td>
+                              <td>{{ TermTableList.Product_Name ? TermTableList.Product_Name : "-"}}</td>
                               <td>{{ TermTableList.Product_Specification }}</td>
                               <td>{{ TermTableList.Batch_No }}</td>
                               <td>{{ TermTableList.Qty }}</td>
@@ -734,19 +746,23 @@
                         <tbody>
                             <tr>
                                 <th>Taxable Amount :</th>
-                                <td class="amt-td ng-binding">{{Tax}}</td>
+                                <td class="amt-td ng-binding">{{Tax ? Tax : '-'}}</td>
+                                <th>CGST Amount :</th>
+                                <td class="amt-td ng-binding">{{CGST ? CGST : '-'}}</td>
+                                <th>SGST Amount :</th>
+                                <td class="amt-td ng-binding">{{SGST ? SGST : '-'}}</td>
                              </tr>
                              <tr>
-                                <th>CGST Amount :</th>
-                                <td class="amt-td ng-binding">{{CGST}}</td>
-                                <th>SGST Amount :</th>
-                                <td class="amt-td ng-binding">{{SGST}}</td>
                                 <th>IGST Amount :</th>
-                                <td class="amt-td ng-binding">{{IGST}}</td>
+                                <td class="amt-td ng-binding">{{IGST ? IGST : '-'}}</td>
+                                <th>Total Amount : </th>
+                                <td class="amt-td ng-binding">{{Total_Amount ? Total_Amount :"-"}}</td>
+                                <th>Rounded Off : </th>
+                                <td class="amt-td ng-binding">{{Rounded_Off ? Rounded_Off :"-"}}</td>
                             </tr>
                              <tr>
                                 <th>Net Amount : </th>
-                                <td class="amt-td ng-binding">{{NetAMT}}</td>
+                                <td class="amt-td ng-binding">{{NetAMT ? NetAMT : '-'}}</td>
                             </tr>
                         </tbody>
                     </table>

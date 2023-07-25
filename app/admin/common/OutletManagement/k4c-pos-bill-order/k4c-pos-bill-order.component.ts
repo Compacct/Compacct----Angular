@@ -105,6 +105,7 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
 
     this.minTime = this.setHours(new Date(), "10:00am");
     this.maxTime = this.setHours(new Date(), "06:00pm");
+    this.InsertStock();
     
   }
   setHours(dt, h):any {
@@ -632,6 +633,20 @@ export class K4cPosBillOrderComponent implements OnInit, OnDestroy {
    // this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));
 
   })
+  }
+  // INSERT STOCK
+  InsertStock(){
+    const sendonj = {
+      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+    }
+    const obj = {
+      "SP_String": "SP_For_POS_Current_Stock",
+      "Report_Name_String": "Insert_Stock",
+      "Json_Param_String": JSON.stringify([sendonj])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    })
   }
   EODCheck(){
     const TempObj = {

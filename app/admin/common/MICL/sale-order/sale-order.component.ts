@@ -133,6 +133,10 @@ export class SaleOrderComponent implements OnInit {
   LiDocNoList:any = [];
   editDocNo: any;
   editlist:any = [];
+  Product_Type: any;
+  Product_Sub_Type: any;
+  editorDis:boolean = false;
+  Remarks_For_Amendment:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -190,6 +194,7 @@ export class SaleOrderComponent implements OnInit {
     this.LI_Doc_No = undefined;
     this.LI_Doc_Date = new Date();
     this.GetLiDocNo();
+    this.editlist = [];
   }
   clearData() { 
     this.SaleOrderFormSubmitted = false;
@@ -231,6 +236,10 @@ export class SaleOrderComponent implements OnInit {
     this.editDocNo = undefined;
     this.Ref_Doc_No =  undefined;
     this.Ref_Doc_Date = undefined;
+    this.editorDis = true
+    setTimeout(() => {
+      this.editorDis = false
+    }, 500);
   }
   Finyear() {
     this.$http
@@ -524,6 +533,8 @@ export class SaleOrderComponent implements OnInit {
     this.UomList = '';
     this.ObjProductInfo.Product_Type_ID = undefined;
     this.ObjProductInfo.Product_Sub_Type_ID = undefined;
+    this.Product_Type = undefined;
+    this.Product_Sub_Type = undefined;
     this.ProductSub = [];
     this.ObjProductInfo.Product_Specification = undefined;
     this.ProductDetalist = [];
@@ -704,6 +715,8 @@ export class SaleOrderComponent implements OnInit {
       this.ObjProductInfo.LI_Qty = TempArry.length ? TempArry[0].LI_Qty : undefined;
       this.ObjProductInfo.Qty = TempArry.length ? TempArry[0].Qty : undefined;
       this.ObjProductInfo.Rate = TempArry.length ? TempArry[0].Rate : undefined;
+      this.Product_Type = TempArry.length ? TempArry[0].Product_Type : undefined;
+      this.Product_Sub_Type = TempArry.length ? TempArry[0].Product_Sub_Type : undefined;
       this.GetTaxAmt();
     }
   }
@@ -747,8 +760,8 @@ export class SaleOrderComponent implements OnInit {
       this.ObjProductInfo.CGST_Rate = Number(gstper);
       this.ObjProductInfo.SGST_Rate = Number(gstper);
       this.ObjProductInfo.IGST_Rate = Number(TaxCatArry[0].GST_Tax_Per);
-      const SubLedgerState = this.ObjSaleOrder.Sub_Ledger_State_2
-        ? this.ObjSaleOrder.Sub_Ledger_State_2.toUpperCase()
+      const SubLedgerState = this.ObjSaleOrder.Sub_Ledger_State
+        ? this.ObjSaleOrder.Sub_Ledger_State.toUpperCase()
         : undefined;
       const CostCenterState = this.Objcostcenter.Cost_Cen_State
         ? this.Objcostcenter.Cost_Cen_State.toUpperCase()
@@ -779,13 +792,13 @@ export class SaleOrderComponent implements OnInit {
         // godown_name: GdwonArry.legth ? GdwonArry[0].godown_name : undefined,
         // godown_id: this.ObjProductInfo.godown_id,
         Product_ID :this.ObjProductInfo.Product_Specification,
-        Product_Type: ProductArry.length ? ProductArry[0].Product_Type : undefined,
+        Product_Type: ProductArry.length ? ProductArry[0].Product_Type : this.Product_Type,
         HSL_No : ProductDArry.length ? ProductDArry[0].HSN_No : undefined,
         LI_Doc_No : this.LI_Doc_No,
         LI_Doc_Date : this.LI_Doc_No ? this.DateService.dateConvert(new Date(this.LI_Doc_Date)) : undefined,
         Ref_Doc_No : this.Ref_Doc_No,
         Ref_Doc_Date : this.Ref_Doc_Date ? this.DateService.dateConvert(new Date(this.Ref_Doc_Date)) : undefined,
-        Product_Sub_Type: ProductSubArry.length ? ProductSubArry[0].Product_Sub_Type : undefined,
+        Product_Sub_Type: ProductSubArry.length ? ProductSubArry[0].Product_Sub_Type : this.Product_Sub_Type,
         Product_Name: ProductDArry.length ? ProductDArry[0].label : undefined,
         // Batch_No_Show: LotNoArry[0].Batch_No_Show,
         LI_Qty: this.ObjProductInfo.LI_Qty,
@@ -825,6 +838,8 @@ export class SaleOrderComponent implements OnInit {
       this.ObjProductInfo.Rate = undefined;
       this.ObjProductInfo.Taxable_Amount = undefined;
       this.Tax_Category = undefined;
+      this.Product_Type = undefined;
+      this.Product_Sub_Type = undefined;
       // }
       // else {
       //    this.compacctToast.clear();
@@ -901,6 +916,7 @@ export class SaleOrderComponent implements OnInit {
         Customer_PO_No: this.Customer_PO_No,
         Customer_PO_Date: this.DateService.dateConvert(new Date(this.Customer_PO_Date)),
         LR_Date: this.DateService.dateConvert(this.SupplierBillDate),
+        Remarks_For_Amendment: this.Remarks_For_Amendment ? this.Remarks_For_Amendment : '',
         L_element: this.AddProdList
       }
       savedata = {...this.ObjSaleOrder,...this.Objcostcenter,...T_Elemnts}
@@ -1085,6 +1101,8 @@ export class SaleOrderComponent implements OnInit {
       this.DocDate = new Date(data[0].Doc_Date);
       this.Ref_Doc_No =  data[0].Ref_Doc_No,
       this.Ref_Doc_Date = this.DateService.dateConvert(data[0].Ref_Doc_Date)
+      this.Remarks_For_Amendment = data[0].Remarks_For_Amendment ? data[0].Remarks_For_Amendment : undefined;
+      this.editorDis = true;
       data.forEach(element => {
         const  productObj = {
             LI_Doc_No : element.LI_Doc_No,
@@ -1093,10 +1111,10 @@ export class SaleOrderComponent implements OnInit {
             Ref_Doc_Date : new Date(element.Ref_Doc_Date),
             Product_ID: Number(element.Product_ID),
             Product_Name: element.Product_Name,
-            Product_Type_ID: element.LI_Doc_No ? undefined : element.Product_Type_ID,
-            Product_Type: element.LI_Doc_No ? undefined : element.Product_Type,
-            Product_Sub_Type_ID: element.LI_Doc_No ? undefined : element.Product_Sub_Type_ID,
-            Product_Sub_Type: element.LI_Doc_No ? undefined : element.Product_Sub_Type,
+            Product_Type_ID: element.Product_Type_ID,
+            Product_Type: element.Product_Type,
+            Product_Sub_Type_ID: element.Product_Sub_Type_ID,
+            Product_Sub_Type: element.Product_Sub_Type,//element.LI_Doc_No ? undefined : element.Product_Sub_Type,
             HSL_No: element.HSL_No,
             UOM: element.UOM,
             LI_Qty: Number(element.LI_Qty),
@@ -1119,6 +1137,10 @@ export class SaleOrderComponent implements OnInit {
           this.AddProdList.push(productObj);
           this.TotalCalculation();
         });
+        
+      setTimeout(() => {
+        this.editorDis = false
+      }, 700);
     })
    }
   //  DynamicRedirectTo (obj){

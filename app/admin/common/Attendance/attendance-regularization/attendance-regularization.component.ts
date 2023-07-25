@@ -73,7 +73,8 @@ export class AttendanceRegularizationComponent implements OnInit {
       "Report_Name_String": "Browse_HR_Txn_Attendance_Regularization",
       "Json_Param_String": JSON.stringify([{
         "From_Date": this.DateService.dateConvert(this.form_Date),
-        "To_Date": this.DateService.dateConvert(this.to_Date)
+        "To_Date": this.DateService.dateConvert(this.to_Date),
+        "User_ID": this.commonApi.CompacctCookies.User_ID
       }])
     }
     this.Search_Spinner = true;

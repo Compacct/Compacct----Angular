@@ -11,6 +11,7 @@ import { CompacctCommonApi } from "../../../shared/compacct.services/common.api.
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service";
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { CompacctHeader } from "../../../shared/compacct.services/common.header.service";
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-k4c-raw-material-indent',
@@ -59,6 +60,11 @@ export class K4cRawMaterialIndentComponent implements OnInit {
   Doc_date: any;
   To_Godown_ID: any;
   Doc_no: any;
+  Product_ID: any;
+  DropdownproductList:any = [];
+  Requisition_Qty: any;
+  uom:any;
+  StockQty: any;
   constructor(
     private Header: CompacctHeader,
     private compacctToast: MessageService,
@@ -77,6 +83,7 @@ export class K4cRawMaterialIndentComponent implements OnInit {
         Link: " Material Management -> Raw Material Indent"
       });
       this.GetToCostCen();
+      this.GetBrowseToCostCen();
       // this.getDept();
       this.getdate();
       this.getMaterialType();
@@ -90,6 +97,7 @@ export class K4cRawMaterialIndentComponent implements OnInit {
     this.clearData();
     this.DistProductType = [];
     this.SelectedProductType = [];
+    this.DropdownproductList = [];
    }
   onReject() {
     this.compacctToast.clear("c");
@@ -117,24 +125,41 @@ export class K4cRawMaterialIndentComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.costcenlist = data;
-      this.browsecostcenlist = data;
     })
   }
-  getDept(costcenid){
-    this.browsedeptList = [];
-    this.deptList = [];
-    if(costcenid) {
+  getDept(costcenterid){
+    // this.deptList = [];
+    if(costcenterid) {
     const obj = {
       "SP_String": "SP_Raw_Material_Indent",
       "Report_Name_String": "Get - Department",
-      "Json_Param_String": JSON.stringify([{ Cost_Cen_ID: costcenid }])
+      "Json_Param_String": JSON.stringify([{ Cost_Cen_ID: costcenterid }])
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      if(this.ObjBrowseData.Cost_Cen_ID) {
-        this.browsedeptList = data;
-      } else{
         this.deptList = data;
-      }
+      // console.log("deptList",this.deptList);
+    })
+    }
+  }
+  GetBrowseToCostCen(){
+    const obj = {
+      "SP_String": "SP_Raw_Material_Indent",
+      "Report_Name_String": "Get Cost Centre Non outlet",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.browsecostcenlist = data;
+    })
+  }
+  getBrowseDept(browsecostcenterid){
+    // this.browsedeptList = [];
+    if(browsecostcenterid) {
+    const obj = {
+      "SP_String": "SP_Raw_Material_Indent",
+      "Report_Name_String": "Get - Department",
+      "Json_Param_String": JSON.stringify([{ Cost_Cen_ID: browsecostcenterid }])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        this.browsedeptList = data;
       // console.log("deptList",this.deptList);
     })
     }
@@ -186,16 +211,15 @@ export class K4cRawMaterialIndentComponent implements OnInit {
   //     })
   //   })
   // }
-  showProduct(valid){
-    console.log(valid);
-    this.RawIndentFormSubmit = true;
-    if(valid){
-      this.showSpinner = true;
+  showProduct(){
+    // console.log(valid);
+    // this.RawIndentFormSubmit = true;
+    // if(valid){
+    //   this.showSpinner = true;
       const TempObj = {
         Cost_Cen_ID:this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
         Godown_ID:this.godownId,
         Product_Type_ID:0,
-        Material_Type : this.Material_Type
       }
       const obj = {
         "SP_String": "SP_Raw_Material_Indent",
@@ -203,19 +227,79 @@ export class K4cRawMaterialIndentComponent implements OnInit {
         "Json_Param_String": JSON.stringify([TempObj])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        const tempData = data;
-        tempData.forEach(element => {
-          element['Requisition_Qty'] = undefined;
+        // const tempData = data;
+        // tempData.forEach(element => {
+        //   element['Requisition_Qty'] = undefined;
+        // });
+        if(data.length){
+          data.forEach(element => {
+            element['value'] = element.Product_ID
+            element['label'] = element.Product_Description
         });
-        this.productList = tempData;
-        this.showSpinner = false;
-        this.backUpproductList = tempData;
-        // this.GetProductType();
-        this.GetDistinct()
-        this.RawIndentFormSubmit = false;
-        console.log("productList",this.productList);
+        this.DropdownproductList = data;
+        }
+        else {
+         this.DropdownproductList = [];
+        }
+        // this.productList = tempData;
+        // this.showSpinner = false;
+        // this.backUpproductList = tempData;
+        // // this.GetProductType();
+        // this.GetDistinct()
+        // this.RawIndentFormSubmit = false;
+        // console.log("productList",this.productList);
       })
+    // }
+  }
+  Getdatafromproduct(){
+    this.uom = undefined;
+    this.StockQty = undefined;
+    if(this.Product_ID){
+    const productdata = this.DropdownproductList.filter(el=> Number(el.Product_ID) === Number(this.Product_ID))
+    this.uom = productdata.length ? productdata[0].UOM : undefined;
+    this.StockQty = productdata.length ? productdata[0].Stock_Qty : undefined;
     }
+  }
+  AddProduct(valid){
+    this.RawIndentFormSubmit = true;
+    this.showSpinner = true;
+  if(valid){
+     const productFilter:any = this.DropdownproductList.filter((el:any)=> Number(el.Product_ID) === Number(this.Product_ID))
+     const godownname:any = this.deptList.filter((ele:any)=> Number(ele.godown_id) === Number(this.godownId))
+     let addData = {
+        Product_ID: Number(this.Product_ID),
+        Product_Description: productFilter.length ? productFilter[0].Product_Description : undefined,
+        Product_Type_ID: productFilter.length ? productFilter[0].Product_Type_ID : undefined,
+        Product_Type: productFilter.length ? productFilter[0].Product_Type : undefined,
+        UOM: productFilter.length ? productFilter[0].UOM : undefined,
+        Present_Stock: productFilter.length ? productFilter[0].Present_Stock : undefined,
+        Requisition_Qty: this.Requisition_Qty,
+        Cost_Cen_ID: this.Cost_Cen_ID,
+        Godown_ID : Number(this.godownId),
+        godown_name : godownname[0].godown_name,
+        User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
+        // Material_Type : this.Material_Type
+     }
+      this.productList.push(addData);
+      this.godownId = undefined;
+      this.Product_ID = undefined;
+      this.uom = undefined;
+      this.StockQty = undefined;
+      this.Requisition_Qty = undefined;
+      this.showSpinner = false;
+      this.backUpproductList = this.productList;
+      // this.GetProductType();
+      this.GetDistinct()
+      this.RawIndentFormSubmit = false;
+      console.log("productList",this.productList);
+     
+   }
+   else{
+    this.showSpinner = false;
+   }
+  }
+  DeteteAdd(index) {
+    this.productList.splice(index,1);
   }
   GetDistinct() {
     let DProductType:any = [];
@@ -304,8 +388,7 @@ export class K4cRawMaterialIndentComponent implements OnInit {
             UOM: el.UOM,
             Requisition_Qty: Number(el.Requisition_Qty),
             User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
-            Godown_ID : Number(this.godownId),
-            Material_Type : this.Material_Type
+            Godown_ID : Number(el.Godown_ID)
           }
           Savedata.push(tempData)
         }
@@ -320,8 +403,7 @@ export class K4cRawMaterialIndentComponent implements OnInit {
             UOM: el.UOM,
             Requisition_Qty: Number(el.Requisition_Qty),
             User_ID: this.$CompacctAPI.CompacctCookies.User_ID,
-            Godown_ID : Number(this.godownId),
-            Material_Type : this.Material_Type
+            Godown_ID : Number(el.Godown_ID)
           }
           Savedata.push(tempData)
         }
@@ -362,6 +444,7 @@ export class K4cRawMaterialIndentComponent implements OnInit {
           this.GetAllData();
           this.clearData();
           this.getdate();
+          this.DropdownproductList = [];
          }
       })
     }
@@ -399,6 +482,32 @@ export class K4cRawMaterialIndentComponent implements OnInit {
         this.seachSpinner = false;
       })
   }
+  exportoexcel(){
+    const start = this.ObjBrowseData.req_date_B
+      ? this.DateService.dateConvert(new Date(this.ObjBrowseData.req_date_B))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjBrowseData.req_date2
+      ? this.DateService.dateConvert(new Date(this.ObjBrowseData.req_date2))
+      : this.DateService.dateConvert(new Date());
+      const tempDate = {
+        From_Date :start,
+        To_Date :end,
+        Cost_Cen_ID : this.ObjBrowseData.Cost_Cen_ID ? Number(this.ObjBrowseData.Cost_Cen_ID) : 0,
+        Godown_ID : Number(this.ObjBrowseData.Godown_ID) ? Number(this.ObjBrowseData.Godown_ID) : 0
+      }
+    const obj = {
+      "SP_String": "SP_Raw_Material_Indent",
+      "Report_Name_String": "Export Raw Material Indent",
+      "Json_Param_String": JSON.stringify([tempDate])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      XLSX.writeFile(workbook, "Indent_List"+'.xlsx');
+      
+    })
+  }
   onFilterChange(eve: any){
     this.GetAllDataList = []
      if(eve){
@@ -412,13 +521,13 @@ export class K4cRawMaterialIndentComponent implements OnInit {
       this.GetAllDataList = this.backUpGetAllDataList;
     }
   }
-  // Print(obj){
-  //   if (obj.Doc_No) {
-  //     window.open("/Report/Crystal_Files/K4C/K4C_Raw_Material_Indent.aspx?DocNo=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+  Print(obj){
+    if (obj.Doc_No) {
+      window.open("/Report/Crystal_Files/K4C/Raw_Material_Indent_Print.aspx?Doc_No=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
 
-  //     );
-  //   }
-  // }
+      );
+    }
+  }
   editraw(col){
    this.DocNo = undefined;
    if(col.Doc_No){

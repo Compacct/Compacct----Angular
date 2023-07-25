@@ -76,9 +76,9 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
       "Report_Name_String": "Get_Project_All",
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      // console.log(data);
+      // //console.log(data);
       this.AllprojectList = data ;
-      console.log("AllprojectList=",this.AllprojectList);
+      //console.log("AllprojectList=",this.AllprojectList);
       this.AllprojectList.forEach(el => {
         this.projectList.push({
           label: el.Project_Description,
@@ -96,7 +96,7 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
     
   }
   getWorkDetails(){
-    console.log('data2')
+    //console.log('data2')
     if(this.objWorkOrder.Project_ID){
      let Tempdata = {
       Project_ID : this.objWorkOrder.Project_ID
@@ -107,14 +107,14 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
       "Json_Param_String": JSON.stringify([Tempdata])      
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      // console.log(data);
+      // //console.log(data);
       data.forEach(el => {
         el['label'] = el.Work_Details
         el['value'] = el.Work_Details_ID
       })
       this.WorkDetailsList = data;
      
-      console.log("WorkDetailsList",this.WorkDetailsList);
+      //console.log("WorkDetailsList",this.WorkDetailsList);
       
        
     });
@@ -127,7 +127,13 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
   }
 
   }
-  
+  ProjectedAmountTotal(){
+  let flg = 0
+  this.WorkOrderAdd.forEach((x:any)=>{
+    flg = (Number(flg) + Number(x.Amount))
+  })
+  return flg.toFixed(2)
+}
   validcheck(){
     return this.WorkDetailsList.length ? true : false
   }
@@ -177,7 +183,7 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
       })
     
    
-      console.log('this.WorkOrderAdd=',this.WorkOrderAdd);
+      //console.log('this.WorkOrderAdd=',this.WorkOrderAdd);
       this.objWorkOrder = new WorkOrder();
       this.WorkFormSubmit = false;
       this.Retrivedata();
@@ -213,7 +219,7 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
   }
 
   onConfirm(){
-    console.log(this.DocNo);
+    //console.log(this.DocNo);
     this.WorkOrderAdd.forEach(el=>{
       this.SaveData.push({
         Project_ID : el.Project_ID,
@@ -228,7 +234,7 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
         Fin_Year_ID : el.Fin_Year_ID
       })
     });
-    console.log(this.SaveData);
+    //console.log(this.SaveData);
     const obj = {
       "SP_String": "SP_Work_Order_Sale_Bill",
       "Report_Name_String":"Work_Order_Sale_Bill_Create_Update",
@@ -236,7 +242,7 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
      }
      this.GlobalAPI.getData(obj).subscribe((data : any)=>
      {
-       console.log('data=',data);
+       //console.log('data=',data);
        
        if(data[0].Response == 'Done')
        {
@@ -297,7 +303,7 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{ Project_ID: Project_ID}]) 
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        console.log('Data=',data);
+        //console.log('Data=',data);
         this.WorkOrderAdd = data;
         //this.SaveData = data;
        
@@ -328,7 +334,7 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
 
   getDateRange(dateRangeObj){
     if (dateRangeObj.length) {
-      console.log("dateRangeObj",dateRangeObj);
+      //console.log("dateRangeObj",dateRangeObj);
       this.objsearch.Start_Date = dateRangeObj[0];
       this.objsearch.End_Date = dateRangeObj[1];
     }
@@ -354,7 +360,7 @@ export class BLTxnWorkOrderSaleBillComponent implements OnInit {
       "Json_Param_String" : JSON.stringify([TempData])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-     console.log("all Data",data);
+     //console.log("all Data",data);
      this.AllWorkOrderData = data;
       
      })

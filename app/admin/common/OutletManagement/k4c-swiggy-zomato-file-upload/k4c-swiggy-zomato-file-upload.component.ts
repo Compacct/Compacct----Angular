@@ -8,6 +8,7 @@ import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import * as XLSX from 'xlsx';
 import { FileUpload } from 'primeng/fileupload';
+import {cloneDeep} from 'lodash';
 @Component({
   selector: 'app-k4c-swiggy-zomato-file-upload',
   templateUrl: './k4c-swiggy-zomato-file-upload.component.html',
@@ -71,16 +72,24 @@ export class K4cSwiggyZomatoFileUploadComponent implements OnInit {
   this.tableDataList = []
   this.tableDataListHeader = []
   if(this.seleteChoose === 'Swiggy'){
-     if(allData[0].hasOwnProperty('Order ID') && allData[0].hasOwnProperty('Order-delivery-time') && allData[0].hasOwnProperty('Total-bill-amount <bill>')){
-        this.tableDataList = [...allData]
+        this.tableDataList =cloneDeep(allData);
         this.tableDataListHeader = Object.keys(this.tableDataList[0])
-        this.tableDataList.forEach((ele:any) => {
-          ele['Order-delivery-time'] = this.DateService.dateTimeConvert(new Date(ele['Order-delivery-time']))
-        });
-        console.log('tableDataList',this.tableDataList)
-        this.loading = false
-     }
+        if(this.tableDataList[0][this.tableDataListHeader[1]] instanceof Date 
+          && !isNaN(this.tableDataList[0][this.tableDataListHeader[1]])
+          && this.tableDataListHeader.length === 3
+          && typeof this.tableDataList[0][this.tableDataListHeader[2]] == 'number' ){
+
+            this.tableDataList.forEach((ele:any) => {
+              ele[this.tableDataListHeader[1]] = this.DateService.dateConvert(new Date(ele[this.tableDataListHeader[1]]))
+            });
+            console.log('tableDataList',this.tableDataList)
+            this.loading = false
+          }
+     
+     
      else {
+      this.tableDataList = []
+      this.tableDataListHeader = []
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "c",
@@ -94,16 +103,23 @@ export class K4cSwiggyZomatoFileUploadComponent implements OnInit {
     }
   }
   if(this.seleteChoose === 'Zomato'){
-    if(allData[0].hasOwnProperty('Order ID') && allData[0].hasOwnProperty('Order Placed At') && allData[0].hasOwnProperty('Bill Amount')){
-       this.tableDataList = [...allData]
+     this.tableDataList = cloneDeep(allData);
        this.tableDataListHeader = Object.keys(this.tableDataList[0])
-       this.tableDataList.forEach((ele:any) => {
-         ele['Order Placed At'] = this.DateService.dateTimeConvert(new Date(ele['Order Placed At']))
-       });
-       console.log('tableDataList',this.tableDataList)
-       this.loading = false
-    }
-    else {
+       if(this.tableDataList[0][this.tableDataListHeader[1]] instanceof Date 
+        && !isNaN(this.tableDataList[0][this.tableDataListHeader[1]])
+        && this.tableDataListHeader.length === 3
+        && typeof this.tableDataList[0][this.tableDataListHeader[2]] == 'number' ){
+        this.tableDataList.forEach((ele:any) => {
+       
+             ele[this.tableDataListHeader[1]] = this.DateService.dateConvert(new Date(ele[this.tableDataListHeader[1]]))
+         
+         });
+         console.log('tableDataList',this.tableDataList)
+         this.loading = false
+       }
+      else {
+      this.tableDataList = []
+      this.tableDataListHeader = []
       this.fileInput.clear()
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -115,6 +131,7 @@ export class K4cSwiggyZomatoFileUploadComponent implements OnInit {
         });
         this.loading = false
     }
+     
  }
  }
  onReject() {
@@ -126,5 +143,58 @@ this.tableDataList = []
 }
 SaveFileData(){
   console.log("tableDataList",this.tableDataList)
+  if(this.tableDataList.length){
+    this.Spinner = true
+    let saveData:any = []
+    this.tableDataList.forEach(ele => {
+      saveData.push(
+        {
+          Customer : this.seleteChoose === 'Zomato' ? 'ZOMATO' : this.seleteChoose === 'Swiggy' ? 'SWIGGY' : "" ,
+          col1 :ele[this.tableDataListHeader[0]],
+          col2 : ele[this.tableDataListHeader[1]],
+          col3 : ele[this.tableDataListHeader[2]]
+        }
+        )
+    });
+    const obj = {
+      "SP_String": "SP_Add_ON",
+      "Report_Name_String": "Swiggy_Zomato_Upload",
+      "Json_Param_String" :  JSON.stringify(saveData)
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.Spinner = false
+      if (data[0].Column1 === "done") {
+      this.tableDataList = []
+      this.tableDataListHeader = []
+      this.fileInput.clear()
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          detail: "Succesfully Uploaded" ,
+        });
+      }
+      else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Somthing Wrong....",
+          detail: "Try again later"
+        });
+      }
+     })
+  }
+  else {
+    this.Spinner = false
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "c",
+      sticky: true,
+      severity: "error",
+      summary: "Error",
+      detail: "No Data Found"
+      });
+  }
 }
 }

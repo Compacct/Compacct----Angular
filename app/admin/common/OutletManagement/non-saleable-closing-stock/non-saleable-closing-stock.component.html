@@ -172,8 +172,8 @@
                                                 <div class="form-group">
                                                     <div class="col-sm-2">
                                                         <label class="control-label">Date</label>
-                                                        <ejs-datepicker strictMode='true' [format]="'dd/MMM/yyyy'" [(value)]='BillDate' [min]='minDate' [max]='maxDate'></ejs-datepicker>
-                                                        <!-- <input class="form-control" name="Date" [disabled]="true" [ngModel]='BillDate  | date :"dd-MMM-yyyy"'> -->
+                                                        <ejs-datepicker *ngIf="!editList.length" strictMode='true' [format]="'dd/MMM/yyyy'" [(value)]='BillDate' [min]='minDate' [max]='maxDate'></ejs-datepicker>
+                                                        <input *ngIf="editList.length" class="form-control" name="Date" [disabled]="true" [ngModel]='docdate  | date :"dd-MMM-yyyy"'>
                                                     </div>
                                                     <!-- <div class="col-sm-3">
                                                         <label class="control-label"> Brand<sup class="text-danger">*</sup></label>
@@ -402,7 +402,7 @@
                     <td>{{col.Product_Description}}</td>
                     <td>{{col.UOM}}</td>
                     <td>{{col.Batch_No}}</td>
-                    <td>{{col.batch_Qty}}</td>
+                    <td>{{col.batch_Qty ? col.batch_Qty : col.Batch_Qty}}</td>
                     <td>{{col.Closing_Qty}}</td>
                     <td>{{col.Remarks}}</td>
                     <td>{{col.Total_Amount}}</td>
@@ -410,7 +410,7 @@
                 </tr>
                 <tr *ngIf='rowIndex === (productlist.length - 1)'>
                     <td colspan="5" class="text-right">Total</td>
-                    <td>{{TotalValue('batch_Qty')}}</td>
+                    <td>{{TotalValue('Batch_Qty')}}</td>
                     <td>{{TotalValue('Closing_Qty')}}</td>
                     <td></td>
                     <td>{{TotalValue('Total_Amount')}}</td>

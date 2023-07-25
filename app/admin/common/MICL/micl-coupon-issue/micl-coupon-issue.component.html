@@ -40,26 +40,32 @@
                                 <div class="col-sm-2">
                                     <label class="control-label">Issue To<sup class="text-danger">*</sup></label>
                                     <select class="form-control" name="issuetobrowse" #issuetobrowse="ngModel" [(ngModel)]="Issue_To_Browse"
-                                    [ngClass]="{clearance: pdfFormSubmitted && issuetobrowse.errors?.required}" required>
+                                    (change)="clearsubledger()" [ngClass]="{clearance: pdfFormSubmitted && issuetobrowse.errors?.required}" required>
                                         <option [ngValue]="undefined">Select</option>
                                         <option *ngFor="let option of IssuetoList" value="{{ option}}">
                                             {{ option }}
                                         </option>
                                     </select>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-3" *ngIf="Issue_To_Browse === 'Contractor'">
+                                    <label class="control-label">Under Contractor<sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="UndercontractorList" name="undercontractorList" #undercontractorList="ngModel"
+                                       [(ngModel)]="Sub_Ledger_ID" [showClear]="true" (onChange)="getsubledgername()"
+                                       [emptyFilterMessage]="'No Item Found'" [filter]="true" filterBy="label,value"
+                                       [resetFilterOnHide]="true" [placeholder]="'Select Contractor'" [virtualScroll]="true"
+                                       itemSize="30"
+                                       [styleClass]="employeeMasterFormSubmit &&  undercontractorList.errors?.required ? 'clearance' :''"
+                                       [required]="true">
+                                    </p-dropdown>
+                                 </div>
+                                <div class="col-sm-1">
                                 <button class="btn btn-primary custombutton" data-toggle="modal" (click)="SearchData()">
                                     <span class="fa fa-search"></span>Search
                                 </button>
                                 </div>
-                                <div class="col-sm-2 custombutton">
-                                    <button class="btn btn-warning" data-toggle="modal" (click)="downloadpdf(pdfForm.form.valid)">
+                                <div class="col-sm-1 custombutton">
+                                    <button class="btn btn-primary" data-toggle="modal" (click)="downloadpdf(pdfForm.form.valid)">
                                         <span class="fa fa-download"></span>&nbsp;Download Statement
-                                    </button>
-                                </div>
-                                <div class="col-sm-2 custombutton" *ngIf="BrowseData.length">
-                                    <button class="btn btn-success" data-toggle="modal" (click)="exportExcelbrowse(BrowseData,'Coupon Issue List')">
-                                        <span class="fa fa-file-excel-o"></span>&nbsp;Export to excel
                                     </button>
                                 </div>
                             </div>
@@ -74,6 +80,16 @@
                                         [rowHover]="true" #dt>
                                         <ng-template pTemplate="caption">
                                             <div class="row">
+                                                <div class="col-sm-3" *ngIf="BrowseData.length">
+                                                    <button style="margin-left: 545px;" class="btn btn-success" data-toggle="modal" (click)="exportExcelbrowse(BrowseData,'Coupon Issue List')">
+                                                        <span class="fa fa-file-excel-o"></span>&nbsp;Export to excel
+                                                    </button>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <button [class]="BrowseData.length ? 'buttonleft1' : 'buttonleft2'" data-toggle="modal" (click)="pdfCantStatementSumm()">
+                                                        <span class="fa fa-download"></span>&nbsp;Canteen Statement Summary
+                                                    </button>
+                                                </div>
                                                 <div class="col-sm-3 pull-right" style="text-align: right">
                                                     <input type="text" pInputText size="50" placeholder="Search"
                                                         (input)="dt.filterGlobal($event.target.value, 'contains')"
