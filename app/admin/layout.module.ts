@@ -506,6 +506,8 @@ import { AssetMasterComponent } from './common/MICL/asset-master/asset-master.co
 import { HrTrainingComponent } from './common/HR/hr-training/hr-training.component';
 import { EvaluateForTrainingComponent } from './common/Attendance/evaluate-for-training/evaluate-for-training.component';
 import { SofthearAudiologistTargetComponent } from './common/PatientManagement/Audiologist/softhear-audiologist-target/softhear-audiologist-target.component';
+import { SalarySlipComponent } from './common/HR/salary-slip/salary-slip.component';
+import { ApproveEvaluateForTraningComponent } from './common/Attendance/approve-evaluate-for-traning/approve-evaluate-for-traning.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -926,7 +928,9 @@ import { SofthearAudiologistTargetComponent } from './common/PatientManagement/A
     AssetMasterComponent,
     HrTrainingComponent,
     EvaluateForTrainingComponent,
-    SofthearAudiologistTargetComponent
+    SofthearAudiologistTargetComponent,
+    SalarySlipComponent,
+    ApproveEvaluateForTraningComponent
   ],
   imports: [
     CommonModule,
