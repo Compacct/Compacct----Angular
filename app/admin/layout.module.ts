@@ -507,6 +507,7 @@ import { HrTrainingComponent } from './common/HR/hr-training/hr-training.compone
 import { EvaluateForTrainingComponent } from './common/Attendance/evaluate-for-training/evaluate-for-training.component';
 import { SofthearAudiologistTargetComponent } from './common/PatientManagement/Audiologist/softhear-audiologist-target/softhear-audiologist-target.component';
 import { SalarySlipComponent } from './common/HR/salary-slip/salary-slip.component';
+import { ApproveEvaluateForTraningComponent } from './common/Attendance/approve-evaluate-for-traning/approve-evaluate-for-traning.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -928,7 +929,8 @@ import { SalarySlipComponent } from './common/HR/salary-slip/salary-slip.compone
     HrTrainingComponent,
     EvaluateForTrainingComponent,
     SofthearAudiologistTargetComponent,
-    SalarySlipComponent
+    SalarySlipComponent,
+    ApproveEvaluateForTraningComponent
   ],
   imports: [
     CommonModule,
