@@ -595,12 +595,11 @@
                                  </p-dropdown>
                              </div>
                              <div class="col-sm-3">
-                                <label class="control-label">Product Specification <sup class="text-danger">*</sup></label>                                 
+                                <label class="control-label">Product Specification </label>                                 
                                 <input class="form-control"  name="prospecification" #prospecification="ngModel" 
                                 [(ngModel)]="ObjProductInfo.Product_Specification"
                                 placeholder="Product Specification"
-                                [ngClass]="{clearance: TermFormSubmitted && prospecification?.errors?.required}"
-                                required>
+                                [ngClass]="{clearance: TermFormSubmitted && prospecification?.errors?.required}">
                             </div>
                             <div class="col-sm-3">
                               <label>Stock Point<sup class="text-danger">*</sup></label>
@@ -720,7 +719,7 @@
                               <td>{{ TermTableList.Product_Type ? TermTableList.Product_Type : "-" }}</td>
                               <td>{{ TermTableList.Product_Sub_Type ? TermTableList.Product_Sub_Type : "-" }}</td>
                               <td>{{ TermTableList.Product_Name ? TermTableList.Product_Name : "-"}}</td>
-                              <td>{{ TermTableList.Product_Specification }}</td>
+                              <td>{{ TermTableList.Product_Specification ? TermTableList.Product_Specification : "-" }}</td>
                               <td>{{ TermTableList.Batch_No }}</td>
                               <td>{{ TermTableList.Qty }}</td>
                               <td>{{ TermTableList.UOM }}</td>
