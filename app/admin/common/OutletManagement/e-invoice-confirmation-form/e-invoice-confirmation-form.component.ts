@@ -118,7 +118,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
         {responseType: 'text'})
         .subscribe((data: any) => {
           this.databaseName = data;
-          console.log(data)
+          console.log("databaseName===",data)
         });
   }
   // PENDING INV
@@ -206,8 +206,14 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
      let reportnamepeninv = "";
-      if (this.databaseName === "K4C" || this.databaseName === "MICL") {
-        reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==";
+      if (this.databaseName === "K4C") {
+        reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=KLD20";
+      }
+      else if (this.databaseName === "MICL") {
+        reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XL01";
+      }
+      else if (this.databaseName === "Diagraph") {
+        reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XLD01";
       }
       else if (this.databaseName === "BSHPL") {
         reportnamepeninv = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Invoice_Queue?code=yf2xGtV6etP5Hj_u-RcbC1iEH6ryfONUXbsUrFGJhRESAzFulwDVDA==";
@@ -396,8 +402,14 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
      let reportnamefailedinv = "";
-      if (this.databaseName === "K4C" || this.databaseName === "MICL") {
-        reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==";
+      if (this.databaseName === "K4C") {
+        reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=KLD20";
+      }
+      else if (this.databaseName === "MICL") {
+        reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XL01";
+      }
+      else if (this.databaseName === "Diagraph") {
+        reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XLD01";
       }
       else if (this.databaseName === "BSHPL") {
         reportnamefailedinv = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Invoice_Queue?code=yf2xGtV6etP5Hj_u-RcbC1iEH6ryfONUXbsUrFGJhRESAzFulwDVDA==";
@@ -543,7 +555,23 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   onConfirmcancel(){
     if(this.invoice_no) {
       this.ngxService.start();
-    this.$http.get("https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&invoice_no="+this.invoice_no)
+      let reportnamecancel = "";
+      if (this.databaseName === "K4C") {
+        reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&CON=KLD20&invoice_no=";
+      }
+      else if (this.databaseName === "MICL") {
+        reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&CON=XL01&invoice_no=";
+      }
+      else if (this.databaseName === "Diagraph") {
+        reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&CON=XLD01&invoice_no=";
+      }
+      else if (this.databaseName === "BSHPL") {
+        reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&invoice_no=";
+      }
+      else {
+        reportnamecancel = "";
+      }
+    this.$http.get(reportnamecancel+this.invoice_no)
    .subscribe((data:any)=>{
     console.log("cancel",data)
     // this.ngxService.stop();

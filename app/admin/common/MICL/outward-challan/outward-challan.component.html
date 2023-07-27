@@ -129,7 +129,7 @@
                                                                         <i class="fa fa-fw fa-print"></i> Print
                                                                     </a>
                                                                 </li>
-                                                            <li>
+                                                            <li *ngIf="!col.Bill_No">
                                                                 <a (click)="Delete(col)">
                                                                     <i class="fa fa-fw fa-trash"></i> Delete
                                                                 </a>

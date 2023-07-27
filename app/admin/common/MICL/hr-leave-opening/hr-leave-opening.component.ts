@@ -578,6 +578,7 @@ AutoUpdatePopup(){
   this.SelectedEmployee = [];
   this.EmployeeAutoUpdateLeaveList = [];
   this.ObjAutoUpdateleave = new AutoUpdateleave();
+  this.AutoU_Transaction_Date = new Date;
   this.leaveId = undefined;
   this.initDate =[];
   this.hrYearList();
@@ -643,6 +644,7 @@ onConfirmjohAutoUp(){
     this.SelectedEmployee.forEach(el => {
       const employeeidFilter = this.AutoUpdateempDataList.filter((ele:any)=>Number(ele.Emp_ID) === Number(el));
     this.EmployeeAutoUpdateLeaveList.push({
+      HR_Year_ID : this.ObjAutoUpdateleave.HR_Year_ID,
       From_Date : this.ObjAutoUpdateleave.From_Date,
       To_Date : this.ObjAutoUpdateleave.To_Date,
       Emp_ID : employeeidFilter.length ? employeeidFilter[0].Emp_ID : undefined,
@@ -672,6 +674,7 @@ onConfirmjohAutoUp(){
           this.leaveId = undefined;
           this.AutoUpdateleaveFormSubmitted = false;
           this.ObjAutoUpdateleave = new AutoUpdateleave();
+          this.AutoU_Transaction_Date = new Date();
           this.hryear = undefined;
           this.AutoUpdateModal = false;
           this.SelectedEmployee = [];

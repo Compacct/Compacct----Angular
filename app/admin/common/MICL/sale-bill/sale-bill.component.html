@@ -157,7 +157,7 @@
                                                                 <i class="fa fa-fw fa-download"></i> Download E-INV
                                                             </a>
                                                         </li>
-                                                        <li>
+                                                        <li *ngIf="!col.E_Invoice_IRN_No">
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
