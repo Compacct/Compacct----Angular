@@ -117,7 +117,7 @@
                                                     <li *ngIf="col.CAN_EDIT == 'YES'">
                                                         <a (click)="EditAdvOrd(col)"><i class="fa fa-fw fa-pencil"></i>Edit</a>
                                                     </li>
-                                                    <li *ngIf="col.CAN_EDIT == 'YES'">
+                                                    <li *ngIf="col.Return_Status == 'YES'">
                                                         <a (click)="ReturnAdvOrd(col)"><i class="fa fa-undo"></i>Return</a>
                                                     </li>
                                                 </ul>
@@ -135,7 +135,7 @@
                                         </td>
                                         <td nowrap><span [ngClass]="'badge bg-'+ getStatusWiseColor(col)" >{{col.AO_Status}}</span></td>
                                         <td nowrap><p (click)="BillPrint(col.Bill_No,col.Sale_link)" class="aTage" style="cursor: pointer;">{{col.Bill_No}}</p></td>
-                                        <td>{{col.Return_Voucher_Amt ? col.Return_Voucher_Amt : '-'}}
+                                        <td>{{col.Payment_Amount ? col.Payment_Amount : '-'}}
                                             <br><p (click)="ReturnPrint(col.Return_Voucher_No,col.Pmt_vchr_link)" class="aTage" style="cursor: pointer;">{{col.Return_Voucher_No}}</p>
                                         </td>
                                         <td nowrap>{{getCostCenterName(col.Cost_Cen_ID)}}</td>
@@ -147,7 +147,7 @@
                                         <td  class="text-bold">Total Received Amount : {{GetTotal(HearingAdvanceBillList,'total_DR_Amt')}}</td>
                                         <td>-</td>
                                         <td>-</td>
-                                        <td  class="text-bold">Total Return Amount : {{GetTotal(HearingAdvanceBillList,'Return_Voucher_Amt')}}</td>
+                                        <td  class="text-bold">Total Return Amount : {{GetTotal(HearingAdvanceBillList,'Payment_Amount')}}</td>
                                         <td>-</td>
                                     </tr>
                                 </ng-template>    
@@ -634,9 +634,8 @@
                     class="form-control" 
                     name="Amount" 
                     #Amount="ngModel"
-                    [ngModel]="objPayment.Amount" 
-                    placeholder="Amount"
-                disabled>
+                    [(ngModel)]="objPayment.Amount" 
+                    placeholder="Amount">
             </div>
             <div class="col-sm-3">
                 <label class="control-label">Narration</label>
