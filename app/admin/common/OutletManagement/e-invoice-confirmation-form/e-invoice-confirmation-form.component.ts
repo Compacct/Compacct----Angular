@@ -66,8 +66,16 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   SuccessCrNotelist:any = [];
   successcrnoteSpinner = false;
   exportSpinner = false;
-  databaseName:any;
-
+  databaseName: any;
+  UpdateModel:boolean = false;
+  VehicleModel: boolean = false;
+  UpdateFormSubmitted: boolean = false;
+  EWay_Bill_Date: Date = new Date();
+  Transport_Doc_Date: Date = new Date();
+  Objupdatepop: updatepop = new updatepop();
+  Doc_no: any = undefined;
+  QREWayBill_No: any = undefined;
+  QREWayBill_NoGent: any = undefined;
   constructor(
     private Header: CompacctHeader,
     private route : ActivatedRoute,
@@ -1001,7 +1009,80 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
     XLSX.writeFile(workbook, fileName+'.xlsx');
     this.exportSpinner = false;
   }
+  getQR(QREWayBill_Noo: any) {
+    this.QREWayBill_NoGent = undefined;
+    if (QREWayBill_Noo.length === 12) {
+      this.$http.get('https://einvoicek4c.azurewebsites.net/api/GenerateQR?code=MP3_fIETBk_459dKs_I3fN4Kz9nVklM4j4XuuHWiTyX5AzFuhkELSQ==&qrname=' + QREWayBill_Noo)
+        .subscribe((data: any) => {
+          this.QREWayBill_NoGent = data[0].qrLink;
+     //console.log(data)
+   })  
+    } 
+  }
 
+  UpdateEbill(doc: any) {
+    this.Doc_no = undefined;
+    this.QREWayBill_No = undefined;
+    if (doc.Doc_No) {
+      this.Doc_no = doc.Doc_No
+      const obj = {
+    "SP_String": "SP_E_Invoice_For_Confirmation_Form",
+    "Report_Name_String": "Get_Data_For_Update_Eway_Bill_Manually",
+    "Json_Param_String": JSON.stringify([{Doc_No:this.Doc_no}])
+        }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.Objupdatepop = data[0];
+        this.EWay_Bill_Date = new Date(data[0].E_Invoice_EwbDt)
+        this.Transport_Doc_Date = new Date(data[0].Transporter_Doc_Date)
+        this.QREWayBill_No = data[0].E_Invoice_EwbNo
+        this.getQR(this.QREWayBill_No)
+        setTimeout(() => {
+          this.UpdateModel = true
+        }, 300);    
+      })
+    }
+  }
+  // ChangeVehicle(doc_no: any) {
+  //    this.VehicleModel = true
+  // }
+  UpdateEbiilPOP(valid: any) {
+    this.UpdateFormSubmitted = true;
+    if (valid && this.Objupdatepop.E_Invoice_EwbNo.length === 12) {
+      const SaveOjb = {
+            Doc_No :this.Doc_no,
+            Transporter_ID: this.Objupdatepop.Transporter_ID,
+            Transporter: this.Objupdatepop.Transporter,
+            LR_No: this.Objupdatepop.Trasporter_Doc_No,
+            LR_Date:this.DateService.dateConvert(this.Transport_Doc_Date),
+            Vehicle_No: this.Objupdatepop.Vehicle_No,
+            Transportation_Distance: this.Objupdatepop.Transportation_Distance,
+            E_Invoice_EwbNo: this.Objupdatepop.E_Invoice_EwbNo,
+            E_Invoice_EwbDt: this.DateService.dateConvert(this.EWay_Bill_Date),
+            E_Invoice_Ewb_QR_Link: this.QREWayBill_NoGent,
+      }
+       const obj = {
+        "SP_String": "SP_E_Invoice_For_Confirmation_Form",
+        "Report_Name_String": "Update_Eway_Bill_Manually",
+        "Json_Param_String": JSON.stringify([SaveOjb])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data: any) => {
+        if (data[0].Column1) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary:"E-way Bill",
+            detail: "Succesfully Update" ,
+          });
+          this.Objupdatepop = new updatepop();
+          this.UpdateFormSubmitted = false;
+          this.QREWayBill_NoGent = undefined;
+          this.Doc_no = undefined;
+          this.UpdateModel = false;
+        }
+      }) 
+      }   
+  }
 }
 class PenInvoice {
   start_date : Date;
@@ -1030,4 +1111,14 @@ class FailedCrNote {
 class SuccessCrNote {
   start_date : Date;
   end_date : Date;
+}
+class updatepop{
+  Doc_No: any;								
+  E_Invoice_Ewb_QR_Link: any;	
+  E_Invoice_EwbNo:any;
+  Transporter_ID:any;
+  Vehicle_No:any;
+  Transportation_Distance: any;
+  Trasporter_Doc_No: any;
+  Transporter: any;
 }
