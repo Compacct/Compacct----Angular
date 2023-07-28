@@ -32,7 +32,7 @@ export class PendingOutcomesComponent implements OnInit {
 
   ngOnInit() {
     this.CokkUiD = this.$CompacctAPI.CompacctCookies.User_ID;
-    //console.log('this.CokkUiD',this.CokkUiD)
+    // console.log('this.CokkUiD',this.CokkUiD)
     this.Header.pushHeader({
       Header: "Pending Outcomes",
       Link: " Patient Management -> Pending Outcomes"
@@ -43,7 +43,7 @@ export class PendingOutcomesComponent implements OnInit {
     this.AudiologistList = [];
       const obj = {
         "SP_String": "Sp_Pending_Outcome",
-        "Report_Name_String": "Get_Audiologist",
+        "Report_Name_String": "Get_User_id",
         "Json_Param_String": JSON.stringify([{User_ID :this.CokkUiD}])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -51,11 +51,11 @@ export class PendingOutcomesComponent implements OnInit {
           if(data.length) {
               data.forEach(element => {
                 element['label'] = element.Name,
-                element['value'] = element.Doctor_ID
+                element['value'] = element.User_ID
               });
             this.AudiologistList = data;
             if (this.$CompacctAPI.CompacctCookies.User_Type === 'U') {
-              this.DoctorID = this.AudiologistList[0].Doctor_ID
+              this.DoctorID = this.AudiologistList[0].User_ID
             }        
           }
           else {
@@ -70,7 +70,7 @@ export class PendingOutcomesComponent implements OnInit {
     this.seachSpinner=true;
 
     const tempobj = {
-      Doctor_ID : this.DoctorID ? this.DoctorID : 0
+      User_ID : this.DoctorID ? this.DoctorID : 0
     }  
     // console.log("tempobj",tempobj);
 
@@ -82,22 +82,19 @@ export class PendingOutcomesComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       // console.log("getPatientDetailsList",data);
       this.seachSpinner= false;
+
+      if (this.$CompacctAPI.CompacctCookies.User_Type === 'U' && !this.DoctorID) {
+        this.PatientDetailsList=[];
+      }else{
+        this.PatientDetailsList = data;
+      }
       
-      this.PatientDetailsList = data;
       // console.log('PatientDetailsList=====',this.PatientDetailsList);
       if (this.PatientDetailsList.length) {
         this.PatientDetailsListHeader = Object.keys(data[0]);
         // console.log('PatientDetailsListHeader=====',this.PatientDetailsListHeader);
       }
-      else{
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "error",
-          summary: "No Appointment Found",
-          detail:" "
-        });
-      }
+
     })  
     
   }
