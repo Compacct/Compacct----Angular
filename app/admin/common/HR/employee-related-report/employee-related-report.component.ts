@@ -36,6 +36,10 @@ export class EmployeeRelatedReportComponent implements OnInit {
   GridList:any = [];
   GridListHeader:any = [];
   employeedisabled:boolean = false;
+  DateRangeflag: boolean = false;
+  excelflag: boolean = false;
+  employeeflag: boolean = false;
+  attentypeflag: boolean = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -82,6 +86,26 @@ export class EmployeeRelatedReportComponent implements OnInit {
       if (this.findObj) {
         this.visibleDate = this.findObj.allowed_control;
         console.log('this.visibleDate===',this.visibleDate);
+        var allowFields:any = [];
+        allowFields = this.visibleDate.split(','); //DT,XL,EMP,AT
+        for (let i = 0; i < allowFields.length; i++) {
+          if (allowFields[i] == 'DT') {
+              this.DateRangeflag = true;
+              // console.log('this.DateRangeflag===',this.DateRangeflag)
+          }
+          else if (allowFields[i] == 'XL') {
+            this.excelflag = true;
+            // console.log('this.excelflag===',this.excelflag)
+          }
+          else if (allowFields[i] == 'EMP') {
+            this.employeeflag = true;
+            // console.log('this.employeeflag===',this.employeeflag)
+          }
+          else if (allowFields[i] == 'AT') {
+            this.attentypeflag = true;
+            // console.log('this.attentypeflag===',this.attentypeflag)
+          }
+        }
       }
     }
     EmployeeData(){
