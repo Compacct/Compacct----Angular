@@ -71,7 +71,9 @@ export class K4cSwiggyZomatoFileUploadComponent implements OnInit {
  getTableData(allData:any){
   this.tableDataList = []
   this.tableDataListHeader = []
+  console.log("allData",allData)
   if(this.seleteChoose === 'Swiggy'){
+    
         this.tableDataList =cloneDeep(allData);
         this.tableDataListHeader = Object.keys(this.tableDataList[0])
         if(this.tableDataList[0][this.tableDataListHeader[1]] instanceof Date 
@@ -80,7 +82,8 @@ export class K4cSwiggyZomatoFileUploadComponent implements OnInit {
           && typeof this.tableDataList[0][this.tableDataListHeader[2]] == 'number' ){
 
             this.tableDataList.forEach((ele:any) => {
-              ele[this.tableDataListHeader[1]] = this.DateService.dateConvert(new Date(ele[this.tableDataListHeader[1]]))
+              const date = new Date(new Date(ele[this.tableDataListHeader[1]]).getTime() + 10 * 60000);
+              ele[this.tableDataListHeader[1]] = this.DateService.dateConvert(new Date(date))
             });
             console.log('tableDataList',this.tableDataList)
             this.loading = false
