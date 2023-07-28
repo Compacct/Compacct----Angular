@@ -32,8 +32,12 @@ export class EvaluateForTrainingComponent implements OnInit {
   trainerLists: any = [];
   TableArray: any = [];
   Remarks: string = "";
+  skill_Name: string = "";
   Created_by: number = 0;
+  skillSpinner: boolean = false;
+  addSkillFormSubmit: boolean = false;
   evalutationFormSubmitted: boolean = false;
+  DisplayAddSkillModel: boolean = false;
   objEvaluationForTraning = new EvaluationForTraning();
   constructor(
     private Header: CompacctHeader,
@@ -300,6 +304,54 @@ export class EvaluateForTrainingComponent implements OnInit {
     });
 
   }
+
+  openSkillModel() {
+    this.DisplayAddSkillModel = true;
+  }
+
+  addSkill(valid: any) {
+    this.addSkillFormSubmit = true;
+    if (valid) {
+      this.addSkillFormSubmit = false;
+      this.skillSpinner = true;
+      const obj = {
+        "SP_String": "SP_HR_Evaluate_For_Training",
+        "Report_Name_String": "Create_Skill",
+        "Json_Param_String": JSON.stringify([{"Skill_Name":this.skill_Name}])
+        }
+        this.GlobalAPI.postData(obj).subscribe((data:any) => {
+          console.log('add skill res', data);
+          this.skillSpinner = false;
+          if(data[0].Column1){
+            this.DisplayAddSkillModel = false;
+            this.getSkillList();
+            this.CompacctToast.clear();
+            this.CompacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: "Skill",
+              detail: "Succesfully Added"
+            });
+          }
+          else {
+            this.CompacctToast.clear();
+            this.CompacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Error",
+              detail: "Something Went Wrong"
+            });
+          }
+        });
+    }
+  }
+
+  closeSkillModel() {
+    this.DisplayAddSkillModel = false;
+    this.skill_Name = '';
+    this.addSkillFormSubmit = false;
+  }
+
   TabClick(e: any) {
     this.tabIndexToView = e.index;
     this.clearData();
