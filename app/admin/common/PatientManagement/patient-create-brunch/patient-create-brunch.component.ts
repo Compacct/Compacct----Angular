@@ -237,7 +237,7 @@ export class PatientCreateBrunchComponent implements OnInit {
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => { 
         //console.log('printdat ', data)
-        window.open(data[0].Column1, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500')
+        window.open(data[0].Column1 +print.Foot_Fall_ID, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500')
       })
   } 
   }

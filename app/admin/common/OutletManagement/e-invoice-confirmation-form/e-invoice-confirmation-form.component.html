@@ -450,6 +450,16 @@
                                                                 <i class="fa fa-fw fa-times"></i> Cancel
                                                             </a>
                                                         </li>
+                                                        <li >
+                                                            <a (click)="UpdateEbill(col)">
+                                                                <i class="fa fa-refresh"></i> Update E-Way Bill Manually
+                                                            </a>
+                                                        </li>
+                                                        <!-- <li >
+                                                            <a (click)="ChangeVehicle(col)">
+                                                                <i class="fa fa-truck"></i> Change Vehicle
+                                                            </a>
+                                                        </li> -->
                                                     </ul>
                                                 </div>
                                             </td>
@@ -1027,6 +1037,7 @@
         </div>
     </div>
 </div>
+
 <p-dialog header="" appendTo="body" [(visible)]="FailedInvDetailsModal" [modal]="true" [responsive]="true" [style]="{ width: '25%', minWidth: '200px' }" style="text-align: center;" [minY]="80" 
 [maximizable]="true" [baseZIndex]="10000">
 
@@ -1040,3 +1051,133 @@
 <p style="width: 160px;" >{{ShowJSON}}</p>
 
 </p-dialog>
+
+<p-dialog [header]="'E-way Bill Manually'" [appendTo]="'body'" [visible]="UpdateModel" [closeOnEscape]="true" [closable]="false"
+    [modal]="true" [responsive]="true" [style]="{ width: '35%', minWidth: '200px' }" 
+    [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+    <form name="UpdateForm" #UpdateForm="ngForm" novalidate>
+        <div class="col-sm-12">
+            <label class="control-label">E-Way Bill No<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" name="E_Way" #E_Way="ngModel" [(ngModel)]="Objupdatepop.E_Invoice_EwbNo"
+              (ngModelChange)='getQR(Objupdatepop.E_Invoice_EwbNo)' placeholder="Type E-Way Bill No" maxlength="12" minlength="12"
+                [ngClass]="{'clearance': (UpdateFormSubmitted && E_Way?.errors?.required)||( E_Way?.errors?.minlength) }" required>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">E-Way Bill Date<sup class="text-danger"></sup></label>
+        <ejs-datepicker [(value)]="EWay_Bill_Date" [format]="'dd/MMM/yyyy'"></ejs-datepicker>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Transport ID<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" name="Transport_ID" #Transport_ID="ngModel" [(ngModel)]="Objupdatepop.Transporter_ID"
+                placeholder="Type Transport ID" [ngClass]="{'clearance': UpdateFormSubmitted && Transport_ID?.errors?.required}" required>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Transport Name<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" name="Transport_Name" #Transport_Name="ngModel" [(ngModel)]="Objupdatepop.Transporter"
+                placeholder="Type Transport Name"[ngClass]="{'clearance': UpdateFormSubmitted && Transport_Name?.errors?.required}" required>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Trasporter Doc No<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" name="DOC" #DOC="ngModel" [(ngModel)]="Objupdatepop.Trasporter_Doc_No"
+                placeholder="Type Trasporter Doc No"[ngClass]="{'clearance': UpdateFormSubmitted && DOC?.errors?.required}" required>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Transport Doc Date<sup class="text-danger"></sup></label>
+        <ejs-datepicker [(value)]="Transport_Doc_Date" [format]="'dd/MMM/yyyy'"></ejs-datepicker>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Vehicle No<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" name="Vehicle_No" #Vehicle_No="ngModel" [(ngModel)]="Objupdatepop.Vehicle_No"
+                placeholder="Type Vehicle No"[ngClass]="{'clearance': UpdateFormSubmitted && Vehicle_No?.errors?.required}" required>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Distance<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" name="Distance" #Distance="ngModel" [(ngModel)]="Objupdatepop.Transportation_Distance"
+                placeholder="Type Distance"[ngClass]="{'clearance': UpdateFormSubmitted && Distance?.errors?.required}" required>
+        </div>
+    </form>
+    <p-footer>
+        <button type="button" (click)="UpdateModel= false" class="btn btn-info">
+            Close
+        </button>
+        <button type="button" (click)="UpdateEbiilPOP(UpdateForm.form.valid)" class="btn btn-primary">
+            <i class="fa fa-superpowers"></i> Update
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!-- <p-dialog [header]="'Change Vehicle '" [appendTo]="'body'" [visible]="VehicleModel" [closeOnEscape]="true" [closable]="false"
+    [modal]="true" [responsive]="true" [style]="{ width: '35%', minWidth: '200px' }" 
+    [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+    <form name="UpdateForm" #UpdateForm="ngForm" novalidate>
+        <div class="col-sm-12">
+            <label class="control-label">E-Way Bill No<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" name="E_Way" #E_Way="ngModel" [(ngModel)]="Objupdatepop.E_Invoice_EwbNo"
+                 placeholder="Type E-Way Bill No" maxlength="12"
+                minlength="12"
+                [ngClass]="{'clearance': (UpdateFormSubmitted && E_Way?.errors?.required)||( E_Way?.errors?.minlength) }"
+                required>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Vehicle No<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" name="Vehicle_No" #Vehicle_No="ngModel"
+                [(ngModel)]="Objupdatepop.Vehicle_No" placeholder="Type Vehicle No"
+                [ngClass]="{'clearance': UpdateFormSubmitted && Vehicle_No?.errors?.required}" required>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Place of Consignor<sup class="text-danger">*</sup></label>
+             <input type="text" class="form-control" name="Place_of" #Place_of="ngModel"
+                [(ngModel)]="Objupdatepop.Vehicle_No" placeholder="Type Vehicle No"
+                [ngClass]="{'clearance': UpdateFormSubmitted && Place_of?.errors?.required}" required>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">State of Consignor<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" name="State_of" #State_of="ngModel"
+                [(ngModel)]="Objupdatepop.Transporter_ID" placeholder="Type State of Consignor"
+                [ngClass]="{'clearance': UpdateFormSubmitted && State_of?.errors?.required}" required>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Reason Code for Vehicle Update<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" name="Reason_Code" #Reason_Code="ngModel"
+                [(ngModel)]="Objupdatepop.Transporter" placeholder="Reason Code for Vehicle Update"
+                [ngClass]="{'clearance': UpdateFormSubmitted && Reason_Code?.errors?.required}" required>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Reason For for Vehicle Update<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" name="Reason_For" #Reason_For="ngModel" [(ngModel)]="Objupdatepop.Trasporter_Doc_No"
+                placeholder="Reason For for Vehicle Update" [ngClass]="{'clearance': UpdateFormSubmitted && Reason_For?.errors?.required}"
+                required>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Transport Doc No<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" name="DOC1" #DOC1="ngModel" [(ngModel)]="Objupdatepop.Trasporter_Doc_No"
+                placeholder="Type Trasporter Doc No" [ngClass]="{'clearance': UpdateFormSubmitted && DOC1?.errors?.required}"
+                required>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Transport Doc Date<sup class="text-danger"></sup></label>
+            <ejs-datepicker [(value)]="Transport_Doc_Date" [format]="'dd/MMM/yyyy'"></ejs-datepicker>
+        </div>
+        
+        <div class="col-sm-12">
+            <label class="control-label">Mode of Transport <sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" name="Mode_of_Transport" #Mode_of_Transport="ngModel"
+                [(ngModel)]="Objupdatepop.Transportation_Distance" placeholder="Type Mode of Transport"
+                [ngClass]="{'clearance': UpdateFormSubmitted && Mode_of_Transport?.errors?.required}" required>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Data Sorce<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" name="Data_Sorce" #Data_Sorce="ngModel"
+                [(ngModel)]="Objupdatepop.Transportation_Distance" placeholder="Type Data Sorce"
+                [ngClass]="{'clearance': UpdateFormSubmitted && Data_Sorce?.errors?.required}" required>
+        </div>
+    </form>
+    <p-footer>
+        <button type="button" (click)="VehicleModel= false" class="btn btn-info">
+            Close
+        </button>
+        <button type="button" (click)="SaveEmail()" class="btn btn-primary">
+            <i class="fa fa-superpowers"></i> Update
+        </button>
+    </p-footer>
+</p-dialog> -->

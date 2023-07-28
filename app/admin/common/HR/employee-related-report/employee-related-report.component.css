@@ -58,3 +58,7 @@
     border: none !important;
     cursor: no-drop;
   }
+  
+  .custom-button1 {
+    margin-top: 26px;
+  }
