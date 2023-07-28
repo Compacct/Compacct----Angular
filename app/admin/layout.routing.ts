@@ -410,6 +410,7 @@ import { EvaluateForTrainingComponent } from './common/Attendance/evaluate-for-t
 import { SofthearAudiologistTargetComponent } from "./common/PatientManagement/Audiologist/softhear-audiologist-target/softhear-audiologist-target.component";
 import { SalarySlipComponent } from './common/HR/salary-slip/salary-slip.component';
 import { ApproveEvaluateForTraningComponent } from './common/Attendance/approve-evaluate-for-traning/approve-evaluate-for-traning.component';
+import { EmployeeRelatedReportComponent } from './common/HR/employee-related-report/employee-related-report.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3133,6 +3134,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: ApproveEvaluateForTraningComponent,
       data: {
         title: 'Approve Evaluate For Traning'
+      }
+    },
+    {
+      path: 'Employee_Related_Report',
+      component: EmployeeRelatedReportComponent,
+      data: {
+        title: 'Employee Related Report'
       }
     },
     /*{

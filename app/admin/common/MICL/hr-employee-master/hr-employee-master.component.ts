@@ -536,6 +536,7 @@ getEmployeeDetails(Emp_ID){
          this.objemployee.Is_Biometric = data[0].Is_Biometric == "Y"? true : false;
          this.objemployee.Late_Ded_Tag = data[0].Late_Ded_Tag == "Y"? true : false; 
          this.objemployee.Is_HOD = data[0].Is_HOD == "Y"? true : false;
+         this.objemployee.Is_Trainer = data[0].Is_Trainer == "Y"? true : false;
          this.Joining_Dt = new Date(data[0].Emp_Joining_Dt);
          this.Resign_On = new Date(data[0].Resign_On);
          this.Leave_Dt = new Date(data[0].Emp_Leave_Dt) ;
@@ -760,6 +761,7 @@ saveEmp(){
     this.objemployee.Late_Ded_Tag = this.objemployee.Late_Ded_Tag? 'Y' : 'N';
     this.objemployee.Is_Biometric = this.objemployee.Is_Biometric? 'Y' : 'N';
     this.objemployee.Is_HOD = this.objemployee.Is_HOD? 'Y' : 'N';
+    this.objemployee.Is_Trainer = this.objemployee.Is_Trainer ? 'Y' : 'N';
     this.objemployee.Login_User_ID = this.objemployee.Login_User_ID ? this.objemployee.Login_User_ID : 0;
     this.objemployee.Off_In_Time = this.objemployee.Off_In_Time ? this.DateService.dateTimeConvert(new Date(this.objemployee.Off_In_Time)) : undefined;
     this.objemployee.Off_Out_Time = this.objemployee.Off_Out_Time ? this.DateService.dateTimeConvert(new Date(this.objemployee.Off_Out_Time)) : undefined;
@@ -1702,6 +1704,7 @@ class Employee{
   Working_Hours_Mins : any;
   PTax_Avail : any;
   Is_HOD : any;
+  Is_Trainer : any;
   Emp_Leave_Dt : any;
   Resign_On : any;
   Emp_Joining_Dt : any;
