@@ -16,10 +16,10 @@ import { ActivatedRoute } from '@angular/router';
   encapsulation: ViewEncapsulation.None
 })
 export class ContractVoucherV2Component implements OnInit {
-items = [];
-menuList =[];
+items:any = [];
+menuList:any =[];
 tabIndexToView= 0;
-AllData =[];
+AllData:any =[];
 buttonname = "Create";
 initDateValid: any = [];
 ObjContract:Contract = new Contract();
@@ -27,7 +27,7 @@ ObjOther : Other = new Other();
 ObjBrowse : Browse = new Browse();
 ContractFormSubmitted = false;
 companyDataList:any =[];
-costCenterList =[];
+costCenterList:any =[];
 initDate:any = [];
 Searchedlist = [];
 BankData =[];
@@ -37,8 +37,8 @@ vouchermaxDate = new Date();
 voucherminDate = new Date();
 voucherdata = new Date();
 userType = "";
-LedgerList = [];
-ToLedgerList =[];
+LedgerList:any = [];
+ToLedgerList:any =[];
 VoucherTypeID = 0;
 LedgerId =0;
 datePickerdis = false;
@@ -100,8 +100,9 @@ clearData(){
     this.ObjContract = new Contract();
     this.ObjOther = new Other();
     this.ObjContract.Company_ID	= this.companyDataList[0].Company_ID;					
-    this.Voucher_Date = this.voucherdata;
-    this.initDate = [];
+    // this.Voucher_Date = this.voucherdata;
+    this.Voucher_Date = new Date();
+    // this.initDate = [];
     this.Cheque_Date = new Date(this.Cheque_Date.setDate(new Date().getDate()));
     this.companyData();
     this.costCenterData();
@@ -305,9 +306,25 @@ getBankTRNType(id:any){
      }
   }
 }
+GetSameCostCenANDledger() {
+  const sameCostCenWithSameLedger = this.lowerAddList.filter(item=> Number(item.Cost_Cen_ID) === Number(this.ObjOther.Cost_Cen_ID) && Number(item.Ledger_ID) === Number(this.ObjOther.Ledger_ID));
+  if(sameCostCenWithSameLedger.length) {
+    this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Same ledger with same costcenter can't be added."
+        });
+    return false;
+  }
+  else {
+    return true;
+  }
+}
 AddData(valid:any){
   this.ContractFormSubmittedAdd = true;
- if(valid){
+ if(valid && this.GetSameCostCenANDledger()){
   if( this.ObjOther.Cost_Cen_ID == this.ObjContract.Cost_Cen_ID && this.ObjOther.Ledger_ID == this.ObjContract.Ledger_ID){
    this.showTost = false
    this.compacctToast.clear();
@@ -331,6 +348,7 @@ AddData(valid:any){
     Ledger_Name : ledgerFilter.label,
     Cost_Cen_ID	:  Number(this.ObjOther.Cost_Cen_ID),
     Cost_Cen_Name : cosCenterFilter.Cost_Cen_Name,
+    Cost_Cen_ID_Trn : Number(this.ObjOther.Cost_Cen_ID),
     DR_Amt: Number(this.ObjOther.DR_Amt),
     Is_Topper:"N",
     Reminder_Req: this.ObjOther.Reminder_Req,
@@ -346,9 +364,9 @@ AddData(valid:any){
   this.lowerAddList.push(addTempObj);
   let backUPobj = {...this.ObjOther}
   this.ObjOther = new Other()
-  this.ObjOther.Cost_Cen_ID=  backUPobj.Cost_Cen_ID								
+  // this.ObjOther.Cost_Cen_ID=  backUPobj.Cost_Cen_ID								
   this.ContractFormSubmittedAdd = false
-  this.ObjOther.Cost_Cen_ID= this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+  this.ObjOther.Cost_Cen_ID= this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
   }
 
  }
@@ -371,7 +389,7 @@ saveData(valid){
   this.ContractFormSubmitted = true
   if(valid){
     if(Number(this.ObjContract.CR_Amt) === this.GetTotalDR()){
-       this.ObjContract.Voucher_Date = this.DateService.dateConvert(new Date(this.voucherdata));
+       this.ObjContract.Voucher_Date = this.DateService.dateConvert(new Date(this.Voucher_Date));
         this.ObjContract.Cheque_Date = this.DateService.dateConvert(new Date(this.Cheque_Date));
         this.ObjContract.Voucher_Type_ID = Number(this.VoucherTypeID);
         this.ObjContract.User_ID = Number(this.$CompacctAPI.CompacctCookies.User_ID);
@@ -382,7 +400,7 @@ saveData(valid){
         this.ObjContract.Sub_Ledger_ID = this.ObjContract.Sub_Ledger_ID;
         this.ObjContract.DR_Amt = this.ObjContract.DR_Amt;
         this.ObjContract.Cost_Head_ID = this.ObjContract.Cost_Head_ID;
-        this.ObjContract.Cost_Cen_ID_Trn = this.ObjContract.Cost_Cen_ID_Trn;
+        this.ObjContract.Cost_Cen_ID_Trn = this.ObjContract.Cost_Cen_ID;
         this.ObjContract.Project_ID = this.ObjContract.Project_ID;
         this.ObjContract.Posted_On = this.ObjContract.Posted_On;
       this.showTost = true
@@ -469,6 +487,7 @@ const obj = {
   // this.ObjOther =data[0];
   let data = JSON.parse(res[0].topper)
   console.log("data",data)
+  this.Voucher_Date = new Date(data[0].Voucher_Date);
   this.ObjContract = data[0]
   this.getBankTRTyp()
   this.ObjContract.Bank_Txn_Type = Number(data[0].Bank_Txn_Type)
@@ -573,6 +592,7 @@ class Contract{
 class Other{
   Ledger_ID:any;
   Cost_Cen_ID	:any;
+  Cost_Cen_ID_Trn :any;
   DR_Amt:any;
  
   Reminder_Req ="N";	
