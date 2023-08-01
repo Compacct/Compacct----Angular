@@ -135,6 +135,8 @@ export class OutwardChallanComponent implements OnInit {
   editDocNo: any;
   StateList2:any =[];
   godwnandbatchdisabled:boolean = false;
+  TCSTaxRequiredValidation = false;
+  TCSdataList:any = [];
   constructor(
     private Header: CompacctHeader,
     private router: Router,
@@ -191,9 +193,14 @@ export class OutwardChallanComponent implements OnInit {
     this.SalesOrderNoList = [];
     this.ObjPurChaseBill.Transporter_ID = undefined;
     this.editDocNo = undefined;
+    this.ObjPurChaseBill.TCS_Y_N = undefined;
+    this.ObjPurChaseBill.TCS_Persentage = 0;
+    this.ObjPurChaseBill.TCS_Amount = 0;
+    this.ObjPurChaseBill.TCS_Per = undefined;
   }
   clearData() { 
     this.PurchaseBillFormSubmitted = false;
+    this.TCSTaxRequiredValidation = false;
     this.TermFormSubmitted = false;
     this.ObjPurChaseBill.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;  
     this.DocDate = new Date();
@@ -424,11 +431,12 @@ export class OutwardChallanComponent implements OnInit {
     this.Tax_Category = undefined;
     this.ObjProductInfo.Qty = undefined;
     this.ObjProductInfo.Rate = undefined;
+    this.ObjProductInfo.Product_Specification = undefined;
     this.Godownlist = [];
-    if (this.ObjProductInfo.Product_Specification && this.ObjProductInfo.Cost_Cen_ID) {
+    if (this.ObjProductInfo.Product_ID && this.ObjProductInfo.Cost_Cen_ID) {
       const TempObj = {
         Cost_Cen_ID: this.ObjProductInfo.Cost_Cen_ID,
-        Product_ID: this.ObjProductInfo.Product_Specification
+        Product_ID: this.ObjProductInfo.Product_ID
       }
       const obj = {
         "SP_String": "SP_MICL_Sale_Bill",
@@ -517,6 +525,7 @@ export class OutwardChallanComponent implements OnInit {
   ChangeProdoctTyp() {
     this.ProductSub = [];
     this.ObjProductInfo.Product_Sub_Type_ID = undefined;
+    this.ObjProductInfo.Product_ID = undefined;
     this.ObjProductInfo.Product_Specification = undefined;
     this.ObjProductInfo.Qty = undefined;
     this.ObjProductInfo.Rate = undefined;
@@ -566,6 +575,7 @@ export class OutwardChallanComponent implements OnInit {
   }
   ProductDetal() {
     this.ProductDetalist = [];
+    this.ObjProductInfo.Product_ID = undefined;
     this.ObjProductInfo.Product_Specification = undefined;
     this.UomList = '';
     this.ObjProductInfo.Batch_Number = undefined;
@@ -621,6 +631,7 @@ export class OutwardChallanComponent implements OnInit {
   }
   ProductDetalforOrder() {
     this.ProductDetalist = [];
+    this.ObjProductInfo.Product_ID = undefined;
     this.ObjProductInfo.Product_Specification = undefined;
     this.UomList = '';
     this.ObjProductInfo.Batch_Number = undefined;
@@ -662,15 +673,15 @@ export class OutwardChallanComponent implements OnInit {
   
   }
   GetLot() {
-    // if (this.ObjProductInfo.Product_Specification) {
+    // if (this.ObjProductInfo.Product_ID) {
     //  this.getUom(); 
     // }
     this.LotNolist = []
     this.ObjProductInfo.Batch_Number = undefined;
-    if (this.ObjProductInfo.Cost_Cen_ID && this.ObjProductInfo.Product_Specification && this.ObjProductInfo.godown_id) {
+    if (this.ObjProductInfo.Cost_Cen_ID && this.ObjProductInfo.Product_ID && this.ObjProductInfo.godown_id) {
       const TempObj = {
         Cost_Cen_ID: this.ObjProductInfo.Cost_Cen_ID,
-        Product_ID: this.ObjProductInfo.Product_Specification,
+        Product_ID: this.ObjProductInfo.Product_ID,
         Godown_ID: this.ObjProductInfo.godown_id,
       }
       const obj = {
@@ -688,8 +699,9 @@ export class OutwardChallanComponent implements OnInit {
   getUom() {
     this.UomList = '';
     this.Tax_Category = undefined;
-    if (this.ObjProductInfo.Product_Specification) {
-      const TempArry: any = this.ProductDetalist.filter((el: any) => Number(el.value) === Number(this.ObjProductInfo.Product_Specification))
+    this.ObjProductInfo.Product_Specification = undefined;
+    if (this.ObjProductInfo.Product_ID) {
+      const TempArry: any = this.ProductDetalist.filter((el: any) => Number(el.value) === Number(this.ObjProductInfo.Product_ID))
       this.UomList = TempArry[0].UOM;
       this.Tax_Category = TempArry.length ? TempArry[0].Cat_ID : undefined;
       if(this.godwnandbatchdisabled) {
@@ -698,6 +710,7 @@ export class OutwardChallanComponent implements OnInit {
         this.ObjProductInfo.Qty = this.ObjProductInfo.Sale_Order_No ? TempArry.length ? TempArry[0].Qty : undefined : undefined;
       }
       this.ObjProductInfo.Rate = this.ObjProductInfo.Sale_Order_No ? TempArry.length ? TempArry[0].Rate : undefined : undefined;
+      this.ObjProductInfo.Product_Specification = TempArry.length ? TempArry[0].label : undefined;
       this.GetTaxAmt();
     }
   }
@@ -710,7 +723,7 @@ export class OutwardChallanComponent implements OnInit {
     }
   }
   checksamebatch () {
-    const sameproductwithsameorderno = this.AddProdList.filter(item=> item.Sale_Order_No === this.ObjProductInfo.Sale_Order_No && item.Batch_No === this.ObjProductInfo.Batch_Number && item.Product_ID === this.ObjProductInfo.Product_Specification );
+    const sameproductwithsameorderno = this.AddProdList.filter(item=> item.Sale_Order_No === this.ObjProductInfo.Sale_Order_No && item.Batch_No === this.ObjProductInfo.Batch_Number && item.Product_ID === this.ObjProductInfo.Product_ID );
     if(sameproductwithsameorderno.length) {
       this.compacctToast.clear();
           this.compacctToast.add({
@@ -727,7 +740,7 @@ export class OutwardChallanComponent implements OnInit {
   }
   checksamebatchandpro () {
     if(!this.ObjProductInfo.Sale_Order_No) {
-    const SameProductbach = this.AddProdList.filter(item=> Number(item.Product_ID) === Number(this.ObjProductInfo.Product_Specification) );
+    const SameProductbach = this.AddProdList.filter(item=> Number(item.Product_ID) === Number(this.ObjProductInfo.Product_ID) );
     if(SameProductbach.length) {
       this.compacctToast.clear();
           this.compacctToast.add({
@@ -778,7 +791,7 @@ export class OutwardChallanComponent implements OnInit {
       // this.BatchQtyCheck = LotNoArry.length ? LotNoArry[0].Batch_Qty : "NA";
       // if(this.BatchQtyCheck >= this.ObjProductInfo.Qty) {
         const CostMatch: any = this.CenterList.filter((el: any) => Number(el.Cost_Cen_ID) === Number(this.ObjProductInfo.Cost_Cen_ID));
-      const ProductDArry: any = this.ProductDetalist.filter((el: any) => Number(el.value) === Number(this.ObjProductInfo.Product_Specification));
+      const ProductDArry: any = this.ProductDetalist.filter((el: any) => Number(el.value) === Number(this.ObjProductInfo.Product_ID));
       const TaxCatArry: any = this.TaxCategoryList.filter((el: any) => Number(el.Cat_ID) === Number(this.Tax_Category));
       this.ObjProductInfo.Cost_Cen_State = CostMatch[0].Cost_Cen_State;
       // this.ObjProductInfo.CGST_Rate = ProductDArry[0].CGST_Rate;
@@ -823,13 +836,14 @@ export class OutwardChallanComponent implements OnInit {
         Cost_Cen_Name: CostMatch.length ? CostMatch[0].Cost_Cen_Name : undefined,
         godown_name: GdwonArry.length ? GdwonArry[0].godown_name : "NA",
         godown_id: this.ObjProductInfo.godown_id ? this.ObjProductInfo.godown_id : 0,
-        Product_ID :this.ObjProductInfo.Product_Specification,
+        Product_ID :this.ObjProductInfo.Product_ID,
         Product_Type_ID: this.ObjProductInfo.Product_Type_ID,
         Product_Type: ProductArry.length ? ProductArry[0].Product_Type : undefined,
         HSN_No : ProductDArry.length ? ProductDArry[0].HSN_No : undefined,
         Product_Sub_Type_ID: this.ObjProductInfo.Product_Sub_Type_ID,
         Product_Sub_Type: ProductSubArry.length ? ProductSubArry[0].Product_Sub_Type : undefined,
-        Product_Specification: ProductDArry.length ? ProductDArry[0].label : undefined,
+        Product_Name: ProductDArry.length ? ProductDArry[0].label : undefined,
+        Product_Specification: this.ObjProductInfo.Product_Specification,
         Batch_No : this.ObjProductInfo.Batch_Number ? this.ObjProductInfo.Batch_Number : "NA",
         Batch_No_Show: LotNoArry.length ? LotNoArry[0].Batch_No_Show : undefined,
         Qty: this.ObjProductInfo.Qty,
@@ -847,6 +861,7 @@ export class OutwardChallanComponent implements OnInit {
       };
       this.AddProdList.push(TemopArry)
       this.TotalCalculation();
+      this.TcsAmtCalculation();
       console.log("this.AddProdList", this.AddProdList)
       this.TermFormSubmitted = false;
       this.ObjProductInfo.Sale_Order_No = undefined;
@@ -855,12 +870,16 @@ export class OutwardChallanComponent implements OnInit {
       this.ProductSub = [];
       this.ProductDetalist = [];
       this.LotNolist = [];
+      this.ObjProductInfo.Product_ID = undefined;
       this.ObjProductInfo.Product_Specification = undefined;
       this.ObjProductInfo.Qty = undefined;
       this.UomList = '';
       this.ObjProductInfo.Rate = undefined;
       this.ObjProductInfo.Taxable_Amount = undefined;
       this.Tax_Category = undefined;
+      if(!this.AddProdList.length){
+        this.ObjPurChaseBill.TCS_Y_N = undefined;
+      }
       // }
       // else {
       //    this.compacctToast.clear();
@@ -875,6 +894,10 @@ export class OutwardChallanComponent implements OnInit {
   Deteteaddlist(index){
     this.AddProdList.splice(index,1);
     this.TotalCalculation();
+    this.TcsAmtCalculation();
+    if(!this.AddProdList.length){
+      this.ObjPurChaseBill.TCS_Y_N = undefined;
+    }
   }
   TotalCalculation() {
     this.Tax = undefined;
@@ -901,8 +924,56 @@ export class OutwardChallanComponent implements OnInit {
     this.SGST = count3.toFixed(2);
     this.IGST = count4.toFixed(2);
     this.Total_Amount = count5.toFixed(2);
-    this.Rounded_Off = Number(Math.round(Number(this.Total_Amount)) - Number(this.Total_Amount)).toFixed(2);
+    // this.Rounded_Off = Number(Math.round(Number(this.Total_Amount)) - Number(this.Total_Amount)).toFixed(2);
+    this.getRoundedOff();
     this.NetAMT = this.RoundOff(this.Total_Amount);
+  }
+  getRoundedOff(){
+    this.Rounded_Off = Number(Math.round(Number(this.Total_Amount) + Number(this.ObjPurChaseBill.TCS_Amount)) - (Number(this.Total_Amount) + Number(this.ObjPurChaseBill.TCS_Amount))).toFixed(2);
+  }
+  GetTCSdat(){
+    if (this.ObjPurChaseBill.TCS_Y_N === 'YES') {
+    this.ngxService.start();
+    const obj = {
+      "SP_String": "SP_MICL_Sale_Bill",
+      "Report_Name_String": "Get_Tcs_Percentage_And_Ledger",
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log(data)
+    this.TCSdataList = data;
+    this.ngxService.stop();
+  }); 
+    }  
+    else {
+      this.ObjPurChaseBill.TCS_Ledger_ID = 0;
+      this.ObjPurChaseBill.TCS_Persentage = 0;
+      this.ObjPurChaseBill.TCS_Amount = 0;
+      this.ObjPurChaseBill.TCS_Per = undefined;
+      // this.objaddPurchacse.Grand_Total = this.objaddPurchacse.Net_Amt;
+      this.getRoundedOff();
+      // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+  }
+  }
+  TcsAmtCalculation(){
+    if (this.ObjPurChaseBill.TCS_Per) {
+        // this.ngxService.start();
+        var tcspercentage = this.TCSdataList.filter(el=> Number(el.TCS_Persentage) === Number(this.ObjPurChaseBill.TCS_Per))
+          this.ObjPurChaseBill.TCS_Ledger_ID = tcspercentage[0].TCS_Ledger_ID;
+          this.ObjPurChaseBill.TCS_Persentage = tcspercentage[0].TCS_Persentage;
+          var netamount = (Number(this.Total_Amount)).toFixed(2);
+          var TCS_Amount = (Number(Number(netamount) * this.ObjPurChaseBill.TCS_Persentage) / 100).toFixed(2);
+          this.ObjPurChaseBill.TCS_Amount = Number(TCS_Amount);
+          this.getRoundedOff();
+          this.NetAMT = this.RoundOff(Number(this.Total_Amount) + Number(this.ObjPurChaseBill.TCS_Amount));
+          this.ngxService.stop();  
+    }
+      else {
+        this.ObjPurChaseBill.TCS_Ledger_ID = 0;
+        this.ObjPurChaseBill.TCS_Persentage = 0;
+        this.ObjPurChaseBill.TCS_Amount = 0;
+        this.getRoundedOff();
+        this.NetAMT = this.RoundOff(Number(this.Total_Amount) + Number(this.ObjPurChaseBill.TCS_Amount));
+    }
   }
   RoundOff(key:any){
     return Math.round(Number(Number(key).toFixed(2)))
@@ -910,6 +981,7 @@ export class OutwardChallanComponent implements OnInit {
   SaveOutward(valid: any){
     this.SaveLowerData = [];
     this.PurchaseBillFormSubmitted = true;
+    this.TCSTaxRequiredValidation = true;
     if (valid && this.AddProdList.length) {
       this.compacctToast.clear();
      this.compacctToast.add({
@@ -928,7 +1000,8 @@ export class OutwardChallanComponent implements OnInit {
       this.AddProdList.forEach(element => {
         this.SaveLowerData.push({
           Product_ID: element.Product_ID,
-          Product_Name: element.Product_Specification,
+          Product_Name: element.Product_Name,
+          Product_Specification: element.Product_Specification,
           godown_id: element.godown_id,
           Product_Type_ID: element.Product_Type_ID,
           Product_Type: element.Product_Type,
@@ -1002,6 +1075,10 @@ export class OutwardChallanComponent implements OnInit {
         Transporter: this.ObjPurChaseBill.Transporter,
         LR_No: this.ObjPurChaseBill.LR_No,
         LR_Date: this.DateService.dateConvert(this.SupplierBillDate),
+        TCS_Y_N: this.ObjPurChaseBill.TCS_Y_N,
+        TCS_Per: Number(this.ObjPurChaseBill.TCS_Per),
+        TCS_Amount: Number(this.ObjPurChaseBill.TCS_Amount).toFixed(2),
+        TCS_Ledger_ID: Number(this.ObjPurChaseBill.TCS_Ledger_ID),
         L_element: this.SaveLowerData
       }
       const obj = {
@@ -1037,7 +1114,12 @@ export class OutwardChallanComponent implements OnInit {
       // this.Choose_Address = undefined;
       this.DocDate = new Date();
       this.SupplierBillDate = new Date();
-      this.PurchaseBillFormSubmitted = false
+      this.PurchaseBillFormSubmitted = false;
+      this.TCSTaxRequiredValidation = false;
+      this.ObjPurChaseBill.TCS_Y_N = undefined;
+      this.ObjPurChaseBill.TCS_Persentage = 0;
+      this.ObjPurChaseBill.TCS_Amount = 0;
+      this.ObjPurChaseBill.TCS_Per = undefined;
       if(this.buttonname === "Update"){
         this.tabIndexToView = 0;
         this.items = ["BROWSE", "CREATE", "PENDING SALES ORDER"];
@@ -1098,6 +1180,9 @@ export class OutwardChallanComponent implements OnInit {
       this.editlist = data;
       console.log("Edit data",data);
       this.ObjPurChaseBill = data[0];
+      this.GetTCSdat();
+      this.ObjPurChaseBill.TCS_Per = data[0].TCS_Per;
+      this.ObjPurChaseBill.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
       this.ObjPurChaseBill.Sub_Ledger_ID = data[0].Sub_Ledger_ID;
       this.GetChooseAddress();
       this.GetSaleOrderNo();
@@ -1112,7 +1197,8 @@ export class OutwardChallanComponent implements OnInit {
       data.forEach(element => {
         const  productObj = {
             Product_ID: Number(element.Product_ID),
-            Product_Specification: element.Product_Name,
+            Product_Name: element.Product_Name,
+            Product_Specification: element.Product_Specification,
             godown_id: Number(element.godown_id),
             godown_name: element.godown_name,
             Cost_Cen_Name: "Finish Product",
@@ -1120,7 +1206,7 @@ export class OutwardChallanComponent implements OnInit {
             Product_Type: element.Product_Type,
             Product_Sub_Type_ID: element.Product_Sub_Type_ID,
             Product_Sub_Type: element.Product_Sub_Type,
-            HSL_No: element.HSL_No,
+            HSN_No: element.HSL_No,
             Batch_No: element.Batch_Number,
             UOM: element.UOM,
             Qty: Number(element.Qty),
@@ -1141,6 +1227,7 @@ export class OutwardChallanComponent implements OnInit {
     
           this.AddProdList.push(productObj);
           this.TotalCalculation();
+          this.NetAMT = this.RoundOff(Number(this.Total_Amount) + Number(this.ObjPurChaseBill.TCS_Amount));
         });
     })
   }
@@ -1323,6 +1410,12 @@ class PurChaseBill {
   Rounded_Off : number;
   User_ID : number;
   Fin_Year_ID : number;
+
+  TCS_Ledger_ID:any;
+  TCS_Y_N : any;
+  TCS_Persentage : any;
+  TCS_Amount : number = 0;
+  TCS_Per : any;
  }
  class BrowsePurBill {
   start_date : Date;

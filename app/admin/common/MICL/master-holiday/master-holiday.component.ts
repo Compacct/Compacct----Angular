@@ -37,6 +37,12 @@ export class MasterHolidayComponent implements OnInit {
   frequency : any = 0;
   BrowseFormSubmitted:boolean = false;
   SelectedLocation:any = [];
+  BackupBrowselist:any = [];
+  DistLocation:any = [];
+  SelectedDistLocation:any = [];
+  DistPurpose:any = [];
+  SelectedDistPurpose:any = [];
+  SearchFields:any = [];
   
 
   constructor(
@@ -115,6 +121,8 @@ export class MasterHolidayComponent implements OnInit {
   }
 
   GetBrowseList(valid){
+    this.Browselist = [];
+    this.BackupBrowselist = [];
     this.seachSpinner = true;
     this.BrowseFormSubmitted = true;
     if(valid) {
@@ -128,6 +136,8 @@ export class MasterHolidayComponent implements OnInit {
     }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.Browselist = data;
+       this.BackupBrowselist = data;
+       this.GetDistinct();
        this.seachSpinner = false;
        this.BrowseFormSubmitted = false;
        
@@ -157,7 +167,51 @@ export class MasterHolidayComponent implements OnInit {
         XLSX.writeFile(workbook, fileName+'.xlsx');
         }
       })
+  }
+  // DISTINCT & FILTER
+  GetDistinct() {
+    let DLocation:any = [];
+    let DPurpose:any = [];
+    this.DistLocation =[];
+    this.SelectedDistLocation =[];
+    this.DistPurpose =[];
+    this.SelectedDistPurpose =[];
+    this.SearchFields =[];
+    this.Browselist.forEach((item) => {
+   if (DLocation.indexOf(item.Location) === -1) {
+    DLocation.push(item.Location);
+   this.DistLocation.push({ label: item.Location, value: item.Location });
+   }
+  if (DPurpose.indexOf(item.Purpose) === -1) {
+    DPurpose.push(item.Purpose);
+    this.DistPurpose.push({ label: item.Purpose, value: item.Purpose });
     }
+  });
+     this.BackupBrowselist = [...this.Browselist];
+  }
+  FilterDist() {
+    let DLocation:any = [];
+    let DPurpose:any = [];
+    this.SearchFields =[];
+  if (this.SelectedDistLocation.length) {
+    this.SearchFields.push('Location');
+    DLocation = this.SelectedDistLocation;
+  }
+  if (this.SelectedDistPurpose.length) {
+    this.SearchFields.push('Purpose');
+    DPurpose = this.SelectedDistPurpose;
+  }
+  this.Browselist = [];
+  if (this.SearchFields.length) {
+    let LeadArr = this.BackupBrowselist.filter(function (e) {
+      return (DLocation.length ? DLocation.includes(e['Location']) : true)
+      && (DPurpose.length ? DPurpose.includes(e['Purpose']) : true)
+    });
+  this.Browselist = LeadArr.length ? LeadArr : [];
+  } else {
+  this.Browselist = [...this.BackupBrowselist] ;
+  }
+  }
 
   AddMasterHoliday(valid:any){
     this.HolidayFormSubmitted = true;

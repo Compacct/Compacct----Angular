@@ -1,172 +1,220 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
-<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
-	<ng-template let-message pTemplate="message">
-		<div style="text-align: center">
-			<i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
-			<h3>{{ message.summary }}</h3>
-			<p>{{ message.detail }}</p>
-		</div>
-		<div class="ui-g ui-fluid">
-			<div class="ui-g-6">
-				<button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
-			</div>
-			<div class="ui-g-6">
-				<button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
-			</div>
-		</div>
-	</ng-template>
-</p-toast>
 <div class="row">
 	<div class="col-xs-12">
 		<div class="box box-primary">
 			<div class="form-horizontal">
 				<div class="box-body">
 					<p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
-						<p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[0]" leftIcon="glyphicon glyphicon-list-alt"> </p-tabPanel>
-						<p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+						<p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[0]"
+							leftIcon="glyphicon glyphicon-list-alt">
+							<div class="row">
+								<div class="col-sm-4">
+									<app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)"
+										[HardCodeDateOpt]="initDate"></app-compacct-daterangepicker>
+								</div>
+								<div class="col-sm-4">
+									<button class="btn btn-primary" (click)="getBrowseData()" id="load">
+										<p-progressSpinner *ngIf="searchSpinner"
+											[style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+											animationDuration=".5s"></p-progressSpinner>
+										<span *ngIf="!searchSpinner" class="glyphicon glyphicon-search"></span>Search
+									</button>
+								</div>
+							</div>
+							<br />
+							<p-table *ngIf="tableHeader.length" [value]="tableData" [paginator]="true" [rows]="10"
+								[rowHover]="true" [autoLayout]="true" sortMode="multiple"
+								[rowsPerPageOptions]="[10, 20, 50, 100, 200, 300]" [globalFilterFields]="tableHeader"
+								[rowHover]="true" #dt1>
+								<ng-template pTemplate="caption">
+									<div class="row">
+										<div class="col-sm-3 pull-right" style="text-align: right">
+											<input type="text" pInputText size="50" placeholder="Search"
+												(input)="dt1.filterGlobal($event.target.value, 'contains')"
+												class="searchInput form-control" />
+										</div>
+									</div>
+								</ng-template>
+								<ng-template pTemplate="header">
+									<tr>
+										<th style="width: 5em">Action</th>
+										<th style="text-align: center" nowrap *ngFor="let Header of tableHeader">
+											{{ Header.replaceAll("_", " ") }}
+										</th>
+									</tr>
+								</ng-template>
+								<ng-template pTemplate="body" let-col>
+									<tr>
+										<td>
+											<div class="dropdown">
+												<button class="btn btn-default btn-sm tableButton dropdown-toggle"
+													type="button" data-toggle="dropdown" style="height: 27px">
+													<i class="fa fa-fw fa-bars"></i>
+													<span class="caret"></span>
+												</button>
+												<ul class="dropdown-menu">
+													<li>
+														<a (click)="Edit(col)"> <i class="fa fa-fw fa-edit"></i> Edit
+														</a>
+													</li>
+												</ul>
+											</div>
+										</td>
+										<td style="text-align: center" nowrap *ngFor="let item of tableHeader">
+											{{ col[item] ? col[item] : "-" }}
+										</td>
+									</tr>
+								</ng-template>
+								<ng-template pTemplate="paginatorright" let-state>
+									Showing {{ state.first + 1 }} of {{ state.first + state.rows }} of {{
+									state.totalRecords }}
+								</ng-template>
+							</p-table>
+						</p-tabPanel>
+						<p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[1]"
+							leftIcon="glyphicon glyphicon-floppy-save">
 							<form name="Evaluation_Form" #Evaluation_Form="ngForm">
 								<div class="form-group">
 									<div class="col-sm-4">
-										<label class="control-label">Evaluattion Date<sup class="text-danger">*</sup></label>
-										<ejs-datepicker
-											[format]="'dd/MMM/yyyy'"
-											[(value)]="evaluattion_Date"
-											[(ngModel)]="evaluattion_Date"
-											name="evaluattionDate"
-											#evaluattionDate="ngModel"
-											required
+										<label class="control-label">Evaluattion Date<sup
+												class="text-danger">*</sup></label>
+										<ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="evaluattion_Date"
+											[(ngModel)]="evaluattion_Date" name="evaluattionDate"
+											[enabled]="!TableArray.length" #evaluattionDate="ngModel" required
 											[cssClass]="evalutationFormSubmitted && evaluattionDate.errors?.required ? 'clearance' : ''">
 										</ejs-datepicker>
 									</div>
 									<div class="col-sm-4">
 										<label class="control-label">Department<sup class="text-danger">*</sup></label>
-										<p-dropdown
-											[options]="departmentList"
-											name="department_List"
-											#department_List="ngModel"
-											[(ngModel)]="objEvaluationForTraning.Dept_ID"
-											[showClear]="true"
-											[emptyFilterMessage]="'No Department Found'"
-											[filter]="true"
-											filterBy="label,value"
-											[resetFilterOnHide]="true"
-											[placeholder]="'Select Department'"
-											[virtualScroll]="true"
-											itemSize="30"
+										<p-dropdown [options]="departmentList" name="department_List"
+											#department_List="ngModel" [(ngModel)]="objEvaluationForTraning.Dept_ID"
+											[showClear]="true" [emptyFilterMessage]="'No Department Found'"
+											[filter]="true" filterBy="label,value" [resetFilterOnHide]="true"
+											[placeholder]="'Select Department'" [virtualScroll]="true" itemSize="30"
+											[disabled]="TableArray.length"
+											(onChange)="getEmployeeList(objEvaluationForTraning.Dept_ID)"
 											[styleClass]="evalutationFormSubmitted && department_List.errors?.required ? 'clearance' : ''"
 											[required]="true">
 										</p-dropdown>
 									</div>
 									<div class="col-sm-4">
-										<label class="control-label">Employee<sup class="text-danger">*</sup></label>
-										<p-dropdown
-											[options]="employeeList"
-											name="employee_List"
-											#employee_List="ngModel"
-											[(ngModel)]="objEvaluationForTraning.Emp_ID"
-											[showClear]="true"
-											[emptyFilterMessage]="'No Employee Found'"
-											[filter]="true"
-											filterBy="label,value"
-											[resetFilterOnHide]="true"
-											[placeholder]="'Select Employee'"
-											[virtualScroll]="true"
-											itemSize="30"
-											[styleClass]="evalutationFormSubmitted && employee_List.errors?.required ? 'clearance' : ''"
+										<label class="control-label">Trainer<sup class="text-danger">*</sup></label>
+										<p-dropdown [options]="trainerLists" name="trainer_List" #trainer_List="ngModel"
+											[(ngModel)]="objEvaluationForTraning.Trainer_ID" [showClear]="true"
+											[emptyFilterMessage]="'No Trainer Found'" [filter]="true"
+											filterBy="label,value" [resetFilterOnHide]="true"
+											[placeholder]="'Select Trainer'" [virtualScroll]="true" itemSize="30"
+											[styleClass]="evalutationFormSubmitted && trainer_List.errors?.required ? 'clearance' : ''"
 											[required]="true">
 										</p-dropdown>
 									</div>
 								</div>
 								<div class="form-group">
 									<div class="col-sm-4">
+										<label class="control-label">Attandees<sup class="text-danger">*</sup></label>
+										<p-dropdown [options]="employeeList" name="employee_List"
+											#employee_List="ngModel" [(ngModel)]="objEvaluationForTraning.Emp_ID"
+											[showClear]="true" [emptyFilterMessage]="'No Attandees Found'"
+											[filter]="true" filterBy="label,value" [resetFilterOnHide]="true"
+											[placeholder]="'Select Attandees'" [virtualScroll]="true" itemSize="30"
+											(onChange)="changeEmployee(objEvaluationForTraning.Emp_ID)"
+											[styleClass]="evalutationFormSubmitted && employee_List.errors?.required ? 'clearance' : ''"
+											[required]="true">
+										</p-dropdown>
+									</div>
+									<div class="col-sm-4">
 										<label class="control-label">Skill<sup class="text-danger">*</sup></label>
-										<p-dropdown
-											[options]="skillList"
-											name="skill_List"
-											#skill_List="ngModel"
-											[(ngModel)]="objEvaluationForTraning.Skill_ID"
-											[showClear]="true"
-											[emptyFilterMessage]="'No Skill Found'"
-											[filter]="true"
-											filterBy="label,value"
-											[resetFilterOnHide]="true"
-											[placeholder]="'Select Skill'"
-											[virtualScroll]="true"
-											itemSize="30"
+										<div class="pull-right">
+                                            <span (click)="openSkillModel()" class="label label-primary" style="cursor: pointer; display: inline-block; padding: 6px;"><i class="fa fa-fw fa-plus"></i> Add Skill</span>
+                                        </div>
+										<p-dropdown [options]="skillList" name="skill_List" #skill_List="ngModel"
+											[(ngModel)]="objEvaluationForTraning.Skill_ID" [showClear]="true"
+											[emptyFilterMessage]="'No Skill Found'" [filter]="true"
+											filterBy="label,value" [resetFilterOnHide]="true"
+											[placeholder]="'Select Skill'" [virtualScroll]="true" itemSize="30"
 											[styleClass]="evalutationFormSubmitted && skill_List.errors?.required ? 'clearance' : ''"
 											[required]="true">
 										</p-dropdown>
 									</div>
 									<div class="col-sm-4">
 										<label class="control-label">Grade<sup class="text-danger">*</sup></label>
-										<p-dropdown
-											[options]="gradeList"
-											name="grade_List"
-											#grade_List="ngModel"
-											[(ngModel)]="objEvaluationForTraning.Grade_ID"
-											[showClear]="true"
-											[emptyFilterMessage]="'No Grade Found'"
-											[filter]="true"
-											filterBy="label,value"
-											[resetFilterOnHide]="true"
-											[placeholder]="'Select Grade'"
-											[virtualScroll]="true"
-											itemSize="30"
+										<p-dropdown [options]="gradeList" name="grade_List" #grade_List="ngModel"
+											[(ngModel)]="objEvaluationForTraning.Grade_ID" [showClear]="true"
+											[emptyFilterMessage]="'No Grade Found'" [filter]="true"
+											filterBy="label,value" [resetFilterOnHide]="true"
+											[placeholder]="'Select Grade'" [virtualScroll]="true" itemSize="30"
 											[styleClass]="evalutationFormSubmitted && grade_List.errors?.required ? 'clearance' : ''"
 											[required]="true">
 										</p-dropdown>
 									</div>
+								</div>
+								<div class="form-group">
 									<div class="col-sm-4">
-										<button class="btn btn-primary pull-right custombtn" (click)="addEvaluation(Evaluation_Form.form.valid)" id="load">
-											<span class="glyphicon glyphicon-plus"></span>Add
-										</button>
+										<label class="control-label">Date Of Joining<sup
+												class="text-danger">*</sup></label>
+										<div class="label-t">{{ objEvaluationForTraning.Date_of_Joining | date :
+											"dd/MMM/yyyy" }}</div>
+									</div>
+									<div class="col-sm-4">
+										<label class="control-label">Present Status<sup
+												class="text-danger">*</sup></label>
+										<div class="label-t">{{ objEvaluationForTraning.Present_Status }}</div>
 									</div>
 								</div>
+								<div class="form-group">
+									<button class="btn btn-primary pull-right custombtn"
+										(click)="addEvaluation(Evaluation_Form.form.valid)" id="load">
+										<span class="glyphicon glyphicon-plus"></span>Add
+									</button>
+								</div>
 							</form>
-                            <br>
-							<p-table
-								[value]="TableArray"
-								[paginator]="true"
-								[rows]="10"
-								[rowHover]="true"
-								[autoLayout]="true"
-								sortMode="multiple"
-								[rowHover]="true"
-								#dt>
+							<br />
+							<p-table [value]="TableArray" [paginator]="true" [rows]="10" [rowHover]="true"
+								[autoLayout]="true" sortMode="multiple" [rowHover]="true" #dt>
 								<ng-template pTemplate="header">
 									<tr>
 										<th style="text-align: center" nowrap>Department</th>
 										<th style="text-align: center" nowrap>Employee</th>
 										<th style="text-align: center" nowrap>Skill</th>
 										<th style="text-align: center" nowrap>Grade</th>
-										<th style="text-align: center" nowrap>Delete</th>
+										<th style="text-align: center" nowrap>Trainer</th>
+										<th style="text-align: center; width: 5rem" nowrap>Delete</th>
 									</tr>
 								</ng-template>
-								<ng-template pTemplate="body" let-col>
+								<ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
 									<tr>
-										<td style="text-align: center" nowrap>{{ col.Dept_Name ? col.Dept_Name : "-" }}</td>
-										<td style="text-align: center" nowrap>{{ col.Emp_Name ? col.Emp_Name : "-" }}</td>
-										<td style="text-align: center" nowrap>{{ col.Skill_Name ? col.Skill_Name : "-" }}</td>
+										<td style="text-align: center" nowrap>{{ col.Dept_Name ? col.Dept_Name : "-" }}
+										</td>
+										<td style="text-align: center" nowrap>{{ col.Emp_Name ? col.Emp_Name : "-" }}
+										</td>
+										<td style="text-align: center" nowrap>{{ col.Skill_Name ? col.Skill_Name : "-"
+											}}</td>
 										<td style="text-align: center" nowrap>{{ col.Grade ? col.Grade : "-" }}</td>
-										<td style="text-align: center" nowrap><button type="button" class="btn btn-outline-danger btn-danger" (click)="deleteEvaluation()"><span class="glyphicon glyphicon-trash"></span></button></td>
+										<td style="text-align: center" nowrap>{{ col.Trainer_Name ? col.Trainer_Name :
+											"-" }}</td>
+										<td style="text-align: center" nowrap>
+											<button type="button" class="btn btn-sm btn-danger"
+												(click)="deleteEvaluation(rowIndex)">
+												<span class="glyphicon glyphicon-trash"></span>
+											</button>
+										</td>
 									</tr>
 								</ng-template>
 							</p-table>
-                            <div class="form-group">
-                                <div class="col-sm-4">
-                                    <label class="control-label">Remarks</label>
-                                    <input type="text" class="form-control" placeholder="Remarks"
-                                    [(ngModel)]="objEvaluationForTraning.Remarks"
-                                    >
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <button class="btn btn-primary pull-right" (click)="SaveEvaluation()" id="load">
-                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
-                                       animationDuration=".5s"></p-progressSpinner>
-                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>Save
-                                 </button>
-                            </div>
+							<div class="form-group">
+								<div class="col-sm-4">
+									<label class="control-label">Remarks</label>
+									<input type="text" class="form-control" placeholder="Remarks"
+										[(ngModel)]="Remarks" />
+								</div>
+							</div>
+							<div class="form-group">
+								<button class="btn btn-primary pull-right" (click)="SaveEvaluation()" id="load">
+									<p-progressSpinner *ngIf="Spinner" [style]="{ width: '15px', height: '15px' }"
+										strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+									<span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{ buttonname }}
+								</button>
+							</div>
 						</p-tabPanel>
 					</p-tabView>
 				</div>
@@ -174,3 +222,45 @@
 		</div>
 	</div>
 </div>
+<!-- add skill model -->
+<p-dialog
+	header="Disapprove"
+	appendTo="body"
+	[(visible)]="DisplayAddSkillModel"
+	[modal]="true"
+	[responsive]="true"
+	[style]="{ width: '370px', minWidth: '300px' }"
+	style="text-align: center"
+	[minY]="70"
+	[positionTop]="50"
+	[maximizable]="false"
+	[closable]="false"
+	[baseZIndex]="10000">
+	<form name="AddSkill" #AddSkill="ngForm">
+		<div class="row">
+			<div class="col-sm-12">
+				<label class="control-label">Skill Name<sup class="text-danger">*</sup></label>
+				<input
+					type="text"
+					class="form-control"
+					placeholder="Skill Name"
+					name="Skill_Name"
+					#Skill_Name="ngModel"
+					[(ngModel)]="skill_Name"
+					[ngClass]="{ clearance: addSkillFormSubmit && Skill_Name?.errors?.required }"
+					required />
+				</div>
+		</div>
+	</form>
+	<p-footer>
+		<button
+			class="btn btn-primary"
+			(click)="addSkill(AddSkill.form.valid)"
+			id="load"
+			[disabled]="skillSpinner">
+			<p-progressSpinner *ngIf="skillSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+			<span *ngIf="!Spinner" class="glyphicon glyphicon-ok"></span> Save
+		</button>
+		<button type="button" (click)="closeSkillModel()" class="btn btn-danger" [disabled]="skillSpinner"><span class="glyphicon glyphicon-remove"></span> Close</button>
+	</p-footer>
+</p-dialog>

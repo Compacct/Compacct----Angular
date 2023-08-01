@@ -53,6 +53,8 @@ export class SaleBillComponent implements OnInit {
   editlist:any = [];
   SelectedChallanNo:any = [];
   editChallanList:any = [];
+  TCSTaxRequiredValidation = false;
+  TCSdataList:any = [];
   constructor(
     private Header: CompacctHeader,
     private $http: HttpClient,
@@ -97,10 +99,15 @@ export class SaleBillComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Create";
     this.clearData();
+    this.ObjTopSale.TCS_Y_N = undefined;
+    this.ObjTopSale.TCS_Persentage = 0;
+    this.ObjTopSale.TCS_Amount = 0;
+    this.ObjTopSale.TCS_Per = undefined;
     this.router.navigate(['./MICL_Sale_Bill']);
   }
   clearData() {
     this.SaleBillFormSubmitted = false;
+    this.TCSTaxRequiredValidation = false;
     this.ObjTopSale.Sub_Ledger_ID = undefined;
     this.ChallanNoList = [];
     // this.ObjTopSale.Bill_No = undefined;
@@ -364,7 +371,17 @@ export class SaleBillComponent implements OnInit {
         this.GridList.forEach(element => {
           element.Cost_Cen_Name = "Finish Product"
         });
-         this.TotalCalculation();
+        //  if(this.QueryStringObj.Challan_No){
+         this.ObjTopSale.TCS_Y_N = data[0].TCS_Y_N;
+         this.GetTCSdat();
+          this.ObjTopSale.TCS_Per = data[0].TCS_Per;
+          this.ObjTopSale.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
+          this.ObjTopSale.TCS_Amount = Number(data[0].TCS_Amount);
+          this.TotalCalculation();
+          this.NetAMT = this.RoundOff(Number(this.Total_Amount) + Number(this.ObjTopSale.TCS_Amount));
+          this.ngxService.stop();
+        //  }
+        //  this.TcsAmtCalculation();
          this.ngxService.stop();
       } else {
         this.ngxService.stop();
@@ -408,14 +425,63 @@ export class SaleBillComponent implements OnInit {
     this.SGST = count3.toFixed(2);
     this.IGST = count4.toFixed(2);
     this.Total_Amount = count5.toFixed(2);
-    this.Rounded_Off = Number(Math.round(Number(this.Total_Amount)) - Number(this.Total_Amount)).toFixed(2); 
+    // this.Rounded_Off = Number(Math.round(Number(this.Total_Amount)) - Number(this.Total_Amount)).toFixed(2); 
+    this.getRoundedOff();
     this.NetAMT = this.RoundOff(this.Total_Amount);
+  }
+  getRoundedOff(){
+    this.Rounded_Off = Number(Math.round(Number(this.Total_Amount) + Number(this.ObjTopSale.TCS_Amount)) - (Number(this.Total_Amount) + Number(this.ObjTopSale.TCS_Amount))).toFixed(2);
+  }
+  GetTCSdat(){
+    if (this.ObjTopSale.TCS_Y_N === 'YES') {
+    this.ngxService.start();
+    const obj = {
+      "SP_String": "SP_MICL_Sale_Bill",
+      "Report_Name_String": "Get_Tcs_Percentage_And_Ledger",
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log(data)
+    this.TCSdataList = data;
+    this.ngxService.stop();
+  }); 
+    }  
+    else {
+      this.ObjTopSale.TCS_Ledger_ID = 0;
+      this.ObjTopSale.TCS_Persentage = 0;
+      this.ObjTopSale.TCS_Amount = 0;
+      this.ObjTopSale.TCS_Per = undefined;
+      // this.objaddPurchacse.Grand_Total = this.objaddPurchacse.Net_Amt;
+      this.getRoundedOff();
+      // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+  }
+  }
+  TcsAmtCalculation(){
+    if (this.ObjTopSale.TCS_Per) {
+        // this.ngxService.start();
+        var tcspercentage = this.TCSdataList.filter(el=> Number(el.TCS_Persentage) === Number(this.ObjTopSale.TCS_Per))
+          this.ObjTopSale.TCS_Ledger_ID = tcspercentage[0].TCS_Ledger_ID;
+          this.ObjTopSale.TCS_Persentage = tcspercentage[0].TCS_Persentage;
+          var netamount = (Number(this.Total_Amount)).toFixed(2);
+          var TCS_Amount = (Number(Number(netamount) * this.ObjTopSale.TCS_Persentage) / 100).toFixed(2);
+          this.ObjTopSale.TCS_Amount = Number(TCS_Amount);
+          this.getRoundedOff();
+          this.NetAMT = this.RoundOff(Number(this.Total_Amount) + Number(this.ObjTopSale.TCS_Amount));
+          this.ngxService.stop();  
+    }
+      else {
+        this.ObjTopSale.TCS_Ledger_ID = 0;
+        this.ObjTopSale.TCS_Persentage = 0;
+        this.ObjTopSale.TCS_Amount = 0;
+        this.getRoundedOff();
+        this.NetAMT = this.RoundOff(Number(this.Total_Amount) + Number(this.ObjTopSale.TCS_Amount));
+    }
   }
   RoundOff(key:any){
     return Math.round(Number(Number(key).toFixed(2)))
   }
   SaveSaleBill(valid:any) {
     this.SaleBillFormSubmitted = true;
+    this.TCSTaxRequiredValidation = true;
     if(this.SelectedChallanNo.length){
     if (valid) {
       this.compacctToast.clear();
@@ -461,7 +527,11 @@ export class SaleBillComponent implements OnInit {
         Rounded_Off : this.Rounded_Off,																						
         Grand_Total: this.NetAMT,
         Fin_Year_ID : this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
-        Address_Type : this.ObjTopSale.Choose_Address
+        Address_Type : this.ObjTopSale.Choose_Address,
+        TCS_Y_N : this.ObjTopSale.TCS_Y_N,
+        TCS_Per : this.ObjTopSale.TCS_Per,
+        TCS_Amount : this.ObjTopSale.TCS_Amount,
+        TCS_Ledger_ID : this.ObjTopSale.TCS_Ledger_ID
       }
       this.ChallanSave = [];
       // this.ObjTopSale.Bill_No.forEach(element => {
@@ -488,7 +558,12 @@ export class SaleBillComponent implements OnInit {
           });
       this.ObjTopSale = new TopSale();
       this.BillDate = new Date();
-      this.SaleBillFormSubmitted = false
+      this.SaleBillFormSubmitted = false;
+      this.TCSTaxRequiredValidation = false;
+      this.ObjTopSale.TCS_Y_N = undefined;
+      this.ObjTopSale.TCS_Persentage = 0;
+      this.ObjTopSale.TCS_Amount = 0;
+      this.ObjTopSale.TCS_Per = undefined;
       this.tabIndexToView = 0;
       this.items = ["BROWSE", "CREATE"];
       this.Tax = undefined;
@@ -524,16 +599,25 @@ export class SaleBillComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         var terd = data[0].Column1
-        if (data[0].Column1) {
+        if (data[0].Column1 === this.DocNo) {
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
-            severity: terd === "Can not delete ! Bill Already generated" ? "error" :"success" ,
+            severity: "success" ,
             summary: terd,
-            detail: terd === "Can not delete ! Bill Already generated" ? "" :  "Succesfully Delete",
+            detail: "Succesfully Delete",
           });
           this.DocNo = undefined;
           this.GetSerarchBrowse(true);
+        } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "delmsg",
+            sticky: true,
+            severity: "warn",
+            summary: terd,
+            // detail: "Confirm to proceed"
+          });
         }
       });
     }
@@ -585,6 +669,7 @@ export class SaleBillComponent implements OnInit {
   onReject() {
     this.compacctToast.clear("c");
     this.compacctToast.clear("s");
+    this.compacctToast.clear("delmsg");
   }
 
   Edit(col){
@@ -659,6 +744,11 @@ export class SaleBillComponent implements OnInit {
       //  }
       // }
       this.Getchallandist();
+      this.ObjTopSale.TCS_Y_N = data[0].TCS_Y_N;
+      this.GetTCSdat();
+      this.ObjTopSale.TCS_Per = data[0].TCS_Per;
+      this.ObjTopSale.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
+      this.ObjTopSale.TCS_Amount = Number(data[0].TCS_Amount);
       this.editChallanList.forEach(el=>{
         this.GridList.push({
           Cost_Cen_ID : el.Cost_Cen_ID,
@@ -670,6 +760,7 @@ export class SaleBillComponent implements OnInit {
           Product_Sub_Type : el.Product_Sub_Type,
           Product_ID : el.Product_ID,
           Product_Description : el.Product_Description,
+          Product_Specification : el.Product_Specification,
           Batch_Number : el.Batch_Number,
           Qty : el.Qty,
           UOM : el.UOM,
@@ -685,11 +776,12 @@ export class SaleBillComponent implements OnInit {
         });
       })
       this.TotalCalculation();
+      this.NetAMT = this.RoundOff(Number(this.Total_Amount) + Number(this.ObjTopSale.TCS_Amount));
     })
    }
    Getchallandist(){
     this.SelectedChallanNo =[];
-    this.editChallanList.forEach((item) => {
+    this.ChallanNoList.forEach((item) => {
          this.SelectedChallanNo.push(item.Doc_No);
     });
   }
@@ -718,6 +810,12 @@ class TopSale{
   Cost_Cen_Email: any;
 
   Bill_No:any;
+
+  TCS_Ledger_ID:any;
+  TCS_Y_N : any;
+  TCS_Persentage : any;
+  TCS_Amount : number = 0;
+  TCS_Per : any;
 }
 class BrowseSaleBill {
   Sub_Ledger_ID: any;

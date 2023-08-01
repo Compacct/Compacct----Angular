@@ -129,7 +129,7 @@
                                                                         <i class="fa fa-fw fa-print"></i> Print
                                                                     </a>
                                                                 </li>
-                                                            <li>
+                                                            <li *ngIf="!col.Bill_No">
                                                                 <a (click)="Delete(col)">
                                                                     <i class="fa fa-fw fa-trash"></i> Delete
                                                                 </a>
@@ -573,7 +573,7 @@
                                  </select>
                              </div>
                              <div class="clearfix"></div>
-                             <div class="col-sm-4">
+                             <div class="col-sm-3">
                                  <label>Product Description<sup class="text-danger">*</sup></label>
                                  <!-- <select class="form-control" name="Description" #Description="ngModel" 
                                      [(ngModel)]="ObjProductInfo.Product_Specification"
@@ -586,7 +586,7 @@
                                      </option>
                                  </select> -->
                                  <p-dropdown [options]="ProductDetalist" name="Description" #Description="ngModel"  
-                                     [(ngModel)]="ObjProductInfo.Product_Specification" 
+                                     [(ngModel)]="ObjProductInfo.Product_ID" 
                                      [showClear]="true" [emptyFilterMessage]="' No Product Found'" 
                                      (onChange)="GetGodown()" [filter]="true" filterBy="label,value.name"
                                      [resetFilterOnHide]="true" [placeholder]="'Select Product'"
@@ -594,7 +594,14 @@
                                      [ngClass]="{'clearance':TermFormSubmitted && Description?.errors?.required}" [required]="true">
                                  </p-dropdown>
                              </div>
-                            <div class="col-sm-4">
+                             <div class="col-sm-3">
+                                <label class="control-label">Product Specification </label>                                 
+                                <input class="form-control"  name="prospecification" #prospecification="ngModel" 
+                                [(ngModel)]="ObjProductInfo.Product_Specification"
+                                placeholder="Product Specification"
+                                [ngClass]="{clearance: TermFormSubmitted && prospecification?.errors?.required}">
+                            </div>
+                            <div class="col-sm-3">
                               <label>Stock Point<sup class="text-danger">*</sup></label>
                             <select class="form-control"name="Stock" #Stock="ngModel" 
                             [(ngModel)]="ObjProductInfo.godown_id"
@@ -608,7 +615,7 @@
                                 </option>
                             </select>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 <label class="control-label">Lot No./Batch No. <sup class="text-danger">*</sup></label>
                                 <select class="form-control" name="BatchNo" #BatchNo="ngModel" 
                                 [(ngModel)]="ObjProductInfo.Batch_Number"
@@ -682,6 +689,7 @@
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Type</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Sub Type</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Description</th>
+                              <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Specification</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Lot No./Batch No.</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">QTY</th>
                               <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">UOM</th>
@@ -710,7 +718,8 @@
                               <td>{{ TermTableList.godown_name }}</td>
                               <td>{{ TermTableList.Product_Type ? TermTableList.Product_Type : "-" }}</td>
                               <td>{{ TermTableList.Product_Sub_Type ? TermTableList.Product_Sub_Type : "-" }}</td>
-                              <td>{{ TermTableList.Product_Specification }}</td>
+                              <td>{{ TermTableList.Product_Name ? TermTableList.Product_Name : "-"}}</td>
+                              <td>{{ TermTableList.Product_Specification ? TermTableList.Product_Specification : "-" }}</td>
                               <td>{{ TermTableList.Batch_No }}</td>
                               <td>{{ TermTableList.Qty }}</td>
                               <td>{{ TermTableList.UOM }}</td>
@@ -729,6 +738,39 @@
                        </table>
                     </div>
             </form>
+            <br>
+                        <div class="form-group" *ngIf="AddProdList.length">
+                            <div class="col-sm-3">
+                             <label class="control-label">TCS Tax Required <sup class="text-danger">*</sup> </label>
+                             <select class="form-control" 
+                             name="tcstaxreq" 
+                             #tcstaxreq="ngModel" 
+                             [(ngModel)]="ObjPurChaseBill.TCS_Y_N"
+                             (ngModelChange)="GetTCSdat()"
+                             [ngClass]="{'clearance': TCSTaxRequiredValidation && tcstaxreq?.errors?.required}" required>
+                                <option  [ngValue]="undefined">Select</option>
+                                <option value ="YES">YES</option>
+                                <option value ="NO">NO</option>
+                             </select>
+                            </div>
+                            <div class="col-sm-3" *ngIf="ObjPurChaseBill.TCS_Y_N == 'YES'">
+                                <label class="control-label">TCS % <sup class="text-danger">*</sup> </label>
+                                <select class="form-control" 
+                                name="tcsper" 
+                                #tcsper="ngModel" 
+                                [(ngModel)]="ObjPurChaseBill.TCS_Per"
+                                (ngModelChange)="TcsAmtCalculation()"
+                                [ngClass]="{'clearance': TCSTaxRequiredValidation && tcsper?.errors?.required}" required>
+                                   <option  [ngValue]="undefined">Select</option>
+                                   <option *ngFor = "let option of TCSdataList" [value] ="option.TCS_Persentage">
+                                    {{option.TCS_Persentage}}
+                                  </option>
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="clearfix"></div>
+                        <br>
 
             <div class="col-xs-12">
                 <div class="table-responsive">
@@ -747,10 +789,12 @@
                                 <td class="amt-td ng-binding">{{IGST ? IGST : '-'}}</td>
                                 <th>Total Amount : </th>
                                 <td class="amt-td ng-binding">{{Total_Amount ? Total_Amount :"-"}}</td>
-                                <th>Rounded Off : </th>
-                                <td class="amt-td ng-binding">{{Rounded_Off ? Rounded_Off :"-"}}</td>
+                                <th>TCS Amount :</th>
+                                <td class="amt-td ng-binding">{{ObjPurChaseBill.TCS_Amount}}</td>
                             </tr>
                              <tr>
+                                <th>Rounded Off : </th>
+                                <td class="amt-td ng-binding">{{Rounded_Off ? Rounded_Off :"-"}}</td>
                                 <th>Net Amount : </th>
                                 <td class="amt-td ng-binding">{{NetAMT ? NetAMT : '-'}}</td>
                             </tr>

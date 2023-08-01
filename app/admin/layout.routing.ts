@@ -407,6 +407,11 @@ import { AdvanceOrderAdjustmentComponent } from './common/OutletManagement/advan
 import { AssetMasterComponent } from './common/MICL/asset-master/asset-master.component';
 import { HrTrainingComponent } from './common/HR/hr-training/hr-training.component';
 import { EvaluateForTrainingComponent } from './common/Attendance/evaluate-for-training/evaluate-for-training.component';
+import { SofthearAudiologistTargetComponent } from "./common/PatientManagement/Audiologist/softhear-audiologist-target/softhear-audiologist-target.component";
+import { SalarySlipComponent } from './common/HR/salary-slip/salary-slip.component';
+import { ApproveEvaluateForTraningComponent } from './common/Attendance/approve-evaluate-for-traning/approve-evaluate-for-traning.component';
+import { EmployeeRelatedReportComponent } from './common/HR/employee-related-report/employee-related-report.component';
+import { K4cDiagnosisPosBillComponent } from './common/OutletManagement/k4c-diagnosis-pos-bill/k4c-diagnosis-pos-bill.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3110,6 +3115,41 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         data: {
           title: 'Evaluate For Traning'
     }
+    },
+    {
+      path: 'CR_Softhear_Audiologist_Target',
+      component: SofthearAudiologistTargetComponent,
+      data: {
+        title: 'Audiologist Target'
+      }
+    },
+    {
+      path: 'Salary_Slip',
+      component: SalarySlipComponent,
+      data: {
+        title: 'Salary Slip'
+      }
+    },
+    {
+      path: 'Approve_Evaluate_For_Traning',
+      component: ApproveEvaluateForTraningComponent,
+      data: {
+        title: 'Approve Evaluate For Traning'
+      }
+    },
+    {
+      path: 'Employee_Related_Report',
+      component: EmployeeRelatedReportComponent,
+      data: {
+        title: 'Employee Related Report'
+      }
+    },
+    {
+      path: 'K4C_Diagnosis_POS_Bill',
+      component: K4cDiagnosisPosBillComponent,
+      data: {
+        title: 'K4C Diagnosis POS Bill'
+      }
     },
     /*{
 
