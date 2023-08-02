@@ -183,7 +183,6 @@
 											[virtualScroll]="true"
 											itemSize="30"
 											[styleClass]="HR_Training_From_Submit && TrainerLists.errors?.required ? 'clearance' : ''"
-											[disabled]="TableArray.length"
 											[required]="true">
 										</p-dropdown>
 									</div>
@@ -275,7 +274,7 @@
 											#Deferred="ngModel"
 											[(ngModel)]="Deferred_Or_Not"
 											[ngClass]="{ clearance: Save_From_Submit && Deferred?.errors?.required }"
-											[required]="editMode">
+											>
 											<option [ngValue]="''">Select</option>
 											<option value="Yes">Yes</option>
 											<option value="No">No</option>
@@ -291,7 +290,7 @@
 											#DeferredRemarks="ngModel"
 											[(ngModel)]="Deferred_Remarks"
 											[ngClass]="{ clearance: Save_From_Submit && DeferredRemarks?.errors?.required }"
-											[required]="editMode" />
+											/>
 									</div>
 									<div class="col-sm-4"></div>
 								</div>
