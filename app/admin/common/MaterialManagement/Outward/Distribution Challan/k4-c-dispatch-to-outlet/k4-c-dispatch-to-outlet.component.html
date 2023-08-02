@@ -167,6 +167,11 @@
                                                                 <i class="fa fa-fw fa-download"></i> Download E-INV
                                                             </a>
                                                         </li>
+                                                        <li *ngIf="col.Franchise === 'Y' && col.Bill_No === 'NA' && col.Total_Qty === col.Total_Accepted_Qty">
+                                                            <a (click)="GeneratingBillNo(col)">
+                                                                <i class="fa fa-bars" aria-hidden="true"></i> Generate Bill No.
+                                                            </a>
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </td>
@@ -333,7 +338,7 @@
 
                                             </form>
                                             <div class="box-footer">
-                                                <button class="btn btn-primary pull-right" data-toggle="modal" (click)="addDispatch(AdditioanForm.form.valid)" id="load" [disabled]="Spinner">
+                                                <button class="btn btn-primary pull-right" data-toggle="modal" (click)="addDispatch(AdditioanForm.form.valid)" id="load" [disabled]="Spinner || generatedisabled">
                                              <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                          <span *ngIf="!Spinner" class="glyphicon glyphicon-plus"></span>Add
                                      </button>
@@ -346,7 +351,7 @@
                             <div class="col-sm-4">
                                 <label class="control-label">Indent List<sup class="text-danger">*</sup> &nbsp;
                   </label>
-                                <p-multiSelect itemSize="30" [options]="IndentFilter" [styleClass]="'compacct-multiselect'" name="indentn" [(ngModel)]="SelectedIndent" [filter]="true" filterBy="label,value.name" (onChange)="filterIndentList()" [resetFilterOnHide]="true">
+                                <p-multiSelect itemSize="30" [options]="IndentFilter" [styleClass]="'compacct-multiselect'" name="indentn" [(ngModel)]="SelectedIndent" [filter]="true" filterBy="label,value.name" (onChange)="filterIndentList()" [disabled]="generatedisabled" [resetFilterOnHide]="true">
                                 </p-multiSelect>
 
                             </div>
@@ -390,7 +395,7 @@
                                             <td>{{col.Batch_No}}</td>
                                             <td *ngIf="AccQtydis">{{col.Accepted_Qty}}</td>
                                             <td>{{col.Batch_Qty}}</td>
-                                            <td><input type="text" [name]="col.product_id" [(ngModel)]='col.Delivery_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                            <td><input type="text" [name]="col.product_id" [(ngModel)]='col.Delivery_Qty' (ngModelChange)='qtyChq(col)' [ngClass]="{'clearance' : flag}" [disabled]="generatedisabled" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <td *ngIf="EditList.length">{{col.Accept_Reason}}</td>
 
                                         </tr>
