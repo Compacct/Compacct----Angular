@@ -305,7 +305,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       if (this.databaseName === "K4C") {
         printlink = "/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" ;
       }
-      else if (this.databaseName === "BSHPL" || this.databaseName === "MICL") {
+      else if (this.databaseName === "BSHPL" || this.databaseName === "MICL" || this.databaseName === "Diagraph") {
         printlink = "/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_Print.aspx?Doc_No=" ;
       }
       else {
@@ -535,6 +535,18 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   PrintEwayBill(obj) {
     if (obj) {
       window.open("/Report/Crystal_Files/Finance/SaleBill/Print_E_Way_Bill.aspx?Doc_No="+ obj, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    }
+  }
+  PrintGatepass(DocNo){
+    if (DocNo) {
+      const objtemp = {
+        "SP_String": "SP_MICL_Sale_Bill",
+        "Report_Name_String": "Gate_Pass_Print"
+      }
+      this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
+        var printlink = data[0].Column1;
+        window.open(printlink + "?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      })
     }
   }
   Cancel(docno){

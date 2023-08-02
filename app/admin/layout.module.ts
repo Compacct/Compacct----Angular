@@ -509,6 +509,7 @@ import { SofthearAudiologistTargetComponent } from './common/PatientManagement/A
 import { SalarySlipComponent } from './common/HR/salary-slip/salary-slip.component';
 import { ApproveEvaluateForTraningComponent } from './common/Attendance/approve-evaluate-for-traning/approve-evaluate-for-traning.component';
 import { EmployeeRelatedReportComponent } from './common/HR/employee-related-report/employee-related-report.component';
+import { K4cDiagnosisPosBillComponent } from './common/OutletManagement/k4c-diagnosis-pos-bill/k4c-diagnosis-pos-bill.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -932,7 +933,8 @@ import { EmployeeRelatedReportComponent } from './common/HR/employee-related-rep
     SofthearAudiologistTargetComponent,
     SalarySlipComponent,
     ApproveEvaluateForTraningComponent,
-    EmployeeRelatedReportComponent
+    EmployeeRelatedReportComponent,
+    K4cDiagnosisPosBillComponent
   ],
   imports: [
     CommonModule,

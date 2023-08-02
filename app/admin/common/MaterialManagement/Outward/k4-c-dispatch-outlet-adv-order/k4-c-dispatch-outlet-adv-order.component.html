@@ -137,6 +137,11 @@
                                                                 <i class="fa fa-fw fa-download"></i> Download E-INV
                                                             </a>
                                                         </li>
+                                                        <li *ngIf="col.Franchise === 'Y' && col.Bill_NO === 'NA'">
+                                                            <a (click)="GeneratingBillNo(col)">
+                                                                <i class="fa fa-bars" aria-hidden="true"></i> Generate Bill No.
+                                                            </a>
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </td>

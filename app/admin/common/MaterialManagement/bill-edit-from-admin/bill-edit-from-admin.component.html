@@ -637,6 +637,71 @@
                </button>
                             </div>
                         </p-tabPanel>
+                        <!-- K4C DIAGNOSIS  -->
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="fa fa-recycle">
+                            <form name="diagnosisform" #diagnosisform="ngForm">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRangediagnosis($event)" [DefaultDateOpt]="'weekwise'"></app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Outlet</label>
+                                        <select class="form-control" name="costcenter" #costcenter="ngModel" [(ngModel)]="Cost_Cen_ID">
+                                            <option  [ngValue] ="undefined">Select</option>
+                                            <option *ngFor = "let option of CostCenterList" [value] ="option.Cost_Cen_ID">
+                                                {{option.Cost_Cen_Name}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                      <div class="col-sm-2">
+                                        <button class="btn btn-primary " style="margin-top: 28px;" data-toggle="modal" (click)="GetGridData()" id="load" [disabled]="seachSpinner">
+                                      <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                   </button>
+                                </div>
+                                </div>
+                            </form>
+                            <div class="table-responsive table-id">
+                                <p-table [value]="GridList"
+                                *ngIf = "GridListHeader.length"
+                                [paginator]="true" [rows]="100" 
+                                [loading]="seachSpinner" [rowHover]="true" 
+                                [autoLayout]="true" sortMode="multiple" 
+                                [rowsPerPageOptions]="[100, 300, 500]"  
+                                [globalFilterFields]='GridListHeader'
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Action</th>
+                                            <th *ngFor="let option of GridListHeader">{{option.replaceAll('_',' ')}}</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td style="text-align:center">
+                                                <button class="btn btn-primary" (click)='editdiagnosismaster(col)' type="button" [id]="col.Doc_No" data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                                                    Re-Generate
+                                                </button>
+                                            </td>
+                                            <ng-container *ngFor="let option of GridListHeader">
+                                                <td nowrap="nowrap">{{col[option]}}</td>
+                                            </ng-container>
+                                            
+                                        </tr>
+                                    </ng-template>                                      
+                                </p-table>
+                            </div>
+
+                        </p-tabPanel>
                     </p-tabView>
                 </div>
             </div>

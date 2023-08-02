@@ -411,6 +411,7 @@ import { SofthearAudiologistTargetComponent } from "./common/PatientManagement/A
 import { SalarySlipComponent } from './common/HR/salary-slip/salary-slip.component';
 import { ApproveEvaluateForTraningComponent } from './common/Attendance/approve-evaluate-for-traning/approve-evaluate-for-traning.component';
 import { EmployeeRelatedReportComponent } from './common/HR/employee-related-report/employee-related-report.component';
+import { K4cDiagnosisPosBillComponent } from './common/OutletManagement/k4c-diagnosis-pos-bill/k4c-diagnosis-pos-bill.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3141,6 +3142,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: EmployeeRelatedReportComponent,
       data: {
         title: 'Employee Related Report'
+      }
+    },
+    {
+      path: 'K4C_Diagnosis_POS_Bill',
+      component: K4cDiagnosisPosBillComponent,
+      data: {
+        title: 'K4C Diagnosis POS Bill'
       }
     },
     /*{
