@@ -412,7 +412,8 @@ import { SalarySlipComponent } from './common/HR/salary-slip/salary-slip.compone
 import { ApproveEvaluateForTraningComponent } from './common/Attendance/approve-evaluate-for-traning/approve-evaluate-for-traning.component';
 import { EmployeeRelatedReportComponent } from './common/HR/employee-related-report/employee-related-report.component';
 import { K4cDiagnosisPosBillComponent } from './common/OutletManagement/k4c-diagnosis-pos-bill/k4c-diagnosis-pos-bill.component';
-
+import { ServiceEngineeringTeamComponent } from "./common/Harbauer/Service/service-engineering-team/service-engineering-team.component";
+import { ProjectMasterComponent } from './common/Harbauer/Service/project-master/project-master.component';
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -3149,6 +3150,20 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: K4cDiagnosisPosBillComponent,
       data: {
         title: 'K4C Diagnosis POS Bill'
+      }
+    },
+    {
+      path: 'BL_Txn_Service_Engineering_Team',
+      component: ServiceEngineeringTeamComponent,
+      data: {
+        title: 'Service Engineering Team'
+      }
+    },
+    {
+      path: 'Bl_Txn_Project_Master',
+      component: ProjectMasterComponent,
+      data: {
+        title: 'Project_Master'
       }
     },
     /*{
