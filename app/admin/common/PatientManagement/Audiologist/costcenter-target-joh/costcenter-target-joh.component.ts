@@ -12,8 +12,7 @@ import { CompacctGlobalApiService } from '../../../../shared/compacct.services/c
   providers: [MessageService],
   encapsulation: ViewEncapsulation.None
 })
-export class CostcenterTargetJohComponent implements OnInit {
-  tabIndexToView: number = 0;
+export class CostcenterTargetJohComponent implements OnInit {  tabIndexToView: number = 0;
   Items: any = ['BROWSE', 'CREATE'];
   Spinner: boolean = false;
   buttonname: string = 'Create';
@@ -21,6 +20,7 @@ export class CostcenterTargetJohComponent implements OnInit {
   searchSpinner: boolean = false;
   costCenterFormSubmit: boolean = false;
   costCeterList: any = [];
+  userId:number = 0;
   TableData: any = [];
   TableSearchData: any = [];
   deleteTargetId: number = 0;
@@ -38,6 +38,7 @@ export class CostcenterTargetJohComponent implements OnInit {
       Header: "Costcenter Target",
       Link: "JOH --> Costcenter Target"
     });
+    this.userId = this.commonApi.CompacctCookies.User_ID;
     this.getCostCenter();
     this.getRetriveData();
   }
@@ -45,7 +46,8 @@ export class CostcenterTargetJohComponent implements OnInit {
   getCostCenter() {
     const obj = {
       "SP_String": "Sp_BL_CRM_Txn_Cost_Center_Target",
-      "Report_Name_String": "Get_Cost_Center_For_Dropdown",
+      "Report_Name_String": "Get_cost_center_dropdown_for_joh",
+      "Json_Param_String": JSON.stringify([{"User_ID":this.userId}])
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
       console.log('costCenter List', data);
