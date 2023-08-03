@@ -748,8 +748,14 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
      let reportnamepencrnote = "";
-      if (this.databaseName === "K4C" || this.databaseName === "MICL") {
-        reportnamepencrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==";
+      if (this.databaseName === "K4C") {
+        reportnamepencrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=KLD20";
+      }
+      else if (this.databaseName === "MICL") {
+        reportnamepencrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=XL01";
+      }
+      else if (this.databaseName === "Diagraph") {
+        reportnamepencrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=XLD01";
       }
       else if (this.databaseName === "BSHPL") {
         reportnamepencrnote = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=Mvkyst7OU0DTxMSZAgg7HNhW2FuwUgMypd1cu36SfC1JAzFucc6OIw==";
@@ -927,8 +933,14 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
      let reportnamefailedcrnote = "";
-      if (this.databaseName === "K4C" || this.databaseName === "MICL") {
-        reportnamefailedcrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==";
+      if (this.databaseName === "K4C") {
+        reportnamefailedcrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=KLD20";
+      }
+      else if (this.databaseName === "MICL") {
+        reportnamefailedcrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=XL01";
+      }
+      else if (this.databaseName === "Diagraph") {
+        reportnamefailedcrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=XLD01";
       }
       else if (this.databaseName === "BSHPL") {
         reportnamefailedcrnote = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=Mvkyst7OU0DTxMSZAgg7HNhW2FuwUgMypd1cu36SfC1JAzFucc6OIw==";
