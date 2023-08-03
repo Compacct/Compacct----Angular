@@ -949,29 +949,51 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
-                                <h5 style="
-                                padding: 0.5em 1em;
-                                background: #c1c1c185;
-                                border-top: 5px solid #3c8dbc;
-                                border-bottom: 1px solid #c6c6c6;
-                                margin-top: 15px;
-                                ">
-                                <i class="fa fa-fw fa-truck">
-                                </i> &nbsp;<strong>Delivery Address :</strong>
-                               </h5>
-                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
-                                    <p-editor name= "payingofficeandworks"
-                                    #payingofficeandworks="ngModel"
-                                    [(ngModel)]="ObjWorkOrder.Paying_Office_Works_Term"
-                                    [style]="{'height':'200px'}"
-                                    [readonly]="editorDis"
-                                    >
-                                      
-                                    </p-editor>
-                                </div>
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-pencil-square-o">
+                                    </i> &nbsp;<strong>Term And Condition :</strong>
+                                   </h5>
+                                    <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                        <p-editor name= "termconditation"
+                                        #termconditation="ngModel"
+                                        [(ngModel)]="ObjWorkOrder.Term_And_Condition"
+                                        [style]="{'height':'200px'}"
+                                        [readonly]="editorDis"
+                                        >
+                                          
+                                        </p-editor>
+                                    </div>
                                 </div>
                                 </div>
                                 <div class="form-group">
+                                    <div class="col-sm-6">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-truck">
+                                    </i> &nbsp;<strong>Delivery Address :</strong>
+                                   </h5>
+                                    <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                        <p-editor name= "payingofficeandworks"
+                                        #payingofficeandworks="ngModel"
+                                        [(ngModel)]="ObjWorkOrder.Paying_Office_Works_Term"
+                                        [style]="{'height':'200px'}"
+                                        [readonly]="editorDis"
+                                        >
+                                          
+                                        </p-editor>
+                                    </div>
+                                    </div>
                                     <div class="col-sm-6">
                                         <h5 style="
                                          padding: 0.5em 1em;
@@ -992,7 +1014,9 @@
                                              </p-editor>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
+                                </div>
+                                <div class="form-group">
+                                <div class="col-sm-6">
                                     <h5 style="
                                     padding: 0.5em 1em;
                                     background: #c1c1c185;
@@ -1011,9 +1035,7 @@
                                         [readonly]="editorDis">
                                         </p-editor>
                                     </div>
-                                    </div>
                                 </div>
-                                <div class="form-group">
                                 <div class="col-sm-6">
                                     <h5 style="
                                     padding: 0.5em 1em;
@@ -1023,7 +1045,7 @@
                                     margin-top: 15px;
                                     ">
                                     <i class="fa fa-fw fa-clock-o">
-                                    </i> &nbsp;<strong>Late Delivery :</strong>
+                                    </i> &nbsp;<strong>Delivery Terms :</strong>
                                   </h5>
                                     <div class="form-group" style="margin-left:3px;margin-right: 0px;">
                                         <p-editor name= "latedelivery"
@@ -1034,28 +1056,28 @@
                                         </p-editor>
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
-                                <h5 style="
-                                padding: 0.5em 1em;
-                                background: #c1c1c185;
-                                border-top: 5px solid #3c8dbc;
-                                border-bottom: 1px solid #c6c6c6;
-                                margin-top: 15px;
-                                ">
-                                <i class="fa fa-university">
-                                </i> &nbsp;<strong>Statutory Obligation :</strong>
-                              </h5>
-                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
-                                    <p-editor name= "statutoryobligation"
-                                    #statutoryobligation="ngModel"
-                                    [(ngModel)]="ObjWorkOrder.Statutory_Obligation"
-                                    [style]="{'height':'200px'}"
-                                    [readonly]="editorDis">
-                                    </p-editor>
-                                </div>
-                                </div>
                                 </div>
                                 <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <h5 style="
+                                        padding: 0.5em 1em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;
+                                        margin-top: 15px;
+                                        ">
+                                        <i class="fa fa-university">
+                                        </i> &nbsp;<strong>Statutory Obligation :</strong>
+                                      </h5>
+                                        <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                            <p-editor name= "statutoryobligation"
+                                            #statutoryobligation="ngModel"
+                                            [(ngModel)]="ObjWorkOrder.Statutory_Obligation"
+                                            [style]="{'height':'200px'}"
+                                            [readonly]="editorDis">
+                                            </p-editor>
+                                        </div>
+                                        </div>
                                     <div class="col-sm-6">
                                         <h5 style="
                                         padding: 0.5em 1em;
@@ -1076,25 +1098,27 @@
                                             </p-editor>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <h5 style="
-                                        padding: 0.5em 1em;
-                                        background: #c1c1c185;
-                                        border-top: 5px solid #3c8dbc;
-                                        border-bottom: 1px solid #c6c6c6;
-                                        margin-top: 15px;
-                                        ">
-                                        <i class="fa fa-sticky-note">
-                                        </i> &nbsp;<strong>Note :</strong>
-                                      </h5>
-                                        <div class="form-group" style="margin-left:3px;margin-right: 0px;">
-                                            <p-editor name= "remarks"
-                                            #remarks="ngModel"
-                                            [(ngModel)]="ObjWorkOrder.Remarks"
-                                            [style]="{'height':'200px'}"
-                                            [readonly]="editorDis">
-                                            </p-editor>
-                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-6">
+                                            <h5 style="
+                                            padding: 0.5em 1em;
+                                            background: #c1c1c185;
+                                            border-top: 5px solid #3c8dbc;
+                                            border-bottom: 1px solid #c6c6c6;
+                                            margin-top: 15px;
+                                            ">
+                                            <i class="fa fa-sticky-note">
+                                            </i> &nbsp;<strong>Note :</strong>
+                                          </h5>
+                                            <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                                <p-editor name= "remarks"
+                                                #remarks="ngModel"
+                                                [(ngModel)]="ObjWorkOrder.Remarks"
+                                                [style]="{'height':'200px'}"
+                                                [readonly]="editorDis">
+                                                </p-editor>
+                                            </div>
                                         </div>
                                     </div>
                                <!-- <h5 style="

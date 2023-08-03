@@ -414,6 +414,8 @@ import { EmployeeRelatedReportComponent } from './common/HR/employee-related-rep
 import { K4cDiagnosisPosBillComponent } from './common/OutletManagement/k4c-diagnosis-pos-bill/k4c-diagnosis-pos-bill.component';
 import { ServiceEngineeringTeamComponent } from "./common/Harbauer/Service/service-engineering-team/service-engineering-team.component";
 import { ProjectMasterComponent } from './common/Harbauer/Service/project-master/project-master.component';
+import { TrainingGradeModuleComponent } from './common/HR/training-grade-module/training-grade-module.component';
+
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -3164,6 +3166,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: ProjectMasterComponent,
       data: {
         title: 'Project_Master'
+      }
+    },
+    {
+      path: 'Training_Grade_Module',
+      component: TrainingGradeModuleComponent,
+      data: {
+        title: 'Training Grade Module'
       }
     },
     /*{

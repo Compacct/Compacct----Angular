@@ -394,7 +394,7 @@
                                         <tr>
                                             <!-- <th>Confirmation for E-INV</th> -->
                                             <th>Action</th>
-                                            <th *ngFor="let option of SuccessInvoicelistHeader | slice:2">{{option.replaceAll('_',' ')}}</th>
+                                            <th *ngFor="let option of SuccessInvoicelistHeader | slice:3">{{option.replaceAll('_',' ')}}</th>
                                             <!-- <th>Sub Ledger GST</th>
                                             <th>Billing Name</th>
                                             <th>STATE</th>
@@ -435,12 +435,12 @@
                                                                 <i class="fa fa-fw fa-print" aria-hidden="true"></i> Print E Way Bill
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.E_Invoice_Ewb_PDF_Link && databaseName != 'MICL'"> <!-- *ngIf="col.E_Invoice_Ewb_PDF_Link" -->
+                                                        <li *ngIf="col.E_Invoice_Ewb_PDF_Link">
                                                             <a (click)="DownloadEINV(col.E_Invoice_Ewb_PDF_Link)">
                                                                 <i class="fa fa-fw fa-download"></i> Download E Way Bill
                                                             </a>
                                                         </li>
-                                                         <li *ngIf="col.E_Invoice_PDF_Link && databaseName != 'MICL'"> <!-- *ngIf="col.E_Invoice_PDF_Link" -->
+                                                         <li *ngIf="col.E_Invoice_PDF_Link">
                                                             <a (click)="DownloadEINV(col.E_Invoice_PDF_Link)">
                                                                 <i class="fa fa-fw fa-download"></i> Download E-INV
                                                             </a>
@@ -450,9 +450,14 @@
                                                                 <i class="fa fa-fw fa-times"></i> Cancel
                                                             </a>
                                                         </li>
-                                                        <li >
+                                                        <li *ngIf="!col.E_Way_Bill_No">
                                                             <a (click)="UpdateEbill(col)">
-                                                                <i class="fa fa-refresh"></i> Update E-Way Bill Manually
+                                                                <i class="fa fa-fw fa-refresh"></i> Update E-Way Bill Manually
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="databaseName === 'MICL'">
+                                                            <a (click)="PrintGatepass(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-print" aria-hidden="true"></i> Print Gate Pass
                                                             </a>
                                                         </li>
                                                         <!-- <li >
@@ -463,7 +468,7 @@
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <ng-container *ngFor="let option of SuccessInvoicelistHeader | slice:2">
+                                            <ng-container *ngFor="let option of SuccessInvoicelistHeader | slice:3">
                                                 <td nowrap="nowrap">{{col[option]}}</td>
                                             </ng-container>
                                             <!-- <td>{{col.Sub_Ledger_GST}}</td>

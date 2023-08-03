@@ -512,6 +512,7 @@ import { EmployeeRelatedReportComponent } from './common/HR/employee-related-rep
 import { K4cDiagnosisPosBillComponent } from './common/OutletManagement/k4c-diagnosis-pos-bill/k4c-diagnosis-pos-bill.component';
 import { ServiceEngineeringTeamComponent } from "./common/Harbauer/Service/service-engineering-team/service-engineering-team.component";
 import { ProjectMasterComponent } from './common/Harbauer/Service/project-master/project-master.component';
+import { TrainingGradeModuleComponent } from './common/HR/training-grade-module/training-grade-module.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -938,7 +939,8 @@ import { ProjectMasterComponent } from './common/Harbauer/Service/project-master
     EmployeeRelatedReportComponent,
     K4cDiagnosisPosBillComponent,
     ServiceEngineeringTeamComponent,
-    ProjectMasterComponent
+    ProjectMasterComponent,
+    TrainingGradeModuleComponent
   ],
   imports: [
     CommonModule,

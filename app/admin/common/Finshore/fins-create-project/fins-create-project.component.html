@@ -38,12 +38,11 @@
 
                                     </div>
                                     <div class="col-sm-4">
-                                        <label class="control-label">Consultant Name<sup class="text-danger">*</sup></label>
+                                        <label class="control-label">Consultant Name<sup class="text-danger"></sup></label>
                                         <select class="form-control"
                                                 name="ConsultantName"
                                                 #ConsultantName="ngModel"
-                                                [(ngModel)]="Objproject.Sub_Ledger_ID_Consultant"
-                                                [ngClass]="{'clearance': ProjectMainForm && ConsultantName?.errors?.required}" required>
+                                                [(ngModel)]="Objproject.Sub_Ledger_ID_Consultant">
                                                 <option  [ngValue]="undefined">Select</option>
                                                 <option *ngFor=" let opt of ConsultantList"  [ngValue]="opt.Sub_Ledger_ID">{{opt.Sub_Ledger_Name}}</option>
                                         </select>
