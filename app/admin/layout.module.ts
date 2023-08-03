@@ -510,6 +510,7 @@ import { SalarySlipComponent } from './common/HR/salary-slip/salary-slip.compone
 import { ApproveEvaluateForTraningComponent } from './common/Attendance/approve-evaluate-for-traning/approve-evaluate-for-traning.component';
 import { EmployeeRelatedReportComponent } from './common/HR/employee-related-report/employee-related-report.component';
 import { K4cDiagnosisPosBillComponent } from './common/OutletManagement/k4c-diagnosis-pos-bill/k4c-diagnosis-pos-bill.component';
+import { TrainingGradeModuleComponent } from './common/HR/training-grade-module/training-grade-module.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -934,7 +935,8 @@ import { K4cDiagnosisPosBillComponent } from './common/OutletManagement/k4c-diag
     SalarySlipComponent,
     ApproveEvaluateForTraningComponent,
     EmployeeRelatedReportComponent,
-    K4cDiagnosisPosBillComponent
+    K4cDiagnosisPosBillComponent,
+    TrainingGradeModuleComponent
   ],
   imports: [
     CommonModule,
