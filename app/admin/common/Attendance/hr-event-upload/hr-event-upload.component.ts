@@ -269,6 +269,45 @@ itemNew2.forEach(element => {
   });
   doc.save('Salary-Statement.pdf');
 }
+jsontopdfbackgroundimg() {
+  //var style:any ='landscape'; //'l', 'mm', [297, 297]
+  // var currentmonth = this.currentmonth;
+  var itemNew = this.idlist1;
+  var doc:any = new jsPDF('landscape');
+  var rows:any = [];
+  var header:any = [];
+  var empname = this.idlist1[0].Name;
+  var imgData;
+  imgData = "../../../../Content/dist/img/certificate.png"
+
+  // doc.autoTable({
+    
+    // didDrawPage: function (data) {
+      doc.addImage(imgData, 'JPEG', 0, 0, 180, 160);
+      // Header
+      // doc.setFontSize(20);
+      // doc.setTextColor(40);
+      // doc.setFontStyle('normal');
+      var width = doc.internal.pageSize.getWidth();
+      // console.log('width---',width)
+      // var height = doc.internal.pageSize.getHeight();
+      // console.log('height---',height)
+      // doc.text('MODERN INDIA CON-CAST LIMITED', width/2, 8, { align: 'center' },{fontSize: 12})
+      // doc.setFontSize(10);
+      doc.text('CERTIFICATE', width/2, 13, { align: 'center' },{fontSize: 12})
+      // doc.text('Bhuniaraichak, J.L No-122, Haldia-721635, Purba Medinipur, West Bengal', width/2, 18, { align: 'center' },{fontSize: 0.4})
+      // doc.text('Salary for The Month of ', width/2, 23, { align: 'center' },{styles: { fontSize: 3 }})
+      
+      // var pageSize = doc.internal.pageSize;
+      // var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+      // doc.text("Prepared By", data.settings.margin.left, pageHeight - 4);
+      // doc.text('Checked By', width/2, pageHeight - 4, { align: 'center' })
+      // doc.text("Authorised By", width - 10, pageHeight - 4, { align: 'right' });
+    // },
+    // margin: {top: 30, right: 6, bottom: 20, left: 6}
+  // });
+  doc.save('bg.pdf');
+}
 
 }
 class HrEvent {
