@@ -1267,7 +1267,7 @@ checkdiscountamt(){
         Net_Payable : this.Net_Payable,
         Hold_Bill  : this.Hold_Bill_Flag ? "Y" : "N",
         Order_Txn_ID : 0,
-        Adv_Order_No : this.ObjaddbillForm.Advance ? this.ObjaddbillForm.Advance : "" ,
+        Adv_Order_No : this.Online_Order_No ? "" : this.ObjaddbillForm.Advance ,
         Online_Order_No : this.Online_Order_No ? this.Online_Order_No : null,
         Online_Order_Date : this.Online_Order_Date ? this.DateService.dateConvert(new Date(this.Online_Order_Date)) : null,
 

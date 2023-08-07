@@ -183,7 +183,8 @@ itemNew.forEach(element => {
     //   // etc
     // },
     
-    // didDrawPage: function (data) {
+    didDrawPage: function (data) {
+      doc.addImage(imgData, 'JPEG', 0, 0, 180, 160);
     //   // Header
     //   // doc.setFontSize(20);
     //   // doc.setTextColor(40);
@@ -206,7 +207,7 @@ itemNew.forEach(element => {
     //   doc.text("Prepared By", data.settings.margin.left, pageHeight - 4);
     //   doc.text('Checked By', width/2, pageHeight - 4, { align: 'center' })
     //   doc.text("Authorised By", width - 10, pageHeight - 4, { align: 'right' });
-    // },
+    },
     // margin: {top: 30, right: 6, bottom: 20, left: 6}
   });
   var itemNew2 = this.idlist2;
