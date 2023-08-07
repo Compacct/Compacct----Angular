@@ -415,6 +415,7 @@ import { ServiceEngineeringTeamComponent } from "./common/Harbauer/Service/servi
 import { ProjectMasterComponent } from './common/Harbauer/Service/project-master/project-master.component';
 import { TrainingGradeModuleComponent } from './common/HR/training-grade-module/training-grade-module.component';
 import { K4cVoucherComponent } from './common/FinancialManagement/Transaction/Voucher/k4c-voucher/k4c-voucher.component';
+import { SalesmanTargetForJohComponent } from './common/PatientManagement/Audiologist/salesman-target-for-joh/salesman-target-for-joh.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3173,6 +3174,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: K4cVoucherComponent,
       data: {
         title: 'Voucher'
+      }
+    },
+    {
+      path: 'CR_Salesman_Target_For_JOH',
+      component: SalesmanTargetForJohComponent,
+      data: {
+        title: 'Salesman Target For Joh'
       }
     },
     /*{

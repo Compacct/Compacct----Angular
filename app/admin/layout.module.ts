@@ -513,6 +513,7 @@ import { ServiceEngineeringTeamComponent } from "./common/Harbauer/Service/servi
 import { ProjectMasterComponent } from './common/Harbauer/Service/project-master/project-master.component';
 import { TrainingGradeModuleComponent } from './common/HR/training-grade-module/training-grade-module.component';
 import { K4cVoucherComponent } from './common/FinancialManagement/Transaction/Voucher/k4c-voucher/k4c-voucher.component';
+import { SalesmanTargetForJohComponent } from './common/PatientManagement/Audiologist/salesman-target-for-joh/salesman-target-for-joh.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -940,7 +941,8 @@ import { K4cVoucherComponent } from './common/FinancialManagement/Transaction/Vo
     ServiceEngineeringTeamComponent,
     ProjectMasterComponent,
     TrainingGradeModuleComponent,
-    K4cVoucherComponent
+    K4cVoucherComponent,
+    SalesmanTargetForJohComponent
   ],
   imports: [
     CommonModule,
