@@ -486,6 +486,7 @@ export class MICLCouponIssueComponent implements OnInit {
   }
   converttoPDFcoupon(itemNew:any) {
     //var style:any = ;
+    var label = this.Issue_To_Browse != "Contractor" ? this.Issue_To_Browse : this.Sub_Ledger_Name;
     var fromdate = this.From_date;
     var month = this.currentmonth
     var year = fromdate.getFullYear();
@@ -500,7 +501,7 @@ export class MICLCouponIssueComponent implements OnInit {
     // var column = ['SL No', 'Emp Code', 'Emp Name', 'Meal', 'Rate', 'Amount Rs', 'Breakfast', 'Rate1', 'Amount Rs.1', 'Grand Total Amount'];
     header = 
       [{
-      content: "MEAL & BREAKFAST COUPON STATEMENT OF " + this.Sub_Ledger_Name + " FOR THE MONTH OF " + currentmonthyear,
+      content: "MEAL & BREAKFAST COUPON STATEMENT OF " + label.toUpperCase() + " FOR THE MONTH OF " + currentmonthyear,
       colSpan: 10,
       styles: {
       halign: 'center',

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, ElementRef, ViewChild } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { MessageService } from "primeng/api";
 import { FileUpload } from "primeng/primeng";
@@ -11,6 +11,8 @@ import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime
 import { ActivatedRoute, Router } from "@angular/router";
 import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
+import { Chart } from 'chart.js';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-hr-event-upload',
@@ -40,6 +42,9 @@ export class HREventUploadComponent implements OnInit {
   idlist1:any = [];
   idlist2:any = [];
 
+  @ViewChild('barChart',{static:false}) barChartRef: ElementRef;
+  ChartList:any = [];
+
   constructor(
     private Header: CompacctHeader,
     private router : Router,
@@ -58,6 +63,7 @@ export class HREventUploadComponent implements OnInit {
     });
     // this.GetEmpData();
     this.createjson();
+    this.createBarChart();
   }
   onReject() {
     //this.compacctToast.clear("c");
@@ -115,6 +121,7 @@ createjson(){
       this.idlist2.push(id2);
      }
  });
+//  this.ChartList = [{'Label':'Label 1','val':10,'color':'red'},{'Label':'Label 2','val':20,'color':'blue'},{'Label':'Label 3','val':15,'color':'green'},{'Label':'Label 4','val':30,'color':'yellow'}]
 }
 
 jsontopdf() {
@@ -307,6 +314,67 @@ jsontopdfbackgroundimg() {
     // margin: {top: 30, right: 6, bottom: 20, left: 6}
   // });
   doc.save('bg.pdf');
+}
+createBarChart() {
+  // var itemNew = this.ChartList;
+  // var column:any = [];
+  // var rows:any = [];
+  // var col:any = [];
+  // var color:any = [];
+  // column = itemNew.length ? Object.keys(itemNew[0]): []
+  // // itemNew.forEach(element => {
+  // //   // rows.push(Object.values(element))
+  // //   var temp = [element.Label]
+  // //   col.push(Object.values(element.Label));
+  // //   console.log('col',col)
+  // //   var temp2 = [element.val]
+  // //   rows.push(Object.values(element.val));
+  // //   console.log('rows',rows)
+  // //   var temp3 = [element.color]
+  // //   color.push(Object.values(element.color));
+  // //   console.log('color',color)
+  
+  // // });
+  // const data = {
+  //   labels: ['Label 1', 'Label 2', 'Label 3', 'Label 4'],
+  //     datasets: [{
+  //       label: 'Sample Data',
+  //       data: [10, 20, 15, 30],
+  //       backgroundColor: ['red', 'blue', 'green', 'yellow'],
+  //   }]
+  // };
+
+  // const options:any = {
+  //   scales: {
+  //     y: {
+  //       beginAtZero: true
+  //     }
+  //   }
+  // };
+
+  // const ctx = this.barChartRef.nativeElement.getContext('2d');
+  // const barChart = new Chart(ctx, {
+  //   type: 'bar',
+  //   data: data,
+  //   options: options
+  // });
+}
+jsontopdfchart(){
+  const pdf = new jsPDF();
+
+    // Get the chart canvas element
+    const chartCanvas:any = this.barChartRef.nativeElement;
+
+    // Convert the chart canvas to an image using html2canvas
+    html2canvas(chartCanvas).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+
+      // Add the image to the PDF
+      pdf.addImage(imgData, 'PNG', 10, 10, 190, 100); // Adjust the position and size as needed
+
+      // Save or open the PDF
+      pdf.save('chart.pdf');
+    });
 }
 
 }

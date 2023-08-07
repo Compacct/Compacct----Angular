@@ -1069,7 +1069,12 @@
         </div>
         <div class="col-sm-12">
             <label class="control-label">E-Way Bill Date<sup class="text-danger"></sup></label>
-        <ejs-datepicker [(value)]="EWay_Bill_Date" [format]="'dd/MMM/yyyy'"></ejs-datepicker>
+        <!-- <ejs-datepicker [(value)]="EWay_Bill_Date" [format]="'dd/MMM/yyyy'"></ejs-datepicker> -->
+        <ejs-datetimepicker [(value)]="EWay_Bill_Date" [min]="minDatebilldate" [format]="'dd/MMM/yyyy hh:mm a'"></ejs-datetimepicker >
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Validity Date<sup class="text-danger"></sup></label>
+        <ejs-datetimepicker [(value)]="E_Invoice_EwbValidTill" [min]="minDatevalidtill" [format]="'dd/MMM/yyyy hh:mm a'"></ejs-datetimepicker >
         </div>
         <div class="col-sm-12">
             <label class="control-label">Transport ID<sup class="text-danger">*</sup></label>
@@ -1083,8 +1088,8 @@
         </div>
         <div class="col-sm-12">
             <label class="control-label">Trasporter Doc No<sup class="text-danger">*</sup></label>
-            <input type="text" class="form-control" name="DOC" #DOC="ngModel" [(ngModel)]="Objupdatepop.Trasporter_Doc_No"
-                placeholder="Type Trasporter Doc No"[ngClass]="{'clearance': UpdateFormSubmitted && DOC?.errors?.required}" required>
+            <input type="text" class="form-control" name="DOC" #DOC="ngModel" [(ngModel)]="Objupdatepop.Trasporter_Doc_No" maxlength="15"
+                placeholder="Type Trasporter Doc No"[ngClass]="{'clearance': (UpdateFormSubmitted && DOC?.errors?.required) || (DOC.errors?.maxlength && DOC.touched)}" required>
         </div>
         <div class="col-sm-12">
             <label class="control-label">Transport Doc Date<sup class="text-danger"></sup></label>
