@@ -113,8 +113,8 @@ export class K4cSwiggyZomatoFileUploadComponent implements OnInit {
         && this.tableDataListHeader.length === 3
         && typeof this.tableDataList[0][this.tableDataListHeader[2]] == 'number' ){
         this.tableDataList.forEach((ele:any) => {
-       
-             ele[this.tableDataListHeader[1]] = this.DateService.dateConvert(new Date(ele[this.tableDataListHeader[1]]))
+          const date = new Date(new Date(ele[this.tableDataListHeader[1]]).getTime() + 10 * 60000);
+             ele[this.tableDataListHeader[1]] = this.DateService.dateConvert(new Date(date))
          
          });
          console.log('tableDataList',this.tableDataList)

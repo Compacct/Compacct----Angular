@@ -3159,7 +3159,7 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       path: 'Bl_Txn_Project_Master',
       component: ProjectMasterComponent,
       data: {
-        title: 'Project_Master'
+        title: 'Project Master'
       }
     },
     {
