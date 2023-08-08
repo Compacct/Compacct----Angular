@@ -29,6 +29,11 @@ export class HrReportsComponent implements OnInit {
   reportFormSubmit: boolean = false;
   Spinner: boolean = false;
   buttonname: string = 'Create';
+  DateRangeflag: boolean = false;
+  Monthflag: boolean = false;
+  excelflag: boolean = false;
+  employeeflag: boolean = false;
+  attentypeflag: boolean = false;
   constructor(
     private Header: CompacctHeader,
     private CompacctToast: MessageService,
@@ -68,9 +73,39 @@ export class HrReportsComponent implements OnInit {
   structureData(repname: any) {
     this.visibleDate = "";
     this.findObj = this.replist.find((ele: any) => ele.report_name == repname)
-    // console.log('selected report', this.findObj);
+    console.log('selected report', this.findObj);
+    this.DateRangeflag = false;
+    this.Monthflag = false;
+    this.excelflag = false;
+    this.employeeflag = false;
+    this.attentypeflag = false;
     if (this.findObj) {
       this.visibleDate = this.findObj.allowed_control;
+      console.log('this.visibleDate===', this.visibleDate);
+      var allowFields: any = [];
+      allowFields = this.visibleDate.split(','); //DT,XL,EMP,AT
+      for (let i = 0; i < allowFields.length; i++) {
+        if (allowFields[i] == 'DT') {
+          this.DateRangeflag = true;
+          // console.log('this.DateRangeflag===',this.DateRangeflag)
+        }
+        if (allowFields[i] == 'MT') {
+          this.Monthflag = true;
+          // console.log('this.DateRangeflag===',this.DateRangeflag)
+        }
+        else if (allowFields[i] == 'XL') {
+          this.excelflag = true;
+          // console.log('this.excelflag===',this.excelflag)
+        }
+        else if (allowFields[i] == 'EMP') {
+          this.employeeflag = true;
+          // console.log('this.employeeflag===',this.employeeflag)
+        }
+        else if (allowFields[i] == 'AT') {
+          this.attentypeflag = true;
+          // console.log('this.attentypeflag===',this.attentypeflag)
+        }
+      }
     }
   }
 

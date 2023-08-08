@@ -509,10 +509,11 @@ import { SofthearAudiologistTargetComponent } from './common/PatientManagement/A
 import { SalarySlipComponent } from './common/HR/salary-slip/salary-slip.component';
 import { ApproveEvaluateForTraningComponent } from './common/Attendance/approve-evaluate-for-traning/approve-evaluate-for-traning.component';
 import { EmployeeRelatedReportComponent } from './common/HR/employee-related-report/employee-related-report.component';
-import { K4cDiagnosisPosBillComponent } from './common/OutletManagement/k4c-diagnosis-pos-bill/k4c-diagnosis-pos-bill.component';
 import { ServiceEngineeringTeamComponent } from "./common/Harbauer/Service/service-engineering-team/service-engineering-team.component";
 import { ProjectMasterComponent } from './common/Harbauer/Service/project-master/project-master.component';
 import { TrainingGradeModuleComponent } from './common/HR/training-grade-module/training-grade-module.component';
+import { K4cVoucherComponent } from './common/FinancialManagement/Transaction/Voucher/k4c-voucher/k4c-voucher.component';
+import { SalesmanTargetForJohComponent } from './common/PatientManagement/Audiologist/salesman-target-for-joh/salesman-target-for-joh.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -937,10 +938,11 @@ import { TrainingGradeModuleComponent } from './common/HR/training-grade-module/
     SalarySlipComponent,
     ApproveEvaluateForTraningComponent,
     EmployeeRelatedReportComponent,
-    K4cDiagnosisPosBillComponent,
     ServiceEngineeringTeamComponent,
     ProjectMasterComponent,
-    TrainingGradeModuleComponent
+    TrainingGradeModuleComponent,
+    K4cVoucherComponent,
+    SalesmanTargetForJohComponent
   ],
   imports: [
     CommonModule,

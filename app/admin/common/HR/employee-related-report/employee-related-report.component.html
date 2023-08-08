@@ -57,7 +57,7 @@
                                </button>
                             </div>
 								<div class="col-sm-3" *ngIf="excelflag">
-									<button class="btn btn-success custom-button1" id="load" (click)="exportExcel(GridList,ReportName)" style="margin: 27px 0 0 10px">
+									<button class="btn btn-success custom-button1" id="load" [disabled]="!GridList.length" (click)="exportExcel(GridList,ReportName)" style="margin: 27px 0 0 10px">
 										<p-progressSpinner
 											*ngIf="Spinner"
 											[style]="{ width: '15px', height: '15px' }"
