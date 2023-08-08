@@ -58,3 +58,7 @@
     border: none !important;
     cursor: no-drop;
   }
+
+  .custom-btn1{
+    margin-top: 28px;
+  }
