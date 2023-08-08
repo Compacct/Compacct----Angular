@@ -23,7 +23,7 @@
             <div class="form-horizontal">
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
-                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" [disabled]="AddList.length && buttonname === 'Save'">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" [disabled]="AddList.length">
                             <form name="pdfForm" #pdfForm="ngForm" novalidate>
                             <div class="form-group">
                                 <!-- <div class="col-sm-2">
