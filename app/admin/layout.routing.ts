@@ -416,7 +416,7 @@ import { ProjectMasterComponent } from './common/Harbauer/Service/project-master
 import { TrainingGradeModuleComponent } from './common/HR/training-grade-module/training-grade-module.component';
 import { K4cVoucherComponent } from './common/FinancialManagement/Transaction/Voucher/k4c-voucher/k4c-voucher.component';
 import { SalesmanTargetForJohComponent } from './common/PatientManagement/Audiologist/salesman-target-for-joh/salesman-target-for-joh.component';
-
+import { ServiceProblemTypeComponent } from './common/Harbauer/Service/service-problem-type/service-problem-type.component';
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -3181,6 +3181,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: SalesmanTargetForJohComponent,
       data: {
         title: 'Salesman Target For Joh'
+      }
+    },
+    {
+      path: 'BL_Txn_Service_Problem_Type',
+      component: ServiceProblemTypeComponent,
+      data: {
+        title: 'Service Problem Type'
       }
     },
     /*{
