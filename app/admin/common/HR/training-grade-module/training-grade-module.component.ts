@@ -47,7 +47,7 @@ export class TrainingGradeModuleComponent implements OnInit {
       "Report_Name_String": "Get_Training_No",
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
-      console.log('Traning no list', data);
+      // console.log('Traning no list', data);
       data.forEach((ele: any) => {
         ele["label"] = ele.Training_No;
         ele["value"] = ele.Training_No;
@@ -67,9 +67,9 @@ export class TrainingGradeModuleComponent implements OnInit {
     this.traning_Status = '';
     this.Traning_Overall_Remarks = '';
     if (value) {
-      console.log(value);
+      // console.log(value);
       this.traningTopic = this.traningNoList.find((ele: any) => ele.Training_No == value);
-      console.log('search value', this.traningTopic);
+      // console.log('search value', this.traningTopic);
       this.getDepartment(value);
     }
   }
@@ -81,7 +81,7 @@ export class TrainingGradeModuleComponent implements OnInit {
       "Json_Param_String": JSON.stringify([{ "Training_No": traning_no }])
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
-      console.log('Department list', data);
+      // console.log('Department list', data);
       data.forEach((ele: any) => {
         ele["label"] = ele.Dept_Name;
         ele["value"] = ele.Dept_ID;
@@ -104,7 +104,7 @@ export class TrainingGradeModuleComponent implements OnInit {
         "Json_Param_String": JSON.stringify([{ "Training_No": traning_No, "Dept_ID": dept_Id }])
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
-        console.log('trainer list', data);
+        // console.log('trainer list', data);
         data.forEach((ele: any) => {
           ele["label"] = ele.Trainer_Name;
           ele["value"] = ele.Emp_Trainer_ID;
@@ -126,7 +126,7 @@ export class TrainingGradeModuleComponent implements OnInit {
         "Json_Param_String": JSON.stringify([{ "Training_No": traning_no }])
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
-        console.log('table data', data);
+        // console.log('table data', data);
         this.TableData = data;
         this.Traning_Overall_Remarks = data[0].Overall_Remarks;
         this.traning_Status = data[0].Training_Status;
@@ -138,11 +138,11 @@ export class TrainingGradeModuleComponent implements OnInit {
     this.gradeFormSubmitted = true;
     if (valid && this.TableData.length) {
       let checkArrayValid = this.TableData.every((ele: any) => { return (ele.Pre_Training_Marks >= 0) && (ele.Post_Training_Marks >= 0) && (ele.Remarks != '') });
-      console.log('validation check', checkArrayValid);
+      // console.log('validation check', checkArrayValid);
       if (checkArrayValid) {
         this.gradeFormSubmitted = false;
         this.Spinner = true;
-        console.log("save data", this.TableData);
+        // console.log("save data", this.TableData);
         this.TableData.forEach((ele: any) => {
           ele["Dept_ID"] = this.objSearchData.Dept_ID;
           ele["Emp_Trainer_ID"] = this.objSearchData.Emp_Trainer_ID;
@@ -151,7 +151,7 @@ export class TrainingGradeModuleComponent implements OnInit {
           ele["Training_From_Date"] = this.DateService.dateConvert(ele["Training_From_Date"]);
           ele["Training_To_Date"] = this.DateService.dateConvert(ele["Training_To_Date"]);
         });
-        console.log('save array', this.TableData);
+        // console.log('save array', this.TableData);
         const obj = {
           "SP_String": "SP_HR_Txn_Training_Marks",
           "Report_Name_String": "Save_HR_Txn_Training_Marks",
@@ -159,7 +159,7 @@ export class TrainingGradeModuleComponent implements OnInit {
         }
         this.GlobalAPI.postData(obj).subscribe((data: any) => {
           this.Spinner = false;
-          console.log('save res', data);
+          // console.log('save res', data);
           if(data[0].Column1){
             this.CompacctToast.clear();
             this.CompacctToast.add({
