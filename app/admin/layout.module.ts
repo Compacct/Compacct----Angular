@@ -515,6 +515,7 @@ import { TrainingGradeModuleComponent } from './common/HR/training-grade-module/
 import { K4cVoucherComponent } from './common/FinancialManagement/Transaction/Voucher/k4c-voucher/k4c-voucher.component';
 import { SalesmanTargetForJohComponent } from './common/PatientManagement/Audiologist/salesman-target-for-joh/salesman-target-for-joh.component';
 import { ServiceProblemTypeComponent } from './common/Harbauer/Service/service-problem-type/service-problem-type.component';
+import { ServiceSupportTicketComponent } from './common/Harbauer/Service/service-support-ticket/service-support-ticket.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -944,7 +945,8 @@ import { ServiceProblemTypeComponent } from './common/Harbauer/Service/service-p
     TrainingGradeModuleComponent,
     K4cVoucherComponent,
     SalesmanTargetForJohComponent,
-    ServiceProblemTypeComponent
+    ServiceProblemTypeComponent,
+    ServiceSupportTicketComponent
   ],
   imports: [
     CommonModule,
