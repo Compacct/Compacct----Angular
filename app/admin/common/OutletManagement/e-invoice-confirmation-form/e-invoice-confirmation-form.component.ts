@@ -71,6 +71,9 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   VehicleModel: boolean = false;
   UpdateFormSubmitted: boolean = false;
   EWay_Bill_Date: Date = new Date();
+  minDatebilldate:Date = new Date();
+  E_Invoice_EwbValidTill: Date = new Date();
+  minDatevalidtill:Date = new Date();
   Transport_Doc_Date: Date = new Date();
   Objupdatepop: updatepop = new updatepop();
   Doc_no: any = undefined;
@@ -305,7 +308,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       if (this.databaseName === "K4C") {
         printlink = "/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" ;
       }
-      else if (this.databaseName === "BSHPL" || this.databaseName === "MICL") {
+      else if (this.databaseName === "BSHPL" || this.databaseName === "MICL" || this.databaseName === "Diagraph") {
         printlink = "/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_Print.aspx?Doc_No=" ;
       }
       else {
@@ -537,6 +540,18 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       window.open("/Report/Crystal_Files/Finance/SaleBill/Print_E_Way_Bill.aspx?Doc_No="+ obj, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
     }
   }
+  PrintGatepass(DocNo){
+    if (DocNo) {
+      const objtemp = {
+        "SP_String": "SP_MICL_Sale_Bill",
+        "Report_Name_String": "Gate_Pass_Print"
+      }
+      this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
+        var printlink = data[0].Column1;
+        window.open(printlink + "?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      })
+    }
+  }
   Cancel(docno){
     this.invoice_no = undefined;
     if (docno) {
@@ -736,8 +751,14 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
      let reportnamepencrnote = "";
-      if (this.databaseName === "K4C" || this.databaseName === "MICL") {
-        reportnamepencrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==";
+      if (this.databaseName === "K4C") {
+        reportnamepencrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=KLD20";
+      }
+      else if (this.databaseName === "MICL") {
+        reportnamepencrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=XL01";
+      }
+      else if (this.databaseName === "Diagraph") {
+        reportnamepencrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=XLD01";
       }
       else if (this.databaseName === "BSHPL") {
         reportnamepencrnote = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=Mvkyst7OU0DTxMSZAgg7HNhW2FuwUgMypd1cu36SfC1JAzFucc6OIw==";
@@ -915,8 +936,14 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
      let reportnamefailedcrnote = "";
-      if (this.databaseName === "K4C" || this.databaseName === "MICL") {
-        reportnamefailedcrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==";
+      if (this.databaseName === "K4C") {
+        reportnamefailedcrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=KLD20";
+      }
+      else if (this.databaseName === "MICL") {
+        reportnamefailedcrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=XL01";
+      }
+      else if (this.databaseName === "Diagraph") {
+        reportnamefailedcrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=XLD01";
       }
       else if (this.databaseName === "BSHPL") {
         reportnamefailedcrnote = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=Mvkyst7OU0DTxMSZAgg7HNhW2FuwUgMypd1cu36SfC1JAzFucc6OIw==";
@@ -1060,7 +1087,14 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
         }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.Objupdatepop = data[0];
-        this.EWay_Bill_Date = new Date(data[0].E_Invoice_EwbDt)
+        this.EWay_Bill_Date = new Date(data[0].Invoice_Date);
+        this.minDatebilldate = new Date(data[0].Invoice_Date);
+        
+        var invdate:any = new Date(data[0].Invoice_Date);
+        this.E_Invoice_EwbValidTill = new Date(invdate);
+        this.E_Invoice_EwbValidTill.setDate(new Date(this.E_Invoice_EwbValidTill).getDate() + 2);
+        this.minDatevalidtill = new Date(data[0].Invoice_Date);
+
         this.Transport_Doc_Date = new Date(data[0].Transporter_Doc_Date)
         this.QREWayBill_No = data[0].E_Invoice_EwbNo
         this.getQR(this.QREWayBill_No)
@@ -1085,8 +1119,9 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
             Vehicle_No: this.Objupdatepop.Vehicle_No,
             Transportation_Distance: this.Objupdatepop.Transportation_Distance,
             E_Invoice_EwbNo: this.Objupdatepop.E_Invoice_EwbNo,
-            E_Invoice_EwbDt: this.DateService.dateConvert(this.EWay_Bill_Date),
+            E_Invoice_EwbDt: this.DateService.dateTimeConvert(this.EWay_Bill_Date),
             E_Invoice_Ewb_QR_Link: this.QREWayBill_NoGent,
+            E_Invoice_EwbValidTill: this.DateService.dateTimeConvert(this.E_Invoice_EwbValidTill),
       }
        const obj = {
         "SP_String": "SP_E_Invoice_For_Confirmation_Form",
@@ -1107,6 +1142,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
           this.QREWayBill_NoGent = undefined;
           this.Doc_no = undefined;
           this.UpdateModel = false;
+          this.GetSuccessInvoicelist();
         }
       }) 
       }   

@@ -27,13 +27,16 @@ export class CouponExpensesComponent implements OnInit {
   To_date: any;
   initDate:any = [];
   seachSpinner:boolean = false;
+  DocNo: any;
+  DocDate: any;
   constructor(
     private Header: CompacctHeader,
     private $http : HttpClient,
     private CompacctToast: MessageService,
     private GlobalAPI: CompacctGlobalApiService,
     private commonApi: CompacctCommonApi,
-    private DateService: DateTimeConvertService
+    private DateService: DateTimeConvertService,
+    private compacctToast: MessageService,
   ) { }
 
   ngOnInit() {
@@ -77,7 +80,9 @@ export class CouponExpensesComponent implements OnInit {
     this.objExpenses.Total_Amount = Number(Total_Amount).toFixed(2);
    }
   }
-  onReject(){}
+  onReject(){
+    this.compacctToast.clear("c");
+  }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
       this.From_date = dateRangeObj[0];
@@ -117,7 +122,52 @@ export class CouponExpensesComponent implements OnInit {
       this.seachSpinner = false;
     }
   }
-
+  Delete(col){
+    this.DocNo = undefined;
+    if(col.Canteen_Exp_ID){
+     this.DocNo = col.Canteen_Exp_ID
+     this.DocDate = new Date(col.Date)
+     this.compacctToast.clear();
+     this.compacctToast.add({
+       key: "c",
+       sticky: true,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+     });
+    }
+  }
+  onConfirm() {
+    if (this.DocNo) {
+      const obj = {
+        "SP_String": "SP_Master_Coupon_Receive",
+        "Report_Name_String": "Delete_Master_Coupon_Canteen_Expenses",
+        "Json_Param_String": JSON.stringify([{ Canteen_Exp_ID: this.DocNo, Date: this.DateService.dateConvert(new Date(this.DocDate))}])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        if (data[0].Column1 === "Done") {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Coupon Expenses",
+            detail: "Succesfully Deleted"
+          });
+          this.DocNo = undefined;
+          this.DocDate = undefined;
+          this.getBrowseData();
+        } else {
+            this.CompacctToast.clear();
+            this.CompacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Error",
+              detail: "Something Wrong"
+            });
+        }
+      });
+    }
+  }
   
 
   SaveCoupon(valid) {

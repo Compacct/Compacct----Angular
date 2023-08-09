@@ -509,6 +509,13 @@ import { SofthearAudiologistTargetComponent } from './common/PatientManagement/A
 import { SalarySlipComponent } from './common/HR/salary-slip/salary-slip.component';
 import { ApproveEvaluateForTraningComponent } from './common/Attendance/approve-evaluate-for-traning/approve-evaluate-for-traning.component';
 import { EmployeeRelatedReportComponent } from './common/HR/employee-related-report/employee-related-report.component';
+import { ServiceEngineeringTeamComponent } from "./common/Harbauer/Service/service-engineering-team/service-engineering-team.component";
+import { ProjectMasterComponent } from './common/Harbauer/Service/project-master/project-master.component';
+import { TrainingGradeModuleComponent } from './common/HR/training-grade-module/training-grade-module.component';
+import { K4cVoucherComponent } from './common/FinancialManagement/Transaction/Voucher/k4c-voucher/k4c-voucher.component';
+import { SalesmanTargetForJohComponent } from './common/PatientManagement/Audiologist/salesman-target-for-joh/salesman-target-for-joh.component';
+import { ServiceProblemTypeComponent } from './common/Harbauer/Service/service-problem-type/service-problem-type.component';
+import { ServiceSupportTicketComponent } from './common/Harbauer/Service/service-support-ticket/service-support-ticket.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -932,7 +939,14 @@ import { EmployeeRelatedReportComponent } from './common/HR/employee-related-rep
     SofthearAudiologistTargetComponent,
     SalarySlipComponent,
     ApproveEvaluateForTraningComponent,
-    EmployeeRelatedReportComponent
+    EmployeeRelatedReportComponent,
+    ServiceEngineeringTeamComponent,
+    ProjectMasterComponent,
+    TrainingGradeModuleComponent,
+    K4cVoucherComponent,
+    SalesmanTargetForJohComponent,
+    ServiceProblemTypeComponent,
+    ServiceSupportTicketComponent
   ],
   imports: [
     CommonModule,

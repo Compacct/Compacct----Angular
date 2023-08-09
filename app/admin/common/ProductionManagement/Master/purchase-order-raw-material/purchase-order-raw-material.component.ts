@@ -1818,6 +1818,7 @@ gettermsdetails(){
         this.termsdetails = data;
         this.ObjWorkOrder.Terms_Of_Price = data[0].Terms_Of_Price;
         this.ObjWorkOrder.Payment_Terms = data[0].Payment_Terms;
+        this.ObjWorkOrder.Late_Delivery = data[0].Late_Delivery;
         this.ObjWorkOrder.Delivery_Terms = data[0].Delivery_Terms;
         this.ObjWorkOrder.Warranty_Guarantee_Term = data[0].Warranty_Guarantee_Term;
         this.ObjWorkOrder.Transist_Insurance = data[0].Transist_Insurance;
@@ -1825,6 +1826,7 @@ gettermsdetails(){
         this.ObjWorkOrder.Taxes_And_Duties = data[0].Taxes_And_Duties;
         this.ObjWorkOrder.Packing_And_Forward = data[0].Packing_And_Forward;
         this.ObjWorkOrder.Transpotation = data[0].Transpotation;
+        this.ObjWorkOrder.Term_And_Condition = data[0].Term_And_Condition;
         this.ObjWorkOrder.Installation_Commissioning = data[0].Installation_Commissioning;
         this.ObjWorkOrder.Delivery_Location = data[0].Delivery_Location;
         this.ObjWorkOrder.Remarks = data[0].Remarks;
@@ -2103,6 +2105,7 @@ class WorkOrder {
   Taxes_And_Duties:any;
   Packing_And_Forward:any;
   Transpotation:any;
+  Term_And_Condition:any;
   Paying_Office_Works_Term:any;
   Installation_Commissioning:any;
   Delivery_Location:any;

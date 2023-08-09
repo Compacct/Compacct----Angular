@@ -148,6 +148,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
   updatedate = undefined;
   billnumber = undefined;
   expotSpinner = false;
+  generatedisabledbutton: boolean = true;
+  generatedisabled: boolean = false;
 
   constructor(
     private $http: HttpClient,
@@ -202,6 +204,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
     this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
     this.SelectedIndent = [];
     this.IndentFilter = [];
+    this.generatedisabledbutton = true;
+    this.generatedisabled = false;
   }
   onConfirm(){
     if(this.doc_no){
@@ -1188,6 +1192,30 @@ editmaster(masterProduct){
   this.getIndentForEdit(masterProduct);
   }
 }
+GeneratingBillNo(masterProduct){
+  this.productDetails = [];
+  //this.BackUpproductDetails = [];
+  this.clearData();
+  this.todayDate = new Date();
+  this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+  this.outLetDis = true;
+  if(masterProduct.Doc_No){
+  this.tabIndexToView = 1;
+  this.items = ["BROWSE", "UPDATE"];
+  this.buttonname = "Update";
+  this.generatedisabledbutton = false;
+  this.generatedisabled = true;
+  this.brandInput = true;
+  this.editDis = true;
+  //this.adDisabled = false;
+  this.inputBoxDisabled = true;
+  this.indentdateDisabled = false;
+  this.reqQTYdis = false;
+  this.AccQtydis = true;
+  this.geteditmaster(masterProduct);
+  this.getIndentForEdit(masterProduct);
+  }
+}
 geteditmaster(masterProduct){
   this.EditList = [];
   const obj = {
@@ -1736,6 +1764,8 @@ clearbutton(){
   this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
   this.SelectedIndent = [];
   this.IndentFilter = [];
+  this.generatedisabledbutton = true;
+  this.generatedisabled = false;
 }
 deleteDispatch(masterProduct){
  console.log("deleteCol",masterProduct)

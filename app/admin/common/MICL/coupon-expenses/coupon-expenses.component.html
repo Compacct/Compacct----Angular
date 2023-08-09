@@ -56,13 +56,28 @@
                      </ng-template>
                      <ng-template pTemplate="header">
                         <tr style="width: 100%;">
+                           <th style="width:5em">Action</th>
                            <th style="text-align: center ;" nowrap *ngFor="let option of DynamicHeader |  slice:1">{{option.replaceAll('_',' ')}}</th>
                            
                         </tr>
                      </ng-template>
                      <ng-template pTemplate="body" let-col>
                         <tr>
-
+                           <td>
+                              <div class="dropdown">
+                                  <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                  <i class="fa fa-fw fa-bars"></i>
+                                                  <span class="caret"></span>
+                                              </button>
+                                  <ul class="dropdown-menu">
+                                      <li>
+                                          <a (click)="Delete(col)">
+                                              <i class="fa fa-fw fa-trash"></i> Delete
+                                          </a>
+                                      </li>
+                                  </ul>
+                              </div>
+                          </td>
                            <ng-container *ngFor="let option of DynamicHeader | slice:1">
                               <td nowrap="nowrap" style="text-align: center;">{{col[option] ? col[option] : "-"}}</td>
                             </ng-container>
