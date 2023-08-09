@@ -25,6 +25,7 @@ export class TrainingGradeModuleComponent implements OnInit {
   Traning_Overall_Remarks: string = '';
   gradeFormSubmitted: boolean = false;
   objSearchData = new searchData();
+  SerachFormSubmitted:boolean = false;
   constructor(
     private Header: CompacctHeader,
     private CompacctToast: MessageService,
@@ -40,6 +41,7 @@ export class TrainingGradeModuleComponent implements OnInit {
     });
     this.getTraningNo();
   }
+  TabClick(e){}
 
   getTraningNo() {
     const obj = {

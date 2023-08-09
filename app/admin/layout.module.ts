@@ -514,6 +514,9 @@ import { ProjectMasterComponent } from './common/Harbauer/Service/project-master
 import { TrainingGradeModuleComponent } from './common/HR/training-grade-module/training-grade-module.component';
 import { K4cVoucherComponent } from './common/FinancialManagement/Transaction/Voucher/k4c-voucher/k4c-voucher.component';
 import { SalesmanTargetForJohComponent } from './common/PatientManagement/Audiologist/salesman-target-for-joh/salesman-target-for-joh.component';
+import { ServiceProblemTypeComponent } from './common/Harbauer/Service/service-problem-type/service-problem-type.component';
+import { ServiceSupportTicketComponent } from './common/Harbauer/Service/service-support-ticket/service-support-ticket.component';
+import { QuizModuleComponent } from './common/Attendance/quiz-module/quiz-module.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -942,7 +945,10 @@ import { SalesmanTargetForJohComponent } from './common/PatientManagement/Audiol
     ProjectMasterComponent,
     TrainingGradeModuleComponent,
     K4cVoucherComponent,
-    SalesmanTargetForJohComponent
+    SalesmanTargetForJohComponent,
+    ServiceProblemTypeComponent,
+    ServiceSupportTicketComponent,
+    QuizModuleComponent
   ],
   imports: [
     CommonModule,

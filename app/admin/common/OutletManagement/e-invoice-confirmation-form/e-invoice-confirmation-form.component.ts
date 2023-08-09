@@ -71,6 +71,9 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   VehicleModel: boolean = false;
   UpdateFormSubmitted: boolean = false;
   EWay_Bill_Date: Date = new Date();
+  minDatebilldate:Date = new Date();
+  E_Invoice_EwbValidTill: Date = new Date();
+  minDatevalidtill:Date = new Date();
   Transport_Doc_Date: Date = new Date();
   Objupdatepop: updatepop = new updatepop();
   Doc_no: any = undefined;
@@ -1084,7 +1087,14 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
         }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.Objupdatepop = data[0];
-        this.EWay_Bill_Date = new Date(data[0].E_Invoice_EwbDt)
+        this.EWay_Bill_Date = new Date(data[0].Invoice_Date);
+        this.minDatebilldate = new Date(data[0].Invoice_Date);
+        
+        var invdate:any = new Date(data[0].Invoice_Date);
+        this.E_Invoice_EwbValidTill = new Date(invdate);
+        this.E_Invoice_EwbValidTill.setDate(new Date(this.E_Invoice_EwbValidTill).getDate() + 2);
+        this.minDatevalidtill = new Date(data[0].Invoice_Date);
+
         this.Transport_Doc_Date = new Date(data[0].Transporter_Doc_Date)
         this.QREWayBill_No = data[0].E_Invoice_EwbNo
         this.getQR(this.QREWayBill_No)
@@ -1109,8 +1119,9 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
             Vehicle_No: this.Objupdatepop.Vehicle_No,
             Transportation_Distance: this.Objupdatepop.Transportation_Distance,
             E_Invoice_EwbNo: this.Objupdatepop.E_Invoice_EwbNo,
-            E_Invoice_EwbDt: this.DateService.dateConvert(this.EWay_Bill_Date),
+            E_Invoice_EwbDt: this.DateService.dateTimeConvert(this.EWay_Bill_Date),
             E_Invoice_Ewb_QR_Link: this.QREWayBill_NoGent,
+            E_Invoice_EwbValidTill: this.DateService.dateTimeConvert(this.E_Invoice_EwbValidTill),
       }
        const obj = {
         "SP_String": "SP_E_Invoice_For_Confirmation_Form",
@@ -1131,6 +1142,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
           this.QREWayBill_NoGent = undefined;
           this.Doc_no = undefined;
           this.UpdateModel = false;
+          this.GetSuccessInvoicelist();
         }
       }) 
       }   

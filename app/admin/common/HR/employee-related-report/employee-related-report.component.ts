@@ -83,6 +83,10 @@ export class EmployeeRelatedReportComponent implements OnInit {
     this.visibleDate = "";
     this.findObj = this.replist.find((ele: any) => ele.report_name == repname)
     console.log('selected report', this.findObj);
+    this.DateRangeflag = false;
+    this.excelflag = false;
+    this.employeeflag = false;
+    this.attentypeflag = false;
     if (this.findObj) {
       this.visibleDate = this.findObj.allowed_control;
       console.log('this.visibleDate===', this.visibleDate);
@@ -149,6 +153,7 @@ export class EmployeeRelatedReportComponent implements OnInit {
     this.GridList = [];
     this.GridListHeader = [];
     this.seachSpinner = true;
+    this.ngxService.start();
     const start = this.From_Date
       ? this.DateService.dateConvert(new Date(this.From_Date))
       : this.DateService.dateConvert(new Date());
@@ -163,13 +168,14 @@ export class EmployeeRelatedReportComponent implements OnInit {
     }
     const obj = {
       "SP_String": "SP_HR_Reports",
-      "Report_Name_String": "Attn. Report",
+      "Report_Name_String": this.ReportName,
       "Json_Param_String": JSON.stringify([senddata])
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       this.GridList = data;
       this.GridListHeader = data.length ? Object.keys(data[0]) : []
       this.seachSpinner = false;
+      this.ngxService.stop();
       //  console.log("GridList ===",this.GridList);
     })
   }
@@ -178,6 +184,7 @@ export class EmployeeRelatedReportComponent implements OnInit {
     let fileName = {report_name:ReportName}
     this.ngxService.start();
     this.ExportExcelService.exprtToExcelHR_Reports(GridList, fileName);
+    this.ngxService.stop();
   }
 
   TabClick(e: any) {
