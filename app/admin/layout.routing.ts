@@ -418,6 +418,7 @@ import { K4cVoucherComponent } from './common/FinancialManagement/Transaction/Vo
 import { SalesmanTargetForJohComponent } from './common/PatientManagement/Audiologist/salesman-target-for-joh/salesman-target-for-joh.component';
 import { ServiceProblemTypeComponent } from './common/Harbauer/Service/service-problem-type/service-problem-type.component';
 import { ServiceSupportTicketComponent } from './common/Harbauer/Service/service-support-ticket/service-support-ticket.component';
+import { QuizModuleComponent } from "./common/Attendance/quiz-module/quiz-module.component";
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -3196,6 +3197,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: ServiceSupportTicketComponent,
       data: {
         title: 'Service Problem Type'
+      }
+    },
+     {
+      path: 'Quiz_Module',
+      component: QuizModuleComponent,
+      data: {
+        title: 'Quiz Module'
       }
     },
     /*{
