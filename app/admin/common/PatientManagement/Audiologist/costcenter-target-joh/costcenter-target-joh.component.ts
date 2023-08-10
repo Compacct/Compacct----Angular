@@ -54,7 +54,7 @@ export class CostcenterTargetJohComponent implements OnInit {  tabIndexToView: n
       "Json_Param_String": JSON.stringify([{"User_ID":this.userId}])
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
-      console.log('costCenter List', data);
+      // console.log('costCenter List', data);
       if (data.length) {
         data.forEach((ele: any) => {
           this.costCeterList.push({
@@ -78,14 +78,14 @@ export class CostcenterTargetJohComponent implements OnInit {  tabIndexToView: n
       let initDate = this.costCenterDate ? new Date(this.costCenterDate.getFullYear(), this.costCenterDate.getMonth(), 1) : new Date();
       this.ObjcostCenter.Target_ID = 0;
       this.ObjcostCenter.Target_Date = this.DateService.dateConvert(initDate);
-      console.log('save obj', this.ObjcostCenter);
+      // console.log('save obj', this.ObjcostCenter);
       const obj = {
         "SP_String": "Sp_BL_CRM_Txn_Cost_Center_Target",
         "Report_Name_String": "Create_Cost_Center_Target",
         "Json_Param_String": JSON.stringify([this.ObjcostCenter])
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
-        console.log('data', data);
+        // console.log('data', data);
         this.Spinner = false;
         if (data[0].Column1 == 'done') {
           this.CompacctToast.clear();
@@ -107,7 +107,7 @@ export class CostcenterTargetJohComponent implements OnInit {  tabIndexToView: n
     if(validCheck){
       this.searchFormSubmit = false;
       this.searchSpinner = true;
-    console.log('retrive function works');
+    // console.log('retrive function works');
     let searchDate = this.costCenterDate ? new Date(this.costCenterDate.getFullYear(), this.costCenterDate.getMonth(), 1) : new Date();
     const obj = {
       "SP_String": "Sp_BL_CRM_Txn_Cost_Center_Target",
@@ -115,7 +115,7 @@ export class CostcenterTargetJohComponent implements OnInit {  tabIndexToView: n
       "Json_Param_String": JSON.stringify([{"Target_Date": this.DateService.dateConvert(searchDate),"Cost_Cen_ID":this.ObjcostCenter.Cost_Cen_ID}])
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
-      console.log('table data', data);
+      // console.log('table data', data);
       this.searchSpinner = false;
       this.TableData = data;
       if (data.length) {
@@ -150,7 +150,7 @@ export class CostcenterTargetJohComponent implements OnInit {  tabIndexToView: n
         "Speech_Revenue": col.Speech_Revenue,
         "Speech_Revenue_Achievement": col.Speech_Revenue_Achievement,
       };
-      console.log('update obj', updateObj);
+      // console.log('update obj', updateObj);
 
       const obj = {
         "SP_String": "Sp_BL_CRM_Txn_Cost_Center_Target",
@@ -158,7 +158,7 @@ export class CostcenterTargetJohComponent implements OnInit {  tabIndexToView: n
         "Json_Param_String": JSON.stringify([updateObj])
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
-        console.log('update response', data);
+        // console.log('update response', data);
         if (data[0].Column1 = "Done") {
           // this.CompacctToast.clear('c');
           this.CompacctToast.clear();
@@ -189,7 +189,7 @@ export class CostcenterTargetJohComponent implements OnInit {  tabIndexToView: n
     // this.deleteTargetId = 0;
     if (col.Target_ID) {
       this.deleteTargetId = col.Target_ID;
-      console.log('deleteTargetId', this.deleteTargetId);
+      // console.log('deleteTargetId', this.deleteTargetId);
       this.CompacctToast.clear();
       this.CompacctToast.add({
         key: "c",
@@ -213,7 +213,7 @@ export class CostcenterTargetJohComponent implements OnInit {  tabIndexToView: n
       "Json_Param_String": JSON.stringify([{ "Target_ID": this.deleteTargetId }])
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
-      console.log('del res', data);
+      // console.log('del res', data);
       this.deleteTargetId = 0;
       if (data[0].Column1.trim() == 'Done') {
         this.CompacctToast.clear('c');
