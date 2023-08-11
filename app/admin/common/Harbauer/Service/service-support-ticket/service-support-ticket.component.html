@@ -25,9 +25,135 @@
                 <div class="box-body">
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
-                            </p-tabPanel>
+                            <div class="table-responsive no-padding">
+                                    <p-table [value]="getAllTicket" 
+                                    [paginator]="getAllTicket.length ? true : false" 
+                                    [rows]="10" [rowHover]="true" [autoLayout]="true" 
+                                    sortMode="multiple" [rowsPerPageOptions]="[10,20,30]"
+                                     [globalFilterFields]="['UOM','Primary/Alternative','Decimal_Place']"
+                                        [rowHover]="true" #dt>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th>Project</th>
+                                                <th>Site</th>
+                                                <th>Docket No</th>
+                                                <th>Status</th>
+                                                <th>Assigned To</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                            <i class="fa fa-fw fa-bars"></i>
+                                                                            <span class="caret"></span>
+                                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <!-- <a (click)="EditUom(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a> -->
+                                                            </li>
+                                                            <li>
+                                                                <!-- <a (click)="DeleteUom(col)">
+                                                                    <i class="fa fa-fw fa-trash"></i> Delete
+                                                                </a> -->
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                <td>{{col.UOM}}</td>
+                                                <td>{{col.PRI_ALT}}</td>
+                                                <td>{{col.Decimal_Place}}</td>
+                                                <td>{{col.PRI_ALT}}</td>
+                                                <td>{{col.Decimal_Place}}</td>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                                 </p-tabPanel>
                             <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
-                                
+                                <form name="supportTicketForm" #supportTicketForm="ngForm" novalidate>
+                                    <div class="form-group">
+                                        <div class="col-sm-4" >
+                                            <label class="control-label">Project<sup class="text-danger">*</sup></label>
+                                            <select class="form-control" 
+                                                name="Project_ID" 
+                                                #Project_ID="ngModel" 
+                                                [(ngModel)]="objsupportTicket.Project_ID" 
+                                                (change)="changeProject(objsupportTicket.Project_ID)"
+                                                [ngClass]="{'clearance': supportTicketFormSubmit && Project_ID?.errors?.required}"
+                                                required>
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let value of projectList" value="{{value.Project_ID}}" >{{value.Project_Name}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4" >
+                                            <label class="control-label">Site<sup class="text-danger">*</sup></label>
+                                            <select class="form-control" 
+                                                name="Site_ID" 
+                                                #Site_ID="ngModel" 
+                                                [(ngModel)]="objsupportTicket.Site_ID" 
+                                                [ngClass]="{'clearance': supportTicketFormSubmit && Site_ID?.errors?.required}"
+                                                required>
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let value of siteList" value="{{value.Site_ID}}" >{{value.Site_Remarks}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4" >
+                                            <label class="control-label">Problem Type<span class="text-danger">*</span></label>
+                                            <p-multiSelect 
+                                            [options]="ProblemTypeList"
+                                            [(ngModel)]="SelectedProblemType"
+                                            [styleClass]="'compacct-multiselect'"
+                                            name="ProblemType" 
+                                            #ProblemType="ngModel" 
+                                            [ngClass]="{'clearance': supportTicketFormSubmit && ProblemType.errors?.required}"
+                                            required></p-multiSelect>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-4" >
+                                            <label class="control-label">Attending Engineer<span class="text-danger"></span></label>
+                                            <p-multiSelect 
+                                            [options]="AttendingEngineerList"
+                                            [(ngModel)]="SelectedAttendingEngineer"
+                                            [styleClass]="'compacct-multiselect'"
+                                            name="AttendingEngineer" 
+                                            #AttendingEngineer="ngModel" 
+                                            [ngClass]="{'clearance': supportTicketFormSubmit && AttendingEngineer.errors?.required}"
+                                            required></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-4" >
+                                            <label class="control-label">Report Time<span class="text-danger"></span></label>
+                                            <ejs-datetimepicker [(value)]="ReportTime" [format]="'dd-MMM-yyyy hh:mm a'"></ejs-datetimepicker>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="box-footer">
+                                        <button class="btn btn-primary pull-right"
+                                                (click)="SaveTicket(supportTicketForm.form.valid)"
+                                                id="load"
+                                                [disabled]="Spinner">
+                                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>Create
+                                        </button>
+                                    </div>
+                                </form>
                             </p-tabPanel>
                     </p-tabView>
                 </div>
