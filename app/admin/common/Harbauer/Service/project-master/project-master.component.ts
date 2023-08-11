@@ -33,6 +33,8 @@ export class ProjectMasterComponent implements OnInit {
   engineerFormSubmit:boolean = false
   seletcProject:any = undefined
   SiteSpinner:boolean = false
+  siteButton:string = "Add"
+  SiteIndex:any = undefined
   @ViewChild('projectSeletcForm',{static:false}) projectSeletcForm:NgForm
   constructor(
     private $http: HttpClient,
@@ -173,17 +175,39 @@ export class ProjectMasterComponent implements OnInit {
   addSite(valid:any){
     this.SiteFormSubmit = true
     if(valid && this.seletcProject){
-      let obj ={
-        Site_Name: this.Objsite.Site_Name,
-        Contact_Person:this.Objsite.Contact_Person,
-        Contact_No:this.Objsite.Contact_No,
-        Contact_Address:this.Objsite.Contact_Address,
-        Site_Remarks:this.Objsite.Site_Remarks,
-        Project_ID:this.seletcProject
+      var obj:any = {}
+      if(this.SiteIndex){
+          this.siteList[Number(this.SiteIndex)].Site_Name = this.Objsite.Site_Name,
+          this.siteList[Number(this.SiteIndex)].Contact_Person =this.Objsite.Contact_Person,
+          this.siteList[Number(this.SiteIndex)].Contact_No =this.Objsite.Contact_No,
+          this.siteList[Number(this.SiteIndex)].Contact_Address =this.Objsite.Contact_Address,
+          this.siteList[Number(this.SiteIndex)].Site_Remarks =this.Objsite.Site_Remarks,
+          this.siteList[Number(this.SiteIndex)].Project_ID =this.seletcProject
+          this.siteList[Number(this.SiteIndex)].Site_ID ==this.Objsite.Site_ID
+         this.SiteFormSubmit = false
+          this.Objsite = new site()
+           this.siteButton = "Add"
+           this.SiteIndex = undefined
       }
-      this.siteList.push(obj)
-      this.SiteFormSubmit = false
-      this.Objsite = new site()
+      else {
+       obj ={
+          Site_Name: this.Objsite.Site_Name,
+          Contact_Person:this.Objsite.Contact_Person,
+          Contact_No:this.Objsite.Contact_No,
+          Contact_Address:this.Objsite.Contact_Address,
+          Site_Remarks:this.Objsite.Site_Remarks,
+          Project_ID:this.seletcProject,
+          Site_ID: 0
+        }
+
+        this.siteList.push(obj)
+        this.SiteFormSubmit = false
+        this.Objsite = new site()
+         this.siteButton = "Add"
+         this.SiteIndex = undefined
+      }
+  
+    
     }
     else {
       if(!this.seletcProject){
@@ -320,6 +344,11 @@ export class ProjectMasterComponent implements OnInit {
       })  
     }
   }
+  editSite(inx:any){
+    this.SiteIndex = inx.toString()
+    this.siteButton = "Update"
+    this.Objsite = {...this.siteList[inx]}
+  }
 }
 
 
@@ -333,6 +362,7 @@ Supervisor_ID:any
 }
 
 class site{
+Site_ID:any
 Project_ID:any
 Site_Name:any   
 Contact_Person:any
