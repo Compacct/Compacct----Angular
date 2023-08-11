@@ -43,6 +43,57 @@
                                 </div>
                             </form>
 
+                            <div class="row" style="margin-top: 20px; margin-bottom: 10px;">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Quizzer</label>
+                                    <p-multiSelect 
+                                        [options]="FilterQuizzerList" 
+                                        defaultLabel="Filter Quizzer" 
+                                        itemSize="30" 
+                                        name="Filter_Quizzer"
+                                        [(ngModel)]="FilterQuizzer" 
+                                        (onChange)='FilterDist()' 
+                                        [styleClass]="'compacct-multiselect'">
+                                    </p-multiSelect>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Department</label>
+                                    <p-multiSelect 
+                                        [options]="FilterDepartmentList" 
+                                        defaultLabel="Filter Department" 
+                                        itemSize="30" 
+                                        name="Filter_Department"
+                                        [(ngModel)]="FilterDepartment" 
+                                        (onChange)='FilterDist()' 
+                                        [styleClass]="'compacct-multiselect'">
+                                    </p-multiSelect>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Employee</label>
+                                    <p-multiSelect 
+                                        [options]="FilterEmployeeList" 
+                                        defaultLabel="Filter Employee" 
+                                        itemSize="30" 
+                                        name="Filter_Employee"
+                                        [(ngModel)]="FilterEmployee" 
+                                        (onChange)='FilterDist()' 
+                                        [styleClass]="'compacct-multiselect'">
+                                    </p-multiSelect>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Topic</label>
+                                        <p-multiSelect 
+                                        [options]="FilterTopicList" 
+                                        defaultLabel="Filter Topic" 
+                                        itemSize="30" 
+                                        name="Filter_Topic"
+                                        [(ngModel)]="FilterTopic" 
+                                        (onChange)='FilterDist()' 
+                                        [styleClass]="'compacct-multiselect'">
+                                    </p-multiSelect>
+                                </div>
+                            </div>
+
                             <p-table 
                                 [value]="allDetalis" 
                                 [paginator]="allDetalis.length ? true : false"

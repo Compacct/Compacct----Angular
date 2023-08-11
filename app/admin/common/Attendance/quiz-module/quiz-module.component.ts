@@ -37,6 +37,17 @@ export class QuizModuleComponent implements OnInit {
   TopicFormSubmitted: boolean=false;
   TopicSpinner: boolean=false;
 
+  FilterQuizzer:any=[];
+  FilterDepartment:any=[];
+  FilterEmployee:any=[];
+  FilterTopic:any=[];
+  BackUpallDetalis:any=[];
+  SearchFields:any=[];
+  FilterQuizzerList:any=[];
+  FilterDepartmentList:any=[];
+  FilterEmployeeList:any=[];
+  FilterTopicList:any=[];
+
   objSearch = new Search();
   objQuiz = new Quiz();
   constructor(
@@ -366,11 +377,94 @@ export class QuizModuleComponent implements OnInit {
 
         this.allDetalis = data;
         //console.log('allDetalis=====',this.allDetalis);
+        this.BackUpallDetalis = data;
+        this.GetDistinct();
         if (this.allDetalis.length) {
           this.allDetalisHeader = Object.keys(data[0]);
           //console.log('allDetalisHeader=====',this.allDetalisHeader);
         }
     });
+  }
+
+  GetDistinct() {
+    let DFilterQuizzer:any = [];
+    let DFilterDepartment:any = [];
+    let DFilterEmployee:any = [];
+    let DFilterTopic:any = [];
+
+    this.FilterQuizzer = [];
+    this.FilterDepartment = [];
+    this.FilterEmployee = [];
+    this.FilterTopic = [];
+
+    this.FilterQuizzerList = [];
+    this.FilterDepartmentList = [];
+    this.FilterEmployeeList = [];
+    this.FilterTopicList = [];
+
+    this.SearchFields =[];
+
+    this.allDetalis.forEach((item) => {
+
+      if (DFilterQuizzer.indexOf(item.Quizzer_Name) === -1) {
+        DFilterQuizzer.push(item.Quizzer_Name);
+        this.FilterQuizzerList.push({ label: item.Quizzer_Name, value: item.Quizzer_Name });
+      }
+
+      if (DFilterDepartment.indexOf(item.Dept_Name) === -1) {
+        DFilterDepartment.push(item.Dept_Name);
+        this.FilterDepartmentList.push({ label: item.Dept_Name, value: item.Dept_Name });
+      }
+
+      if (DFilterEmployee.indexOf(item.Emp_Name) === -1) {
+        DFilterEmployee.push(item.Emp_Name);
+        this.FilterEmployeeList.push({ label: item.Emp_Name, value: item.Emp_Name });
+      }
+
+      if (DFilterTopic.indexOf(item.Topic_Name) === -1) {
+        DFilterTopic.push(item.Topic_Name);
+        this.FilterTopicList.push({ label: item.Topic_Name, value: item.Topic_Name });
+      }
+
+    });
+    this.BackUpallDetalis = [...this.allDetalis];
+  }
+
+  FilterDist(){
+    let DFilterQuizzer:any = [];
+    let DFilterDepartment:any = [];
+    let DFilterEmployee:any = [];
+    let DFilterTopic:any = [];
+    this.SearchFields =[];
+    if (this.FilterQuizzer.length) {
+      this.SearchFields.push('Quizzer_Name');
+      DFilterQuizzer = this.FilterQuizzer;
+    }
+    if (this.FilterDepartment.length) {
+      this.SearchFields.push('Dept_Name');
+      DFilterDepartment = this.FilterDepartment;
+    }
+    if (this.FilterEmployee.length) {
+      this.SearchFields.push('Emp_Name');
+      DFilterEmployee = this.FilterEmployee;
+    }
+    if (this.FilterTopic.length) {
+      this.SearchFields.push('Topic_Name');
+      DFilterTopic = this.FilterTopic;
+    }
+    this.allDetalis = [];
+    if (this.SearchFields.length) {
+      let LeadArr = this.BackUpallDetalis.filter(function (e) {
+        return (DFilterQuizzer.length ? DFilterQuizzer.includes(e['Quizzer_Name']) : true) &&
+               (DFilterDepartment.length ? DFilterDepartment.includes(e['Dept_Name']) : true) &&
+               (DFilterEmployee.length ? DFilterEmployee.includes(e['Emp_Name']) : true) &&
+               (DFilterTopic.length ? DFilterTopic.includes(e['Topic_Name']) : true)
+      });
+    this.allDetalis = LeadArr.length ? LeadArr : [];
+    } 
+    else {
+    this.allDetalis = [...this.BackUpallDetalis];
+    }
   }
 
   EditQuiz(col:any){
