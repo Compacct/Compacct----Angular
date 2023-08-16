@@ -159,9 +159,7 @@
                         </div>
                     </form>
                     <div class="col-sm-12" style="margin-top: 5px;" >
-                        <button class="btn btn-primary pull-right" (click)="addSite(SiteForm.form.valid)" >
-                        
-                           <span class="glyphicon glyphicon-plus"></span>Add
+                        <button class="btn btn-primary pull-right" (click)="addSite(SiteForm.form.valid)" >{{siteButton}}
                          </button>
                     </div>
                    
@@ -176,6 +174,7 @@
                                         <th nowrap >Contact No</th>
                                         <th nowrap >Address </th>
                                         <th></th>
+                                        <th></th>
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
@@ -185,6 +184,7 @@
                                         <td>{{col.Contact_Person ? col.Contact_Person : '-'}}</td>
                                         <td>{{col.Contact_No ? col.Contact_No : '-'}}</td>
                                         <td>{{col.Contact_Address ? col.Contact_Address : '-'}}</td>
+                                        <td align="center"><button class="btn danger" (click)="editSite(rowIndex)" ><i class="fa fa-edit"></i></button></td>
                                         <td align="center"><button (click)="commonDelete('site',rowIndex)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                     </tr>
                                 </ng-template>

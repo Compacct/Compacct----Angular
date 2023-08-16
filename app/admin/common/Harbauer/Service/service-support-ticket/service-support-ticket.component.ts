@@ -21,6 +21,17 @@ export class ServiceSupportTicketComponent implements OnInit {
   tabIndexToView = 0;
   Spinner = false; 
   buttonname = "Create";
+  objsupportTicket:supportTicket = new supportTicket()
+  supportTicketFormSubmit:boolean = false
+  ProblemTypeList:any = []
+  SelectedProblemType:any = []
+  AttendingEngineerList:any = []
+  SelectedAttendingEngineer:any = []
+  ReportTime:Date = new Date()
+  getAllTicket:any = []
+  projectList:any = []
+  siteList:any = []
+  EngineerList:any = []
   constructor(
     private $http : HttpClient,
     private commonApi : CompacctCommonApi,
@@ -37,6 +48,8 @@ export class ServiceSupportTicketComponent implements OnInit {
       Link: "Support Ticket"
     });
     this.items = ["BROWSE", "CREATE"];
+    this.getProject()
+    this.getProblemType()
   }
   onReject() {
     this.compacctToast.clear('c');
@@ -51,4 +64,84 @@ export class ServiceSupportTicketComponent implements OnInit {
   clearData(){
 
   }
+  SaveTicket(valid:any){
+    this.supportTicketFormSubmit = true
+    if(valid){
+      this.supportTicketFormSubmit = false
+    }
+  }
+  getProject(){
+    this.projectList = []
+    const obj = {
+      "SP_String": "SP_BL_Txn_Service_Support_Ticket",
+      "Report_Name_String": "Get_Project_dropdown",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.projectList = data
+      console.log('projectList',this.projectList)
+     
+    })
+  }
+
+  changeProject(id){
+    this.getSite(id)
+    this.getEngineer(id)
+  }
+
+  getSite(id:any){
+    this.siteList = []
+    this.objsupportTicket.Site_ID = undefined
+    if(id){
+     const obj = {
+        "SP_String": "SP_BL_Txn_Service_Support_Ticket",
+        "Report_Name_String": "Get_Site_dropdown",
+        "Json_Param_String": JSON.stringify([{Project_ID : id}]) 
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.siteList = data
+        console.log('siteList',this.siteList)
+        
+      })
+    }
+   
+  }
+  getEngineer(id:any){
+    this.AttendingEngineerList = []
+    this.SelectedAttendingEngineer = []
+    if(id){
+      const obj = {
+         "SP_String": "SP_BL_Txn_Service_Support_Ticket",
+         "Report_Name_String": "Get_Engineering_dropdown",
+         "Json_Param_String": JSON.stringify([{Project_ID : id}]) 
+       }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        data.forEach(el => { el.label = el.Member_Name, el.value =el.Eng_ID });
+        this.AttendingEngineerList = data
+        console.log('AttendingEngineerList',this.AttendingEngineerList)
+        
+       })
+     }
+  }
+  getProblemType(){
+    this.ProblemTypeList = []
+    const obj = {
+      "SP_String": "SP_BL_Txn_Service_Support_Ticket",
+      "Report_Name_String": "Get_Problem_Type_dropdown",
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      data.forEach(el => { el.label = el.Problem_Type, el.value =el.Problem_Type_ID });
+      this.ProblemTypeList = data
+      console.log('ProblemTypeList',this.ProblemTypeList)
+    })
+  }
+}
+
+
+class supportTicket{
+  Docket_No:any
+  Project_ID:any
+  Site_ID:any
+  Report_Time:any
+  Status_ID:any
+  Remarks:any
 }

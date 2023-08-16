@@ -199,7 +199,7 @@ export class UserMasterComponent implements OnInit {
       this.ObjUser = data[0];
       this.ObjUser.User_Type = data[0].User_Type;
       this.ObjUser.User_Time = data [0].User_Time;
-      this.ObjUser.Expiry_Date = data[0].Expiry_Date
+      this.ObjUser.Expiry_Date = data[0].Expiry_Date;
       this.pass = data[0].Password;
       this.getSubDeptData();
      })

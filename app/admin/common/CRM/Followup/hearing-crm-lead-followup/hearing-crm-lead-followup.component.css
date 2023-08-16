@@ -81,6 +81,16 @@ hr {
      background-color: #6450d1;
      color: white;
 }
+.btn-social.btn-xs {
+    font-size: 15px;
+    height: 3rem;
+    vertical-align: unset;
+}
+#hover:hover{
+        color: #edecec;
+            text-decoration: none;
+            background-color: blue;
+}
 fieldset {
     border: 2px solid #e9ebeb !important;
     margin: 0;
