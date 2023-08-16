@@ -246,8 +246,15 @@
                       <input type="text" class="form-control" name="Reason_visit" #Reason_visit="ngModel" [(ngModel)]="objPatient.Reason_visit"
                         placeholder="Reason for visiting today">
                     </div>
+                    <div class="col-sm-4">
+                      <label class="control-label">Email ID</label>
+                      <input type="text" class="form-control" name="Email_ID" #Email_ID="ngModel"
+                        [(ngModel)]="objPatient.Email_ID" placeholder="Enter Email ID"
+                        pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$"
+                        [ngClass]="{'clearance': CreationFormSubmited && Email_ID?.errors?.pattern}">
+                    </div>
                 </div>
-                <div class="row">
+                <div class="row" style="margin-top: 20px;">
                   <button class="btn btn-primary pull-right" (click)="saveDocAppo(PatientCreation.form.valid)" id="load"
                     [disabled]="Spinner">
                     <p-progressSpinner *ngIf="Spinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"

@@ -294,7 +294,7 @@ class Patient {
   Consultancy_Type: any;
   Reference_Patient_ID: any;
   Age_Unit: any;
-
+  Email_ID: any;
   Occupation: any;
   accompanied: any;
   Reason_visit: any;
