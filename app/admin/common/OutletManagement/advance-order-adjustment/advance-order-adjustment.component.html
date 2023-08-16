@@ -59,7 +59,16 @@
                                 [globalFilterFields]='DynamicHeaderforAdvOrderList'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-2" style="margin-top: -22px;">
+                                                <label class="control-label"></label>
+                                                <div class="checkBox">
+                                                    <label class="pull-right">
+                                                   <p-checkbox  [(ngModel)]="SelectAllFLag"  name="selectall"  (onChange)="SelectAllChange()"  binary="true" ></p-checkbox>
+                                                   Select all
+                                               </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
                                                 <button class="btn btn-primary" (click)="SaveAdvanceOrder()" id="load" [disabled]="Spinner">
                                                         <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Save

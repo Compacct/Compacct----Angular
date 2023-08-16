@@ -857,7 +857,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
       //  this.view_Order_No = data[0].Adv_Order_No;
 
     // console.log("this.viewList  ===",this.viewList);
-
+    this.ViewPoppup = true;
   })
   }
   UpdateBox (viewobj){

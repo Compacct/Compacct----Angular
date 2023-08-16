@@ -22,6 +22,7 @@ export class AdvanceOrderAdjustmentComponent implements OnInit {
   To_date: any;
   AdvanceOrderlist:any = [];
   DynamicHeaderforAdvOrderList:any = [];
+  SelectAllFLag:boolean = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -51,6 +52,7 @@ export class AdvanceOrderAdjustmentComponent implements OnInit {
     this.AdvanceOrderlist = [];
     this.Spinner = true;
     this.seachSpinner = true;
+    this.SelectAllFLag = false;
     const start = this.From_date
     ? this.DateService.dateConvert(new Date(this.From_date))
     : this.DateService.dateConvert(new Date());
@@ -80,6 +82,17 @@ export class AdvanceOrderAdjustmentComponent implements OnInit {
      this.seachSpinner = false;
    })
    }
+  }
+  SelectAllChange(){
+     if(this.SelectAllFLag){
+      this.AdvanceOrderlist.forEach(el=>{
+        el.Check_Order_Adjustment = true
+      })
+    } else {
+      this.AdvanceOrderlist.forEach(el=>{
+        el.Check_Order_Adjustment = false
+      })
+    }
   }
   SaveAdvanceOrder(){
     this.Spinner = false;

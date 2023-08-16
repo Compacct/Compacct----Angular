@@ -162,7 +162,7 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th style="width:5em">Action</th>
-                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeader  |  slice:3">{{option.replaceAll('_',' ')}}</th> 
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeader  |  slice:4">{{option.replaceAll('_',' ')}}</th> 
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
@@ -205,10 +205,15 @@
                                                                 <i class="fa fa-fw fa-times"></i> Cancel
                                                             </a>
                                                         </li>
+                                                        <li *ngIf="col.File_Upload">
+                                                            <a (click)="showDocument(col.File_Upload)">
+                                                                <i class="fa fa-fw fa-file-text-o"></i> Show Document
+                                                            </a>
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </td>
-                                            <ng-container *ngFor="let option of DynamicHeader  |  slice:3">
+                                            <ng-container *ngFor="let option of DynamicHeader  |  slice:4">
                                                 <td *ngIf="option != 'Work_Details'" >{{col[option]}}</td>
                                                 <td *ngIf="option == 'Work_Details'">
                                                     <div (click)="selectWork($event,col,op)" [ngClass]="stringShort(col[option],'css')">{{stringShort(col[option],'ff')}}</div>
@@ -1042,6 +1047,22 @@
                                     >
                                       
                                     </p-editor>
+                                </div>
+                                <br>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Upload File</label>
+                                        <span class="btn btn-xs btn-danger pull-right" (click)="ClearUploadInpt(UploadFile)"
+                                          *ngIf="file"><i class="fa fa-close"></i></span>
+                                        <div>
+                                          <p-fileUpload mode="basic" name="filedoc" #UploadFile chooseLabel="BROWSE" uploadLabel="UPLOAD"
+                                            accept="image/*" [customUpload]="true" (onSelect)="fileSelect()"
+                                            *ngIf="upload" (uploadHandler)="onBasicUpload(UploadFile)">
+                                          </p-fileUpload>
+                                          <button name="pan" *ngIf="!upload" pButton pRipple type="button"
+                                            label="Show Document" (click)="showDoc()"></button>
+                                        </div>
+                                      </div>
                                 </div>
                                 <div class="box-footer">
                                     <button class="btn btn-primary pull-right" 
