@@ -67,7 +67,57 @@ export class ServiceSupportTicketComponent implements OnInit {
   SaveTicket(valid:any){
     this.supportTicketFormSubmit = true
     if(valid){
-      this.supportTicketFormSubmit = false
+      this.Spinner = true
+      this.objsupportTicket.Report_Time = this.DateService.dateTimeConvert(this.ReportTime)
+      this.objsupportTicket.Created_By = this.$CompacctAPI.CompacctCookies.User_ID
+      if(!this.SelectedProblemType.length){
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "compacct-toast",
+        summary: "No Problem Type was selected",
+      });
+        return
+      }
+      let ProblemType:any = []
+      this.SelectedProblemType.forEach(ele => {
+        ProblemType.push(
+          {
+            Problem_Type_ID : ele
+          }
+          )
+      });
+      this.objsupportTicket.Problem_type_details = ProblemType
+      const obj = {
+        "SP_String": "SP_BL_Txn_Service_Support_Ticket",
+        "Report_Name_String": "Create_Service_Support_Tkt",
+        "Json_Param_String": JSON.stringify([this.objsupportTicket]) 
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        if(data[0].Column1){
+          this.Spinner = false
+          this.objsupportTicket = new supportTicket()
+          this.supportTicketFormSubmit = false
+          this.SelectedProblemType = []
+          this.ReportTime = new Date()
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Support Ticket Create Succesfully",
+            detail: "Succesfully Create"
+          });
+        }
+        else {
+          this.Spinner = false
+          this.compacctToast.clear();
+          this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Error",
+          detail: "Something Wrong"
+        });
+        }
+      })
     }
   }
   getProject(){
@@ -115,11 +165,8 @@ export class ServiceSupportTicketComponent implements OnInit {
          "Json_Param_String": JSON.stringify([{Project_ID : id}]) 
        }
        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        data.forEach(el => { el.label = el.Member_Name, el.value =el.Eng_ID });
-        this.AttendingEngineerList = data
-        console.log('AttendingEngineerList',this.AttendingEngineerList)
-        
-       })
+       this.AttendingEngineerList = data
+        })
      }
   }
   getProblemType(){
@@ -138,10 +185,12 @@ export class ServiceSupportTicketComponent implements OnInit {
 
 
 class supportTicket{
-  Docket_No:any
-  Project_ID:any
-  Site_ID:any
-  Report_Time:any
-  Status_ID:any
-  Remarks:any
+  Docket_No:any = 'A'
+  Project_ID:any          
+  Site_ID  :any        
+  Report_Time :any     
+  Remarks:any      
+  Created_By:any
+  Assign_To :any 
+  Problem_type_details:any
 }

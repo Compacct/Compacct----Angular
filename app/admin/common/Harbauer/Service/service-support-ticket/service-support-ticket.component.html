@@ -129,18 +129,24 @@
                                     <div class="form-group">
                                         <div class="col-sm-4" >
                                             <label class="control-label">Attending Engineer<span class="text-danger"></span></label>
-                                            <p-multiSelect 
-                                            [options]="AttendingEngineerList"
-                                            [(ngModel)]="SelectedAttendingEngineer"
-                                            [styleClass]="'compacct-multiselect'"
-                                            name="AttendingEngineer" 
-                                            #AttendingEngineer="ngModel" 
-                                            [ngClass]="{'clearance': supportTicketFormSubmit && AttendingEngineer.errors?.required}"
-                                            required></p-multiSelect>
+                                            <select class="form-control" 
+                                            name="Assign_To" 
+                                            #Assign_To="ngModel" 
+                                            [(ngModel)]="objsupportTicket.Assign_To"  >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option  *ngFor="let value of AttendingEngineerList" value="{{value.Eng_ID}}" >{{value.Member_Name}}</option>
+                                        </select>
                                         </div>
                                         <div class="col-sm-4" >
                                             <label class="control-label">Report Time<span class="text-danger"></span></label>
                                             <ejs-datetimepicker [(value)]="ReportTime" [format]="'dd-MMM-yyyy hh:mm a'"></ejs-datetimepicker>
+                                        </div>
+                                        <div class="col-sm-4" >
+                                            <label class="control-label">Remarks<span class="text-danger"></span></label>
+                                            <textarea class="form-control" 
+                                            name="Remarks" [(ngModel)]="objsupportTicket.Remarks" 
+                                            rows="2" 
+                                            placeholder="Remarks"></textarea>
                                         </div>
                                         
                                     </div>
