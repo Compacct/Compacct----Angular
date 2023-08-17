@@ -3195,7 +3195,7 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       path: 'BL_Txn_Service_Support_Ticket',
       component: ServiceSupportTicketComponent,
       data: {
-        title: 'Service Problem Type'
+        title: 'Support Ticket'
       }
     },
     /*{
