@@ -112,7 +112,13 @@ export class ProjectMasterComponent implements OnInit {
       .subscribe((data : any)=>
       {
         if(data[0].Column1){
-        
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Project Master "+ (this.Objproject.Project_ID ? 'Update' : 'Create') +" Succesfully",
+            detail: "Succesfully "+ (this.Objproject.Project_ID ? 'Update' : 'Create')
+          });
           this.getProject()
           this.projectSeletcForm.form.setValue(
             {
@@ -120,15 +126,19 @@ export class ProjectMasterComponent implements OnInit {
             }
             )
           this.changeProject()
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "success",
-            summary: "Project Master "+ this.Objproject.Project_ID ? 'Update' : 'Create' +" Succesfully",
-            detail: "Succesfully "+ this.Objproject.Project_ID ? 'Update' : 'Create'
-          });
+       
+        
           this.clearData()
           this.buttonname = "Update";
+        }
+        else if ( data[0].Column1 == 0){
+          this.Spinner = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Project Name Already Exists"
+        });
         }
         else {
           this.Spinner = false;
