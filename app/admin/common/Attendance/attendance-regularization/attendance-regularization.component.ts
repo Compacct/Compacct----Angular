@@ -152,15 +152,15 @@ export class AttendanceRegularizationComponent implements OnInit {
 
   SaveForm(valid) {
     this.AttendenceFormSubmitted = true;
-    if (valid && this.apply_Date && this.attendence_Date && this.disabled_inTime && this.disabled_OutTime && (this.Changed_In_Time || this.Changed_Out_Time)) {
+    if (valid && this.apply_Date && this.attendence_Date && (this.Changed_In_Time || this.Changed_Out_Time)) {
       this.AttendenceFormSubmitted = false;
       this.Spinner = true;
       this.objAttendence.Apply_Date = this.DateService.dateConvert(this.apply_Date);
       this.objAttendence.Atten_Date = this.DateService.dateConvert(this.attendence_Date);
       this.Changed_In_Time ? this.objAttendence.Changed_In_Time = this.DateService.dateTimeConvert(this.getInTime()) : this.objAttendence.Changed_In_Time = undefined;
       this.Changed_Out_Time ? this.objAttendence.Changed_Out_Time = this.DateService.dateTimeConvert(this.getOutTime()) : this.objAttendence.Changed_Out_Time = undefined;
-      this.objAttendence.In_Time = this.DateService.dateTimeConvert(new Date(this.disabled_inTime));
-      this.objAttendence.Out_Time = this.DateService.dateTimeConvert(new Date(this.disabled_OutTime));
+      this.disabled_inTime ? this.objAttendence.In_Time = this.DateService.dateTimeConvert(new Date(this.disabled_inTime)) : this.objAttendence.In_Time = undefined;
+      this.disabled_OutTime ? this.objAttendence.Out_Time = this.DateService.dateTimeConvert(new Date(this.disabled_OutTime)) : this.objAttendence.Out_Time = undefined;
       this.objAttendence.Created_By = this.User_ID;
       // console.log('Save Object', this.objAttendence);
 
@@ -266,5 +266,4 @@ class Attendence {
   Out_Time: any;
   Remarks: any;
   Created_By: any;
-
 }
