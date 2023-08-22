@@ -63,7 +63,6 @@ export class HREventUploadComponent implements OnInit {
     });
     // this.GetEmpData();
     this.createjson();
-    this.createBarChart();
   }
   onReject() {
     //this.compacctToast.clear("c");
@@ -315,7 +314,7 @@ jsontopdfbackgroundimg() {
   // });
   doc.save('bg.pdf');
 }
-createBarChart() {
+// createBarChart() {
   // var itemNew = this.ChartList;
   // var column:any = [];
   // var rows:any = [];
@@ -358,7 +357,79 @@ createBarChart() {
   //   data: data,
   //   options: options
   // });
-}
+// }
+createBarChart() {
+  const doc:any = new jsPDF();
+    const data = [252, 331, 331, 55, 839, 42]; // Sample data for the column chart
+    const labels = ['TREES', 'WATER', 'OIL', 'Energy', 'Air Pollution', 'LANDFILL SPACE']; // Sample labels for the x-axis
+    const chartWidth = 180; // Width of the chart
+    const chartHeight = 80; // Height of the chart
+    const startX = 20; // Starting X coordinate of the chart
+    const startY = 50 + chartHeight; // Starting Y coordinate of the chart
+    const columnWidth = 10; // Width of each column
+    const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33E1', '#FF9933', '#33CCFF']; // Sample colors for the columns
+
+   // Calculate the height of the table
+  //  const tableData = labels.map((label, i) => [label, data[i]]);
+   const tableHeight = doc.autoTable.previous.finalY - startY + 20; // Calculate the height of the table
+
+    doc.text('Environmental Impact Chart', 20, 20);
+
+    // Draw the border around the chart area
+    // doc.rect(startX - 2, startY, chartWidth + 4, -chartHeight - 4); // Adjusted border placement
+    // Draw the border around the entire chart area
+    const borderX = startX - 2; // Adjusted border position for X
+    const borderY = startY + 2; // Adjusted border position for Y
+    const borderWidth = chartWidth + 4;
+    const borderHeight = -(chartHeight + 20 + 4); // Include space for x-axis labels in border height
+    doc.rect(borderX, borderY, borderWidth, borderHeight);
+
+
+    // Set the draw color
+    doc.setDrawColor('#615b59'); // Set the color to red
+
+    // Draw x and y scale lines
+    doc.line(startX - 2, startY, chartWidth + 2, startY); // x-axis line
+    doc.line(startX, startY, startX, startY); // y-axis line
+
+    // Draw y-axis points
+    for (let i = 0; i <= 9; i++) {
+      const yPoint = startY - (i / 10) * chartHeight;
+      doc.setFontSize(10);
+      doc.text(i * 100 + '' , startX - 12, yPoint + 2); // Labels on y-axis points
+      doc.setDrawColor('#615b59');
+      doc.line(startX - 2, yPoint, chartWidth + 2, yPoint); // Tick marks on y-axis
+    }
+    // // Draw a border around the chart area
+    // doc.rect(startX, startY, chartWidth, -chartHeight);
+
+    // Draw the column chart with colors and labels
+    for (let i = 0; i < data.length; i++) {
+      const x = (startX + i * (columnWidth + 10)) + 10;
+      const y = (startY - (data[i] / 1000) * chartHeight) - 0.1; // Adjust the y position based on data
+      const height = (data[i] / 1000) * chartHeight; // Adjust the height based on data
+      const color = colors[i % colors.length]; // Get color based on index
+      doc.setFontSize(8);
+      doc.setFillColor(color); // Set the fill color for the column
+      doc.rect(x, y, columnWidth, height, 'F');
+      doc.text(labels[i], x, startY + 10);
+    }
+
+     // Create the table using autoTable plugin
+   const tableStartY = startY + 20; // Position the table above the chart
+   doc.autoTable({
+     startY: tableStartY,
+     head: [labels],
+     body: [data],
+     headStyles :{fillColor : [255, 255, 255],lineWidth: 0.1,lineColor:[0,0,0],textColor:[0, 0, 0],fontSize: 6},
+     bodyStyles: {lineWidth: 0.1,lineColor:[0,0,0],textColor:[0, 0, 0],fontSize: 6,fontStyle: 'bold'},
+   }); 
+
+    // Save the PDF
+    doc.save('environmental_impact_chart.pdf');
+  }
+
+
 jsontopdfchart(){
   const pdf = new jsPDF();
 

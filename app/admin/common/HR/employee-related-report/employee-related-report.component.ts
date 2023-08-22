@@ -130,7 +130,7 @@ export class EmployeeRelatedReportComponent implements OnInit {
           var empname = this.EmployeeList.filter(el => Number(el.User_ID) === Number(this.$CompacctAPI.CompacctCookies.User_ID))
           console.log(empname)
           this.Emp_ID = empname.length ? empname[0].Emp_ID : undefined;
-          this.employeedisabled = empname.length ? true : false;
+          this.employeedisabled = empname.length && this.$CompacctAPI.CompacctCookies.User_Type != 'A' ? true : false;
           console.log("employee==", this.EmployeeList);
         } else {
           this.EmployeeList = [];

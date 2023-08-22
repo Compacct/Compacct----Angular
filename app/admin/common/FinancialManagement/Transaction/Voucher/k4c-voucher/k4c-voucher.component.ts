@@ -452,6 +452,7 @@ getDateRange(dateRangeObj) {
 }
 ShowSearchData(valid){
   this.JournalSearchFormSubmit = true;
+  this.seachSpinner = true;
   if(valid){
    this.objsearch.Start_date = this.objsearch.Start_date
     ? this.DateService.dateConvert(new Date(this.objsearch.Start_date))
@@ -473,8 +474,10 @@ ShowSearchData(valid){
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      console.log("all Data",data);
      this.AlljournalData = data;
+     this.seachSpinner = false;
       if(this.AlljournalData.length){
         this.DynamicHeader = Object.keys(data[0]);
+        this.seachSpinner = false;
       }
      })
   }

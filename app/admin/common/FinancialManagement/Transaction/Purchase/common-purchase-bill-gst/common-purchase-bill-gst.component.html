@@ -8,20 +8,31 @@
             <p>{{message.detail}}</p>
         </div>
 
-        <div class="ui-g ui-fluid" *ngIf="!deleteError">
-          <div class="ui-g-6" *ngIf="Save && !Del">
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
               <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
           </div>
-          <div class="ui-g-6" *ngIf="Del && !Save">
-            <button type="button" pButton (click)="onConfirmDel()" label="Yes" class="ui-button-success"></button>
-        </div>
           <div class="ui-g-6">
               <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
           </div>
       </div>
-      <div class="ui-g ui-fluid" *ngIf="deleteError">
-           <div class="ui-g-12">
-              <button type="button" pButton (click)="onReject()" label="OK" class="ui-button-danger" style="font-size: 20px;"></button>
+
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="d" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+            <button type="button" pButton (click)="onConfirmDel()" label="Yes" class="ui-button-success"></button>
+        </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
           </div>
       </div>
 
@@ -37,20 +48,6 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                             <form name="SearchPurBillForm" #SearchPurBillForm="ngForm" novalidate>
                                 <div class="form-group">
-                                    <div class="col-sm-3">
-                                        <label class="control-label">Company<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" 
-                                        name="browsecompany" 
-                                        #browsecompany="ngModel" 
-                                        [(ngModel)]="ObjBrowsePurBill.Company_ID"
-                                        [ngClass]="{'clearance': SearchPurBillFormSubmitted && browsecompany?.errors?.required}"
-                                        required>
-                                        <option  [ngValue]="undefined">Select</option>
-                                           <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
-                                              {{option.Company_Name}}
-                                            </option>
-                                      </select>
-                                    </div>
                                     <div class="col-sm-3">
                                         <label class="control-label">Date</label>
                                          <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate"> <!-- [minmaxValid]= "initDateValid" required -->
@@ -81,37 +78,7 @@
                                         <h5><strong></strong></h5>
                                     </div>
                                 </div>
-                                <div *ngIf="SerarchPurBillList.length && openProject == 'Y'" style="margin-top:5px;margin-bottom:10px">
-                                    <fieldset class="col-md-12">
-                                      <legend>Filter</legend>
-          
-                                      <div class="form-group">
-                                        <div class="col-sm-4">
-                                          <label class="control-label">Project <span class="text-danger"></span></label>
-                                          <p-multiSelect
-                                          [options]="DistProject"
-                                          [(ngModel)]="SelectedDistProject"
-                                          [virtualScroll]="true"
-                                          itemSize="30"
-                                          (onChange)='GlobalFilterChangenUpdate()'
-                                          [styleClass]="'compacct-multiselect'"
-                                          name="Project"></p-multiSelect>
-                                        </div>
-                                        <div class="col-sm-4">
-                                          <label class="control-label">Sub Ledger <span class="text-danger"></span></label>
-                                          <p-multiSelect
-                                          [options]="DistSubledger"
-                                          [(ngModel)]="SelectedSubledger"
-                                          [virtualScroll]="true"
-                                          itemSize="30"
-                                          (onChange)='GlobalFilterChangenUpdate()'
-                                          [styleClass]="'compacct-multiselect'"
-                                          name="Sub_Ledger"></p-multiSelect>
-                                        </div>
-                                         </div>
-                                        </fieldset>
-                                  </div>
-                                  <div class="clearfix"></div>
+                                <div class="clearfix"></div>
                                 <div class="table-id">
                                     <p-table [value]="SerarchPurBillList"
                                     [paginator]="true" [rows]="100" 
@@ -133,7 +100,6 @@
                                                 <th style="width:5em">Action</th>
                                                 <th nowrap="nowrap">Doc No</th> 
                                                 <th nowrap="nowrap">Doc Date</th>
-                                                <th nowrap="nowrap" *ngIf="openProject == 'Y'" >Project</th>
                                                 <th nowrap="nowrap">Sub Ledger</th>
                                                 <th nowrap="nowrap">Cost Center</th>
                                                 <th nowrap="nowrap">Net Amount</th>
@@ -153,16 +119,16 @@
                                                                         <span class="caret"></span>
                                                                     </button>
                                                         <ul class="dropdown-menu">
-                                                            <!-- <li>
-                                                                    <a (click)="Edit(col)">
-                                                                        <i class="fa fa-fw fa-pencil"></i> Edit
-                                                                    </a>
-                                                                </li> -->
-                                                                <li>
-                                                                    <a (click)="Print(col.Doc_No)">
-                                                                        <i class="fa fa-fw fa-print"></i> Print
-                                                                    </a>
-                                                                </li>
+                                                            <li>
+                                                                <a (click)="EditPurchaseBill(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="Print(col.Doc_No)">
+                                                                    <i class="fa fa-fw fa-print"></i> Print
+                                                                </a>
+                                                            </li>
                                                             <li>
                                                                 <a (click)="Delete(col)">
                                                                     <i class="fa fa-fw fa-trash"></i> Delete
@@ -174,12 +140,11 @@
                                                 <!-- <ng-container pTemplate="body" let-col> -->
                                                     <td>{{col.Doc_No}}</td>
                                                     <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
-                                                    <td nowrap="nowrap" *ngIf="openProject == 'Y'">{{col.Project_Description}}</td>
                                                     <td>{{col.Sub_Ledger_Name}}</td>
                                                     <td>{{col.Cost_Cen_Name}}</td>
-                                                    <td>{{col.Bill_Net_Amt}}</td>
-                                                    <td>{{col.Supp_Ref_No}}</td>
-                                                    <td>{{col.Supp_Ref_Date | date : 'dd/MMM/yyyy'}}</td>
+                                                    <td>{{col.Net_Amt}}</td>
+                                                    <td>{{col.Supplier_Bill_No ? col.Supplier_Bill_No : '-'}}</td>
+                                                    <td>{{col.Supplier_Bill_Date | date : 'dd/MMM/yyyy'}}</td>
                                                     <td>{{col.Document ? col.Document : '-'}}</td>
                                                     <td nowrap="nowrap" >{{col.Fin_Year_Name ? col.Fin_Year_Name : '-'}}</td>
                                                 <!-- </ng-container> -->
@@ -424,8 +389,8 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-3">
-                                                    <label class="control-label">Supplier Bill No <sup class="text-danger">*</sup> </label>
-                                                    <input class="form-control" name="suppbillno" #suppbillno="ngModel" [(ngModel)]="ObjPurChaseBill.Supp_Ref_No" placeholder="Supplier Bill No" [ngClass]="{'clearance':CommonPurchaseBillFormSubmitted && suppbillno?.errors?.required}" required>
+                                                    <label class="control-label">Supplier Bill No </label>
+                                                    <input class="form-control" name="suppbillno" #suppbillno="ngModel" [(ngModel)]="ObjPurChaseBill.Supp_Ref_No" placeholder="Supplier Bill No" [ngClass]="{'clearance':CommonPurchaseBillFormSubmitted && suppbillno?.errors?.required}">
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label class="control-label">Supplier Bill Date <sup class="text-danger">*</sup></label>
@@ -494,6 +459,7 @@
                                               (onChange)="ProductChange()"
                                               [filter]="true"
                                               filterBy="label,value.name"
+                                              [resetFilterOnHide]="true"
                                               [placeholder]="'Select Product'"
                                               [virtualScroll]="true"
                                               itemSize="30"
@@ -526,15 +492,18 @@
                                                 </select> -->
                                         </div>
                                         <div class="col-sm-3" *ngIf="ProductExpirydisabled">
-                                                <label class="control-label"
-                                                  >Expriy Date<sup class="text-danger">*</sup></label
-                                                >
+                                                <label class="control-label">Expriy Date<sup class="text-danger">*</sup></label>
+                                                <span class="pull-right" style="margin-top: 1px;">
+                                                    <!-- <small><b>DD/MM/YYYY</b></small> &nbsp; -->
+                                                    <p-checkbox name='expiryflag'  [(ngModel)]="expirydatepickerflag"  [binary]="true"></p-checkbox> &nbsp;
+                                                    <span>DD/MM/YYYY</span>
+                                                </span>
                                                 <div class="input-group date">
                                                   <div class="input-group-addon">
                                                     <i class="fa fa-calendar"></i>
                                                   </div>
-                                                  <input type="month" name="exdate" #exdate="ngModel" [(ngModel)]="expiryDate" [ngClass]="{clearance:ProductInfoSubmitted && exdate?.errors?.required}" required>
-                                                  <!-- <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='expiryDate' [enabled]="Product_Expiry" placeholder="dd/MMM/yyyy"></ejs-datepicker> -->
+                                                  <input *ngIf="!expirydatepickerflag" type="month" class="form-control" name="exdate" #exdate="ngModel" [(ngModel)]="expiryDate" [ngClass]="{clearance:ProductInfoSubmitted && exdate?.errors?.required}" required>
+                                                  <ejs-datepicker *ngIf="expirydatepickerflag" [format]="'dd/MMM/yyyy'" [(value)]='expiryDate' placeholder="dd/MMM/yyyy"></ejs-datepicker>
                                                   <!--  <input
                                                     type="date"
                                                     name="expdate"
@@ -645,7 +614,7 @@
                                                     class="form-control"
                                                     name="Discount"
                                                     #Discount="ngModel"
-                                                    [(ngModel)]="ObjProductInfo.Discount_Type_Amt"
+                                                    [(ngModel)]="ObjProductInfo.Discount"
                                                     (ngModelChange)="AfterDiscCalChange()"
                                                     [disabled]="!ObjProductInfo.Discount_Type"
                                                     placeholder="Discount"
@@ -658,7 +627,7 @@
                                                 class="form-control"
                                                 name="Discount_AMT"
                                                 #Discount_AMT="ngModel"
-                                                [(ngModel)]="ObjProductInfo.Discount"
+                                                [(ngModel)]="ObjProductInfo.Discount_Type_Amt"
                                                 placeholder="Discount AMT"
                                                 CompacctDigitonly="true"
                                                  disabled>
@@ -759,14 +728,14 @@
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Rate</th>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Total Amt</th>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Discount Type</th>
-                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Discount Type Amt</th>
+                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Discount</th>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Discount Amt</th>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Taxable Amt</th>
                                             <th nowrap colspan="2" class="text-center" style="vertical-align:middle">CGST</th>
                                             <th nowrap colspan="2" class="text-center" style="vertical-align:middle">SGST</th>
                                             <th nowrap colspan="2" class="text-center" style="vertical-align:middle">IGST</th>
                                             <th nowrap colspan="2" class="text-center" style="vertical-align:middle">CESS</th>
-                                            <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Net Amount</th>
+                                            <!-- <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Net Amount</th> -->
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Stock Point</th>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Pur. Order No</th>
                                             <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Delete</th>
@@ -795,8 +764,8 @@
                                             <td>{{obj.Rate}}</td>
                                             <td>{{obj.Amount}}</td>
                                             <td>{{obj.Discount_Type ? obj.Discount_Type : '-'}}</td>
-                                            <td>{{obj.Discount_Type_Amount}}</td>
                                             <td>{{obj.Discount}}</td>
+                                            <td>{{obj.Discount_Type_Amount}}</td>
                                             <td>{{obj.Taxable_Amount}}</td>
                                             <td>{{obj.CGST_Rate}}</td>
                                             <td>{{obj.CGST_Amount}}</td>
@@ -807,7 +776,7 @@
                                             <td>{{obj.CESS_Percentage}}</td>
                                             <td>{{obj.CESS_Amount}}</td>
 
-                                            <td>{{obj.Net_Value}}</td>
+                                            <!-- <td>{{obj.Net_Value}}</td> -->
                                             <td>{{obj.Godown_Name ? obj.Godown_Name : '-'}}</td>
                                             <td>{{obj.Pur_Order_No ? obj.Pur_Order_No : '-'}}</td>
                                             <td><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
@@ -884,19 +853,35 @@
                     </div>
                 </form>
                 <br>
-                <div class="col-sm-4" *ngIf="AddProductDetails.length">
+                <div class="form-group" *ngIf="AddProductDetails.length">
+                <div class="col-sm-4">
                   <label class="control-label">TCS Tax Required <sup class="text-danger">*</sup> </label>
                   <select class="form-control" 
                   name="tcstaxreq" 
                   #tcstaxreq="ngModel" 
                   [(ngModel)]="TCSTaxRequired"
-                  (ngModelChange)="TcsAmtCalculation()"
+                  (ngModelChange)="GetTCSdat()"
                   [ngClass]="{'clearance': TCSTaxRequiredValidation && tcstaxreq?.errors?.required}" required>
                      <option  [ngValue]="undefined">Select</option>
                      <option value ="YES">YES</option>
                      <option value ="NO">NO</option>
                 </select>
               </div>
+              <div class="col-sm-3" *ngIf="TCSTaxRequired == 'YES'">
+                <label class="control-label">TCS % <sup class="text-danger">*</sup> </label>
+                <select class="form-control" 
+                name="tcsper" 
+                #tcsper="ngModel" 
+                [(ngModel)]="TCS_Per"
+                (ngModelChange)="TcsAmtCalculation()"
+                [ngClass]="{'clearance': TCSTaxRequiredValidation && tcsper?.errors?.required}" required>
+                   <option  [ngValue]="undefined">Select</option>
+                   <option *ngFor = "let option of TCSdataList" [value] ="option.TCS_Persentage">
+                    {{option.TCS_Persentage}}
+                  </option>
+                </select>
+            </div>
+            </div>
                         <br>
                         <br>
                         <div class="clearfix"></div>
@@ -904,52 +889,42 @@
                             <div class="col-xs-12">
                                 <div class="table-responsive">
                                   <table class="table">
-                                    <tbody><tr>
-                                      <th>Total Amount:</th>
-                                      <td class="amt-td ng-binding">{{Total_Amount}}</td>
-                                      <th>CGST Amount :</th>
-                                      <td class="amt-td ng-binding">{{CGST_Amount}}</td>
+                                    <tbody>
+                                        <tr>
+                                          <th>Total Amount:</th>
+                                          <td class="amt-td ng-binding">{{Total_Amount}}</td>
+                                          <th>Term Amount :</th>
+                                          <td class="amt-td ng-binding">{{Total_Term_Amount}}</td>
+                                          <th>SGST Amount :</th>
+                                          <td class="amt-td ng-binding">{{SGST_Amount}}</td>
+                                          <th>TCS Amount : </th>
+                                          <td class="amt-td ng-binding">{{TCS_Amount}}</td>
+                                        </tr>
+                                        <tr>
+                                          <th>Discount Amount :</th>
+                                          <td class="amt-td ng-binding">{{Dis_Amount}}</td>
+                                          <th>CESS Amount :</th>
+                                          <td class="amt-td ng-binding">{{CESS}}</td>
+                                          <th>IGST Amount:</th>
+                                          <td class="amt-td ng-binding">{{IGST_Amount}}</td>
+                                          <th>Rounded Off :</th>
+                                          <td class="amt-td ng-binding">{{Round_off}}</td>
 
-                                      <th>CESS Amount :</th>
-                                      <td class="amt-td ng-binding">{{CESS}}</td>
-                                      
-                                      
-                                      <!-- ngIf: ctrl.TCSflag -->
-                                      <!-- ngIf: ctrl.TCSflag -->
-                                    </tr>
-                                    <tr>
-                                      <th>Term Amount :</th>
-                                      <td class="amt-td ng-binding">{{Total_Term_Amount}}</td>
-                                      <th>SGST Amount :</th>
-                                      <td class="amt-td ng-binding">{{SGST_Amount}}</td>
-
-                                      <th>Total TAX :</th>
-                                      <td class="amt-td ng-binding">{{Total_Tax}}</td>
-                                    </tr>
-                                    <tr>
-                                      <th>Discount Amount :</th>
-                                      <td class="amt-td ng-binding">{{Dis_Amount}}</td>
-                                      <th>IGST Amount:</th>
-                                      <td class="amt-td ng-binding">{{IGST_Amount}}</td>
-
-                                      <th>Gross Amount : </th>
-                                      <td class="amt-td ng-binding">{{Gross_Amount}}</td>
-                                      <th>TCS Amount : </th>
-                                      <td class="amt-td ng-binding">{{TCS_Amount}}</td>
-                                    </tr>
-                                    <tr>
-                                      <th>Taxable Amount :</th>
-                                      <td class="amt-td ng-binding">{{Taxable_Amount}}</td>
-                                      <th>Total GST :</th>
-                                      <td class="amt-td ng-binding">{{Total_GST}}</td>
-
-                                      <th>Rounded Off :</th>
-                                      <td class="amt-td ng-binding">{{Round_off}}</td>
-                                      <th>Grand Total : </th>
-                                      <td class="amt-td ng-binding">{{Net_Amt}}</td>
-                                    </tr>
-
-                                  </tbody></table>
+                                          <!-- <th>Total TAX :</th>
+                                          <td class="amt-td ng-binding">{{Total_Tax}}</td> -->
+                                        </tr>
+                                        <tr>
+                                          <th>Taxable Amount :</th>
+                                          <td class="amt-td ng-binding">{{Taxable_Amount}}</td>
+                                          <th>CGST Amount :</th>
+                                          <td class="amt-td ng-binding">{{CGST_Amount}}</td>
+                                          <th>Gross Amount : </th>
+                                          <td class="amt-td ng-binding">{{Gross_Amount}}</td>
+                                          <th>Net Amount : </th>
+                                          <td class="amt-td ng-binding">{{Net_Amt}}</td>
+                                        </tr>
+                                    </tbody>
+                                  </table>
                                 </div>
                               </div>
                               <br>

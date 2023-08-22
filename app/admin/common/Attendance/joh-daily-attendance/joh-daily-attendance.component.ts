@@ -404,7 +404,11 @@ export class JohDailyAttendanceComponent implements OnInit {
       "Json_Param_String": JSON.stringify([AtObj])
       }
     this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      if(this.Atten_Type == 6 || this.Atten_Type == 8 || this.Atten_Type == 10){
       this.Balance = data.length ? data[0].Balance : "0";
+      } else {
+        this.Balance = undefined;
+      }
     })
   }
   // CheckIsLeave () {
@@ -436,6 +440,7 @@ export class JohDailyAttendanceComponent implements OnInit {
       Date : this.DateService.dateConvert(new Date(this.Daily_Atten_Date))
     }
     if(valid){
+    if(this.Balance != 0){ 
     if(isleave === true) {
       const obj = {
         "SP_String": "SP_Leave_Application",
@@ -461,6 +466,16 @@ export class JohDailyAttendanceComponent implements OnInit {
     }
     else {
       this.SaveAttendanceType();
+    }
+    }
+    else{
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Leave can not apply. "
+      });
     }
     }
   }
