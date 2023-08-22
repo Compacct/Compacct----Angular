@@ -239,6 +239,23 @@ export class ServiceEngineeringTeamComponent implements OnInit {
             detail: "Succesfully Delete"
           });
           }
+          else if(data[0].Column1 != "done"){
+            this.compacctToast.clear();
+            this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: data[0].Column1
+          });
+          }
+          else{
+            this.compacctToast.clear();
+            this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error",
+            detail: "Something Wrong"
+          });
+          }
           this.GetTreeData();
          });
     }

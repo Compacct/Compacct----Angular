@@ -112,7 +112,13 @@ export class ProjectMasterComponent implements OnInit {
       .subscribe((data : any)=>
       {
         if(data[0].Column1){
-        
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Project Master "+ (this.Objproject.Project_ID ? 'Update' : 'Create') +" Succesfully",
+            detail: "Succesfully "+ (this.Objproject.Project_ID ? 'Update' : 'Create')
+          });
           this.getProject()
           this.projectSeletcForm.form.setValue(
             {
@@ -120,15 +126,19 @@ export class ProjectMasterComponent implements OnInit {
             }
             )
           this.changeProject()
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "success",
-            summary: "Project Master "+ this.Objproject.Project_ID ? 'Update' : 'Create' +" Succesfully",
-            detail: "Succesfully "+ this.Objproject.Project_ID ? 'Update' : 'Create'
-          });
+       
+        
           this.clearData()
           this.buttonname = "Update";
+        }
+        else if ( data[0].Column1 == 0){
+          this.Spinner = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Project Name Already Exists"
+        });
         }
         else {
           this.Spinner = false;
@@ -145,12 +155,17 @@ export class ProjectMasterComponent implements OnInit {
   }
   changeProject(){
     this.Objproject = new project()
+    this.Objsite = new site()
+    this.SiteFormSubmit = false
+    this.ObjEngineer = new Engineer()
+    this.engineerFormSubmit = false
+    this.SiteIndex = undefined
     this.buttonname = "Create";
+    this.siteButton = "Add"
     this.EngineerList = []
     this.siteList = []
     if(this.seletcProject ){
-
-      this.buttonname = "Update";
+    this.buttonname = "Update";
     const obj = {
         "SP_String": "SP_Service_Project_Team",
         "Report_Name_String":'Retrieve_Service_Project_Master',
@@ -176,6 +191,25 @@ export class ProjectMasterComponent implements OnInit {
     this.SiteFormSubmit = true
     if(valid && this.seletcProject){
       var obj:any = {}
+      let  siteListClone =  JSON.parse(JSON.stringify(this.siteList))
+      if(this.SiteIndex ){
+        siteListClone.splice(Number(this.SiteIndex),1)
+       }
+       else {
+        siteListClone =  JSON.parse(JSON.stringify(this.siteList))
+       }
+      console.log(siteListClone)
+      const FindsiteList = siteListClone.find(el=> el.Site_Name == this.Objsite.Site_Name )
+      if(FindsiteList) {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Site Name Already Exists"
+         });
+        return
+       }
+        
       if(this.SiteIndex){
           this.siteList[Number(this.SiteIndex)].Site_Name = this.Objsite.Site_Name,
           this.siteList[Number(this.SiteIndex)].Contact_Person =this.Objsite.Contact_Person,
@@ -184,10 +218,10 @@ export class ProjectMasterComponent implements OnInit {
           this.siteList[Number(this.SiteIndex)].Site_Remarks =this.Objsite.Site_Remarks,
           this.siteList[Number(this.SiteIndex)].Project_ID =this.seletcProject
           this.siteList[Number(this.SiteIndex)].Site_ID ==this.Objsite.Site_ID
-         this.SiteFormSubmit = false
+          this.SiteFormSubmit = false
           this.Objsite = new site()
-           this.siteButton = "Add"
-           this.SiteIndex = undefined
+          this.siteButton = "Add"
+          this.SiteIndex = undefined
       }
       else {
        obj ={
@@ -203,8 +237,8 @@ export class ProjectMasterComponent implements OnInit {
         this.siteList.push(obj)
         this.SiteFormSubmit = false
         this.Objsite = new site()
-         this.siteButton = "Add"
-         this.SiteIndex = undefined
+        this.siteButton = "Add"
+        this.SiteIndex = undefined
       }
   
     
