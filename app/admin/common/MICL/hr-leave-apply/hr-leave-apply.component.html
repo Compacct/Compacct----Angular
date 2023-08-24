@@ -443,9 +443,11 @@
                                     </select>
                             </div>
                             <div class="col-sm-4">
-                            <label class="control-label">Employee
-                                <sup class="text-danger">*</sup></label>
-                                <select class="form-control"name="Emp_Name"
+                            <label class="control-label">Employee<sup class="text-danger">*</sup></label>
+                                <p-dropdown [options]="empDataList" name="Employee" #Employee="ngModel" [(ngModel)]="ObjHrleave.Emp_ID" [disabled]="Editdisable" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Employee'"
+                                    [virtualScroll]="true" itemSize="30" (onChange)="getShowBaln()" [styleClass]="leaveHrFormSubmitted &&  Employee.errors?.required ? 'clearance' :''" [required] = "true">
+                                </p-dropdown>
+                                <!-- <select class="form-control"name="Emp_Name"
                                 #Emp_Name ="ngModel"
                                 [(ngModel)]="ObjHrleave.Emp_ID"
                                 [ngClass]="{'clearance': leaveHrFormSubmitted && Emp_Name?.errors?.required}"
@@ -453,7 +455,7 @@
                                 required>
                                 <option [ngValue]="undefined">Select</option>
                                 <option *ngFor="let emp of empDataList" value="{{emp.Emp_ID}}">{{emp.Emp_Name}}</option>
-                            </select>
+                                </select> -->
                         
                             </div>
                             <div class="col-sm-4">

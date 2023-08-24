@@ -134,8 +134,8 @@
                                                 <td *ngIf="col.Approval_Status_1 == 'Y' && col.Approval_Status_2 == 'Y'" style="color:green;">{{"SANCTIONED"}}</td>
                                                 <td *ngIf="(col.Approval_Status_1 == 'N' || col.Approval_Status_2 == 'N')" style="color:red;">{{"REJECTED"}}</td>
                                                 <td *ngIf="!col.Approval_Status_1 || !col.Approval_Status_1">{{"APPLIED"}}</td>
-                                                <td></td>
-                                                <td></td>
+                                                <td>{{col.Pending_EMI ? col.Pending_EMI : "-"}}</td>
+                                                <td>{{col.Pending_EMI_Amount ? col.Pending_EMI_Amount : "-"}}</td>
                                             </tr>
                                         </ng-template>
                                             <!-- <ng-template pTemplate="paginatorright" let-state> </ng-template> -->

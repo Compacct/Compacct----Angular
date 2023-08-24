@@ -191,7 +191,7 @@ export class AdvanceOrderAdjustmentComponent implements OnInit {
     else{
       this.AdvanceOrderlist = this.BackupAdvanceOrderlist;
       this.SelectAllFLag = false;
-      this.SelectAllChange();
+      // this.SelectAllChange();
     }
   }
 

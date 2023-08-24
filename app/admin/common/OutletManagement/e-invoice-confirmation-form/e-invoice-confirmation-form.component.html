@@ -567,12 +567,12 @@
                                 </div>
                             </div>
                             <div class="table-responsive table-id">
-                                <p-table [value]="CancelInvoicelist" #dt2 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" 
+                                <p-table [value]="CancelInvoicelist" #dt6 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" 
                                 [globalFilterFields]='["Sub_Ledger_GST","Billing_Name","STATE","POS","Doc_No","Doc_Date","Reverse_Charge","Invoice_Type","ECOMM_GSTN","Taxable_Amount","CGST_Amount","SGST_Amount","IGST_Amount","Invoice_Value"]'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
-                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt6.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                             </div>
                                         </div>
 

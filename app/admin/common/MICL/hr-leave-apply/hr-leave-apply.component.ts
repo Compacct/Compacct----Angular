@@ -489,12 +489,14 @@ export class HrLeaveApplyComponent implements OnInit {
   
   } 
   compareDate(){
-    const Apply_From_Date = new Date(this.FromDatevalue);
-    const Apply_To_Date = new Date(this.ToDatevalue);
-    console.log("Apply_From_Date====",Apply_From_Date)
-    console.log("Apply_To_Date====",Apply_To_Date)
+    const ApplyFromDate = new Date(this.FromDatevalue).toISOString();
+    const ApplyToDate = new Date(this.ToDatevalue).toISOString();
+    const Apply_From_Date = ApplyFromDate.split('T');
+    const Apply_To_Date = ApplyToDate.split('T');
     if(Apply_From_Date && Apply_To_Date) {
-    if(Apply_From_Date.getTime() === Apply_To_Date.getTime()) {
+    // console.log("Apply_From_Date====",Apply_From_Date[0])
+    // console.log("Apply_To_Date====",Apply_To_Date[0])
+    if(Apply_From_Date[0] == Apply_To_Date[0]) {
       this.checkboxdisabled = true;
       this.HalfDayFlag = false;
     }
