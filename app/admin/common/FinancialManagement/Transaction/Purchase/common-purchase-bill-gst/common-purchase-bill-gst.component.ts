@@ -569,7 +569,7 @@ export class CommonPurchaseBillGstComponent implements OnInit {
   CalCulateTotalAmt(){
     this.ObjProductInfo.Amount = 0;
     if (this.ObjProductInfo.Qty && this.ObjProductInfo.Rate) {
-      this.chkqut()
+      // this.chkqut()
       var amt;
       amt = Number(this.ObjProductInfo.Qty * this.ObjProductInfo.Rate).toFixed(2);
       this.ObjProductInfo.Amount = amt;
@@ -639,7 +639,7 @@ export class CommonPurchaseBillGstComponent implements OnInit {
   AddProductInfo(valid) {
     //console.log(this.ObjaddbillForm.Product_ID)
     this.ProductInfoSubmitted = true;
-    if(valid && !this.chkqut()) {
+    if(valid) { //&& !this.chkqut()
       const SubLedgerState = this.ObjPurChaseBill.Sub_Ledger_State
         ? this.ObjPurChaseBill.Sub_Ledger_State.toUpperCase()
         : undefined;
