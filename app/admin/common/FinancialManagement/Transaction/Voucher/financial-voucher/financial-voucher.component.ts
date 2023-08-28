@@ -169,6 +169,7 @@ export class FinancialVoucherComponent implements OnInit {
     this.clearProject();
     this.totalDR = 0
     this.totalCR = 0
+    this.voucherdata = new Date();
   }
   GetLedgerTop(){
     const obj = {
@@ -523,6 +524,57 @@ export class FinancialVoucherComponent implements OnInit {
   getBankTRNType(id:any){
     console.log("Type Check",typeof(id));
     if(id){
+      this.objjournal.Cheque_No = undefined
+      this.NEFTDate = new Date()
+      this.objjournal.Bank_Name = undefined
+      this.objjournal.Bank_Branch_Name = undefined
+      if(Number(id) === 1){
+        this.labelText1 = "Transaction No"
+        this.labelText2 = "Transaction Date"
+        this.labelText3 = "Bank Name"
+        this.labelText4 = "Bank Branch Name"
+      }
+      else if(Number(id) === 2){
+        this.labelText1 = ""
+        this.labelText2 = ""
+        this.labelText3 = ""
+        this.labelText4 = ""
+      }
+      else if(Number(id) === 3){
+        this.labelText1 = "Cheque No"
+        this.labelText2 = "Cheque Date"
+        this.labelText3 = "Bank Name"
+        this.labelText4 = "Bank Branch Name"
+      }
+      else if(Number(id) === 4){
+        this.labelText1 = "NEFT No"
+        this.labelText2 = "NEFT Date"
+        this.labelText3 = ""
+        this.labelText4 = ""
+      }
+      else if(Number(id) === 6){
+        this.labelText1 = "Transaction No"
+        this.labelText2 = "Transaction Date"
+        this.labelText3 = "Card Issue Bank"
+        this.labelText4 = ""
+      }
+      else if(Number(id) === 7){
+        this.labelText1 = "Transaction No"
+        this.labelText2 = "Transaction Date"
+        this.labelText3 = ""
+        this.labelText4 = ""
+      }
+      else if(Number(id) === 5){
+        this.labelText1 = "Transaction No"
+        this.labelText2 = "Transaction Date"
+        this.labelText3 = "Finance"
+        this.labelText4 = ""
+      }
+    }
+  }
+  getBankTRNTypeforedit(id:any){
+    console.log("Type Check",typeof(id));
+    if(id){
       if(Number(id) === 1){
         this.labelText1 = "Transaction No"
         this.labelText2 = "Transaction Date"
@@ -740,7 +792,8 @@ export class FinancialVoucherComponent implements OnInit {
     this.objjournal.Voucher_No = data[0].voucher_No
     this
     this.GetBankTransactionType(data[0].Ledger_ID);
-    this.voucherdata = new Date(data[0].Voucher_Date)
+    this.voucherdata = new Date(data[0].Voucher_Date);
+    this.NEFTDate = data[0].Cheque_Date ? new Date(data[0].Cheque_Date) : new Date();
     this.lowerList = data[0].bottom;
     console.log("lowerList",this.lowerList)
     setTimeout(() => {
@@ -748,7 +801,7 @@ export class FinancialVoucherComponent implements OnInit {
         const bankTrnFilter = this.BankTransactionTypeList.filter((el:any)=> el.Txn_Type_Name === data[0].Bank_Txn_Type)[0]
         this.objjournal.Bank_Txn_Type  = bankTrnFilter.Bank_Txn_Type_ID
         console.log("this.objjournal.Bank_Txn_Type",typeof(this.objjournal.Bank_Txn_Type))
-        this.getBankTRNType(this.objjournal.Bank_Txn_Type)
+        this.getBankTRNTypeforedit(this.objjournal.Bank_Txn_Type)
       }
     }, 200);
   

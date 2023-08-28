@@ -21,7 +21,11 @@ export class AdvanceOrderAdjustmentComponent implements OnInit {
   From_date: any;
   To_date: any;
   AdvanceOrderlist:any = [];
+  BackupAdvanceOrderlist:any = [];
   DynamicHeaderforAdvOrderList:any = [];
+  SelectAllFLag:boolean = false;
+  data: any[];
+  globalFilterValue: string = '';
 
   constructor(
     private Header: CompacctHeader,
@@ -48,9 +52,11 @@ export class AdvanceOrderAdjustmentComponent implements OnInit {
     }
   }
   GetAdvanceOrderlist() {
+    this.globalFilterValue = '';
     this.AdvanceOrderlist = [];
     this.Spinner = true;
     this.seachSpinner = true;
+    this.SelectAllFLag = false;
     const start = this.From_date
     ? this.DateService.dateConvert(new Date(this.From_date))
     : this.DateService.dateConvert(new Date());
@@ -70,8 +76,10 @@ export class AdvanceOrderAdjustmentComponent implements OnInit {
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.AdvanceOrderlist = data;
      //console.log('Invoice list=====',this.PenInvoicelist)
+     this.BackupAdvanceOrderlist = this.AdvanceOrderlist.slice();
      if(this.AdvanceOrderlist.length){
       this.DynamicHeaderforAdvOrderList = Object.keys(data[0]);
+      console.log('this.DynamicHeaderforAdvOrderList===',this.DynamicHeaderforAdvOrderList)
     }
     else {
       this.DynamicHeaderforAdvOrderList = [];
@@ -80,6 +88,19 @@ export class AdvanceOrderAdjustmentComponent implements OnInit {
      this.seachSpinner = false;
    })
    }
+  }
+  SelectAllChange(){
+     if(this.SelectAllFLag){
+      this.AdvanceOrderlist.forEach(el=>{
+        el.Check_Order_Adjustment = true
+        console.log('list===',this.AdvanceOrderlist)
+      })
+    } else {
+      this.AdvanceOrderlist.forEach(el=>{
+        el.Check_Order_Adjustment = false
+        console.log('list===',this.AdvanceOrderlist)
+      })
+    }
   }
   SaveAdvanceOrder(){
     this.Spinner = false;
@@ -160,5 +181,34 @@ export class AdvanceOrderAdjustmentComponent implements OnInit {
   }
   onReject(){}
   onConfirm(){}
+
+  onGlobalFilterChange(value: string) {
+    if(value) {
+    this.globalFilterValue = value;
+    this.applyGlobalFilter(value);
+    this.resetDataWithFilter(this.data);
+    }
+    else{
+      this.AdvanceOrderlist = this.BackupAdvanceOrderlist;
+      this.SelectAllFLag = false;
+      // this.SelectAllChange();
+    }
+  }
+
+  resetDataWithFilter(newData: any[]) {
+    this.AdvanceOrderlist = newData;
+    this.applyGlobalFilter(this.globalFilterValue);
+  }
+
+  applyGlobalFilter(filterValue: string) {
+      this.data = this.AdvanceOrderlist.filter(item =>
+        Object.values(item).some(value => {
+          if (value !== null && value !== undefined) {
+            return value.toString().toLowerCase().includes(filterValue.toLowerCase());
+          }
+          return false;
+        })
+      );
+  }
 
 }

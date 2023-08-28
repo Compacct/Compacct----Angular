@@ -36,6 +36,8 @@ export class ServiceEngineeringTeamComponent implements OnInit {
   TreeDataListHeader:any = []
   buttonname:string = "Create"
   Eng_ID:any = ""
+  clonedSpecilizationList:any = []
+  rowIndexNumber:any
   constructor(
     private $http: HttpClient,
     private Header: CompacctHeader,
@@ -98,6 +100,7 @@ export class ServiceEngineeringTeamComponent implements OnInit {
    }
    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.SpecilizationList = data
+     this.clonedSpecilizationList = JSON.parse(JSON.stringify(data))
     })
 
   }
@@ -236,12 +239,107 @@ export class ServiceEngineeringTeamComponent implements OnInit {
             detail: "Succesfully Delete"
           });
           }
+          else if(data[0].Column1 != "done"){
+            this.compacctToast.clear();
+            this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: data[0].Column1
+          });
+          }
+          else{
+            this.compacctToast.clear();
+            this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error",
+            detail: "Something Wrong"
+          });
+          }
           this.GetTreeData();
          });
     }
  
 
  }
+ pencil(rowIndexNumber:number){
+  if(this.rowIndexNumber == undefined){
+    return true
+  }
+  else {
+    return this.rowIndexNumber != rowIndexNumber ? true : false
+  }
+  
+}
+onRowEditInit(row: any ,rowIndexNumber:number ) {
+  this.SpecilizationList = JSON.parse(JSON.stringify(this.clonedSpecilizationList))
+  console.log(this.clonedSpecilizationList)
+  this.rowIndexNumber = rowIndexNumber
+}
+onRowSave(col:any){
+ 
+  const obj = {
+    "SP_String": "SP_Service_Engineering_Team",
+    "Report_Name_String" : "Edit_Specialization",
+    "Json_Param_String": JSON.stringify([col]),
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    if (data[0].Column1) {
+      this.rowIndexNumber = undefined
+      this.GetSpecilizationList()
+      this.onRowcencleInit()
+       this.compacctToast.clear();
+       this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "",
+        detail: "Specialization Succesfully Update"
+      });
+      }
+  })
+}
+onRowcencleInit(){
+  this.SpecilizationList = JSON.parse(JSON.stringify(this.clonedSpecilizationList))
+  this.rowIndexNumber = undefined
+}
+onRowDelete(col){
+  if(col.Eng_Specialization_ID){
+    const obj = {
+      "SP_String": "SP_Service_Engineering_Team",
+      "Report_Name_String":"Delete_Specialization",
+      "Json_Param_String": JSON.stringify([{ Eng_Specialization_ID : col.Eng_Specialization_ID}]) 
+     }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log("data ==",data[0].Column1);
+      if (data[0].Column1 === "done"){
+         this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Specialization Delete Succesfully",
+          // detail: "Succesfully Cancel"
+        });
+        }
+        else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: data[0].Column1,
+            // detail: "Succesfully Cancel"
+          });
+        }
+        this.GetSpecilizationList()
+        this.onRowcencleInit()
+       });
+  }
+  
+}
+close(){
+  this.CreateSalesExceModal = false
+  this.SpecializationModal = false
+  this.ViewModal = false
+}
 }
 
 class serviceEngineering{

@@ -127,7 +127,7 @@
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.Franchise != 'N'">
+                                                        <li *ngIf="col.Franchise != 'N' && !col.E_Invoice_PDF_Link">
                                                             <a (click)="dataforregeneratingbill(col)">
                                                                 <i class="fa fa-bars" aria-hidden="true"></i> Regenerate Bill
                                                             </a>
@@ -137,7 +137,7 @@
                                                                 <i class="fa fa-fw fa-download"></i> Download E-INV
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.Franchise === 'Y' && col.Bill_NO === 'NA'">
+                                                        <li *ngIf="col.Franchise === 'Y' && col.Bill_NO === 'NA' && !col.E_Invoice_PDF_Link">
                                                             <a (click)="GeneratingBillNo(col)">
                                                                 <i class="fa fa-bars" aria-hidden="true"></i> Generate Bill No.
                                                             </a>

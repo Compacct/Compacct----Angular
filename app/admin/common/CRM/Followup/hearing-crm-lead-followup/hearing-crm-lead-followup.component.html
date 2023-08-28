@@ -115,7 +115,7 @@
                                                 class="fa fa-fw fa-phone-square" *ngIf="col.Mobile_2"></i>{{col.Mobile_2 ? col.Mobile_2
                                             :'-'}}</a></td>
                                     <td style="text-align: center;">{{col.Mobile_3_WP ? col.Mobile_3_WP : '-' }}</td>
-                                    <td>{{col.Prefered_Location ? col.Prefered_Location :'-'}}</td>
+                                    <td>{{col.Cost_Cen_Name ? col.Cost_Cen_Name :'-'}}</td>
                                     <td>{{col.Followup_Type ? col.Followup_Type :'-'}}</td>
                                     <td>{{col.Followup_Details ? col.Followup_Details :'-'}}</td>
                                 </tr>
@@ -160,10 +160,10 @@
                                                         <i class="fa fa-user"></i>&nbsp;{{objMain.SentTo}}
                                                     </a>
                                                     <a class="btn btn-danger btn-social  btn-xs" *ngIf="objMain.Current_Action">
-                                                        Action Taken :<i class="fa fa-angle-double-right"></i>&nbsp;{{objMain.Current_Action}} On {{objMain.Posted_On}}
+                                                        Action Taken :<i class="fa fa-angle-double-right"></i>&nbsp;{{objMain.Current_Action}} On {{objMain.Posted_On|date:"dd/MMM/yyyy , h:mm a"}}
                                                     </a>
-                                                    <a class="btn btn-dangerr btn-social  btn-xs"  *ngIf="objMain.Next_Followup">
-                                                        Next Followup :<i class="fa fa-angle-double-right"></i>&nbsp;{{objMain.Next_Followup}}
+                                                    <a class="btn btn-dangerr btn-social  btn-xs"  *ngIf="objMain.Next_Followup" id="hover">
+                                                        Next Followup :<i class="fa fa-angle-double-right"></i>&nbsp;{{objMain.Next_Followup|date:"dd/MMM/yyyy , h:mm a"}}
                                                     </a>
                                                     <br>
                                                 </div>

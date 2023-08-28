@@ -235,15 +235,18 @@
                                 </div>
                             </div>
                             <div class="col-sm-4">
-                                <label class="control-label">Employees</label>
-                                    <select class="form-control" name="Emp_Name"
+                                <label class="control-label">Employees<sup class="text-danger">*</sup></label>
+                                   <p-dropdown [options]="empDataList" name="Employee" #Employee="ngModel" [(ngModel)]="Objleave.Emp_ID" [disabled]="Editdisable" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Employee'"
+                                        [virtualScroll]="true" itemSize="30" (onChange)="getbalancedata()" [styleClass]="leaveFormSubmitted &&  Employee.errors?.required ? 'clearance' :''" [required] = "true">
+                                    </p-dropdown>
+                                    <!-- <select class="form-control" name="Emp_Name"
                                     #Emp_Name ="ngModel"
                                     [(ngModel)]="Objleave.Emp_ID" 
                                     (change)="getbalancedata()"
                                     [disabled]="Editdisable">
                                     <option [ngValue]="undefined">All</option>
                                     <option  *ngFor="let Emp of empDataList"  value ={{Emp.Emp_ID}}>{{Emp.Emp_Name}}</option>
-                                 </select>
+                                 </select> -->
                             </div>
                                    
                             </div>
