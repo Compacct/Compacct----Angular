@@ -7,7 +7,7 @@ import { FileUpload } from "primeng/primeng";
 import { CompacctGlobalApiService } from "../../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from '../../../../shared/compacct.global/dateTime.service';
 import { data } from "jquery";
-import { Console } from "console";
+import { Console, log } from "console";
 @Component({
   selector: 'app-sub-ledger',
   templateUrl: './sub-ledger.component.html',
@@ -129,6 +129,21 @@ export class SubLedgerComponent implements OnInit {
   //this.GetUser();
   //this.GetAllData();
   }
+
+  countryChange(){
+  console.log('country changed',this.objSubLedger.Country);
+  this.objSubLedger.Composite_GST = 'No';
+    this.objSubLedger.Pin = undefined;
+  if(this.objSubLedger.Country!='India'){
+    this.objSubLedger.PAN_No = undefined;
+    this.objSubLedger.GST = undefined;
+    this.objSubLedger.Composite_GST = 'Yes';
+    this.objSubLedger.Pin = '999999';
+    this.objSubLedger.State = undefined;
+    this.objSubLedger.District = undefined;
+  }
+  }
+
   changecompositegst(){
     if (this.objSubLedger.Composite_GST === "Yes") {
        this.objSubLedger.GST = "NA"
