@@ -86,6 +86,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   Consignee_Pin: any;
   Cost_Cen_PIN: any;
   Pending_Doc_No: any;
+  cancelinvoiceno: any;
   constructor(
     private Header: CompacctHeader,
     private route : ActivatedRoute,
@@ -324,6 +325,68 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       window.open(printlink + obj, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
   
       );
+    }
+  }
+  cancleinv(doc){
+    this.cancelinvoiceno = undefined;
+    if (doc) {
+      this.cancelinvoiceno = doc;
+    this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "cancelinv",
+       sticky: true,
+       closable: false,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+      });
+    }
+  }
+  onConfirmcancelinv(){ // from pending tab
+    if(this.cancelinvoiceno){
+      this.ngxService.start();
+      const TempObj = {
+        Bill_No : this.cancelinvoiceno
+      }
+      const obj = {
+        "SP_String": "SP_E_Invoice",
+        "Report_Name_String": "Set_E_Invoice_Cancel",
+        "Json_Param_String": JSON.stringify([TempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       // console.log("del Data===", data[0].Column1)
+         if (data[0].Column1 === "done"){
+           this.GetPenInvoicelist();
+           this.ngxService.stop();
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: "Invoice ",
+             detail: "Cancel Successfully"
+           });
+         }
+         else{
+          this.ngxService.stop();
+          this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Something Wrong"
+            });
+        }
+       })
+    }
+    else{
+      this.ngxService.stop();
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Something Wrong"
+          });
     }
   }
 
@@ -635,6 +698,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   onReject(){
     this.compacctToast.clear("c");
     this.compacctToast.clear("cancel");
+    this.compacctToast.clear("cancelinv");
   }
   // CANCEL INV
   CancelgetDateRange(dateRangeObj) {
