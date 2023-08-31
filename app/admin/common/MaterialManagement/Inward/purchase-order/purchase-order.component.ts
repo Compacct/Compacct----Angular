@@ -185,6 +185,7 @@ export class PurchaseOrderComponent implements OnInit {
   file: boolean = false;
 
   @ViewChild("UploadFile", { static: false }) UploadFile!: FileUpload;
+  PDFFile: any;
 
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
@@ -284,6 +285,7 @@ clearData(){
   if (this.UploadFile) {
     this.UploadFile.clear();
   }
+  this.PDFFile = undefined;
     this.viewHeader = "";
     this.DetalisObj = {};
     this.objpurchase = new purchase();
@@ -2414,10 +2416,16 @@ ClearUploadInpt(elem: any) {
   else {
     this.UploadFile.clear();
     this.file = false;
+    this.PDFFile = undefined;
   }
 }
-fileSelect() {
+fileSelect(event) {
   this.file = true;
+  this.PDFFile = undefined;
+    if (event) {
+      this.PDFFile = event.files[0];
+      this.file = true;
+    }
 }
 showDoc() {
   window.open(this.objpurchase.File_Upload);
@@ -2427,12 +2435,15 @@ showDocument(doc) {
 }
 
 onBasicUpload(elem: any) {
-  if (elem._files.length) {
+  if (this.PDFFile) {
     this.UploadDocApprove(elem);
+  }
+  else {
+    this.onConfirmSave();
   }
 }
 UploadDocApprove(elem: any) {
-  const upfile = elem._files[0];
+  const upfile = this.PDFFile;
   // console.log('file elem', upfile);
   if (upfile['size']) {
     this.ngxService.start();
@@ -2442,6 +2453,7 @@ UploadDocApprove(elem: any) {
         this.objpurchase.File_Upload = data.file_url;
         this.ngxService.stop();
         this.upload = false;
+        this.onConfirmSave();
       })
   }
 }

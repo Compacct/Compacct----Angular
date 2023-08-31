@@ -15,6 +15,7 @@ import { Console } from 'console';
 import { CompacctProductDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct-product-details/compacct-product-details.component';
 import { CompacctgstandcustomdutyComponent } from '../../../shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
 import { CompacctFinancialDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 
 @Component({
@@ -149,6 +150,12 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
   ViewMetTypeModal = false;
   EXCELSpinner:boolean = false
   DescriptionCheck: any;
+  databaseName: any;
+  uploaddoc: boolean = true;
+  file: boolean = false;
+
+  @ViewChild("UploadFile", { static: false }) UploadFile!: FileUpload;
+  PDFFile:any;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -157,7 +164,8 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
     private DateService: DateTimeConvertService,
     private GlobalAPI: CompacctGlobalApiService,
     private compacctToast: MessageService,
-    private GetDistinctItems :CompacctGetDistinctService
+    private GetDistinctItems :CompacctGetDistinctService,
+    private ngxService: NgxUiLoaderService,
   ) {
     this.route.queryParams.subscribe(params => {
       console.log(params);
@@ -171,6 +179,7 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
       Header: this.headerData,
       Link: " Tender Management -> Master -> "+this.headerData
     });
+     this.getDatabase();
      this.getMaterialTyp();
      this.GetProductType();
      //this.GetProductSubType();
@@ -190,6 +199,18 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
     this.clearData();
     this.productid = undefined;
   }
+  getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log(data)
+        });
+  }
+  showDocument(doc) {
+    window.open(doc);
+  }
   clearData() {
      this.Spinner = false;
     // this.TenderSearchForm = false;
@@ -200,11 +221,22 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
      this.makedisabled = false;
      this.destroyChild();
      this.GetBrowseList();
+     if(this.databaseName != 'MICL') {
+      if(this.databaseName != 'MICL_Demo') {
      this.PDFViewFlag = false;
      if (this.PDFViewFlag === false) {
       this.fileInput.clear();
     }
-  
+    }
+    }
+    if(this.databaseName === 'MICL' || this.databaseName === 'MICL_Demo') {
+    this.file = false;
+    this.uploaddoc = true;
+    if (this.UploadFile) {
+      this.UploadFile.clear();
+    }
+    this.PDFFile = undefined;
+    }
   }
   destroyChild() {
     if (this.ProductDetailsInput) {
@@ -1234,6 +1266,7 @@ deleteMaterialType(mettype){
   //     }
   //   }
   // }
+  
   CheckDescription(){
     const tempobj = {
       Product_Type_ID : this.ObjMasterProductm.Product_Type_ID,
@@ -1255,7 +1288,8 @@ deleteMaterialType(mettype){
        })
   
    }
-  SaveMasterProductM(valid){
+  
+  SaveMasterProductM(valid?){
    if (this.productid) {
         this.Spinner = true;
         this.MasterProductmFormSubmitted = true;
@@ -1524,6 +1558,10 @@ deleteMaterialType(mettype){
       console.log("mechanical",data);
       this.editList = data;
          this.ObjMasterProductm = data[0];
+         if (data[0].Product_Image) {
+          this.file = true;
+          this.uploaddoc = false;
+        }
      //  this.myDate = data[0].Date;
       this.ObjFinancialComponentData = data[0];
       //  console.log("ObjFinancialComponentData",this.ObjFinancialComponentData)
@@ -1823,6 +1861,225 @@ deleteMaterialType(mettype){
     XLSX.writeFile(workbook, 'master_product_mechanical.xlsx');
     this.EXCELSpinner = false
   }
+
+  //MICL File Upload 
+  ClearUploadInpt(elem: any) {
+    if (this.ObjMasterProductm.Product_Image) {
+      this.uploaddoc = true;
+      this.ObjMasterProductm.Product_Image = undefined;
+    }
+    else {
+      this.UploadFile.clear();
+      this.file = false;
+      this.PDFFile = undefined;
+    }
+  }
+  fileSelect(event) {
+    this.file = false;
+    this.PDFFile = undefined;
+    if (event) {
+      this.PDFFile = event.files[0];
+      this.file = true;
+    }
+  }
+  showDoc() {
+    window.open(this.ObjMasterProductm.Product_Image);
+  }
+  
+  onBasicUpload(valid) {
+    this.MasterProductmFormSubmitted = true;
+    if(valid){
+    if (this.PDFFile) {
+       this.UploadDocApprove();
+    }
+    else {
+      this.SaveMasterProductMicl();
+    }
+    }
+    else {
+      this.ngxService.stop();
+    }
+  }
+  UploadDocApprove() {
+    const upfile = this.PDFFile;
+    // console.log('file elem', upfile);
+    if (upfile['size']) {
+      this.ngxService.start();
+      this.GlobalAPI.CommonFileUpload(upfile)
+        .subscribe((data: any) => {
+          // console.log('upload response', data);
+          this.ObjMasterProductm.Product_Image = data.file_url;
+          this.ngxService.stop();
+          this.uploaddoc = false;
+          this.SaveMasterProductMicl();
+        })
+    }
+  }
+  SaveMasterProductMicl(){
+    if (this.productid) {
+         this.Spinner = true;
+        //  this.MasterProductmFormSubmitted = true;
+         console.log("this.checkrequ()",this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ))
+       if(this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
+         if(this.DescriptionCheck === "OK") {
+       let UpdateArr =[]
+      
+         const Obj = {
+             Product_ID : this.productid,
+             Product_Mfg_Comp_ID : this.MakeEdit
+         }
+         UpdateArr.push({...Obj,...this.ObjMasterProductm})
+     
+          console.log("Update =" , UpdateArr)
+         const obj = {
+            "SP_String": "SP_Harbauer_Master_Product_mechanical",
+            "Report_Name_String" : "Master_Product_Mech_Update",
+            "Json_Param_String": JSON.stringify(UpdateArr)
+         }
+          this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+            console.log(data);
+            var tempID = data[0].Column1;
+            if(data[0].Column1){
+              var msg = this.buttonname != "Create" ? "Succesfully Updated " : "Succesfully Created " ;
+              this.Spinner = false;
+              this.ngxService.stop();
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "success",
+                summary: '',
+                detail: msg
+              });
+              this.clearData();
+             this.productid = undefined;
+            this.tabIndexToView = 0;
+            this.items = ["BROWSE", "CREATE"];
+            } else{
+              this.ngxService.stop();
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "error",
+                summary: "Warn Message",
+                detail: "Error Occured "
+              });
+            }
+          })
+      
+       
+       
+         }
+         else {
+         this.Spinner = false;
+         this.ngxService.stop();
+         this.compacctToast.clear();
+         this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "error",
+           summary: "Warn Message",
+           detail: "Description already exists."
+         });
+       }
+       } 
+       else {
+       this.Spinner = false;
+       this.ngxService.stop();
+       this.compacctToast.clear();
+         this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "error",
+           summary: "Warn Message",
+           // detail: "No Docs Selected"
+           detail: "Error Occured "
+         });
+       }
+       }
+       else {
+       this.Spinner = true;
+       this.ngxService.stop();
+       this.MasterProductmFormSubmitted = true;
+        if(this.Product_Mfg_Comp_ID.length){
+         if(this.DescriptionCheck === "OK") {
+          let tempArr =[]
+         this.Product_Mfg_Comp_ID.forEach(item => {
+           const obj = {
+               Product_ID : 0,
+               Product_Mfg_Comp_ID : item
+           }
+         tempArr.push({...obj,...this.ObjMasterProductm})
+       });
+       console.log("create =" , tempArr)
+      // return JSON.stringify(tempArr);
+       // if(valid && this.ProductPDFFile['size']){
+          const obj = {
+            "SP_String": "SP_Harbauer_Master_Product_mechanical",
+            "Report_Name_String" : "Master_Product_Mech_Create",
+            "Json_Param_String": JSON.stringify(tempArr)
+        
+          }
+          this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+            console.log(data);
+            this.ObjMasterProductm.Product_ID = data[0].Product_Manufacturing_Group;
+            if(data[0].Product_Manufacturing_Group){
+              var msg = this.buttonname != "Create" ? "Succesfully Updated " : "Succesfully Created " ;
+              this.Spinner = false;
+              this.ngxService.stop();
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "success",
+                summary: 'Error msg',
+                detail: msg
+              });
+              // this.ObjManualPaymentCnfm = new ManualPaymentCnfm();
+              // this.ManualPaymentConfirmFormSubmit = false;
+              // this.ManualPaymentConfirmModal = false;
+              this.clearData();
+        
+            } else{
+             // this.ngxService.stop();
+              this.Spinner = false;
+              this.ngxService.stop();
+              this.destroyChild();
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "error",
+                summary: "Warn Message",
+                detail: "Error Occured "
+              });
+            }
+          })
+         }
+       else {
+       this.Spinner = false;
+       this.ngxService.stop();
+       this.compacctToast.clear();
+       this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Description already exists."
+       });
+     }
+      }
+         else {
+         //if(!this.ProductPDFFile['size']) {
+           this.Spinner = false;
+           this.ngxService.stop();
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "error",
+             summary: "Validation",
+             // detail: "No Docs Selected"
+             detail: "Error Occured "
+           });
+       }
+     // }
+   }
+  }
+  //
 }
 class MasterProductm{
    Material_ID:number;

@@ -97,7 +97,12 @@
                                                                 <a (click)="Active(col)">
                                                                       <i class="fa fa-power-off"></i> Active
                                                                 </a>
-                                                           </li> 
+                                                           </li>
+                                                           <li *ngIf="col.File_Upload">
+                                                            <a (click)="showDocument(col.File_Upload)">
+                                                                <i class="fa fa-fw fa-file-text-o"></i> Show Document
+                                                            </a>
+                                                        </li> 
                                                         </ul>
                                                     </div>
                                                 </td> 
@@ -401,9 +406,20 @@
                            </div>
                            <div class="col-sm-4"></div>
                     </div>
+                    <div class="form-group">
+                        <div class="col-sm-6" style="margin-left:15px;">
+                            <label class="control-label">File Upload</label>
+                            <span class="btn btn-xs btn-danger pull-right" (click)="ClearUploadInpt(UploadFile)"
+                                *ngIf="file"><i class="fa fa-close"></i></span>
+                            <p-fileUpload #UploadFile *ngIf="upload" name="filedoc" accept="image/*,application/pdf" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" [showCancelButton]="false" (onSelect)="fileSelect($event)">
+                            </p-fileUpload> 
+                            <button name="pan" *ngIf="!upload" pButton pRipple type="button"
+                                label="Show Document" (click)="showDoc()"></button>
+                        </div>
+                    </div>
                     
                     <div class="box-footer">
-                                <button class="btn btn-primary pull-right"  id="load" (click)="saveData(ProductForm.form.valid)"   [disabled]="Spinner">
+                                <button class="btn btn-primary pull-right"  id="load" (click)="onBasicUpload(ProductForm.form.valid)"   [disabled]="Spinner">
                                                 <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                             <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
                                         </button>
