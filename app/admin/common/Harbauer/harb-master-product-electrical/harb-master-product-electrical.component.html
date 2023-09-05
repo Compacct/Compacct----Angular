@@ -94,6 +94,11 @@
                                                                 <i class="fa fa-times"></i> Inactive
                                                             </a>
                                                         </li>
+                                                        <li *ngIf="col.Product_Image && databaseName === 'MICL'">
+                                                            <a (click)="showDocument(col.Product_Image)">
+                                                                <i class="fa fa-fw fa-file-text-o"></i> Show Document
+                                                            </a>
+                                                        </li>
                                                         <!-- <li>
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
@@ -367,7 +372,7 @@
                                     <div class="col-sm-4"></div>
                                 </div>     
                                 <div class="form-group">
-                                    <div class="col-sm-6" style="margin-left:15px;">
+                                    <div *ngIf="databaseName === 'Harbauer'" class="col-sm-6" style="margin-left:15px;">
                                         <label class="control-label">File Upload</label>
                                         <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept="image/*,application/pdf" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)" url="/Harbauer_Master_Product_mechanical/Upload_Doc">
                                             <!-- <ng-template let-aFile pTemplate='aFile'>
@@ -384,6 +389,15 @@
                                         <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
                                         <!-- <p-fileUpload name="myfile[]" customUpload="true" multiple="multiple" (uploadHandler)="onUpload($event)" accept=""image/*,.csv,.xml,.doc,.docx,.pdf""></p-fileUpload> -->
                                     </div>
+                                    <div *ngIf="databaseName === 'MICL_Demo' || databaseName === 'MICL'" class="col-sm-6" style="margin-left:15px;">
+                                        <label class="control-label">File Upload</label>
+                                        <span class="btn btn-xs btn-danger pull-right" (click)="ClearUploadInpt(UploadFile)"
+                                            *ngIf="file"><i class="fa fa-close"></i></span>
+                                        <p-fileUpload #UploadFile *ngIf="uploaddoc" name="filedoc" accept="image/*,application/pdf" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" [showCancelButton]="false" (onSelect)="fileSelect($event)">
+                                        </p-fileUpload> 
+                                        <button name="pan" *ngIf="!uploaddoc" pButton pRipple type="button"
+                                            label="Show Document" (click)="showDoc()"></button>
+                                    </div>
                                 </div>
                                     <!-- <div class="col-sm-6">
                                         <label class="control-label">File Upload</label>
@@ -393,9 +407,13 @@
                                         <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
                                     </div> -->                               
                                 <div class="box-footer">
-                                    <button class="btn btn-primary pull-right" type="button" (click)="SaveMasterProductel(MasterProductelForm.form.valid)" id="load" [disabled]="Spinner">
+                                    <button *ngIf="databaseName === 'Harbauer'" class="btn btn-primary pull-right" type="button" (click)="SaveMasterProductel(MasterProductelForm.form.valid)" id="load" [disabled]="Spinner">
                                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                                         <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                    </button>
+                                    <button *ngIf="databaseName === 'MICL_Demo' || databaseName === 'MICL'" class="btn btn-primary pull-right" type="button" (click)="onBasicUpload(MasterProductelForm.form.valid)" id="load" [disabled]="Spinner">
+                                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                     </button>
                                 </div>
                             </form>

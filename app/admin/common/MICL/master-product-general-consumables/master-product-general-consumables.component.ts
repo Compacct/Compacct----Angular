@@ -9,6 +9,8 @@ import { CompacctgstandcustomdutyComponent } from '../../../shared/compacct.comp
 import { CompacctFinancialDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component';
 import { ActivatedRoute } from '@angular/router';
 import * as XLSX from 'xlsx';
+import { NgxUiLoaderService } from "ngx-ui-loader";
+import { FileUpload } from 'primeng/fileupload';
 @Component({
   selector: 'app-master-product-general-consumables',
   templateUrl: './master-product-general-consumables.component.html',
@@ -113,6 +115,11 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
   Parameter_ID: any;
   Tolerance_Level: any;
   SpinnerParam = false;
+  upload: boolean = true;
+  file: boolean = false;
+
+  @ViewChild("UploadFile", { static: false }) UploadFile!: FileUpload;
+  ProductPDFFile:any;
   constructor(
     private http: HttpClient,
     private compact: CompacctCommonApi,
@@ -121,6 +128,7 @@ export class MasterProductGeneralConsumablesComponent implements OnInit {
     private compacctToast:MessageService,
     public $CompacctAPI: CompacctCommonApi,
     private route: ActivatedRoute,
+    private ngxService: NgxUiLoaderService,
   ) {
     this.route.queryParams.subscribe(params => {
       console.log(params);
@@ -984,6 +992,12 @@ deleteMaterialType(mettype){
     this.Objproduct = new product();
     this.productCode = undefined;
     this.destroyChild();
+    this.file = false;
+    this.upload = true;
+    if (this.UploadFile) {
+      this.UploadFile.clear();
+    }
+    this.ProductPDFFile = undefined;
    }
    CheckDescription(){
     const tempobj = {
@@ -1006,15 +1020,85 @@ deleteMaterialType(mettype){
        })
   
    }
+
+   //File Upload
+   ClearUploadInpt(elem: any) {
+    if (this.Objproduct.File_Upload) {
+      this.upload = true;
+      this.Objproduct.File_Upload = undefined;
+    }
+    else {
+      this.UploadFile.clear();
+      this.file = false;
+      this.ProductPDFFile = undefined;
+    }
+  }
+  // fileSelect() {
+  //   this.file = true;
+  // }
+  fileSelect(event) {
+    this.file = false;
+    this.ProductPDFFile = undefined;
+    if (event) {
+      this.ProductPDFFile = event.files[0];
+      this.file = true;
+    }
+  }
+  showDoc() {
+    window.open(this.Objproduct.File_Upload);
+  }
+  showDocument(doc) {
+    window.open(doc);
+  }
+  
+  onBasicUpload(valid: any) {
+    this.ProductFormSubmitted = true;
+    if(valid && this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
+      if(this.DescriptionCheck === "OK") {
+        if (this.ProductPDFFile) {
+           this.UploadDocApprove();
+        }
+        else {
+          this.saveData();
+        }
+      }
+      else {
+        this.Spinner = false;
+        this.ngxService.stop();
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "error",
+             summary: "Warn Message",
+             detail: "Description already exists."
+           });
+      }
+    }
+  }
+  UploadDocApprove() {
+    const upfile = this.ProductPDFFile;
+    // console.log('file elem', upfile);
+    if (upfile['size']) {
+      this.ngxService.start();
+      this.GlobalAPI.CommonFileUpload(upfile)
+        .subscribe((data: any) => {
+          // console.log('upload response', data);
+          this.Objproduct.File_Upload = data.file_url;
+          this.ngxService.stop();
+          this.upload = false;
+          this.saveData();
+        })
+    }
+  }
   
    //Save Data
-saveData(valid:any){
+saveData(){
     console.log("savedata==",this.Objproduct);
-    console.log("valid",valid)
-    this.ProductFormSubmitted = true;
-    console.log("checkrequ",this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ))
-    if(valid && this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
-      if(this.DescriptionCheck === "OK") { 
+    // console.log("valid",valid)
+    // this.ProductFormSubmitted = true;
+    // console.log("checkrequ",this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ))
+    // if(valid && this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
+      // if(this.DescriptionCheck === "OK") { 
       console.log("productCode==",this.productCode);
       
       // var mocdes = this.materialCon.filter(item => Number(item.MOC_ID) === Number(this.Objproduct.MOC_ID))
@@ -1035,6 +1119,7 @@ saveData(valid:any){
          .subscribe((data:any)=>{
           console.log("data ==",data);
            if (data[0].Column1){
+            this.ngxService.stop();
              this.compacctToast.clear();
              this.compacctToast.add({
               key: "compacct-toast",
@@ -1054,22 +1139,28 @@ saveData(valid:any){
             this.AddParamDetails = [];
             this.Parameter_ID = undefined;
             this.Tolerance_Level = undefined;
+            this.file = false;
+            this.upload = true;
+            if (this.UploadFile) {
+              this.UploadFile.clear();
+            }
+            this.ProductPDFFile = undefined;
            });
-      }
-      else {
-       this.Spinner = false;
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "error",
-            summary: "Warn Message",
-            detail: "Description already exists."
-          });
-     }
-     }
-       else{
-         console.error("Somthing Wrong")
-       }    
+    //   }
+    //   else {
+    //    this.Spinner = false;
+    //       this.compacctToast.clear();
+    //       this.compacctToast.add({
+    //         key: "compacct-toast",
+    //         severity: "error",
+    //         summary: "Warn Message",
+    //         detail: "Description already exists."
+    //       });
+    //  }
+    //  }
+    //    else{
+    //      console.error("Somthing Wrong")
+    //    }    
      }
      checkrequ(financial?,Gst?,product?){
       let falg = false
@@ -1116,6 +1207,11 @@ saveData(valid:any){
 //Edit
   EditProduct(product:any){
     this.productCode = undefined;
+    this.file = false;
+    this.upload = true;
+    if (this.UploadFile) {
+      this.UploadFile.clear();
+    }
     if (product.Product_ID) {
       // this.productCode = undefined;
       this.tabIndexToView = 1;
@@ -1146,6 +1242,10 @@ saveData(valid:any){
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        console.log("Edit data==",data);
        this.Objproduct = data[0];
+       if (data[0].File_Upload) {
+        this.file = true;
+        this.upload = false;
+      }
        this.ObjFinancialComponentData = data[0];
        this.ProductDetailsInput.EditProductDetalis(data[0].Product_Type_ID,data[0].Product_Sub_Type_ID,data[0].Product_Description,data[0].Product_Code,data[0].Rack_NO)
 
@@ -1599,6 +1699,7 @@ class product{
   Output_CGST_RCM_Ledger_ID:any;
   Output_SGST_RCM_Ledger_ID:any;
   Output_IGST_RCM_Ledger_ID:any;
+  File_Upload:any;
 }
 class Financial{
   Can_Purchase : boolean;

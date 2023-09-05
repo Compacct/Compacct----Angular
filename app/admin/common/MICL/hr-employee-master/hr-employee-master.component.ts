@@ -180,7 +180,7 @@ export class HREmployeeMasterComponent implements OnInit {
   }
 
 leftdatechange(){
-  if(this.objemployee.Present_Status === "RESIGNED" || this.objemployee.Present_Status === "SUSPENDED" || this.objemployee.Present_Status === "ABSCONDED") {
+  if(this.objemployee.Present_Status === "RESIGNED" || this.objemployee.Present_Status === "SUSPENDED" || this.objemployee.Present_Status === "ABSCONDED" || this.objemployee.Present_Status === "TERMINATED") {
     this.Leave_Dt = new Date();
     this.leftdisabled = true;
   }
@@ -543,7 +543,8 @@ getEmployeeDetails(Emp_ID){
          this.objemployee.Present_Status = data[0].Present_Status;
          this.leftdisabled = this.objemployee.Present_Status === "RESIGNED" || 
                              this.objemployee.Present_Status === "SUSPENDED" || 
-                             this.objemployee.Present_Status === "ABSCONDED" ? true : false;
+                             this.objemployee.Present_Status === "ABSCONDED" ||
+                             this.objemployee.Present_Status === "TERMINATED" ? true : false;
          this.DOB = new Date(data[0].D_O_B);
          this.Spouse_DOB = new Date(data[0].Spouse_DOB);
          this.Date_Of_Anniversary = new Date(data[0].Date_Of_Anniversary);

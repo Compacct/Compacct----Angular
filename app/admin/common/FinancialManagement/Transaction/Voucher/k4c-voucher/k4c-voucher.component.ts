@@ -51,6 +51,7 @@ export class K4cVoucherComponent implements OnInit {
   RefDocDate = new Date();
   VoucherNo = undefined;
   costHeadDataList:any = [];
+  costCenterDataList:any = [];
   projectDataList:any = [];
   DynamicHeader:any = [];
   VoucherTypeID = undefined;
@@ -62,6 +63,13 @@ export class K4cVoucherComponent implements OnInit {
   labelText2:string = ""
   labelText3:string = ""
   labelText4:string = ""
+  buttondisabled:boolean = true;
+  diagnosiscostHeadList:any = [];
+  From_Date: any;
+  To_Date: any;
+  Cost_Cen_ID:any;
+  GridList:any = [];
+  GridListHeader:any = [];
 
   constructor(
     private $http: HttpClient,
@@ -76,13 +84,13 @@ export class K4cVoucherComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       console.log("params",params.Voucher_Type_ID);
       this.VoucherTypeID = params.Voucher_Type_ID
-      this.headerText = Number(this.VoucherTypeID) === 1 ? "Receive Voucher" : Number(this.VoucherTypeID) === 2 ? "Payment Voucher" : ""
+      this.headerText = Number(this.VoucherTypeID) === 1 ? "Receive Voucher" : Number(this.VoucherTypeID) === 2 ? "Payment Voucher" : Number(this.VoucherTypeID) === 3 ? "Contra Voucher" : ""
       
      })
    }
 
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "DIAGNOSIS"];
     this.menuList = [
       { label: "Edit", icon: "pi pi-fw pi-user-edit" },
       { label: "Delete", icon: "fa fa-fw fa-trash" }
@@ -96,10 +104,12 @@ export class K4cVoucherComponent implements OnInit {
     this.getVoucherType();
     this.GetCostHead();
     this.getProject();
+    this.GetdiagnosisCostCenter();
+    this.gettoCostCentercontra();
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE", "CREATE"];
+    this.items = ["BROWSE", "CREATE", "DIAGNOSIS"];
     this.buttonname = "Create";
     this.clearData();
   }
@@ -125,6 +135,8 @@ export class K4cVoucherComponent implements OnInit {
     // this.AlljournalData = [];
     // this.objsearch.Voucher_Type_ID = undefined
     this.Spinner = false;
+    this.buttondisabled = true;
+    this.objjournalloweer.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
   }
   GetBankTransactionType(LedgerId:any){
     // this.objjournal.Bank_Txn_Type = undefined;
@@ -144,54 +156,106 @@ export class K4cVoucherComponent implements OnInit {
   convartNumber(n:any){
     return typeof(n) === "number" ? n : Number(n)
     }
-  getBankTRNType(id:any){
-    console.log("Type Check",typeof(id));
-    if(id){
-      if(Number(id) === 1){
-        this.labelText1 = "Transaction No"
-        this.labelText2 = "Transaction Date"
-        this.labelText3 = "Bank Name"
-        this.labelText4 = "Bank Branch Name"
-      }
-      else if(Number(id) === 2){
-        this.labelText1 = ""
-        this.labelText2 = ""
-        this.labelText3 = ""
-        this.labelText4 = ""
-      }
-      else if(Number(id) === 3){
-        this.labelText1 = "Cheque No"
-        this.labelText2 = "Cheque Date"
-        this.labelText3 = "Bank Name"
-        this.labelText4 = "Bank Branch Name"
-      }
-      else if(Number(id) === 4){
-        this.labelText1 = "NEFT No"
-        this.labelText2 = "NEFT Date"
-        this.labelText3 = ""
-        this.labelText4 = ""
-      }
-      else if(Number(id) === 6){
-        this.labelText1 = "Transaction No"
-        this.labelText2 = "Transaction Date"
-        this.labelText3 = "Card Issue Bank"
-        this.labelText4 = ""
-      }
-      else if(Number(id) === 7){
-        this.labelText1 = "Transaction No"
-        this.labelText2 = "Transaction Date"
-        this.labelText3 = ""
-        this.labelText4 = ""
-      }
-      else if(Number(id) === 5){
-        this.labelText1 = "Transaction No"
-        this.labelText2 = "Transaction Date"
-        this.labelText3 = "Finance"
-        this.labelText4 = ""
+    getBankTRNType(id:any){
+      console.log("Type Check",typeof(id));
+      if(id){
+        this.objjournal.Cheque_No = undefined
+        this.NEFTDate = new Date()
+        this.objjournal.Bank_Name = undefined
+        this.objjournal.Bank_Branch_Name = undefined
+        if(Number(id) === 1){
+          this.labelText1 = "Transaction No"
+          this.labelText2 = "Transaction Date"
+          this.labelText3 = "Bank Name"
+          this.labelText4 = "Bank Branch Name"
+        }
+        else if(Number(id) === 2){
+          this.labelText1 = ""
+          this.labelText2 = ""
+          this.labelText3 = ""
+          this.labelText4 = ""
+        }
+        else if(Number(id) === 3){
+          this.labelText1 = "Cheque No"
+          this.labelText2 = "Cheque Date"
+          this.labelText3 = "Bank Name"
+          this.labelText4 = "Bank Branch Name"
+        }
+        else if(Number(id) === 4){
+          this.labelText1 = "NEFT No"
+          this.labelText2 = "NEFT Date"
+          this.labelText3 = ""
+          this.labelText4 = ""
+        }
+        else if(Number(id) === 6){
+          this.labelText1 = "Transaction No"
+          this.labelText2 = "Transaction Date"
+          this.labelText3 = "Card Issue Bank"
+          this.labelText4 = ""
+        }
+        else if(Number(id) === 7){
+          this.labelText1 = "Transaction No"
+          this.labelText2 = "Transaction Date"
+          this.labelText3 = ""
+          this.labelText4 = ""
+        }
+        else if(Number(id) === 5){
+          this.labelText1 = "Transaction No"
+          this.labelText2 = "Transaction Date"
+          this.labelText3 = "Finance"
+          this.labelText4 = ""
+        }
       }
     }
-  }
+    getBankTRNTypeforedit(id:any){
+      console.log("Type Check",typeof(id));
+      if(id){
+        if(Number(id) === 1){
+          this.labelText1 = "Transaction No"
+          this.labelText2 = "Transaction Date"
+          this.labelText3 = "Bank Name"
+          this.labelText4 = "Bank Branch Name"
+        }
+        else if(Number(id) === 2){
+          this.labelText1 = ""
+          this.labelText2 = ""
+          this.labelText3 = ""
+          this.labelText4 = ""
+        }
+        else if(Number(id) === 3){
+          this.labelText1 = "Cheque No"
+          this.labelText2 = "Cheque Date"
+          this.labelText3 = "Bank Name"
+          this.labelText4 = "Bank Branch Name"
+        }
+        else if(Number(id) === 4){
+          this.labelText1 = "NEFT No"
+          this.labelText2 = "NEFT Date"
+          this.labelText3 = ""
+          this.labelText4 = ""
+        }
+        else if(Number(id) === 6){
+          this.labelText1 = "Transaction No"
+          this.labelText2 = "Transaction Date"
+          this.labelText3 = "Card Issue Bank"
+          this.labelText4 = ""
+        }
+        else if(Number(id) === 7){
+          this.labelText1 = "Transaction No"
+          this.labelText2 = "Transaction Date"
+          this.labelText3 = ""
+          this.labelText4 = ""
+        }
+        else if(Number(id) === 5){
+          this.labelText1 = "Transaction No"
+          this.labelText2 = "Transaction Date"
+          this.labelText3 = "Finance"
+          this.labelText4 = ""
+        }
+      }
+    }
   GetSameCostCenANDledger() {
+    if (this.VoucherTypeID != 3) {
     const sameCostCenWithSameLedger = this.lowerList.filter(item=> Number(item.Sub_Ledger_ID) === Number(this.objjournalloweer.Sub_Ledger_ID) && Number(item.Ledger_ID) === Number(this.objjournalloweer.Ledger_ID));
     if(sameCostCenWithSameLedger.length) {
       this.compacctToast.clear();
@@ -207,6 +271,23 @@ export class K4cVoucherComponent implements OnInit {
       return true;
     }
   }
+  if (this.VoucherTypeID == 3) {
+    const sameCostCenWithSameLedger = this.lowerList.filter(item=> Number(item.Cost_Cen_ID) === Number(this.objjournalloweer.Cost_Cen_ID) && Number(item.Ledger_ID) === Number(this.objjournalloweer.Ledger_ID));
+    if(sameCostCenWithSameLedger.length) {
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Same combination can't be added."
+          });
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+  }
   lowerAdd(valid){
     this.journallowerFormSubmitted = true;
     console.log("valid",valid);
@@ -215,16 +296,28 @@ export class K4cVoucherComponent implements OnInit {
     let LedgerFilter = this.LedgerdataList.filter((el) => el.Ledger_ID == Number(this.objjournalloweer.Ledger_ID));
     let LedgersubFilter = this.SubLedgerDataListlow.filter((el) => el.Sub_Ledger_ID == Number(this.objjournalloweer.Sub_Ledger_ID));
     let costCernterFilter = this.costHeadDataList.filter((el)=>el.Cost_Head_ID === Number(this.objjournalloweer.Cost_Head_ID))
+    let costcentname = this.costCenterDataList.filter((el)=>el.Cost_Cen_ID === Number(this.objjournalloweer.Cost_Cen_ID))
     console.log("this.objjournalloweer.ITC_Eligibility",this.objjournalloweer.ITC_Eligibility);
+    var cramt;
+    var dramt;
+    if (this.VoucherTypeID == 3) {
+      dramt = this.objjournalloweer.DR_Amt;
+      cramt = 0;
+    } else {
+      dramt = this.objjournalloweer.DrCrdata === "DR" ? Number(Number(this.objjournalloweer.Amount).toFixed(2)) : 0,
+      cramt = this.objjournalloweer.DrCrdata === "CR" ? Number(Number(this.objjournalloweer.Amount).toFixed(2)) : 0;
+    }
     this.lowerList.push({
      Slno: this.lowerList.length + 1,
      Ledger_ID: Number(this.objjournalloweer.Ledger_ID),
+     Cost_Cen_ID: this.VoucherTypeID == 3 ? this.objjournalloweer.Cost_Cen_ID : 0,
+     Cost_Cen_Name: costcentname.length ? costcentname[0].Cost_Cen_Name : undefined,
      Ledger_Name : LedgerFilter[0].Ledger_Name,
      Sub_Ledger_ID : Number(this.objjournalloweer.Sub_Ledger_ID),
      Sub_Ledger_Name : LedgersubFilter.length ? LedgersubFilter[0].Sub_Ledger_Name : "",
      Adjustment_Doc_No: this.objjournalloweer.Ref_Doc_No,
-     DR_Amt : this.objjournalloweer.DrCrdata === "DR" ? Number(Number(this.objjournalloweer.Amount).toFixed(2)) : 0,
-     CR_Amt : this.objjournalloweer.DrCrdata === "CR" ? Number(Number(this.objjournalloweer.Amount).toFixed(2)) : 0,
+     DR_Amt : dramt,
+     CR_Amt: cramt,
      Cost_Head_ID : Number(this.objjournalloweer.Cost_Head_ID),
      Cost_Head_Name : costCernterFilter.length ? costCernterFilter[0].Cost_Head_Name : "",
      Ref_Doc_No : this.objjournalloweer.Ref_Doc_No,
@@ -333,7 +426,17 @@ export class K4cVoucherComponent implements OnInit {
     // console.log(data);
     this.costHeadList = data;
     this.objsearch.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+    this.objjournal.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
     console.log("costHeadList",this.costHeadList);
+   })
+ }
+ gettoCostCentercontra(){
+  const obj = {
+    "SP_String": "sp_Comm_Controller",
+    "Report_Name_String": "Get_Master_Cost_Center_Dropdown",
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.costCenterDataList = data;
    })
  }
  DeleteProduct(index) {
@@ -349,6 +452,7 @@ getDateRange(dateRangeObj) {
 }
 ShowSearchData(valid){
   this.JournalSearchFormSubmit = true;
+  this.seachSpinner = true;
   if(valid){
    this.objsearch.Start_date = this.objsearch.Start_date
     ? this.DateService.dateConvert(new Date(this.objsearch.Start_date))
@@ -370,10 +474,20 @@ ShowSearchData(valid){
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      console.log("all Data",data);
      this.AlljournalData = data;
+     this.seachSpinner = false;
       if(this.AlljournalData.length){
         this.DynamicHeader = Object.keys(data[0]);
+        this.seachSpinner = false;
       }
      })
+  }
+}
+Print(obj) {
+  //console.log("billno ===", true)
+  if (obj.Voucher_No) {
+    window.open("/Report/Crystal_Files/Finance/Voucher/report_voucher_print.aspx?Doc_No=" + obj.Voucher_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+
+    );
   }
 }
 getTotalDRCR(){
@@ -381,9 +495,11 @@ getTotalDRCR(){
   this.totalCR = 0;
   if(this.objjournal.DrCrdata === "DR" && this.objjournal.Amount){
     this.totalDR = Number(Number((this.objjournal.Amount)).toFixed(2));
+    this.objjournalloweer.DrCrdata = "CR"
    }
    else if(this.objjournal.DrCrdata === "CR" && this.objjournal.Amount){
     this.totalCR = Number(Number((this.objjournal.Amount)).toFixed(2));
+    this.objjournalloweer.DrCrdata = "DR"
    }
    else {
      console.log("objjournal.DrCrdata Not Found",this.objjournal.DrCrdata);
@@ -426,8 +542,17 @@ saveJournal(valid){
     }
     let msg = "";
     let rept = ""
-   this.objjournal.DR_Amt = this.objjournal.DrCrdata === "DR" ? Number(this.objjournal.Amount) : 0
-   this.objjournal.CR_Amt = this.objjournal.DrCrdata === "CR" ? Number(this.objjournal.Amount) : 0
+    var cramt;
+    var dramt;
+    if (this.VoucherTypeID == 3) {
+      dramt = 0;
+      cramt = this.objjournal.CR_Amt;
+    } else {
+      dramt = this.objjournal.DrCrdata === "DR" ? Number(this.objjournal.Amount) : 0,
+      cramt = this.objjournal.DrCrdata === "CR" ? Number(this.objjournal.Amount) : 0;
+    }
+   this.objjournal.DR_Amt = dramt
+   this.objjournal.CR_Amt = cramt
    this.objjournal.Voucher_Type_ID = Number(this.VoucherTypeID)
    this.objjournal.Voucher_Date = this.DateService.dateConvert(this.voucherdata)
    this.objjournal.Fin_Year_ID = Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
@@ -457,7 +582,7 @@ saveJournal(valid){
      if(data[0].Column1 === "Done"){
       if(this.VoucherNo){
         this.tabIndexToView = 0;
-        this.items = ["BROWSE", "CREATE"];
+        this.items = ["BROWSE", "CREATE", "DIAGNOSIS"];
         this.buttonname = "Create";
         this.ShowSearchData(true)
       }
@@ -465,6 +590,7 @@ saveJournal(valid){
       //   this.initDate = [new Date(),new Date()];
       // }
       this.ShowSearchData(true)
+      this.GetGridData();
       this.getCostCenter();
       this.Spinner = false;
       // this.AlljournalData = [];
@@ -506,6 +632,8 @@ GetCostHead(){
 }
 GetDocumentType(){
   this.objjournalloweer.Doc_Type_ID = undefined;
+  this.RefDocumentList = [] ;
+  this.objjournalloweer.Ref_Doc_No = undefined;
   if(this.objjournalloweer.Sub_Ledger_ID){
     const sendobj = {
       Voucher_Type_ID : Number(this.VoucherTypeID),
@@ -524,6 +652,7 @@ GetDocumentType(){
   }
 }
 ChangeDocumentType(){
+  this.RefDocumentList = [] ;
   this.objjournalloweer.Ref_Doc_No = undefined;
   if(this.objjournalloweer.Sub_Ledger_ID && this.objjournalloweer.Doc_Type_ID){
     const sendobj = {
@@ -566,6 +695,25 @@ getProject(){
      this.projectDataList = data;
    })
 }
+ViewJournal(col){
+  this.VoucherNo = undefined;
+  this.objjournal = new journalTopper();
+  this.buttondisabled = true;
+  this.lowerList = [];
+  this.SubLedgerList = [];
+  this.totalDR = 0;
+  this.totalCR= 0;
+  this.objjournalloweer = new journalTopper();
+  this.journallowerFormSubmitted = false;
+  this.journalFormSubmitted = false;
+  if(col.Voucher_No){
+    this.buttondisabled = false;
+    this.VoucherNo = col.Voucher_No;
+    this.tabIndexToView = 1;
+    this.items = ["BROWSE", "VIEW", "DIAGNOSIS"];
+    this.GetEditMasterUom(col.Voucher_No)
+  }
+}
 EditJournal(col){
   if(col.Voucher_No){
     this.VoucherNo = undefined;
@@ -579,10 +727,25 @@ EditJournal(col){
     this.objjournalloweer = new journalTopper();
     this.journalFormSubmitted = false;
     this.tabIndexToView = 1;
-    this.items = ["BROWSE", "UPDATE"];
+    this.items = ["BROWSE", "UPDATE", "DIAGNOSIS"];
     this.buttonname = "Update";
     this.GetEditMasterUom(col.Voucher_No)
   }
+}
+CopyJournal(col){
+    this.VoucherNo = undefined;
+    this.objjournal = new journalTopper();
+    this.buttondisabled = true;
+    this.lowerList = [];
+    this.SubLedgerList = [];
+    this.totalDR = 0;
+    this.totalCR= 0;
+    this.objjournalloweer = new journalTopper();
+    this.journallowerFormSubmitted = false;
+    this.journalFormSubmitted = false;
+    this.tabIndexToView = 1;
+    this.items = ["BROWSE", "COPY VOUCHER", "DIAGNOSIS"];
+    this.GetEditMasterUom(col.Voucher_No)  
 }
 GetEditMasterUom(V_NO){
   const obj = {
@@ -594,16 +757,17 @@ GetEditMasterUom(V_NO){
      let data = JSON.parse(res[0].T_element);
      console.log("Edit Data",data);
      this.objjournal = data[0];
-     this.objjournal.Voucher_No = data[0].voucher_No
+     this.objjournal.Voucher_No = (this.buttonname === "Create" && this.buttondisabled) ? undefined : data[0].Voucher_No
      this.voucherdata = new Date(data[0].Voucher_Date)
      this.getsubLedgertop(data[0].Ledger_ID,data[0].Sub_Ledger_ID);
+     this.NEFTDate = data[0].Cheque_Date ? new Date(data[0].Cheque_Date) : new Date();
      this.lowerList = data[0].L_element ? data[0].L_element : [];
      setTimeout(() => {
       if(data[0].Bank_Txn_Type){
         const bankTrnFilter = this.BankTransactionTypeList.filter((el:any)=> el.Txn_Type_Name === data[0].Bank_Txn_Type)[0]
         this.objjournal.Bank_Txn_Type  = bankTrnFilter.Bank_Txn_Type_ID
         console.log("this.objjournal.Bank_Txn_Type",typeof(this.objjournal.Bank_Txn_Type))
-        this.getBankTRNType(this.objjournal.Bank_Txn_Type)
+        this.getBankTRNTypeforedit(this.objjournal.Bank_Txn_Type)
       }
     }, 200);
 
@@ -677,6 +841,110 @@ getToFix(number){
  if(number){
   return Number(Number(number).toFixed(2))
  }
+}
+//K4C DIAGNOSIS
+getDateRangediagnosis(dateRangeObj: any) {
+  if (dateRangeObj.length) {
+    this.From_Date = dateRangeObj[0];
+    this.To_Date = dateRangeObj[1];
+  }
+}
+GetdiagnosisCostCenter() {
+  const obj = {
+    "SP_String": "sp_Comm_Controller",
+    "Report_Name_String": "Get_Master_Cost_Center_Dropdown",
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    // console.log(data);
+    this.diagnosiscostHeadList = data;
+    this.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+    console.log("diagnosiscostHeadList",this.diagnosiscostHeadList);
+   })
+}
+
+GetGridData(){
+  this.GridList = [];
+  this.GridListHeader = [];
+  this.seachSpinner = true;
+  const start = this.From_Date
+  ? this.DateService.dateConvert(new Date(this.From_Date))
+  : this.DateService.dateConvert(new Date());
+  const end = this.To_Date
+  ? this.DateService.dateConvert(new Date(this.To_Date))
+  : this.DateService.dateConvert(new Date());
+  const senddata = {
+    Satrt_date : start,
+    End_date : end,
+    Voucher_Type_ID : this.VoucherTypeID
+  }
+  const obj = {
+    "SP_String": "Sp_Acc_Journal",
+    "Report_Name_String": "Diagnosis_Journal_List",
+    "Json_Param_String": JSON.stringify([senddata])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.GridList = data;
+    this.GridListHeader = data.length ? Object.keys(data[0]): []
+    this.seachSpinner = false;
+    //  console.log("GridList ===",this.GridList);
+  })
+} 
+editdiagnosismaster(eROW){
+  if(eROW.Voucher_No){
+    this.VoucherNo = undefined;
+    this.VoucherNo = eROW.Voucher_No;
+    this.objjournal = new journalTopper();
+    this.lowerList = [];
+    this.SubLedgerList = [];
+    this.totalDR = 0;
+    this.totalCR= 0;
+    this.journallowerFormSubmitted = false;
+    this.objjournalloweer = new journalTopper();
+    this.journalFormSubmitted = false;
+    this.tabIndexToView = 1;
+    this.items = ["BROWSE", "UPDATE", "DIAGNOSIS"];
+    this.buttonname = "Update";
+    this.geteditdiagnosismaster(eROW.Voucher_No)
+  }
+}
+geteditdiagnosismaster(V_NO){
+  const obj = {
+    "SP_String": "Sp_Acc_Journal",
+    "Report_Name_String":"BL_Txn_Acc_Journal_Get",
+    "Json_Param_String": JSON.stringify([{Voucher_No : V_NO}]) 
+   }
+   this.GlobalAPI.getData(obj).subscribe((res:any)=>{
+     let data = JSON.parse(res[0].T_element);
+     console.log("Edit Data",data);
+     this.objjournal = data[0];
+     this.objjournal.Voucher_No = (this.buttonname === "Create" && this.buttondisabled) ? undefined : data[0].Voucher_No
+     this.voucherdata = new Date(data[0].Voucher_Date)
+     this.getsubLedgertop(data[0].Ledger_ID,data[0].Sub_Ledger_ID);
+     this.NEFTDate = data[0].Cheque_Date ? new Date(data[0].Cheque_Date) : new Date();
+     this.lowerList = data[0].L_element ? data[0].L_element : [];
+     setTimeout(() => {
+      if(data[0].Bank_Txn_Type){
+        const bankTrnFilter = this.BankTransactionTypeList.filter((el:any)=> el.Txn_Type_Name === data[0].Bank_Txn_Type)[0]
+        this.objjournal.Bank_Txn_Type  = bankTrnFilter.Bank_Txn_Type_ID
+        console.log("this.objjournal.Bank_Txn_Type",typeof(this.objjournal.Bank_Txn_Type))
+        this.getBankTRNTypeforedit(this.objjournal.Bank_Txn_Type)
+      }
+    }, 200);
+
+     if(data[0].DR_Amt){
+      this.objjournal.Amount = Number((data[0].DR_Amt).toFixed(2))
+      this.objjournal.DrCrdata = "DR";
+      this.getTotalDRCR()
+    }
+    else if (data[0].CR_Amt){
+      this.objjournal.Amount = Number((data[0].CR_Amt).toFixed(2))
+      this.objjournal.DrCrdata = "CR";
+      this.getTotalDRCR()
+    }
+    else {
+      console.error("Amount Not Found");
+    }
+   })
 }
 }
 class journalTopper{

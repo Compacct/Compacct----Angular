@@ -262,6 +262,10 @@ getBankTRTyp(){
 getBankTRNType(id:any){
   console.log("Type Check",typeof(id));
   if(id){
+    this.ObjContract.Cheque_No = undefined
+    this.Cheque_Date = new Date()
+    this.ObjContract.Bank_Name = undefined
+    this.ObjContract.Bank_Branch_Name = undefined
      if(Number(id)=== 1){
       this.labelText1 = "Transaction No"
       this.labelText2 = "Transaction Date"
@@ -304,6 +308,53 @@ getBankTRNType(id:any){
       this.labelText3 = "Finance"
       this.labelText4 = ""
      }
+  }
+}
+getBankTRNTypeforedit(id:any){
+  console.log("Type Check",typeof(id));
+  if(id){
+    if(Number(id) === 1){
+      this.labelText1 = "Transaction No"
+      this.labelText2 = "Transaction Date"
+      this.labelText3 = "Bank Name"
+      this.labelText4 = "Bank Branch Name"
+    }
+    else if(Number(id) === 2){
+      this.labelText1 = ""
+      this.labelText2 = ""
+      this.labelText3 = ""
+      this.labelText4 = ""
+    }
+    else if(Number(id) === 3){
+      this.labelText1 = "Cheque No"
+      this.labelText2 = "Cheque Date"
+      this.labelText3 = "Bank Name"
+      this.labelText4 = "Bank Branch Name"
+    }
+    else if(Number(id) === 4){
+      this.labelText1 = "NEFT No"
+      this.labelText2 = "NEFT Date"
+      this.labelText3 = ""
+      this.labelText4 = ""
+    }
+    else if(Number(id) === 6){
+      this.labelText1 = "Transaction No"
+      this.labelText2 = "Transaction Date"
+      this.labelText3 = "Card Issue Bank"
+      this.labelText4 = ""
+    }
+    else if(Number(id) === 7){
+      this.labelText1 = "Transaction No"
+      this.labelText2 = "Transaction Date"
+      this.labelText3 = ""
+      this.labelText4 = ""
+    }
+    else if(Number(id) === 5){
+      this.labelText1 = "Transaction No"
+      this.labelText2 = "Transaction Date"
+      this.labelText3 = "Finance"
+      this.labelText4 = ""
+    }
   }
 }
 GetSameCostCenANDledger() {
@@ -491,8 +542,9 @@ const obj = {
   this.ObjContract = data[0]
   this.getBankTRTyp()
   this.ObjContract.Bank_Txn_Type = Number(data[0].Bank_Txn_Type)
-  this.getBankTRNType(this.ObjContract.Bank_Txn_Type)
+  this.getBankTRNTypeforedit(this.ObjContract.Bank_Txn_Type)
   this.ObjContract.Voucher_No = data[0].voucher_No
+  this.Cheque_Date = data[0].Cheque_Date ? new Date(data[0].Cheque_Date) : new Date();
   this.lowerAddList = data[0].bottom
  })
 }

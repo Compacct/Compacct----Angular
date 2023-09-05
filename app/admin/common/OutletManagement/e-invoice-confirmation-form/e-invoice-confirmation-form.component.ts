@@ -79,6 +79,14 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   Doc_no: any = undefined;
   QREWayBill_No: any = undefined;
   QREWayBill_NoGent: any = undefined;
+  UpdateEwayBillModel:boolean = false;
+  ObjupdateEwayBillpop: updateEwayBillpop = new updateEwayBillpop();
+  UpdateEwayFormSubmitted:boolean = false;
+  LR_Date = new Date();
+  Consignee_Pin: any;
+  Cost_Cen_PIN: any;
+  Pending_Doc_No: any;
+  cancelinvoiceno: any;
   constructor(
     private Header: CompacctHeader,
     private route : ActivatedRoute,
@@ -317,6 +325,68 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       window.open(printlink + obj, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
   
       );
+    }
+  }
+  cancleinv(doc){
+    this.cancelinvoiceno = undefined;
+    if (doc) {
+      this.cancelinvoiceno = doc;
+    this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "cancelinv",
+       sticky: true,
+       closable: false,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+      });
+    }
+  }
+  onConfirmcancelinv(){ // from pending tab
+    if(this.cancelinvoiceno){
+      this.ngxService.start();
+      const TempObj = {
+        Bill_No : this.cancelinvoiceno
+      }
+      const obj = {
+        "SP_String": "SP_E_Invoice",
+        "Report_Name_String": "Set_E_Invoice_Cancel",
+        "Json_Param_String": JSON.stringify([TempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       // console.log("del Data===", data[0].Column1)
+         if (data[0].Column1 === "done"){
+           this.GetPenInvoicelist();
+           this.ngxService.stop();
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: "Invoice ",
+             detail: "Cancel Successfully"
+           });
+         }
+         else{
+          this.ngxService.stop();
+          this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Something Wrong"
+            });
+        }
+       })
+    }
+    else{
+      this.ngxService.stop();
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Something Wrong"
+          });
     }
   }
 
@@ -628,6 +698,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   onReject(){
     this.compacctToast.clear("c");
     this.compacctToast.clear("cancel");
+    this.compacctToast.clear("cancelinv");
   }
   // CANCEL INV
   CancelgetDateRange(dateRangeObj) {
@@ -1147,6 +1218,84 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       }) 
       }   
   }
+  
+  UpdateEwaybillPOP(doc){
+    this.Consignee_Pin = undefined;
+    this.Cost_Cen_PIN = undefined;
+    this.Pending_Doc_No = undefined;
+    if (doc.Doc_No) {
+      this.Pending_Doc_No = doc.Doc_No;
+      const obj = {
+    "SP_String": "SP_E_Invoice_For_Confirmation_Form",
+    "Report_Name_String": "Get_Data_For_Update_Eway_Bill_Manually",
+    "Json_Param_String": JSON.stringify([{Doc_No:this.Pending_Doc_No}])
+        }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.ObjupdateEwayBillpop = data[0];
+        this.ObjupdateEwayBillpop.LR_No = data[0].Transporter_Doc;
+        this.ObjupdateEwayBillpop.LR_No = data[0].Trasporter_Doc_No;
+        this.LR_Date = data[0].Transporter_Doc_Date ? new Date(data[0].Transporter_Doc_Date) : new Date(data[0].Invoice_Date);
+        this.Consignee_Pin = data[0].Consignee_Pin;
+        this.Cost_Cen_PIN = data[0].Cost_Cen_PIN;
+        setTimeout(() => {
+          this.UpdateEwayBillModel = true
+        }, 300);    
+      })
+    }
+  }
+  // CALCULATE DISTANCE
+  CalculateDistance(){
+    if (this.Consignee_Pin && this.Cost_Cen_PIN) {
+      this.ngxService.start();
+      this.$http.get("https://azdistancecalc.azurewebsites.net/api/Distance?code=OTrdwwzB0Q8uzU1BIhgflRcUMM60Q1uRSS22Wx0-99QwAzFuk-uwmw==&fromPincode="+this.Cost_Cen_PIN+"&toPincode="+this.Consignee_Pin)
+     .subscribe((data:any)=>{
+      console.log("data",data)
+      this.ObjupdateEwayBillpop.Transportation_Distance = Math.ceil(Number(Number(data[0].distance).toFixed(2)));
+      this.ngxService.stop();
+      // console.log("Transportation_Distance",this.ObjPurChaseBill.Transportation_Distance)
+     })
+    }
+  }
+  UpdateSaveEwaybillPOP(valid: any) {
+    this.UpdateEwayFormSubmitted = true;
+    if (valid) {
+      const SaveOjb = {
+        Doc_No : this.Pending_Doc_No,
+        Transporter_ID: this.ObjupdateEwayBillpop.Transporter_ID,
+        Transporter: this.ObjupdateEwayBillpop.Transporter,
+        LR_No: this.ObjupdateEwayBillpop.LR_No,
+        LR_Date:this.DateService.dateConvert(this.LR_Date),
+        Vehicle_No: this.ObjupdateEwayBillpop.Vehicle_No,
+        Transportation_Distance: this.ObjupdateEwayBillpop.Transportation_Distance
+  }
+       const obj = {
+        "SP_String": "SP_E_Invoice_For_Confirmation_Form",
+        "Report_Name_String": "Update_Eway_Bill_Manually",
+        "Json_Param_String": JSON.stringify([SaveOjb])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data: any) => {
+        if (data[0].Column1) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary:"E-way Bill",
+            detail: "Succesfully Update" ,
+          });
+          this.ObjupdateEwayBillpop = new updateEwayBillpop();
+          this.UpdateEwayFormSubmitted = false;
+          this.Pending_Doc_No = undefined;
+          this.UpdateEwayBillModel = false;
+          this.GetPenInvoicelist();
+        }
+      }) 
+      }   
+  }
+  keyDownHandler(event) {
+    if (event.code === 'Space') {
+        event.preventDefault();
+    }
+}
 }
 class PenInvoice {
   start_date : Date;
@@ -1185,4 +1334,13 @@ class updatepop{
   Transportation_Distance: any;
   Trasporter_Doc_No: any;
   Transporter: any;
+}
+class updateEwayBillpop{
+  Doc_No: any;								
+  Transporter_ID: any;	
+  Transporter:any;
+  Transportation_Distance:any;
+  LR_No:any;
+  LR_Date:any;
+  Vehicle_No:any;
 }

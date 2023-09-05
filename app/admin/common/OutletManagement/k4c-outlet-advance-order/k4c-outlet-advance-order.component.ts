@@ -24,6 +24,7 @@ declare var $:any;
 export class K4cOutletAdvanceOrderComponent implements OnInit {
   items:any = [];
   Spinner = false;
+  mobSpinner = false;
   tabIndexToView = 0;
   buttonname = "Save & Print Bill";
   searchObj : search = new search();
@@ -320,6 +321,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   Showdatabymobile(valid){
     this.Searchlist = [];
     this.MobileSubmitFormSubmitted = true;
+    this.mobSpinner = true;
     if(valid){
     const tempobj = {
       User_Id : this.$CompacctAPI.CompacctCookies.User_ID,
@@ -336,7 +338,11 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
        //console.log('Searchbymobilelist=====',this.Searchlist)
        //this.seachSpinner = false;
        this.MobileSubmitFormSubmitted = false;
+       this.mobSpinner = false;
      })
+    }
+    else {
+      this.mobSpinner = false;
     }
   }
 
@@ -2024,6 +2030,7 @@ clearData(){
   this.addbillFormSubmitted = false;
   this.SavePrintFormSubmitted = false;
   this.seachSpinner = false;
+  this.Spinner = false;
   this.getorderdate();
   //this.delivery_Date;
   this.delivery_Date = new Date();

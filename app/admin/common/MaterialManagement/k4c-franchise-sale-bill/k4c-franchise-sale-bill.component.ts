@@ -6,6 +6,7 @@ import { CompacctHeader } from "../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service"
 import { ActivatedRoute, Router } from "@angular/router";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-k4c-franchise-sale-bill',
@@ -83,6 +84,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -485,6 +487,7 @@ const obj = {
     //this.Can_Remarks = true;
     this.remarksFormSubmitted = true;
    // if(this.Doc_No){
+    this.ngxService.start();
       const Tempdata = {
         Doc_No : this.Doc_No,
         User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
@@ -509,8 +512,10 @@ const obj = {
             detail: "Succesfully Deleted"
           });
           this.clearData();
+          this.ngxService.stop();
     }
     else {
+      this.ngxService.stop();
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "compacct-toast",

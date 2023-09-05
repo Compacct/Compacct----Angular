@@ -111,6 +111,12 @@ export class K4cMasterProductComponent implements OnInit {
       this.getProductTypeListRow(0);
       this.getBandlist();
     }
+    else if(this.Param_Flag === 'Maintenance'){
+      this.getBrand();
+      this.getBandlist();
+      //this.getRowData();
+      // this.getProductTypeListRow(0);
+    }
     this.getMfgData();
     this.getCategoryList();
     this.GetUOM();
@@ -373,6 +379,31 @@ export class K4cMasterProductComponent implements OnInit {
           this.items = ["BROWSE", "CREATE"];
           this.buttonname = "Create";
         }
+        else if (this.Param_Flag === "Maintenance"){
+          const obj = {
+            "SP_String": "SP_Controller_Master",
+            "Report_Name_String": "Update Maintenance Product",
+            "Json_Param_String": JSON.stringify([this.ObjmasterProduct])
+          }
+          this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+            // console.log("del Data===", data[0].Column1)
+            if (data[0].Column1 === "done"){
+             this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "success",
+                summary: "Product Id: " + TempId ,
+                detail: "Succesfully Updated"
+              });
+              this.Spinner = false;
+              //this.getRowData();
+              this.getBandlist();
+              }
+          })
+          this.tabIndexToView = 0;
+          this.items = ["BROWSE", "CREATE"];
+          this.buttonname = "Create";
+        }
         else {
           this.compacctToast.clear();
           this.compacctToast.add({
@@ -495,6 +526,28 @@ export class K4cMasterProductComponent implements OnInit {
                 this.getBandlist();
             })
           }
+          else if (this.Param_Flag === "Maintenance"){
+            const obj = {
+              "SP_String": "SP_Controller_Master",
+              "Report_Name_String": "Add Maintenance Product",
+              "Json_Param_String": JSON.stringify([this.ObjmasterProduct])
+            }
+            this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+             console.log("del Data===", data[0].Column1)
+              if (data[0].Column1){
+                 this.compacctToast.clear();
+                this.compacctToast.add({
+                  key: "compacct-toast",
+                  severity: "success",
+                  summary: "Product Added",
+                  detail: "Succesfully Created"
+                });
+                }
+                this.Spinner = false;
+                // this.getRowData();
+                this.getBandlist();
+            })
+          }
           else {
             this.compacctToast.clear();
            this.compacctToast.add({
@@ -601,7 +654,7 @@ export class K4cMasterProductComponent implements OnInit {
   {ReportName = "Get - Product Type List Semi Finished"}
   else if (this.Param_Flag === 'Finished')
   {ReportName = "Get - Product Type List Finished"}
-  else if(this.Param_Flag === 'Store Item - N/Saleable')
+  else if(this.Param_Flag === 'Store Item - N/Saleable' || this.Param_Flag === 'Maintenance')
   {ReportName = "Get - Product Type List Store Item"}
   else if(this.Param_Flag === 'Store Item - Saleable')
   {ReportName = "Get - Product Type List Store Item"}
@@ -710,7 +763,27 @@ export class K4cMasterProductComponent implements OnInit {
           console.log("this.DynamicHeader",this.DynamicHeader);
           console.log("this.rowDataList",this.rowDataList);
         })
-      } else {
+      }
+      else if (this.Param_Flag === 'Maintenance') {
+        const obj = {
+          "SP_String": "SP_Controller_Master",
+          "Report_Name_String": "Browse - Maintenance Product Master",
+          "Json_Param_String": JSON.stringify([{Brand_ID : this.Objbrand.Brand_ID ? this.Objbrand.Brand_ID : 0}])
+    
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          // console.log("row  ===",data);
+          this.DynamicHeader = Object.keys(data[0]);
+          this.rowDataList = data;
+          this.BackupRowDataList = data;
+          this.brandIdSave = this.Objbrand.Brand_ID;
+          this.getProductTypeListRow(this.Objbrand.Brand_ID);
+          this.filterProduct();
+          console.log("this.DynamicHeader",this.DynamicHeader);
+          console.log("this.rowDataList",this.rowDataList);
+        })
+      }
+       else {
       const ReportName = this.Param_Flag === 'Finished' ? "Browse - Finished Product Master" : "Browse - Semi Finished Product Master";
 
       const obj = {

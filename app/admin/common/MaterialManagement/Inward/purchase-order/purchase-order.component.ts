@@ -14,6 +14,7 @@ import { CompacctProjectComponent } from '../../../../shared/compacct.components
 import { timeStamp } from 'console';
 import { NgxUiLoaderService } from "ngx-ui-loader";
 import * as XLSX from 'xlsx';
+import { FileUpload } from 'primeng/fileupload';
 
 @Component({
   selector: 'app-purchase-order',
@@ -180,6 +181,11 @@ export class PurchaseOrderComponent implements OnInit {
   Server_Date = new Date();
   minFromDate = new Date();
   maxFromDate = new Date();
+  upload: boolean = true;
+  file: boolean = false;
+
+  @ViewChild("UploadFile", { static: false }) UploadFile!: FileUpload;
+  PDFFile: any;
 
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
@@ -274,6 +280,12 @@ TabClick(e) {
 clearData(){
     this.gettermsdetails();
     
+  this.file = false;
+  this.upload = true;
+  if (this.UploadFile) {
+    this.UploadFile.clear();
+  }
+  this.PDFFile = undefined;
     this.viewHeader = "";
     this.DetalisObj = {};
     this.objpurchase = new purchase();
@@ -1504,6 +1516,11 @@ this.getAllDataList = [...this.BackupSearchedlist] ;
 }
 Edit(col){
   this.status = undefined;
+  this.file = false;
+  this.upload = true;
+  if (this.UploadFile) {
+    this.UploadFile.clear();
+  }
   if(col.Doc_No){
     this.DocNo = undefined;
     this.DocNo = col.Doc_No;
@@ -1528,7 +1545,11 @@ geteditmaster(Dno){
   this.GlobalAPI.getData(obj).subscribe((res:any)=>{
     let data = JSON.parse(res[0].Column1)
     console.log("Edit data",data);
-    this.objpurchase = data[0],
+    this.objpurchase = data[0];
+    if (data[0].File_Upload) {
+      this.file = true;
+      this.upload = false;
+    }
     this.GetTCSdat();
     this.objpurchase.TCS_Per = data[0].TCS_Persentage;
     this.getreq();
@@ -2386,6 +2407,56 @@ this.ObjCol = {}
 this.ObjCol = col
 overlaypanel.toggle(event); 
 }
+
+ClearUploadInpt(elem: any) {
+  if (this.objpurchase.File_Upload) {
+    this.upload = true;
+    this.objpurchase.File_Upload = undefined;
+  }
+  else {
+    this.UploadFile.clear();
+    this.file = false;
+    this.PDFFile = undefined;
+  }
+}
+fileSelect(event) {
+  this.file = true;
+  this.PDFFile = undefined;
+    if (event) {
+      this.PDFFile = event.files[0];
+      this.file = true;
+    }
+}
+showDoc() {
+  window.open(this.objpurchase.File_Upload);
+}
+showDocument(doc) {
+  window.open(doc);
+}
+
+onBasicUpload(elem: any) {
+  if (this.PDFFile) {
+    this.UploadDocApprove(elem);
+  }
+  else {
+    this.onConfirmSave();
+  }
+}
+UploadDocApprove(elem: any) {
+  const upfile = this.PDFFile;
+  // console.log('file elem', upfile);
+  if (upfile['size']) {
+    this.ngxService.start();
+    this.GlobalAPI.CommonFileUpload(upfile)
+      .subscribe((data: any) => {
+        // console.log('upload response', data);
+        this.objpurchase.File_Upload = data.file_url;
+        this.ngxService.stop();
+        this.upload = false;
+        this.onConfirmSave();
+      })
+  }
+}
 }
 class purchase {
         Doc_No:any;
@@ -2466,6 +2537,7 @@ class purchase {
         TCS_Amount : number = 0;
         TCS_Per : any;
         Approve_Status : any;
+        File_Upload:any;
 }
 class addPurchacse{
       Product_ID:any;

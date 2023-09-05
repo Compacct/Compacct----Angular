@@ -230,7 +230,7 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       if (data.length) {
         this.disposalList = JSON.parse(data[0].AA);
-        console.log('this.disposalList',this.disposalList)
+       // console.log('this.disposalList',this.disposalList)
       }
      })
   

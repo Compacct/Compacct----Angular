@@ -17,12 +17,12 @@ import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime
 })
 export class HrLeaveOpeningComponent  implements OnInit {
   items:any = [];
-  menuList=[];
-  AllData = [];
-  empDataList=[];
-  hrYeatList=[];
-  leaveList=[];
-  menuData=[];
+  menuList:any = [];
+  AllData:any = [];
+  empDataList:any = [];
+  hrYeatList:any = [];
+  leaveList:any = [];
+  menuData:any = [];
   initDate:any =[];
   tabIndexToView= 0;
   buttonname = "Create";
@@ -33,7 +33,7 @@ export class HrLeaveOpeningComponent  implements OnInit {
   can_popup = false;
   act_popup = false;
   masterLeaveId : number;
-  GlobalApi=[];
+  GlobalApi:any = [];
   txnId = undefined;
   mastertxnId = undefined;
   HRYearID = undefined;
@@ -67,6 +67,10 @@ export class HrLeaveOpeningComponent  implements OnInit {
   APCheckStatusData: any;
   SelectedEmployee:any = [];
   EmployeeAutoUpdateLeaveList:any = [];
+  AddleaveopList:any = [];
+  empid: any;
+  formdate: any;
+  todate: any;
 
   constructor(
     public $http: HttpClient,
@@ -103,6 +107,7 @@ TabClick(e) {
   this.clearData();
   this.Editdisable = false;
   this.hryear = undefined;
+  this.AddleaveopList = [];
 }
 getDatabase(){
   this.$http
@@ -116,6 +121,9 @@ getDatabase(){
 clearData(){
   this.leaveFormSubmitted = false;
   this.Objleave = new leave();
+  if(this.databaseName === 'GN_JOH_HR') {
+  this.Objleave.Emp_ID = 0;
+  }
   this.leaveId = undefined;
   this.initDate =[];
   this.hrYearList();
@@ -154,7 +162,7 @@ GetAllData(valid){
 }
   // DISTINCT & FILTER
 GetDistinct() {
-  let DEmpName = [];
+  let DEmpName:any = [];
   this.DistEmpName =[];
   this.SelectedDistEmpName =[];
   this.SearchFields =[];
@@ -191,15 +199,23 @@ employeeData(){
 
    this.GlobalAPI.getData(obj)
    .subscribe((data:any)=>{
-    this.empDataList = data;
+    // this.empDataList = data;
     if(data.length){
       data.forEach(element => {
         element['label'] = element.Emp_Name
         element['value'] = element.Emp_ID
       });
+      this.empDataList = data;
+      if(this.databaseName === 'GN_JOH_HR') {
+      this.Objleave.Emp_ID = 0;
+      }
       this.AutoUpdateempDataList = data;
      }
      else {
+      this.empDataList = data;
+      if(this.databaseName === 'GN_JOH_HR') {
+      this.Objleave.Emp_ID = undefined;
+      }
       this.AutoUpdateempDataList = [];
      }
     console.log("employee==",this.empDataList);
@@ -285,6 +301,7 @@ getbalancedata(){
     }
 }
 saveData(valid:any){
+  this.leaveFormSubmitted = true
   if(valid){
     if(!this.Objleave.Emp_ID){
       this.Spinner =true
@@ -353,6 +370,9 @@ onConfirm2(){
           this.tabIndexToView = 0;
           this.leaveFormSubmitted = false;
           this.Objleave = new leave();
+          if(this.databaseName === 'GN_JOH_HR') {
+          this.Objleave.Emp_ID = 0;
+          }
           this.hryear = undefined;
         });
     
@@ -490,10 +510,11 @@ leaveChange(){
 // For Joh
 Getsavestatus(valid){
   this.CheckStatusData = undefined;
-  this.leaveFormSubmitted = true
-  if(valid){
+  this.leaveFormSubmitted = this.buttonname === "Create" ? true : false;
+  if(this.buttonname === "Create" ? valid : true){
   const johobj = {
     HR_Year_ID : this.Objleave.HR_Year_ID,
+    Transaction_Date : this.DateService.dateConvert(new Date(this.Transaction_Date)),
     Atten_Type_ID : Number(this.Objleave.LEAVE_TYPE),
     From_Date : this.Objleave.From_Date ? this.DateService.dateConvert(new Date(this.Objleave.From_Date)): this.DateService.dateConvert(new Date()),
     To_Date : this.Objleave.To_Date ? this.DateService.dateConvert(new Date(this.Objleave.To_Date)): this.DateService.dateConvert(new Date())
@@ -530,7 +551,7 @@ Getsavestatus(valid){
 }
 onConfirmjoh(){
   console.log("savedata==",this.Objleave);
-  this.leaveFormSubmitted = true
+  this.leaveFormSubmitted = this.buttonname === "Create" ? true : false;
     console.log("leaveId==",this.leaveId);
     // if(this.$CompacctAPI.CompacctCookies.User_Type === "A") {
    this.Objleave.From_Date = this.Objleave.From_Date ? this.DateService.dateConvert(new Date(this.Objleave.From_Date)): this.DateService.dateConvert(new Date());
@@ -539,14 +560,16 @@ onConfirmjoh(){
    this.Objleave.Leave_Year = "NA"
    this.Objleave.Tran_Type = "Opening"
    this.Objleave.Emp_ID = this.Objleave.Emp_ID ? this.Objleave.Emp_ID : 0
+   this.Objleave.Atten_Type_ID = Number(this.Objleave.LEAVE_TYPE),
    this.Objleave.LEAVE_TYPE = Number(this.Objleave.LEAVE_TYPE)
-   this.Objleave.Transaction_Date = this.Objleave.Transaction_Date ? this.DateService.dateConvert(new Date(this.Transaction_Date)) : this.DateService.dateConvert(new Date());
+   this.Objleave.Transaction_Date = this.Transaction_Date ? this.DateService.dateConvert(new Date(this.Transaction_Date)) : this.DateService.dateConvert(new Date());
+   this.Objleave.trn_type = "Save";
     // }
     let msg = this.buttonname ;
       const obj = {
         "SP_String": "SP_HR_Leave_Opening_Issue_Balance",
         "Report_Name_String": 'Save_HR_Leave_Opening_Issue_Balance',
-        "Json_Param_String": JSON.stringify([this.Objleave])
+        "Json_Param_String": this.buttonname === "Update" ? JSON.stringify(this.AddleaveopList) : JSON.stringify([this.Objleave])
        }
        this.GlobalAPI.getData(obj)
        .subscribe((data:any)=>{
@@ -559,8 +582,8 @@ onConfirmjoh(){
             summary: "User Succesfully " +msg,
             detail: "Succesfully " +msg
           });
-          }
           this.Spinner = false;
+          this.AddleaveopList = [];
           this.GetAllData(true);
           this.leaveId = undefined;
           this.txnId = undefined;
@@ -569,6 +592,8 @@ onConfirmjoh(){
           this.leaveFormSubmitted = false;
           this.Objleave = new leave();
           this.hryear = undefined;
+          this.Transaction_Date = new Date();
+        }
         });
     
       
@@ -596,6 +621,7 @@ GetAutoUpsavestatus(valid){
   if(valid){
   const johobj = {
     HR_Year_ID : this.ObjAutoUpdateleave.HR_Year_ID,
+    Transaction_Date : this.DateService.dateConvert(new Date(this.Transaction_Date)),
     Atten_Type_ID : Number(this.ObjAutoUpdateleave.LEAVE_TYPE),
     From_Date : this.ObjAutoUpdateleave.From_Date ? this.DateService.dateConvert(new Date(this.ObjAutoUpdateleave.From_Date)): this.DateService.dateConvert(new Date()),
     To_Date : this.ObjAutoUpdateleave.To_Date ? this.DateService.dateConvert(new Date(this.ObjAutoUpdateleave.To_Date)): this.DateService.dateConvert(new Date())
@@ -638,7 +664,7 @@ onConfirmjohAutoUp(){
     this.ObjAutoUpdateleave.From_Date = this.Objleave.From_Date ? this.DateService.dateConvert(new Date(this.Objleave.From_Date)): this.DateService.dateConvert(new Date());
     this.ObjAutoUpdateleave.To_Date = this.Objleave.To_Date ? this.DateService.dateConvert(new Date(this.Objleave.To_Date)): this.DateService.dateConvert(new Date());
   //  this.ObjAutoUpdateleave.Emp_ID = this.Objleave.Emp_ID ? this.Objleave.Emp_ID : 0
-   this.ObjAutoUpdateleave.Transaction_Date = this.Objleave.Transaction_Date ? this.DateService.dateConvert(new Date(this.Transaction_Date)) : this.DateService.dateConvert(new Date());
+   this.ObjAutoUpdateleave.Transaction_Date = this.AutoU_Transaction_Date ? this.DateService.dateConvert(new Date(this.AutoU_Transaction_Date)) : this.DateService.dateConvert(new Date());
     // }
     if(this.SelectedEmployee.length) {
     this.SelectedEmployee.forEach(el => {
@@ -679,6 +705,7 @@ onConfirmjohAutoUp(){
           this.AutoUpdateModal = false;
           this.SelectedEmployee = [];
           this.EmployeeAutoUpdateLeaveList = [];
+          this.AddleaveopList = [];
         } 
         else {
           this.compacctToast.clear();
@@ -702,12 +729,143 @@ onConfirmjohAutoUp(){
       });
     }
 }
+
+TrasnsactionDateCheck(){
+  if(this.Transaction_Date) {
+    var transdate = this.DateService.dateConvert(new Date(this.Transaction_Date));
+    console.log('Transaction_Date==',new Date(transdate).toISOString())
+    const sametransdate = this.AddleaveopList.filter(item=> new Date(item.Transaction_Date).toISOString() == new Date(transdate).toISOString());
+    if(sametransdate.length) {
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Same transaction date found."
+          });
+          console.log(false)
+      return false;
+    }
+    else {
+      console.log(true)
+      return true;
+    }
+  }
+}
+Leavetypecheck(){
+  const sameleavetype = this.AddleaveopList.filter(item=> Number(item.Atten_Type_ID) === Number(this.Objleave.LEAVE_TYPE));
+    if(sameleavetype.length) {
+        return true;
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Add same leave type. "
+      });
+      return false;
+    }
+}
+Addleaveop(valid) {
+  this.leaveFormSubmitted = true;
+  if (valid && this.TrasnsactionDateCheck() && this.Leavetypecheck()) {
+    const hryear: any = this.hrYeatList.filter((el: any) => Number(el.HR_Year_ID) === Number(this.Objleave.HR_Year_ID));
+    const empname: any = this.empDataList.filter((el: any) => Number(el.Emp_ID) === Number(this.Objleave.Emp_ID));
+    const leavetype: any = this.leaveList.filter((el: any) => Number(el.Atten_Type_ID) === Number(this.Objleave.LEAVE_TYPE));
+    const TemopArry = {
+      HR_Year_ID:this.Objleave.HR_Year_ID,
+      HR_Year_Name: hryear.length ? hryear[0].HR_Year_Name : undefined,
+      Transaction_Date: this.DateService.dateConvert(new Date(this.Transaction_Date)),
+      From_Date: this.DateService.dateConvert(new Date(this.Objleave.From_Date)),
+      To_Date: this.DateService.dateConvert(new Date(this.Objleave.To_Date)),
+      Emp_ID: this.Objleave.Emp_ID,
+      Emp_Name: empname.length ? empname[0].Emp_Name : undefined,
+      Atten_Type_ID: Number(this.Objleave.LEAVE_TYPE),
+      LEAVE_TYPE : Number(this.Objleave.LEAVE_TYPE),
+      LEAVE_TYPE_Name : leavetype.length ? leavetype[0].Leave_Type : undefined,
+      DR_Leave: Number(this.Objleave.DR_Leave),
+      Remarks: this.Objleave.Remarks,
+      trn_type : "Update"
+    };
+    this.AddleaveopList.push(TemopArry)
+    console.log("this.AddleaveopList", this.AddleaveopList)
+    this.leaveFormSubmitted = false;
+    this.Objleave.DR_Leave = undefined;
+    this.Objleave.Remarks = undefined;
+    this.hrYearList();
+  }
+}
+Deleteaddlist(index){
+  this.AddleaveopList.splice(index,1);
+}
+Editleaveop(leave:any){
+  this.empid = undefined;
+  this.formdate = undefined;
+  this.todate = undefined;
+  this.hryear = undefined;
+  this.Editdisable = false;
+  this.AddleaveopList = [];
+  if (leave.Emp_ID) {
+    this.Editdisable = true;
+    this.tabIndexToView = 1;
+    this.items = ["BROWSE", "UPDATE"];
+    this.buttonname = "Update";
+    this.clearData();
+    this.empid = leave.Emp_ID
+    this.formdate = new Date(leave.From_Date);
+    this.todate = new Date(leave.To_Date);
+   this.GetEditMasterleaveop()
+   }    
+}
+GetEditMasterleaveop(){
+const tempobj = {
+  Emp_ID : this.empid,
+  From_Date : this.DateService.dateConvert(new Date(this.formdate)),
+  To_Date : this.DateService.dateConvert(new Date(this.todate))
+}
+const obj = {
+  "SP_String": "SP_HR_Leave_Opening_Issue_Balance",
+  "Report_Name_String":"Get_HR_Leave_Opening_Issue_Balance",
+  "Json_Param_String": JSON.stringify([tempobj]) 
+ }
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+   console.log("EditMasterdata===",data);
+   this.Objleave.HR_Year_ID = data[0].HR_Year_ID;
+   this.Objleave.Emp_ID = data[0].Emp_ID;
+   this.Objleave.LEAVE_TYPE = data[0].LEAVE_TYPE;
+   this.getbalancedata();
+  if(data.length){
+    data.forEach(element => {
+      const leavetype: any = this.leaveList.filter((el: any) => Number(el.Atten_Type_ID) === Number(element.LEAVE_TYPE));
+      const editobj = {
+        HR_Year_ID : element.HR_Year_ID,
+        HR_Year_Name: element.HR_Year_Name,
+        Transaction_Date: this.DateService.dateConvert(new Date(element.Transaction_Date)),
+        From_Date: this.DateService.dateConvert(new Date(element.From_Date)),
+        To_Date: this.DateService.dateConvert(new Date(element.To_Date)),
+        Emp_ID: element.Emp_ID,
+        Emp_Name: element.Emp_Name,
+        Atten_Type_ID: Number(element.LEAVE_TYPE),
+        LEAVE_TYPE : Number(element.LEAVE_TYPE),
+        LEAVE_TYPE_Name : leavetype.length ? leavetype[0].Leave_Type : undefined,
+        DR_Leave : Number(element.DR_Leave),
+        Remarks: element.Remarks, 
+        trn_type : "Update"
+      }
+      this.AddleaveopList.push(editobj);
+    });
+  }
+ })
+}
 } 
 class leave{
   HR_Year_ID:any
   Leave_Month:any
   Leave_Year:any
   Leave_Type:any
+  Atten_Type_ID:any
   LEAVE_TYPE:any
   Tran_Type = "Opening"
   DR_Leave:any
@@ -718,6 +876,7 @@ class leave{
   Emp_ID:any
   Emp_Name:any
   Transaction_Date:any;
+  trn_type:any;
 }
 class Browse {
   HR_Year_ID : any;

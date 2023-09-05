@@ -235,14 +235,15 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <label class="control-label">PAN<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="PAN" #PAN="ngModel" [(ngModel)]="objSubLedger.PAN_No" placeholder="PAN" maxlength="10" [ngClass]="{'clearance': SubLedgerFormSubmit && PAN.errors?.required}" required>
+                                        <input class="form-control" name="PAN" #PAN="ngModel" [(ngModel)]="objSubLedger.PAN_No" [disabled]="this.objSubLedger.Country!='India'" placeholder="PAN" maxlength="10" [ngClass]="{'clearance': SubLedgerFormSubmit && PAN.errors?.required}" required>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">GST No.<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="GST_NO" #GST_NO="ngModel" [(ngModel)]="objSubLedger.GST" placeholder="GST NO." [disabled]="gstdisabled" (onChange)='checkGSTvalid(objSubLedger.GST)' minlength="15" maxlength="15" [ngClass]="{
+                                        <input class="form-control" name="GST_NO" #GST_NO="ngModel" [(ngModel)]="objSubLedger.GST" [disabled]="this.objSubLedger.Country!='India'"
+                                        placeholder="GST NO." [disabled]="gstdisabled" (onChange)='checkGSTvalid(objSubLedger.GST)' minlength="15" maxlength="15" [ngClass]="{
                                             clearance:
                                               (GSTvalidFlag) ||
                                               (GST_NO.errors?.minlength && GST_NO.touched)
@@ -287,8 +288,10 @@
                                     <div class="col-sm-4">
                                         <label class="control-label">Composite GST / Unregistered</label>
                                         <div class="input-group" style="margin-top: 15px;">
-                                            <p-radioButton name="gst1" value="Yes" [(ngModel)]="objSubLedger.Composite_GST" label="Yes" (click)="changecompositegst()"></p-radioButton>&nbsp;&nbsp;
-                                            <p-radioButton name="gst2" value="No" [(ngModel)]="objSubLedger.Composite_GST" label="No" (click)="changecompositegst()"></p-radioButton>
+                                            <p-radioButton name="gst1" value="Yes" [(ngModel)]="objSubLedger.Composite_GST" label="Yes" (click)="changecompositegst()" [disabled]="this.objSubLedger.Country!='India'"
+                                            ></p-radioButton>&nbsp;&nbsp;
+                                            <p-radioButton name="gst2" value="No" [(ngModel)]="objSubLedger.Composite_GST" label="No" (click)="changecompositegst()" [disabled]="this.objSubLedger.Country!='India'"
+                                            ></p-radioButton>
 
                                         </div>
                                     </div>
@@ -329,7 +332,7 @@
 
                                     <div class="col-sm-4">
                                         <label class="control-label">Country</label>
-                                        <select class="form-control" name="Country" #Country="ngModel" [(ngModel)]="objSubLedger.Country">
+                                        <select class="form-control" name="Country" #Country="ngModel" [(ngModel)]="objSubLedger.Country"  (change)="countryChange()">
                                     <option  [ngValue]="undefined">Select</option>
                                         <option *ngFor="let option of AllCountryList" [ngValue]="option.Country">
                                     {{option.Country}}
@@ -343,7 +346,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">PIN</label>
-                                        <input class="form-control" name="Pin" #Pin="ngModel" [(ngModel)]="objSubLedger.Pin" placeholder="PIN" (ngModelChange)="stateDistrictChange(objSubLedger.Pin)" minlength="6" maxlength="6" CompacctDigitonly="true">
+                                        <input class="form-control" name="Pin" #Pin="ngModel" [(ngModel)]="objSubLedger.Pin" placeholder="PIN" (ngModelChange)="stateDistrictChange(objSubLedger.Pin)" minlength="6" maxlength="6" CompacctDigitonly="true" [disabled]="this.objSubLedger.Country!='India'">
                                     </div>
 
 

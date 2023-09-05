@@ -506,7 +506,7 @@ export class OutwardChallanComponent implements OnInit {
       this.$http.get("https://azdistancecalc.azurewebsites.net/api/Distance?code=OTrdwwzB0Q8uzU1BIhgflRcUMM60Q1uRSS22Wx0-99QwAzFuk-uwmw==&fromPincode="+this.ObjPurChaseBill.Cost_Cen_PIN+"&toPincode="+this.ObjPurChaseBill.Sub_Ledger_Pin_2)
      .subscribe((data:any)=>{
       console.log("data",data)
-      this.ObjPurChaseBill.Transportation_Distance = data[0].distance;
+      this.ObjPurChaseBill.Transportation_Distance = Math.ceil(Number(Number(data[0].distance).toFixed(2)));
       this.ngxService.stop();
       // console.log("Transportation_Distance",this.ObjPurChaseBill.Transportation_Distance)
      })
