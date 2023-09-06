@@ -120,6 +120,7 @@
                                          name="Sub_Ledger_Name" 
                                         #Sub_Ledger_Name="ngModel" 
                                         [(ngModel)]="objSubLedger.Sub_Ledger_Name" 
+                                        (change)="objSubLedger.Billing_Name = objSubLedger.Sub_Ledger_Name"
                                         placeholder="Sub Ledger Name"
                                          [ngClass]="{'clearance': SubLedgerFormSubmit && Sub_Ledger_Name.errors?.required}" 
                                          required>
@@ -143,9 +144,14 @@
                                         placeholder="Contact Name" >
                                     </div>
                                     <div class="col-sm-4" >
-                                        <label class="control-label">Contact No<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="Mobile" #Mobile="ngModel" CompacctDigitonly="true" minlength="10" maxlength="10" [(ngModel)]="objSubLedger.Mobile_No" placeholder="Contact No" [ngClass]="{'clearance': (SubLedgerFormSubmit && Mobile.errors?.required) || Mobile?.errors?.minlength || Mobile?.errors?.maxlength}"
-                                            required>
+                                        <label class="control-label">Contact No<sup class="text-danger"></sup></label>
+                                        <input class="form-control" 
+                                        name="Mobile" 
+                                        #Mobile="ngModel" 
+                                        CompacctDigitonly="true"
+                                         minlength="10" maxlength="10" 
+                                         [(ngModel)]="objSubLedger.Mobile_No" 
+                                         placeholder="Contact No" >
                                     </div>
                                     <div class="col-sm-4" >
                                         <label class="control-label">Email</label>
@@ -171,20 +177,19 @@
                                         </select>
                                     </div>
                                     <div class="col-sm-4" >
-                                        <label class="control-label">GST No.<sup class="text-danger">*</sup></label>
+                                        <label class="control-label">GST No.<sup class="text-danger"></sup></label>
                                         <input class="form-control" name="GST_NO" #GST_NO="ngModel" [(ngModel)]="objSubLedger.GST" placeholder="GST NO." [disabled]="gstdisabled" (onChange)='checkGSTvalid(objSubLedger.GST)' minlength="15" maxlength="15" 
-                                        [ngClass]="{clearance: (GSTvalidFlag) ||(GST_NO.errors?.minlength && GST_NO.touched) }" required>
+                                        >
                                     </div>
                                 </div>
                                 <div class="form-group" >
                                     <div class="col-sm-4" >
-                                        <label class="control-label">PAN No<sup class="text-danger">*</sup></label>
+                                        <label class="control-label">PAN No<sup class="text-danger"></sup></label>
                                         <input class="form-control" 
                                         name="PAN" #PAN="ngModel" 
                                         [(ngModel)]="objSubLedger.PAN_No" 
                                         placeholder="PAN" maxlength="10" 
-                                        [ngClass]="{'clearance': SubLedgerFormSubmit && PAN.errors?.required}" 
-                                        required>
+                                       >
                                     </div>
                                     <div class="col-sm-4" >
                                         <label class="control-label">TAN No<sup class="text-danger"></sup></label>
