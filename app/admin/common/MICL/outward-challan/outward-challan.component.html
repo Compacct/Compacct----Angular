@@ -829,11 +829,16 @@
                                               </option>
                                         </select>
                                     </div> -->
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-1">
                                             <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPendingSalesOrder(PendingSalesOrderForm.form.valid)" id="load" [disabled]="seachSpinner">
                                           <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                           <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                        </button>
+                                    </div>
+                                    <div class="col-sm-2">
+                                    <button *ngIf='PendingSalesOrderList.length' type="button" (click)="exportoexcel(PendingSalesOrderList,'Pending_Sale_Order')" class="btn btn-success custombutton">
+                                        <i class="glyphicon glyphicon-save"></i>&nbsp;  export to excel
+                                    </button>
                                     </div>
                                 </div>
                                 </form>
