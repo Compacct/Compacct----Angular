@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { MessageService } from "primeng/api";
 import { FileUpload } from "primeng/primeng";
@@ -80,6 +80,12 @@ export class FinsBrowseProjectComponent implements OnInit {
   SelectPIAmt: any = undefined;
   PvbBillto:any =undefined;
   PvbDatebill:any =undefined;
+
+  rindex:any = undefined
+  fieldname:string = ""
+  abData:any
+  @ViewChild('dtTr',{read: ElementRef,static:false}) table:ElementRef
+  //@ViewChild('wanted', {read: ElementRef}) myWantedChild: ElementRef;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -106,6 +112,7 @@ export class FinsBrowseProjectComponent implements OnInit {
     this.items =['UPDATE','COMPLETED']
   }
   getAllBrowse() {
+
     this.alldataList = [];
     this.backUPdataList = [];
     const obj = {
@@ -113,6 +120,7 @@ export class FinsBrowseProjectComponent implements OnInit {
       "Report_Name_String": "Browse_Project",
        "Json_Param_String": JSON.stringify([{ Assigned_To: this.cokiseId }])
     }
+    this.abData = this.GlobalAPI.getData(obj)
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       if (data.length > 0) {
         this.alldataList = data;
@@ -281,7 +289,10 @@ export class FinsBrowseProjectComponent implements OnInit {
     this.compacctToast.clear("c");
   }
   onConfirm(){}
-  openDialog(col: any, field: any) {
+  openDialog(col: any, field: any,index?:any) {
+    this.rindex = index
+    console.log(this.rindex)
+    this.fieldname = field
     if (field == 'EMP Assigned To') {
     this.projectId = col.Project_ID;
     this.dialogheader = field;
@@ -339,7 +350,7 @@ export class FinsBrowseProjectComponent implements OnInit {
     this.Pveus_Report_Shr = col.Report_Shared
     this.SelectReportShr = this.Pveus_Report_Shr
     }
-    else if (field == 'Courier Detalis To') { 
+    else if (field == 'Courier Detalis To' || field == 'Courier Detalis Date' ) { 
     this.projectId = col.Project_ID;
     this.dialogheader = field;
     this.dialogModel = true;
@@ -349,11 +360,11 @@ export class FinsBrowseProjectComponent implements OnInit {
     this.SelectClientName = this.bckupCilint 
     this.CourierDate = this.bckupCurDate == null ? new Date() : this.bckupCurDate   
     }
-    else if (field == 'Bill To') { 
+    else if (field == 'Bill To' || field == 'Bill PI No' || field == 'Bill PI Date' || field == 'Bill PI Amt') { 
     this.projectId = col.Project_ID;
     this.dialogheader = field;
     this.dialogModel = true;
-      this.AllPopForm = false;
+      this.AllPopForm = false; 
       this.PvbBillto = col.Bill_To;
       this.PvbDatebill = col.Bill_To_PI_Date
       this.SelectBill_To = this.PvbBillto;
@@ -368,10 +379,11 @@ export class FinsBrowseProjectComponent implements OnInit {
       return
     }
       else {
-        var tempobj = {};
+        var tempobj:any = {};
         if (this.dialogheader == 'EMP Assigned To') {
           const Filter1 = this.alldataList.filter((ele: any) => ele.Assigned_To === this.userid)
           const Filter2 = this.userlist.filter((el: any) => el.User_ID === this.SelectEmp)
+          
            tempobj = {
             Project_ID: this.projectId,
             Project_Column: this.dialogheader,
@@ -382,6 +394,10 @@ export class FinsBrowseProjectComponent implements OnInit {
             Changed_To_Text: Filter2[0].User_Name,
             Remarks: this.SelectRemarksEmp
           }
+          this.alldataList[this.rindex].Assigned_To = tempobj.Changed_To
+          this.alldataList[this.rindex].Assign_To_Name =  tempobj.Changed_To_Text
+        
+          
         }
         else if (this.dialogheader == 'Status') {
           const Filter1 = this.alldataList.filter((ele: any) => ele.Status_ID === this.statusId)
@@ -395,7 +411,11 @@ export class FinsBrowseProjectComponent implements OnInit {
             Previous_Data_Text: Filter1[0].Status_Name,
             Changed_To_Text: Filter2[0].Status_Name,
             Remarks: this.SelectRemarkstatus
-          }       
+          } 
+          console.log(tempobj)
+          this.alldataList[this.rindex].Status_ID = this.SelectStatus
+          this.alldataList[this.rindex].Status_Name = Filter2[0].Status_Name
+          console.log(this.alldataList)
         }
         else if (this.dialogheader == 'Engagment Letter') {
            tempobj = {
@@ -410,6 +430,8 @@ export class FinsBrowseProjectComponent implements OnInit {
             Changed_To_Text: this.EngagmentLetter +" : " + this.Type_of_eng ,
             Remarks: this.SelectRemarksE_letter
           }
+          this.alldataList[this.rindex].Engagement_Letter = this.EngagmentLetter
+          this.alldataList[this.rindex].Engagement_Letter_Type = this.Type_of_eng
         }
         else if (this.dialogheader == 'Final Doc') {
            tempobj = {
@@ -422,6 +444,7 @@ export class FinsBrowseProjectComponent implements OnInit {
             Changed_To_Text:this.SelectFinalDoc,
             Remarks: this.SelectRemarksFinal_Doc
           }
+          this.alldataList[this.rindex].Final_Doc = this.SelectFinalDoc
         }
         else if (this.dialogheader == 'Signing Date') {
            tempobj = {
@@ -433,6 +456,7 @@ export class FinsBrowseProjectComponent implements OnInit {
             Changed_To: this.DateService.dateConvert(this.SigningDate), 
             Changed_To_Text : this.DateService.dateConvert(this.SigningDate) 
           }
+          this.alldataList[this.rindex].Signning_Date = this.SigningDate
         }
         else if (this.dialogheader == 'Report Shared') {
            tempobj = {
@@ -444,8 +468,9 @@ export class FinsBrowseProjectComponent implements OnInit {
             Changed_To: this.SelectReportShr, 
             Changed_To_Text : this.SelectReportShr 
           }
+          this.alldataList[this.rindex].Report_Shared = this.SelectReportShr
         }
-        else if (this.dialogheader == 'Courier Detalis To') {
+        else if (this.dialogheader == 'Courier Detalis To' || this.dialogheader == 'Courier Detalis Date' ) {
            tempobj = {
             Project_ID: this.projectId,
             Project_Column: this.dialogheader,
@@ -453,8 +478,11 @@ export class FinsBrowseProjectComponent implements OnInit {
             Courier_Details_To: this.SelectClientName,
 						Courier_Details_Date: this.DateService.dateConvert( this.CourierDate),	        	
 						Previous_Courier_Details_To: this.bckupCilint,	              							
-						Previous_Courier_Details_Date: this.DateService.dateConvert(this.bckupCurDate) 	       
+						Previous_Courier_Details_Date: this.DateService.dateConvert(this.bckupCurDate)
+            
           }
+          this.alldataList[this.rindex].Courier_Details_To = this.SelectClientName
+          this.alldataList[this.rindex].Courier_Details_Date = this.CourierDate
           const Obj = {
             "SP_String": "SP_BL_Txn_Finshore_Project",
             "Report_Name_String": 'Update_Courier_Detalis',
@@ -472,12 +500,12 @@ export class FinsBrowseProjectComponent implements OnInit {
           this.dialogModel = false;
           this.AllPopForm = false;
           this.dialogheader = '';
-          this.getAllBrowse(); 
+          //this.getAllBrowse(); 
             }
         })
           return
         }
-        else if (this.dialogheader == 'Bill To') {
+        else if ( this.dialogheader == 'Bill To' || this.dialogheader == 'Bill PI No' || this.dialogheader == 'Bill PI Date' || this.dialogheader == 'Bill PI Amt') {
            tempobj = {
             Project_ID: this.projectId,
             Project_Column: this.dialogheader,
@@ -489,6 +517,10 @@ export class FinsBrowseProjectComponent implements OnInit {
 						Previous_Bill_To: this.PvbBillto,	              							
             Previous_Bill_To_PI_Date: this.DateService.dateConvert(this.PvbDatebill) 	                     																  
           }
+          this.alldataList[this.rindex].Bill_To = this.SelectBill_To
+          this.alldataList[this.rindex].Bill_To_PI_No = this.SelectPIno
+          this.alldataList[this.rindex].Bill_To_PI_Date = this.PIDate
+          this.alldataList[this.rindex].Bill_To_PI_Amount = this.SelectPIAmt
           const Obj = {
             "SP_String": "SP_BL_Txn_Finshore_Project",
             "Report_Name_String": 'Update_Bill_To',
@@ -506,7 +538,7 @@ export class FinsBrowseProjectComponent implements OnInit {
           this.dialogModel = false;
           this.AllPopForm = false;
           this.dialogheader = '';
-          this.getAllBrowse();       
+          //this.getAllBrowse();       
             }
         })
           return
@@ -530,7 +562,7 @@ export class FinsBrowseProjectComponent implements OnInit {
             this.dialogModel = false;
             this.AllPopForm = false;
             this.dialogheader = '';
-            this.getAllBrowse();
+            //this.getAllBrowse();
             this.FilterDist();
             this.GetDistinct();
             this.tabIndexToView = 1
@@ -539,7 +571,7 @@ export class FinsBrowseProjectComponent implements OnInit {
               this.dialogModel = false;
               this.AllPopForm = false;
               this.dialogheader = '';
-              this.getAllBrowse(); 
+             // this.getAllBrowse(); 
           }
 
           
@@ -548,6 +580,7 @@ export class FinsBrowseProjectComponent implements OnInit {
         
     }
   }
+
   getSubledger() {
     this.SubledgerList = [];
     const obj = {
@@ -601,6 +634,9 @@ export class FinsBrowseProjectComponent implements OnInit {
     if (this.EngagmentLetter === 'Y' || this.EngagmentLetter === undefined) {
       this.Type_of_eng = undefined;
     }
+  }
+  trackByFn(index: number, item: any): any {
+   return item.Project_ID; // Assuming 'id' is a unique identifier in your data
   }
 }
 
