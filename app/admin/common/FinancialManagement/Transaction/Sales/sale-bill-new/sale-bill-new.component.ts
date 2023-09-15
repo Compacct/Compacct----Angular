@@ -134,6 +134,7 @@ export class SaleBillNewComponent implements OnInit {
   Edit_TCS_Amount : any;
   withoutbatchpro:any = [];
   popouSpinner:boolean = false;
+  subledstatedisabled:boolean = false;
 
 
   constructor(
@@ -244,7 +245,7 @@ export class SaleBillNewComponent implements OnInit {
     this.ObjProductInfo = new ProductInfo();
     this.ObjProductInfo.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.BatchNoList = [];
-  
+    this.subledstatedisabled = false;
    }
    GetCustomer(){
     const obj = {
@@ -329,6 +330,9 @@ export class SaleBillNewComponent implements OnInit {
     const ChooseaddressObj = this.ChooseAddressList.filter(item=> item.Address_Caption == this.ObjSaleBillNew.Choose_Address);
    // console.log(vendorObj);
     this.ObjSaleBillNew.Sub_Ledger_State = ChooseaddressObj[0].State;
+    
+    this.subledstatedisabled = this.ObjSaleBillNew.Sub_Ledger_State && this.buttonname != 'Create' ? true : false;
+
     this.ObjSaleBillNew.Sub_Ledger_GST_No = ChooseaddressObj[0].Sub_Ledger_GST_No;
     this.ObjSaleBillNew.Sub_Ledger_Address_1 = ChooseaddressObj[0].Address_1;
     this.ObjSaleBillNew.Sub_Ledger_Land_Mark = ChooseaddressObj[0].Land_Mark;
@@ -1026,7 +1030,7 @@ export class SaleBillNewComponent implements OnInit {
     
   }
   GetSelectedBatchqty () {
-    const sameproductwithbatch = this.AddProductDetails.filter(item=> item.Batch_Number === this.ObjProductInfo.Batch_Number && item.Rate === this.ObjProductInfo.Rate );
+    const sameproductwithbatch = this.AddProductDetails.filter(item=> Number(item.Product_ID) === Number(this.ObjProductInfo.Product_ID) && item.Batch_Number === this.ObjProductInfo.Batch_Number && item.Rate === this.ObjProductInfo.Rate );
     if(sameproductwithbatch.length) {
       this.compacctToast.clear();
           this.compacctToast.add({
@@ -1743,7 +1747,7 @@ export class SaleBillNewComponent implements OnInit {
     if(col.Doc_No){
      this.editDocNo = col.Doc_No
      this.tabIndexToView = 1;
-    this.items = [ 'BROWSE', 'UPDATE','PENDING GRN'];
+    this.items = [ 'BROWSE', 'UPDATE'];
     this.buttonname = "Update";
     this.AcceptanceOrderNoList = [];
     this.geteditData(col.Doc_No);
