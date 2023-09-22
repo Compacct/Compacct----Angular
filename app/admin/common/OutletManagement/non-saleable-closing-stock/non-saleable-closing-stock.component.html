@@ -391,6 +391,8 @@
                     <th>Batch Qty</th>
                     <th>Closing Qty</th>
                     <th>Consumption Qty</th>
+                    <th>Issue Qty</th>
+                    <th>RTF Qty</th>
                     <th>Remarks</th>
                     <th>Total Amount</th>
                 </tr>
@@ -406,6 +408,8 @@
                     <td>{{col.batch_Qty ? col.batch_Qty : col.Batch_Qty}}</td>
                     <td>{{col.Closing_Qty}}</td>
                     <td>{{col.Consumption_Qty}}</td>
+                    <td>{{col.Issue_Qty ? col.Issue_Qty : '-'}}</td>
+                    <td>{{col.RTF_Qty ? col.RTF_Qty : '-'}}</td>
                     <td>{{col.Remarks}}</td>
                     <td>{{col.Total_Amount}}</td>
 
