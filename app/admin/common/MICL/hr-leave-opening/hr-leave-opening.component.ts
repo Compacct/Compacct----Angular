@@ -17,12 +17,12 @@ import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime
 })
 export class HrLeaveOpeningComponent  implements OnInit {
   items:any = [];
-  menuList=[];
-  AllData = [];
-  empDataList=[];
-  hrYeatList=[];
-  leaveList=[];
-  menuData=[];
+  menuList:any = [];
+  AllData:any = [];
+  empDataList:any = [];
+  hrYeatList:any = [];
+  leaveList:any = [];
+  menuData:any = [];
   initDate:any =[];
   tabIndexToView= 0;
   buttonname = "Create";
@@ -33,7 +33,7 @@ export class HrLeaveOpeningComponent  implements OnInit {
   can_popup = false;
   act_popup = false;
   masterLeaveId : number;
-  GlobalApi=[];
+  GlobalApi:any = [];
   txnId = undefined;
   mastertxnId = undefined;
   HRYearID = undefined;
@@ -121,6 +121,9 @@ getDatabase(){
 clearData(){
   this.leaveFormSubmitted = false;
   this.Objleave = new leave();
+  if(this.databaseName === 'GN_JOH_HR') {
+  this.Objleave.Emp_ID = 0;
+  }
   this.leaveId = undefined;
   this.initDate =[];
   this.hrYearList();
@@ -159,7 +162,7 @@ GetAllData(valid){
 }
   // DISTINCT & FILTER
 GetDistinct() {
-  let DEmpName = [];
+  let DEmpName:any = [];
   this.DistEmpName =[];
   this.SelectedDistEmpName =[];
   this.SearchFields =[];
@@ -196,15 +199,23 @@ employeeData(){
 
    this.GlobalAPI.getData(obj)
    .subscribe((data:any)=>{
-    this.empDataList = data;
+    // this.empDataList = data;
     if(data.length){
       data.forEach(element => {
         element['label'] = element.Emp_Name
         element['value'] = element.Emp_ID
       });
+      this.empDataList = data;
+      if(this.databaseName === 'GN_JOH_HR') {
+      this.Objleave.Emp_ID = 0;
+      }
       this.AutoUpdateempDataList = data;
      }
      else {
+      this.empDataList = data;
+      if(this.databaseName === 'GN_JOH_HR') {
+      this.Objleave.Emp_ID = undefined;
+      }
       this.AutoUpdateempDataList = [];
      }
     console.log("employee==",this.empDataList);
@@ -290,6 +301,7 @@ getbalancedata(){
     }
 }
 saveData(valid:any){
+  this.leaveFormSubmitted = true
   if(valid){
     if(!this.Objleave.Emp_ID){
       this.Spinner =true
@@ -358,6 +370,9 @@ onConfirm2(){
           this.tabIndexToView = 0;
           this.leaveFormSubmitted = false;
           this.Objleave = new leave();
+          if(this.databaseName === 'GN_JOH_HR') {
+          this.Objleave.Emp_ID = 0;
+          }
           this.hryear = undefined;
         });
     
@@ -499,6 +514,7 @@ Getsavestatus(valid){
   if(this.buttonname === "Create" ? valid : true){
   const johobj = {
     HR_Year_ID : this.Objleave.HR_Year_ID,
+    Transaction_Date : this.DateService.dateConvert(new Date(this.Transaction_Date)),
     Atten_Type_ID : Number(this.Objleave.LEAVE_TYPE),
     From_Date : this.Objleave.From_Date ? this.DateService.dateConvert(new Date(this.Objleave.From_Date)): this.DateService.dateConvert(new Date()),
     To_Date : this.Objleave.To_Date ? this.DateService.dateConvert(new Date(this.Objleave.To_Date)): this.DateService.dateConvert(new Date())
@@ -605,6 +621,7 @@ GetAutoUpsavestatus(valid){
   if(valid){
   const johobj = {
     HR_Year_ID : this.ObjAutoUpdateleave.HR_Year_ID,
+    Transaction_Date : this.DateService.dateConvert(new Date(this.Transaction_Date)),
     Atten_Type_ID : Number(this.ObjAutoUpdateleave.LEAVE_TYPE),
     From_Date : this.ObjAutoUpdateleave.From_Date ? this.DateService.dateConvert(new Date(this.ObjAutoUpdateleave.From_Date)): this.DateService.dateConvert(new Date()),
     To_Date : this.ObjAutoUpdateleave.To_Date ? this.DateService.dateConvert(new Date(this.ObjAutoUpdateleave.To_Date)): this.DateService.dateConvert(new Date())

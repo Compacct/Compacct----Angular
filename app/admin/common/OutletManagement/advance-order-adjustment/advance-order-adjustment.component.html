@@ -75,7 +75,7 @@
                                                 </button>
                                             </div>
                                             <div class="col-sm-3 pull-right" style="text-align: right">
-                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                <input type="text" pInputText size="50" placeholder="Search" [(ngModel)]="globalFilterValue" (input)="onGlobalFilterChange($event.target.value)" class="searchInput form-control">
                                             </div>
                                         </div>
 

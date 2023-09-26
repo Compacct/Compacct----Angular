@@ -34,6 +34,12 @@ export class HrReportsComponent implements OnInit {
   excelflag: boolean = false;
   employeeflag: boolean = false;
   attentypeflag: boolean = false;
+  HRyearflag: boolean = false;
+  Quaterflag: boolean = false;
+  quaterlist: any = [];
+  HrYearList: any = [];
+  Quarter: any;
+  HR_Year_ID: any;
   constructor(
     private Header: CompacctHeader,
     private CompacctToast: MessageService,
@@ -50,6 +56,8 @@ export class HrReportsComponent implements OnInit {
       Link: "JOH HR --> HR Reports"
     });
     this.getReportNames();
+    this.gethrYearList();
+    this.getQuaterNames();
   }
 
   getDateRange(dateRangeObj: any) {
@@ -69,8 +77,32 @@ export class HrReportsComponent implements OnInit {
       this.replist = data;
     });
   }
+  gethrYearList(){
+    const obj = {
+      "SP_String":"SP_Leave_Application",
+      "Report_Name_String":"Get_HR_Year_List"
+   }
+   this.GlobalAPI.getData(obj)
+     .subscribe((data:any)=>{
+      this.HrYearList = data;
+      this.HR_Year_ID =  this.HrYearList.length ? this.HrYearList[0].HR_Year_ID : undefined;
+      });
+  }
+  getQuaterNames() {
+    const obj = {
+      "SP_String": "SP_HR_Reports",
+      "Report_Name_String": "Get_Quarter_Names",
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+      // console.log('report Names', data);
+      this.quaterlist = data;
+    });
+  }
 
   structureData(repname: any) {
+    this.HR_Year_ID =  this.HrYearList.length ? this.HrYearList[0].HR_Year_ID : undefined;
+    this.Quarter = undefined;
+    this.currentMonth = new Date();
     this.visibleDate = "";
     this.findObj = this.replist.find((ele: any) => ele.report_name == repname)
     console.log('selected report', this.findObj);
@@ -79,6 +111,8 @@ export class HrReportsComponent implements OnInit {
     this.excelflag = false;
     this.employeeflag = false;
     this.attentypeflag = false;
+    this.HRyearflag = false;
+    this.Quaterflag = false;
     if (this.findObj) {
       this.visibleDate = this.findObj.allowed_control;
       console.log('this.visibleDate===', this.visibleDate);
@@ -87,23 +121,24 @@ export class HrReportsComponent implements OnInit {
       for (let i = 0; i < allowFields.length; i++) {
         if (allowFields[i] == 'DT') {
           this.DateRangeflag = true;
-          // console.log('this.DateRangeflag===',this.DateRangeflag)
         }
         if (allowFields[i] == 'MT') {
           this.Monthflag = true;
-          // console.log('this.DateRangeflag===',this.DateRangeflag)
         }
         else if (allowFields[i] == 'XL') {
           this.excelflag = true;
-          // console.log('this.excelflag===',this.excelflag)
         }
         else if (allowFields[i] == 'EMP') {
           this.employeeflag = true;
-          // console.log('this.employeeflag===',this.employeeflag)
         }
         else if (allowFields[i] == 'AT') {
           this.attentypeflag = true;
-          // console.log('this.attentypeflag===',this.attentypeflag)
+        }
+        else if (allowFields[i] == 'YR') {
+          this.HRyearflag = true;
+        }
+        else if (allowFields[i] == 'QR') {
+          this.Quaterflag = true;
         }
       }
     }
@@ -171,6 +206,32 @@ export class HrReportsComponent implements OnInit {
         const apiObj = {
           "SP_String": "SP_HR_Reports",
           "Report_Name_String": this.findObj.report_name
+        }
+        this.GlobalAPI.postData(apiObj).subscribe(async (data: any) => {
+          // console.log("export excel data", data);
+          this.Spinner = false;
+          if (data.length) {
+            this.ngxService.start();
+            await this.ExportExcelService.exprtToExcelHR_Reports(data, this.findObj);
+            this.ngxService.stop();
+          }
+          else {
+            this.CompacctToast.clear();
+            this.CompacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Excel Export Fail",
+              detail: "No Data Available"
+            });
+          }
+        });
+      }
+      else if (this.visibleDate == "YR,QR,XL" || this.visibleDate == "YR,XL" || this.visibleDate == "QR,XL") {
+        this.Spinner = true;
+        const apiObj = {
+          "SP_String": "SP_HR_Reports",
+          "Report_Name_String": this.findObj.report_name,
+          "Json_Param_String": JSON.stringify([{ "HR_Year_ID": this.HR_Year_ID, "Quarter": this.Quarter }])
         }
         this.GlobalAPI.postData(apiObj).subscribe(async (data: any) => {
           // console.log("export excel data", data);

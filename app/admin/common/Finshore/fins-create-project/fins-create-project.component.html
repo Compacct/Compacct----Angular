@@ -181,6 +181,10 @@
                                         </select>
                                     </div>
                                     <div class="col-sm-4">
+                                        <label class="control-label">Signning Date<sup class="text-danger"></sup></label>
+                                        <ejs-datepicker  [(value)]="SignningDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-4">
                                         <label class="control-label">Payment Status<sup class="text-danger"></sup></label>
                                         <select class="form-control" name="Payment_Status" #Payment_Status="ngModel" [(ngModel)]="Objproject.Payment_Status">
                                             <option [ngValue]="undefined">Select</option>

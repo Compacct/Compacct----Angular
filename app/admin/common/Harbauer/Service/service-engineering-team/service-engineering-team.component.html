@@ -129,7 +129,7 @@
           </div>
           <div class="col-sm-12">
             <label class="control-label"
-              >user Name<sup class="text-danger">*</sup></label
+              >User Name<sup class="text-danger">*</sup></label
             >
             <select
               class="form-control"
@@ -235,7 +235,7 @@
   <p-footer>
     <button
       type="button"
-      (click)="CreateSalesExceModal = false"
+      (click)="close()"
       class="btn btn-default"
     >
       CANCEL
@@ -258,24 +258,37 @@
 <p-dialog [header]="'View Specialization'" [appendTo]="'body'" [visible]="ViewModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">
     <div class="table-responsive no-padding">
-        <p-table [value]="SpecilizationList">
-            
-            <ng-template pTemplate="header">
-                <tr>
-                    <th>Specialization</th>
-                    <!-- <th>Delete</th> -->
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-col let-i="rowIndex">
-                <tr>
-
-                    <td>{{col.Specialization}}</td>
-                    <!-- <td><button class="btn btn-sm btn-danger" (click)="deleteorg(col)"><i class="fa fa-trash"></i></button></td> -->
-            </ng-template>
-        </p-table>
+       <p-table [value]="SpecilizationList" >
+          <ng-template pTemplate="header">
+              <tr>
+                  <th>Specialization</th>
+                  <th style="width:9em"></th>
+              </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-ri="rowIndex">
+              <tr >
+                <td>
+                      
+                          <span *ngIf="rowIndexNumber == ri"  >
+                              <input  class="form-control" type="text" [(ngModel)]="rowData.Specialization" required>
+                          </span>
+                          <span  *ngIf="rowIndexNumber != ri" >
+                              {{rowData.Specialization}}
+                          </span>
+                      
+                  </td>
+                 <td style="text-align:center">
+                      <button *ngIf="pencil(ri)" pButton type="button"  icon="pi pi-pencil" class="ui-button-info" (click)="onRowEditInit(rowData,ri)" ></button>
+                      <button *ngIf="rowIndexNumber == ri" pButton type="button"  icon="pi pi-check" class="ui-button-success"  (click)="onRowSave(rowData)" style="margin-right: .5em" ></button>
+                      <button *ngIf="rowIndexNumber == ri" pButton type="button"  icon="pi pi-times" class="ui-button-danger" (click)="onRowcencleInit()" ></button>
+                      <button *ngIf="pencil(ri)" pButton pRipple type="button"  icon="pi pi-trash" (click)="onRowDelete(rowData,ri)" class="ui-button-danger" style=" margin-left: 30px;"></button>
+                    </td>
+              </tr>
+          </ng-template>
+      </p-table>
     </div>
     <p-footer>
-        <button type="button" (click)="ViewModal = false" class="btn btn-default">
+        <button type="button" (click)="ViewModal = false; " class="btn btn-default">
   CANCEL
 </button>
     </p-footer>

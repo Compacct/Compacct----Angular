@@ -234,7 +234,7 @@ export class LeaveRegisterComponent implements OnInit {
       },
       margin: {top: 30, bottom: 30}
       });
-      doc.save('Canteen-Statement-Summary.pdf');
+      doc.save('Leave_Register.pdf');
   }
   onConfirm(){}
   onReject(){}

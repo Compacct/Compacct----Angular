@@ -144,7 +144,7 @@
                                                                 <i class="fa fa-trash" aria-hidden="true"></i> Delete
                                                             </a>
                                                         </li>
-                                                        <li *ngIf='col.CR_No != "NA" && $CompacctAPI.CompacctCookies.User_Type != "U"'>
+                                                        <li *ngIf='col.CR_No != "NA" && $CompacctAPI.CompacctCookies.User_Type != "U" && !col.E_Invoice_PDF_Link'>
                                                             <a (click)="dataforregeneratingcrnote(col)">
                                                                 <i class="fa fa-bars" aria-hidden="true"></i> Regenerate Bill
                                                             </a>

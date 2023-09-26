@@ -517,6 +517,7 @@ import { SalesmanTargetForJohComponent } from './common/PatientManagement/Audiol
 import { ServiceProblemTypeComponent } from './common/Harbauer/Service/service-problem-type/service-problem-type.component';
 import { ServiceSupportTicketComponent } from './common/Harbauer/Service/service-support-ticket/service-support-ticket.component';
 import { QuizModuleComponent } from './common/Attendance/quiz-module/quiz-module.component';
+import { K4cAllDiagnosisComponent } from './common/OutletManagement/k4c-all-diagnosis/k4c-all-diagnosis.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -948,7 +949,8 @@ import { QuizModuleComponent } from './common/Attendance/quiz-module/quiz-module
     SalesmanTargetForJohComponent,
     ServiceProblemTypeComponent,
     ServiceSupportTicketComponent,
-    QuizModuleComponent
+    QuizModuleComponent,
+    K4cAllDiagnosisComponent
   ],
   imports: [
     CommonModule,

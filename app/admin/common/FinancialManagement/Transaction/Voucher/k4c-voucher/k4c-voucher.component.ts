@@ -256,7 +256,8 @@ export class K4cVoucherComponent implements OnInit {
     }
   GetSameCostCenANDledger() {
     if (this.VoucherTypeID != 3) {
-    const sameCostCenWithSameLedger = this.lowerList.filter(item=> Number(item.Sub_Ledger_ID) === Number(this.objjournalloweer.Sub_Ledger_ID) && Number(item.Ledger_ID) === Number(this.objjournalloweer.Ledger_ID));
+    const sameCostCenWithSameLedger = this.lowerList.filter(item=> (Number(item.Sub_Ledger_ID) === Number(this.objjournalloweer.Sub_Ledger_ID)) &&
+                                       (Number(item.Ledger_ID) === Number(this.objjournalloweer.Ledger_ID)) && (item.Ref_Doc_No == this.objjournalloweer.Ref_Doc_No));
     if(sameCostCenWithSameLedger.length) {
       this.compacctToast.clear();
           this.compacctToast.add({
@@ -452,6 +453,7 @@ getDateRange(dateRangeObj) {
 }
 ShowSearchData(valid){
   this.JournalSearchFormSubmit = true;
+  this.seachSpinner = true;
   if(valid){
    this.objsearch.Start_date = this.objsearch.Start_date
     ? this.DateService.dateConvert(new Date(this.objsearch.Start_date))
@@ -473,8 +475,10 @@ ShowSearchData(valid){
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      console.log("all Data",data);
      this.AlljournalData = data;
+     this.seachSpinner = false;
       if(this.AlljournalData.length){
         this.DynamicHeader = Object.keys(data[0]);
+        this.seachSpinner = false;
       }
      })
   }
