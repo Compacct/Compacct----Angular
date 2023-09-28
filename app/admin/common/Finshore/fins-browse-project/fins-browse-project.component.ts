@@ -86,6 +86,51 @@ export class FinsBrowseProjectComponent implements OnInit {
   abData:any
   @ViewChild('dtTr',{read: ElementRef,static:false}) table:ElementRef
   //@ViewChild('wanted', {read: ElementRef}) myWantedChild: ElementRef;
+
+  DistEmployeeTwo:any = [];
+  DistStatusTwo:any = [];
+  DistCustomerTwo:any = [];
+  DistConsultantTwo:any = [];
+
+  DistEmployeeSelectTwo: any = [];
+  DistStatusSelectTwo: any = [];
+  DistCustomerSelectTwo: any = [];
+  DistConsultantSelectTwo: any = [];
+
+  alldataListTwo: any=[];
+  DynamicHeaderTwo: any=[];
+  backUPalldataListTwo: any=[];
+  selectedValue:any=undefined;
+
+  dialogInvoice:boolean=false;
+  PiList:any=[];
+  BrowseData:any=[];
+
+  UpdatePIFormSubmitted:boolean=false;
+  PISpinner:boolean=false;
+  PI_Date: Date = new Date();
+  PiName:any=undefined;
+
+  UpdateInvFormSubmitted:boolean=false;
+  InvSpinner:boolean=false;
+  Inv_Date: Date = new Date();
+  InvName:any=undefined;
+  
+  UpdatePaymentFormSubmitted:boolean=false;
+  PaymentSpinner:boolean=false;
+  TotalAmt:any=undefined;
+  PaidAmt:any=undefined;
+  PendingAmt:any=undefined;
+  PaymentList:any=[];
+  UPmtSpinner:boolean=false;
+
+  Amountt:number=0;
+  TDSS:number=0;
+  NetPayment:number=0;
+
+  objUpdateInvoice = new UpdateInvoice();
+  objUpdatePI = new UpdatePI();
+  objUpdatePayment = new UpdatePayment();
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -97,19 +142,38 @@ export class FinsBrowseProjectComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.items =['UPDATE','COMPLETED']
+    this.items =['UPDATE','INVOICE/PAYMENT']
     this.Header.pushHeader({
       Header: "Browse",
       Link: "Track Project"
     });
     this.cokiseId = this.$CompacctAPI.CompacctCookies.User_ID;
+    this.PiList=['Customer','Consultant'];
     this.getAllBrowse();
     this.getSubledger();
     this.getAllBrowseCompled();
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items =['UPDATE','COMPLETED']
+    this.items =['UPDATE','INVOICE/PAYMENT']
+    this.ClearData();
+    this.getAllBrowse();
+  }
+  ClearData(){
+    this.DistEmployeeSelect=[];
+    this.DistStatusSelect = [];
+    this.DistCustomerSelect = [];
+    this.DistConsultantSelect = [];
+
+    this.selectedValue=undefined;
+    this.alldataListTwo = [];
+    this.backUPalldataListTwo = [];
+    this.DynamicHeaderTwo=[];
+
+    this.DistEmployeeSelectTwo = [];
+    this.DistStatusSelectTwo = [];
+    this.DistCustomerSelectTwo = [];
+    this.DistConsultantSelectTwo = [];
   }
   getAllBrowse() {
 
@@ -127,6 +191,8 @@ export class FinsBrowseProjectComponent implements OnInit {
         this.backUPdataList = data;
         this.DynamicHeader = Object.keys(data[0]);
         this.GetDistinct();
+        // console.log('getAllBrowse',this.alldataList);
+        // console.log('DynamicHeader',this.DynamicHeader);
       }
     });
   }
@@ -275,7 +341,7 @@ export class FinsBrowseProjectComponent implements OnInit {
     this.StatusList = [];
     const obj = {
       "SP_String": "SP_BL_Txn_Finshore_Project",
-      "Report_Name_String": "Get_Status_Name",
+      "Report_Name_String": "Get_Status_Name_without_completed",
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       if (data.length > 0) {
@@ -580,7 +646,6 @@ export class FinsBrowseProjectComponent implements OnInit {
         
     }
   }
-
   getSubledger() {
     this.SubledgerList = [];
     const obj = {
@@ -638,5 +703,405 @@ export class FinsBrowseProjectComponent implements OnInit {
   trackByFn(index: number, item: any): any {
    return item.Project_ID; // Assuming 'id' is a unique identifier in your data
   }
+
+  FilterDistTwo(){
+    let First: any = [];
+    let Second: any = [];
+    let three: any = [];
+    let fore: any = [];
+    let SearchFields: any = [];
+    if (this.DistEmployeeSelectTwo.length) {
+      SearchFields.push('Assign_To_Name');
+      First = this.DistEmployeeSelectTwo;
+    }
+    if (this.DistStatusSelectTwo.length) {
+      SearchFields.push('Status_Name');
+      Second = this.DistStatusSelectTwo;
+    }
+    if (this.DistCustomerSelectTwo.length) {
+      SearchFields.push('Sub_Ledger_Client');
+      three = this.DistCustomerSelectTwo;
+    }
+     if (this.DistConsultantSelectTwo.length) {
+      SearchFields.push('Sub_Ledger_Consultant');
+      fore = this.DistConsultantSelectTwo;
+    }
+    this.alldataListTwo = [];
+    if (SearchFields.length) {
+      let LeadArr = this.backUPalldataListTwo.filter(function (e) {
+        return (First.length ? First.includes(e['Assign_To_Name']) : true)
+          && (Second.length ? Second.includes(e['Status_Name']) : true)
+          && (three.length ? three.includes(e['Sub_Ledger_Client']) : true)
+          &&(fore.length ? fore.includes(e['Sub_Ledger_Consultant']) : true)
+      });
+      this.alldataListTwo = LeadArr.length ? LeadArr : [];
+    } else {
+      this.alldataListTwo = [...this.backUPalldataListTwo];
+    }
+
+  }
+  GetDistinctTwo(){
+    let Status: any = [];
+    this.DistCustomerTwo = [];
+    this.DistConsultantTwo = [];
+    this.DistStatusTwo = [];
+    this.DistEmployeeTwo = [];
+    this.alldataListTwo.forEach((item) => {
+      if (Status.indexOf(item.Sub_Ledger_Client) === -1) {
+        Status.push(item.Sub_Ledger_Client);
+        this.DistCustomerTwo.push({ label: item.Sub_Ledger_Client, value: item.Sub_Ledger_Client });
+      }
+      if (Status.indexOf(item.Status_Name) === -1) {
+        Status.push(item.Status_Name);
+        this.DistStatusTwo.push({ label: item.Status_Name, value: item.Status_Name });
+      }
+       if (Status.indexOf(item.Assign_To_Name) === -1) {
+        Status.push(item.Assign_To_Name);
+        this.DistEmployeeTwo.push({ label: item.Assign_To_Name, value: item.Assign_To_Name });
+      }
+      if (Status.indexOf(item.Sub_Ledger_Consultant) === -1) {
+        Status.push(item.Sub_Ledger_Consultant);
+        this.DistConsultantTwo.push({ label: item.Sub_Ledger_Consultant, value: item.Sub_Ledger_Consultant });
+      }    
+    });
+    this.backUPalldataListTwo = [...this.alldataListTwo];
+  }
+  getData(){
+    console.log('selectedValue',this.selectedValue);
+    this.alldataListTwo = [];
+    this.backUPalldataListTwo = [];
+    this.DynamicHeaderTwo=[];
+
+    if(this.selectedValue=='All'){
+      const obj = {
+        "SP_String": "SP_BL_Txn_Finshore_Project_Invoice",
+        "Report_Name_String": "Browse_Project_All",
+        "Json_Param_String": JSON.stringify([{ Assigned_To: this.cokiseId }])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        if (data.length > 0) {
+          this.alldataListTwo = data;
+          this.backUPalldataListTwo = data;
+          this.DynamicHeaderTwo = Object.keys(data[0]);
+          this.GetDistinctTwo();
+          console.log('getData All',this.alldataListTwo);
+          console.log('DynamicHeader All',this.DynamicHeaderTwo);
+        }
+      });
+    }
+    else if(this.selectedValue=='Invoice Pending'){
+      const obj = {
+        "SP_String": "SP_BL_Txn_Finshore_Project_Invoice",
+        "Report_Name_String": "Browse_Project_Invoice_Pending",
+        "Json_Param_String": JSON.stringify([{ Assigned_To: this.cokiseId }])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        if (data.length > 0) {
+          this.alldataListTwo = data;
+          this.backUPalldataListTwo = data;
+          this.DynamicHeaderTwo = Object.keys(data[0]);
+          this.GetDistinctTwo();
+          console.log('getData All',this.alldataListTwo);
+          console.log('DynamicHeader All',this.DynamicHeaderTwo);
+        }
+      });
+    }
+    else if(this.selectedValue=='Payment Pending'){
+      const obj = {
+        "SP_String": "SP_BL_Txn_Finshore_Project_Invoice",
+        "Report_Name_String": "Browse_Project_Payment_Pending",
+        "Json_Param_String": JSON.stringify([{ Assigned_To: this.cokiseId }])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        if (data.length > 0) {
+          this.alldataListTwo = data;
+          this.backUPalldataListTwo = data;
+          this.DynamicHeaderTwo = Object.keys(data[0]);
+          this.GetDistinctTwo();
+          console.log('getData All',this.alldataListTwo);
+          console.log('DynamicHeader All',this.DynamicHeaderTwo);
+        }
+      });
+    }
+  }
+  UpdateData(col: any) {
+    this.objUpdatePI=new UpdatePI();
+    this.PiName=undefined;
+
+    this.objUpdateInvoice=new UpdateInvoice();
+    this.InvName=undefined;
+
+    this.BrowseData=[];
+    this.dialogInvoice=true;
+    this.BrowseData=col;
+    console.log('BrowseData',this.BrowseData);
+    
+
+    this.objUpdatePI.Bill_To_PI_No=this.BrowseData.Bill_To_PI_No;
+    this.PI_Date=this.BrowseData.Bill_To_PI_Date ? this.BrowseData.Bill_To_PI_Date : new Date();
+    this.objUpdatePI.Bill_To_PI_Amount=this.BrowseData.Bill_To_PI_Amount;
+    this.objUpdatePI.Previous_Bill_To=this.BrowseData.Bill_To;
+    this.objUpdatePI.Previous_Bill_To_PI_Date=this.BrowseData.Bill_To_PI_Date ? this.DateService.dateConvert(this.BrowseData.Bill_To_PI_Date) : null;
+    this.objUpdatePI.Bill_To=this.BrowseData.Bill_To;
+    this.PI_Cust_Cons_change();
+
+    this.objUpdateInvoice.Invoice_No=this.BrowseData.Invoice_No;
+    this.Inv_Date=this.BrowseData.Invoice_Date ? this.BrowseData.Invoice_Date : new Date();
+    this.objUpdateInvoice.Invoice_Amount=this.BrowseData.Invoice_Amount;
+    this.objUpdateInvoice.Previous_Invoice_To=this.BrowseData.Invoice_To;
+    this.objUpdateInvoice.Previous_Invoice_Date=this.BrowseData.Invoice_Date ? this.DateService.dateConvert(this.BrowseData.Invoice_Date) : null;
+    this.objUpdateInvoice.Invoice_To=this.BrowseData.Invoice_To;
+    this.Inv_Cust_Cons_change();
+
+    this.TotalAmt=this.BrowseData.Invoice_Amount;
+    this.PaidAmt=this.BrowseData.total_Paid_Net_Amount;
+    this.PendingAmt=Number(this.TotalAmt)-Number(this.PaidAmt);
+    
+    this.getPaymentList(this.BrowseData.Project_ID);
+  }
+  PI_Cust_Cons_change(){
+    this.PiName=undefined;
+    this.objUpdatePI.Bill_To_Sub_Ledger_ID=undefined;
+    if(this.objUpdatePI.Bill_To == 'Customer'){
+      this.PiName=this.BrowseData.Sub_Ledger_Client;
+      this.objUpdatePI.Bill_To_Sub_Ledger_ID=this.BrowseData.Sub_Ledger_ID_Client;
+    }
+    else if(this.objUpdatePI.Bill_To == 'Consultant'){
+      this.PiName=this.BrowseData.Sub_Ledger_Consultant;
+      this.objUpdatePI.Bill_To_Sub_Ledger_ID=this.BrowseData.Sub_Ledger_ID_Consultant;
+    }
+  }
+  Update_PI(valid:any){
+    console.log('BrowseData',this.BrowseData);
+    this.UpdatePIFormSubmitted = true;
+    console.log('UpdatePIFormSubmitted',valid);
+    if(valid){
+      this.PISpinner = true;
+
+      this.objUpdatePI.Project_ID=this.BrowseData.Project_ID;
+      this.objUpdatePI.Bill_To_PI_Date=this.PI_Date ? this.DateService.dateConvert(this.PI_Date) : null;
+      this.objUpdatePI.User_ID=this.cokiseId;
+
+      console.log('this.objUpdatePI',this.objUpdatePI);
+      const PIobj = {
+        "SP_String": "SP_BL_Txn_Finshore_Project_Invoice",
+        "Report_Name_String": "Update_PI",
+        "Json_Param_String": JSON.stringify([this.objUpdatePI])
+      }
+      this.GlobalAPI.postData(PIobj).subscribe((data:any) => {
+        console.log('data res', data);
+        if(data[0].Column1){
+          this.UpdatePIFormSubmitted=false;
+          this.PISpinner=false;
+          this.getData();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "PI",
+            detail: "Succesfully Updated"
+          });
+        }
+        else {
+          this.PISpinner=false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error",
+            detail: "Something Went Wrong"
+          });
+        }
+      });
+    }
+  }
+  Inv_Cust_Cons_change(){
+    this.InvName=undefined;
+    this.objUpdateInvoice.Invoice_To_Sub_Ledger_ID=undefined;
+    if(this.objUpdateInvoice.Invoice_To == 'Customer'){
+      this.InvName=this.BrowseData.Sub_Ledger_Client;
+      this.objUpdateInvoice.Invoice_To_Sub_Ledger_ID=this.BrowseData.Sub_Ledger_ID_Client;
+    }
+    else if(this.objUpdateInvoice.Invoice_To == 'Consultant'){
+      this.InvName=this.BrowseData.Sub_Ledger_Consultant;
+      this.objUpdateInvoice.Invoice_To_Sub_Ledger_ID=this.BrowseData.Sub_Ledger_ID_Consultant;
+    }
+  }
+  Update_Inv(valid:any){
+    console.log('BrowseData',this.BrowseData);
+    this.UpdateInvFormSubmitted = true;
+    console.log('UpdateInvFormSubmitted',valid);
+    if(valid){
+      this.InvSpinner = true;
+
+      this.objUpdateInvoice.Project_ID=this.BrowseData.Project_ID;
+      this.objUpdateInvoice.Invoice_Date=this.Inv_Date ? this.DateService.dateConvert(this.Inv_Date) : null;
+      this.objUpdateInvoice.User_ID=this.cokiseId;
+
+      console.log('this.objUpdateInvoice',this.objUpdateInvoice);
+      const Invobj = {
+        "SP_String": "SP_BL_Txn_Finshore_Project_Invoice",
+        "Report_Name_String": "Update_Invoice",
+        "Json_Param_String": JSON.stringify([this.objUpdateInvoice])
+      }
+      this.GlobalAPI.postData(Invobj).subscribe((data:any) => {
+        console.log('data res', data);
+        if(data[0].Column1){
+          this.TotalAmt=this.objUpdateInvoice.Invoice_Amount;
+          this.UpdateInvFormSubmitted=false;
+          this.InvSpinner=false;
+          this.getData();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "INVOICE",
+            detail: "Succesfully Updated"
+          });
+        }
+        else {
+          this.InvSpinner=false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error",
+            detail: "Something Went Wrong"
+          });
+        }
+      });
+    }
+  }
+  AmountChange(){
+    this.objUpdateInvoice.Invoice_Amount=this.objUpdatePI.Bill_To_PI_Amount;
+  }
+  TotalAmountChange(){
+    this.TotalAmt=this.objUpdateInvoice.Invoice_Amount
+    this.PendingAmt=Number(this.TotalAmt)-Number(this.PaidAmt);
+  }
+  NetPaymentChange(){
+    this.objUpdatePayment.Net_Payment=Number(this.objUpdatePayment.Amount)-Number(this.objUpdatePayment.TDS);
+  }
+  Add_Payment(valid:any){
+    this.UpdatePaymentFormSubmitted = true;
+    console.log('UpdatePaymentFormSubmitted',valid);
+    if(valid){
+      this.PaymentSpinner=true;
+
+      this.objUpdatePayment.Project_ID=this.BrowseData.Project_ID;
+      this.objUpdatePayment.Created_By=this.cokiseId;
+
+      this.PaymentList.push(this.objUpdatePayment);
+      console.log('this.PaymentList',this.PaymentList);
+
+      this.objUpdatePayment = new UpdatePayment();
+      this.UpdatePaymentFormSubmitted = false;
+      this.PaymentSpinner=false;
+    }
+  }
+  deletePaymentList(index:any){
+    this.PaymentList.splice(index, 1);
+  }
+  getPaymentList(ProjectID:any){
+      console.log('ProjectID',ProjectID);
+      this.PaymentList=[];
+      const Pmtobj = {
+        "SP_String": "SP_BL_Txn_Finshore_Project_Invoice",
+        "Report_Name_String": "Get_Payment_Details",
+        "Json_Param_String": JSON.stringify([{ Project_ID: ProjectID }])
+      }
+      this.GlobalAPI.postData(Pmtobj).subscribe((data:any) => {
+        console.log('getPaymentList',data);
+        this.PaymentList=data
+        console.log('this.PaymentList',data);
+      });
+  }
+  UpdatePaymentList(){
+    this.UPmtSpinner = true;
+    console.log('this.PaymentList',this.PaymentList);
+    const Pmtobj = {
+      "SP_String": "SP_BL_Txn_Finshore_Project_Invoice",
+      "Report_Name_String": "Update_Payment",
+      "Json_Param_String": JSON.stringify(this.PaymentList)
+    }
+    this.GlobalAPI.postData(Pmtobj).subscribe((data:any) => {
+      console.log('data res', data);
+      if(data[0].Column1){
+        this.PaidAmt=this.NetPayment;
+        this.PendingAmt=Number(this.TotalAmt)-Number(this.PaidAmt);
+        this.UPmtSpinner=false;
+        this.getData();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "PAYMENT",
+          detail: "Succesfully Updated"
+        });
+      }
+      else {
+        this.UPmtSpinner=false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Error",
+          detail: "Something Went Wrong"
+        });
+      }
+    });
+  }
+  CalAmountt(){
+    this.Amountt=0;
+    this.PaymentList.forEach((item:any) => {
+      this.Amountt+=Number(item.Amount);
+    })
+    return this.Amountt;  
+  }
+  CalTDSS(){
+    this.TDSS=0;
+    this.PaymentList.forEach((item:any) => {
+      this.TDSS+=Number(item.TDS);
+    })
+    return this.TDSS;  
+  }
+  CalNetPaymentt(){
+    this.NetPayment=0;
+    this.PaymentList.forEach((item:any) => {
+      this.NetPayment+=Number(item.Net_Payment);
+    })
+    return this.NetPayment;  
+  }
+}
+
+class UpdatePI{
+  Project_ID:any;            				   
+	Bill_To:any   
+	Bill_To_PI_No:any;        			
+	Bill_To_PI_Date:any;  	      
+	Bill_To_PI_Amount:any;    
+	Bill_To_Sub_Ledger_ID:any;  
+  User_ID:any;            					
+	Previous_Bill_To:any;       						
+	Previous_Bill_To_PI_Date:any;     
+}
+class UpdateInvoice{
+  Project_ID:any;						
+  User_ID:any;					
+  Previous_Invoice_To:any;			
+  Previous_Invoice_Date:any;
+  Invoice_To:any;
+  Invoice_No:any;					
+  Invoice_Date:any;
+  Invoice_Amount:any;
+  Invoice_To_Sub_Ledger_ID:any;
+}
+
+class UpdatePayment{
+  Amount:any;
+  TDS:any;
+  Net_Payment:any;
+  Project_ID:any;
+  Created_By:any;
 }
 
