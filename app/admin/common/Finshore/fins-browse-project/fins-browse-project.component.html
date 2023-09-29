@@ -165,19 +165,11 @@
                         </div>
                         </p-tabPanel>
                         <p-tabPanel headerStyleClass="compacct-tabs"[header]="items[1]"  leftIcon="fa fa-credit-card">
-                            <div class="row" style="margin-bottom: 30px; margin-left: 10px; margin-top: 10px;">
-                                <div class="col-md-2">
-                                   <p style="font-size: 15px; font-weight: bold;">Select Type</p>
-                                </div>
-                                <div class="col-md-1" style="margin-left: -50px">
-                                    <p-radioButton name="groupname" value="All" label="All" [(ngModel)]="selectedValue" (onClick)="getData()"></p-radioButton>
-                                </div>
-                                <div class="col-md-2">
-                                    <p-radioButton name="groupname" value="Invoice Pending" label="Invoice Pending" [(ngModel)]="selectedValue" (onClick)="getData()"></p-radioButton>
-                                </div>
-                                <div class="col-md-2" style="margin-left: -10px">
-                                    <p-radioButton name="groupname" value="Payment Pending" label="Payment Pending" [(ngModel)]="selectedValue" (onClick)="getData()"></p-radioButton>
-                                </div>
+                            <div class="row" style="margin-bottom: 20px; margin-left: 10px; margin-top: 10px;">
+                                <label style="font-size: 15px; font-weight: bold;">Select Type</label >
+                                <span style="margin-left: 20px;"><p-radioButton name="groupname" value="All" label="All" [(ngModel)]="selectedValue" (onClick)="getData()" ></p-radioButton></span>
+                                <span style="margin-left: 20px;"><p-radioButton name="groupname" value="Invoice Pending" label="Invoice Pending" [(ngModel)]="selectedValue" (onClick)="getData()" ></p-radioButton></span>
+                                <span style="margin-left: 20px;"><p-radioButton name="groupname" value="Payment Pending" label="Payment Pending" [(ngModel)]="selectedValue" (onClick)="getData()" ></p-radioButton></span>
                             </div>
                             <fieldset class="col-md-12">
                                 <legend>Filter</legend>
@@ -783,16 +775,16 @@ style="text-align: center;"
                 </div>
                 <div class="table table-borderless" *ngIf="PaymentList.length>0">
                     <tr>
-                        <td class="Foot">Total Amount : </td>
-                        <td class="Foot" style="color: #4cc556;">{{CalAmountt()}}</td>
+                        <td class="Foot">Total Amount : &#8377;</td>
+                        <td class="Foot" style="color: #4cc556;"> {{CalAmountt()}}</td>
                     </tr>
                     <tr>
-                        <td class="Foot">Total TDS : </td>
-                        <td class="Foot" style="color: brown;">{{CalTDSS()}}</td>
+                        <td class="Foot">Total TDS : &#8377;</td>
+                        <td class="Foot" style="color: brown;"> {{CalTDSS()}}</td>
                     </tr>
                     <tr>
-                        <td class="Foot">Net Payment : </td>
-                        <td class="Foot">{{CalNetPaymentt()}}</td>
+                        <td class="Foot">Net Payment : &#8377;</td>
+                        <td class="Foot"> {{CalNetPaymentt()}}</td>
                     </tr>
                 </div>
                 <div class="form-group">
