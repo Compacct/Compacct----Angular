@@ -357,7 +357,7 @@ export class FinsBrowseProjectComponent implements OnInit {
   onConfirm(){}
   openDialog(col: any, field: any,index?:any) {
     this.rindex = index
-    console.log(this.rindex)
+    // console.log(this.rindex)
     this.fieldname = field
     if (field == 'EMP Assigned To') {
     this.projectId = col.Project_ID;
@@ -478,10 +478,10 @@ export class FinsBrowseProjectComponent implements OnInit {
             Changed_To_Text: Filter2[0].Status_Name,
             Remarks: this.SelectRemarkstatus
           } 
-          console.log(tempobj)
+          // console.log(tempobj)
           this.alldataList[this.rindex].Status_ID = this.SelectStatus
           this.alldataList[this.rindex].Status_Name = Filter2[0].Status_Name
-          console.log(this.alldataList)
+          // console.log(this.alldataList)
         }
         else if (this.dialogheader == 'Engagment Letter') {
            tempobj = {
@@ -767,7 +767,7 @@ export class FinsBrowseProjectComponent implements OnInit {
     this.backUPalldataListTwo = [...this.alldataListTwo];
   }
   getData(){
-    console.log('selectedValue',this.selectedValue);
+    // console.log('selectedValue',this.selectedValue);
     this.alldataListTwo = [];
     this.backUPalldataListTwo = [];
     this.DynamicHeaderTwo=[];
@@ -784,8 +784,8 @@ export class FinsBrowseProjectComponent implements OnInit {
           this.backUPalldataListTwo = data;
           this.DynamicHeaderTwo = Object.keys(data[0]);
           this.GetDistinctTwo();
-          console.log('getData All',this.alldataListTwo);
-          console.log('DynamicHeader All',this.DynamicHeaderTwo);
+          // console.log('getData All',this.alldataListTwo);
+          // console.log('DynamicHeader All',this.DynamicHeaderTwo);
         }
       });
     }
@@ -801,8 +801,8 @@ export class FinsBrowseProjectComponent implements OnInit {
           this.backUPalldataListTwo = data;
           this.DynamicHeaderTwo = Object.keys(data[0]);
           this.GetDistinctTwo();
-          console.log('getData All',this.alldataListTwo);
-          console.log('DynamicHeader All',this.DynamicHeaderTwo);
+          // console.log('getData All',this.alldataListTwo);
+          // console.log('DynamicHeader All',this.DynamicHeaderTwo);
         }
       });
     }
@@ -818,8 +818,8 @@ export class FinsBrowseProjectComponent implements OnInit {
           this.backUPalldataListTwo = data;
           this.DynamicHeaderTwo = Object.keys(data[0]);
           this.GetDistinctTwo();
-          console.log('getData All',this.alldataListTwo);
-          console.log('DynamicHeader All',this.DynamicHeaderTwo);
+          // console.log('getData All',this.alldataListTwo);
+          // console.log('DynamicHeader All',this.DynamicHeaderTwo);
         }
       });
     }
@@ -834,8 +834,10 @@ export class FinsBrowseProjectComponent implements OnInit {
     this.BrowseData=[];
     this.dialogInvoice=true;
     this.BrowseData=col;
-    console.log('BrowseData',this.BrowseData);
-    
+    // console.log('BrowseData',this.BrowseData);
+    this.UpdatePaymentFormSubmitted = false;
+    this.UpdatePIFormSubmitted = false;
+    this.UpdateInvFormSubmitted = false;
 
     this.objUpdatePI.Bill_To_PI_No=this.BrowseData.Bill_To_PI_No;
     this.PI_Date=this.BrowseData.Bill_To_PI_Date ? this.BrowseData.Bill_To_PI_Date : new Date();
@@ -872,9 +874,9 @@ export class FinsBrowseProjectComponent implements OnInit {
     }
   }
   Update_PI(valid:any){
-    console.log('BrowseData',this.BrowseData);
+    // console.log('BrowseData',this.BrowseData);
     this.UpdatePIFormSubmitted = true;
-    console.log('UpdatePIFormSubmitted',valid);
+    // console.log('UpdatePIFormSubmitted',valid);
     if(valid){
       this.PISpinner = true;
 
@@ -882,14 +884,14 @@ export class FinsBrowseProjectComponent implements OnInit {
       this.objUpdatePI.Bill_To_PI_Date=this.PI_Date ? this.DateService.dateConvert(this.PI_Date) : null;
       this.objUpdatePI.User_ID=this.cokiseId;
 
-      console.log('this.objUpdatePI',this.objUpdatePI);
+      // console.log('this.objUpdatePI',this.objUpdatePI);
       const PIobj = {
         "SP_String": "SP_BL_Txn_Finshore_Project_Invoice",
         "Report_Name_String": "Update_PI",
         "Json_Param_String": JSON.stringify([this.objUpdatePI])
       }
       this.GlobalAPI.postData(PIobj).subscribe((data:any) => {
-        console.log('data res', data);
+        // console.log('data res', data);
         if(data[0].Column1){
           this.UpdatePIFormSubmitted=false;
           this.PISpinner=false;
@@ -928,9 +930,9 @@ export class FinsBrowseProjectComponent implements OnInit {
     }
   }
   Update_Inv(valid:any){
-    console.log('BrowseData',this.BrowseData);
+    // console.log('BrowseData',this.BrowseData);
     this.UpdateInvFormSubmitted = true;
-    console.log('UpdateInvFormSubmitted',valid);
+    // console.log('UpdateInvFormSubmitted',valid);
     if(valid){
       this.InvSpinner = true;
 
@@ -938,14 +940,14 @@ export class FinsBrowseProjectComponent implements OnInit {
       this.objUpdateInvoice.Invoice_Date=this.Inv_Date ? this.DateService.dateConvert(this.Inv_Date) : null;
       this.objUpdateInvoice.User_ID=this.cokiseId;
 
-      console.log('this.objUpdateInvoice',this.objUpdateInvoice);
+      // console.log('this.objUpdateInvoice',this.objUpdateInvoice);
       const Invobj = {
         "SP_String": "SP_BL_Txn_Finshore_Project_Invoice",
         "Report_Name_String": "Update_Invoice",
         "Json_Param_String": JSON.stringify([this.objUpdateInvoice])
       }
       this.GlobalAPI.postData(Invobj).subscribe((data:any) => {
-        console.log('data res', data);
+        // console.log('data res', data);
         if(data[0].Column1){
           this.TotalAmt=this.objUpdateInvoice.Invoice_Amount;
           this.UpdateInvFormSubmitted=false;
@@ -984,15 +986,26 @@ export class FinsBrowseProjectComponent implements OnInit {
   }
   Add_Payment(valid:any){
     this.UpdatePaymentFormSubmitted = true;
-    console.log('UpdatePaymentFormSubmitted',valid);
+    // console.log('UpdatePaymentFormSubmitted',valid);
     if(valid){
+      if(Number(this.objUpdatePayment.Net_Payment)>Number(this.PendingAmt)){
+        this.UpdatePaymentFormSubmitted = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Amounts Exceed",
+          detail: "Pending Amount Can't be negetive"
+        });
+        return;
+      }
       this.PaymentSpinner=true;
 
       this.objUpdatePayment.Project_ID=this.BrowseData.Project_ID;
       this.objUpdatePayment.Created_By=this.cokiseId;
 
       this.PaymentList.push(this.objUpdatePayment);
-      console.log('this.PaymentList',this.PaymentList);
+      // console.log('this.PaymentList',this.PaymentList);
 
       this.objUpdatePayment = new UpdatePayment();
       this.UpdatePaymentFormSubmitted = false;
@@ -1001,9 +1014,13 @@ export class FinsBrowseProjectComponent implements OnInit {
   }
   deletePaymentList(index:any){
     this.PaymentList.splice(index, 1);
+    if(!this.PaymentList.length){
+      this.PaidAmt=0;
+      this.PendingAmt=Number(this.TotalAmt)-Number(this.PaidAmt);
+    }
   }
   getPaymentList(ProjectID:any){
-      console.log('ProjectID',ProjectID);
+      // console.log('ProjectID',ProjectID);
       this.PaymentList=[];
       const Pmtobj = {
         "SP_String": "SP_BL_Txn_Finshore_Project_Invoice",
@@ -1011,21 +1028,32 @@ export class FinsBrowseProjectComponent implements OnInit {
         "Json_Param_String": JSON.stringify([{ Project_ID: ProjectID }])
       }
       this.GlobalAPI.postData(Pmtobj).subscribe((data:any) => {
-        console.log('getPaymentList',data);
+        // console.log('getPaymentList',data);
         this.PaymentList=data
-        console.log('this.PaymentList',data);
+        // console.log('this.PaymentList',this.PaymentList);
       });
   }
   UpdatePaymentList(){
     this.UPmtSpinner = true;
-    console.log('this.PaymentList',this.PaymentList);
+    if(!this.PaymentList.length){
+      this.UPmtSpinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Required",
+        detail: "Atleast One Payment mode required"
+      });
+      return;
+    }
+    // console.log('this.PaymentList',this.PaymentList);
     const Pmtobj = {
       "SP_String": "SP_BL_Txn_Finshore_Project_Invoice",
       "Report_Name_String": "Update_Payment",
       "Json_Param_String": JSON.stringify(this.PaymentList)
     }
     this.GlobalAPI.postData(Pmtobj).subscribe((data:any) => {
-      console.log('data res', data);
+      // console.log('data res', data);
       if(data[0].Column1){
         this.PaidAmt=this.NetPayment;
         this.PendingAmt=Number(this.TotalAmt)-Number(this.PaidAmt);
@@ -1056,21 +1084,24 @@ export class FinsBrowseProjectComponent implements OnInit {
     this.PaymentList.forEach((item:any) => {
       this.Amountt+=Number(item.Amount);
     })
-    return this.Amountt;  
+    return this.Amountt.toFixed(2);  
   }
   CalTDSS(){
     this.TDSS=0;
     this.PaymentList.forEach((item:any) => {
       this.TDSS+=Number(item.TDS);
     })
-    return this.TDSS;  
+    return this.TDSS.toFixed(2);  
   }
   CalNetPaymentt(){
     this.NetPayment=0;
     this.PaymentList.forEach((item:any) => {
       this.NetPayment+=Number(item.Net_Payment);
     })
-    return this.NetPayment;  
+    this.PaidAmt=Number(this.NetPayment);
+    this.PendingAmt=Number(this.TotalAmt)-Number(this.PaidAmt);
+    // console.log('this.PaidAmt',this.PaidAmt);
+    return this.NetPayment.toFixed(2);  
   }
 }
 
