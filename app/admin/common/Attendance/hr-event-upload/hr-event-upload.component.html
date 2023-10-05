@@ -77,6 +77,15 @@
                               (onSelect)="FetchPDFFile($event)"
                             ></p-fileUpload>
                           </div>
+                          <div class="col-sm-2" >
+                            <button  class="btn btn-success" (click)="jsontopdf()">multiple table pdf</button>
+                        </div>
+                        <div class="col-sm-2" >
+                            <button  class="btn btn-success" (click)="jsontopdfbackgroundimg()">bg pdf</button>
+                        </div>
+                        <div class="col-sm-2" >
+                            <button  class="btn btn-success" (click)="createBarChart()">chart pdf</button>
+                        </div>
                         </div>
                         
 
@@ -91,6 +100,12 @@
                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                    </button>
                            </div>
+                           <div class="row">
+                            <div class="col-sm-8">
+                                <h5><strong></strong></h5>
+                            </div>
+                        </div>
+                           <canvas #barChart width="400" height="200"></canvas>
                         <!-- </p-tabPanel>
                     </p-tabView> -->
                 </div>

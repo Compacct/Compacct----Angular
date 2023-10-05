@@ -105,6 +105,15 @@ export class BillEditFromAdminComponent implements OnInit {
   Online_Order_No: any;
   canbilldate: any;
   BillDate: any;
+  Created_By: any;
+
+  From_Date: Date = new Date();
+  To_Date: Date = new Date();
+  CostCenterList:any = [];
+  Cost_Cen_ID: any;
+  GridList:any = [];
+  GridListHeader:any = [];
+  GetDataList: any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -143,7 +152,7 @@ export class BillEditFromAdminComponent implements OnInit {
   ngOnInit() {
     $(".content-header").removeClass("collapse-pos");
     $(".content").removeClass("collapse-pos");
-    this.items = ["BROWSE","UPDATE"];
+    this.items = ["BROWSE","UPDATE","DIAGNOSIS"];
     this.Header.pushHeader({
       Header: "Sale Bill",
       Link: "Sale Bill"
@@ -157,11 +166,12 @@ export class BillEditFromAdminComponent implements OnInit {
     this.getwalletamount();
     this.getcredittoaccount();
     //console.log(this.QueryStringObj);
+    this.GetCostCenter();
   }
   TabClick(e){
     //console.log(e)
     this.tabIndexToView = e.index;
-    this.items = ["BROWSE","UPDATE"];
+    this.items = ["BROWSE","UPDATE","DIAGNOSIS"];
     this.productSubmit =[];
     this.clearData();
     this.clearlistamount();
@@ -259,6 +269,7 @@ autoaFranchiseBill() {
       this.clearData();
       this.canbilldate = "";
       this.rowCostcenter = "";
+      this.Created_By = undefined;
       if(eROW.Bill_No){
         this.ngxService.start();
       this.Objcustomerdetail.Bill_No = eROW.Bill_No;
@@ -268,7 +279,7 @@ autoaFranchiseBill() {
       this.autoaFranchiseBill();
       this.CustumerName = eROW.Customer_Name;
       //this.Browsetab = false;
-      this.items = ["BROWSE","UPDATE"];
+      this.items = ["BROWSE","UPDATE","DIAGNOSIS"];
       this.buttonname = "Update";
        //console.log("this.EditDoc_No ", this.Objcustomerdetail.Bill_No );
       this.GetProductTypeFilterList();
@@ -281,7 +292,7 @@ autoaFranchiseBill() {
       this.geteditmaster(this.Objcustomerdetail.Bill_No);
       //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
       }
-    }
+  }
     geteditmaster(Bill_No){
       //console.log("Doc_No",Bill_No);
       const obj = {
@@ -305,6 +316,7 @@ autoaFranchiseBill() {
         this.Objcustomerdetail.Bill_Remarks = data[0].Bill_Remarks;
         this.Objcustomerdetail.Cuppon_No = data[0].Cuppon_No;
         this.Objcustomerdetail.Cuppon_OTP = data[0].Cuppon_OTP;
+        this.Created_By = data[0].Created_By;
     
         data.forEach(element => {
         const  productObj = {
@@ -410,6 +422,7 @@ autoaFranchiseBill() {
     
     })
     }
+    
   PrintBill(obj) {
     if (obj.Bill_No) {
       window.open("/Report/Crystal_Files/K4C/K4C_Bill_Print.aspx?DocNo=" + obj.Bill_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
@@ -1241,7 +1254,7 @@ checkdiscountamt(){
         }
   
       const TempObj = {
-        Created_By : this.$CompacctAPI.CompacctCookies.User_ID,
+        Created_By : this.Created_By ? this.Created_By : this.$CompacctAPI.CompacctCookies.User_ID,
         Foot_Fall_ID : this.Objcustomerdetail.Foot_Fall_ID,
         Bill_Date : this.DateService.dateConvert(new Date(this.myDate)),
         //Doc_No : this.ObjaddbillForm.Doc_No,
@@ -1254,7 +1267,7 @@ checkdiscountamt(){
         Net_Payable : this.Net_Payable,
         Hold_Bill  : this.Hold_Bill_Flag ? "Y" : "N",
         Order_Txn_ID : 0,
-        Adv_Order_No : this.ObjaddbillForm.Advance ? this.ObjaddbillForm.Advance : "" ,
+        Adv_Order_No : this.Online_Order_No ? "" : this.ObjaddbillForm.Advance ,
         Online_Order_No : this.Online_Order_No ? this.Online_Order_No : null,
         Online_Order_Date : this.Online_Order_Date ? this.DateService.dateConvert(new Date(this.Online_Order_Date)) : null,
 
@@ -1266,7 +1279,7 @@ checkdiscountamt(){
         Bill_No : this.Objcustomerdetail.Bill_No,
         Doc_Number : "A",
         // Doc_Date : this.DateService.dateConvert(new Date(this.myDate)),
-        User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
+        User_ID : this.Created_By ? this.Created_By : this.$CompacctAPI.CompacctCookies.User_ID,
         Fin_Year_ID : Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID),
   
       }
@@ -1420,6 +1433,7 @@ checkdiscountamt(){
        this.clearData();
        this.tabIndexToView = 0;
        this.GetSearchedlist();
+       this.GetGridData();
       // this.router.navigate(['./POS_BIll_Order']);
         }
         var billdate = new Date(this.BillDate);
@@ -1512,6 +1526,7 @@ checkdiscountamt(){
            });
        this.tabIndexToView = 0;
        this.GetSearchedlist();
+       this.GetGridData();
        this.productSubmit =[];
        this.clearlistamount();
        this.cleartotalamount();
@@ -1592,6 +1607,221 @@ checkdiscountamt(){
     };
     this.router.navigate([obj.Redirect_To], navigationExtras);
   }
+  //K4C DIAGNOSIS
+  getDateRangediagnosis(dateRangeObj: any) {
+    if (dateRangeObj.length) {
+      this.From_Date = dateRangeObj[0];
+      this.To_Date = dateRangeObj[1];
+    }
+  }
+  GetCostCenter() {
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Get - Cost Center Name All",
+      "Json_Param_String": JSON.stringify([{User_ID:this.$CompacctAPI.CompacctCookies.User_ID}])
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+      // console.log('report Names', data);
+      this.CostCenterList = data;
+    });
+  }
+
+  GetGridData(){
+    this.GridList = [];
+    this.GridListHeader = [];
+    this.seachSpinner = true;
+    const start = this.From_Date
+    ? this.DateService.dateConvert(new Date(this.From_Date))
+    : this.DateService.dateConvert(new Date());
+    const end = this.To_Date
+    ? this.DateService.dateConvert(new Date(this.To_Date))
+    : this.DateService.dateConvert(new Date());
+    const senddata = {
+      From_Date : start,
+      To_Date : end,
+      Cost_Cen_ID : this.Cost_Cen_ID ? this.Cost_Cen_ID : 0
+    }
+    const obj = {
+      "SP_String": "SP_Add_ON",
+      "Report_Name_String": "Get_K4C_Diagnosis_POS_Bill",
+      "Json_Param_String": JSON.stringify([senddata])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.GridList = data;
+      this.GridListHeader = data.length ? Object.keys(data[0]): []
+      this.seachSpinner = false;
+      //  console.log("GridList ===",this.GridList);
+    })
+  } 
+  editdiagnosismaster(eROW){
+    //console.log("editmaster",eROW);
+      this.clearData();
+      this.canbilldate = "";
+      this.rowCostcenter = "";
+      this.Created_By = undefined;
+      if(eROW.Bill_No){
+        this.ngxService.start();
+      this.Objcustomerdetail.Bill_No = eROW.Bill_No;
+      this.canbilldate = new Date(eROW.Bill_Date);
+      // this.rowCostcenter = eROW.Cost_Cent_ID;
+      // this.ObjaddbillForm.selectitem = this.rowCostcenter;
+      // this.autoaFranchiseBill();
+      // this.CustumerName = eROW.Customer_Name;
+      //this.Browsetab = false;
+      this.items = ["BROWSE","UPDATE","DIAGNOSIS"];
+      this.buttonname = "Update";
+       //console.log("this.EditDoc_No ", this.Objcustomerdetail.Bill_No );
+      // this.GetProductTypeFilterList();
+      // this.getselectitem();
+      // if (this.CustumerName == "SWIGGY" || this.CustumerName == "ZOMATO") {
+      //   this.getonlinewalletlist();
+      // } else {
+      //   this.getwalletamount();
+      // }
+      this.geteditdiagnosismaster(this.Objcustomerdetail.Bill_No);
+      //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
+      }
+  }
+  geteditdiagnosismaster(Bill_No){
+    //console.log("Doc_No",Bill_No);
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "Get Outlet Bill Details For Edit",
+      "Json_Param_String": JSON.stringify([{Doc_No : this.Objcustomerdetail.Bill_No}])
+  
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.editList = data;
+      this.rowCostcenter = data[0].Cost_Cent_ID;
+      this.ObjaddbillForm.selectitem = data[0].Cost_Cent_ID;
+      this.autoaFranchiseBill();
+      this.GetProductTypeFilterList();
+      this.getselectitem();
+      this.CustumerName = data[0].Wallet_Ac;
+      if(this.CustumerName === "SWIGGY" || this.CustumerName === "ZOMATO") {
+        this.getonlinewalletlist();
+      } else {
+        this.getwalletamount();
+      }
+      this.ObjaddbillForm.Advance = data[0].Online_Order_No ? data[0].Online_Order_No : data[0].Adv_Order_No;
+      this.Online_Order_No = data[0].Online_Order_No;
+      this.Online_Order_Date = data[0].Online_Order_Date ? new Date(data[0].Online_Order_Date) : null;
+      this.Objcustomerdetail.Costomer_Mobile = data[0].Costomer_Mobile;
+      this.Objcustomerdetail.Customer_Name= data[0].Customer_Name;
+      // this.Objcustomerdetail.Customer_DOB = data[0].Customer_DOB;
+      // this.Objcustomerdetail.Customer_Anni= data[0].Customer_Anni;
+      this.Objcustomerdetail.Customer_DOB = data[0].Customer_DOB ? this.DateService.dateConvert(data[0].Customer_DOB) : undefined;
+      this.Objcustomerdetail.Customer_Anni= data[0].Customer_Anni ? this.DateService.dateConvert(data[0].Customer_Anni) : undefined;
+      this.Objcustomerdetail.Customer_GST = data[0].Customer_GST;
+      this.Objcustomerdetail.Bill_Remarks = data[0].Bill_Remarks;
+      this.Objcustomerdetail.Cuppon_No = data[0].Cuppon_No;
+      this.Objcustomerdetail.Cuppon_OTP = data[0].Cuppon_OTP;
+      this.Created_By = data[0].Created_By;
+  
+      data.forEach(element => {
+      const  productObj = {
+          Product_ID : element.Product_ID,
+          Product_Description : element.Product_Description,
+          Modifier : element.Product_Modifier,
+          product_type : element.Product_Type,
+          is_service : element.Is_Service,
+          Net_Price : Number(element.Rate),
+          Delivery_Charge : Number(element.Delivery_Charge),
+          Batch_No : element.Batch_No,
+          Stock_Qty :  Number(element.Qty),
+          Amount : Number(element.Amount).toFixed(2),
+          Amount_berore_Tax : Number(element.Taxable).toFixed(2),
+          Max_Discount : Number(element.Discount_Per),
+          Dis_Amount : Number(element.Discount_Amt).toFixed(2),
+          Taxable : Number(Number(element.Taxable) - Number(element.Discount_Amt)).toFixed(2),
+          Gross_Amount : Number(element.Taxable).toFixed(2),
+          SGST_Per : Number(element.SGST_Per).toFixed(2),
+          SGST_Amount : Number(element.SGST_Amt).toFixed(2),
+          CGST_Per : Number(element.CGST_Per).toFixed(2),
+          CGST_Amount : Number(element.CGST_Amt).toFixed(2),
+          GST_Tax_Per : Number(element.IGST_Per),
+          GST_Tax_Per_forcalcu : Number(element.IGST_Per),
+          GST_Tax_Per_Amt : element.IGST_Amt,
+          Net_Amount : Number(element.Net_Amount).toFixed(2),
+          Taxable_Amount : Number(element.Taxable),
+          CGST_Output_Ledger_ID : Number(element.CGST_Output_Ledger_ID),
+          SGST_Output_Ledger_ID : Number(element.SGST_Output_Ledger_ID),
+          IGST_Output_Ledger_ID : Number(element.IGST_Output_Ledger_ID),
+        };
+  
+        this.productSubmit.push(productObj);
+      });
+      //this.QueryStringObj && this.QueryStringObj.Txn_ID
+      // if(data[0].Txn_ID){
+      //   this.getwalletamount();
+      //   // this.ObjcashForm.Wallet_Ac_ID = data[0].Wallet_Ac_ID ? data[0].Wallet_Ac_ID : undefined;
+      //   // this.ObjcashForm.Wallet_Ac = data[0].Wallet_Ac ? data[0].Wallet_Ac : undefined;
+      //   this.ObjcashForm.Wallet_Amount = data[0].Wallet_Amount ? data[0].Wallet_Amount : "";
+      //   this.ObjcashForm.Credit_To_Ac_ID = data[0].Credit_To_Ac_ID ? data[0].Credit_To_Ac_ID : undefined;
+      //   this.ObjcashForm.Credit_To_Ac = data[0].Credit_To_Ac ? data[0].Credit_To_Ac : undefined;
+      //   this.ObjcashForm.Credit_To_Amount = data[0].Credit_To_Amount ? data[0].Credit_To_Amount : "";
+      // } else {
+        if (data[0].Credit_To_Ac_ID) {
+          this.ObjcashForm.Credit_To_Ac_ID = data[0].Credit_To_Ac_ID;
+          this.ObjcashForm.Credit_To_Ac = data[0].Credit_To_Ac;
+          this.ObjcashForm.Credit_To_Amount = data[0].Credit_To_Amount;
+          this.creditdisabled = false;
+        } else {
+          this.ObjcashForm.Credit_To_Ac_ID = undefined;
+          this.ObjcashForm.Credit_To_Ac = undefined;
+          this.ObjcashForm.Credit_To_Amount = "";
+          this.creditdisabled = false;
+        }
+      // this.ObjcashForm.Credit_To_Ac_ID = data[0].Credit_To_Ac_ID ? data[0].Credit_To_Ac_ID : undefined;
+      // this.ObjcashForm.Credit_To_Ac = data[0].Credit_To_Ac ? data[0].Credit_To_Ac : undefined;
+      // this.ObjcashForm.Credit_To_Amount = data[0].Credit_To_Amount ? data[0].Credit_To_Amount : "";
+      if (data[0].Wallet_Ac_ID) {
+        this.ObjcashForm.Wallet_Ac_ID = data[0].Wallet_Ac_ID;
+        this.ObjcashForm.Wallet_Ac = data[0].Wallet_Ac;
+        this.ObjcashForm.Wallet_Amount = data[0].Wallet_Amount;
+        // if (this.CustumerName == "SWIGGY" || this.CustumerName == "ZOMATO") {
+        this.walletdisabled = false;
+        // } else {
+          // this.walletdisabled = true;
+        // }
+      } else {
+        this.ObjcashForm.Wallet_Ac_ID = undefined;
+        this.ObjcashForm.Wallet_Ac = undefined;
+        this.ObjcashForm.Wallet_Amount = "";
+        this.walletdisabled = false;
+      }
+      // this.ObjcashForm.Wallet_Ac_ID = data[0].Wallet_Ac_ID ? data[0].Wallet_Ac_ID : undefined;
+      // this.ObjcashForm.Wallet_Ac = data[0].Wallet_Ac ? data[0].Wallet_Ac : undefined;
+      // this.ObjcashForm.Wallet_Amount = data[0].Wallet_Amount ? data[0].Wallet_Amount : "";
+      this.ObjcashForm.Cash_Amount = data[0].Cash_Amount ? data[0].Cash_Amount : "";
+      this.ObjcashForm.Card_Amount = data[0].Card_Amount ? data[0].Card_Amount : "";
+      this.ObjcashForm.Total_Paid = data[0].Total_Paid;
+      this.ObjcashForm.Refund_Amount = data[0].Refund_Amount;
+      this.ObjcashForm.Due_Amount = data[0].Due_Amount;
+  
+      this.Objcustomerdetail.Foot_Fall_ID = data[0].Foot_Fall_ID;
+      this.Objcustomerdetail.Cost_Cen_ID = data[0].Cost_Cen_ID;
+      //this.ObjaddbillForm.Doc_Date = data[0].Order_Date;
+      this.Objcustomerdetail.Bill_No = data[0].Bill_No;
+      this.myDate = data[0].Bill_Date;
+      this.Total = data[0].Net_Amount;
+      this.Amount_Payable = data[0].Amount_Payable;
+      this.Adv = data[0].Advance;
+      this.Round_Off = data[0].Rounded_Off;
+  
+      this.CalculateTotalAmt();
+      this.listofamount();
+      setTimeout(()=>{
+      this.tabIndexToView = 1;
+      this.ngxService.stop();
+      },800)
+    //console.log("this.editList  ===",data);
+   //this.myDate =  new Date(data[0].Column1);
+    // on save use this
+   // this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));
+  
+  })
+  }
   // EditBill(col,val){
   //   // if (val === 'advordertosalebill') {
   //   //   const TempObj = {
@@ -1611,6 +1841,7 @@ checkdiscountamt(){
   //     this.RedirectTo(TempObj);
   //   }
   // }
+  
 
 
 }

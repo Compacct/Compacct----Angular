@@ -43,6 +43,7 @@ export class ProcessSalaryComponent implements OnInit {
   bankregdisabled = false;
   currentmonth: any;
   ButtonShowOrNot: any;
+  databaseName: any;
 
   constructor(
     private route : ActivatedRoute,
@@ -68,9 +69,19 @@ export class ProcessSalaryComponent implements OnInit {
     //this.startdate = this.Month_Name+'-'+'01'
     console.log('Month_Name',this.Month_Name)
    // this.Month_Name = new Date();
+    this.getDatabase();
     this.GetButtonshownData();
     this.GetEmpId();
     this.GetBrowseData();
+  }
+  getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log(data)
+        });
   }
   GetBrowseData(){
     this.BrowseList = [];

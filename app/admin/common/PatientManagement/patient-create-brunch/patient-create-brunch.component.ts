@@ -30,6 +30,8 @@ export class PatientCreateBrunchComponent implements OnInit {
   objPatient = new Patient();
   occptionList: any = [];
   databaseName; any = undefined;
+  ContactNameList:any = []
+  footFallId:any = undefined
   constructor(
     private Header: CompacctHeader,
     private CompacctToast: MessageService,
@@ -57,26 +59,46 @@ export class PatientCreateBrunchComponent implements OnInit {
 
   }
 
-  checkMobile(mobile: any) {
+  checkMobile(mobile: any,field:any) {
+    this.ContactNameList = []
     //console.log(mobile);
     if (mobile.length == 10) {
+      
       //console.log('10 digit Complete')
       this.$http.get(`/Hearing_BL_CRM_Appointment/Get_Name_From_Mobile_Hearing?Mobile=` + mobile).subscribe((data: any) => {
         if (data.length) {
-          //console.log(data);
-          this.CompacctToast.clear();
-          this.CompacctToast.add({
-            key: "compacct-toast",
-            severity: "error",
-            summary: "Warn Message",
-            detail: "Mobile Number Already Exist",
+         
+          if(this.databaseName == 'BSHPL'){
+              console.log(data);
+            this.CompacctToast.clear();
+            this.CompacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Mobile Number Already Exist",
           });
-          this.objPatient.Mobile = undefined;
+          this.objPatient[field] = undefined
+          }
+          else {
+            this.ContactNameList = JSON.parse(data)
+          }
+         
         }
       })
     }
   }
-
+  NameChange(){
+    this.objPatient.Prefix = undefined
+    this.objPatient.Contact_Name = undefined
+    if(this.footFallId && this.databaseName != 'BSHPL'){
+      const ContactNameListFilter = this.ContactNameList.Filter((el:any)=> el.Foot_Fall_ID == this.footFallId )
+      if(ContactNameListFilter.length){
+        this.objPatient.Prefix = ContactNameListFilter[0].Prefix
+        this.objPatient.Contact_Name = ContactNameListFilter[0].Contact_Name
+      }
+    }
+   
+  }
   getCountryList() {
     this.$http.get(`/Common/Get_Country_List`).subscribe((data: any) => {
       let CountryList = JSON.parse(data);
@@ -225,8 +247,9 @@ export class PatientCreateBrunchComponent implements OnInit {
         {responseType: 'text'})
         .subscribe((data: any) => {
           this.databaseName = data;
-          //console.log(data)
+          //console.log(data) BSHPL
         });
+        //this.databaseName = 'BSHPL'
   }
   PrintClick(print:any) {
     if (print.Foot_Fall_ID) {
@@ -248,6 +271,7 @@ export class PatientCreateBrunchComponent implements OnInit {
     this.CreationFormSubmited = false;
     this.Spinner = false;
     this.objPatient.Country = "India";
+    this.ContactNameList = []
   }
 
   onConfirm() {

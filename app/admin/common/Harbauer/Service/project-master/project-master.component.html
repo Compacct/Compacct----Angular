@@ -1,0 +1,256 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+
+                <div class="box-body">
+                    <form name="projectSeletcForm" #projectSeletcForm="ngForm" novalidate>
+                        <div class="col-sm-4">
+                            <label class="control-label">Project</label>
+                            <select class="form-control" name="Project" [(ngModel)]="seletcProject" (change)="changeProject()"  >
+                             <option [ngValue]="undefined">Select</option>
+                             <option *ngFor="let project of ProjectList"  [ngValue]="project.Project_ID">{{project.Project_Name}}</option>
+    
+                            </select>
+                        </div>
+                        </form>
+                    
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-5">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <h5 style="padding: 5px;" ><strong>Project Details</strong></h5>
+                    <form name="projectForm" #projectForm="ngForm" novalidate>
+                    <div class="col-sm-12">
+                        <label class="control-label">Project Name<sup class="text-danger">*</sup></label>
+                        <input class="form-control" 
+                        name="Project_Name" 
+                        placeholder="Project Name"
+                        #Project_Name="ngModel" 
+                        [(ngModel)]="Objproject.Project_Name" 
+                        [ngClass]="{'clearance': projectFormSubmit && Project_Name.errors?.required}" 
+                        required >
+                    </div>
+                    <div class="col-sm-12">
+                        <label class="control-label">Project Description<sup class="text-danger">*</sup></label>
+                        <input class="form-control" 
+                        name="Project_Description" 
+                        placeholder="Project Description"
+                        #Project_Description="ngModel" 
+                        [(ngModel)]="Objproject.Project_Description" 
+                        [ngClass]="{'clearance': projectFormSubmit && Project_Description.errors?.required}" 
+                        required >
+                    </div>
+                    <div class="col-sm-12" >
+                        <label class="control-label">Site Supervisor<sup class="text-danger">*</sup></label>
+                        <select class="form-control" name="Supervisor_ID"
+                        #Supervisor_ID="ngModel" 
+                        [(ngModel)]="Objproject.Supervisor_ID" 
+                        [ngClass]="{'clearance': projectFormSubmit && Supervisor_ID.errors?.required}" 
+                        required>
+                            <option [ngValue]="undefined">Select</option>
+                            <option *ngFor="let value of SitesupervisorList " [ngValue]="value.Eng_ID">{{value.Member_Name}}</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-12">
+                        <label class="control-label">Tender No<sup class="text-danger"></sup></label>
+                        <input class="form-control" 
+                        name="Tender_No" placeholder="Tender No"
+                        #Tender_No="ngModel" 
+                        [(ngModel)]="Objproject.Tender_No" 
+                         >
+                    </div>
+                    <div class="col-sm-12">
+                        <label class="control-label">Remark<sup class="text-danger"></sup></label>
+                        <input class="form-control" 
+                         name="Project_Remarks" placeholder="Remark"
+                        #Project_Remarks="ngModel" 
+                        [(ngModel)]="Objproject.Project_Remarks" >
+                    </div>
+                    <div class="col-sm-12"  style="margin-top: 5px;" >
+                        <button class="btn btn-primary pull-right" (click)="createProject(projectForm.form.valid)"  [disabled]="Spinner">
+                           <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                           <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                         </button>
+                    </div>
+                </form>
+              
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-7">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <h5 style="padding: 5px;" ><strong>Site Details</strong></h5>
+                    <form name="SiteForm" #SiteForm="ngForm" novalidate>
+                        <div class="col-sm-12">
+                            <div class="col-sm-6" >
+                                <label class="control-label">Site Name<sup class="text-danger">*</sup></label>
+                                <input class="form-control" 
+                                name="Site_Name" 
+                                placeholder="Site Name" 
+                                #Site_Name="ngModel" 
+                                [(ngModel)]="Objsite.Site_Name" 
+                                [ngClass]="{'clearance': SiteFormSubmit && Site_Name.errors?.required}" 
+                                required>
+                            </div>
+                           
+                            <div class="col-sm-6" >
+                                <label class="control-label">Site Remark</label>
+                                <input class="form-control" name="Site_Remarks" 
+                                #Site_Remarks="ngModel" 
+                                [(ngModel)]="Objsite.Site_Remarks" 
+                                [ngClass]="{'clearance': SiteFormSubmit && Site_Remarks.errors?.required}" 
+                                 placeholder="Site Remark" >
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="col-sm-4" >
+                                <label class="control-label">Contact Person <sup class="text-danger"></sup></label>
+                                <input class="form-control" name="Mobile" #Contact_Person="ngModel" 
+                                [(ngModel)]="Objsite.Contact_Person" 
+                                [ngClass]="{'clearance': SiteFormSubmit && Contact_Person.errors?.required}" 
+                                 
+                                placeholder="Contact Person" >
+                            </div>
+                            <div class="col-sm-4" >
+                                <label class="control-label">Contact No</label>
+                                <input class="form-control" name="Contact_No" [CompacctDigitonly]="true" maxlength="10" minlength="10" #Contact_No="ngModel" 
+                                [(ngModel)]="Objsite.Contact_No"  [ngClass]="{'clearance': SiteFormSubmit && Contact_Person.errors?.minlength}"   placeholder="Contact No" >
+                            </div>
+                            <div class="col-sm-4" >
+                                <label class="control-label">Site Address/Dist.</label>
+                                <input class="form-control" 
+                                name="Contact_Address" 
+                                #Contact_Address="ngModel" 
+                                [(ngModel)]="Objsite.Contact_Address"  
+                                placeholder="Site Address/Dist" >
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-sm-12" style="margin-top: 5px;" >
+                        <button class="btn btn-primary pull-right" (click)="addSite(SiteForm.form.valid)" >{{siteButton}}
+                         </button>
+                    </div>
+                   
+                    <div class="col-sm-12" style="margin-top: 5px;" >
+                        <div class="table-responsive no-padding ">
+                            <p-table [value]="siteList" [rowHover]="true" [autoLayout]="true" [responsive]="true">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th nowrap >Site Name</th>
+                                        <th nowrap >Site Remark</th>
+                                        <th nowrap >Contact Person</th>
+                                        <th nowrap >Contact No</th>
+                                        <th nowrap >Address </th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                    <tr>
+                                        <td>{{col.Site_Name ? col.Site_Name : '-'}}</td>
+                                        <td>{{col.Site_Remarks ? col.Site_Remarks : '-'}}</td>
+                                        <td>{{col.Contact_Person ? col.Contact_Person : '-'}}</td>
+                                        <td>{{col.Contact_No ? col.Contact_No : '-'}}</td>
+                                        <td>{{col.Contact_Address ? col.Contact_Address : '-'}}</td>
+                                        <td align="center"><button class="btn danger" (click)="editSite(rowIndex)" ><i class="fa fa-edit"></i></button></td>
+                                        <td align="center"><button (click)="commonDelete('site',rowIndex)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorright" let-state>
+                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                    <div class="col-sm-12" style="margin-top: 8px;" >
+                       
+                        <button class="btn btn-primary pull-right" (click)="updateSite()"  >
+                           Update Site
+                          </button>
+                        </div>
+                    <div class="col-sm-12" style="margin-top: 5px;" >
+                        <form name="engineerForm" #engineerForm="ngForm" novalidate>
+                           
+                        <div class="col-sm-6" > 
+                            <label class="control-label">Engineer<sup class="text-danger">*</sup></label>
+                            <select class="form-control" 
+                            name="Engineer_ID"  
+                            #Engineer_ID="ngModel" 
+                            [(ngModel)]="ObjEngineer.Engineer_ID" 
+                            [ngClass]="{'clearance': engineerFormSubmit && Engineer_ID.errors?.required}" 
+                            required>
+                                <option [ngValue]="undefined">Select</option>
+                                <option *ngFor=" let value of engineerList " [ngValue]=" value.Eng_ID ">{{value.Member_Name}} </option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2" >
+                            <button class="btn btn-primary pull-right custombutton" (click)="addEngineer(engineerForm.form.valid)"  >
+                                <span class="glyphicon glyphicon-plus"></span>Add
+                              </button>
+                        </div>
+                    </form>
+                    </div>
+                    <div class="col-sm-12" style="margin-top: 5px;" >
+                        <div class="table-responsive no-padding productTable">
+                            <p-table [value]="EngineerList" [rowHover]="true">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Engineer</th>
+                                       <th></th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                    <tr>
+                                        <td>{{col.Engineer_ID ? GetEngineerNameFromId(col.Engineer_ID ): '-'}}</td>
+                                        <td><button (click)="commonDelete('engineer',rowIndex)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorright" let-state>
+                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                    <div class="col-sm-12" style="margin-top: 8px;" >
+                       
+                        <button (click)="updateEngineer()" class="btn btn-primary pull-right">
+                          <span  class="glyphicon glyphicon-save"></span> Update Engineer
+                         </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

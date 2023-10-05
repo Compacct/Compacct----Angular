@@ -180,7 +180,7 @@ export class HREmployeeMasterComponent implements OnInit {
   }
 
 leftdatechange(){
-  if(this.objemployee.Present_Status === "RESIGNED" || this.objemployee.Present_Status === "SUSPENDED" || this.objemployee.Present_Status === "ABSCONDED") {
+  if(this.objemployee.Present_Status === "RESIGNED" || this.objemployee.Present_Status === "SUSPENDED" || this.objemployee.Present_Status === "ABSCONDED" || this.objemployee.Present_Status === "TERMINATED") {
     this.Leave_Dt = new Date();
     this.leftdisabled = true;
   }
@@ -536,13 +536,15 @@ getEmployeeDetails(Emp_ID){
          this.objemployee.Is_Biometric = data[0].Is_Biometric == "Y"? true : false;
          this.objemployee.Late_Ded_Tag = data[0].Late_Ded_Tag == "Y"? true : false; 
          this.objemployee.Is_HOD = data[0].Is_HOD == "Y"? true : false;
+         this.objemployee.Is_Trainer = data[0].Is_Trainer == "Y"? true : false;
          this.Joining_Dt = new Date(data[0].Emp_Joining_Dt);
          this.Resign_On = new Date(data[0].Resign_On);
          this.Leave_Dt = new Date(data[0].Emp_Leave_Dt) ;
          this.objemployee.Present_Status = data[0].Present_Status;
          this.leftdisabled = this.objemployee.Present_Status === "RESIGNED" || 
                              this.objemployee.Present_Status === "SUSPENDED" || 
-                             this.objemployee.Present_Status === "ABSCONDED" ? true : false;
+                             this.objemployee.Present_Status === "ABSCONDED" ||
+                             this.objemployee.Present_Status === "TERMINATED" ? true : false;
          this.DOB = new Date(data[0].D_O_B);
          this.Spouse_DOB = new Date(data[0].Spouse_DOB);
          this.Date_Of_Anniversary = new Date(data[0].Date_Of_Anniversary);
@@ -760,6 +762,7 @@ saveEmp(){
     this.objemployee.Late_Ded_Tag = this.objemployee.Late_Ded_Tag? 'Y' : 'N';
     this.objemployee.Is_Biometric = this.objemployee.Is_Biometric? 'Y' : 'N';
     this.objemployee.Is_HOD = this.objemployee.Is_HOD? 'Y' : 'N';
+    this.objemployee.Is_Trainer = this.objemployee.Is_Trainer ? 'Y' : 'N';
     this.objemployee.Login_User_ID = this.objemployee.Login_User_ID ? this.objemployee.Login_User_ID : 0;
     this.objemployee.Off_In_Time = this.objemployee.Off_In_Time ? this.DateService.dateTimeConvert(new Date(this.objemployee.Off_In_Time)) : undefined;
     this.objemployee.Off_Out_Time = this.objemployee.Off_Out_Time ? this.DateService.dateTimeConvert(new Date(this.objemployee.Off_Out_Time)) : undefined;
@@ -1702,6 +1705,7 @@ class Employee{
   Working_Hours_Mins : any;
   PTax_Avail : any;
   Is_HOD : any;
+  Is_Trainer : any;
   Emp_Leave_Dt : any;
   Resign_On : any;
   Emp_Joining_Dt : any;

@@ -18,6 +18,7 @@ import { valHooks } from "jquery";
 export class FinsCreateProjectComponent implements OnInit {
   EngagmentDate: Date = new Date()
   ValuationDate: Date = new Date()
+  SignningDate:Date = new Date()
   buttonname: string = 'save'
   Spinner: boolean = false
   SubledgerList: any = []
@@ -148,7 +149,7 @@ export class FinsCreateProjectComponent implements OnInit {
     this.StatusList = [];
     const obj = {
       "SP_String": "SP_BL_Txn_Finshore_Project",
-      "Report_Name_String": "Get_Status_Name_without_completed",
+      "Report_Name_String": "Get_Status_Name",
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       if (data.length > 0) {
@@ -207,6 +208,7 @@ export class FinsCreateProjectComponent implements OnInit {
     }
     else {
       this.Objproject.Engagement_Letter_Date = this.DateService.dateConvert(this.EngagmentDate);
+      this.Objproject.Signning_Date = this.SignningDate ? this.DateService.dateConvert(this.SignningDate) : null
       this.Objproject.Valuation_Date = this.DateService.dateConvert(this.ValuationDate);
       this.Objproject.User_ID = this.CokiuserId;
       this.Objproject.Project_Act = this.SelectedProjectAct.length ? this.SelectedProjectAct.toString() : this.Objproject.Project_Act;
@@ -276,4 +278,5 @@ Project_Act_Others: any;
 Method_Others: any;
 Bill_To_PI_Amount: any;
 Payment_Status: any;
+Signning_Date:any
 }

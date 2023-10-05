@@ -108,6 +108,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   Cancle_Remarks : string;
   remarksFormSubmitted = false;
   advordernumber: any;
+  viewgenerateList: any=[];
 
   constructor(
     private $http: HttpClient,
@@ -152,12 +153,14 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
     this.inputDate = true;
     this.Delivery_Date = new Date();
     this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+    this.viewgenerateList = [];
   }
   clearData(){
     //this.ObjadvDispat= new advDispat();
     this.OutletFormSubmit = false;
     this.flag = false;
     this.ngxService.stop();
+    this.viewgenerateList = [];
    }
   GetDate(){
     const obj = {
@@ -488,7 +491,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
                     detail: "Something Wrong"
                   });
             }
-        }
+  }
 // saveboxcharge(){
   // this.flagbox = false;
   // for(let i = 0; i < this.productDetails.length ; i++){
@@ -849,14 +852,12 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("Data From Api",data);
       this.viewList = data;
-       this.view_Doc_No = data[0].Doc_No;
-       this.view_Doc_date = new Date(data[0].Doc_Date);
-       this.view_Order_No = data[0].Adv_Order_No;
-    
-    this.ViewPoppup = true;
+      //  this.view_Doc_No = data[0].Doc_No;
+      //  this.view_Doc_date = new Date(data[0].Doc_Date);
+      //  this.view_Order_No = data[0].Adv_Order_No;
 
     // console.log("this.viewList  ===",this.viewList);
-
+    this.ViewPoppup = true;
   })
   }
   UpdateBox (viewobj){
@@ -907,6 +908,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
       });
     }
   }
+  
   GetDist1() {
     let DOrderBy = [];
     this.OutletFilter = [];
@@ -1212,6 +1214,168 @@ RegenerateBill(){
           });
         }
      })
+}
+
+// GENERATE BILL NO
+GeneratingBillNo(row){
+  //console.log("View ==",DocNo);
+this.clearData();
+if(row.Doc_No){
+this.view_Doc_No = row.Doc_No;
+//this.ViewPoppup = true;
+this.GetViewDataforgeneratebillno(this.view_Doc_No);
+}
+}
+GetViewDataforgeneratebillno(Doc_No){
+  this.viewgenerateList = [];
+  const obj = {
+    "SP_String": "SP_Controller_Master",
+    "Report_Name_String": "View Custom Order Dispatch Details",
+    "Json_Param_String": JSON.stringify([{Doc_No : this.view_Doc_No}])
+
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log("Data From Api",data);
+    this.viewgenerateList = data;
+    //  this.view_Doc_No = data[0].Doc_No;
+    //  this.view_Doc_date = new Date(data[0].Doc_Date);
+    //  this.view_Order_No = data[0].Adv_Order_No;
+
+  // console.log("this.viewList  ===",this.viewList);
+  this.saveAdvGenerate();
+
+})
+}
+saveAdvGenerate(){
+  console.log(this.saveqty());
+  console.log(this.viewgenerateList.length && this.saveqty());
+  if(this.viewgenerateList.length && this.saveqty()){
+    this.ngxService.start();
+        this.saveData = [];
+           this.viewgenerateList.forEach(el=>{
+             if(Number(el.Delivery_Qty) && Number(el.Delivery_Qty) !== 0 ){
+               if(el.Franchise === 'Y') {//(Number(el.Box_Charge) || Number(el.Box_Charge) === 0)) {
+              this.flagbox = false;
+                 if(el.Box_Charge) {
+             const saveObj = {
+               Doc_No: el.Doc_No,
+               Doc_Date: el.Doc_Date,
+               F_Cost_Cen_ID: el.F_Cost_Cen_ID,
+               F_Godown_ID: el.F_Godown_ID,
+               To_Cost_Cen_ID: el.To_Cost_Cen_ID,
+               To_Godown_ID: el.To_Godown_ID,
+               Batch_No : el.Batch_NO,
+               Product_ID: el.Product_ID,
+               Qty: el.Delivery_Qty,
+               Accepted_Qty : el.Delivery_Qty,
+               Rate: 0,
+               UOM: el.UOM,
+               User_ID: el.User_ID,
+               REMARKS: el.REMARKS,
+               Fin_Year_ID: this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
+               Vehicle_Details : el.Vehicle_Details,
+               Adv_Order_No : el.Adv_Order_No,
+               Status : this.Auto_Accepted == "Y" ? "Updated" : "Not Updated",
+               Box_Charge : el.Box_Charge, //? el.Box_Charge : 0,
+               Box_Charge_Remarks : el.Box_Charge_Remarks,
+               Order_Cost_Centre_ID : el.Order_Cost_Centre_ID
+             }
+             this.saveData.push(saveObj)
+            }
+            else {
+                this.flagbox = true;
+                 }
+                }
+                 else {
+                  const saveObj = {
+                    Doc_No: el.Doc_No,
+                    Doc_Date: el.Doc_Date,
+                    F_Cost_Cen_ID: el.F_Cost_Cen_ID,
+                    F_Godown_ID: el.F_Godown_ID,
+                    To_Cost_Cen_ID: el.To_Cost_Cen_ID,
+                    To_Godown_ID: el.To_Godown_ID,
+                    Batch_No : el.Batch_NO,
+                    Product_ID: el.Product_ID,
+                    Qty: el.Delivery_Qty,
+                    Accepted_Qty : el.Delivery_Qty,
+                    Rate: 0,
+                    UOM: el.UOM,
+                    User_ID: el.User_ID,
+                    REMARKS: el.REMARKS,
+                    Fin_Year_ID: this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
+                    Vehicle_Details : el.Vehicle_Details,
+                    Adv_Order_No : el.Adv_Order_No,
+                    Status : this.Auto_Accepted == "Y" ? "Updated" : "Not Updated",
+                    Box_Charge : el.Box_Charge ? el.Box_Charge : 0,
+                    Box_Charge_Remarks : el.Box_Charge_Remarks,
+                    Order_Cost_Centre_ID : el.Order_Cost_Centre_ID
+                  }
+                  this.saveData.push(saveObj)
+                 }
+                 }
+          })
+           if(this.saveData.length){
+            const obj = {
+              "SP_String": "SP_Production_Voucher",
+               "Report_Name_String": "Add K4C Txn Distribution For Custom Order",
+               "Json_Param_String": JSON.stringify(this.saveData)
+             }
+             this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+              this.dispatchchallanno = data[0].Column1;
+               var tempID = data[0].Column1;
+               if(data[0].Column1){
+                if(this.FranchiseBill != "N") {
+                  this.SaveFranchisechallan();
+                }
+                this.ngxService.stop();
+                 this.compacctToast.clear();
+               this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "success",
+               summary: "Distribution Challan No. " + tempID,
+               detail: "Distribution Challan Entry Succesfully"
+             });
+             this.productDetails = [];
+             this.tabIndexToView = 0;
+             this.items = ["BROWSE", "CREATE"];
+             this.buttonname = "Create";
+             this.clearData();
+             this.searchData();
+            // this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+               } else{
+                this.ngxService.stop();
+                this.compacctToast.clear();
+                    this.compacctToast.add({
+                      key: "compacct-toast",
+                      severity: "error",
+                      summary: "Warn Message",
+                      detail: "Something Wrong"
+                    });
+              }
+             })
+           }
+           else{
+            this.ngxService.stop();
+            this.compacctToast.clear();
+                this.compacctToast.add({
+                  key: "compacct-toast",
+                  severity: "error",
+                  summary: "Warn Message",
+                  detail: "Something Wrong"
+                });
+          }
+
+          }
+          else{
+            this.ngxService.stop();
+            this.compacctToast.clear();
+                this.compacctToast.add({
+                  key: "compacct-toast",
+                  severity: "error",
+                  summary: "Warn Message",
+                  detail: "Something Wrong"
+                });
+          }
 }
 
 }

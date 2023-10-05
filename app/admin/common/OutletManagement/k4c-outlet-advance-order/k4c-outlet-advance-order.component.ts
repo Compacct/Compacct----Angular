@@ -24,6 +24,7 @@ declare var $:any;
 export class K4cOutletAdvanceOrderComponent implements OnInit {
   items:any = [];
   Spinner = false;
+  mobSpinner = false;
   tabIndexToView = 0;
   buttonname = "Save & Print Bill";
   searchObj : search = new search();
@@ -125,6 +126,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
 
   BrandList:any = [];
   Brand_ID:any;
+  minDelDate: Date;
 
   constructor(
     private Header: CompacctHeader,
@@ -186,13 +188,15 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
      
      //Delivery Date
    //this.DateService.dateConvert(new Date (this.delivery_Date));
+   if(this.buttonname != "Update"){
    this.delivery_Date.setDate(new Date(this.delivery_Date).getDate() + 1);
+   }
    this.minTime = this.setHours(new Date(), "10:00am");
    this.maxTime = this.setHours(new Date(), "06:00pm");
    //this.DateService.dateTimeConvert(new Date(this.Delivey_Time));
   }
   setHours(dt, h):any {
-    const s = /(\d+):(\d+)(.+)/.exec(h);
+    const s:any = /(\d+):(\d+)(.+)/.exec(h);
     dt.setHours(s[3] === "pm" ?
       12 + parseInt(s[1], 10) :
       parseInt(s[1], 10));
@@ -317,6 +321,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   Showdatabymobile(valid){
     this.Searchlist = [];
     this.MobileSubmitFormSubmitted = true;
+    this.mobSpinner = true;
     if(valid){
     const tempobj = {
       User_Id : this.$CompacctAPI.CompacctCookies.User_ID,
@@ -333,7 +338,11 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
        //console.log('Searchbymobilelist=====',this.Searchlist)
        //this.seachSpinner = false;
        this.MobileSubmitFormSubmitted = false;
+       this.mobSpinner = false;
      })
+    }
+    else {
+      this.mobSpinner = false;
     }
   }
 
@@ -447,6 +456,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   }
 
 getorderdate(){
+  this.minDelDate = new Date();
      const obj = {
       "SP_String": "SP_Controller_Master",
       "Report_Name_String": "Get - Outlet Order Date",
@@ -457,6 +467,7 @@ getorderdate(){
       this.dateList = data;
     //console.log("this.dateList  ===",this.dateList);
    this.myDate =  new Date(data[0].Outlet_Order_Date);
+   this.minDelDate = new Date(data[0].Outlet_Order_Date);
     // on save use this
    // this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));
 
@@ -1556,6 +1567,7 @@ EditFromBrowse(Erow){
   //this.DocNO = undefined;
     //console.log("Edit",eROW);
     this.clearData();
+    this.minDelDate = new Date();
     if(Erow.Adv_Order_No){
     this.Objcustomerdetail.Adv_Order_No = Erow.Adv_Order_No;
    // console.log('advance order id ==',eROW.Adv_Order_No)
@@ -1571,6 +1583,7 @@ Edit(eROW){
   //this.DocNO = undefined;
     //console.log("Edit",eROW);
     this.clearData();
+    this.minDelDate = new Date();
     if(eROW.Adv_Order_No){
     this.Objcustomerdetail.Adv_Order_No = eROW.Adv_Order_No;
    // console.log('advance order id ==',eROW.Adv_Order_No)
@@ -1596,6 +1609,8 @@ geteditlist(Adv_Order_No){
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        console.log(data);
        this.editList = data;
+       this.myDate = new Date(data[0].Order_Date);
+       this.minDelDate = new Date(data[0].Order_Date);
        this.Objcustomerdetail.Costomer_Mobile = data[0].Costomer_Mobile;
        this.Objcustomerdetail.Customer_Name= data[0].Customer_Name;
       //  this.Objcustomerdetail.Customer_DOB = data[0].Customer_DOB;
@@ -1667,8 +1682,8 @@ geteditlist(Adv_Order_No){
     //this.ObjaddbillForm.Doc_Date = data[0].Order_Date;
     this.Objcustomerdetail.Adv_Order_No = data[0].Adv_Order_No;
 
-    this.myDate = data[0].Order_Date;
-    this.delivery_Date = data[0].Del_Date;
+    // this.myDate = data[0].Order_Date;
+    this.delivery_Date = new Date(data[0].Del_Date);
     this.Total = data[0].Net_Amount;
     this.Amount_Payable = data[0].Amount_Payable;
     this.Round_Off = data[0].Rounded_Off;
@@ -2015,10 +2030,13 @@ clearData(){
   this.addbillFormSubmitted = false;
   this.SavePrintFormSubmitted = false;
   this.seachSpinner = false;
+  this.Spinner = false;
   this.getorderdate();
   //this.delivery_Date;
   this.delivery_Date = new Date();
+  if(this.buttonname != "Update"){
   this.delivery_Date.setDate(this.delivery_Date.getDate() + 1);
+  }
   //console.log('Delivery Date ===' , this.delivery_Date)
   this.Objcustomerdetail.Del_Cost_Cent_ID ='32';
   this.Hold_Order_Flag = false;

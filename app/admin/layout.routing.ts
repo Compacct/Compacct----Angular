@@ -408,7 +408,18 @@ import { AssetMasterComponent } from './common/MICL/asset-master/asset-master.co
 import { HrTrainingComponent } from './common/HR/hr-training/hr-training.component';
 import { EvaluateForTrainingComponent } from './common/Attendance/evaluate-for-training/evaluate-for-training.component';
 import { SofthearAudiologistTargetComponent } from "./common/PatientManagement/Audiologist/softhear-audiologist-target/softhear-audiologist-target.component";
-
+import { SalarySlipComponent } from './common/HR/salary-slip/salary-slip.component';
+import { ApproveEvaluateForTraningComponent } from './common/Attendance/approve-evaluate-for-traning/approve-evaluate-for-traning.component';
+import { EmployeeRelatedReportComponent } from './common/HR/employee-related-report/employee-related-report.component';
+import { ServiceEngineeringTeamComponent } from "./common/Harbauer/Service/service-engineering-team/service-engineering-team.component";
+import { ProjectMasterComponent } from './common/Harbauer/Service/project-master/project-master.component';
+import { TrainingGradeModuleComponent } from './common/HR/training-grade-module/training-grade-module.component';
+import { K4cVoucherComponent } from './common/FinancialManagement/Transaction/Voucher/k4c-voucher/k4c-voucher.component';
+import { SalesmanTargetForJohComponent } from './common/PatientManagement/Audiologist/salesman-target-for-joh/salesman-target-for-joh.component';
+import { ServiceProblemTypeComponent } from './common/Harbauer/Service/service-problem-type/service-problem-type.component';
+import { ServiceSupportTicketComponent } from './common/Harbauer/Service/service-support-ticket/service-support-ticket.component';
+import { QuizModuleComponent } from "./common/Attendance/quiz-module/quiz-module.component";
+import { K4cAllDiagnosisComponent } from './common/OutletManagement/k4c-all-diagnosis/k4c-all-diagnosis.component';
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -3117,6 +3128,90 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: SofthearAudiologistTargetComponent,
       data: {
         title: 'Audiologist Target'
+      }
+    },
+    {
+      path: 'Salary_Slip',
+      component: SalarySlipComponent,
+      data: {
+        title: 'Salary Slip'
+      }
+    },
+    {
+      path: 'Approve_Evaluate_For_Traning',
+      component: ApproveEvaluateForTraningComponent,
+      data: {
+        title: 'Approve Evaluate For Traning'
+      }
+    },
+    {
+      path: 'Employee_Related_Report',
+      component: EmployeeRelatedReportComponent,
+      data: {
+        title: 'Employee Related Report'
+      }
+    },
+    {
+      path: 'BL_Txn_Service_Engineering_Team',
+      component: ServiceEngineeringTeamComponent,
+      data: {
+        title: 'Service Engineering Team'
+      }
+    },
+    {
+      path: 'Bl_Txn_Project_Master',
+      component: ProjectMasterComponent,
+      data: {
+        title: 'Project Master'
+      }
+    },
+    {
+      path: 'Training_Grade_Module',
+      component: TrainingGradeModuleComponent,
+      data: {
+        title: 'Training Grade Module'
+      }
+    },
+    {
+      path: 'K4C_Voucher',
+      component: K4cVoucherComponent,
+      data: {
+        title: 'Voucher'
+      }
+    },
+    {
+      path: 'CR_Salesman_Target_For_JOH',
+      component: SalesmanTargetForJohComponent,
+      data: {
+        title: 'Salesman Target For Joh'
+      }
+    },
+    {
+      path: 'BL_Txn_Service_Problem_Type',
+      component: ServiceProblemTypeComponent,
+      data: {
+        title: 'Service Problem Type'
+      }
+    },
+     {
+      path: 'BL_Txn_Service_Support_Ticket',
+      component: ServiceSupportTicketComponent,
+      data: {
+        title: 'Support Ticket'
+      }
+    },
+     {
+      path: 'Quiz_Module',
+      component: QuizModuleComponent,
+      data: {
+        title: 'Quiz Module'
+      }
+    },
+    {
+      path: 'K4C_All_Diagnosis',
+      component: K4cAllDiagnosisComponent,
+      data: {
+        title: 'K4C Diagnosis'
       }
     },
     /*{

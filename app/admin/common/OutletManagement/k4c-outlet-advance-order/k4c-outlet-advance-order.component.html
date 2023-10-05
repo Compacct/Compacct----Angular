@@ -93,9 +93,9 @@
                                                     </div>
 
                                                     <div class="col-sm-3">
-                                                        <button class="btn btn-primary custombutton3" data-toggle="modal" (click)="Showdatabymobile(MobileSubmitForm.form.valid)" id="load2" [disabled]="Spinner">
-                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                         <span *ngIf="!Spinner"></span>Show
+                                                        <button class="btn btn-primary custombutton3" data-toggle="modal" (click)="Showdatabymobile(MobileSubmitForm.form.valid)" id="load2" [disabled]="mobSpinner">
+                                             <p-progressSpinner *ngIf="mobSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                         <span *ngIf="!mobSpinner"></span>Show
                                      </button>
                                                     </div>
                                                 </div>
@@ -311,7 +311,7 @@
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="control-label">Delivery Date</label>
-                                            <ejs-datepicker [(value)]="delivery_Date" [format]="'dd/MMM/yyyy'" name="Del_Date" #Del_Date2 #Del_Date="ngModel" [ngModel]="delivery_Date" (change)='DeliveryChange($event)'></ejs-datepicker>
+                                            <ejs-datepicker [(value)]="delivery_Date" [format]="'dd/MMM/yyyy'" name="Del_Date" #Del_Date2 #Del_Date="ngModel" [ngModel]="delivery_Date" [min]='minDelDate' (change)='DeliveryChange($event)'></ejs-datepicker>
                                             <!-- (close)="enableButton($event)" <input class="form-control"
                                      type="date"
                                      name="Delivey_Date"

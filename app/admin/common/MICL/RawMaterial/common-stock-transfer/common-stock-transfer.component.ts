@@ -12,6 +12,7 @@ import { CompacctHeader } from "../../../../shared/compacct.services/common.head
 import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service";
 import { CompacctProjectComponent } from "../../../../shared/compacct.components/compacct.forms/compacct-project/compacct-project.component";
 import { ActivatedRoute } from "@angular/router";
+import { batchCancel } from "@syncfusion/ej2-angular-grids";
 
 @Component({
   selector: 'app-common-stock-transfer',
@@ -212,7 +213,16 @@ export class CommonStockTransferComponent implements OnInit {
         console.log("LotNolist  ===", data);
         this.BatchNolist = data;
         this.ObjStockTransfer.Batch_No = this.BatchNolist.length ? this.BatchNolist[0].Batch_No : undefined;
+        this.GetBatchDetails();
       })
+  }
+  GetBatchDetails(){
+    this.ObjStockTransfer.Rate = undefined;
+    if(this.ObjStockTransfer.Batch_No){
+      const batchdetails = this.BatchNolist.filter(el=> el.Batch_No == this.ObjStockTransfer.Batch_No)
+      this.ObjStockTransfer.Rate = batchdetails.length ? batchdetails[0].Rate : undefined;
+      this.GetTaxAmt();
+    }
   }
   GetTaxAmt() {
     if (this.ObjStockTransfer.Qty && this.ObjStockTransfer.Rate) {

@@ -16,6 +16,7 @@ import { Console } from 'console';
 import { CompacctProductDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct-product-details/compacct-product-details.component';
 import { CompacctgstandcustomdutyComponent } from '../../../shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
 import { CompacctFinancialDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-harb-master-product-electrical',
@@ -172,6 +173,12 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   ViewMetTypeModal = false;
   EXCELSpinner:boolean = false
   DescriptionCheck: any;
+  databaseName: any;
+  uploaddoc: boolean = true;
+  file: boolean = false;
+
+  @ViewChild("UploadFile", { static: false }) UploadFile!: FileUpload;
+  PDFFile:any;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -180,7 +187,8 @@ export class HarbMasterProductElectricalComponent implements OnInit {
     private DateService: DateTimeConvertService,
     private GlobalAPI: CompacctGlobalApiService,
     private compacctToast: MessageService,
-    private GetDistinctItems :CompacctGetDistinctService
+    private GetDistinctItems :CompacctGetDistinctService,
+    private ngxService: NgxUiLoaderService,
   ) { 
     this.route.queryParams.subscribe(params => {
       console.log(params);
@@ -194,7 +202,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       Header: this.headerData,
       Link: " Tender Management -> Master -> "+this.headerData
     });
-    
+    this.getDatabase();
     //  this.GetProductType();
      //this.GetProductSubType();
      this.getMaterialTyp();
@@ -217,6 +225,18 @@ export class HarbMasterProductElectricalComponent implements OnInit {
     this.destroyChild();
     this.clearData();
     this.productid = undefined;
+  }
+  getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log(data)
+        });
+  }
+  showDocument(doc) {
+    window.open(doc);
   }
   destroyChild() {
     if (this.ProductDetailsInput) {
@@ -318,10 +338,22 @@ export class HarbMasterProductElectricalComponent implements OnInit {
      this.Product_Mfg_Comp_ID = undefined;
      this.makedisabled = false;
      this.GetBrowseList();
+     if(this.databaseName != 'MICL') {
+      if(this.databaseName != 'MICL_Demo') {
      this.PDFViewFlag = false;
      if (this.PDFViewFlag === false) {
       this.fileInput.clear();
     }
+    }
+    }
+    if(this.databaseName === 'MICL' || this.databaseName === 'MICL_Demo') {
+      this.file = false;
+      this.uploaddoc = true;
+      if (this.UploadFile) {
+        this.UploadFile.clear();
+      }
+      this.PDFFile = undefined;
+      }
   
   }
 
@@ -1975,6 +2007,10 @@ deleteMaterialType(mettype){
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.editList = data;
       this.ObjMasterProductel = data[0];
+      if (data[0].Product_Image) {
+        this.file = true;
+        this.uploaddoc = false;
+      }
       this.ObjFinancialComponentData = data[0];
       this.objproduct = data[0]
       this.ProductDetailsInput.EditProductDetalis(data[0].Product_Type_ID,data[0].Product_Sub_Type_ID,data[0].Product_Description,data[0].Product_Code,data[0].Rack_NO)
@@ -2288,6 +2324,239 @@ deleteProUom(uom){
     XLSX.writeFile(workbook, 'master_product_electrical.xlsx');
     this.EXCELSpinner = false
   }
+  //MICL File Upload 
+  ClearUploadInpt(elem: any) {
+    if (this.ObjMasterProductel.Product_Image) {
+      this.uploaddoc = true;
+      this.ObjMasterProductel.Product_Image = undefined;
+    }
+    else {
+      this.UploadFile.clear();
+      this.file = false;
+      this.PDFFile = undefined;
+    }
+  }
+  fileSelect(event) {
+    this.file = false;
+    this.PDFFile = undefined;
+    if (event) {
+      this.PDFFile = event.files[0];
+      this.file = true;
+    }
+  }
+  showDoc() {
+    window.open(this.ObjMasterProductel.Product_Image);
+  }
+  
+  onBasicUpload(valid) {
+    this.MasterProductelFormSubmitted = true;
+    if(valid){
+    if (this.PDFFile) {
+       this.UploadDocApprove();
+    }
+    else {
+      this.SaveMasterProductelMicl();
+    }
+    }
+    else {
+      this.ngxService.stop();
+    }
+  }
+  UploadDocApprove() {
+    const upfile = this.PDFFile;
+    // console.log('file elem', upfile);
+    if (upfile['size']) {
+      this.ngxService.start();
+      this.GlobalAPI.CommonFileUpload(upfile)
+        .subscribe((data: any) => {
+          // console.log('upload response', data);
+          this.ObjMasterProductel.Product_Image = data.file_url;
+          this.ngxService.stop();
+          this.uploaddoc = false;
+          this.SaveMasterProductelMicl();
+        })
+    }
+  }
+  SaveMasterProductelMicl(){
+    //if(this.Product_Mfg_Comp_ID.length) {
+      if (this.productid) {
+        this.Spinner = true;
+        this.MasterProductelFormSubmitted = true;
+      if(this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)) {
+        if(this.DescriptionCheck === "OK") {
+      let UpdateArr:any =[]
+      // this.Product_Mfg_Comp_ID.forEach(item => {
+        const Obj = {
+            Product_ID : this.productid,
+            Product_Mfg_Comp_ID : this.Product_Mfg_Comp_ID
+           // Mfg_Company : item.label
+        }
+        UpdateArr.push({...Obj,...this.ObjMasterProductel})
+    // });
+    console.log("Update =" , UpdateArr)
+    // if(valid && this.productid){
+      // const Obj = {
+      //   Product_ID  : this.productid,
+      //   Product_Mfg_Comp_ID : this.Product_Mfg_Comp_ID
+      // }
+         const obj = {
+           "SP_String": "SP_Harbauer_Master_Product_Electrical",
+           "Report_Name_String" : "Master_Product_Electrical_Update",
+           "Json_Param_String": JSON.stringify(UpdateArr)
+       
+         }
+         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+           console.log(data);
+           var tempID = data[0].Column1;
+           if(data[0].Column1){
+            // const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+            this.compacctToast.clear();
+            this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: '', //"Return_ID  " + tempID,
+             detail: "Succesfully Updated" //+ mgs
+           });
+           this.clearData();
+           this.productid = undefined;
+           this.tabIndexToView = 0;
+           this.items = ["BROWSE", "CREATE"];
+          //  this.buttonname = "Save";
+            // this.testchips =[];
+       
+           } else{
+            this.ngxService.stop();
+             this.compacctToast.clear();
+             this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "error",
+               summary: "Warn Message",
+               detail: "Error Occured "
+             });
+           }
+         })
+       // }
+      
+      
+    }
+    else {
+     this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Description already exists."
+        });
+   } 
+  }
+   else {
+      this.Spinner = false;
+     // this.destroyChild();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          // detail: "No Docs Selected"
+          detail: "Error Occured "
+        });
+      }
+     }
+        else {
+      this.Spinner = true;
+      this.MasterProductelFormSubmitted = true;
+      // const Obj = {
+      //   Product_Code : this.ObjMachineMaster.Product_Model,
+      //   Product_Description : this.ObjMachineMaster.Product_Description,
+      //   Product_Mfg_Comp_ID : this.ObjMachineMaster.Manufacturer
+      // }
+      if(this.Product_Mfg_Comp_ID.length) {
+        if(this.DescriptionCheck === "OK") {
+      // if(this.Product_Mfg_Comp_ID.length) {
+        let tempArr =[]
+        this.Product_Mfg_Comp_ID.forEach(item => {
+          const obj = {
+              Product_ID : 0,
+              Product_Mfg_Comp_ID : item
+             // Mfg_Company : item.label
+          }
+        tempArr.push({...obj,...this.ObjMasterProductel})
+      });
+      console.log("create =" , tempArr)
+     // return JSON.stringify(tempArr);
+      // if(valid && this.ProductPDFFile['size']){
+         const obj = {
+           "SP_String": "SP_Harbauer_Master_Product_Electrical",
+           "Report_Name_String" : "Master_Product_Electrical_Create",
+           "Json_Param_String": JSON.stringify(tempArr)
+       
+         }
+         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+           console.log(data);
+           this.ObjMasterProductel.Product_ID = data[0].Product_Manufacturing_Group;
+           if(data[0].Product_Manufacturing_Group){
+            this.compacctToast.clear();
+            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+            this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: '', //"Return_ID  " + tempID,
+             detail: "Succesfully Saved" //+ mgs
+           });
+           this.clearData();
+       
+           } else{
+            this.ngxService.stop();
+             this.Spinner = false;
+             this.destroyChild();
+             this.compacctToast.clear();
+             this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "error",
+               summary: "Warn Message",
+               detail: "Error Occured "
+             });
+           }
+         })
+      //   } 
+      //   else {
+      // //  if(!this.ProductPDFFile['size']) {
+      //     this.Spinner = false;
+      //     this.compacctToast.clear();
+      //     this.compacctToast.add({
+      //       key: "compacct-toast",
+      //       severity: "error",
+      //       summary: "Warn Message",
+      //       detail: "Error Occured "
+      //     });
+      // }
+    }
+      else {
+       this.Spinner = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Description already exists."
+          });
+     }
+    }
+    else {
+      //  if(!this.ProductPDFFile['size']) {
+          this.Spinner = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+      }
+  }
+  }
+  //
 }
 class MasterProductel{
    Material_ID:number;

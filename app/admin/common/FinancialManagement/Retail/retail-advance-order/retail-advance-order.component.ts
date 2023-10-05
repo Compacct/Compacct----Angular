@@ -25,7 +25,7 @@ export class RetailAdvanceOrderComponent implements OnInit {
   items:any = [];
   CostCenterList: any =[];
   CostCenterListAll: any = [];
-  SEarchFilter: any = ['Doc_No','Doc_Date','Contact_Name','Amount','Discount','Remarks','Received_Amount','Bill_No']
+  SEarchFilter: any = [];
 
   DocDate: Date = new Date();
   AdvanceOrderFormSubmitted: boolean= false;
@@ -336,6 +336,10 @@ export class RetailAdvanceOrderComponent implements OnInit {
           this.HearingAdvanceBillList =   temp;
           this.HearingAdvanceFormSubmitted = false;
           this.HearingAdvanceFormseachSpinner = false;
+          if (this.HearingAdvanceBillList.length) {
+            this.SEarchFilter = Object.keys(this.HearingAdvanceBillList[0]);
+            //console.log('SEarchFilter=====',this.SEarchFilter);
+          }
       });
     }
   }
@@ -953,7 +957,7 @@ export class RetailAdvanceOrderComponent implements OnInit {
   ReturnAdvOrd(col:any){
     if(col){
       this.displayPaymentPopup=true;
-      this.backupRecvAmount=Number(col.total_DR_Amt);
+      this.backupRecvAmount=Number(col.total_DR_Amt)-Number(col.Payment_Amount);
       this.objPayment.Amount=Number(this.backupRecvAmount).toFixed(2);
       this.backupPatient=col.Contact_Name;
       this.backupPatientID=col.FOOT_Fall_ID;
@@ -987,12 +991,21 @@ export class RetailAdvanceOrderComponent implements OnInit {
     this.PaymentFormSubmitted=true;
     //console.log('PaymentFormSubmitted',valid);
     if(valid){
+      if(!(this.backupRecvAmount>=this.objPayment.Amount)){
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Amount Exceeds ",
+          detail:"Return Amount can't be greater than Receive Amount "
+        });
+        return
+      }
       this.objPayment.BankDate=this.DateService.dateConvert(this.BankPaymentDate);
       this.addPaymentList.push(this.objPayment);
       //console.log('addPaymentList',this.addPaymentList);
       this.objPayment = new Payment();
       this.BankTRNtypeList=[];
-      this.objPayment.Amount= Number(0).toFixed(2);
       this.BankPaymentDate = new Date();
       this.PaymentFormSubmitted=false;
     }

@@ -29,19 +29,6 @@
 									<ejs-datepicker start="Year" [(value)]="costCenterDate" format="MMMM/yyyy" depth="Year"></ejs-datepicker>
 								</div>
 								<div class="col-sm-4">
-									<button class="btn btn-primary" style="margin: 27px 0 0 10px" id="load" [disabled]="searchSpinner" (click)="getRetriveData()">
-										<p-progressSpinner
-											*ngIf="searchSpinner"
-											[style]="{ width: '15px', height: '15px' }"
-											strokeWidth="8"
-											animationDuration=".5s"></p-progressSpinner>
-										<span *ngIf="!searchSpinner" class="glyphicon glyphicon-search"></span> Search
-									</button>
-								</div>
-							</div>
-							<hr />
-							<div class="row">
-								<div class="col-sm-3">
 									<label class="control-label">CostCenter Name<sup class="text-danger">*</sup></label>
 									<p-dropdown
 										[options]="costCeterList"
@@ -56,10 +43,29 @@
 										[placeholder]="'Select CostCenter'"
 										[virtualScroll]="true"
 										itemSize="30"
-										[styleClass]="costCenterFormSubmit && centerLists.errors?.required ? 'clearance' : ''"
+										[disabled]="loginUserType != 'A'"
+										[styleClass]="(costCenterFormSubmit || searchFormSubmit) && centerLists.errors?.required ? 'clearance' : ''"
 										[required]="true">
 									</p-dropdown>
 								</div>
+								<div class="col-sm-4">
+									<button
+										class="btn btn-primary"
+										style="margin: 27px 0 0 10px"
+										id="load"
+										[disabled]="searchSpinner"
+										(click)="getRetriveData(!centerLists.errors?.required)">
+										<p-progressSpinner
+											*ngIf="searchSpinner"
+											[style]="{ width: '15px', height: '15px' }"
+											strokeWidth="8"
+											animationDuration=".5s"></p-progressSpinner>
+										<span *ngIf="!searchSpinner" class="glyphicon glyphicon-search"></span> Search
+									</button>
+								</div>
+							</div>
+							<hr />
+							<div class="row">
 								<div class="col-sm-3">
 									<label class="control-label">BR Target</label>
 									<input
@@ -93,8 +99,6 @@
 										[(ngModel)]="ObjcostCenter.Revenue_Target"
 										CompacctDigitonly="true" />
 								</div>
-							</div>
-							<div class="row">
 								<div class="col-sm-3">
 									<label class="control-label">Revenue Achivement</label>
 									<input
@@ -106,6 +110,8 @@
 										[(ngModel)]="ObjcostCenter.Revenue_Achivement"
 										CompacctDigitonly="true" />
 								</div>
+							</div>
+							<div class="row">
 								<div class="col-sm-3">
 									<label class="control-label">ASP Target</label>
 									<input
@@ -139,8 +145,6 @@
 										[(ngModel)]="ObjcostCenter.Pr_Target"
 										CompacctDigitonly="true" />
 								</div>
-							</div>
-							<div class="row">
 								<div class="col-sm-3">
 									<label class="control-label">PR Achivement</label>
 									<input
@@ -152,6 +156,8 @@
 										[(ngModel)]="ObjcostCenter.Pr_Achivement"
 										CompacctDigitonly="true" />
 								</div>
+							</div>
+							<div class="row">
 								<div class="col-sm-3">
 									<label class="control-label">FU Assessment</label>
 									<input
@@ -185,8 +191,6 @@
 										[(ngModel)]="ObjcostCenter.FU_Revenue"
 										CompacctDigitonly="true" />
 								</div>
-							</div>
-							<div class="row">
 								<div class="col-sm-3">
 									<label class="control-label">FU Revenue Achievement</label>
 									<input
@@ -198,6 +202,8 @@
 										[(ngModel)]="ObjcostCenter.FU_Revenue_Achievement"
 										CompacctDigitonly="true" />
 								</div>
+							</div>
+							<div class="row">
 								<div class="col-sm-3">
 									<label class="control-label">RAF Assessment</label>
 									<input
@@ -231,8 +237,6 @@
 										[(ngModel)]="ObjcostCenter.RAF_Revenue"
 										CompacctDigitonly="true" />
 								</div>
-							</div>
-							<div class="row">
 								<div class="col-sm-3">
 									<label class="control-label">RAF Revenue Achievement</label>
 									<input
@@ -244,6 +248,8 @@
 										[(ngModel)]="ObjcostCenter.RAF_Revenue_Achievement"
 										CompacctDigitonly="true" />
 								</div>
+							</div>
+							<div class="row">
 								<div class="col-sm-3">
 									<label class="control-label">Speech Revenue</label>
 									<input
@@ -266,7 +272,7 @@
 										[(ngModel)]="ObjcostCenter.Speech_Revenue_Achievement"
 										CompacctDigitonly="true" />
 								</div>
-								<div class="col-sm-3">
+								<div class="col-sm-6">
 									<button
 										class="btn btn-primary pull-right"
 										id="load"
@@ -335,157 +341,95 @@
 							<ng-template pTemplate="body" let-col>
 								<tr>
 									<td>
-										<button class="btn btn-sm btn-danger" (click)="deleteCostCenter(col)"><span class="glyphicon glyphicon-trash"></span></button>
+										<button class="btn btn-sm btn-danger" (click)="deleteCostCenter(col)" [disabled]="loginUserType != 'A'">
+											<span class="glyphicon glyphicon-trash"></span>
+										</button>
 									</td>
 									<td>
-										<button class="btn btn-sm btn-success" (click)="updateCostCenter(col)"><span class="glyphicon glyphicon-repeat"></span></button>
+										<button class="btn btn-sm btn-success" (click)="updateCostCenter(col)" [disabled]="loginUserType != 'A'">
+											<span class="glyphicon glyphicon-repeat"></span>
+										</button>
 									</td>
 									<td style="text-align: center" nowrap>{{ col.Cost_Cen_Name ? col.Cost_Cen_Name : "-" }}</td>
 									<td style="text-align: center" nowrap>
-										<input
-											type="text"
-											class="form-control"
-											[(ngModel)]="col.Br_Target"
-											CompacctDigitonly="true" />
+										<input type="text" class="form-control" [(ngModel)]="col.Br_Target" CompacctDigitonly="true" />
 									</td>
 									<td style="text-align: center" nowrap>
-										<input
-										type="text"
-										class="form-control"
-										[(ngModel)]="col.Br_Achivement"
-										CompacctDigitonly="true" /></td>
-									<td style="text-align: center" nowrap>
-										<input
-										type="text"
-										class="form-control"
-										[(ngModel)]="col.Revenue_Target"
-										CompacctDigitonly="true" /></td>
-									<td style="text-align: center" nowrap>
-										<input
-										type="text"
-										class="form-control"
-										[(ngModel)]="col.Revenue_Achivement"
-										CompacctDigitonly="true" /></td>
-									<td style="text-align: center" nowrap>
-										<input
-										type="text"
-										class="form-control"
-										[(ngModel)]="col.Asp_Target"
-										CompacctDigitonly="true" /></td>
-									<td style="text-align: center" nowrap>
-										<input
-										type="text"
-										class="form-control"
-										[(ngModel)]="col.Asp_Achivement"
-										CompacctDigitonly="true" /></td>
-									<td style="text-align: center" nowrap>
-										<input
-										type="text"
-										class="form-control"
-										[(ngModel)]="col.Pr_Target"
-										CompacctDigitonly="true" /></td>
-									<td style="text-align: center" nowrap>
-										<input
-										type="text"
-										class="form-control"
-										[(ngModel)]="col.Pr_Achivement"
-										CompacctDigitonly="true" />
+										<input type="text" class="form-control" [(ngModel)]="col.Br_Achivement" CompacctDigitonly="true" />
 									</td>
 									<td style="text-align: center" nowrap>
-										<input
-										type="text"
-										class="form-control"
-										[(ngModel)]="col.FU_Assessment"
-										CompacctDigitonly="true" />
+										<input type="text" class="form-control" [(ngModel)]="col.Revenue_Target" CompacctDigitonly="true" />
 									</td>
 									<td style="text-align: center" nowrap>
-										<input
-										type="text"
-										class="form-control"
-										[(ngModel)]="col.FU_Achivement"
-										CompacctDigitonly="true" />
+										<input type="text" class="form-control" [(ngModel)]="col.Revenue_Achivement" CompacctDigitonly="true" />
 									</td>
 									<td style="text-align: center" nowrap>
-										<input
-										type="text"
-										class="form-control"
-										[(ngModel)]="col.FU_Revenue"
-										CompacctDigitonly="true" />
+										<input type="text" class="form-control" [(ngModel)]="col.Asp_Target" CompacctDigitonly="true" />
 									</td>
 									<td style="text-align: center" nowrap>
-										<input
-										type="text"
-										class="form-control"
-										[(ngModel)]="col.FU_Revenue_Achievement"
-										CompacctDigitonly="true" />
+										<input type="text" class="form-control" [(ngModel)]="col.Asp_Achivement" CompacctDigitonly="true" />
 									</td>
 									<td style="text-align: center" nowrap>
-										<input
-										type="text"
-										class="form-control"
-										[(ngModel)]="col.RAF_Issue"
-										CompacctDigitonly="true" />
+										<input type="text" class="form-control" [(ngModel)]="col.Pr_Target" CompacctDigitonly="true" />
 									</td>
 									<td style="text-align: center" nowrap>
-										<input
-										type="text"
-										class="form-control"
-										[(ngModel)]="col.RAF_Achievement"
-										CompacctDigitonly="true" />
+										<input type="text" class="form-control" [(ngModel)]="col.Pr_Achivement" CompacctDigitonly="true" />
 									</td>
 									<td style="text-align: center" nowrap>
-										<input
-										type="text"
-										class="form-control"
-										[(ngModel)]="col.RAF_Revenue"
-										CompacctDigitonly="true" />
+										<input type="text" class="form-control" [(ngModel)]="col.FU_Assessment" CompacctDigitonly="true" />
 									</td>
 									<td style="text-align: center" nowrap>
-										<input
-										type="text"
-										class="form-control"
-										[(ngModel)]="col.RAF_Revenue_Achievement"
-										CompacctDigitonly="true" />
+										<input type="text" class="form-control" [(ngModel)]="col.FU_Achivement" CompacctDigitonly="true" />
 									</td>
 									<td style="text-align: center" nowrap>
-										<input
-										type="text"
-										class="form-control"
-										[(ngModel)]="col.Speech_Revenue"
-										CompacctDigitonly="true" />
+										<input type="text" class="form-control" [(ngModel)]="col.FU_Revenue" CompacctDigitonly="true" />
 									</td>
 									<td style="text-align: center" nowrap>
-										<input
-										type="text"
-										class="form-control"
-										[(ngModel)]="col.Speech_Revenue_Achievement"
-										CompacctDigitonly="true" />
+										<input type="text" class="form-control" [(ngModel)]="col.FU_Revenue_Achievement" CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input type="text" class="form-control" [(ngModel)]="col.RAF_Issue" CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input type="text" class="form-control" [(ngModel)]="col.RAF_Achievement" CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input type="text" class="form-control" [(ngModel)]="col.RAF_Revenue" CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input type="text" class="form-control" [(ngModel)]="col.RAF_Revenue_Achievement" CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input type="text" class="form-control" [(ngModel)]="col.Speech_Revenue" CompacctDigitonly="true" />
+									</td>
+									<td style="text-align: center" nowrap>
+										<input type="text" class="form-control" [(ngModel)]="col.Speech_Revenue_Achievement" CompacctDigitonly="true" />
 									</td>
 								</tr>
 							</ng-template>
 							<ng-template pTemplate="footer">
 								<tr *ngIf="TableData.length">
-								   <td colspan="3" style="text-align: center;">Total Target Amount</td>
-								   <td>{{calBr_Target()}}</td>
-								   <td>{{calBr_Achivement()}}</td>
-								   <td>{{calRevenue_Target()}}</td>
-								   <td>{{calRevenue_Achivement()}}</td>
-								   <td>{{calAsp_Target()}}</td>
-								   <td>{{calAsp_Achivement()}}</td>
-								   <td>{{calPr_Target()}}</td>
-								   <td>{{calPr_Achivement()}}</td>
-								   <td>{{calFU_Assessment()}}</td>
-								   <td>{{calFU_Achivement()}}</td>
-								   <td>{{calFU_Revenue()}}</td>
-								   <td>{{calFU_Revenue_Achievement()}}</td>
-								   <td>{{calRAF_Issue()}}</td>
-								   <td>{{calRAF_Achievement()}}</td>
-								   <td>{{calRAF_Revenue()}}</td>
-								   <td>{{calRAF_Revenue_Achievement()}}</td>
-								   <td>{{calSpeech_Revenue()}}</td>
-								   <td>{{calSpeech_Revenue_Achievement()}}</td>
+									<td colspan="3" style="text-align: center">Total Target Amount</td>
+									<td>{{ calBr_Target() }}</td>
+									<td>{{ calBr_Achivement() }}</td>
+									<td>{{ calRevenue_Target() }}</td>
+									<td>{{ calRevenue_Achivement() }}</td>
+									<td>{{ calAsp_Target() }}</td>
+									<td>{{ calAsp_Achivement() }}</td>
+									<td>{{ calPr_Target() }}</td>
+									<td>{{ calPr_Achivement() }}</td>
+									<td>{{ calFU_Assessment() }}</td>
+									<td>{{ calFU_Achivement() }}</td>
+									<td>{{ calFU_Revenue() }}</td>
+									<td>{{ calFU_Revenue_Achievement() }}</td>
+									<td>{{ calRAF_Issue() }}</td>
+									<td>{{ calRAF_Achievement() }}</td>
+									<td>{{ calRAF_Revenue() }}</td>
+									<td>{{ calRAF_Revenue_Achievement() }}</td>
+									<td>{{ calSpeech_Revenue() }}</td>
+									<td>{{ calSpeech_Revenue_Achievement() }}</td>
 								</tr>
-							 </ng-template>
+							</ng-template>
 							<ng-template pTemplate="paginatorright" let-state>
 								Showing {{ state.first + 1 }} of {{ state.first + state.rows }} of {{ state.totalRecords }}
 							</ng-template>

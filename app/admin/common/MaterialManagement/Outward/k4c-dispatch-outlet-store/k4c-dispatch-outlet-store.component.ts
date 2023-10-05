@@ -141,6 +141,8 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
 
   franchalndate = undefined;
   Refreshlist:any = [];
+  generatedisabledbutton: boolean = true;
+  generatedisabled: boolean = false;
   
   constructor(
     private $http: HttpClient,
@@ -194,6 +196,8 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
     this.SelectedIndent = [];
     this.IndentFilter = [];
     this.SpinnerShow = false;
+    this.generatedisabledbutton = true;
+    this.generatedisabled = false;
 
   }
   onConfirm(){
@@ -252,6 +256,8 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
   this.EditList = [];
   this.todayDate = new Date();
   this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+  this.generatedisabledbutton = true;
+  this.generatedisabled = false;
   }
   getCostcenter(){
     console.log(this.Objdispatch.Brand_ID)
@@ -1210,6 +1216,26 @@ editmaster(masterProduct){
   this.tabIndexToView = 1;
   this.items = ["BROWSE", "UPDATE"];
   this.buttonname = "Update";
+  this.brandInput = true;
+  this.editDis = true;
+  //this.adDisabled = false;
+  this.inputBoxDisabled = true;
+  this.indentdateDisabled = false;
+  this.reqQTYdis = false;
+  this.AccQtydis = true;
+  this.geteditmaster(masterProduct);
+  }
+}
+GeneratingBillNo(masterProduct){
+  this.productDetails = [];
+  this.clearData();
+  this.outLetDis = true;
+  if(masterProduct.Doc_No){
+  this.tabIndexToView = 1;
+  this.items = ["BROWSE", "UPDATE"];
+  this.buttonname = "Update";
+  this.generatedisabledbutton = false;
+  this.generatedisabled = true;
   this.brandInput = true;
   this.editDis = true;
   //this.adDisabled = false;

@@ -23,15 +23,39 @@
 										</option>
 									</select>
 								</div>
-								<div class="col-sm-4" *ngIf="visibleDate == 'MT,XL'">
+								<div class="col-sm-4" *ngIf="Monthflag">
 									<label class="control-label">Select Date<sup class="text-danger">*</sup></label>
 									<ejs-datepicker start="Year" [(value)]="currentMonth" format="MMMM/yyyy" depth="Year"></ejs-datepicker>
 								</div>
-								<div class="col-sm-4" *ngIf="visibleDate == 'DT,XL'">
+								<div class="col-sm-4" *ngIf="DateRangeflag">
 									<label class="control-label">Select Date<sup class="text-danger">*</sup></label>
 									<app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate"></app-compacct-daterangepicker>
 								</div>
-								<div class="col-sm-4">
+								<div class="col-sm-4" *ngIf="HRyearflag">
+									<label class="control-label">Year
+										<sup class="text-danger">*</sup></label>
+										<select class="form-control"name="hryearid"
+										#hryearid ="ngModel"
+										[(ngModel)]="HR_Year_ID"
+										[ngClass]="{'clearance': reportFormSubmit && hryearid?.errors?.required}"
+										required>
+											<option [ngValue]="undefined">Select</option>
+											<option *ngFor="let y of HrYearList" value="{{y.HR_Year_ID}}">{{y.HR_Year_Name}}</option>
+										</select>
+								</div>
+								<div class="col-sm-4" *ngIf="Quaterflag">
+									<label class="control-label">Quarter
+										<sup class="text-danger">*</sup></label>
+										<select class="form-control"name="quater"
+										#quater ="ngModel"
+										[(ngModel)]="Quarter"
+										[ngClass]="{'clearance': reportFormSubmit && quater?.errors?.required}"
+										required>
+											<option [ngValue]="undefined">Select</option>
+											<option *ngFor="let y of quaterlist" value="{{y.Quarter}}">{{y.Quarter}}</option>
+										</select>
+								</div>
+								<div class="col-sm-4" *ngIf="excelflag">
 									<button class="btn btn-success custom-button1" id="load" (click)="exportExcel(rep_form.form.valid)" style="margin: 27px 0 0 10px">
 										<p-progressSpinner
 											*ngIf="Spinner"

@@ -1,0 +1,334 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+  <ng-template let-message pTemplate="message">
+      <div style="text-align: center">
+          <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+          <h3>{{message.summary}}</h3>
+          <p>{{message.detail}}</p>
+      </div>
+
+      <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+  </ng-template>
+</p-toast>
+<div class="row">
+  <div class="col-xs-12">
+     <div class="box box-primary">
+        <div class="form-horizontal">
+           <div class="box-body">
+            <p-tabView >
+              <div class="table-responsive">
+                <p-table [value]="TreeDataList"
+                [paginator]="TreeDataList.length ? true : false "
+                [rows]="10" 
+                [rowHover]="true" 
+                [autoLayout]="true"
+                sortMode="multiple"
+                [rowsPerPageOptions]="[100,200,300]"
+                [globalFilterFields]="TreeDataListHeader"
+                [rowHover]="true" #dt>
+                    <ng-template pTemplate="caption">
+                        <div class="row">
+                          
+                          <div class="col-sm-3 pull-right" style="text-align: right">
+                            <input type="text" pInputText size="50" placeholder="Search"
+                                (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                        </div>
+                        <div class="col-sm-2 pull-right" style="text-align: right">
+                          <button (click)='SaleExcModal()' class="btn btn-primary btn-sm pull-right">
+                            <span class="glyphicon glyphicon-plus"></span> Create Engineer
+                          </button>
+                        </div>
+                          
+                        </div>
+                
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                          <th style="width:5em">Action</th>
+                        <th>Member Name</th>
+                        <th>Under Member Name</th>
+                        <th>Specialization</th>
+                        <th>Is Supervisor</th>
+                        <th>Is Problem Resolver</th>
+                       </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-col>
+                        <tr>
+                          <td>
+                            <div class="dropdown">
+                                <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                    <i class="fa fa-fw fa-bars"></i>
+                                                    <span class="caret"></span>
+                                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a (click)="Edit(col)">
+                                            <i class="fa fa-fw fa-pencil"></i> Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a (click)="Delete(col)">
+                                            <i class="fa fa-fw fa-trash"></i> Delete
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                          <td> {{col.Member_Name}} </td>
+                          <td> {{col.under_member_name}} </td>
+                          <td> {{col.Specialization}} </td>
+                          <td> {{col.Is_Supervisor == 'Y' ? "Yes" : "No"}} </td>
+                          <td> {{col.Is_Problem_Resolver == 'Y' ? 'Yes' : 'No'}} </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                </div>
+              </p-tabView>
+              
+              </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   
+  <p-dialog
+  [header]="buttonname+' Engineering Team'"
+  [appendTo]="'body'"
+  [visible]="CreateSalesExceModal"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '40%', minWidth: '300px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+>
+<form name="CreateEngineeringteam" #CreateEngineeringteam="ngForm" novalidate>
+    <div class="form-group">
+        <div class="col-sm-12">
+            <label class="control-label">Member Name<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control"
+            name="Member_Name"
+              #Member_Name="ngModel"
+              [(ngModel)]="objserviceEngineering.Member_Name"
+              [ngClass]="{
+                clearance:
+                serviceEngineeringFormSubmit && Member_Name.errors?.required
+              }"
+              placeholder="Member Name"
+              required>
+          </div>
+          <div class="col-sm-12">
+            <label class="control-label"
+              >User Name<sup class="text-danger">*</sup></label
+            >
+            <select
+              class="form-control"
+              name=" User_ID "
+              #User_ID ="ngModel"
+              [(ngModel)]="objserviceEngineering. User_ID "
+              [ngClass]="{
+                clearance:
+                serviceEngineeringFormSubmit &&  User_ID .errors?.required
+              }"
+              required
+            >
+              <option [ngValue]="undefined">Select</option>
+              <option
+                *ngFor="let option of UserList"
+                value="{{ option.User_ID }}"
+              >
+                {{ option.Name }}
+              </option>
+            </select>
+          </div>
+          <div class="col-sm-12">
+            <label class="control-label"
+              >Specialization<sup class="text-danger"></sup></label
+            >
+            <div class="pull-right">
+                <span (click)="viewSpeci()"  class="btn-vk createPatient"><i class="fa fa-fw  fa-eye"></i> View</span> &nbsp;
+                <span (click)="createSpeci()" class="btn-vk createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+            </div>
+            <select
+              class="form-control"
+              name="Eng_Specialization_ID"
+              #Eng_Specialization_ID="ngModel"
+              [(ngModel)]="objserviceEngineering.Eng_Specialization_ID"
+             >
+              <option [ngValue]="undefined">Select</option>
+              <option
+                *ngFor="let option of SpecilizationList"
+                value="{{ option.Eng_Specialization_ID }}" >
+                {{ option.Specialization }}
+              </option>
+            </select>
+          </div>
+          <div class="col-sm-12">
+            <label class="control-label"
+              >Under Team<sup class="text-danger">*</sup></label
+            >
+            <select
+              class="form-control"
+              name="Under_Eng_ID"
+              #Under_Eng_ID="ngModel"
+              [(ngModel)]="objserviceEngineering.Under_Eng_ID"
+              [ngClass]="{clearance:serviceEngineeringFormSubmit && Under_Eng_ID.errors?.required}"
+              required
+            >
+              <option [ngValue]="undefined">Select</option>
+              <option
+                *ngFor="let option of UnderTeamList"
+                value="{{ option.Eng_ID }}"
+              >
+                {{ option.Member_Name }}
+              </option>
+            </select>
+          </div>
+          <div class="col-sm-12">
+            <label class="control-label"
+              >Is Supervisor <sup class="text-danger">*</sup></label
+            >
+            <select
+              class="form-control"
+              name="Is_Supervisor"
+              #Is_Supervisor="ngModel"
+              [(ngModel)]="objserviceEngineering.Is_Supervisor"
+              [ngClass]="{  clearance:serviceEngineeringFormSubmit && Is_Supervisor.errors?.required }"
+              required
+            >
+              <option [ngValue]="undefined">Select</option>
+              <option value="Y" > Yes </option>
+              <option value="N" > No </option>
+            </select>
+          </div>
+          <div class="col-sm-12" *ngIf="objserviceEngineering.Is_Supervisor == 'N'" >
+            <label class="control-label"
+              >Problem Resolver <sup class="text-danger">*</sup></label
+            >
+            <select
+              class="form-control"
+              name="Is_Problem_Resolver"
+              #Is_Problem_Resolver="ngModel"
+              [(ngModel)]="objserviceEngineering.Is_Problem_Resolver"
+              [ngClass]="{  clearance:serviceEngineeringFormSubmit && Is_Problem_Resolver.errors?.required }"
+              [required]="objserviceEngineering.Is_Supervisor == 'N'"
+            >
+              <option [ngValue]="undefined">Select</option>
+              <option value="Y" > Yes </option>
+              <option value="N" > No </option>
+            </select>
+          </div>
+        </div>
+</form>
+
+
+  <p-footer>
+    <button
+      type="button"
+      (click)="close()"
+      class="btn btn-default"
+    >
+      CANCEL
+    </button>
+    <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="Createteam(CreateEngineeringteam.form.valid)" [disabled]="SpinnerCreate">
+      <p-progressSpinner
+        *ngIf="SpinnerCreate"
+        [style]="{ width: '15px', height: '15px' }"
+        strokeWidth="8"
+        animationDuration=".5s"
+      ></p-progressSpinner>
+      <span
+        *ngIf="!SpinnerCreate"
+        class="glyphicon glyphicon-save"
+      ></span
+      >&nbsp;{{buttonname}}
+      </button>
+  </p-footer>
+</p-dialog>
+<p-dialog [header]="'View Specialization'" [appendTo]="'body'" [visible]="ViewModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+       <p-table [value]="SpecilizationList" >
+          <ng-template pTemplate="header">
+              <tr>
+                  <th>Specialization</th>
+                  <th style="width:9em"></th>
+              </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-ri="rowIndex">
+              <tr >
+                <td>
+                      
+                          <span *ngIf="rowIndexNumber == ri"  >
+                              <input  class="form-control" type="text" [(ngModel)]="rowData.Specialization" required>
+                          </span>
+                          <span  *ngIf="rowIndexNumber != ri" >
+                              {{rowData.Specialization}}
+                          </span>
+                      
+                  </td>
+                 <td style="text-align:center">
+                      <button *ngIf="pencil(ri)" pButton type="button"  icon="pi pi-pencil" class="ui-button-info" (click)="onRowEditInit(rowData,ri)" ></button>
+                      <button *ngIf="rowIndexNumber == ri" pButton type="button"  icon="pi pi-check" class="ui-button-success"  (click)="onRowSave(rowData)" style="margin-right: .5em" ></button>
+                      <button *ngIf="rowIndexNumber == ri" pButton type="button"  icon="pi pi-times" class="ui-button-danger" (click)="onRowcencleInit()" ></button>
+                      <button *ngIf="pencil(ri)" pButton pRipple type="button"  icon="pi pi-trash" (click)="onRowDelete(rowData,ri)" class="ui-button-danger" style=" margin-left: 30px;"></button>
+                    </td>
+              </tr>
+          </ng-template>
+      </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewModal = false; " class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+
+<p-dialog [header]="'Create Specialization'" [appendTo]="'body'" [visible]="SpecializationModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
+    [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="SpecializationForm" #SpecializationForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Specialization Name<sup class="text-danger">*</sup
+  ></label>
+        <input type="text" 
+        class="form-control" 
+        name="Specialization" #Specialization="ngModel"
+         [(ngModel)]="SpecializationModalCreate" 
+         placeholder="Specialization"
+          [ngClass]="{clearance: SpecializationSubmitted && Specialization?.errors?.required }" required />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="SpecializationModal = false" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreateSpecialization(SpecializationForm.form.valid)" id="load2" [disabled]="Spinner">
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;Create
+</button>
+    </p-footer>
+</p-dialog>

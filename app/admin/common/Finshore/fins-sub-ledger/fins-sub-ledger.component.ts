@@ -696,12 +696,12 @@ class SubLedger{
   Pin : any;
   State : any;
   District : any;
-  Export_Domestic : any;
+  Export_Domestic : any = "Domestic";
   Brand : any;
   Website : any;
   TDS_Deduction : any;
   CIRCLE : any;
-  IS_SEZ : any;
+  IS_SEZ : any="No";
   Recurring_Order_Days : any;
   Amount_Business_Expected : any;
   PerYear_Onetime : any = "PerYear";

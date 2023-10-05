@@ -124,6 +124,9 @@
 									</div>
 									<div class="col-sm-4">
 										<label class="control-label">Skill<sup class="text-danger">*</sup></label>
+										<div class="pull-right">
+                                            <span (click)="openSkillModel()" class="label label-primary" style="cursor: pointer; display: inline-block; padding: 6px;"><i class="fa fa-fw fa-plus"></i> Add Skill</span>
+                                        </div>
 										<p-dropdown [options]="skillList" name="skill_List" #skill_List="ngModel"
 											[(ngModel)]="objEvaluationForTraning.Skill_ID" [showClear]="true"
 											[emptyFilterMessage]="'No Skill Found'" [filter]="true"
@@ -219,3 +222,45 @@
 		</div>
 	</div>
 </div>
+<!-- add skill model -->
+<p-dialog
+	header="Disapprove"
+	appendTo="body"
+	[(visible)]="DisplayAddSkillModel"
+	[modal]="true"
+	[responsive]="true"
+	[style]="{ width: '370px', minWidth: '300px' }"
+	style="text-align: center"
+	[minY]="70"
+	[positionTop]="50"
+	[maximizable]="false"
+	[closable]="false"
+	[baseZIndex]="10000">
+	<form name="AddSkill" #AddSkill="ngForm">
+		<div class="row">
+			<div class="col-sm-12">
+				<label class="control-label">Skill Name<sup class="text-danger">*</sup></label>
+				<input
+					type="text"
+					class="form-control"
+					placeholder="Skill Name"
+					name="Skill_Name"
+					#Skill_Name="ngModel"
+					[(ngModel)]="skill_Name"
+					[ngClass]="{ clearance: addSkillFormSubmit && Skill_Name?.errors?.required }"
+					required />
+				</div>
+		</div>
+	</form>
+	<p-footer>
+		<button
+			class="btn btn-primary"
+			(click)="addSkill(AddSkill.form.valid)"
+			id="load"
+			[disabled]="skillSpinner">
+			<p-progressSpinner *ngIf="skillSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+			<span *ngIf="!Spinner" class="glyphicon glyphicon-ok"></span> Save
+		</button>
+		<button type="button" (click)="closeSkillModel()" class="btn btn-danger" [disabled]="skillSpinner"><span class="glyphicon glyphicon-remove"></span> Close</button>
+	</p-footer>
+</p-dialog>

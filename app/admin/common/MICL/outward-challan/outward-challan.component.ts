@@ -8,6 +8,7 @@ import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { Dropdown } from "primeng/components/dropdown/dropdown";
 import { NgxUiLoaderService } from "ngx-ui-loader";
+import * as XLSX from 'xlsx';
 import { CompacctProjectComponent } from '../../../shared/compacct.components/compacct.forms/compacct-project/compacct-project.component';
 
 @Component({
@@ -135,6 +136,8 @@ export class OutwardChallanComponent implements OnInit {
   editDocNo: any;
   StateList2:any =[];
   godwnandbatchdisabled:boolean = false;
+  TCSTaxRequiredValidation = false;
+  TCSdataList:any = [];
   constructor(
     private Header: CompacctHeader,
     private router: Router,
@@ -191,9 +194,14 @@ export class OutwardChallanComponent implements OnInit {
     this.SalesOrderNoList = [];
     this.ObjPurChaseBill.Transporter_ID = undefined;
     this.editDocNo = undefined;
+    this.ObjPurChaseBill.TCS_Y_N = undefined;
+    this.ObjPurChaseBill.TCS_Persentage = 0;
+    this.ObjPurChaseBill.TCS_Amount = 0;
+    this.ObjPurChaseBill.TCS_Per = undefined;
   }
   clearData() { 
     this.PurchaseBillFormSubmitted = false;
+    this.TCSTaxRequiredValidation = false;
     this.TermFormSubmitted = false;
     this.ObjPurChaseBill.Company_ID = this.companyList.length === 1 ? this.companyList[0].Company_ID : undefined;  
     this.DocDate = new Date();
@@ -499,7 +507,7 @@ export class OutwardChallanComponent implements OnInit {
       this.$http.get("https://azdistancecalc.azurewebsites.net/api/Distance?code=OTrdwwzB0Q8uzU1BIhgflRcUMM60Q1uRSS22Wx0-99QwAzFuk-uwmw==&fromPincode="+this.ObjPurChaseBill.Cost_Cen_PIN+"&toPincode="+this.ObjPurChaseBill.Sub_Ledger_Pin_2)
      .subscribe((data:any)=>{
       console.log("data",data)
-      this.ObjPurChaseBill.Transportation_Distance = data[0].distance;
+      this.ObjPurChaseBill.Transportation_Distance = Math.ceil(Number(Number(data[0].distance).toFixed(2)));
       this.ngxService.stop();
       // console.log("Transportation_Distance",this.ObjPurChaseBill.Transportation_Distance)
      })
@@ -854,6 +862,7 @@ export class OutwardChallanComponent implements OnInit {
       };
       this.AddProdList.push(TemopArry)
       this.TotalCalculation();
+      this.TcsAmtCalculation();
       console.log("this.AddProdList", this.AddProdList)
       this.TermFormSubmitted = false;
       this.ObjProductInfo.Sale_Order_No = undefined;
@@ -869,6 +878,9 @@ export class OutwardChallanComponent implements OnInit {
       this.ObjProductInfo.Rate = undefined;
       this.ObjProductInfo.Taxable_Amount = undefined;
       this.Tax_Category = undefined;
+      if(!this.AddProdList.length){
+        this.ObjPurChaseBill.TCS_Y_N = undefined;
+      }
       // }
       // else {
       //    this.compacctToast.clear();
@@ -883,6 +895,10 @@ export class OutwardChallanComponent implements OnInit {
   Deteteaddlist(index){
     this.AddProdList.splice(index,1);
     this.TotalCalculation();
+    this.TcsAmtCalculation();
+    if(!this.AddProdList.length){
+      this.ObjPurChaseBill.TCS_Y_N = undefined;
+    }
   }
   TotalCalculation() {
     this.Tax = undefined;
@@ -909,8 +925,56 @@ export class OutwardChallanComponent implements OnInit {
     this.SGST = count3.toFixed(2);
     this.IGST = count4.toFixed(2);
     this.Total_Amount = count5.toFixed(2);
-    this.Rounded_Off = Number(Math.round(Number(this.Total_Amount)) - Number(this.Total_Amount)).toFixed(2);
+    // this.Rounded_Off = Number(Math.round(Number(this.Total_Amount)) - Number(this.Total_Amount)).toFixed(2);
+    this.getRoundedOff();
     this.NetAMT = this.RoundOff(this.Total_Amount);
+  }
+  getRoundedOff(){
+    this.Rounded_Off = Number(Math.round(Number(this.Total_Amount) + Number(this.ObjPurChaseBill.TCS_Amount)) - (Number(this.Total_Amount) + Number(this.ObjPurChaseBill.TCS_Amount))).toFixed(2);
+  }
+  GetTCSdat(){
+    if (this.ObjPurChaseBill.TCS_Y_N === 'YES') {
+    this.ngxService.start();
+    const obj = {
+      "SP_String": "SP_MICL_Sale_Bill",
+      "Report_Name_String": "Get_Tcs_Percentage_And_Ledger",
+      }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log(data)
+    this.TCSdataList = data;
+    this.ngxService.stop();
+  }); 
+    }  
+    else {
+      this.ObjPurChaseBill.TCS_Ledger_ID = 0;
+      this.ObjPurChaseBill.TCS_Persentage = 0;
+      this.ObjPurChaseBill.TCS_Amount = 0;
+      this.ObjPurChaseBill.TCS_Per = undefined;
+      // this.objaddPurchacse.Grand_Total = this.objaddPurchacse.Net_Amt;
+      this.getRoundedOff();
+      // this.ObjVoucherTopper.DR_Amt = this.ObjSaleBillNew.Grand_Total;
+  }
+  }
+  TcsAmtCalculation(){
+    if (this.ObjPurChaseBill.TCS_Per) {
+        // this.ngxService.start();
+        var tcspercentage = this.TCSdataList.filter(el=> Number(el.TCS_Persentage) === Number(this.ObjPurChaseBill.TCS_Per))
+          this.ObjPurChaseBill.TCS_Ledger_ID = tcspercentage[0].TCS_Ledger_ID;
+          this.ObjPurChaseBill.TCS_Persentage = tcspercentage[0].TCS_Persentage;
+          var netamount = (Number(this.Total_Amount)).toFixed(2);
+          var TCS_Amount = (Number(Number(netamount) * this.ObjPurChaseBill.TCS_Persentage) / 100).toFixed(2);
+          this.ObjPurChaseBill.TCS_Amount = Number(TCS_Amount);
+          this.getRoundedOff();
+          this.NetAMT = this.RoundOff(Number(this.Total_Amount) + Number(this.ObjPurChaseBill.TCS_Amount));
+          this.ngxService.stop();  
+    }
+      else {
+        this.ObjPurChaseBill.TCS_Ledger_ID = 0;
+        this.ObjPurChaseBill.TCS_Persentage = 0;
+        this.ObjPurChaseBill.TCS_Amount = 0;
+        this.getRoundedOff();
+        this.NetAMT = this.RoundOff(Number(this.Total_Amount) + Number(this.ObjPurChaseBill.TCS_Amount));
+    }
   }
   RoundOff(key:any){
     return Math.round(Number(Number(key).toFixed(2)))
@@ -918,6 +982,7 @@ export class OutwardChallanComponent implements OnInit {
   SaveOutward(valid: any){
     this.SaveLowerData = [];
     this.PurchaseBillFormSubmitted = true;
+    this.TCSTaxRequiredValidation = true;
     if (valid && this.AddProdList.length) {
       this.compacctToast.clear();
      this.compacctToast.add({
@@ -1011,6 +1076,10 @@ export class OutwardChallanComponent implements OnInit {
         Transporter: this.ObjPurChaseBill.Transporter,
         LR_No: this.ObjPurChaseBill.LR_No,
         LR_Date: this.DateService.dateConvert(this.SupplierBillDate),
+        TCS_Y_N: this.ObjPurChaseBill.TCS_Y_N,
+        TCS_Per: Number(this.ObjPurChaseBill.TCS_Per),
+        TCS_Amount: Number(this.ObjPurChaseBill.TCS_Amount).toFixed(2),
+        TCS_Ledger_ID: Number(this.ObjPurChaseBill.TCS_Ledger_ID),
         L_element: this.SaveLowerData
       }
       const obj = {
@@ -1046,7 +1115,12 @@ export class OutwardChallanComponent implements OnInit {
       // this.Choose_Address = undefined;
       this.DocDate = new Date();
       this.SupplierBillDate = new Date();
-      this.PurchaseBillFormSubmitted = false
+      this.PurchaseBillFormSubmitted = false;
+      this.TCSTaxRequiredValidation = false;
+      this.ObjPurChaseBill.TCS_Y_N = undefined;
+      this.ObjPurChaseBill.TCS_Persentage = 0;
+      this.ObjPurChaseBill.TCS_Amount = 0;
+      this.ObjPurChaseBill.TCS_Per = undefined;
       if(this.buttonname === "Update"){
         this.tabIndexToView = 0;
         this.items = ["BROWSE", "CREATE", "PENDING SALES ORDER"];
@@ -1107,6 +1181,9 @@ export class OutwardChallanComponent implements OnInit {
       this.editlist = data;
       console.log("Edit data",data);
       this.ObjPurChaseBill = data[0];
+      this.GetTCSdat();
+      this.ObjPurChaseBill.TCS_Per = data[0].TCS_Per;
+      this.ObjPurChaseBill.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
       this.ObjPurChaseBill.Sub_Ledger_ID = data[0].Sub_Ledger_ID;
       this.GetChooseAddress();
       this.GetSaleOrderNo();
@@ -1151,6 +1228,7 @@ export class OutwardChallanComponent implements OnInit {
     
           this.AddProdList.push(productObj);
           this.TotalCalculation();
+          this.NetAMT = this.RoundOff(Number(this.Total_Amount) + Number(this.ObjPurChaseBill.TCS_Amount));
         });
     })
   }
@@ -1265,6 +1343,11 @@ export class OutwardChallanComponent implements OnInit {
       })
     }
   }
+  exportoexcel(Arr,fileName): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+  }
 }
 class PurChaseBill {
   Receiver_Name: any;
@@ -1333,6 +1416,12 @@ class PurChaseBill {
   Rounded_Off : number;
   User_ID : number;
   Fin_Year_ID : number;
+
+  TCS_Ledger_ID:any;
+  TCS_Y_N : any;
+  TCS_Persentage : any;
+  TCS_Amount : number = 0;
+  TCS_Per : any;
  }
  class BrowsePurBill {
   start_date : Date;

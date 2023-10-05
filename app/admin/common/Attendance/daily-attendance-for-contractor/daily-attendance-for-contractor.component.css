@@ -65,13 +65,17 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav {
   
   .P,
   .WO,
-  .CO,
   .PH {
     background-color: rgb(67 162 47) !important;
     color: #ffff;
     text-align: center;
   }
   /* .L,.HL,.OF */
+  .CO {
+    background-color: rgb(30 166 221) !important;
+    color: #ffff;
+    text-align: center;
+  }
   
   .SL,
   .CL,

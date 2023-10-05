@@ -71,11 +71,22 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   VehicleModel: boolean = false;
   UpdateFormSubmitted: boolean = false;
   EWay_Bill_Date: Date = new Date();
+  minDatebilldate:Date = new Date();
+  E_Invoice_EwbValidTill: Date = new Date();
+  minDatevalidtill:Date = new Date();
   Transport_Doc_Date: Date = new Date();
   Objupdatepop: updatepop = new updatepop();
   Doc_no: any = undefined;
   QREWayBill_No: any = undefined;
   QREWayBill_NoGent: any = undefined;
+  UpdateEwayBillModel:boolean = false;
+  ObjupdateEwayBillpop: updateEwayBillpop = new updateEwayBillpop();
+  UpdateEwayFormSubmitted:boolean = false;
+  LR_Date = new Date();
+  Consignee_Pin: any;
+  Cost_Cen_PIN: any;
+  Pending_Doc_No: any;
+  cancelinvoiceno: any;
   constructor(
     private Header: CompacctHeader,
     private route : ActivatedRoute,
@@ -118,7 +129,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
         {responseType: 'text'})
         .subscribe((data: any) => {
           this.databaseName = data;
-          console.log(data)
+          console.log("databaseName===",data)
         });
   }
   // PENDING INV
@@ -206,8 +217,14 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
      let reportnamepeninv = "";
-      if (this.databaseName === "K4C" || this.databaseName === "MICL") {
-        reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==";
+      if (this.databaseName === "K4C") {
+        reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=KLD20";
+      }
+      else if (this.databaseName === "MICL") {
+        reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XL01";
+      }
+      else if (this.databaseName === "Diagraph") {
+        reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XLD01";
       }
       else if (this.databaseName === "BSHPL") {
         reportnamepeninv = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Invoice_Queue?code=yf2xGtV6etP5Hj_u-RcbC1iEH6ryfONUXbsUrFGJhRESAzFulwDVDA==";
@@ -299,7 +316,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       if (this.databaseName === "K4C") {
         printlink = "/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" ;
       }
-      else if (this.databaseName === "BSHPL" || this.databaseName === "MICL") {
+      else if (this.databaseName === "BSHPL" || this.databaseName === "MICL" || this.databaseName === "Diagraph") {
         printlink = "/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_Print.aspx?Doc_No=" ;
       }
       else {
@@ -308,6 +325,68 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       window.open(printlink + obj, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
   
       );
+    }
+  }
+  cancleinv(doc){
+    this.cancelinvoiceno = undefined;
+    if (doc) {
+      this.cancelinvoiceno = doc;
+    this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "cancelinv",
+       sticky: true,
+       closable: false,
+       severity: "warn",
+       summary: "Are you sure?",
+       detail: "Confirm to proceed"
+      });
+    }
+  }
+  onConfirmcancelinv(){ // from pending tab
+    if(this.cancelinvoiceno){
+      this.ngxService.start();
+      const TempObj = {
+        Bill_No : this.cancelinvoiceno
+      }
+      const obj = {
+        "SP_String": "SP_E_Invoice",
+        "Report_Name_String": "Set_E_Invoice_Cancel",
+        "Json_Param_String": JSON.stringify([TempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       // console.log("del Data===", data[0].Column1)
+         if (data[0].Column1 === "done"){
+           this.GetPenInvoicelist();
+           this.ngxService.stop();
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: "Invoice ",
+             detail: "Cancel Successfully"
+           });
+         }
+         else{
+          this.ngxService.stop();
+          this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Warn Message",
+              detail: "Something Wrong"
+            });
+        }
+       })
+    }
+    else{
+      this.ngxService.stop();
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Something Wrong"
+          });
     }
   }
 
@@ -396,8 +475,14 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
      let reportnamefailedinv = "";
-      if (this.databaseName === "K4C" || this.databaseName === "MICL") {
-        reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==";
+      if (this.databaseName === "K4C") {
+        reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=KLD20";
+      }
+      else if (this.databaseName === "MICL") {
+        reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XL01";
+      }
+      else if (this.databaseName === "Diagraph") {
+        reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XLD01";
       }
       else if (this.databaseName === "BSHPL") {
         reportnamefailedinv = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Invoice_Queue?code=yf2xGtV6etP5Hj_u-RcbC1iEH6ryfONUXbsUrFGJhRESAzFulwDVDA==";
@@ -525,6 +610,18 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       window.open("/Report/Crystal_Files/Finance/SaleBill/Print_E_Way_Bill.aspx?Doc_No="+ obj, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
     }
   }
+  PrintGatepass(DocNo){
+    if (DocNo) {
+      const objtemp = {
+        "SP_String": "SP_MICL_Sale_Bill",
+        "Report_Name_String": "Gate_Pass_Print"
+      }
+      this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
+        var printlink = data[0].Column1;
+        window.open(printlink + "?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      })
+    }
+  }
   Cancel(docno){
     this.invoice_no = undefined;
     if (docno) {
@@ -543,7 +640,23 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   onConfirmcancel(){
     if(this.invoice_no) {
       this.ngxService.start();
-    this.$http.get("https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&invoice_no="+this.invoice_no)
+      let reportnamecancel = "";
+      if (this.databaseName === "K4C") {
+        reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&CON=KLD20&invoice_no=";
+      }
+      else if (this.databaseName === "MICL") {
+        reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&CON=XL01&invoice_no=";
+      }
+      else if (this.databaseName === "Diagraph") {
+        reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&CON=XLD01&invoice_no=";
+      }
+      else if (this.databaseName === "BSHPL") {
+        reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&invoice_no=";
+      }
+      else {
+        reportnamecancel = "";
+      }
+    this.$http.get(reportnamecancel+this.invoice_no)
    .subscribe((data:any)=>{
     console.log("cancel",data)
     // this.ngxService.stop();
@@ -585,6 +698,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   onReject(){
     this.compacctToast.clear("c");
     this.compacctToast.clear("cancel");
+    this.compacctToast.clear("cancelinv");
   }
   // CANCEL INV
   CancelgetDateRange(dateRangeObj) {
@@ -708,8 +822,14 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
      let reportnamepencrnote = "";
-      if (this.databaseName === "K4C" || this.databaseName === "MICL") {
-        reportnamepencrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==";
+      if (this.databaseName === "K4C") {
+        reportnamepencrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=KLD20";
+      }
+      else if (this.databaseName === "MICL") {
+        reportnamepencrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=XL01";
+      }
+      else if (this.databaseName === "Diagraph") {
+        reportnamepencrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=XLD01";
       }
       else if (this.databaseName === "BSHPL") {
         reportnamepencrnote = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=Mvkyst7OU0DTxMSZAgg7HNhW2FuwUgMypd1cu36SfC1JAzFucc6OIw==";
@@ -887,8 +1007,14 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      if(updateData.length <= 50) {
      console.log("updateData",updateData);
      let reportnamefailedcrnote = "";
-      if (this.databaseName === "K4C" || this.databaseName === "MICL") {
-        reportnamefailedcrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==";
+      if (this.databaseName === "K4C") {
+        reportnamefailedcrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=KLD20";
+      }
+      else if (this.databaseName === "MICL") {
+        reportnamefailedcrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=XL01";
+      }
+      else if (this.databaseName === "Diagraph") {
+        reportnamefailedcrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=XLD01";
       }
       else if (this.databaseName === "BSHPL") {
         reportnamefailedcrnote = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=Mvkyst7OU0DTxMSZAgg7HNhW2FuwUgMypd1cu36SfC1JAzFucc6OIw==";
@@ -1032,7 +1158,14 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
         }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.Objupdatepop = data[0];
-        this.EWay_Bill_Date = new Date(data[0].E_Invoice_EwbDt)
+        this.EWay_Bill_Date = new Date(data[0].Invoice_Date);
+        this.minDatebilldate = new Date(data[0].Invoice_Date);
+        
+        var invdate:any = new Date(data[0].Invoice_Date);
+        this.E_Invoice_EwbValidTill = new Date(invdate);
+        this.E_Invoice_EwbValidTill.setDate(new Date(this.E_Invoice_EwbValidTill).getDate() + 2);
+        this.minDatevalidtill = new Date(data[0].Invoice_Date);
+
         this.Transport_Doc_Date = new Date(data[0].Transporter_Doc_Date)
         this.QREWayBill_No = data[0].E_Invoice_EwbNo
         this.getQR(this.QREWayBill_No)
@@ -1057,8 +1190,9 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
             Vehicle_No: this.Objupdatepop.Vehicle_No,
             Transportation_Distance: this.Objupdatepop.Transportation_Distance,
             E_Invoice_EwbNo: this.Objupdatepop.E_Invoice_EwbNo,
-            E_Invoice_EwbDt: this.DateService.dateConvert(this.EWay_Bill_Date),
+            E_Invoice_EwbDt: this.DateService.dateTimeConvert(this.EWay_Bill_Date),
             E_Invoice_Ewb_QR_Link: this.QREWayBill_NoGent,
+            E_Invoice_EwbValidTill: this.DateService.dateTimeConvert(this.E_Invoice_EwbValidTill),
       }
        const obj = {
         "SP_String": "SP_E_Invoice_For_Confirmation_Form",
@@ -1079,10 +1213,89 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
           this.QREWayBill_NoGent = undefined;
           this.Doc_no = undefined;
           this.UpdateModel = false;
+          this.GetSuccessInvoicelist();
         }
       }) 
       }   
   }
+  
+  UpdateEwaybillPOP(doc){
+    this.Consignee_Pin = undefined;
+    this.Cost_Cen_PIN = undefined;
+    this.Pending_Doc_No = undefined;
+    if (doc.Doc_No) {
+      this.Pending_Doc_No = doc.Doc_No;
+      const obj = {
+    "SP_String": "SP_E_Invoice_For_Confirmation_Form",
+    "Report_Name_String": "Get_Data_For_Update_Eway_Bill_Manually",
+    "Json_Param_String": JSON.stringify([{Doc_No:this.Pending_Doc_No}])
+        }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.ObjupdateEwayBillpop = data[0];
+        this.ObjupdateEwayBillpop.LR_No = data[0].Transporter_Doc;
+        this.ObjupdateEwayBillpop.LR_No = data[0].Trasporter_Doc_No;
+        this.LR_Date = data[0].Transporter_Doc_Date ? new Date(data[0].Transporter_Doc_Date) : new Date(data[0].Invoice_Date);
+        this.Consignee_Pin = data[0].Consignee_Pin;
+        this.Cost_Cen_PIN = data[0].Cost_Cen_PIN;
+        setTimeout(() => {
+          this.UpdateEwayBillModel = true
+        }, 300);    
+      })
+    }
+  }
+  // CALCULATE DISTANCE
+  CalculateDistance(){
+    if (this.Consignee_Pin && this.Cost_Cen_PIN) {
+      this.ngxService.start();
+      this.$http.get("https://azdistancecalc.azurewebsites.net/api/Distance?code=OTrdwwzB0Q8uzU1BIhgflRcUMM60Q1uRSS22Wx0-99QwAzFuk-uwmw==&fromPincode="+this.Cost_Cen_PIN+"&toPincode="+this.Consignee_Pin)
+     .subscribe((data:any)=>{
+      console.log("data",data)
+      this.ObjupdateEwayBillpop.Transportation_Distance = Math.ceil(Number(Number(data[0].distance).toFixed(2)));
+      this.ngxService.stop();
+      // console.log("Transportation_Distance",this.ObjPurChaseBill.Transportation_Distance)
+     })
+    }
+  }
+  UpdateSaveEwaybillPOP(valid: any) {
+    this.UpdateEwayFormSubmitted = true;
+    if (valid) {
+      const SaveOjb = {
+        Doc_No : this.Pending_Doc_No,
+        Transporter_ID: this.ObjupdateEwayBillpop.Transporter_ID,
+        Transporter: this.ObjupdateEwayBillpop.Transporter,
+        LR_No: this.ObjupdateEwayBillpop.LR_No,
+        LR_Date:this.DateService.dateConvert(this.LR_Date),
+        Vehicle_No: this.ObjupdateEwayBillpop.Vehicle_No,
+        Transportation_Distance: this.ObjupdateEwayBillpop.Transportation_Distance
+  }
+       const obj = {
+        "SP_String": "SP_E_Invoice_For_Confirmation_Form",
+        "Report_Name_String": "Update_Eway_Bill_Manually",
+        "Json_Param_String": JSON.stringify([SaveOjb])
+      }
+      this.GlobalAPI.postData(obj).subscribe((data: any) => {
+        if (data[0].Column1) {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary:"E-way Bill",
+            detail: "Succesfully Update" ,
+          });
+          this.ObjupdateEwayBillpop = new updateEwayBillpop();
+          this.UpdateEwayFormSubmitted = false;
+          this.Pending_Doc_No = undefined;
+          this.UpdateEwayBillModel = false;
+          this.GetPenInvoicelist();
+        }
+      }) 
+      }   
+  }
+  keyDownHandler(event) {
+    if (event.code === 'Space') {
+        event.preventDefault();
+    }
+}
 }
 class PenInvoice {
   start_date : Date;
@@ -1121,4 +1334,13 @@ class updatepop{
   Transportation_Distance: any;
   Trasporter_Doc_No: any;
   Transporter: any;
+}
+class updateEwayBillpop{
+  Doc_No: any;								
+  Transporter_ID: any;	
+  Transporter:any;
+  Transportation_Distance:any;
+  LR_No:any;
+  LR_Date:any;
+  Vehicle_No:any;
 }

@@ -84,14 +84,14 @@
                   <div class="col-sm-4">
                     <label class="control-label">Mobile Number<sup class="text-danger">*</sup></label>
                     <input type="text" class="form-control" placeholder="Enter mobile number" name="Mobile"
-                      #Mobile="ngModel" [(ngModel)]="objPatient.Mobile" (ngModelChange)="checkMobile(objPatient.Mobile)"
+                      #Mobile="ngModel" [(ngModel)]="objPatient.Mobile" (ngModelChange)="checkMobile(objPatient.Mobile,'Mobile')"
                       CompacctDigitonly="true" maxlength="10" minlength="10"
                       [ngClass]="{clearance: CreationFormSubmited && Mobile?.errors?.required}" required>
                   </div>
                   <div class="col-sm-4">
                     <label class="control-label">Alternate Mobile Number</label>
                     <input type="text" class="form-control" placeholder="Enter Another number" name="AnotherMobile"
-                      #AnotherMobile="ngModel" [(ngModel)]="objPatient.Mobile_2" CompacctDigitonly="true" maxlength="10"
+                      #AnotherMobile="ngModel" [(ngModel)]="objPatient.Mobile_2" (ngModelChange)="checkMobile(objPatient.Mobile_2,'Mobile_2')" CompacctDigitonly="true" maxlength="10"
                       minlength="10">
                   </div>
                   <div class="col-sm-4">
@@ -103,8 +103,8 @@
                 </div>
                 <div class="row">
                   <div class="col-sm-4">
-                    <label class="control-label">Name<sup class="text-danger">*</sup></label>
-                    <div class="input-group">
+                    <label class="control-label">Name<sup class="text-danger">*</sup> <a *ngIf="ContactNameList.length && databaseName != 'BSHPL'" (click)=" ContactNameList = []" style="color: #3c8dbc;" > Add New Patient </a></label>
+                    <div class="input-group" *ngIf="!ContactNameList.length || databaseName == 'BSHPL'" >
                       <span class="input-group-btn">
                         <select name="NameStatus" style="width: 100px;" class="form-control" [(ngModel)]="objPatient.Prefix"
                           #NameStatus="ngModel"
@@ -117,6 +117,15 @@
                           [(ngModel)]="objPatient.Contact_Name"
                           [ngClass]="{clearance: CreationFormSubmited && Name?.errors?.required}" required>
                     </div>
+                    <div>
+                      <select *ngIf="ContactNameList.length && databaseName != 'BSHPL'" name="Name" class="form-control" [(ngModel)]="footFallId"
+                    #Name="ngModel" (change)="NameChange()"
+                    [ngClass]="{clearance: CreationFormSubmited && Name?.errors?.required}"required>
+                    <option [ngValue]="undefined">Select</option>
+                    <option *ngFor="let option of ContactNameList" value="{{option.Contact_Name}}">{{option.Prefix}} {{option.Contact_Name}}</option>
+                  </select>
+                    </div>
+                    
                   </div>
                   <div class="col-sm-4">
                     <label class="control-label">Age</label>

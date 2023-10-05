@@ -1,0 +1,201 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box box-primary">
+			<div class="form-horizontal">
+				<div class="box-body">
+					<p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+						<div class="panel panel-primary">
+							<div class="panel-body">
+								<div class="form-group">
+									<div class="col-sm-4">
+										<label class="control-label">Training No<sup class="text-danger">*</sup></label>
+										<p-dropdown
+											[options]="traningNoList"
+											name="traningNo"
+											#traningNo="ngModel"
+											[(ngModel)]="objSearchData.Training_No"
+											[showClear]="true"
+											[emptyFilterMessage]="'No Item Found'"
+											[filter]="true"
+											filterBy="label,value"
+											[resetFilterOnHide]="true"
+											[placeholder]="'Select Training No'"
+											[virtualScroll]="true"
+											(onChange)="getTraningTopic(objSearchData.Training_No)"
+											itemSize="30"
+											[styleClass]="SerachFormSubmitted && traningNo.errors?.required ? 'clearance' : ''"
+											[required]="true">
+										</p-dropdown>
+									</div>
+									<div class="col-sm-4">
+										<label class="control-label">Department<sup class="text-danger">*</sup></label>
+										<p-dropdown
+											[options]="departmentList"
+											name="Department"
+											#Department="ngModel"
+											[(ngModel)]="objSearchData.Dept_ID"
+											[showClear]="true"
+											[emptyFilterMessage]="'No Department Found'"
+											[filter]="true"
+											filterBy="label,value"
+											[resetFilterOnHide]="true"
+											[placeholder]="'Select Department'"
+											[virtualScroll]="true"
+											(onChange)="getTrainerName(objSearchData.Training_No, objSearchData.Dept_ID)"
+											itemSize="30"
+											[styleClass]="SerachFormSubmitted && Department.errors?.required ? 'clearance' : ''"
+											[required]="true">
+										</p-dropdown>
+									</div>
+									<div class="col-sm-4">
+										<label class="control-label">Trainer Name<sup class="text-danger">*</sup></label>
+										<p-dropdown
+											[options]="TrainerList"
+											name="TrainerName"
+											#TrainerName="ngModel"
+											[(ngModel)]="objSearchData.Emp_Trainer_ID"
+											[showClear]="true"
+											[emptyFilterMessage]="'No Trainer Found'"
+											[filter]="true"
+											filterBy="label,value"
+											[resetFilterOnHide]="true"
+											[placeholder]="'Select Trainer'"
+											[virtualScroll]="true"
+											(onChange)="getTableData(objSearchData.Training_No, objSearchData.Dept_ID, objSearchData.Emp_Trainer_ID)"
+											itemSize="30"
+											[styleClass]="SerachFormSubmitted && TrainerName.errors?.required ? 'clearance' : ''"
+											[required]="true">
+										</p-dropdown>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-4">
+										<label class="control-label">Trainer Name<sup class="text-danger">*</sup></label>
+										<div class="label-t">{{ traningTopic ? traningTopic.Learning_Object : "-" }}</div>
+									</div>
+									<div class="col-sm-4"></div>
+									<div class="col-sm-4"></div>
+								</div>
+							</div>
+						</div>
+						<form name="GradeForm" #GradeForm="ngForm">
+							<p-table
+								[value]="TableData"
+								[paginator]="true"
+								[rows]="20"
+								[rowHover]="true"
+								[autoLayout]="true"
+								sortMode="multiple"
+								[globalFilterFields]="['Attendees_Name']"
+								[rowsPerPageOptions]="[10, 20, 50, 100, 200, 300]"
+								[rowHover]="true"
+								#dt>
+								<ng-template pTemplate="caption">
+									<div class="row">
+										<div class="col-sm-3 pull-right" style="text-align: right">
+											<input
+												type="text"
+												pInputText
+												size="50"
+												placeholder="Search"
+												(input)="dt.filterGlobal($event.target.value, 'contains')"
+												class="searchInput form-control" />
+										</div>
+									</div>
+								</ng-template>
+								<ng-template pTemplate="header">
+									<tr>
+										<th style="text-align: center" nowrap>Attendees_Name</th>
+										<th style="text-align: center" nowrap>Pre Training Marks</th>
+										<th style="text-align: center" nowrap>Post Training Marks</th>
+										<th style="text-align: center" nowrap>Remarks</th>
+									</tr>
+								</ng-template>
+								<ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+									<tr>
+										<td style="text-align: center" nowrap>{{ col.Attendees_Name ? col.Attendees_Name : "-" }}</td>
+										<td style="text-align: center" nowrap>
+											<input
+												type="text"
+												class="form-control"
+												placeholder="Pre Training Marks"
+												[name]="'Pre_Training_Marks'+rowIndex"
+												CompacctDigitonly="true"
+												[(ngModel)]="col.Pre_Training_Marks"
+												[ngClass]="{ clearance: gradeFormSubmitted && col.Pre_Training_Marks == '' }"
+												required />
+										</td>
+										<td style="text-align: center" nowrap>
+											<input
+												type="text"
+												class="form-control"
+												placeholder="Post Training Marks"
+												[name]="'Post_Training_Marks'+rowIndex"
+												CompacctDigitonly="true"
+												[(ngModel)]="col.Post_Training_Marks"
+												[ngClass]="{ clearance: gradeFormSubmitted && col.Post_Training_Marks == '' }"
+												required />
+										</td>
+										<td style="text-align: center" nowrap>
+											<input
+												type="text"
+												class="form-control"
+												placeholder="Remarks"
+												[name]="'Remarks'+rowIndex"
+												[(ngModel)]="col.Remarks"
+												[ngClass]="{ clearance: gradeFormSubmitted && col.Remarks == '' }"
+												required />
+										</td>
+									</tr>
+								</ng-template>
+								<ng-template pTemplate="paginatorright" let-state>
+									Showing {{ state.first + 1 }} of {{ state.first + state.rows }} of {{ state.totalRecords }}
+								</ng-template>
+							</p-table>
+							<br />
+							<div class="form-group">
+								<div class="col-sm-4">
+									<label class="control-label">Traning Status<sup class="text-danger">*</sup></label>
+									<select
+										name="traningStatus"
+										class="form-control"
+										#traningStatus="ngModel"
+										[(ngModel)]="traning_Status"
+										[ngClass]="{ clearance: gradeFormSubmitted && traningStatus?.errors?.required }"
+										required>
+										<option [ngValue]="''">Select</option>
+										<option value="Complete">Complete</option>
+										<option value="Not Complete">Not Complete</option>
+									</select>
+								</div>
+								<div class="col-sm-4">
+									<label class="control-label">Traning Overall Remarks<sup class="text-danger">*</sup></label>
+									<input
+										type="text"
+										class="form-control"
+										placeholder="Traning Overall Remarks"
+										name="TraningOverallRemarks"
+										#TraningOverallRemarks="ngModel"
+										[(ngModel)]="Traning_Overall_Remarks"
+										[ngClass]="{ clearance: gradeFormSubmitted && TraningOverallRemarks?.errors?.required }"
+										required />
+								</div>
+								<div class="col-sm-4">
+									<button class="btn btn-primary pull-right custom-btn1" (click)="SaveGradeForm(GradeForm.form.valid)" id="load" [disabled]="Spinner">
+										<p-progressSpinner
+											*ngIf="Spinner"
+											[style]="{ width: '15px', height: '15px' }"
+											strokeWidth="8"
+											animationDuration=".5s"></p-progressSpinner>
+										<span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>Save
+									</button>
+								</div>
+							</div>
+						</form>
+					</p-tabView>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
