@@ -34,7 +34,8 @@ export class ProjectMasterComponent implements OnInit {
   seletcProject:any = undefined
   SiteSpinner:boolean = false
   siteButton:string = "Add"
-  SiteIndex:any = undefined
+  SiteIndex:any = undefined;
+  Workorder_Date:Date = new Date()
   @ViewChild('projectSeletcForm',{static:false}) projectSeletcForm:NgForm
   constructor(
     private $http: HttpClient,
@@ -73,7 +74,7 @@ export class ProjectMasterComponent implements OnInit {
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.ProjectList = data
-      console.log(data)
+      //console.log(data)
      })
   }
   getSiteSupervisor(){
@@ -84,7 +85,7 @@ export class ProjectMasterComponent implements OnInit {
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.SitesupervisorList = data
-      console.log(data)
+      //console.log(data)
      })
   }
   getEngineer(){
@@ -95,13 +96,14 @@ export class ProjectMasterComponent implements OnInit {
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.engineerList = data
-      console.log(data)
+      //console.log(data)
      })
   }
   onConfirm() {}
   createProject(valid:any){
     this.projectFormSubmit = true
     if(valid){
+      this.Objproject.Work_Order_Date = this.DateService.dateConvert(this.Workorder_Date)
       this.Spinner = true
       const obj = {
         "SP_String": "SP_Service_Project_Team",
@@ -154,16 +156,17 @@ export class ProjectMasterComponent implements OnInit {
     }
   }
   changeProject(){
-    this.Objproject = new project()
-    this.Objsite = new site()
-    this.SiteFormSubmit = false
-    this.ObjEngineer = new Engineer()
-    this.engineerFormSubmit = false
-    this.SiteIndex = undefined
+    this.Objproject = new project();
+    this.Objsite = new site();
+    this.Workorder_Date = new Date();
+    this.SiteFormSubmit = false;
+    this.ObjEngineer = new Engineer();
+    this.engineerFormSubmit = false;
+    this.SiteIndex = undefined;
     this.buttonname = "Create";
     this.siteButton = "Add"
-    this.EngineerList = []
-    this.siteList = []
+    this.EngineerList = [];
+    this.siteList = [];
     if(this.seletcProject ){
     this.buttonname = "Update";
     const obj = {
@@ -175,8 +178,9 @@ export class ProjectMasterComponent implements OnInit {
       .subscribe((data : any)=>
       {
         let project = JSON.parse(data[0].Project_team_details)[0]
-        console.log(project)
+        //console.log('retv proj',project)
         this.Objproject.Project_Name = project.Project_Name
+        this.Workorder_Date = new Date(project.Work_Order_Date)
         this.Objproject.Project_ID = project.Project_ID
         this.Objproject.Tender_No = project.Tender_No
         this.Objproject.Project_Remarks = project.Project_Remarks
@@ -198,7 +202,7 @@ export class ProjectMasterComponent implements OnInit {
        else {
         siteListClone =  JSON.parse(JSON.stringify(this.siteList))
        }
-      console.log(siteListClone)
+      //console.log(siteListClone)
       const FindsiteList = siteListClone.find(el=> el.Site_Name == this.Objsite.Site_Name )
       if(FindsiteList) {
         this.compacctToast.clear();
@@ -288,7 +292,7 @@ export class ProjectMasterComponent implements OnInit {
     return finData ? finData.Member_Name : "NA"
   }
   commonDelete(type,i){
-    console.log(i)
+    //console.log(i)
     if(type == "site"){
       this.siteList.splice(i,1)
     }
@@ -297,7 +301,7 @@ export class ProjectMasterComponent implements OnInit {
     }
   }
   updateSite(){
-    console.log("Click")
+    //console.log("Click")
     if(this.seletcProject ){
       const obj = {
         "SP_String": "SP_Service_Project_Team",
@@ -393,6 +397,7 @@ Project_Description:any
 Tender_No :any                    
 Project_Remarks:any
 Supervisor_ID:any
+Work_Order_Date:any
 }
 
 class site{
