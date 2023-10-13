@@ -9,7 +9,7 @@
                 <div class="form-group">
                     <div class='col-sm-12'>
                         <label class="control-label">Order No</label>
-                        <input class="form-control" name="oRDER_nO" #oRDER_nO="ngModel" id='OrderNoCheck' oninput="event.target.value = event.target.value.replace(/[^0-9]/g, '');" maxlength="12" (keypress)="onKeypressEvent($event)" ngModelChange="pastefunction()" (keydown)="onKeydownMain3($event, 'OrderNoCheck')" [(ngModel)]="ClickedOnlineLedger['Order_No']" placeholder="Order No">
+                        <input class="form-control" name="oRDER_nO" #oRDER_nO="ngModel" id='OrderNoCheck' oninput="event.target.value = event.target.value.replace(/[^0-9]/g, '');" (keypress)="onKeypressEvent($event)" ngModelChange="pastefunction()" (keydown)="onKeydownMain3($event, 'OrderNoCheck')" [(ngModel)]="ClickedOnlineLedger['Order_No']" placeholder="Order No">
                     </div>
                     <div class='col-sm-12' *ngIf="keypressmsg && !ClickedOnlineLedger['Order_No']">
                     <p style="color:red">{{keypressmsg}}</p>

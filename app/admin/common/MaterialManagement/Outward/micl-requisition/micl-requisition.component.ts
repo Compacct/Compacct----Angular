@@ -609,17 +609,17 @@ export class MiclRequisitionComponent implements OnInit {
            });
           
            // this.SaveNPrintBill();
-           this.Print(data[0].Column1)
-            this.clearData();
+           this.clearData();
             this.Department_ID = undefined;
             this.Requisition_ID = undefined;
             this.Material_Type_ID = undefined;
             this.Spinner = false;
+            this.reqDocNo = undefined;
+            this.Print(data[0].Column1)
             this.searchData(true);
             this.tabIndexToView = 0;
             this.items = ["BROWSE", "CREATE", "STOCK", "STATUS", "MIS"];
             this.buttonname = "Save";
-            this.reqDocNo = undefined;
             } else{
               this.Spinner = false;
               this.ngxService.stop();
