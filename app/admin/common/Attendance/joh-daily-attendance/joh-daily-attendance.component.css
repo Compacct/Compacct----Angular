@@ -56,6 +56,7 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav {
   .ED,
   .HL,
   .LWP,
+  .LW,
   .LT {
     background-color: rgb(244 121 38) !important;
     color: #ffff;
@@ -76,7 +77,8 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav {
   .CL,
   .PL,
   .AL,
-  .HD {
+  .HD,
+  .ML {
     background-color: rgb(27 56 173) !important;
     color: #ffff;
     text-align: center;
