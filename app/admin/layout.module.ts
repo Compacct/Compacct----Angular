@@ -519,6 +519,7 @@ import { ServiceSupportTicketComponent } from './common/Harbauer/Service/service
 import { QuizModuleComponent } from './common/Attendance/quiz-module/quiz-module.component';
 import { K4cAllDiagnosisComponent } from './common/OutletManagement/k4c-all-diagnosis/k4c-all-diagnosis.component';
 import { PatientCreateWithInformationComponent } from './common/PatientManagement/patient-create-with-information/patient-create-with-information.component';
+import { DailyAttendanceJohForEmployeeComponent } from './common/Attendance/daily-attendance-joh-for-employee/daily-attendance-joh-for-employee.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -952,7 +953,8 @@ import { PatientCreateWithInformationComponent } from './common/PatientManagemen
     ServiceSupportTicketComponent,
     QuizModuleComponent,
     K4cAllDiagnosisComponent,
-    PatientCreateWithInformationComponent
+    PatientCreateWithInformationComponent,
+    DailyAttendanceJohForEmployeeComponent
   ],
   imports: [
     CommonModule,

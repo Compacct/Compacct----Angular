@@ -1,0 +1,126 @@
+div.table-responsive.table-id>p-table>div>div {
+    width: auto !important;
+}
+.box-body {
+    padding-top: 10px !important;
+    padding-left: 10px !important;
+}
+
+.ta-editor {
+    min-height: 160px;
+}
+
+body .ui-widget {
+    font-family: source sans pro, sans-serif !important;
+}
+
+textarea.form-control {
+    height: auto;
+}
+
+.box.boxboxDivide-primary {
+    border-top-color: #f3efec;
+    height: 10px;
+    border: 0;
+    box-shadow: 0 10px 10px -10px #8c8b8b inset;
+}
+
+.ui-table-auto-layout>.ui-table-wrapper {
+    width: auto !important;
+}
+
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+    border-bottom: 1px solid #c1c1c1 !important;
+    margin-bottom: 0px;
+}
+.custombutton {
+    margin-top: 28px;
+}
+.A,
+.L,
+.ES {
+    background-color: #ff4141 !important;
+    color: #ffff;
+    text-align: center;
+  }
+  /* PL , CL , SL 
+  .EL,.AL,.CO,.LWP,.COMM,.OFF*/
+  
+  .LP,
+  .ED,
+  .HL,
+  .LWP,
+  .LW,
+  .LT {
+    background-color: rgb(244 121 38) !important;
+    color: #ffff;
+    text-align: center;
+  }
+  /* HD */
+  
+  .P,
+  .WO,
+  .PH {
+    background-color: rgb(67 162 47) !important;
+    color: #ffff;
+    text-align: center;
+  }
+  /* .L,.HL,.OF */
+  
+  .SL,
+  .CL,
+  .PL,
+  .AL,
+  .HD,
+  .ML {
+    background-color: rgb(27 56 173) !important;
+    color: #ffff;
+    text-align: center;
+  }
+  .CO {
+    background-color: rgb(30 166 221) !important;
+    color: #ffff;
+    text-align: center;
+  }
+  
+  .PWO,
+  .PW,
+  .PPH {
+    background-color:#45fc7f !important;
+    color: #ffff;
+    text-align: center;
+  }
+  .OD {
+    background-color:#adef12 !important;
+    color: #ffff;
+    text-align: center;
+  }
+  .pull-right {
+    margin-right: 20px;
+}
+div.label-t {
+  padding: 7px 12px;
+  background: rgb(206 216 216 / 51%);
+  margin-left: -28px;
+}
+.lcAIGs {
+  font-size: var(--font-size-body2);
+  font-weight: var(--font-weight-normal);
+  color: var(--text-tertiary);
+  text-align: inherit;
+  margin-bottom: unset;
+}
+.ant-input-suffix {
+  margin-left: 4px;
+}
+.ant-input-prefix, .ant-input-suffix {
+  align-items: center;
+  display: flex;
+  flex: none;
+}
