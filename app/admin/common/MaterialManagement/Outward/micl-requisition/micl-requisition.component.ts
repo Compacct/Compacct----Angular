@@ -126,6 +126,7 @@ export class MiclRequisitionComponent implements OnInit {
   Department_ID:any;
   SelectedDistcreatedbyDepartment:any = [];
   DistcreatedbyDepartment:any = [];
+  saveSpinner:boolean = false;
 
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -417,6 +418,7 @@ export class MiclRequisitionComponent implements OnInit {
   }
   SaveRequi(valid){ 
    //console.log("valid",valid);
+   this.saveSpinner = false;
    this.reqiFormSubmitted = true;
    this.validatation.required = true;
    this.ngxService.start();
@@ -531,6 +533,7 @@ export class MiclRequisitionComponent implements OnInit {
   onConfirmSave(){
       let saveData:any = [];
       let paramlist:any = [];
+      this.saveSpinner = true;
       // let mgs = "";
       // if(this.ReqNo){
  
@@ -609,18 +612,20 @@ export class MiclRequisitionComponent implements OnInit {
            });
           
            // this.SaveNPrintBill();
-           this.Print(data[0].Column1)
-            this.clearData();
+           this.saveSpinner = false;
+           this.clearData();
             this.Department_ID = undefined;
             this.Requisition_ID = undefined;
             this.Material_Type_ID = undefined;
             this.Spinner = false;
+            this.reqDocNo = undefined;
+            this.Print(data[0].Column1)
             this.searchData(true);
             this.tabIndexToView = 0;
             this.items = ["BROWSE", "CREATE", "STOCK", "STATUS", "MIS"];
             this.buttonname = "Save";
-            this.reqDocNo = undefined;
             } else{
+              this.saveSpinner = false;
               this.Spinner = false;
               this.ngxService.stop();
               this.compacctToast.add({
@@ -1003,6 +1008,7 @@ export class MiclRequisitionComponent implements OnInit {
   }
   Active(col){
     //console.log("col",col);
+    this.saveSpinner = false;
     this.can_popup = false;
     this.Del = false;
     this.Save = false;

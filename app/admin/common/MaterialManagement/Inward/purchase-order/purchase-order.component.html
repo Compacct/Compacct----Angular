@@ -10,7 +10,7 @@
 
         <div class="ui-g ui-fluid" *ngIf="!deleteError">
             <div class="ui-g-6" *ngIf="Save && !Del">
-                <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
+                <button type="button" pButton (click)="onBasicUpload()" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6" *ngIf="Del && !Save">
               <button type="button" pButton (click)="onConfirmDel()" label="Yes" class="ui-button-success"></button>
@@ -1050,19 +1050,17 @@
                                 </div>
                                 <br>
                                 <div class="form-group">
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-6">
                                         <label class="control-label">Upload File</label>
                                         <span class="btn btn-xs btn-danger pull-right" (click)="ClearUploadInpt(UploadFile)"
                                           *ngIf="file"><i class="fa fa-close"></i></span>
-                                        <div>
-                                          <p-fileUpload mode="basic" name="filedoc" #UploadFile chooseLabel="BROWSE" uploadLabel="UPLOAD"
-                                            accept="image/*" [customUpload]="true" (onSelect)="fileSelect()"
-                                            *ngIf="upload" (uploadHandler)="onBasicUpload(UploadFile)">
+                                          <p-fileUpload name="filedoc" #UploadFile chooseLabel="BROWSE" [showUploadButton]="false" [showCancelButton]="false"
+                                            accept="image/*,application/pdf" [customUpload]="true" (onSelect)="fileSelect($event)"
+                                            *ngIf="upload">
                                           </p-fileUpload>
                                           <button name="pan" *ngIf="!upload" pButton pRipple type="button"
                                             label="Show Document" (click)="showDoc()"></button>
-                                        </div>
-                                      </div>
+                                    </div>
                                 </div>
                                 <div class="box-footer">
                                     <button class="btn btn-primary pull-right" 

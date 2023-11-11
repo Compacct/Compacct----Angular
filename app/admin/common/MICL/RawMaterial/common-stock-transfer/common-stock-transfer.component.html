@@ -235,6 +235,7 @@
                                 [(ngModel)]="ObjStockTransfer.Rate"
                                  placeholder="Rate"
                                  (ngModelChange)="GetTaxAmt()"
+                                 [disabled]="ObjStockTransfer.F_Product_ID"
                                   CompacctDigitonly="true"
                                 [ngClass]="{clearance: StockTransferFormSubmitted && Rate?.errors?.required}" required>
                             </div>

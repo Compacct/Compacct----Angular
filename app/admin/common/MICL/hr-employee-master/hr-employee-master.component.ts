@@ -121,6 +121,7 @@ export class HREmployeeMasterComponent implements OnInit {
   locationsubmitted:boolean = false;
   Location:any;
   bankacnoflag:boolean = false;
+  resetdisabled:boolean = false;
   constructor(
     private http : HttpClient,
     private commonApi : CompacctCommonApi,
@@ -198,6 +199,7 @@ leftdatechange(){
 onReject(){
     this.compacctToast.clear("c");
     this.compacctToast.clear("consul");
+    this.compacctToast.clear("resetphone");
 }
 Bankinfo(){
   if(this.objemployee.Salary_Paid_By === 'Bank')
@@ -1618,6 +1620,65 @@ getConsultancyEmp(){
    })
 
 }
+
+ResetPhone(){
+  if (this.objselect.Emp_ID) {
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "resetphone",
+      sticky: true,
+      closable: false,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+      })
+  }
+}
+onConfirmReset(){
+  this.resetdisabled = true;
+  if(this.objemployee.Emp_Code){
+    const obj = {
+      "SP_String": "SP_HR_ATTN_DETAILS",
+      "Report_Name_String": "Reset_Device_ID",
+      "Json_Param_String": JSON.stringify([{Emp_Code : this.objemployee.Emp_Code}])
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      console.log('data=',data);
+      if(data[0].Column1 === "Done"){
+           //this.SubLedgerID = data[0].Column1
+          this.resetdisabled = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: " ",
+          detail: "Reset Succesfully"
+        });
+      }
+      else{
+        this.resetdisabled = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error",
+        detail: "Something Wrong"
+      });
+      }
+     });
+     
+  } else {
+        this.resetdisabled = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error",
+        detail: "Something Wrong"
+      });
+  }
+}
+
 // onFileChanged(event) {
 //   const files = event.target.files;
 //   if (files.length === 0)

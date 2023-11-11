@@ -204,7 +204,6 @@ div.table-responsive.table-id>p-table>div>div {
   
   .P,
   .WO,
-  .CO,
   .PH {
     background-color: rgb(67 162 47) !important;
     color: #ffff;
@@ -216,8 +215,14 @@ div.table-responsive.table-id>p-table>div>div {
   .CL,
   .PL,
   .AL,
-  .HD {
+  .HD,
+  .ML {
     background-color: rgb(27 56 173) !important;
+    color: #ffff;
+    text-align: center;
+  }
+  .CO {
+    background-color: rgb(30 166 221) !important;
     color: #ffff;
     text-align: center;
   }

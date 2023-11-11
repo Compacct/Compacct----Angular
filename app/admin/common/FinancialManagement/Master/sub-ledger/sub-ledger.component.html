@@ -242,8 +242,8 @@
                                 <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">GST No.<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="GST_NO" #GST_NO="ngModel" [(ngModel)]="objSubLedger.GST" [disabled]="this.objSubLedger.Country!='India'"
-                                        placeholder="GST NO." [disabled]="gstdisabled" (onChange)='checkGSTvalid(objSubLedger.GST)' minlength="15" maxlength="15" [ngClass]="{
+                                        <input class="form-control" name="GST_NO" #GST_NO="ngModel" [(ngModel)]="objSubLedger.GST" [disabled]="this.objSubLedger.Country!='India' || gstdisabled"
+                                        placeholder="GST NO." (onChange)='checkGSTvalid(objSubLedger.GST)' minlength="15" maxlength="15" [ngClass]="{
                                             clearance:
                                               (GSTvalidFlag) ||
                                               (GST_NO.errors?.minlength && GST_NO.touched)
@@ -464,7 +464,7 @@
                                             <option  [ngValue]="undefined">Select</option>
                                              <option *ngFor="let option of AllEnquirySource" [ngValue]="option.Enq_Source_ID">
                                             {{option.Enq_Source_Name}}
-                                            </option>-->
+                                            </option>
                                                </select>
                                     </div>
                                 </div>

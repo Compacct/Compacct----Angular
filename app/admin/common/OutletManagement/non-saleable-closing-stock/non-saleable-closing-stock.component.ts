@@ -467,6 +467,9 @@ const obj = {
         Expiry_Date : element.Expiry_Date,
         batch_Qty : element.batch_Qty ? element.batch_Qty : element.Batch_Qty,
         Closing_Qty : element.Closing_Qty,
+        Consumption_Qty : element.Consumption_Qty,
+        Issue_Qty : element.Issue_Qty,
+        RTF_Qty : element.RTF_Qty,
         Remarks : element.Remarks,
         Total_Amount : element.Total_Amount
        }

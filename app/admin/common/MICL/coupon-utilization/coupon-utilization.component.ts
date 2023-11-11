@@ -102,7 +102,10 @@ export class CouponUtilizationComponent implements OnInit {
       this.DynamicHeader = Object.keys(this.allDataList[0]);
       console.log('Dynamic Header',this.DynamicHeader);
       this.seachSpinner = false;
-    }
+      }
+      else {
+        this.seachSpinner = false;
+      }
     });
     }
     else {

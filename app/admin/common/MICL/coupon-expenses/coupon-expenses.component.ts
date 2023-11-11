@@ -116,6 +116,9 @@ export class CouponExpensesComponent implements OnInit {
       console.log('Dynamic Header',this.DynamicHeader);
       this.seachSpinner = false;
     }
+    else {
+      this.seachSpinner = false;
+    }
     });
     }
     else {

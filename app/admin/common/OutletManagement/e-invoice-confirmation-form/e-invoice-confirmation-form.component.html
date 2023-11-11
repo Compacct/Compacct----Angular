@@ -1209,8 +1209,7 @@
             [(ngModel)]="ObjupdateEwayBillpop.Vehicle_No"
             pattern="[a-zA-Z]{2}(.*)"
             placeholder="Vehicle No" 
-            maxlength="7"
-            [ngClass]="{'clearance': (UpdateEwayFormSubmitted && Vehicle?.errors?.required) || (Vehicle?.errors?.pattern && Vehicle.touched) || (Vehicle.errors?.maxlength && Vehicle.touched)}"required>
+            [ngClass]="{'clearance': (UpdateEwayFormSubmitted && Vehicle?.errors?.required) || (Vehicle?.errors?.pattern && Vehicle.touched)}"required>
         </div> 
     </form>
     <p-footer>

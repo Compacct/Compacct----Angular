@@ -420,6 +420,8 @@ import { ServiceProblemTypeComponent } from './common/Harbauer/Service/service-p
 import { ServiceSupportTicketComponent } from './common/Harbauer/Service/service-support-ticket/service-support-ticket.component';
 import { QuizModuleComponent } from "./common/Attendance/quiz-module/quiz-module.component";
 import { K4cAllDiagnosisComponent } from './common/OutletManagement/k4c-all-diagnosis/k4c-all-diagnosis.component';
+import { PatientCreateWithInformationComponent } from './common/PatientManagement/patient-create-with-information/patient-create-with-information.component';
+
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -3212,6 +3214,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: K4cAllDiagnosisComponent,
       data: {
         title: 'K4C Diagnosis'
+      }
+    },
+    {
+      path: 'Patient_Create_With_Information',
+      component: PatientCreateWithInformationComponent,
+      data: {
+        title: 'Patient Create With Information'
       }
     },
     /*{
