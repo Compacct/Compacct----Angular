@@ -16,31 +16,17 @@ import { ActivatedRoute, Router } from "@angular/router";
 })
 export class DailyAttendanceJohForEmployeeComponent implements OnInit {
 
-  EmpList:any[]= []; //Emp List Array
-  initDate : any = [];
-  From_Date:Date = new Date();
-  To_Date:Date = new Date();
+  EmpList: any[] = []; //Emp List Array
+  initDate: any = [];
+  From_Date: Date = new Date();
+  To_Date: Date = new Date();
+  selectedEmpCode: string = '';
   objEmpInfo = new EmpInfo();
-  SerachFormSubmitted:boolean = false;
+  seachSpinner = false;
+  SerachFormSubmitted: boolean = false;
+  EmpData: any = [];
+  EmpDataFilterField: any = [];
 
-  Spinner = false;
-  seachSpinner = false
-  ShowSpinner = false;
-  tabIndexToView = 0;
-  buttonname = "Save";
-  myDate = new Date();
-  EmpDailyAttenList: any = [];
-  BackupEmpDailyAttenList: any = [];
-  AttenTypelist: any = [];
-  Daily_Atten_Date = new Date();
-  AttendancePopup = false;
-  attendancetypeFormSubmitted = false;
-  empid: any;
-  Atten_Type: any;
-  employeename: any;
-  checkbuttonname: any;
-  AttendanceTypeList: any = [];
-  DetailsModal = false;
   Total_Present: any;
   Total_Present_in_Weekly_Off: any;
   Total_Present_in_Public_Holiday: any;
@@ -57,29 +43,6 @@ export class DailyAttendanceJohForEmployeeComponent implements OnInit {
   Total_Late: any;
   Half_Day: any;
   Annual_Leave: any;
-  DistWorkLocation: any = [];
-  SelectedDistWorkLocation: any = [];
-  SearchFields: any = [];
-  databaseName: any;
-  recaptureSpinner = false;
-  Recapture: any;
-  CheckFinalizedOrNot: any;
-  SaveButtonDisabled: boolean = false;
-  OTPopup: boolean = false;
-  OtEmpid: any;
-  OtEmpname: any;
-  OT_Hours: any;
-  OTFormSubmitted: boolean = false;
-  Overtime_Rate: any;
-  Per_Hours: any;
-  Total_Amount: any;
-  Add_Custom_Salary_Multiple: any;
-  otattntype: any;
-  Balance: any;
-  ottotalmin: any;
-  fixedtotalamt: any;
-  backupperhour: any;
-
 
   constructor(
     private Header: CompacctHeader,
@@ -96,582 +59,141 @@ export class DailyAttendanceJohForEmployeeComponent implements OnInit {
       Header: "Daily Attendance JOH for Employee",
       Link: " HR -> Transaction -> Daily Attendance JOH for Employee"
     });
-    this.getDatabase();
-    this.getAttendanceType();
+    this.getEmpList();
   }
 
-  getDatabase() {
-    this.$http
-      .get("/Common/Get_Database_Name",
-        { responseType: 'text' })
-      .subscribe((data: any) => {
-        this.databaseName = data;
-        console.log('Database name',data);
-      });
+  getEmpList() {
+    const obj = {
+      "SP_String": "SP_HR_Attn_Sheet_Day_Wise",
+      "Report_Name_String": "Get_Employee",
+    }
+
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      console.log('Emp list>>>', data);
+      data.forEach((ele: any) => {
+        ele["label"] = ele.Emp_Name;
+        ele["value"] = ele.Emp_ID;
+      })
+      this.EmpList = data;
+    });
   }
 
-  getDateRange(dateRangeObj:any){
-    if(dateRangeObj.length){
+  getEmpCode(empId: any) {
+    this.selectedEmpCode = '';
+    this.EmpData = [];
+    console.log('Emp Id>>>', empId);
+    if (empId) {
+      let selectedEmp = this.EmpList.find((ele: any) => ele.Emp_ID == empId);
+      this.selectedEmpCode = selectedEmp ? selectedEmp.Emp_Code : '';
+      console.log('Emp code>>>', selectedEmp);
+    }
+  }
+
+  getDateRange(dateRangeObj: any) {
+    if (dateRangeObj.length) {
       this.From_Date = dateRangeObj[0];
       this.To_Date = dateRangeObj[1];
     }
   }
-  
-  GetEmpData(valid:any) {
-    console.log('search form valid',valid);
-    
+
+  GetEmpData(valid: any) {
+    console.log('search form valid', valid);
     this.SerachFormSubmitted = true;
-    if(valid){
-    this.SerachFormSubmitted = false;
-    this.seachSpinner = true;
-    this.checkbuttonname = undefined;
-    this.Recapture = undefined;
-    const AtObj = {
-      Date: this.DateService.dateConvert(new Date(this.Daily_Atten_Date)),
-    }
-    const obj = {
-      "SP_String": "SP_HR_Attn_Sheet_Day_Wise",
-      "Report_Name_String": "Get_HR_Attn_Sheet_Day_Wise",
-      "Json_Param_String": JSON.stringify([AtObj])
-    }
-    this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      this.EmpDailyAttenList = data;
-      this.BackupEmpDailyAttenList = data;
-      this.GetDistinct();
-      this.seachSpinner = false;
-      this.checkbuttonname = data[0].Btn_Name;
-      if (this.checkbuttonname === "Update") {
-        this.buttonname = "Update";
+    if (valid) {
+      this.SerachFormSubmitted = false;
+      this.seachSpinner = true;
+      this.objEmpInfo.Start_Date = this.DateService.dateConvert(this.From_Date ? this.From_Date : new Date());
+      this.objEmpInfo.End_Date = this.DateService.dateConvert(this.To_Date ? this.To_Date : new Date());
+      const obj = {
+        "SP_String": "SP_HR_Attn_Sheet_Day_Wise",
+        "Report_Name_String": "Get_HR_Attn_Sheet_Day_Wise_for_employee",
+        "Json_Param_String": JSON.stringify([this.objEmpInfo])
       }
-      else {
-        this.buttonname = "Save";
-      }
-      this.EmpDailyAttenList.forEach((val) => {
-        val["OTdisabled"] = false;
-        val["Work_Minute"] = 0;//val.Work_Minute;
-        val["minDate"] = Date;
-        if (val.Atten_Type_ID) {
-          var attendanceid = this.AttenTypelist.filter(ele => Number(ele.Atten_Type_ID) === Number(val.Atten_Type_ID));
-          val.Atten_Type_ID = attendanceid ? attendanceid[0].Sht_Desc : null;
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        this.seachSpinner = false;
+        console.log('Emp data>>>', data);
+        this.EmpData = data;
+        this.TotalLeaveType();
+        if(data.length){
+          this.EmpDataFilterField = Object.keys(data[0]);
         }
-        val["OTdisabled"] = true;
       })
-      this.TotalLeaveType();
-      this.getdataforbuttondisabled();
-    })
-  }
-  }
-
-
-  getAttendanceType() {
-    const obj = {
-      "SP_String": "SP_HR_Attn_Sheet_Day_Wise",
-      "Report_Name_String": "Get_Attn_Data_Type"
     }
-    this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      this.AttenTypelist = data;
-      console.log("AttenTypelist ===", this.AttenTypelist);
-    })
   }
 
-  getdataforbuttondisabled() {
-    this.CheckFinalizedOrNot = undefined;
-    var date = new Date(this.Daily_Atten_Date);
-    var month = date.getMonth() + 1;
-    var year = date.getFullYear();
-    var firstDate = year + "-" + month + "-" + "01";
-    const obj = {
-      "SP_String": "SP_Process_Monthly_Attendance_Sheet",
-      "Report_Name_String": "Check Finalized Or Not",
-      "Json_Param_String": JSON.stringify([{ StartDate: this.DateService.dateConvert(new Date(firstDate)) }])
 
-    }
-    this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      this.CheckFinalizedOrNot = data ? data[0].Column1 : undefined;
-      this.SaveButtonDisabled = this.CheckFinalizedOrNot === "Finalized" ? true : false;
-    })
-  }
   
-  GetReCaptureData() {
-    this.recaptureSpinner = true;
-    this.checkbuttonname = undefined;
-    this.Recapture = undefined;
-    const AtObj = {
-      Date: this.DateService.dateConvert(new Date(this.Daily_Atten_Date)),
-    }
-    const obj = {
-      "SP_String": "SP_HR_Attn_Sheet_Day_Wise",
-      "Report_Name_String": "Recapture_HR_Attn_Sheet_Day_Wise",
-      "Json_Param_String": JSON.stringify([AtObj])
-    }
-    this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      this.EmpDailyAttenList = data;
-      this.BackupEmpDailyAttenList = data;
-      this.GetDistinct();
-      this.recaptureSpinner = false;
-      this.checkbuttonname = data[0].Btn_Name;
-      this.Recapture = data[0].Recapture;
-      if (this.checkbuttonname === "Update") {
-        this.buttonname = "Update";
-      }
-      else {
-        this.buttonname = "Save";
-      }
-      this.EmpDailyAttenList.forEach((val) => {
-        val["OTdisabled"] = false;
-        val["Work_Minute"] = 0;//val.Work_Minute;
-        val["minDate"] = Date;
-        if (val.Atten_Type_ID) {
-          var attendanceid = this.AttenTypelist.filter(ele => Number(ele.Atten_Type_ID) === Number(val.Atten_Type_ID));
-          val.Atten_Type_ID = attendanceid ? attendanceid[0].Sht_Desc : null;
-        }
-        val["OTdisabled"] = true;
-      })
-      this.TotalLeaveType();
-      this.getdataforbuttondisabled();
-    })
-  }
-  // DISTINCT & FILTER
-  GetDistinct() {
-    let DWorkLocation: any = [];
-    this.DistWorkLocation = [];
-    this.SelectedDistWorkLocation = [];
-    this.SearchFields = [];
-    this.EmpDailyAttenList.forEach((item) => {
-      if (DWorkLocation.indexOf(item.Work_Location) === -1) {
-        DWorkLocation.push(item.Work_Location);
-        this.DistWorkLocation.push({ label: item.Work_Location, value: item.Work_Location });
-      }
-    });
-    this.BackupEmpDailyAttenList = [...this.EmpDailyAttenList];
-  }
-  FilterDist() {
-    let DWorkLocation: any = [];
-    this.SearchFields = [];
-    if (this.SelectedDistWorkLocation.length) {
-      this.SearchFields.push('Process_ID');
-      DWorkLocation = this.SelectedDistWorkLocation;
-    }
-    this.EmpDailyAttenList = [];
-    if (this.SearchFields.length) {
-      let LeadArr = this.BackupEmpDailyAttenList.filter(function (e) {
-        return (DWorkLocation.length ? DWorkLocation.includes(e['Work_Location']) : true)
-      });
-      this.EmpDailyAttenList = LeadArr.length ? LeadArr : [];
-    } else {
-      this.EmpDailyAttenList = [...this.BackupEmpDailyAttenList];
-    }
-    this.TotalLeaveType();
-  }
   TotalLeaveType() {
-    var present = this.EmpDailyAttenList.filter(item => item.Atten_Type_ID === "P")
+    var present = this.EmpData.filter(item => item.Sht_Desc === "P")
     this.Total_Present = present.length ? present.length : undefined;
+    // console.log("this.Total_Present===",this.Total_Present);
 
-    var pwoff = this.EmpDailyAttenList.filter(item => item.Atten_Type_ID === "PWO" || item.Atten_Type_ID === "PW")
+    var pwoff = this.EmpData.filter(item => item.Sht_Desc === "PWO" || item.Sht_Desc === "PW")
     this.Total_Present_in_Weekly_Off = pwoff.length ? pwoff.length : undefined;
 
-    var pph = this.EmpDailyAttenList.filter(item => item.Atten_Type_ID === "PPH")
+    var pph = this.EmpData.filter(item => item.Sht_Desc === "PPH")
     this.Total_Present_in_Public_Holiday = pph.length ? pph.length : undefined;
 
 
-    var holiday = this.EmpDailyAttenList.filter(item => item.Atten_Type_ID === "HL")
+    var holiday = this.EmpData.filter(item => item.Sht_Desc === "HL")
     this.Total_Holiday = holiday.length ? holiday.length : undefined;
 
-    var pholiday = this.EmpDailyAttenList.filter(item => item.Atten_Type_ID === "PH")
+    var pholiday = this.EmpData.filter(item => item.Sht_Desc === "PH")
     this.Total_Public_Holiday = pholiday.length ? pholiday.length : undefined;
 
 
-    var woff = this.EmpDailyAttenList.filter(item => item.Atten_Type_ID === "WO")
+    var woff = this.EmpData.filter(item => item.Sht_Desc === "WO")
     this.Total_Weekly_Off = woff.length ? woff.length : undefined;
 
 
-    var sickle = this.EmpDailyAttenList.filter(item => item.Atten_Type_ID === "SL")
+    var sickle = this.EmpData.filter(item => item.Sht_Desc === "SL")
     this.Total_Sick_Leave = sickle.length ? sickle.length : undefined;
 
 
-    var casualle = this.EmpDailyAttenList.filter(item => item.Atten_Type_ID === "CL")
+    var casualle = this.EmpData.filter(item => item.Sht_Desc === "CL")
     this.Total_Casual_Leave = casualle.length ? casualle.length : undefined;
 
 
-    var prle = this.EmpDailyAttenList.filter(item => item.Atten_Type_ID === "PL")
+    var prle = this.EmpData.filter(item => item.Sht_Desc === "PL")
     this.Total_Prevlage_Leave = prle.length ? prle.length : undefined;
 
 
-    var comoff = this.EmpDailyAttenList.filter(item => item.Atten_Type_ID === "CO")
+    var comoff = this.EmpData.filter(item => item.Sht_Desc === "CO")
     this.Total_Compensatory_Off = comoff.length ? comoff.length : undefined;
 
-    var absent = this.EmpDailyAttenList.filter(item => item.Atten_Type_ID === "A")
+    var absent = this.EmpData.filter(item => item.Sht_Desc === "A")
     this.Total_Absent = absent.length ? absent.length : undefined;
 
-    var leavewthoutpay = this.EmpDailyAttenList.filter(item => item.Atten_Type_ID === "LWP")
+    var leavewthoutpay = this.EmpData.filter(item => item.Sht_Desc === "LWP")
     this.Leave_Without_Pay = leavewthoutpay.length ? leavewthoutpay.length : undefined;
 
-    var left = this.EmpDailyAttenList.filter(item => item.Atten_Type_ID === "L")
+    var left = this.EmpData.filter(item => item.Sht_Desc === "L")
     this.Total_Left = left.length ? left.length : undefined;
 
-    var late = this.EmpDailyAttenList.filter(item => item.Atten_Type_ID === "LT")
+    var late = this.EmpData.filter(item => item.Sht_Desc === "LT")
     this.Total_Late = late.length ? late.length : undefined;
 
-    var halfday = this.EmpDailyAttenList.filter(item => item.Atten_Type_ID === "HD")
+    var halfday = this.EmpData.filter(item => item.Sht_Desc === "HD")
     this.Half_Day = halfday.length ? halfday.length : undefined;
 
-    var annualleave = this.EmpDailyAttenList.filter(item => item.Atten_Type_ID === "AL")
+    var annualleave = this.EmpData.filter(item => item.Sht_Desc === "AL")
     this.Annual_Leave = annualleave.length ? annualleave.length : undefined;
   }
-  getAttenTypedropdown(atnid) {
-    const obj = {
-      "SP_String": "SP_HR_Attn_Sheet_Day_Wise",
-      "Report_Name_String": "Get_Attn_Data_Type"
-    }
-    this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      var attntypelist = data;
-      //  console.log("AttendanceTypeList ===",this.AttendanceTypeList);
-      if (atnid == "WO") {
-        var atdata = attntypelist.filter(function (value) {
-          return value.Atten_Type_ID != 2 &&
-            value.Atten_Type_ID != 3 &&
-            value.Atten_Type_ID != 4 &&
-            value.Atten_Type_ID != 5 &&
-            value.Atten_Type_ID != 6 &&
-            value.Atten_Type_ID != 8 &&
-            value.Atten_Type_ID != 9 &&
-            value.Atten_Type_ID != 10 &&
-            value.Atten_Type_ID != 11 &&
-            value.Atten_Type_ID != 12 &&
-            value.Atten_Type_ID != 13 &&
-            value.Atten_Type_ID != 15
 
-        });
-        this.AttendanceTypeList = atdata;
-      }
-      else if (atnid == "PH") {
-        var atdata = attntypelist.filter(function (value) {
-          return value.Atten_Type_ID != 2 &&
-            value.Atten_Type_ID != 3 &&
-            value.Atten_Type_ID != 4 &&
-            value.Atten_Type_ID != 5 &&
-            value.Atten_Type_ID != 6 &&
-            value.Atten_Type_ID != 7 &&
-            value.Atten_Type_ID != 8 &&
-            value.Atten_Type_ID != 9 &&
-            value.Atten_Type_ID != 10 &&
-            value.Atten_Type_ID != 12 &&
-            value.Atten_Type_ID != 13 &&
-            value.Atten_Type_ID != 14
-        });
-        this.AttendanceTypeList = atdata;
-      }
-      else if (atnid == "PWO" || atnid == "PW" || atnid == "PPH") {
-        this.AttendanceTypeList = attntypelist;
-      }
-      else {
-        var atdata = attntypelist.filter(function (value) {
-          return value.Atten_Type_ID != 14 &&
-            value.Atten_Type_ID != 15;
-        });
-        this.AttendanceTypeList = atdata;
-      }
-    })
-  }
-  ShowAttendancePopup(obj) {
-    this.empid = undefined;
-    this.employeename = undefined;
-    this.Atten_Type = undefined;
-    if (obj.Emp_ID && obj.Atten_Type_ID) {
-      this.empid = obj.Emp_ID;
-      this.employeename = obj.Emp_Name;
-      var attnid = this.AttenTypelist.filter(ele => ele.Sht_Desc === obj.Atten_Type_ID)
-      this.Atten_Type = attnid[0].Atten_Type_ID;
-      console.log("this.Atten_Type===", this.Atten_Type)
-      if (this.Atten_Type === 8 || this.Atten_Type === 6) {
-        this.GetBalance();
-      }
-      this.AttendancePopup = true;
-    }
-  }
-  GetBalance() {
-    this.Balance = undefined;
-    const AtObj = {
-      Emp_ID: this.empid,
-      Atten_Type_ID: this.Atten_Type,
-      Date: this.DateService.dateConvert(new Date(this.Daily_Atten_Date))
-    }
-    const objtemp = {
-      "SP_String": "SP_HR_Attn_Sheet_Day_Wise",
-      "Report_Name_String": "Show_Balance",
-      "Json_Param_String": JSON.stringify([AtObj])
-    }
-    this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
-      if (this.Atten_Type == 6 || this.Atten_Type == 8 || this.Atten_Type == 10) {
-        this.Balance = data.length ? data[0].Balance : "0";
-      } else {
-        this.Balance = undefined;
-      }
-    })
-  }
-
-  CheckApproveStatus(valid) {
-    this.attendancetypeFormSubmitted = true;
-    var attndata = this.AttenTypelist.filter(item => Number(item.Atten_Type_ID) === Number(this.Atten_Type))
-    var isleave = attndata[0].Is_Leave;
-    const objattn = {
-      Emp_ID: this.empid,
-      Atten_Type_ID: this.Atten_Type,
-      Date: this.DateService.dateConvert(new Date(this.Daily_Atten_Date))
-    }
-    if (valid) {
-
-      if (isleave === true) {
-        const obj = {
-          "SP_String": "SP_Leave_Application",
-          "Report_Name_String": "Check_Approve_Status",
-          "Json_Param_String": JSON.stringify([objattn])
-
-        }
-        this.GlobalAPI.postData(obj).subscribe((data: any) => {
-
-          if (data[0].Column1 === "OK") {
-            this.SaveAttendanceType();
-          } else {
-            this.compacctToast.clear();
-            this.compacctToast.add({
-              key: "c",
-              sticky: true,
-              severity: "warn",
-              summary: data[0].Column1,
-              detail: ""
-            });
-          }
-        })
-      }
-      else {
-        this.SaveAttendanceType();
-      }
-
-    }
-  }
-  SaveAttendanceType() {
-
-    this.EmpDailyAttenList.forEach((el: any) => {
-      if (Number(el.Emp_ID) == Number(this.empid)) {
-        var attenshtdes = this.AttenTypelist.filter(ele => Number(ele.Atten_Type_ID) === Number(this.Atten_Type));
-        el.Atten_Type_ID = attenshtdes ? attenshtdes[0].Sht_Desc : null;
-      }
-    })
-
-    this.AttendancePopup = false;
-
-  }
-  CalculateTime(obj) {
-
-    if (obj.Off_In_Time) {
-      obj.minDate = new Date(obj.Off_In_Time);
-    }
-    if (obj.Off_In_Time && obj.Off_Out_Time) {
-
-      var outtime: any = new Date(obj.Off_Out_Time);
-      var intime: any = new Date(obj.Off_In_Time);
-
-      var minutes = (Math.abs(outtime.getTime() - intime.getTime()) / (1000 * 60));
-      obj.Work_Minute = minutes;
-
-    }
-  }
-
-  // SAVE AND UPDATE
-  dataforSave() {
-    // console.log(this.DateService.dateConvert(new Date(this.myDate)))
-    if (this.BackupEmpDailyAttenList.length) {
-
-      let tempArr: any = []
-      this.BackupEmpDailyAttenList.forEach(item => {
-
-        var attenid = this.AttenTypelist.filter(el => el.Sht_Desc === item.Atten_Type_ID)
-        const TempObj = {
-          Date: this.DateService.dateConvert(new Date(this.Daily_Atten_Date)),
-          Emp_Code: item.Emp_Code,
-          Emp_ID: item.Emp_ID,
-          Emp_Name: item.Emp_Name,
-          Atten_Type_ID: attenid[0].Atten_Type_ID,
-          Off_In_Time: item.Off_In_Time ? this.DateService.dateTimeConvert(new Date(item.Off_In_Time)) : null,
-          Off_Out_Time: item.Off_Out_Time ? this.DateService.dateTimeConvert(new Date(item.Off_Out_Time)) : null,
-          Working_Hours_Mins: item.Working_Hours_Mins ? item.Working_Hours_Mins : null,
-          Work_Minute: item.Work_Minute ? item.Work_Minute : null,
-          OT_Minutes: item.OT_Minutes,
-          OT_Avail: item.OT_Avail,
-          Amount: item.Amount,
-          Remarks: item.Remarks,
-          OT_Hours: item.OT_Hours,
-          Per_Hours: item.Per_Hours,
-          Add_Custom_Salary_Multiple: item.Add_Custom_Salary_Multiple,
-          Overtime_Rate: item.Overtime_Rate
-        }
-        tempArr.push(TempObj)
-
-      });
-      console.log("Save Data ===", tempArr)
-      return JSON.stringify(tempArr);
-
-
-    }
-  }
-  Showdialog() {
-    if (this.Recapture === "Recapture") {
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "re",
-        sticky: true,
-        severity: "warn",
-        summary: "All Attendance data will remove for this Date. Want to Procced?"
-      });
-    }
-    else {
-      this.SaveDailyAttendance();
-    }
-  }
-  SaveDailyAttendance() {
-    if (this.BackupEmpDailyAttenList.length) {
-      const obj = {
-        "SP_String": "SP_HR_Attn_Sheet_Day_Wise",
-        "Report_Name_String": "Insert_HR_Attn_Sheet_Day_Wise",
-        "Json_Param_String": this.dataforSave()
-
-      }
-      this.GlobalAPI.postData(obj).subscribe((data: any) => {
-        //console.log(data);
-        if (data[0].Column1) {
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "success",
-            summary: "Message ",
-            detail: "Succesfully Saved "
-          });
-          this.GetEmpData(true);
-        } else {
-          this.compacctToast.clear();
-          this.compacctToast.add({
-            key: "compacct-toast",
-            severity: "error",
-            summary: "Warn Message",
-            detail: "Error Occured "
-          });
-        }
-      })
-    }
-
-
-  }
 
   onReject() {
     this.compacctToast.clear("c");
     this.compacctToast.clear("re");
   }
 
-  information() {
+  onConfirm(){
 
-    const objtemp = {
-      "SP_String": "HR_Txn_Attn_Sheet",
-      "Report_Name_String": "Attendance_Details_HTML"
-    }
-    this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
-      var printlink = data[0].Column1;
-
-      if (printlink) {
-        window.open(printlink, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
-      }
-    })
   }
-
-  OTpopup(otdata) {
-
-    if (otdata.Emp_ID && otdata.Atten_Type_ID) {
-      this.OtEmpid = otdata.Emp_ID;
-      this.OtEmpname = otdata.Emp_Name;
-      this.otattntype = otdata.Atten_Type_ID
-
-      this.Overtime_Rate = otdata.Overtime_Rate ? otdata.Overtime_Rate : "Fixed_Amount";
-      console.log('this.Overtime_Rate----', this.Overtime_Rate)
-      this.GetPerHour();
-
-      this.OT_Hours = otdata.OT_Hours;
-      this.Per_Hours = otdata.Per_Hours;
-      this.Add_Custom_Salary_Multiple = otdata.Add_Custom_Salary_Multiple;
-      this.Total_Amount = otdata.Amount;
-    }
-    this.OTPopup = true;
-  }
-  calculatemin() {
-    if (this.OT_Hours) {
-      var othours: any = this.OT_Hours;
-      var gethr: any = othours.split(":");
-      var hr = gethr[0];
-      var min = gethr[1];
-      console.log("ot===", hr);
-      var otmin = ((60 * Number(hr)) + Number(min));
-      this.ottotalmin = Number(otmin);
-      console.log("ot min===", this.ottotalmin);
-      this.Calculatemultiple();
-    }
-  }
-  gethalfdaytime() {
-    this.OT_Hours = "04:30";
-    this.calculatemin();
-  }
-  getfulldaytime() {
-    this.OT_Hours = "09:00";
-    this.calculatemin();
-  }
-  GetPerHour() {
-    if (this.Overtime_Rate === "Fixed_Amount") {
-      const objtemp = {
-        "SP_String": "SP_HR_Attn_Sheet_Day_Wise",
-        "Report_Name_String": "Get_Per_Hour_Amount",
-        "Json_Param_String": JSON.stringify([{ Emp_ID: this.OtEmpid }])
-      }
-      this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
-        this.backupperhour = data[0].Per_Hour_Amount;
-        this.Per_Hours = Number(this.backupperhour).toFixed(2);
-        this.Add_Custom_Salary_Multiple = undefined;
-        this.Calculatemultiple();
-      })
-    }
-    else {
-      this.Per_Hours = Number(this.backupperhour).toFixed(2);
-      this.Calculatemultiple();
-    }
-  }
-  Calculatemultiple() {
-    if (this.OT_Hours) {
-      var gethractototalmin = Number((this.Per_Hours * this.ottotalmin) / 60).toFixed(2);
-      this.fixedtotalamt = Number(gethractototalmin).toFixed(2);
-      if (this.Add_Custom_Salary_Multiple) {
-        this.Total_Amount = Number(Number(this.Add_Custom_Salary_Multiple) * Number(this.fixedtotalamt)).toFixed(2);
-        console.log("this.Total_Amount===", this.Total_Amount);
-      }
-      else {
-        this.Total_Amount = Number(this.fixedtotalamt).toFixed(2);
-      }
-    }
-  }
-  SaveOT() {
-    this.EmpDailyAttenList.forEach((el: any) => {
-      if (Number(el.Emp_ID) == Number(this.OtEmpid)) {
-        el.OT_Minutes = this.ottotalmin ? this.ottotalmin : 0;
-        el.Amount = this.Total_Amount ? this.Total_Amount : 0;
-        el.OT_Hours = this.OT_Hours;
-        el.Per_Hours = this.Per_Hours;
-        el.Add_Custom_Salary_Multiple = this.Add_Custom_Salary_Multiple;
-        el.Overtime_Rate = this.Overtime_Rate;
-      }
-    })
-    this.OTPopup = false;
-  }
-
+  
 }
 
 class EmpInfo {
-  emp_id:any;
-  from_date:any;
-  to_date:any;
+  Emp_ID: any;
+  Start_Date: any;
+  End_Date: any;
 }
