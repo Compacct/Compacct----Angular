@@ -69,7 +69,7 @@ export class DailyAttendanceJohForEmployeeComponent implements OnInit {
     }
 
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      console.log('Emp list>>>', data);
+      // console.log('Emp list>>>', data);
       data.forEach((ele: any) => {
         ele["label"] = ele.Emp_Name;
         ele["value"] = ele.Emp_ID;
@@ -81,11 +81,11 @@ export class DailyAttendanceJohForEmployeeComponent implements OnInit {
   getEmpCode(empId: any) {
     this.selectedEmpCode = '';
     this.EmpData = [];
-    console.log('Emp Id>>>', empId);
+    // console.log('Emp Id>>>', empId);
     if (empId) {
       let selectedEmp = this.EmpList.find((ele: any) => ele.Emp_ID == empId);
       this.selectedEmpCode = selectedEmp ? selectedEmp.Emp_Code : '';
-      console.log('Emp code>>>', selectedEmp);
+      // console.log('Emp code>>>', selectedEmp);
     }
   }
 
@@ -97,7 +97,7 @@ export class DailyAttendanceJohForEmployeeComponent implements OnInit {
   }
 
   GetEmpData(valid: any) {
-    console.log('search form valid', valid);
+    // console.log('search form valid', valid);
     this.SerachFormSubmitted = true;
     if (valid) {
       this.SerachFormSubmitted = false;
@@ -111,7 +111,7 @@ export class DailyAttendanceJohForEmployeeComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         this.seachSpinner = false;
-        console.log('Emp data>>>', data);
+        // console.log('Emp data>>>', data);
         this.EmpData = data;
         this.TotalLeaveType();
         if(data.length){
