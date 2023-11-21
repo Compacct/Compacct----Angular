@@ -777,29 +777,29 @@ export class SaleBillNewComponent implements OnInit {
     }
   }
   calculategstamt(){
-    // this.AddProductDetails.forEach(ele=>{
-    //   const SubLedgerState = this.ObjSaleBillNew.Sub_Ledger_State
-    //     ? this.ObjSaleBillNew.Sub_Ledger_State.toUpperCase()
-    //     : undefined;
-    //   const CostCenterState = this.ObjSaleBillNew.Cost_Cen_State
-    //     ? this.ObjSaleBillNew.Cost_Cen_State.toUpperCase()
-    //     : undefined;
-    //     if (SubLedgerState && CostCenterState) {
-    //       if (SubLedgerState === CostCenterState) {
-    //         ele.CGST_Amount = Number(((ele.Taxable_Amount * ele.CGST_Rate) / 100).toFixed(2));
-    //         ele.SGST_Amount = Number(((ele.Taxable_Amount * ele.SGST_Rate) / 100).toFixed(2));
-    //         ele.IGST_Amount = 0;
-    //         ele.IGST_Rate = 0;
-    //       }
-    //       else {
-    //         ele.IGST_Amount = Number(((ele.Taxable_Amount * ele.IGST_Rate) / 100).toFixed(2));
-    //         ele.CGST_Amount = 0;
-    //         ele.CGST_Rate = 0;
-    //         ele.SGST_Amount = 0;
-    //         ele.SGST_Rate = 0;
-    //       }
-    //     } 
-    // })
+    this.AddProductDetails.forEach(ele=>{
+      const SubLedgerState = this.ObjSaleBillNew.Sub_Ledger_State
+        ? this.ObjSaleBillNew.Sub_Ledger_State.toUpperCase()
+        : undefined;
+      const CostCenterState = this.ObjSaleBillNew.Cost_Cen_State
+        ? this.ObjSaleBillNew.Cost_Cen_State.toUpperCase()
+        : undefined;
+        // if (SubLedgerState && CostCenterState) {
+          if (ele.IGST_Rate === 0 && ele.IGST_Amount === 0) {
+            ele.CGST_Amount = Number(((ele.Taxable_Amount * ele.CGST_Rate) / 100).toFixed(2));
+            ele.SGST_Amount = Number(((ele.Taxable_Amount * ele.SGST_Rate) / 100).toFixed(2));
+            ele.IGST_Amount = 0;
+            ele.IGST_Rate = 0;
+          }
+          else {
+            ele.IGST_Amount = Number(((ele.Taxable_Amount * ele.IGST_Rate) / 100).toFixed(2));
+            ele.CGST_Amount = 0;
+            ele.CGST_Rate = 0;
+            ele.SGST_Amount = 0;
+            ele.SGST_Rate = 0;
+          }
+        // } 
+    })
     
   }
   calculatenetamtForTable(){
@@ -808,6 +808,7 @@ export class SaleBillNewComponent implements OnInit {
       var netamount = (Number(elem.Taxable_Amount) + Number(elem.CGST_Amount) + Number(elem.SGST_Amount) 
                     + Number(elem.IGST_Amount) + Number(elem.CESS_AMT)).toFixed(2);
       elem.Net_Value = Number(netamount)
+      elem.Gross_Amount = Number(netamount)
     })
     
   }
@@ -1059,6 +1060,9 @@ export class SaleBillNewComponent implements OnInit {
         return true;
       }
   }
+  getTofix(key){
+    return Number(Number(key).toFixed(2))
+   }
   AddProductInfo(valid) {
     //console.log(this.ObjaddbillForm.Product_ID)
     this.ProductInfoSubmitted = true;
