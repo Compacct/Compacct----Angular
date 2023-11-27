@@ -40,8 +40,11 @@
                                     <label></label>
                                     <button  class="btn btn-warning" (click)="UpdateSPBrowseData()" [disabled]="processSalarydisabled" >Process salary</button>
                                 </div>
-                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U' && $CompacctAPI.CompacctCookies.Del_Right === 'Y' && ButtonShowOrNot === 'YES' && databaseName != 'GN_JOH_HR'">
+                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U' && $CompacctAPI.CompacctCookies.Del_Right === 'Y' && ButtonShowOrNot === 'YES'">
                                     <button  class="btn btn-success" (click)="exportoexcel('Process_Salary')" [disabled]="!BrowseList.length">Salary Register</button>
+                                </div>
+                                <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U' && $CompacctAPI.CompacctCookies.Del_Right === 'Y' && ButtonShowOrNot === 'YES' && databaseName == 'GN_JOH_HR'">
+                                    <button  class="btn btn-success" (click)="exportoexcelJOH('Process_Salary')" [disabled]="!BrowseList.length">Export To Excel</button>
                                 </div>
                                 <div class="col-sm-2" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'U' && $CompacctAPI.CompacctCookies.Del_Right === 'Y' && ButtonShowOrNot === 'YES'">
                                     <button  class="btn btn-primary" (click)="Finalized()" [disabled]="processSalarydisabled">Finalized</button>
