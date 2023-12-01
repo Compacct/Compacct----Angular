@@ -788,22 +788,30 @@
                                                     </div>
                                                     <div class='col-sm-12' *ngIf="!QueryStringObj?.Sub_Ledger_ID">
                                                         <label class="control-label">Other Payment Mode: </label>
+                                                        <div *ngIf="LedgerNameforupi === 'UPI' && ObjcashForm.Wallet_Amount" class="pull-right" style="margin-top: -2px;">
+                                                            <button (click)="getdataforrequestdetailsupi()" class="btn createPatient" [disabled]="txnbuttondisabledupi" style="background-color: #587ea3; color: white;"> Request</button> &nbsp; 
+                                                            <button  (click)="CheckTransactionupi()" class="btn createPatient" [disabled]="confirmtxnflagupi" style="background-color: #587ea3; color: white;"> Confirm</button>
+                                                        </div>
                                                         <div class="input-group">
                                                             <div class="input-group-addon">
-                                                                <select name="wallet" #wallet="ngModel" [(ngModel)]="ObjcashForm.Wallet_Ac_ID" [disabled]='QueryStringObj?.Txn_ID'>
+                                                                <select name="wallet" #wallet="ngModel" [(ngModel)]="ObjcashForm.Wallet_Ac_ID" [disabled]='QueryStringObj?.Txn_ID' (change)="getledgername()">
                                                                     <option [ngValue]="undefined">select</option>
                                                                     <option *ngFor = "let option of walletlist" [value] ="option.Txn_ID">
                                                                         {{option.Ledger_Name}}
                                                                     </option>
                                                                 </select>
                                                             </div>
-                                                            <input type="text" class="form-control" id="exampleInputAmount" name="Wallet" #Wallet="ngModel" [(ngModel)]="ObjcashForm.Wallet_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true" [disabled]='QueryStringObj?.Txn_ID'>
+                                                            <input type="text" class="form-control" id="exampleInputAmount" name="Wallet" #Wallet="ngModel" [(ngModel)]="ObjcashForm.Wallet_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true" [disabled]='QueryStringObj?.Txn_ID || txndisabledupi'>
                                                         </div>
                                                     </div>
 
                                                     <div class='col-sm-12' *ngIf="!QueryStringObj?.Sub_Ledger_ID">
                                                         <label class="control-label">Card Amount: </label>
-                                                        <input class="form-control" type="text" style="text-align: center" name="card" #card="ngModel" [(ngModel)]="ObjcashForm.Card_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true">
+                                                        <div *ngIf="ObjcashForm.Card_Amount" class="pull-right" style="margin-top: -2px;">
+                                                            <button (click)="getdataforrequestdetails()" class="btn createPatient" [disabled]="txnbuttondisabled" style="background-color: #587ea3; color: white;"> Request</button> &nbsp; 
+                                                            <button  (click)="CheckTransaction()" class="btn createPatient" [disabled]="confirmtxnflag" style="background-color: #587ea3; color: white;"> Confirm</button>
+                                                        </div>
+                                                        <input class="form-control" type="text" style="text-align: center" name="card" #card="ngModel" [disabled]='txndisabled' [(ngModel)]="ObjcashForm.Card_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true">
                                                     </div>
                                                     <div class='col-sm-12' *ngIf="!QueryStringObj?.Sub_Ledger_ID">
                                                         <div class="form-group">
