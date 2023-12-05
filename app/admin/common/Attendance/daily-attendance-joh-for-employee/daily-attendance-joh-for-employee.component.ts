@@ -111,7 +111,7 @@ export class DailyAttendanceJohForEmployeeComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         this.seachSpinner = false;
-        // console.log('Emp data>>>', data);
+        console.log('Emp data>>>', data);
         this.EmpData = data;
         this.TotalLeaveType();
         if(data.length){
