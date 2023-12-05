@@ -154,6 +154,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
     })
   }
   searchData(valid){
+    this.seachSpinner = true;
     this.DistributionSearchFormSubmitted = true;
   const start = this.ObjBrowseData.From_Date
         ? this.DateService.dateConvert(new Date(this.ObjBrowseData.From_Date))
@@ -211,10 +212,14 @@ export class ReceiveDistributionChallanComponent implements OnInit {
       this.GetAllDataList = data;
       console.log("this.GetAllDataList",this.GetAllDataList);
       this.DistributionSearchFormSubmitted = false;
+      this.seachSpinner = false;
      // this.Objdispatch.From_Godown_ID = this.FromGodownList.length === 1 ? this.FromGodownList[0].From_Godown_ID : undefined;
     })
   //}
-  }
+    }
+    else {
+      this.seachSpinner = false;
+    }
   }
   editmaster(masterProduct){
    this.clearData();

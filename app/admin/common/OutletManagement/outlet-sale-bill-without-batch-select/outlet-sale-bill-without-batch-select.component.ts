@@ -106,6 +106,25 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
   Order_No:any;
   Order_Date:any
 
+  rp_username: any;
+  rp_appkey: any;
+  rp_device_Id: any;
+  txnidAsRefNumber: any;
+  RequestId:any;
+  confirmtxnflag:boolean = true;
+  transactionStatus: any;
+  tid: any;
+  txndisabled:boolean = false;
+  LedgerNameforupi: any;
+  txnbuttondisabled:boolean = false;
+  txndisabledupi:boolean = false;
+  confirmtxnflagupi:boolean = false;
+  txnbuttondisabledupi:boolean = false;
+  txnidAsRefNumberupi: any;
+  RequestIdupi: any;
+  transactionStatusupi: any;
+  tidupi: any;
+
   constructor(
     private Header: CompacctHeader,
     private route : ActivatedRoute,
@@ -441,6 +460,17 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
  
    });
  }
+ GetcostcenterDetails(){
+  this.rp_username = undefined;
+  this.rp_appkey = undefined;
+  this.rp_device_Id = undefined;
+if(this.ObjaddbillForm.selectitem) {
+  const ccdetails = this.returnedID.filter(ele=> Number(ele.Cost_Cen_ID) === Number(this.ObjaddbillForm.selectitem))
+  this.rp_username = ccdetails.length ? ccdetails[0].rp_username : undefined;
+  this.rp_appkey = ccdetails.length ? ccdetails[0].rp_appkey : undefined;
+  this.rp_device_Id = ccdetails.length ? ccdetails[0].rp_device_Id : undefined;
+}
+ }
 
  // FRANCISE BILL
 autoaFranchiseBill() {
@@ -456,6 +486,7 @@ autoaFranchiseBill() {
   }
  
   getselectitem(){
+    this.GetcostcenterDetails();
     //if(this.ObjaddbillForm.Cost_Cen_ID){
      this.Objcustomerdetail.Doc_Date = this.DateService.dateConvert(new Date(this.myDate));
      //console.log("this.ObjaddbillForm.Doc_Date ===",this.ObjaddbillForm.Doc_Date)
@@ -1234,6 +1265,374 @@ checkdiscountamt(){
     }
   })
 }
+
+// Check Transaction Details
+// For CARD
+getdataforrequestdetails(){
+  this.txnidAsRefNumber = undefined;
+  const objsend = {
+    Txn_Type : "B",
+    Txn_amount: this.ObjcashForm.Card_Amount,
+    rp_payment_type: "CARD"
+  }
+  const obj = {
+    "SP_String": "SP_rp_txn",
+    "Report_Name_String": "rp_gen_request",
+    "Json_Param_String": JSON.stringify([objsend])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log(data)
+    if(data[0].Column1){
+      this.txnidAsRefNumber = data[0].Column1;
+      this.RequestPayment();
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Something wrong."
+      });
+    }
+    
+  })
+}
+RequestPayment(){
+  this.RequestId = undefined;
+  const obj = {
+    username: this.rp_username,
+    appKey: this.rp_appkey,
+    amount: this.ObjcashForm.Card_Amount,
+    customerMobileNumber: this.Objcustomerdetail.Costomer_Mobile,
+    externalRefNumber: this.txnidAsRefNumber,
+    pushTo: {
+        deviceId: this.rp_device_Id
+    },
+    mode: "CARD"
+}
+console.log("sendobj===",obj)
+  this.$http.post('https://k4crzpayment.azurewebsites.net/api/rz_request?code=4klJypmsNXuEg925xXsUBY4jQZEn6CPR1W5vKU-GrHfUAzFufZc9kA==',obj)
+        .subscribe((data: any) => {
+     console.log('getdata===',data)
+     this.RequestId = data.p2pRequestId
+     if(this.RequestId){
+     this.confirmtxnflag = this.RequestId ? false : true;
+      this.txnbuttondisabled = this.RequestId ? true : false;
+     const senddata = {
+      Txn_ID : this.txnidAsRefNumber,
+      rp_req_id : this.RequestId,
+      rp_status : 'PENDING',
+      tid : 'NA'
+     }
+     this.Updaterequestdetails(senddata);
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: data.realCode
+      });
+    }
+   })  
+}
+CheckTransaction(){
+  this.transactionStatus = undefined;
+  this.tid = undefined;
+  const obj = {
+    username: this.rp_username,
+    appKey: this.rp_appkey,
+    origP2pRequestId: this.RequestId
+}
+console.log("sendobj===",obj)
+  this.$http.post('https://k4crzpayment.azurewebsites.net/api/get_status?code=x4u-RtD7ZkaZC1SZjgalnnrpPOesMg34WSqliOedceA1AzFuVH2DEQ==',obj)
+        .subscribe((data: any) => {
+     console.log('getdata===',data)
+     this.transactionStatus = data.realCode;
+     this.tid = data.tid;
+
+     if(this.transactionStatus === "P2P_DEVICE_CANCELED"){
+      this.txnbuttondisabled = false;
+      const senddata = {
+        Txn_ID : this.txnidAsRefNumber,
+        rp_status : 'CANCELED', 
+        rp_req_id : 'NA',
+        tid : 'NA'
+      }
+      this.Updaterequestdetails(senddata);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Transaction Cancelled."
+      });
+    }
+    else if(this.transactionStatus === "P2P_DEVICE_TXN_DONE"){
+      const senddata = {
+        Txn_ID : this.txnidAsRefNumber,
+        rp_status : 'DONE', 
+        rp_req_id : this.RequestId,
+        tid : this.tid
+      }
+      this.ObjcashForm.Card_Amount = data.amount;
+      this.txndisabled = true;
+      this.AmountChange();
+      this.Updaterequestdetails(senddata);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Success Message",
+        detail: "Transaction Successful."
+      });
+    }
+    else if(this.transactionStatus === "P2P_DEVICE_RECEIVED"){
+      this.txnbuttondisabled = true;
+      const senddata = {
+        Txn_ID : this.txnidAsRefNumber,
+        rp_status : 'PENDING',
+        rp_req_id : this.RequestId,
+        tid : 'NA'
+      }
+      this.Updaterequestdetails(senddata);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Transaction Pending."
+      });
+    }
+    else {
+      this.txnbuttondisabled = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: this.transactionStatus
+      });
+    }
+     
+   })  
+}
+Updaterequestdetails(dataobj){
+  const obj = {
+    "SP_String": "SP_rp_txn",
+    "Report_Name_String": "rp_update_req_return",
+    "Json_Param_String": JSON.stringify([dataobj])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log(data)
+  })
+}
+// For UPI
+getledgername(){
+  this.LedgerNameforupi = undefined;
+  this.txndisabledupi = false;
+  if(this.ObjcashForm.Wallet_Ac_ID){
+  const ledgername = this.walletlist.filter(el=> Number(el.Txn_ID) === Number(this.ObjcashForm.Wallet_Ac_ID));
+    this.LedgerNameforupi = ledgername.length ? ledgername[0].Ledger_Name : undefined;
+  }
+}
+getdataforrequestdetailsupi(){
+  this.txnidAsRefNumberupi = undefined;
+  const objsend = {
+    Txn_Type : "A",
+    Txn_amount: this.ObjcashForm.Wallet_Amount,
+    rp_payment_type: "UPI"
+  }
+  const obj = {
+    "SP_String": "SP_rp_txn",
+    "Report_Name_String": "rp_gen_request",
+    "Json_Param_String": JSON.stringify([objsend])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log(data)
+    if(data[0].Column1){
+      this.txnidAsRefNumberupi = data[0].Column1;
+      this.RequestPaymentupi();
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Something wrong."
+      });
+    }
+    
+  })
+}
+RequestPaymentupi(){
+  this.RequestIdupi = undefined;
+  const obj = {
+    username: this.rp_username,
+    appKey: this.rp_appkey,
+    amount: this.ObjcashForm.Wallet_Amount,
+    customerMobileNumber: this.Objcustomerdetail.Costomer_Mobile,
+    externalRefNumber: this.txnidAsRefNumberupi,
+    pushTo: {
+        deviceId: this.rp_device_Id
+    },
+    mode: "UPI"
+}
+console.log("sendobj===",obj)
+  this.$http.post('https://k4crzpayment.azurewebsites.net/api/rz_request?code=4klJypmsNXuEg925xXsUBY4jQZEn6CPR1W5vKU-GrHfUAzFufZc9kA==',obj)
+        .subscribe((data: any) => {
+     console.log('getdata===',data)
+     this.RequestIdupi = data.p2pRequestId
+     if(this.RequestIdupi){
+      this.confirmtxnflagupi = this.RequestIdupi ? false : true;
+      this.txnbuttondisabledupi = this.RequestIdupi ? true : false;
+     const senddata = {
+      Txn_ID : this.txnidAsRefNumberupi,
+      rp_req_id : this.RequestIdupi,
+      rp_status : 'PENDING',
+      tid : 'NA'
+     }
+     this.Updaterequestdetailsupi(senddata);
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: data.realCode
+      });
+    }
+   })  
+}
+CheckTransactionupi(){
+  this.transactionStatusupi = undefined;
+  this.tidupi = undefined;
+  const obj = {
+    username: this.rp_username,
+    appKey: this.rp_appkey,
+    origP2pRequestId: this.RequestIdupi
+}
+console.log("sendobj===",obj)
+  this.$http.post('https://k4crzpayment.azurewebsites.net/api/get_status?code=x4u-RtD7ZkaZC1SZjgalnnrpPOesMg34WSqliOedceA1AzFuVH2DEQ==',obj)
+        .subscribe((data: any) => {
+     console.log('getdata===',data)
+     this.transactionStatusupi = data.realCode;
+     this.tidupi = data.tid;
+     
+     if(this.transactionStatusupi === "P2P_DEVICE_CANCELED"){
+      this.txnbuttondisabledupi = false;
+      const senddata = {
+        Txn_ID : this.txnidAsRefNumberupi,
+        rp_status : 'CANCELED', 
+        rp_req_id : 'NA',
+        tid : 'NA'
+      }
+      this.Updaterequestdetailsupi(senddata);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Transaction Cancelled."
+      });
+    }
+    else if(this.transactionStatusupi === "P2P_DEVICE_TXN_DONE"){
+      const senddata = {
+        Txn_ID : this.txnidAsRefNumberupi,
+        rp_status : 'DONE', 
+        rp_req_id : this.RequestIdupi,
+        tid : this.tidupi
+      }
+      this.ObjcashForm.Wallet_Amount = data.amount;
+      this.txndisabledupi = true;
+      this.AmountChange();
+      this.Updaterequestdetailsupi(senddata);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Success Message",
+        detail: "Transaction Successful."
+      });
+    }
+    else if(this.transactionStatusupi === "P2P_DEVICE_RECEIVED"){
+      this.txnbuttondisabledupi = true;
+      const senddata = {
+        Txn_ID : this.txnidAsRefNumberupi,
+        rp_status : 'PENDING',
+        rp_req_id : this.RequestIdupi,
+        tid : 'NA'
+      }
+      this.Updaterequestdetailsupi(senddata);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Transaction Pending."
+      });
+    }
+    else {
+      this.txnbuttondisabledupi = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: this.transactionStatusupi
+      });
+    }
+     
+   })  
+}
+Updaterequestdetailsupi(dataobj){
+  const obj = {
+    "SP_String": "SP_rp_txn",
+    "Report_Name_String": "rp_update_req_return",
+    "Json_Param_String": JSON.stringify([dataobj])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log(data)
+  })
+}
+Updaterequestdetailsaftersave(billno){
+  let arr:any = [];
+  let senddata:any = {};
+  let senddataupi:any = {};
+  if((this.RequestId) && (this.transactionStatus === "P2P_DEVICE_TXN_DONE")){
+   senddata = {
+    Txn_ID : this.txnidAsRefNumber,
+    rp_status : 'DONE', 
+    rp_req_id : this.RequestId,
+    tid : this.tid,
+    Bill_No : billno
+  }
+  arr.push(senddata)
+  }
+  if((this.RequestIdupi) && (this.transactionStatusupi === "P2P_DEVICE_TXN_DONE")){
+   senddataupi = {
+    Txn_ID : this.txnidAsRefNumberupi,
+    rp_status : 'DONE', 
+    rp_req_id : this.RequestIdupi,
+    tid : this.tidupi,
+    Bill_No : billno
+  }
+  arr.push(senddataupi)
+  }
+  console.log('rp_update_bill_no==',JSON.stringify(arr))
+  const obj = {
+    "SP_String": "SP_rp_txn",
+    "Report_Name_String": "rp_update_bill_no",
+    "Json_Param_String": JSON.stringify(arr)
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log(data)
+  })
+}
  // DAY END CHECK
  saveCheck(){
    if(this.FromCostCentId && this.godown_id){
@@ -1407,6 +1806,9 @@ checkdiscountamt(){
      this.Objcustomerdetail.Bill_No = data[0].Column1;
      if(data[0].Column1){
       this.UpdateStock();
+      if((this.RequestId && this.transactionStatus === "P2P_DEVICE_TXN_DONE") || (this.RequestIdupi && this.transactionStatusupi === "P2P_DEVICE_TXN_DONE")) {
+        this.Updaterequestdetailsaftersave(data[0].Column1);
+      }
       if (this.FranchiseBill != "Y") {
         this.SaveFranSaleBill();
         this.SaveNPrintBill();
@@ -1931,7 +2333,15 @@ OnCustomerDetailsSubmit(valid) {
         this.GSTvalidFlagcustpopup = false;
         this.CustomerDetailsPopUpFlag = false;
         this.CustomerDisabledFlag = true;
+        this.txndisabledupi = false;
+        this.txnbuttondisabledupi = false;
+        this.txndisabled = false;
+        this.txnbuttondisabled = false;
       } else{
+        this.txndisabledupi = false;
+        this.txnbuttondisabledupi = false;
+        this.txndisabled = false;
+        this.txnbuttondisabled = false;
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
