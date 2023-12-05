@@ -1348,6 +1348,7 @@ console.log("sendobj===",obj)
       }
       this.ObjcashForm.Card_Amount = data.amount;
       this.txndisabled = true;
+      this.AmountChange();
       this.Updaterequestdetails(senddata);
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -1517,6 +1518,7 @@ console.log("sendobj===",obj)
       }
       this.ObjcashForm.Wallet_Amount = data.amount;
       this.txndisabledupi = true;
+      this.AmountChange();
       this.Updaterequestdetailsupi(senddata);
       this.compacctToast.clear();
       this.compacctToast.add({

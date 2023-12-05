@@ -1408,6 +1408,7 @@ console.log("sendobj===",obj)
       }
       this.ObjcashForm.Card_Amount = data.amount;
       this.txndisabled = true;
+      this.AmountChange();
       this.Updaterequestdetails(senddata);
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -1577,6 +1578,7 @@ console.log("sendobj===",obj)
       }
       this.ObjcashForm.Wallet_Amount = data.amount;
       this.txndisabledupi = true;
+      this.AmountChange();
       this.Updaterequestdetailsupi(senddata);
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -2383,7 +2385,15 @@ OnCustomerDetailsSubmit(valid) {
         this.GSTvalidFlagcustpopup = false;
         this.CustomerDetailsPopUpFlag = false;
         this.CustomerDisabledFlag = true;
+        this.txndisabledupi = false;
+        this.txnbuttondisabledupi = false;
+        this.txndisabled = false;
+        this.txnbuttondisabled = false;
       } else{
+        this.txndisabledupi = false;
+        this.txnbuttondisabledupi = false;
+        this.txndisabled = false;
+        this.txnbuttondisabled = false;
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",

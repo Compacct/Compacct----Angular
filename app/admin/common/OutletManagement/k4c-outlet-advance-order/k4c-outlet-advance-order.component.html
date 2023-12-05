@@ -794,7 +794,7 @@
                                                         </div>
                                                         <div class="input-group">
                                                             <div class="input-group-addon">
-                                                                <select name="wallet" #wallet="ngModel" [(ngModel)]="ObjcashForm.Wallet_Ac_ID" [disabled]='QueryStringObj?.Txn_ID' (change)="getledgername()">
+                                                                <select name="wallet" #wallet="ngModel" [(ngModel)]="ObjcashForm.Wallet_Ac_ID" [disabled]='QueryStringObj?.Txn_ID || txndisabledupi' (change)="getledgername()">
                                                                     <option [ngValue]="undefined">select</option>
                                                                     <option *ngFor = "let option of walletlist" [value] ="option.Txn_ID">
                                                                         {{option.Ledger_Name}}
