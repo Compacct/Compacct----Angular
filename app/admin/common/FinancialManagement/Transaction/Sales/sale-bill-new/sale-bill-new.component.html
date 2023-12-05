@@ -268,7 +268,7 @@
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label class="control-label">State<sup class="text-danger">*</sup></label>
-                                                    <select class="form-control" name="state" #state="ngModel" [(ngModel)]="ObjSaleBillNew.Sub_Ledger_State"  [disabled]="maindisabled" [ngClass]="{'clearance': SaleBillNewFormSubmitted && state?.errors?.required}" required>
+                                                    <select class="form-control" name="state" #state="ngModel" [(ngModel)]="ObjSaleBillNew.Sub_Ledger_State"  [disabled]="subledstatedisabled" [ngClass]="{'clearance': SaleBillNewFormSubmitted && state?.errors?.required}" required>
                                                          <option  [ngValue]="undefined">Select</option>
                                                             <option  *ngFor="let option of StateList" value="{{option.state}}">
                                                             {{option.state}}
@@ -864,7 +864,7 @@
                                             <td>{{obj.SGST_Amount}}</td>
                                             <td>{{obj.IGST_Rate}}</td>
                                             <td>{{obj.IGST_Amount}}</td>
-                                            <td>{{obj.Gross_Amount}}</td>
+                                            <td>{{getTofix(obj.Gross_Amount)}}</td>
                                             <td nowrap>{{obj.Cost_Cen_Name ? obj.Cost_Cen_Name : '-'}}</td>
                                             <td nowrap>{{obj.Godown_Name ? obj.Godown_Name : '-'}}</td>
                                             <td>{{obj.AO_Product ? obj.AO_Product : '-'}}</td>

@@ -30,4 +30,9 @@ fieldset {
     background-color:#4dad0ed4 !important;
     color: #fff;
   }
+  .Foot{
+    font-weight: bolder;
+    font-size: 15px;
+    text-align: right;
+  }
 

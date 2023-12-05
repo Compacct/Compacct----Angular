@@ -176,7 +176,7 @@
                                                 <div class="col-sm-6">
                                                     <label class="control-label">Customer <sup class="text-danger">*</sup></label>
                                                     <p-dropdown [options]="CustomerList" name="customer" [(ngModel)]="ObjPurChaseBill.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="CustomerNameChange()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Customer'"
-                                                        [virtualScroll]="true" itemSize="30" #customer="ngModel"  [required]="true" [ngClass]="{'clearance':CommonPurchaseBillFormSubmitted && customer?.errors?.required}" required>
+                                                    [disabled]="buttonname === 'Update'" [virtualScroll]="true" itemSize="30" #customer="ngModel"  [required]="true" [ngClass]="{'clearance':CommonPurchaseBillFormSubmitted && customer?.errors?.required}" required>
                                                     </p-dropdown>
                                                 </div>
                                                 <div class="col-sm-3">

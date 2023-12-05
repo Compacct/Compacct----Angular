@@ -81,12 +81,19 @@
                         </select>
                     </div>
                     <div class="col-sm-12">
-                        <label class="control-label">Tender No<sup class="text-danger"></sup></label>
+                        <label class="control-label">Workorder No<sup class="text-danger"></sup></label>
                         <input class="form-control" 
-                        name="Tender_No" placeholder="Tender No"
+                        name="Tender_No" placeholder="Workorder No"
                         #Tender_No="ngModel" 
                         [(ngModel)]="Objproject.Tender_No" 
                          >
+                    </div>
+                    <div class="col-sm-12">
+                        <label class="control-label">Workorder Date<sup class="text-danger"></sup></label>
+                        <ejs-datepicker 
+                        [(value)]="Workorder_Date"
+                         [format]="'dd/MMM/yyyy'">
+                        </ejs-datepicker>
                     </div>
                     <div class="col-sm-12">
                         <label class="control-label">Remark<sup class="text-danger"></sup></label>

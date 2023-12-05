@@ -1,0 +1,202 @@
+<p-toast key="compacct-toast" baseZIndex="99999"> </p-toast>
+<p-toast position="center" key="re" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+	<ng-template let-message pTemplate="message">
+		<div style="text-align: center">
+			<i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+			<h3>{{ message.summary }}</h3>
+			<p>{{ message.detail }}</p>
+		</div>
+
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-6">
+				<button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+			</div>
+			<div class="ui-g-6">
+				<button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+			</div>
+		</div>
+	</ng-template>
+</p-toast>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box box-primary">
+			<div class="form-horizontal">
+				<div class="box-body">
+					<div class="form-group">
+						<form name="EMPForm" #EMPForm="ngForm">
+							<div class="col-sm-4">
+								<label class="control-label">Employee Name <sup class="text-danger">*</sup></label>
+								<p-dropdown
+									[options]="EmpList"
+									name="Emp_id"
+									#Emp_id="ngModel"
+									[(ngModel)]="objEmpInfo.Emp_ID"
+									(onChange)="getEmpCode(objEmpInfo.Emp_ID)"
+									[showClear]="true"
+									[emptyFilterMessage]="'No Employee Found'"
+									[filter]="true"
+									filterBy="label,value"
+									[resetFilterOnHide]="true"
+									[placeholder]="'Select Employee'"
+									[virtualScroll]="true"
+									itemSize="30"
+									[styleClass]="SerachFormSubmitted && Emp_id.errors?.required ? 'clearance' : ''"
+									[required]="true">
+								</p-dropdown>
+							</div>
+							<div class="col-sm-4">
+								<label class="control-label">Date Range<sup class="text-danger">*</sup></label>
+								<app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate"></app-compacct-daterangepicker>
+							</div>
+							<div class="col-sm-2">
+								<label class="control-label">Employee Code<sup class="text-danger">*</sup></label>
+								<input
+									type="text"
+									class="form-control"
+									placeholder="Employee Code"
+									[ngModel]="selectedEmpCode"
+									[ngModelOptions]="{ standalone: true }"
+									disabled />
+							</div>
+							<div class="col-sm-1">
+								<button
+									class="btn btn-primary custombutton"
+									data-toggle="modal"
+									(click)="GetEmpData(EMPForm.form.valid)"
+									id="load"
+									[disabled]="seachSpinner">
+									<p-progressSpinner
+										*ngIf="seachSpinner"
+										[style]="{ width: '15px', height: '15px' }"
+										strokeWidth="8"
+										animationDuration=".5s"></p-progressSpinner>
+									<span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+								</button>
+							</div>
+						</form>
+						<!-- <div class="col-sm-3" *ngIf="databaseName == 'GN_CCSAHA_Kolkata'">
+							<label class="control-label">Work Location <span class="text-danger"></span></label>
+							<p-multiSelect
+								[options]="DistWorkLocation"
+								[(ngModel)]="SelectedDistWorkLocation"
+								itemSize="30"
+								(onChange)="FilterDist()"
+								[styleClass]="'compacct-multiselect'"
+								name="Work_Location"></p-multiSelect>
+						</div> -->
+						<!-- <div class="databaseName == 'GN_CCSAHA_Kolkata' ? 'col-sm-2' : 'col-sm-5'">
+							<span class="fa fa-question-circle pull-right" (click)="information()"></span>
+						</div> -->
+					</div>
+
+					<div class="clearfix"></div>
+					<div class="no-padding">
+						<p-table
+							*ngIf="EmpData.length"
+							[value]="EmpData"
+							[paginator]="true"
+							[rows]="100"
+							[autoLayout]="true"
+							sortMode="multiple"
+							[rowsPerPageOptions]="[50, 100, 200, 300]"
+							[globalFilterFields]="EmpDataFilterField"
+							[rowHover]="true"
+							#dt1>
+							<ng-template pTemplate="caption">
+								<div class="row">
+									<div class="col-sm-3 pull-right" style="text-align: right">
+										<input
+											type="text"
+											pInputText
+											size="50"
+											placeholder="Search"
+											(input)="dt1.filterGlobal($event.target.value, 'contains')"
+											class="searchInput form-control" />
+									</div>
+								</div>
+							</ng-template>
+							<ng-template pTemplate="header">
+								<tr>
+									<th style="text-align: center;" nowrap>Attendance Type</th>
+									<th style="text-align: center;" nowrap>OT</th>
+									<th style="text-align: center;" nowrap>Date</th>
+									<th style="text-align: center;" nowrap>In Time</th>
+									<th style="text-align: center;" nowrap>Out Time</th>
+									<th style="text-align: center;" nowrap>Working Minutes</th>
+									<th style="text-align: center;" nowrap>OT Minutes</th>
+									<th style="text-align: center;" nowrap>Remarks</th>
+								</tr>
+							</ng-template>
+							<ng-template pTemplate="body" let-col>
+								<tr>
+									<td [class]="col.Sht_Desc">{{ col.Sht_Desc ? col.Sht_Desc : '-' }}</td>
+									<td style="text-align: center;">{{ col.OT_Avail ? "Yes" : "No" }} </td>
+									<td style="text-align: center;">{{ col.Date | date: "dd/MMM/yyyy"}}</td>
+									<td style="text-align: center;">{{ col.Off_In_Time ? col.Off_In_Time : '-'}}</td>
+									<td style="text-align: center;">{{ col.Off_Out_Time ? col.Off_Out_Time : '-'}}</td>
+									<td style="text-align: center;">{{ col.Work_Minute ? col.Work_Minute : '-'}}</td>
+									<td style="text-align: center;">{{ col.OT_Minutes ? col.OT_Minutes : '-'}}</td>
+									<td style="text-align: center;">{{ col.Remarks ? col.Remarks : '-'}}</td>
+								</tr>
+							</ng-template>
+						</p-table>
+					</div>
+
+					 <div class="table-responsive no-padding">
+						<table class="table bidopen table-bordered" *ngIf="EmpData.length">
+							<thead>
+								<tr>
+									<th style="width: 7%" *ngIf="Total_Present">Present</th>
+									<th style="width: 8%" *ngIf="Total_Present_in_Weekly_Off">Present in Weekly Off</th>
+									<th style="width: 8%" *ngIf="Total_Present_in_Public_Holiday">Present in Public Holiday</th>
+									<th style="width: 7%" *ngIf="Total_Holiday">Holiday</th>
+									<th style="width: 8%" *ngIf="Total_Public_Holiday">Public Holiday</th>
+									<th style="width: 8%" *ngIf="Total_Weekly_Off">Weekly Off</th>
+									<th style="width: 8%" *ngIf="Total_Sick_Leave">Sick Leave</th>
+									<th style="width: 8%" *ngIf="Total_Casual_Leave">Casual Leave</th>
+									<th style="width: 8%" *ngIf="Total_Prevlage_Leave">Prevlage Leave</th>
+									<th style="width: 8%" *ngIf="Total_Compensatory_Off">Compensatory Off</th>
+									<th style="width: 7%" *ngIf="Total_Absent">Absent</th>
+									<th style="width: 8%" *ngIf="Leave_Without_Pay">Leave Without Pay</th>
+									<th style="width: 7%" *ngIf="Total_Left">Left</th>
+									<th style="width: 7%" *ngIf="Total_Late">Late</th>
+									<th style="width: 7%" *ngIf="Half_Day">Half Day</th>
+									<th style="width: 7%" *ngIf="Annual_Leave">Annual Leave</th>
+								</tr>
+								<tr>
+									<th style="width: 7%" *ngIf="Total_Present">{{ Total_Present ? Total_Present : 0 }}</th>
+									<th style="width: 8%" *ngIf="Total_Present_in_Weekly_Off">{{ Total_Present_in_Weekly_Off ? Total_Present_in_Weekly_Off : 0 }}</th>
+									<th style="width: 8%" *ngIf="Total_Present_in_Public_Holiday">
+										{{ Total_Present_in_Public_Holiday ? Total_Present_in_Public_Holiday : 0 }}
+									</th>
+									<th style="width: 7%" *ngIf="Total_Holiday">{{ Total_Holiday ? Total_Holiday : 0 }}</th>
+									<th style="width: 8%" *ngIf="Total_Public_Holiday">{{ Total_Public_Holiday ? Total_Public_Holiday : 0 }}</th>
+									<th style="width: 8%" *ngIf="Total_Weekly_Off">{{ Total_Weekly_Off ? Total_Weekly_Off : 0 }}</th>
+									<th style="width: 8%" *ngIf="Total_Sick_Leave">{{ Total_Sick_Leave ? Total_Sick_Leave : 0 }}</th>
+									<th style="width: 8%" *ngIf="Total_Casual_Leave">{{ Total_Casual_Leave ? Total_Casual_Leave : 0 }}</th>
+									<th style="width: 8%" *ngIf="Total_Prevlage_Leave">{{ Total_Prevlage_Leave ? Total_Prevlage_Leave : 0 }}</th>
+									<th style="width: 8%" *ngIf="Total_Compensatory_Off">{{ Total_Compensatory_Off ? Total_Compensatory_Off : 0 }}</th>
+									<th style="width: 7%" *ngIf="Total_Absent">{{ Total_Absent ? Total_Absent : 0 }}</th>
+									<th style="width: 8%" *ngIf="Leave_Without_Pay">{{ Leave_Without_Pay ? Leave_Without_Pay : 0 }}</th>
+									<th style="width: 7%" *ngIf="Total_Left">{{ Total_Left ? Total_Left : 0 }}</th>
+									<th style="width: 7%" *ngIf="Total_Late">{{ Total_Late ? Total_Late : 0 }}</th>
+									<th style="width: 7%" *ngIf="Half_Day">{{ Half_Day ? Half_Day : 0 }}</th>
+									<th style="width: 7%" *ngIf="Annual_Leave">{{ Annual_Leave ? Annual_Leave : 0 }}</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+
+					<div class="row">
+						<div class="col-sm-8">
+							<h5><strong></strong></h5>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

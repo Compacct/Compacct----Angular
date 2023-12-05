@@ -256,7 +256,8 @@ export class K4cVoucherComponent implements OnInit {
     }
   GetSameCostCenANDledger() {
     if (this.VoucherTypeID != 3) {
-    const sameCostCenWithSameLedger = this.lowerList.filter(item=> Number(item.Sub_Ledger_ID) === Number(this.objjournalloweer.Sub_Ledger_ID) && Number(item.Ledger_ID) === Number(this.objjournalloweer.Ledger_ID));
+    const sameCostCenWithSameLedger = this.lowerList.filter(item=> (Number(item.Sub_Ledger_ID) === Number(this.objjournalloweer.Sub_Ledger_ID)) &&
+                                       (Number(item.Ledger_ID) === Number(this.objjournalloweer.Ledger_ID)) && (item.Ref_Doc_No == this.objjournalloweer.Ref_Doc_No));
     if(sameCostCenWithSameLedger.length) {
       this.compacctToast.clear();
           this.compacctToast.add({
