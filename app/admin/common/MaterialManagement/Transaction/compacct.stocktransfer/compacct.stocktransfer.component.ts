@@ -445,10 +445,18 @@ export class StocktransferComponent implements OnInit {
           if (data) {
             const SerialNoList = data ? JSON.parse(data) : [];
             SerialNoList.forEach(el => {
-              this.SerialList.push({
-                label: el.Serial_No + "   " + "( Rs." + el.Rate + ")",
-                value: el.Serial_No
-              });
+              if(this.databaseName === 'BSHPL'){
+                this.SerialList.push({
+                  label: el.Serial_No ,
+                  value: el.Serial_No
+                });
+              }else{
+                this.SerialList.push({
+                  label: el.Serial_No + "   "+"( Rs." + el.Rate + ")" ,
+                  value: el.Serial_No
+                });
+              }
+             
             });
           } else {
             this.SerialList = [];
@@ -466,7 +474,7 @@ export class StocktransferComponent implements OnInit {
       this.$http
         .get("/Common/Get_Stock_Qty", { params: obj })
         .subscribe((data: any) => {
-          // console.log('GetBatch',data);
+          //console.log('GetBatch11',data);
           if (data) {
             const BatchNoList = data ? JSON.parse(data) : [];
             this.BackUpBatchNoList= JSON.parse(data);
@@ -476,7 +484,7 @@ export class StocktransferComponent implements OnInit {
               this.BatchList.push({
                 label: el.Batch_No_Display,
                 value: el.Batch_No
-              });
+              });   
             });
           } else {
             this.BatchList = [];

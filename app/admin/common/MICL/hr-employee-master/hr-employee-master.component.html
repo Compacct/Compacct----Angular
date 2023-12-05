@@ -38,6 +38,24 @@
         </div>
     </ng-template>
 </p-toast>
+<p-toast position="center" key="resetphone" (onClose)="onReject()" [modal]="true" baseZIndex="99999999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirmReset()" [disabled]="resetdisabled" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -58,13 +76,17 @@
                                         [virtualScroll]="true" itemSize="30" (onChange)="getEmployeeDetails(objselect.Emp_ID)">
                                     </p-dropdown>
                                 </div>
-                                <div class="col-sm-4 ">
-                                    <button [disabled]="userdisabled" class="btn btn-primary " style="margin-top: 28px;margin-left: 40%; " data-toggle="modal " (click)="GetNewEmployee() " id="load30 " [disabled]="seachSpinner ">
+                                <div class="col-sm-3">
+                                    <button [disabled]="userdisabled" class="btn btn-primary " style="margin-top: 28px;margin-left: 40%; " data-toggle="modal " (click)="GetNewEmployee() " id="load30" [disabled]="seachSpinner">
                                 <p-progressSpinner *ngIf="seachSpinner " [style]="{width: '15px', height: '15px'} " strokeWidth="8 "  animationDuration=".5s "></p-progressSpinner>
                                <span *ngIf="!seachSpinner " class="glyphicon glyphicon-plus "></span>&nbsp;New Employee
                                </button>
                                 </div>
-                                <div class="col-sm-4 "></div>
+                                <div class="col-sm-2">
+                                    <button *ngIf="databaseName === 'GN_JOH_HR' && $CompacctAPI.CompacctCookies.User_Type === 'A'" [disabled]="!objselect.Emp_ID" class="btn btn-primary" style="margin-top: 28px;margin-left: 40%; " data-toggle="modal " (click)="ResetPhone()" id="load">
+                                       <span class="glyphicon glyphicon-phone"></span>&nbsp;Reset
+                                    </button>
+                                </div>
                             </div>
                         </form>
                         <!-- <hr class="box box-shadow "> -->

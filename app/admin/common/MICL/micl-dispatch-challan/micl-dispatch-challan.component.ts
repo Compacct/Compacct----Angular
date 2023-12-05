@@ -1116,7 +1116,9 @@ saveqty(){
   }
  searchData(valid){
     this.DispatchSearchFormSubmit = true;
+    this.seachSpinner = true;
     if(valid){
+      this.DispatchSearchFormSubmit = false;
       console.log("this.ObjBrowseData.Cost_Cen_ID",this.ObjBrowseData.Cost_Cen_ID);
       const start = this.ObjBrowseData.From_Date
           ? this.DateService.dateConvert(new Date(this.ObjBrowseData.From_Date))
@@ -1140,6 +1142,7 @@ saveqty(){
        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.GetAllDataList = data;
         console.log("this.GetAllDataList",this.GetAllDataList);
+        this.seachSpinner = false;
         // this.clearData();
         // this.todayDate = new Date();
         // this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));

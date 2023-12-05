@@ -9,13 +9,13 @@
 
         <div class="ui-g ui-fluid" *ngIf="!deleteError">
             <div class="ui-g-6" *ngIf="Save && !Del">
-                <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
+                <button type="button" pButton (click)="onConfirmSave()" label="Yes" [disabled]="saveSpinner" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6" *ngIf="Del && !Save">
                 <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6">
-                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+                <button type="button" pButton (click)="onReject()" label="No" [disabled]="saveSpinner" class="ui-button-secondary"></button>
             </div>
         </div>
         <div class="ui-g ui-fluid" *ngIf="deleteError">

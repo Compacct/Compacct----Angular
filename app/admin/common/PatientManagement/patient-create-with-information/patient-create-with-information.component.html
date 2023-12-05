@@ -1,0 +1,537 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+  <ng-template let-message pTemplate="message">
+    <div style="text-align: center">
+      <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+      <h3>{{message.summary}}</h3>
+      <p>{{message.detail}}</p>
+    </div>
+
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-6">
+        <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+      </div>
+      <div class="ui-g-6">
+        <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box box-primary">
+      <div class="form-horizontal">
+        <div class="box-body">
+          <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+            <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[0]" leftIcon="glyphicon glyphicon-list-alt">
+              <div class="table-responsive no-padding">
+                <p-table [value]="allDataList" [paginator]="true" [rows]="50" [rowHover]="true" [autoLayout]="true"
+                  sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100,200,300]"
+                  [globalFilterFields]="['Contact_Name','Cost_Cen_Name','Mobile','Name', 'Age' ]" [rowHover]="true" #dt>
+                  <ng-template pTemplate="caption">
+                    <div class="row">
+                      <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search"
+                          (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                      </div>
+                    </div>
+                  </ng-template>
+                  <ng-template pTemplate="header">
+                    <tr style="width: 100%;">
+                      <th style="width:5em">Action</th>
+                      <th style="text-align: center ;" nowrap>Patient ID</th>
+                      <th style="text-align: center ;" nowrap>Patient Name</th>
+                      <th style="text-align: center ;" nowrap>Mobile No.</th>
+                      <th style="text-align: center ;" nowrap>Age</th>
+                      <th style="text-align: center ;" nowrap>Cost Center Name</th>
+                      <th style="text-align: center ;" nowrap>User Name</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-col>
+                    <tr>
+                      <td>
+                        <div class="dropdown">
+                            <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                        <i class="fa fa-fw fa-bars"></i>
+                                        <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                              <li>
+                                <a (click)="Edit(col)">
+                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                </a>
+                              </li>
+                                <!-- <li>
+                                    <a (click)="PrintClick(col)">
+                                        <i class="fa fa-fw fa-print"></i> Print
+                                    </a>
+                                </li> -->
+                            </ul>
+                        </div>
+                     </td>
+                      <td style="text-align: center ;" nowrap>{{col.Foot_Fall_ID ? col.Foot_Fall_ID : '-'}}</td>
+                      <td style="text-align: center ;" nowrap>{{col.Contact_Name ? col.Contact_Name : '-'}}</td>
+                      <td style="text-align: center ;" nowrap>{{col.Mobile ? col.Mobile : '-'}}</td>
+                      <td style="text-align: center ;" nowrap>{{col.Age ? col.Age : '-'}}</td>
+                      <td style="text-align: center ;" nowrap>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
+                      <td style="text-align: center ;" nowrap>{{col.Name ? col.Name : '-'}}</td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="paginatorright" let-state>
+                    Showing {{state.first+1}} of {{(state.first) + state.rows}} of {{state.totalRecords}}
+                  </ng-template>
+                </p-table>
+              </div>
+            </p-tabPanel>
+            <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+              <form name="PatientCreation" #PatientCreation="ngForm" novalidate>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                        <ejs-datepicker 
+                            [(value)]="Date" 
+                            [format]="'dd/MMM/yyyy'">
+                        </ejs-datepicker>
+                    </div>
+                </div>
+                <br>
+                <div class="form-group">
+                <div class="col-lg-12">
+                    <div class="panel-group">
+                        <div class="panel panel-primary">
+                                <div class="panel-body">
+                                    <div class="form-group" style="padding: 1em;">
+                                    <h4 style="padding: 0.5em 0em; margin-top:-26px; color: #007ca3;">
+                                        <strong>PATIENT INFORMATION</strong>
+                                    </h4>
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                              <label class="control-label">Mobile No<sup class="text-danger">*</sup></label>
+                                              <input type="text" class="form-control" placeholder="Enter mobile number" name="Mobile"
+                                                #Mobile="ngModel" [(ngModel)]="objPatient.Mobile" (ngModelChange)="checkMobile(objPatient.Mobile,'Mobile')"
+                                                CompacctDigitonly="true" maxlength="10" minlength="10"
+                                                [ngClass]="{clearance: CreationFormSubmited && Mobile?.errors?.required}" required>
+                                            </div>
+                                            <div class="col-sm-4">
+                                              <label class="control-label">Alternate Mobile No</label>
+                                              <input type="text" class="form-control" placeholder="Enter Another number" name="AnotherMobile"
+                                                #AnotherMobile="ngModel" [(ngModel)]="objPatient.Mobile_2" (ngModelChange)="checkMobile(objPatient.Mobile_2,'Mobile_2')" CompacctDigitonly="true" maxlength="10"
+                                                minlength="10">
+                                            </div>
+                                            <div class="col-sm-4">
+                                              <label class="control-label">WhatsApp No</label>
+                                              <input type="text" class="form-control" placeholder="WhatsApp number" name="WhatsAppMobile"
+                                                #WhatsAppMobile="ngModel" [(ngModel)]="objPatient.Mobile_3_WP" CompacctDigitonly="true"
+                                                maxlength="10" minlength="10">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                              <label class="control-label">Name<sup class="text-danger">*</sup> <a *ngIf="ContactNameList.length && databaseName != 'BSHPL'" (click)=" ContactNameList = []" style="color: #3c8dbc;" > Add New Patient </a></label>
+                                              <div class="input-group" *ngIf="!ContactNameList.length || databaseName == 'BSHPL'" >
+                                                <span class="input-group-btn">
+                                                  <select name="NameStatus" style="width: 100px;" class="form-control" [(ngModel)]="objPatient.Prefix"
+                                                    #NameStatus="ngModel"
+                                                    [ngClass]="{clearance: CreationFormSubmited && NameStatus?.errors?.required}" required>
+                                                    <option [ngValue]="undefined">Select</option>
+                                                    <option *ngFor="let option of listNamePrefix" value="{{option}}">{{option}}</option>
+                                                  </select>
+                                                </span>
+                                                <input type="text" class="form-control" placeholder="Name" name="Name" #Name="ngModel"
+                                                    [(ngModel)]="objPatient.Contact_Name"
+                                                    [ngClass]="{clearance: CreationFormSubmited && Name?.errors?.required}" required>
+                                              </div>
+                                              <div>
+                                                <select *ngIf="ContactNameList.length && databaseName != 'BSHPL'" name="Name" class="form-control" [(ngModel)]="footFallId"
+                                              #Name="ngModel" (change)="NameChange()"
+                                              [ngClass]="{clearance: CreationFormSubmited && Name?.errors?.required}"required>
+                                              <option [ngValue]="undefined">Select</option>
+                                              <option *ngFor="let option of ContactNameList" value="{{option.Contact_Name}}">{{option.Prefix}} {{option.Contact_Name}}</option>
+                                            </select>
+                                              </div>
+                                              
+                                            </div>
+                                            <div class="col-sm-4">
+                                              <label class="control-label">Age</label>
+                                              <div class="input-group">
+                                                <input type="text" class="form-control" placeholder="Age" CompacctDigitonly="true"
+                                                    name="AgeNumber" #AgeNumber="ngModel" [(ngModel)]="objPatient.Age">
+                                                <span class="input-group-btn">
+                                                  <select name="AgeUnit" style="width: 100px;" id="Name-Status" class="form-control" [(ngModel)]="objPatient.Age_Unit"
+                                                    #AgeUnit="ngModel">
+                                                    <option [ngValue]="undefined">Select</option>
+                                                    <option value="Year">Year</option>
+                                                    <option value="Month">Month</option>
+                                                    <option value="Days">Days</option>
+                                                  </select>
+                                                </span>
+                                              </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                              <label class="control-label">Gender<sup class="text-danger">*</sup></label>
+                                              <select name="Gender" id="Name-Status" class="form-control" [(ngModel)]="objPatient.Gender"
+                                                #Gender="ngModel" [ngClass]="{clearance: CreationFormSubmited && Gender?.errors?.required}"
+                                                required>
+                                                <option [ngValue]="undefined">Select</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                                <option value="Other">Other</option>
+                                              </select>
+                                            </div>
+                                          </div>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Date of Birth </label>
+                                            <ejs-datepicker 
+                                                [(value)]="Date_Of_Birth" 
+                                                [format]="'dd/MMM/yyyy'"
+                                                name="Birth_date">
+                                            </ejs-datepicker>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Email ID</label>
+                                            <input type="text" class="form-control" name="Email_ID" #Email_ID="ngModel"
+                                              [(ngModel)]="objPatient.Email" placeholder="Enter Email ID"
+                                              pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$"
+                                              [ngClass]="{'clearance': CreationFormSubmited && Email_ID?.errors?.pattern}" >
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Profession<sup class="text-danger"></sup></label>
+                                            <select name="Occupation" class="form-control" [(ngModel)]="objPatient.Occupation" #Occupation="ngModel">
+                                              <option [ngValue]="undefined">Select</option>
+                                              <option *ngFor="let opt of occptionList" value="{{opt.Occupation_ID}}">{{opt.Occupation_Name}}</option>
+                                              
+                                            </select>
+                                          </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Pincode</label>
+                                            <input type="text" class="form-control" placeholder="Pincode" name="Pincode" #Pincode="ngModel" 
+                                              [(ngModel)]="objPatient.Pin" CompacctDigitonly="true" maxlength="6" minlength="6">
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Location</label>
+                                          <input type="text" class="form-control" Compacct-Place (setAddress)="getAddressOnChange($event)"
+                                            placeholder="Location" name="Location" #Location="ngModel" [(ngModel)]="objPatient.Location">
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Country</label>
+                                          <select name="Country" class="form-control" [(ngModel)]="objPatient.Country" #Country="ngModel">
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of countryList" value="{{option.country}}">{{option.country}}</option>
+                                          </select>
+                                        </div>
+                                      </div>
+                                      <div class="row">
+                                        <div class="col-sm-4">
+                                          <label class="control-label">State</label>
+                                          <select name="State" class="form-control" [(ngModel)]="objPatient.State" #State="ngModel"
+                                            (change)="getDistrictList(objPatient.State)">
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of stateList" value="{{option.State}}">{{option.State}}</option>
+                                          </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <label class="control-label">District</label>
+                                          <select name="District" class="form-control" [(ngModel)]="objPatient.District" #District="ngModel">
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of districtList" value="{{option.District}}">{{option.District}}
+                                            </option>
+                                          </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Home Address</label>
+                                          <textarea type="text" class="form-control" placeholder="Address" name="Address" #Address="ngModel"
+                                            [(ngModel)]="objPatient.Address" rows="2">
+                                          </textarea>
+                                        </div>
+                                      </div>
+                                      <div class="row">
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Enquiry Source<sup class="text-danger">*</sup></label>
+                                          <select name="Source" class="form-control" [(ngModel)]="objPatient.Enq_Source_ID" #Source="ngModel"
+                                            [ngClass]="{clearance: CreationFormSubmited && Source?.errors?.required}" required>
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of enqSourceList" value="{{option.Enq_Source_ID}}">
+                                              {{option.Enq_Source_Name}}</option>
+                                          </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Consultancy Type<sup class="text-danger">*</sup></label>
+                                          <select name="ConsultancyType" class="form-control" [(ngModel)]="objPatient.Consultancy_Type"
+                                            #ConsultancyType="ngModel"
+                                            [ngClass]="{clearance: CreationFormSubmited && ConsultancyType?.errors?.required}" required>
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option value="Hearing">Hearing</option>
+                                            <option value="Speech">Speech</option>
+                                          </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <label class="control-label">Who has accompanied you<sup class="text-danger"></sup></label>
+                                          <select name="accompanied" class="form-control" [(ngModel)]="objPatient.Who_has_accompanied_you"
+                                            #accompanied="ngModel">
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option value="Parent">Parent</option>
+                                            <option value="Guardian">Guardian</option>
+                                            <option value="Friend">Friend</option>
+                                            <option value="Spouse">Spouse</option>
+                                            <option value="Children">Children</option>
+                                            <option value="Self">Self</option>
+                                          </select>
+                                        </div>
+                                      </div>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <br>
+                <div class="form-group">
+                <div class="col-lg-12">
+                <div class="form-group" style="padding: 1em;">
+                    <h4 style="padding: 0.5em 0em; margin-top:-26px; color: #007ca3;">
+                        <strong>CASE HISTORY GENERAL</strong>
+                    </h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label class="control-label">Reason for Visit </label>
+                            <input type="text" class="form-control" name="Reason_visit" #Reason_visit="ngModel" [(ngModel)]="objPatient.Reason_for_visiting_Today"
+                              placeholder="Reason for visit">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="control-label">Present Complaints </label>
+                            <input type="text" class="form-control" name="present_complaints" #present_complaints="ngModel" [(ngModel)]="objPatient.Present_Complaints"
+                              placeholder="Present Complaints">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label class="control-label">Duration Years</label>
+                                <input type="text" class="form-control" name="durationyear" #durationyear="ngModel"
+                                  [(ngModel)]="objPatient.Duration_Years" placeholder="Duration Years" CompacctDigitonly="true"
+                                  [ngClass]="{clearance: CreationFormSubmited && durationyear?.errors?.required}">
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="control-label">Duration Months</label>
+                                <input type="text" class="form-control" name="durationmonth" #durationmonth="ngModel"
+                                  [(ngModel)]="objPatient.Duration_Months" placeholder="Duration Months" CompacctDigitonly="true"
+                                  [ngClass]="{clearance: CreationFormSubmited && durationmonth?.errors?.required}">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="control-label">Nature of Hearing Problem</label>
+                            <select name="hearingproblem" class="form-control" [(ngModel)]="objPatient.Nature_Of_Hearing_Problem"
+                              #hearingproblem="ngModel" [ngClass]="{clearance: CreationFormSubmited && hearingproblem?.errors?.required}">
+                              <option [ngValue]="undefined">Select</option>
+                              <option value="Sudden">Sudden</option>
+                              <option value="Gradual">Gradual</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label class="control-label">Tinitus Right </label>
+                            <select name="tinitusright" class="form-control" [(ngModel)]="objPatient.Tinnitus_Right"
+                              #tinitusright="ngModel" [ngClass]="{clearance: CreationFormSubmited && tinitusright?.errors?.required}">
+                              <option [ngValue]="undefined">Select</option>
+                              <option value="Continuous">Continuous</option>
+                              <option value="Fluctuating">Fluctuating</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="control-label">Tinitus Left</label>
+                            <select name="tinitusleft" class="form-control" [(ngModel)]="objPatient.Tinnitus_Left"
+                              #tinitusleft="ngModel" [ngClass]="{clearance: CreationFormSubmited && tinitusleft?.errors?.required}">
+                              <option [ngValue]="undefined">Select</option>
+                              <option value="Continuous">Continuous</option>
+                              <option value="Fluctuating">Fluctuating</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="control-label">Ear Discharge Right</label>
+                            <input name="eardischargeright" class="form-control" [(ngModel)]="objPatient.Ear_Discharge_Right" placeholder="Ear Discharge Right"
+                              #eardischargeright="ngModel" [ngClass]="{clearance: CreationFormSubmited && eardischargeright?.errors?.required}">
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="control-label">Ear Discharge Left </label>
+                            <input name="eardischargeleft" class="form-control" [(ngModel)]="objPatient.Ear_Discharge_Left" placeholder="Ear Discharge Left"
+                              #eardischargeleft="ngModel" [ngClass]="{clearance: CreationFormSubmited && eardischargeleft?.errors?.required}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <label class="control-label">Ear Pain Right </label>
+                            <input name="earpainright" class="form-control" [(ngModel)]="objPatient.Ear_Pain_Right" placeholder="Ear Pain Right"
+                              #earpainright="ngModel" [ngClass]="{clearance: CreationFormSubmited && earpainright?.errors?.required}">
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label">Ear Pain Left </label>
+                            <input name="earpainleft" class="form-control" [(ngModel)]="objPatient.Ear_Pain_Left" placeholder="Ear Pain Left"
+                              #earpainleft="ngModel" [ngClass]="{clearance: CreationFormSubmited && earpainleft?.errors?.required}">
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label">Giddiness/Vertigo </label>
+                            <select name="giddinessvertigo" class="form-control" [(ngModel)]="objPatient.Giddiness_Vertigo"
+                              #giddinessvertigo="ngModel" [ngClass]="{clearance: CreationFormSubmited && giddinessvertigo?.errors?.required}">
+                              <option [ngValue]="undefined">Select</option>
+                              <option value="Giddiness">Giddiness</option>
+                              <option value="Vertigo">Vertigo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                          <label class="control-label">Blocking Sensation of the ear </label>
+                            <select name="blockingsensation" class="form-control" [(ngModel)]="objPatient.Blocking_Sensation"
+                              #blockingsensation="ngModel" [ngClass]="{clearance: CreationFormSubmited && blockingsensation?.errors?.required}">
+                              <option [ngValue]="undefined">Select</option>
+                              <option value="Right">Right</option>
+                              <option value="Left">Left</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label">Exposure to the noise </label>
+                            <select name="exposurenoise" class="form-control" [(ngModel)]="objPatient.Exposure_To_Noise" (change)="ExposureNoisechange(objPatient.Exposure_To_Noise)"
+                              #exposurenoise="ngModel" [ngClass]="{clearance: CreationFormSubmited && exposurenoise?.errors?.required}">
+                              <option [ngValue]="undefined">Select</option>
+                              <option value="Yes">Yes</option>
+                              <option value="No">No</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label">Duration of exposure in a day</label>
+                                <input type="text" class="form-control" placeholder="Months" name="durationexposure" #durationexposure="ngModel"
+                                  [(ngModel)]="objPatient.Duration_Of_Exposure" placeholder="Duration of exposure in a day" [disabled]="ExposureNoisedisabled"
+                                  [ngClass]="{clearance: CreationFormSubmited && durationexposure?.errors?.required}" >
+                        </div>
+                    </div>
+                      <div class="row">
+                        <div class="col-sm-6">
+                            <label class="control-label">Any Previous Audiological & ENT Reports</label>
+                                <input type="text" class="form-control" placeholder="Previous ENT Report" name="previousentreport" #previousentreport="ngModel"
+                                  [(ngModel)]="objPatient.Previous_ENT_Report"
+                                  [ngClass]="{clearance: CreationFormSubmited && previousentreport?.errors?.required}" >
+                        </div>
+                    </div>
+                </div>
+                </div>
+                </div>
+                <br>
+                <div class="form-group">
+                  <div class="col-lg-12">
+                  <div class="form-group" style="padding: 1em;">
+                      <h4 style="padding: 0.5em 0em; margin-top:-26px; color: #007ca3;">
+                          <strong>MEDICAL</strong>
+                      </h4>
+                      <div class="row">
+                        <div class="col-sm-4">
+                          <label class="control-label">Reference Doctor</label>
+                          <p-dropdown [options]="refDoctorList" name="RefDoctor" #RefDoctor="ngModel"
+                            [(ngModel)]="objPatient.Enq_Source_Sub_ID" [showClear]="true"
+                            [emptyFilterMessage]="' No Data Found'" [filter]="true" filterBy="label,value.name"
+                            [resetFilterOnHide]="true" [placeholder]="'Select Reference Doctor'" [virtualScroll]="true"
+                            [itemSize]="30">
+                          </p-dropdown>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label">Surgical History</label>
+                                <input type="text" class="form-control" name="surgicalhistory" #surgicalhistory="ngModel"
+                                  [(ngModel)]="objPatient.Surgical_History" placeholder="Surgical History"
+                                  [ngClass]="{clearance: CreationFormSubmited && surgicalhistory?.errors?.required}" >
+                        </div>
+                        <div class="col-sm-4">
+                          <label class="control-label">Medications</label>
+                          <textarea type="text" class="form-control" placeholder="Medications" name="medications" #medications="ngModel"
+                            [(ngModel)]="objPatient.Medications" rows="2">
+                          </textarea>
+                        </div>
+                      </div>
+                  </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                <div class="col-lg-12">
+                <div class="form-group" style="padding: 1em;">
+                    <h4 style="padding: 0.5em 0em; margin-top:-26px; color: #007ca3;">
+                        <strong>HEARING</strong>
+                    </h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label class="control-label">Better Ear </label>
+                            <input type="text" class="form-control" name="betterear" #betterear="ngModel" [(ngModel)]="objPatient.Better_Ear"
+                              placeholder="Better Ear">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="control-label">Family History of Hearing Loss </label>
+                            <input type="text" class="form-control" name="familyhistory" #familyhistory="ngModel" [(ngModel)]="objPatient.Family_History"
+                              placeholder="Family History of Hearing Loss">
+                        </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-6">
+                          <label class="control-label">Current/Previous Hearing aids </label>
+                          <input type="text" class="form-control" name="CurrentPresentHA" #CurrentPresentHA="ngModel" [(ngModel)]="objPatient.Current_Present_HA"
+                            placeholder="Current/Previous Hearing aids">
+                      </div>
+                      <div class="col-sm-6">
+                          <label class="control-label">Hearing Aid Difficulties</label>
+                          <input type="text" class="form-control" name="HearingAidDifficulties" #HearingAidDifficulties="ngModel" [(ngModel)]="objPatient.Hearing_Aid_Difficulties"
+                            placeholder="Hearing Aid Difficulties">
+                      </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                        <label class="control-label">Listening Activities</label>
+                        <input type="text" class="form-control" name="ListeningActivities" #ListeningActivities="ngModel" [(ngModel)]="objPatient.Listening_Activities"
+                          placeholder="Listening Activities">
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="control-label">Impact of Hearing difficulty on daily basis</label>
+                        <input type="text" class="form-control" name="ImpactOfHearingDifficulty" #ImpactOfHearingDifficulty="ngModel" [(ngModel)]="objPatient.Impact_Of_Hearing_Difficulty"
+                          placeholder="Impact of Hearing difficulty on daily basis">
+                    </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-6">
+                      <label class="control-label">Type of Work</label>
+                      <input type="text" class="form-control" name="TypeOfWork" #TypeOfWork="ngModel" [(ngModel)]="objPatient.Type_Of_Work"
+                        placeholder="Type of Work">
+                  </div>
+                  <div class="col-sm-6">
+                      <label class="control-label">Meetings/Group activities</label>
+                      <input type="text" class="form-control" name="MeetingGroupActivities" #MeetingGroupActivities="ngModel" [(ngModel)]="objPatient.Meeting_Group_Activities"
+                        placeholder="Meetings/Group activities">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-6">
+                      <label class="control-label">Impact of heaing difficulties on pateint</label>
+                      <input type="text" class="form-control" name="ImpactDifficultyPatient" #ImpactDifficultyPatient="ngModel" [(ngModel)]="objPatient.Impact_Difficulty_Patient"
+                        placeholder="Impact of heaing difficulties on pateint">
+                  </div>
+                  <div class="col-sm-6">
+                      <label class="control-label">Persons influenced by hearing difficulties</label>
+                      <input type="text" class="form-control" name="PersonsInfluenced" #PersonsInfluenced="ngModel" [(ngModel)]="objPatient.Persons_Influenced"
+                        placeholder="Persons Influenced by hearing difficulties">
+                  </div>
+                </div>
+                </div>
+                </div>
+                </div>
+
+                <div class="row" style="margin-top: 20px;">
+                  <button class="btn btn-primary pull-right" (click)="saveDocAppo(PatientCreation.form.valid)" id="load"
+                    [disabled]="Spinner">
+                    <p-progressSpinner *ngIf="Spinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                      animationDuration=".5s"></p-progressSpinner>
+                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}</button>
+                </div>
+              </form>
+            </p-tabPanel>
+          </p-tabView>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
