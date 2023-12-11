@@ -230,7 +230,7 @@ export class K4cMasterCostCenterComponent implements OnInit {
   GetSlicedArr () {
     let TempArr = [];
     this.DynamicHeader.forEach((item)=>{
-      if(item ==="Brand" || item === "Cost_Cen_Name"|| item ==="Location"){
+      if(item ==="Brand" || item === "Cost_Cen_Name"|| item ==="Location" || item ==="rp_username" || item ==="rp_appkey" || item ==="rp_device_Id"){
         TempArr.push(item)
       }
     })
@@ -572,4 +572,7 @@ class Costcenter {
   Contact_Name : string ;
   Brand : any;
   Franchise_Rate : string;
+  rp_username : string;
+  rp_appkey : string;
+  rp_device_Id : string;
 }   
