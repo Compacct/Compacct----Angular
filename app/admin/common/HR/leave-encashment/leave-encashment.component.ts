@@ -78,6 +78,13 @@ export class LeaveEncashmentComponent implements OnInit {
     }
   }
 
+  checkValidity(col:any){
+    if(Number(col.Leave_Balance)< (Number(col.Encashment) + Number(col.next_year_opening))){
+      return true;
+    }
+    else return false;
+  }
+
   SaveData() {
     if (this.tableData.length) {
       this.Spinner = true;

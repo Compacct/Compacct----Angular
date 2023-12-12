@@ -62,3 +62,7 @@
   .custom-btn1{
       margin-top: 28px;
     }
+
+    .red-border {
+      border-color: red !important;
+    }
