@@ -66,7 +66,7 @@
 							<ng-template pTemplate="header">
 								<tr>
 									<th style="width: 5em">Sl No.</th>
-									<th style="text-align: center" nowrap>Emp Code</th>
+									<th style="text-align: center" nowrap>Emp Id</th>
 									<th style="text-align: center" nowrap>Emp Name</th>
 									<th style="text-align: center" nowrap>Leave Balance</th>
 									<th style="text-align: center" nowrap>Leave Days</th>
@@ -76,7 +76,7 @@
 							<ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
 								<tr>
 									<td>{{ rowIndex + 1 }}</td>
-									<td style="text-align: center" nowrap>{{ col.Emp_Code ? col.Emp_Code : "-" }}</td>
+									<td style="text-align: center" nowrap>{{ col.Emp_ID ? col.Emp_ID : "-" }}</td>
 									<td style="text-align: center" nowrap>{{ col.Emp_Name ? col.Emp_Name : "-" }}</td>
 									<td style="text-align: center" nowrap>{{ col.Leave_Balance ? col.Leave_Balance : "-" }}</td>
 									<td style="text-align: center" nowrap>
@@ -86,7 +86,8 @@
 										class="form-control" 
 										placeholder="Leave Days" 
 										name="Leave_Days" 
-										[(ngModel)]="col.Encashment" />
+										[(ngModel)]="col.Encashment"
+										[class.red-border]="checkValidity(col)" />
 									</td>
 									<td style="text-align: center" nowrap>
 										<input
@@ -95,7 +96,8 @@
 											placeholder="Leave Next Opening"
 											name="Leave_Next_Opening"
 											CompacctDigitonly="true"
-											[(ngModel)]="col.next_year_opening" />
+											[(ngModel)]="col.next_year_opening" 
+											[class.red-border]="checkValidity(col)"/>
 									</td>
 								</tr>
 							</ng-template>
