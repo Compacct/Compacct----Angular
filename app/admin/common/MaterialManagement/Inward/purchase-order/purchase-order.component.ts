@@ -1452,6 +1452,7 @@ const tempobj = {
   // User_ID: this.$CompacctAPI.CompacctCookies.User_ID
 }
 if (valid) {
+  this.seachSpinner = true;
   const obj = {
     "SP_String": "Sp_Purchase_Order",
     "Report_Name_String": "Purchase_Order_Browse",
@@ -1965,6 +1966,7 @@ const tempobj = {
 // console.log(this.objpendingreq.Cost_Cen_ID)
 // console.log("valid",valid)
 if (valid || this.userType != 'A') {
+  this.seachPendingReqSpinner = true;
   const obj = {
     "SP_String": "Sp_Purchase_Order",
     "Report_Name_String": "Browse_Pending_Requisition",
@@ -2023,6 +2025,7 @@ const tempobj = {
 // console.log(this.objpendingPurIndPro.Cost_Cen_ID)
 // console.log("valid",valid)
 if (valid || this.userType != 'A') {
+  this.seachPendingPurIndProSpinner = true;
   const obj = {
     "SP_String": "Sp_Purchase_Order",
     "Report_Name_String": "Browse_Pending_Requisition_Product_wise",
