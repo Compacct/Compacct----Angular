@@ -186,6 +186,8 @@ export class PurchaseOrderComponent implements OnInit {
 
   @ViewChild("UploadFile", { static: false }) UploadFile!: FileUpload;
   PDFFile: any;
+  ViewAmdList: any = [];
+  ViewPoppup: boolean = false;
 
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
@@ -1186,6 +1188,9 @@ this.objpurchase.Term_Net = this.getTofix(this.grNetTerm)
 this.objpurchase.Total_GST = this.getTofix(Number(this.GSTTotal) + Number(this.GrGstTermAmt))
 this.objpurchase.Rounded_Off = Number(this.getRoundedOff());
 this.objpurchase.Total_Net_Amount = Number(this.RoundOff(this.taxAblTotal + this.GrTermAmount + this.GSTTotal + this.GrGstTermAmt));
+if(this.buttonname === "Update" || this.buttonname === "UPDATE"){
+this.objpurchase.Update_Type = this.objpurchase.Amendment_Remarks ? "Amendment" : "Edit";
+}
 
  let save = []
  if(this.addPurchaseList.length){
@@ -1537,6 +1542,28 @@ Edit(col){
    
    }
 }
+Amendment(coldoc){
+  this.status = undefined;
+  this.file = false;
+  this.upload = true;
+  if (this.UploadFile) {
+    this.UploadFile.clear();
+  }
+  if(coldoc.Doc_No){
+    this.DocNo = undefined;
+    this.DocNo = coldoc.Doc_No;
+    this.status = coldoc.Approve_Status;
+    this.tabIndexToView = 1;
+    this.items = [ 'BROWSE', 'UPDATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT'];
+    this.buttonname = "UPDATE";
+    this.clearProject()
+    this.geteditmaster(coldoc.Doc_No);
+    if(this.openProject === "Y"){
+      this.getEditProject(coldoc.Doc_No);
+    }
+   
+   }
+}
 geteditmaster(Dno){
   const obj = {
     "SP_String": "Sp_Purchase_Order",
@@ -1583,6 +1610,21 @@ getEditProject(DocNo){
        
         })
   }
+}
+ViewAmendment(amddoc){
+  if(amddoc){
+    const obj = {
+      "SP_String":"Sp_Purchase_Order",
+      "Report_Name_String":"Amendment_Details",
+      "Json_Param_String": JSON.stringify([{Doc_No:amddoc.Doc_No}])
+    }
+     this.GlobalAPI.getData(obj)
+     .subscribe((data:any)=>{
+      this.ViewAmdList = data;
+      // console.log("Browse data==",this.AllData);
+      }); 
+      this.ViewPoppup = true;
+    }
 }
 Print(DocNo) {
   if(DocNo) {
@@ -2541,6 +2583,8 @@ class purchase {
         TCS_Per : any;
         Approve_Status : any;
         File_Upload:any;
+        Update_Type:any;
+        Amendment_Remarks:any;
 }
 class addPurchacse{
       Product_ID:any;
