@@ -190,12 +190,12 @@
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li>
-                                                        <li>
+                                                        <li *ngIf="col.Approve_Status === 'Approved' && col.Cancel_PO != 'Y'">
                                                             <a (click)="Amendment(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Amendment
                                                             </a>
                                                         </li>
-                                                        <li>
+                                                        <li *ngIf="col.Amendment_Remarks">
                                                             <a (click)="ViewAmendment(col)">
                                                                 <i class="fa fa-fw fa-eye"></i> View Amendment
                                                             </a>

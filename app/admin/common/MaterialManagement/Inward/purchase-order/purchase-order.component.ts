@@ -1623,7 +1623,7 @@ ViewAmendment(amddoc){
       this.ViewAmdList = data;
       // console.log("Browse data==",this.AllData);
       }); 
-      this.ViewPoppup = true;
+      this.ViewPoppup = true ;
     }
 }
 Print(DocNo) {
