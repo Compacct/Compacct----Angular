@@ -189,6 +189,22 @@ export class PurchaseOrderComponent implements OnInit {
   ViewAmdList: any = [];
   ViewPoppup: boolean = false;
 
+  ObjReqStatusData : ReqStatusData = new ReqStatusData ();
+  reqstatusSpinner = false;
+  ReqStatusDataList:any = [];
+  DynamicReqStatusDataListHeader:any = [];
+  GodownReqStatusList:any = [];
+  currentstocklist:any = [];
+  Current_Stock:any;
+  Consumption:any;
+  backUpReqStatusDataList:any = [];
+  SelectedDistDepartment:any = [];
+  SelectedDistProductTypestatus:any = [];
+  DistDepartment:any = [];
+  DistProductTypestatus:any = [];
+  SelectedDistcreatedbyDepartment:any = [];
+  DistcreatedbyDepartment:any = [];
+
   constructor(private $http: HttpClient ,
     private commonApi: CompacctCommonApi,   
     private Header: CompacctHeader ,
@@ -212,7 +228,7 @@ export class PurchaseOrderComponent implements OnInit {
 
 ngOnInit() {
     $(document).prop('title', this.headerText ? this.headerText : $('title').text());
-    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT'];
+    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT','STATUS' ];
     this.menuList = [
       {label: 'Edit', icon: 'pi pi-fw pi-user-edit'},
       {label: 'Delete', icon: 'fa fa-fw fa-trash'}
@@ -264,7 +280,7 @@ GetFreightType(){
 }
 TabClick(e) {
     this.tabIndexToView = e.index;
-    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT'];
+    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT','STATUS' ];
     this.buttonname = "Create";
     this.clearData();
     this.clearProject()
@@ -272,7 +288,8 @@ TabClick(e) {
     // this.getTotal(this.misReportList)
     this.addPurchaseListInput = false
     this.status = undefined;
-    
+    this.MISSpinner = false;
+    this.reqstatusSpinner = false
     // this.gettermsdetails();
       // setTimeout(function(){
       //   const elem:any  = document.getElementById('creditdays');
@@ -1264,7 +1281,7 @@ this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
   if(this.DocNo){
     this.ngxService.stop();
     this.tabIndexToView = 0;
-    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT'];
+    this.items = [ 'BROWSE', 'CREATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT','STATUS' ];
     this.buttonname = "Create";
   }
 
@@ -1532,7 +1549,7 @@ Edit(col){
     this.DocNo = col.Doc_No;
     this.status = col.Approve_Status;
     this.tabIndexToView = 1;
-    this.items = [ 'BROWSE', 'UPDATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT'];
+    this.items = [ 'BROWSE', 'UPDATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT','STATUS' ];
     this.buttonname = "Update";
     this.clearProject()
     this.geteditmaster(col.Doc_No);
@@ -1554,7 +1571,7 @@ Amendment(coldoc){
     this.DocNo = coldoc.Doc_No;
     this.status = coldoc.Approve_Status;
     this.tabIndexToView = 1;
-    this.items = [ 'BROWSE', 'UPDATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT'];
+    this.items = [ 'BROWSE', 'UPDATE','PENDING PURCHASE INDENT','PENDING PURCHASE INDENT PRODUCT','UPDATE TERMS','MIS REPORT','STATUS' ];
     this.buttonname = "UPDATE";
     this.clearProject()
     this.geteditmaster(coldoc.Doc_No);
@@ -2238,6 +2255,9 @@ if (valid) {
     this.MISreportFormSubmit = false;
   })
   }
+  else {
+    this.MISSpinner = false;
+  }
 }
 getTotalValue(key){
   let Amtval = 0;
@@ -2502,6 +2522,48 @@ UploadDocApprove(elem: any) {
       })
   }
 }
+
+getReStatsuDateRange(dateRangeObj) {
+  if (dateRangeObj.length) {
+    this.ObjReqStatusData.From_Date = dateRangeObj[0];
+    this.ObjReqStatusData.To_Date = dateRangeObj[1];
+  }
+}
+GetRequisitionStatusData(){
+  // this.RequistionSearchFormSubmit = true;
+  this.reqstatusSpinner = true
+    const tempDate = {
+      From_Date :this.ObjReqStatusData.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjReqStatusData.From_Date))
+      : this.DateService.dateConvert(new Date()),
+      To_Date :this.ObjReqStatusData.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjReqStatusData.To_Date))
+      : this.DateService.dateConvert(new Date()),
+      To_Cost_Cen_ID :this.$CompacctAPI.CompacctCookies.Cost_Cen_ID ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : 0
+    }
+    const obj = {
+      "SP_String": "Sp_Purchase_Order",
+      "Report_Name_String": "Get_Purchase_Order_Status",
+      "Json_Param_String": JSON.stringify([tempDate])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.ReqStatusDataList = data;
+      if(this.ReqStatusDataList.length){
+        this.DynamicReqStatusDataListHeader= Object.keys(data[0])
+      }
+      // this.RequistionSearchFormSubmit = false;
+      this.backUpReqStatusDataList = data;
+      this.reqstatusSpinner = false
+      //console.log("this.ReqStatusDataList",this.ReqStatusDataList);
+    })
+
+
+}
+exportexcel(Arr,fileName): void {
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, fileName+'.xlsx');
+}
 }
 class purchase {
         Doc_No:any;
@@ -2675,4 +2737,11 @@ class Term {
   GST_Per:any
   GST_Amount:any
   HSN_No:any
+}
+class ReqStatusData {
+  From_Date: string;
+  To_Date: string;
+  Cost_Cen_ID : any;
+  Godown_ID : any;
+  To_Cost_Cen_ID :any
 }

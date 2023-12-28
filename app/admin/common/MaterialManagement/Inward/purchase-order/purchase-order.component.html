@@ -627,7 +627,7 @@
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Taxable Amount</th>
                                         <th  nowrap="" colspan="2" style="vertical-align:middle">{{taxlabelChange()}}</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Net Amount</th>
-                                        <th *ngIf="buttonname === 'Update'" nowrap="" rowspan="2" style="vertical-align:middle">Edit</th>
+                                        <th *ngIf="buttonname != 'Create'" nowrap="" rowspan="2" style="vertical-align:middle">Edit</th>
                                         <th nowrap="" rowspan="2" style="vertical-align:middle">Delete</th>
                                          </tr>
                                         <tr style="background-color:#3c8dbc;color:white;">
@@ -665,7 +665,7 @@
                                                 <td>{{col.GST_Percentage ? col.GST_Percentage : 0}}</td>
                                                 <td>{{col.GST_Amount ? col.GST_Amount : 0}}</td>
                                                 <td>{{col.Total_Amount ? col.Total_Amount : 0}}</td>
-                                                <td *ngIf="buttonname === 'Update'"> <a class="btn btn-sm btn-warning" (click)="EditAddPurchase(i)"
+                                                <td *ngIf="buttonname != 'Create'"> <a class="btn btn-sm btn-warning" (click)="EditAddPurchase(i)"
                                                     ><div><i class="fa fa-fw fa-edit"> </i></div>
                                                   </a></td>
                                                <td> <a class="btn btn-sm btn-danger" (click)="DeleteAddPurchase(i)"
@@ -1684,6 +1684,69 @@
                                       </table>
                                 </div> -->
                         </p-tabPanel>
+                        <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[6]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="ReqStatusForm" #ReqStatusForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Period</label>
+
+                                        <app-compacct-daterangepicker (DaterangeObj)="getReStatsuDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetRequisitionStatusData()" id="load" [disabled]="reqstatusSpinner">
+                                      <p-progressSpinner *ngIf="reqstatusSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!reqstatusSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                   </button>
+                                    </div>
+                                    <div class="col-sm-2">  
+                                        <button class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcel(ReqStatusDataList, 'PO_Status')" id="load1" [disabled]="ReqStatusDataList.length ? false : true">
+                                        <span class="fa fa-fw  fa-download"></span>&nbsp;EXPORT TO EXCEL
+                                     </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <br>
+                            <div class="no-padding">
+                                <p-table [value]="ReqStatusDataList"
+                                [paginator]="ReqStatusDataList.length ? true : false"
+                                *ngIf='ReqStatusDataList.length'
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicReqStatusDataListHeader'
+                                    [rowHover]="true" #dt7>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt7.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicReqStatusDataListHeader">{{option.replaceAll('_',' ')}}</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <ng-container *ngFor="let option of DynamicReqStatusDataListHeader">
+                                                <td nowrap="nowrap">{{col[option]}}</td>
+                                            </ng-container>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel> -->
                     </p-tabView>
                 </div>
             </div>
@@ -2173,11 +2236,11 @@ style="text-align: center;"
 <p-dialog header="Details" [appendTo]="'body'" [(visible)]="ViewPoppup" [modal]="true" [responsive]="true" [minY]="50" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '50%', minWidth: '200px'}">
     
     <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
-        <p-table [value]="ViewAmdList" [globalFilterFields]='["Amendment_No","Amendment_Remarks"]' [rowHover]="true" [autoLayout]="true" #dt2>
+        <p-table [value]="ViewAmdList" [globalFilterFields]='["Amendment_No","Amendment_Remarks"]' [rowHover]="true" [autoLayout]="true" #dt9>
             <ng-template pTemplate="caption">
                 <div class="row">
                     <div class="col-sm-3 pull-right" style="text-align: right">
-                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt9.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                     </div>
                 </div>
 
