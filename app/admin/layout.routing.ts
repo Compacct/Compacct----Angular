@@ -422,7 +422,7 @@ import { QuizModuleComponent } from "./common/Attendance/quiz-module/quiz-module
 import { K4cAllDiagnosisComponent } from './common/OutletManagement/k4c-all-diagnosis/k4c-all-diagnosis.component';
 import { PatientCreateWithInformationComponent } from './common/PatientManagement/patient-create-with-information/patient-create-with-information.component';
 import { DailyAttendanceJohForEmployeeComponent } from './common/Attendance/daily-attendance-joh-for-employee/daily-attendance-joh-for-employee.component';
-
+import { LeaveEncashmentComponent } from './common/HR/leave-encashment/leave-encashment.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3232,6 +3232,15 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         title: 'Daily Attendance JOH for Employee'
       }
     },
+    {
+      path: 'Leave_Encashment',
+      component: LeaveEncashmentComponent,
+      data: {
+        title: 'Leave Encashment'
+      }
+    },
+
+    
     /*{
 
 
