@@ -423,7 +423,7 @@ import { K4cAllDiagnosisComponent } from './common/OutletManagement/k4c-all-diag
 import { PatientCreateWithInformationComponent } from './common/PatientManagement/patient-create-with-information/patient-create-with-information.component';
 import { DailyAttendanceJohForEmployeeComponent } from './common/Attendance/daily-attendance-joh-for-employee/daily-attendance-joh-for-employee.component';
 import { LeaveEncashmentComponent } from './common/HR/leave-encashment/leave-encashment.component';
-
+import { DoctorSchedulComponent } from './common/PatientManagement/doctor-schedul/doctor-schedul.component';
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -3239,7 +3239,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         title: 'Leave Encashment'
       }
     },
-
+    {
+      path: 'BL_CRM_Doctor_Schedule_V2',
+      component: DoctorSchedulComponent,
+      data: {
+        title: 'Doctor Schedule Entry'
+      }
+    },
     
     /*{
 
