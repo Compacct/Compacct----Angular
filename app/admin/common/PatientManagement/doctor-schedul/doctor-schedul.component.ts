@@ -122,14 +122,15 @@ export class DoctorSchedulComponent implements OnInit {
         "Json_Param_String": JSON.stringify([this.objDoctorSchedul])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        if(data[0]){
+        console.log(data)
+        if(data[0].Message == 'Success'){
           this.clearData()
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "success",
             summary: "Doctor Schedule",
-            detail: "Succesfully Save"
+            detail: data[0].Text
           });
         }
         else {
@@ -139,7 +140,7 @@ export class DoctorSchedulComponent implements OnInit {
             key: "compacct-toast",
             severity: "error",
             summary: "Warn Message ",
-            detail:"Error occured "
+            detail:data[0].Text
           });
         }
       })
