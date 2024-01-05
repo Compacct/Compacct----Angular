@@ -180,7 +180,7 @@
                                             <td align="center">{{ i + 1 }}</td>
                                             <td>
                                                 <!-- style="text-align:center" <input type="checkbox" id="col.confirmationInv" name="col.confirmationInv" value="col.confirmation_Inv"> -->
-                                                <p-checkbox name="col.confirmationInv" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" (ngModelChange)='CheckPenInvQueuelength()' [binary]="true"></p-checkbox>
+                                                <p-checkbox [name]="col.Doc_No+i" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" (ngModelChange)='CheckPenInvQueuelength()' [binary]="true"></p-checkbox>
                                             </td>
                                             <!-- <td style="text-align:center">
                                                 <button class="btn btn-primary custombtn" (click)='ViewInvoice(col.Doc_No)' type="button" [id]="col.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
@@ -323,7 +323,7 @@
                                             <td align="center">{{ i + 1 }}</td>
                                             <td>
                                                 <!-- <input type="checkbox" id="col.confirmationInv" name="col.confirmationInv" value="col.confirmation_Inv"> -->
-                                                <p-checkbox name="col.failedconfirmationInv" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" (ngModelChange)='CheckFailedInvQueuelength()' [binary]="true"></p-checkbox>
+                                                <p-checkbox [name]="col.Doc_No+i" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" (ngModelChange)='CheckFailedInvQueuelength()' [binary]="true"></p-checkbox>
                                             </td>
                                             <td style="text-align:center">
                                                 <button class="btn btn-primary custombtn" (click)='ViewInvoice(col.Doc_No)' type="button" [id]="col.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">

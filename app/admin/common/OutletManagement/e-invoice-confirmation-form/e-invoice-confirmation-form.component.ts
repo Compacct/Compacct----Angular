@@ -199,7 +199,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   }
   SavePenInvoice() {
     this.Spinner = false;
-    this.ngxService.start();
+    // this.ngxService.start();
   if(this.PenInvoicelist.length){
     let updateData:any = [];
     this.PenInvoicelist.forEach(el=>{
@@ -209,57 +209,13 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
           Doc_No : el.Doc_No
         }
         updateData.push(updateObj)
-        console.log("updateData",updateData);
+        // console.log("updateData",updateData);
       }
 
     })
     if(updateData.length){
      if(updateData.length <= 50) {
-     console.log("updateData",updateData);
-     let reportnamepeninv = "";
-      if (this.databaseName === "K4C") {
-        reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=KLD20";
-      }
-      else if (this.databaseName === "MICL") {
-        reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XL01";
-      }
-      else if (this.databaseName === "Diagraph") {
-        reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XLD01";
-      }
-      else if (this.databaseName === "BSHPL") {
-        reportnamepeninv = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Invoice_Queue?code=yf2xGtV6etP5Hj_u-RcbC1iEH6ryfONUXbsUrFGJhRESAzFulwDVDA==";
-      }
-      else {
-        reportnamepeninv = "";
-      }
-     this.$http.post(reportnamepeninv,updateData)
-     .subscribe((data:any)=>{
-      console.log("data",data)
-
-      if(data[0].status === "success"){
-        this.GetPenInvoicelist();
-        this.Spinner = false;
-        this.ngxService.stop();
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "success",
-          summary: "Invoice ",
-          detail: data[0].msg
-        });
-        }
-        else{
-          this.Spinner = false;
-          this.ngxService.stop();
-          this.compacctToast.clear();
-              this.compacctToast.add({
-                key: "compacct-toast",
-                severity: "error",
-                summary: "Warn Message",
-                detail: "Something Wrong"
-              });
-        }
-     })
+      this.ApiCreateEInvoiceDirectPending(updateData)
      }
      else{
        this.Spinner = false;
@@ -297,6 +253,41 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
           detail: "Something Wrong"
         });
   }
+  }
+  async ApiCreateEInvoiceDirectPending(updateData:any){
+    let reportnamepeninv = "";
+      if (this.databaseName === "K4C") {
+        // reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=KLD20";
+        reportnamepeninv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=KLD20";
+      }
+      else if (this.databaseName === "MICL") {
+        // reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XL01";
+        reportnamepeninv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=XL01";
+      }
+      else if (this.databaseName === "Diagraph") {
+        // reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XLD01";
+        reportnamepeninv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=XLD01";
+      }
+      else if (this.databaseName === "BSHPL") {
+        reportnamepeninv = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Invoice_Queue?code=yf2xGtV6etP5Hj_u-RcbC1iEH6ryfONUXbsUrFGJhRESAzFulwDVDA==";
+      }
+      else {
+        reportnamepeninv = "";
+      }
+    for(let i = 0; i < updateData.length ; i++ ) {
+      console.log(updateData[i])
+      await this.$http.post(reportnamepeninv,[updateData[i]]).toPromise()
+    }
+    this.GetPenInvoicelist();
+    this.Spinner = false;
+    this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "success",
+      summary: "Invoice ",
+      detail: 'Invoice created successfully'
+    });
   }
 
   
@@ -457,79 +448,60 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   }
   SaveFailedInvoice() {
     this.Spinner = false;
-    this.ngxService.start();
+    // this.ngxService.start();
   if(this.FailedInvoicelist.length){
     let updateData:any = [];
-    this.FailedInvoicelist.forEach(el=>{
+    this.FailedInvoicelist.forEach(async el=>{
       console.log("confirmation_Inv ====",el.confirmation_Inv)
       if (el.confirmation_Inv === true) {
         const updateObj = {
           Doc_No : el.Doc_No
         }
         updateData.push(updateObj)
-        console.log("updateData",updateData);
+      //  await this.ApiCreateEInvoiceDirect(updateObj).then((data:any)=>{
+      //   if(data[0].status === "success"){
+      //     this.GetFailedInvoicelist();
+      //     this.Spinner = false;
+      //     this.ngxService.stop();
+      //     this.compacctToast.clear();
+      //     this.compacctToast.add({
+      //       key: "compacct-toast",
+      //       severity: "success",
+      //       summary: "Invoice "+updateObj.Doc_No,
+      //       detail: data[0].msg
+      //     });
+      //     }
+      //  }).catch((error:any)=>{
+      //   console.error(error)
+      //   this.Spinner = false;
+      //   this.ngxService.stop();
+      //   this.compacctToast.clear();
+      //   this.compacctToast.add({
+      //     key: "compacct-toast",
+      //     severity: "error",
+      //     summary: "Warn Message",
+      //     detail: "Something Wrong"
+      //   });
+      //  })
+     
       }
-
+      
     })
-    if(updateData.length){
+    if(updateData.length) {
      if(updateData.length <= 50) {
-     console.log("updateData",updateData);
-     let reportnamefailedinv = "";
-      if (this.databaseName === "K4C") {
-        reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=KLD20";
-      }
-      else if (this.databaseName === "MICL") {
-        reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XL01";
-      }
-      else if (this.databaseName === "Diagraph") {
-        reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XLD01";
-      }
-      else if (this.databaseName === "BSHPL") {
-        reportnamefailedinv = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Invoice_Queue?code=yf2xGtV6etP5Hj_u-RcbC1iEH6ryfONUXbsUrFGJhRESAzFulwDVDA==";
-      }
-      else {
-        reportnamefailedinv = "";
-      }
-     this.$http.post(reportnamefailedinv,updateData)
-     .subscribe((data:any)=>{
-      console.log("data",data)
-
-      if(data[0].status === "success"){
-        this.GetFailedInvoicelist();
-        this.Spinner = false;
-        this.ngxService.stop();
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "success",
-          summary: "Invoice ",
-          detail: data[0].msg
-        });
-        }
-        else{
-          this.Spinner = false;
-          this.ngxService.stop();
-          this.compacctToast.clear();
-              this.compacctToast.add({
-                key: "compacct-toast",
-                severity: "error",
-                summary: "Warn Message",
-                detail: "Something Wrong"
-              });
-        }
-     })
+      this.ApiCreateEInvoiceDirect(updateData)
      }
      else{
-       this.Spinner = false;
-       this.ngxService.stop();
-       this.compacctToast.clear();
-           this.compacctToast.add({
-             key: "compacct-toast",
-             severity: "error",
-             summary: "Warn Message",
-             detail: "Can't Create More Than Fifty Queue."
-           });
-      }
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Can't Create More Than Fifty Queue."
+          });
+     }
     }
     else{
       this.Spinner = false;
@@ -542,7 +514,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
             detail: "Something Wrong"
           });
     }
-
+     
   }
   else{
     this.Spinner = false;
@@ -555,6 +527,41 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
           detail: "Something Wrong"
         });
   }
+  }
+  async ApiCreateEInvoiceDirect(updateData:any){
+    let reportnamefailedinv = "";
+    if (this.databaseName === "K4C") {
+      // reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=KLD20";
+      reportnamefailedinv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=KLD20";
+    }
+    else if (this.databaseName === "MICL") {
+      // reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XL01";
+      reportnamefailedinv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=XL01";
+    }
+    else if (this.databaseName === "Diagraph") {
+      // reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XLD01";
+      reportnamefailedinv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=XLD01";
+    }
+    else if (this.databaseName === "BSHPL") {
+      reportnamefailedinv = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Invoice_Queue?code=yf2xGtV6etP5Hj_u-RcbC1iEH6ryfONUXbsUrFGJhRESAzFulwDVDA==";
+    }
+    else {
+      reportnamefailedinv = "";
+    }
+    for(let i = 0; i < updateData.length ; i++ ) {
+      console.log(updateData[i])
+      await this.$http.post(reportnamefailedinv,[updateData[i]]).toPromise()
+    }
+    this.GetFailedInvoicelist();
+    this.Spinner = false;
+    this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "success",
+      summary: "Invoice ",
+      detail: 'queue created successfully'
+    });
   }
   // SUCCESS INV
   SuccessgetDateRange(dateRangeObj) {
