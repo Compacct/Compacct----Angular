@@ -87,6 +87,8 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   Cost_Cen_PIN: any;
   Pending_Doc_No: any;
   cancelinvoiceno: any;
+  peninvSpinner:boolean = false;
+  failedinvSpinner:boolean = false;
   constructor(
     private Header: CompacctHeader,
     private route : ActivatedRoute,
@@ -119,6 +121,8 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
     this.tabIndexToView = e.index;
     this.items = ["PENDING INV", "FAILED / QUEUE INV", "SUCCESS INV", "CANCEL INV", "PENDING CR NOTES", "FAILED / QUEUE CR NOTES", "SUCCESS CR NOTES"];
     this.buttonname = "Save";
+    this.peninvSpinner = false;
+    this.failedinvSpinner = false;
     // this.productaddSubmit =[];
     // this.clearData();
   }
@@ -198,9 +202,10 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       }
   }
   SavePenInvoice() {
-    this.Spinner = false;
+    // this.peninvSpinner = false;
     // this.ngxService.start();
   if(this.PenInvoicelist.length){
+    this.peninvSpinner = true;
     let updateData:any = [];
     this.PenInvoicelist.forEach(el=>{
       console.log("confirmation_Inv ====",el.confirmation_Inv)
@@ -218,7 +223,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       this.ApiCreateEInvoiceDirectPending(updateData)
      }
      else{
-       this.Spinner = false;
+       this.peninvSpinner = false;
        this.ngxService.stop();
        this.compacctToast.clear();
            this.compacctToast.add({
@@ -230,7 +235,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       }
     }
     else{
-      this.Spinner = false;
+      this.peninvSpinner = false;
       this.ngxService.stop();
       this.compacctToast.clear();
           this.compacctToast.add({
@@ -243,7 +248,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
 
   }
   else{
-    this.Spinner = false;
+    this.peninvSpinner = false;
     this.ngxService.stop();
     this.compacctToast.clear();
         this.compacctToast.add({
@@ -274,20 +279,39 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       else {
         reportnamepeninv = "";
       }
+    let afterSave:any[] = []
     for(let i = 0; i < updateData.length ; i++ ) {
       console.log(updateData[i])
-      await this.$http.post(reportnamepeninv,[updateData[i]]).toPromise()
+      await this.$http.post(reportnamepeninv,[updateData[i]]).toPromise().then(data=>{
+        console.log('data',data)
+        afterSave.push(data)
+       }).catch(e=>{
+        afterSave.push(e)
+       })
     }
-    this.GetPenInvoicelist();
-    this.Spinner = false;
-    this.ngxService.stop();
-    this.compacctToast.clear();
-    this.compacctToast.add({
-      key: "compacct-toast",
-      severity: "success",
-      summary: "Invoice ",
-      detail: 'Invoice created successfully'
-    });
+    if(afterSave.length == updateData.length){
+      this.GetPenInvoicelist();
+      this.peninvSpinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Invoice ",
+        detail: 'Invoice created successfully'
+      });
+    }
+    else {
+      this.peninvSpinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error ",
+        detail: 'Something Was wrong'
+      });
+    }
   }
 
   
@@ -447,9 +471,10 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       }
   }
   SaveFailedInvoice() {
-    this.Spinner = false;
+    // this.failedinvSpinner = false;
     // this.ngxService.start();
   if(this.FailedInvoicelist.length){
+    this.failedinvSpinner = true;
     let updateData:any = [];
     this.FailedInvoicelist.forEach(async el=>{
       console.log("confirmation_Inv ====",el.confirmation_Inv)
@@ -492,7 +517,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       this.ApiCreateEInvoiceDirect(updateData)
      }
      else{
-      this.Spinner = false;
+      this.failedinvSpinner = false;
       this.ngxService.stop();
       this.compacctToast.clear();
           this.compacctToast.add({
@@ -504,7 +529,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      }
     }
     else{
-      this.Spinner = false;
+      this.failedinvSpinner = false;
       this.ngxService.stop();
       this.compacctToast.clear();
           this.compacctToast.add({
@@ -517,7 +542,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
      
   }
   else{
-    this.Spinner = false;
+    this.failedinvSpinner = false;
     this.ngxService.stop();
     this.compacctToast.clear();
         this.compacctToast.add({
@@ -548,20 +573,40 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
     else {
       reportnamefailedinv = "";
     }
+    let afterSave:any[] = []
     for(let i = 0; i < updateData.length ; i++ ) {
       console.log(updateData[i])
-      await this.$http.post(reportnamefailedinv,[updateData[i]]).toPromise()
+      await this.$http.post(reportnamefailedinv,[updateData[i]]).toPromise().then(data=>{
+        console.log('data',data)
+        afterSave.push(data)
+       }).catch(e=>{
+        afterSave.push(e)
+       })
     }
-    this.GetFailedInvoicelist();
-    this.Spinner = false;
-    this.ngxService.stop();
-    this.compacctToast.clear();
-    this.compacctToast.add({
-      key: "compacct-toast",
-      severity: "success",
-      summary: "Invoice ",
-      detail: 'queue created successfully'
-    });
+    if(afterSave.length == updateData.length){
+      this.GetFailedInvoicelist();
+      this.failedinvSpinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Invoice ",
+        detail: 'queue created successfully'
+      });
+    }
+    else {
+      this.failedinvSpinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error ",
+        detail: 'Something Was wrong'
+      });
+    }
+   
   }
   // SUCCESS INV
   SuccessgetDateRange(dateRangeObj) {
@@ -649,13 +694,16 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       this.ngxService.start();
       let reportnamecancel = "";
       if (this.databaseName === "K4C") {
-        reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&CON=KLD20&invoice_no=";
+        // reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&CON=KLD20&invoice_no=";
+        reportnamecancel = "https://einvoicecompacct.azurewebsites.net/api/Cancel_E_Invoice?code=RO6d24bzuLcsnBQGxQWeim3xjl_Bal8vv93JRZbaieu3AzFuJSt7mg==&CON=KLD20&invoice_no=";
       }
       else if (this.databaseName === "MICL") {
-        reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&CON=XL01&invoice_no=";
+        // reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&CON=XL01&invoice_no=";
+        reportnamecancel = "https://einvoicecompacct.azurewebsites.net/api/Cancel_E_Invoice?code=RO6d24bzuLcsnBQGxQWeim3xjl_Bal8vv93JRZbaieu3AzFuJSt7mg==&CON=XL01&invoice_no=";
       }
       else if (this.databaseName === "Diagraph") {
-        reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&CON=XLD01&invoice_no=";
+        // reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&CON=XLD01&invoice_no=";
+        reportnamecancel = "https://einvoicecompacct.azurewebsites.net/api/Cancel_E_Invoice?code=RO6d24bzuLcsnBQGxQWeim3xjl_Bal8vv93JRZbaieu3AzFuJSt7mg==&CON=XLD01&invoice_no=";
       }
       else if (this.databaseName === "BSHPL") {
         reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&invoice_no=";
@@ -1254,7 +1302,8 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   CalculateDistance(){
     if (this.Consignee_Pin && this.Cost_Cen_PIN) {
       this.ngxService.start();
-      this.$http.get("https://azdistancecalc.azurewebsites.net/api/Distance?code=OTrdwwzB0Q8uzU1BIhgflRcUMM60Q1uRSS22Wx0-99QwAzFuk-uwmw==&fromPincode="+this.Cost_Cen_PIN+"&toPincode="+this.Consignee_Pin)
+      // this.$http.get("https://azdistancecalc.azurewebsites.net/api/Distance?code=OTrdwwzB0Q8uzU1BIhgflRcUMM60Q1uRSS22Wx0-99QwAzFuk-uwmw==&fromPincode="+this.Cost_Cen_PIN+"&toPincode="+this.Consignee_Pin)
+      this.$http.get("https://einvoicecompacct.azurewebsites.net/api/Get_Distance?code=uVJjIusLgOThNqFJk6dMRU0XRg1ft0BrxPOIlYoeSy5eAzFuZUnSGA==&fromPincode="+this.Cost_Cen_PIN+"&toPincode="+this.Consignee_Pin)
      .subscribe((data:any)=>{
       console.log("data",data)
       this.ObjupdateEwayBillpop.Transportation_Distance = Math.ceil(Number(Number(data[0].distance).toFixed(2)));

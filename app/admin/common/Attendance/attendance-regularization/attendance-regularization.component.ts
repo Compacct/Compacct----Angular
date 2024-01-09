@@ -37,6 +37,7 @@ export class AttendanceRegularizationComponent implements OnInit {
   initDate: any = [];
   del_empID: number = 0;
   del_ApplyDate: Date = new Date();
+  del_AttenDate: Date = new Date();
   objAttendence = new Attendence();
 
   constructor(
@@ -90,6 +91,7 @@ export class AttendanceRegularizationComponent implements OnInit {
     if (col) {
       this.del_empID = col.Emp_ID;
       this.del_ApplyDate = col.Apply_Date;
+      this.del_AttenDate = col.Atten_Date;
       this.CompacctToast.clear();
       this.CompacctToast.add({
         key: "c",
@@ -230,7 +232,7 @@ export class AttendanceRegularizationComponent implements OnInit {
     const obj = {
       "SP_String": "SP_HR_Txn_Attendance_Regularization",
       "Report_Name_String": "Delete_HR_Txn_Attendance_Regularization",
-      "Json_Param_String": JSON.stringify([{ "Emp_ID": this.del_empID, "Apply_Date": this.DateService.dateConvert(this.del_ApplyDate) }])
+      "Json_Param_String": JSON.stringify([{ "Emp_ID": this.del_empID, "Atten_Date": this.DateService.dateConvert(this.del_AttenDate) }])
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
       // console.log('delete res', data);
@@ -252,6 +254,7 @@ export class AttendanceRegularizationComponent implements OnInit {
     this.CompacctToast.clear("c");
     this.del_empID = 0;
     this.del_ApplyDate = new Date();
+    this.del_AttenDate = new Date();
   }
 
 }
