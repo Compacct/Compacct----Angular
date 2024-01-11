@@ -802,9 +802,9 @@
                             </div>
                             <div class="box-footer">
                                 <div class="text-right">
-                                    <button class="btn btn-primary pull-right" (click)="SavePenCrNote()" id="load" [disabled]="Spinner || !PenCRNoteconfirmcheckbox">
-                           <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                       <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Save 
+                                    <button class="btn btn-primary pull-right" (click)="SavePenCrNote()" id="load" [disabled]="pencrSpinner || !PenCRNoteconfirmcheckbox">
+                           <p-progressSpinner *ngIf="pencrSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                       <span *ngIf="!pencrSpinner" class="glyphicon glyphicon-save"></span> Save 
                    </button>
                                 </div>
                             </div>
@@ -939,8 +939,8 @@
                             </div>
                             <div class="box-footer">
                                 <div class="text-right">
-                                    <button class="btn btn-primary pull-right" (click)="SaveFailedCrNote()" id="load" [disabled]="Spinner || !FailedCRNoteconfirmcheckbox">
-                           <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <button class="btn btn-primary pull-right" (click)="SaveFailedCrNote()" id="load" [disabled]="failedcrSpinner || !FailedCRNoteconfirmcheckbox">
+                           <p-progressSpinner *ngIf="failedcrSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                        <!-- <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> --> Put In E-Invoice Genaration-Queue  
                    </button>
                                 </div>

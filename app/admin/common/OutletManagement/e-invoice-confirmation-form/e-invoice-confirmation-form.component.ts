@@ -89,6 +89,8 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   cancelinvoiceno: any;
   peninvSpinner:boolean = false;
   failedinvSpinner:boolean = false;
+  pencrSpinner:boolean = false;
+  failedcrSpinner:boolean = false;
   constructor(
     private Header: CompacctHeader,
     private route : ActivatedRoute,
@@ -123,6 +125,8 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
     this.buttonname = "Save";
     this.peninvSpinner = false;
     this.failedinvSpinner = false;
+    this.pencrSpinner = false;
+    this.failedcrSpinner = false;
     // this.productaddSubmit =[];
     // this.clearData();
   }
@@ -309,7 +313,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
         key: "compacct-toast",
         severity: "error",
         summary: "Error ",
-        detail: 'Something Was wrong'
+        detail: 'Something wrong'
       });
     }
   }
@@ -603,7 +607,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
         key: "compacct-toast",
         severity: "error",
         summary: "Error ",
-        detail: 'Something Was wrong'
+        detail: 'Something wrong'
       });
     }
    
@@ -857,9 +861,9 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       }
   }
   SavePenCrNote() {
-    this.Spinner = false;
-    this.ngxService.start();
+    // this.ngxService.start();
   if(this.PenCrNotelist.length) {
+    this.pencrSpinner = true;
     let updateData:any = [];
     this.PenCrNotelist.forEach(el=>{
       console.log("confirmation_Credit_Note ====",el.confirmation_Credit_Note)
@@ -868,60 +872,17 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
           Doc_No : el.Note_No
         }
         updateData.push(updateObj)
-        console.log("updateData",updateData);
+        // console.log("updateData",updateData);
       }
 
     })
   //}
     if(updateData.length) {
      if(updateData.length <= 50) {
-     console.log("updateData",updateData);
-     let reportnamepencrnote = "";
-      if (this.databaseName === "K4C") {
-        reportnamepencrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=KLD20";
-      }
-      else if (this.databaseName === "MICL") {
-        reportnamepencrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=XL01";
-      }
-      else if (this.databaseName === "Diagraph") {
-        reportnamepencrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=XLD01";
-      }
-      else if (this.databaseName === "BSHPL") {
-        reportnamepencrnote = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=Mvkyst7OU0DTxMSZAgg7HNhW2FuwUgMypd1cu36SfC1JAzFucc6OIw==";
-      }
-      else {
-        reportnamepencrnote = "";
-      }
-      this.$http.post(reportnamepencrnote,updateData)
-     .subscribe((data:any)=>{
-      console.log("data",data)
-        if(data[0].status === "success"){
-        this.GetPenCrNotelist();
-        this.Spinner = false;
-        this.ngxService.stop();
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "success",
-          summary: "Credit Note ",
-          detail: data[0].msg
-        });
-        }
-        else{
-          this.Spinner = false;
-          this.ngxService.stop();
-          this.compacctToast.clear();
-              this.compacctToast.add({
-                key: "compacct-toast",
-                severity: "error",
-                summary: "Warn Message",
-                detail: "Something Wrong"
-              });
-        }
-    })
+      this.ApiCreateCreditNoteDirectPending(updateData)
     }
     else{
-      this.Spinner = false;
+      this.pencrSpinner = false;
       this.ngxService.stop();
       this.compacctToast.clear();
           this.compacctToast.add({
@@ -933,7 +894,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
     }
   }
     else {
-      this.Spinner = false;
+      this.pencrSpinner = false;
       this.ngxService.stop();
       this.compacctToast.clear();
           this.compacctToast.add({
@@ -945,7 +906,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
     }
   }
   else{
-    this.Spinner = false;
+    this.pencrSpinner = false;
     this.ngxService.stop();
     this.compacctToast.clear();
         this.compacctToast.add({
@@ -955,6 +916,57 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
           detail: "Something Wrong"
         });
   }
+  }
+  async ApiCreateCreditNoteDirectPending(updateData:any){
+    let reportnamepencrnote = "";
+      if (this.databaseName === "K4C") {
+        reportnamepencrnote = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Credit_Note_Direct?code=xV1HqvDxeCr6h_wWVT-hBlI-6pKDgoLln0F2_heaOZsgAzFuc3M5Iw==&CON=KLD20";
+      }
+      else if (this.databaseName === "MICL") {
+        reportnamepencrnote = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Credit_Note_Direct?code=xV1HqvDxeCr6h_wWVT-hBlI-6pKDgoLln0F2_heaOZsgAzFuc3M5Iw==&CON=XL01";
+      }
+      else if (this.databaseName === "Diagraph") {
+        reportnamepencrnote = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Credit_Note_Direct?code=xV1HqvDxeCr6h_wWVT-hBlI-6pKDgoLln0F2_heaOZsgAzFuc3M5Iw==&CON=XLD01";
+      }
+      else if (this.databaseName === "BSHPL") {
+        reportnamepencrnote = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=Mvkyst7OU0DTxMSZAgg7HNhW2FuwUgMypd1cu36SfC1JAzFucc6OIw==";
+      }
+      else {
+        reportnamepencrnote = "";
+      }
+    let afterSave:any[] = []
+    for(let i = 0; i < updateData.length ; i++ ) {
+      console.log(updateData[i])
+      await this.$http.post(reportnamepencrnote,[updateData[i]]).toPromise().then(data=>{
+        console.log('data',data)
+        afterSave.push(data)
+       }).catch(e=>{
+        afterSave.push(e)
+       })
+    }
+    if(afterSave.length == updateData.length){
+      this.GetPenCrNotelist();
+      this.pencrSpinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Credit Note ",
+        detail: 'Credit note created successfully'
+      });
+    }
+    else {
+      this.pencrSpinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error ",
+        detail: 'Something wrong'
+      });
+    }
   }
 
   
@@ -1042,9 +1054,9 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       }
   }
   SaveFailedCrNote() {
-    this.Spinner = false;
-    this.ngxService.start();
+    // this.ngxService.start();
   if(this.FailedCrNotelist.length) {
+    this.failedcrSpinner = true;
     let updateData:any = [];
     this.FailedCrNotelist.forEach(el=>{
       console.log("confirmation_Credit_Note ====",el.confirmation_Credit_Note)
@@ -1060,53 +1072,10 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
   //}
     if(updateData.length) {
      if(updateData.length <= 50) {
-     console.log("updateData",updateData);
-     let reportnamefailedcrnote = "";
-      if (this.databaseName === "K4C") {
-        reportnamefailedcrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=KLD20";
-      }
-      else if (this.databaseName === "MICL") {
-        reportnamefailedcrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=XL01";
-      }
-      else if (this.databaseName === "Diagraph") {
-        reportnamefailedcrnote = "https://einvoicek4c.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=jPsyuiZml49N-cUZvVdGXgDmdA53NDYae0VpVCEGm8yjAzFugsuusQ==&CON=XLD01";
-      }
-      else if (this.databaseName === "BSHPL") {
-        reportnamefailedcrnote = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=Mvkyst7OU0DTxMSZAgg7HNhW2FuwUgMypd1cu36SfC1JAzFucc6OIw==";
-      }
-      else {
-        reportnamefailedcrnote = "";
-      }
-      this.$http.post(reportnamefailedcrnote,updateData)
-     .subscribe((data:any)=>{
-      console.log("data",data)
-        if(data[0].status === "success"){
-        this.GetFailedCrNotelist();
-        this.Spinner = false;
-        this.ngxService.stop();
-        this.compacctToast.clear();
-        this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "success",
-          summary: "Credit Note ",
-          detail: data[0].msg
-        });
-        }
-        else{
-          this.Spinner = false;
-          this.ngxService.stop();
-          this.compacctToast.clear();
-              this.compacctToast.add({
-                key: "compacct-toast",
-                severity: "error",
-                summary: "Warn Message",
-                detail: "Something Wrong"
-              });
-        }
-    })
-    }
+      this.ApiCreateECreditNoteDirect(updateData)
+     }
     else{
-      this.Spinner = false;
+      this.failedcrSpinner = false;
       this.ngxService.stop();
       this.compacctToast.clear();
           this.compacctToast.add({
@@ -1118,7 +1087,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
     }
   }
     else {
-      this.Spinner = false;
+      this.failedcrSpinner = false;
       this.ngxService.stop();
       this.compacctToast.clear();
           this.compacctToast.add({
@@ -1130,7 +1099,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
     }
   }
   else{
-    this.Spinner = false;
+    this.failedcrSpinner = false;
     this.ngxService.stop();
     this.compacctToast.clear();
         this.compacctToast.add({
@@ -1140,6 +1109,58 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
           detail: "Something Wrong"
         });
   }
+  }
+  async ApiCreateECreditNoteDirect(updateData:any){
+    let reportnamefailedcrnote = "";
+      if (this.databaseName === "K4C") {
+        reportnamefailedcrnote = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Credit_Note_Direct?code=xV1HqvDxeCr6h_wWVT-hBlI-6pKDgoLln0F2_heaOZsgAzFuc3M5Iw==&CON=KLD20";
+      }
+      else if (this.databaseName === "MICL") {
+        reportnamefailedcrnote = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Credit_Note_Direct?code=xV1HqvDxeCr6h_wWVT-hBlI-6pKDgoLln0F2_heaOZsgAzFuc3M5Iw==&CON=XL01";
+      }
+      else if (this.databaseName === "Diagraph") {
+        reportnamefailedcrnote = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Credit_Note_Direct?code=xV1HqvDxeCr6h_wWVT-hBlI-6pKDgoLln0F2_heaOZsgAzFuc3M5Iw==&CON=XLD01";
+      }
+      else if (this.databaseName === "BSHPL") {
+        reportnamefailedcrnote = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=Mvkyst7OU0DTxMSZAgg7HNhW2FuwUgMypd1cu36SfC1JAzFucc6OIw==";
+      }
+      else {
+        reportnamefailedcrnote = "";
+      }
+    let afterSave:any[] = []
+    for(let i = 0; i < updateData.length ; i++ ) {
+      console.log(updateData[i])
+      await this.$http.post(reportnamefailedcrnote,[updateData[i]]).toPromise().then(data=>{
+        console.log('data',data)
+        afterSave.push(data)
+       }).catch(e=>{
+        afterSave.push(e)
+       })
+    }
+    if(afterSave.length == updateData.length){
+      this.GetFailedCrNotelist();
+      this.failedcrSpinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Credit Note ",
+        detail: 'queue created successfully'
+      });
+    }
+    else {
+      this.failedcrSpinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error ",
+        detail: 'Something wrong'
+      });
+    }
+   
   }
   //SUCCESS CREDIT NOTE
   getSuccessDateRangeCrNote(dateRangeObj) {
