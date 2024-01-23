@@ -474,7 +474,8 @@ export class NepalBLTxnPurchaseOrderComponent implements OnInit {
         blob_name: fileData.containername,
         po_pdf_url: fileData.file_url,
         to_email: this.ToEmailSelect,
-        cc_details: ccdetailsList
+        cc_details: ccdetailsList,
+        from_email:"procurement@sarawagigroup.com.np"
     }
     this.$http.post(`https://sgnepalemailaz.azurewebsites.net/api/Send_PO_Email?code=7XLxczCq_9fq2mFIrCC0-Dp3hsK0SB1_tGcerYvvfbrzAzFui0Jccw==`,JSON.stringify(sendObj) )
     .subscribe(((data:any)=>{
