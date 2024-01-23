@@ -74,7 +74,7 @@ export class AccOpeningBalcManagementComponent implements OnInit, OnDestroy {
     if(valid) {
       this.seachSpinner = true;
       const tempObj = {
-        Cost_Cen_ID : this.SearchCost_Cen_ID,
+        // Cost_Cen_ID : this.SearchCost_Cen_ID,
         Fin_Year_ID : this.SearchFinyearID,
       }
       const obj = {
@@ -110,8 +110,8 @@ export class AccOpeningBalcManagementComponent implements OnInit, OnDestroy {
         data[index].value = val.Cost_Cen_ID;
       });
        this.CostCenterList = data;
-       this.SearchCost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-       this.GetAllAcOpeningBalc(true);
+      //  this.SearchCost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      //  this.GetAllAcOpeningBalc(true);
      })
   }
   GetLedgerList(){
@@ -314,7 +314,7 @@ export class AccOpeningBalcManagementComponent implements OnInit, OnDestroy {
       const obj1 = {
         "SP_String": "SP_Opening_Journal",
         "Report_Name_String": "Get_Opening_Journal_Data_For_Edit",
-        "Json_Param_String": JSON.stringify([{'Cost_Cen_ID' : obj.Cost_Cen_ID, 'Fin_Year_ID': obj.Fin_Year_ID}])
+        "Json_Param_String": JSON.stringify([{'Fin_Year_ID': obj.Fin_Year_ID}]) //'Cost_Cen_ID' : obj.Cost_Cen_ID, 
       }
       this.GlobalAPI.getData(obj1).pipe(takeUntil(this.destroy$)).subscribe((data:any)=>{
         console.log(data)
@@ -337,6 +337,20 @@ export class AccOpeningBalcManagementComponent implements OnInit, OnDestroy {
 
       })
     }
+  }
+  exportoexcel(tempobj,fileName){
+    const obj = {
+      "SP_String": "SP_Opening_Journal",
+      "Report_Name_String": "Download_Journal",
+      "Json_Param_String": JSON.stringify([{Fin_Year_ID : tempobj.Fin_Year_ID}])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      XLSX.writeFile(workbook, fileName+'.xlsx');
+      
+    })
   }
 
 }

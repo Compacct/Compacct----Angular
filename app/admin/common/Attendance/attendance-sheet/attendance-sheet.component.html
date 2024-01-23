@@ -1,4 +1,4 @@
-<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<!-- <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
 <div class="col-lg-12">
     <div class="panel-group">
         <div class="panel panel-primary">
@@ -9,7 +9,6 @@
                             <tr>
                                 <th class="header-width" style="background-color:rgb(70, 93, 136) !important ; color:white">
                                     <div class="col-sm-12">
-                                        <!-- <label for="monthpicker">Month Picker</label> -->
                                         <input type="month" name="month" [(ngModel)]="Month_Name" (change)="getmonthdaydate()" style="background-color: rgb(70, 93, 136);
                                         color: #ffff;">
                                     </div>
@@ -31,15 +30,15 @@
                                 <td *ngFor="let col of row.monthData;let i2 = index" (click)="getdialog(i,row,i2)" (contextmenu)="onrightclick(i,row,i2)" [class]="col">
                                     {{col}}
                                 </td>
-                                <!-- [class]='getClass()' contextmenu id="noContextMenu" (dblclick)-->
                             </tr>
                         </tbody>
-                    </table>
+                    </table> 
                 </div>
             </div>
         </div>
     </div>
-</div>
+</div> -->
+<!-- [class]='getClass()' contextmenu id="noContextMenu" (dblclick)-->
 <!-- <div class="col-lg-8">
     <div class="panel-group">
         <div class="panel panel-primary">
@@ -65,17 +64,17 @@
         </div>
     </div>
 </div> -->
-<div class="box-footer">
+<!-- <div class="box-footer">
     <button class="btn btn-primary pull-right" (click)="saveAttendance()" id="load" [disabled]="Spinner">
         <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
         <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
         </button>
-</div>
+</div> -->
 
 
 
 <!-- FOR ONE EMPLOYEE (ONE CELL) -->
-<p-dialog header="Update Attendance" [appendTo]="'body'" [(visible)]="display" [modal]="true" [responsive]="true" [minY]="70" [closeOnEscape]="true" [style]="{ width: '35%', minWidth: '350px' }">
+<!-- <p-dialog header="Update Attendance" [appendTo]="'body'" [(visible)]="display" [modal]="true" [responsive]="true" [minY]="70" [closeOnEscape]="true" [style]="{ width: '35%', minWidth: '350px' }">
     <form name="attendancestatusForm" #attendancestatusForm="ngForm" novalidate>
         <div class="col-sm-12">
             <label>Employee Name:</label>&nbsp; {{employeename}}
@@ -103,10 +102,10 @@
             </div>
         </p-footer>
     </form>
-</p-dialog>
+</p-dialog> -->
 
 <!-- FOR ALL EMPLOYEE (ONE COLUMN)-->
-<p-dialog header={{DayName}} [appendTo]="'body'" [(visible)]="displayALLEmployee" [modal]="true" [responsive]="true" [minY]="70" [closeOnEscape]="true" [style]="{ width: '30%', minWidth: '300px' }">
+<!-- <p-dialog header={{DayName}} [appendTo]="'body'" [(visible)]="displayALLEmployee" [modal]="true" [responsive]="true" [minY]="70" [closeOnEscape]="true" [style]="{ width: '30%', minWidth: '300px' }">
     <div class="col-sm-12">
         <label>Date:</label>&nbsp; {{Doc_date_AllEmp | date :"dd/MMM/yyyy"}}
 
@@ -129,4 +128,222 @@
          </button>
         </div>
     </p-footer>
+</p-dialog> -->
+
+
+
+<!-- ATTENDANCE NEW -->
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast> 
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-6" *ngIf="generate && !download">
+              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6" *ngIf="!generate && download">
+              <button type="button" pButton (click)="exportmonthlypro('Attendance_Sheet')" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+
+    </ng-template>
+</p-toast>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box box-primary">
+                                <div class="form-horizontal">
+                                    <div class="box-body">
+
+                    <div class="form_group">
+                        <div class="col-sm-3">
+                            <input class="form-control" type="month" name="month" [(ngModel)]="Month_Name">
+                        </div>
+                        <!-- <div class="col-sm-2">
+                            <button  class="btn btn-primary" (click)="getAttendanceDatafornewmonth()" >Generate Attendance</button>
+                        </div>
+                        <div class="col-sm-3">
+                            <button  class="btn btn-primary" (click)="getAttendanceDataforExistingmonth()" >Add Employee in Attendance Sheet</button>
+                        </div> -->
+                        <div class="col-sm-2">
+                            <button class="btn btn-primary" data-toggle="modal" (click)="getAttendanceData()" id="load" [disabled]="seachSpinner">
+                             <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                             <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Show Details
+                            </button>
+                        </div>
+                        <div class="col-sm-3" *ngIf="AllAttendanceData.length">
+                            <button  class="btn btn-warning"  (click)="ChekMonthlyProcAS()" [disabled]="PMAttnSheet">Process Monthly Attendance Sheet</button>
+                        </div>
+                        <div class="col-sm-2" *ngIf="AllAttendanceData.length">
+                            <button  class="btn btn-success"  (click)="exportoexcelattnsht('Attendance_Sheet')">Export To Excel</button>
+                        </div>
+                        <div class="col-sm-1" *ngIf="AllAttendanceData.length && databaseName != 'Harbauer'">
+                            <button  class="btn btn-primary"  (click)="Printattendance()"><span class="fa fa-fw fa-print"></span>Print</button>
+                        </div>
+                        <div>
+                            <span  class="fa fa-question-circle pull-right"  (click)="information()"></span>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    
+<div class="col-lg-12">
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-body">
+                    <div class="no-padding" *ngIf="!showdata">
+                    <p-table [value]="AllAttendanceData"
+                            [rowHover]="true" 
+                            [autoLayout]="true" 
+                            [responsive]="true"
+                            [scrollable]="true"
+                            scrollHeight="400px"
+                            sortMode="multiple"
+                            [columns]="cols" >
+                            <ng-template pTemplate="colgroup" let-columns>
+                                <colgroup>
+                                     <col *ngFor="let col of DynamicHeader" [class]="col === 'Emp_Name' || col === 'Designation' ? 'tablelarge' : 'tablesmall'">
+                                </colgroup>
+                            </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="background-color:rgb(90 96 109) !important ; color:white"
+                                              *ngFor="let option of DynamicHeader">{{option.replaceAll('_',' ')}}</th> <!-- (click)="ChangeAllRow(option)" -->
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr >
+                                                <!-- <td  *ngFor="let option of DynamicHeader | slice:1; let i = index" 
+                                                 (contextmenu)="onrightclick(option,col)" [class]="getcellText(col[option],option)">{{getcellText(col[option],option)}} </td> --><!--(click)="tableCellData(option,col)" -->
+                                                 <td  *ngFor="let option of DynamicHeader; let i = index" 
+                                                 (contextmenu)="onrightclick(option,col)" [class]="col[option]">{{col[option]}} </td>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                </div>
+                <div class="form-group" *ngIf="showdata">
+                    <div style="margin-left : 40px;">{{showdata}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-8">
+        <h5><strong></strong></h5>
+    </div>
+</div>
+<div class="box-footer">
+    <!-- <button class="btn btn-primary pull-right" (click)="saveAttendance()" id="load" [disabled]="Spinner">
+        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+        </button> -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+ <!-- FOR ONE EMPLOYEE (ONE CELL)  -->
+<p-dialog header="Update Attendance" [appendTo]="'body'" [(visible)]="display" [modal]="true" [responsive]="true" [minY]="70" [closeOnEscape]="true" [style]="{ width: '35%', minWidth: '350px' }">
+    <form name="attendancestatusForm" #attendancestatusForm="ngForm" novalidate>
+        <div class="col-sm-12">
+            <label>Employee Name:</label>&nbsp; {{employeename}}
+        </div>
+        <div class="col-sm-12">
+            <label>Date:</label>&nbsp; {{Doc_date}}
+
+        </div>
+        <div class="col-sm-12">
+            <label>Attendance Type <sup class="text-danger">*</sup></label>&nbsp;
+            <select name="attentype" #attentype="ngModel" [(ngModel)]="Attendance_Status" [ngClass]="{'clearance': attendancestatusFormSubmitted && attentype?.errors?.required}" required>
+           <option  [ngValue]="undefined">Select</option>
+           <option *ngFor = "let option of AttenTypelist" value="{{option.Atten_Type_ID}}">
+             {{option.Atten_Type}}
+            </option>
+           </select>
+        </div>
+    </form>
+        <hr>
+        <p-footer>
+            <div class="text-right">
+                <button type="button" (click)="display = false" class="btn btn-default"><i class="fa fa-time"></i>&nbsp; Close</button>&nbsp;
+                <button type="button" (click)="SaveAttendanceType(attendancestatusForm.form.valid)" class="btn btn-success">
+           <i class="fa fa-check"></i>&nbsp;  Done
+         </button>
+            </div>
+        </p-footer>
+</p-dialog>
+
+ <!-- FOR ALL EMPLOYEE (ONE COLUMN) -->
+<p-dialog header={{DayName}} [appendTo]="'body'" [(visible)]="displayALLEmployee" [modal]="true" [responsive]="true" [minY]="70" [closeOnEscape]="true" [style]="{ width: '30%', minWidth: '300px' }">
+    <form name="AllattendancestatusForm" #AllattendancestatusForm="ngForm" novalidate>
+       <div class="col-sm-12">
+         <label>Date:</label>&nbsp; {{Doc_date_AllEmp}}
+
+        </div>
+        <div class="col-sm-12">
+          <label>Attendance Type <sup class="text-danger">*</sup></label>&nbsp;
+          <select name="Allattentype" #Allattentype="ngModel" [(ngModel)]="Attendance_Status_ALlEmployee" [ngClass]="{'clearance': AllattendancestatusFormSubmitted && Allattentype?.errors?.required}" required>
+            <option  [ngValue]="undefined">Select</option>
+            <option *ngFor = "let option of AttenTypelist" value="{{option.Atten_Type_ID}}">
+              {{option.Atten_Type}}
+            </option>
+          </select>
+        </div>
+    </form>
+    <hr>
+    <p-footer>
+        <div class="text-right">
+            <button type="button" (click)="displayALLEmployee = false" class="btn btn-default"><i class="fa fa-time"></i>&nbsp; Close</button>&nbsp;
+            <button type="button" (click)="SaveForALLEmployee(AllattendancestatusForm.form.valid)" class="btn btn-success">
+           <i class="fa fa-check"></i>&nbsp;  Done
+         </button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<!-- INFORMATION -->
+<p-dialog header="" appendTo="body" [(visible)]="DetailsModal" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="80" 
+[maximizable]="true" [baseZIndex]="10000">
+<p><b>Type of Attendence:</b></p>
+<br>
+<p>Present</p>
+<p>Present in Weekly Off</p> 
+<p>Present in Public Holiday</p>
+<p>Holiday</p>
+<p>Public Holiday</p>
+<p>Weekly Off</p>
+<p>Sick Leave</p> 
+<p>Casual Leave</p>
+<p>Prevlage Leave</p>
+<p>Compensatory Off</p>
+<p>Absent</p>
+<p>Leave Without Pay</p>
+<p>Left</p>
+<br>
+<p>Present = Present + Present in Weekly Off + Present in Public Holiday</p>
+<br>
+<p>Holiday = Holiday+ Public Holiday + Weekly Off</p>
+<br>
+<p>Leave =Sick Leave + Casual Leave + Prevlage Leave + Compensatory Off</p>
+<br>
+<p>Without Pay = Leave Without Pay + Left</p>
+<br>
+<p>Paid Days = Present + Holiday + Leave</p>
+
 </p-dialog>

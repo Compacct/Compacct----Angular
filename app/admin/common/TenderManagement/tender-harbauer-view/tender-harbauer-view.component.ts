@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ElementRef, ViewChild, Type } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { MessageService } from "primeng/api";
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
@@ -138,6 +138,20 @@ export class TenderHarbauerViewComponent implements OnInit {
   UserList = [];
   CreateLightBoxSubmitted = false;
   DivisionSubmitted = false;
+  // Upload Document
+   uploadModel:boolean = false;
+   PDFFlag:boolean = false;
+   ProductPDFFile:any = {};
+   SpinnerUpload:boolean = false
+   PDFViewFlag:boolean = false;
+   ProductPDFLink:any = undefined;
+   DocTenderDocID:any = undefined;
+   pImg:any = undefined
+   doctypeList:any = [];
+   docType:any = undefined
+   docTypeOther:any = undefined
+   doctypeFormSubmit:boolean = false
+   multipalDocTypeList:any = [];
   // Bid Openning & AOC
    BidOpenningModel = false;
    ObjBidOpeningList = new BidOpeningList(); 
@@ -168,6 +182,91 @@ export class TenderHarbauerViewComponent implements OnInit {
   
   ViewTenderID = undefined;
   TenderviewModel = false;
+
+  EstimateProductChangeModal = false;
+  ShowAddedEstimateProductList = [];
+  rowGroupMetadata: any;
+  SpinnerProd = false;
+  colsForProduct = [{
+      field: 'SL_No',
+      header: 'SL No.'
+    },
+    {
+      field: 'Budget_Group_Name',
+      header: 'Group Name'
+    },
+    {
+      field: 'Budget_Sub_Group_Name',
+      header: 'Sub Group Name'
+    },
+    {
+      field: 'Work_Details',
+      header: 'Work Details'
+    },
+    {
+      field: 'Site_Description',
+      header: 'Site'
+    },
+    {
+      field: 'Product_Description',
+      header: 'Product'
+    },
+    {
+      field: 'unit',
+      header: 'Unit'
+    },
+    {
+      field: 'Qty',
+      header: 'Qty'
+    },
+    {
+      field: 'Nos',
+      header: 'Nos'
+    },
+    {
+      field: 'TQty',
+      header: 'Total Qty'
+    },
+    {
+      field: 'UOM',
+      header: 'UOM'
+    },
+    {
+      field: 'saleRate',
+      header: 'Sale Rate'
+    },
+    {
+      field: 'Sale_Amount',
+      header: 'Sale Amount'
+    },
+    {
+      field: 'Rate',
+      header: 'Purchase Rate'
+    },
+    {
+      field: 'Amount',
+      header: 'Purchase Amount'
+    },
+    {
+      field: 'Changed_Sale_Rate',
+      header: 'Changed Sale Rate'
+    },
+    {
+      field: 'Changed_Sale_Amount',
+      header: 'Changed Sale Amount'
+    },
+    {
+      field: 'Changed_Rate',
+      header: 'Changed Purchase Rate'
+    },
+    {
+      field: 'Changed_Amount',
+      header: 'Changed Purchase Amount'
+    }
+  ];
+
+  BiddinStatusFlag = false;
+  @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -182,11 +281,11 @@ export class TenderHarbauerViewComponent implements OnInit {
 
   ngOnInit() {
     this.Header.pushHeader({
-      Header: "Tender View (GOVT.)",
+      Header: "Tender Update",
       Link: "Tender Management -> Update"
     });
     this.filterByList = ['FINANCIAL YEAR','DEPARTMENT',"PRIVATE OR GOVT","TENDER TYPE"];
-    this.filteroptionList = ['NOT RECEIVED TENDER','L1 TENDER','NOT SUBMITTED TENDER','PENDING TENDER']
+    this.filteroptionList = ['NOT RECEIVED TENDER','AWARDING THE TENDER','NOT SUBMITTED TENDER','PENDING TENDER']
     this.getFinancial();
     this.GetTenderOrgList();
     this.GetTypeList();
@@ -213,6 +312,15 @@ export class TenderHarbauerViewComponent implements OnInit {
   }
   clearData(){
 
+  }
+  
+  validate2 (e) {
+    let input = e.target.value;
+    const reg = /^\d*(\.\d{0,1})?$/;
+  
+    if (!reg.test(input)) {
+      e.preventDefault();
+    }
   }
   onReject() {
     this.compacctToast.clear("c");
@@ -1318,6 +1426,7 @@ CheckIfTenderIDExist(){
   // Bid Opeing & AOC
   ViewBidOpening(col){
    console.log("col",col);
+   this.BiddinStatusFlag = false;
    this.BidOpenListViewByRateFlag = false;
    this.BidOpenListViewByLotteryFlag = false;
    this.BidTenderId = undefined;
@@ -1349,11 +1458,12 @@ CheckIfTenderIDExist(){
       }
       this.GlobalAPI.postData(obj).subscribe((data:any)=>{ 
         if(data.length && data[0].Status) {
-          if(data[0].Status === 'AWARDING THE TENDER' && data[0].Agreement_Number){
+          if(data[0].Status === 'AWARDING THE TENDER' && data[0].Tender_Negotiated_Value){
             this.ObjBidOpening.Financial_Bid_Status = data[0].Status;
             this.AgreementList = data;
-            this.ObjAgreement.Tender_Negotiated_Value = data[0].Agreement_Number;
+            this.ObjAgreement.Tender_Negotiated_Value = data[0].Tender_Negotiated_Value;
             this.ObjAgreement.Tender_Doc_ID = TenderDocID;
+            this.BiddinStatusFlag = true;
           }
           if(data[0].Status === 'NOT- AWARDING THE TENDER' && data[0].Not_Awarding_Reason){    
             this.ObjBidOpening.Financial_Bid_Status = data[0].Status; 
@@ -1536,6 +1646,39 @@ CheckIfTenderIDExist(){
         detail: "Bidder already exists."
       });
     }
+  }
+  
+  
+  SaveDraftBidOpening(){
+    if (this.BidOpenListView.length) {
+       const obj = {
+      "SP_String": "BL_CRM_Txn_Enq_Bidding_Add_harbour",
+      "Report_Name_String" : "Tender_Govt_Bidding_Add_harbour",
+      "Json_Param_String": JSON.stringify(this.BidOpenListView),
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       console.log("data",data);
+       if(data[0].Column1){
+        this.compacctToast.clear();
+          this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: 'Draft ' ,
+          detail: "Succesfully Saved"
+        });
+       }
+       else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error"
+        });
+       }
+       
+    })
+  }
   }
   convertNumberToWords(amount) {
     var words = new Array();
@@ -2014,7 +2157,7 @@ if( this.BidOpenListViewByLottery[0].Bidder_Name ==='HARBAUER India [P] Ltd'){
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("data",data);
-        if (data.success) {
+        if (data[0].Column1) {
           this.compacctToast.clear();
           this.compacctToast.add({
           key: "compacct-toast",
@@ -2037,6 +2180,246 @@ if( this.BidOpenListViewByLottery[0].Bidder_Name ==='HARBAUER India [P] Ltd'){
    }
   }
   
+  
+  //Budget Details
+  onSort() {
+    this.updateRowGroupMetaData();
+  }
+  updateRowGroupMetaData() {
+    this.rowGroupMetadata = {};
+    if (this.ShowAddedEstimateProductList) {
+      for (let i = 0; i < this.ShowAddedEstimateProductList.length; i++) {
+        let rowData = this.ShowAddedEstimateProductList[i];
+        let brand = rowData.Budget_Group_Name;
+        if (i == 0) {
+          this.rowGroupMetadata[brand] = {
+            index: 0,
+            size: 1
+          };
+        } else {
+          let previousRowData = this.ShowAddedEstimateProductList[i - 1];
+          let previousRowGroup = previousRowData.Budget_Group_Name;
+          if (brand === previousRowGroup)
+            this.rowGroupMetadata[brand].size++;
+          else
+            this.rowGroupMetadata[brand] = {
+              index: i,
+              size: 1
+            };
+        }
+      }
+    }
+  }
+  GetEstimateProductScheme(_TenderId) {
+    this.ShowAddedEstimateProductList = [];
+    if (_TenderId) {
+      const obj = {
+        "SP_String": "SP_Tender_Management_All",
+        "Report_Name_String": "Get Data Tender Estimate_With_Changed_Amount",
+        "Json_Param_String": JSON.stringify([{
+          'Tender_Doc_ID': _TenderId
+        }])
+      }
+      this.GlobalAPI
+        .getData(obj)
+        .subscribe((data: any) => {
+          if (data.length) {
+            this.ShowAddedEstimateProductList = data;
+            this.EstimateProductChangeModal = true;
+            console.log(data)
+          }
+        });
+    }
+  }
+  getPurchaseAmt() {
+    return this.ShowAddedEstimateProductList.reduce((n, {
+      Amount
+    }) => n + Number(Amount), 0)
+  }
+  getSaleAmt() {
+    return this.ShowAddedEstimateProductList.reduce((n, {
+      Sale_Amount
+    }) => n + Number(Sale_Amount), 0)
+  }
+  getTotalPurchaseAmt() {
+    return this.ShowAddedEstimateProductList.length ? Number(this.ShowAddedEstimateProductList[0].No_of_Site) * this.getPurchaseAmt() : '-';
+  }
+  SaveChangeEstimateProduct(){
+    if(this.ShowAddedEstimateProductList.length) {
+        this.SpinnerProd = true;
+        const obj = {
+          "SP_String": "SP_Tender_Management_All",
+          "Report_Name_String": "Update_Data_Tender_Estimate_With_Changed_Amount",
+          "Json_Param_String": JSON.stringify(this.ShowAddedEstimateProductList)
+        }
+        this.GlobalAPI.getData(obj).subscribe((data: any) => {
+          console.log(data)
+        if (data[0].message) {
+          // if (this.ObjTender.Tender_Doc_ID) {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: "",
+              detail: "Succesfully Updated"
+            });
+          this.EstimateProductChangeModal= false;
+        } else {
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+        }
+        this.SpinnerProd = false;
+        });
+    }
+    }
+  // Upload Doc
+  UploadDoc(col){
+    console.log(col)
+    if(col.Tender_Doc_ID){
+      //this.getUploadData(col.Tender_Doc_ID);
+      this.DocTenderDocID = undefined
+      this.DocTenderDocID = col.Tender_Doc_ID
+      this.PDFFlag = false;
+      this.ProductPDFFile = {};
+      this.docTypeOther = undefined;
+      this.docType = undefined;
+      this.SpinnerUpload = false;
+      this.PDFViewFlag = false;
+      this.ProductPDFLink = undefined;
+      this.pImg = undefined
+      this.doctypeFormSubmit = false
+      this.fileInput.clear();
+      this.getDocType()
+      this.GetTenderDocMultiple()
+      setTimeout(() => {
+        this.uploadModel = true;
+      }, 700);
+    }
+   }
+  getUploadData(TenderDocID){
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Get_Tender_Document",
+      "Json_Param_String": JSON.stringify({Tender_Doc_ID: Number(TenderDocID)})
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+     this.pImg = data[0].Product_Image
+    
+    })
+  }
+  handleFileSelect(event:any) {
+    this.PDFFlag = false;
+    this.ProductPDFFile = {};
+    if (event) {
+      console.log(event)
+      this.ProductPDFFile = event.files[0];
+      this.PDFFlag = true;
+   }
+  }
+  SaveUploadDoc(valid:any){
+    this.doctypeFormSubmit = true
+    if(valid){
+      if(this.ProductPDFFile['size']){
+        this.SpinnerUpload =true
+        this.GlobalAPI.CommonFileUpload(this.ProductPDFFile)
+        .subscribe((data : any)=>
+        {
+          if(data.file_url){
+            this.saveDoc(data.file_url)
+          }
+          else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error",
+            detail: "Fail to upload"
+          });
+          }
+        })  
+      }
+    }
+    
+  }
+  saveDoc(fileUrl){
+     const tempSaveDataObj = {
+      Tender_Doc_ID: Number(this.DocTenderDocID),
+      Document_Type: this.docType == 'Other' ? this.docTypeOther : this.docType,
+      File_Name: fileUrl,
+      User_ID : this.commonApi.CompacctCookies.User_ID
+    }
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      // "Report_Name_String": "Update_Tender_Document",
+      "Report_Name_String": "Update_Tender_Document_Multiple",
+      "Json_Param_String": JSON.stringify(tempSaveDataObj)
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+        console.log(data)
+        if(data[0].message == "Update done"){
+          this.PDFFlag = false;
+          this.ProductPDFFile = {};
+         // this.uploadModel = false;
+         this.docType = undefined;
+          this.GetTenderDocMultiple()
+          this.SpinnerUpload = false;
+          this.PDFViewFlag = false;
+          this.ProductPDFLink = undefined;
+          this.pImg = undefined;
+          this.doctypeFormSubmit = false
+          this.SearchTender(true);
+          this.fileInput.clear();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            // summary: "File Succesfully Upload",
+            detail: "File Succesfully Upload"
+          });
+         }
+         else {
+          this.SpinnerUpload =false 
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+        }
+    })
+  }
+  showImg(img:any){
+    window.open(img)
+  }
+  getDocType(){
+    this.doctypeList = []
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Get_Document_Type"
+     }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+     console.log(data);
+     this.doctypeList = data
+    })
+  }
+  GetTenderDocMultiple(){
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Get_Tender_Document_Multiple",
+      "Json_Param_String": JSON.stringify({Tender_Doc_ID : this.DocTenderDocID})
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+     console.log("multi Data",data)
+     this.multipalDocTypeList = data;
+    })
+  }
+ 
 }
 class search{
   Filter1_Text:string;

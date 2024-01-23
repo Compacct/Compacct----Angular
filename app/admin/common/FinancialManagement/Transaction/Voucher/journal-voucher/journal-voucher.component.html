@@ -29,7 +29,7 @@
                                     <div class="col-sm-3">
                                         <label class="control-label">Date </label>
                                         <app-compacct-daterangepicker
-                                        (DaterangeObj)="getDateRange($event)">
+                                        (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
                                         </app-compacct-daterangepicker>
                                     </div>
                                     <div class="col-sm-3">
@@ -425,8 +425,11 @@
                                                         
                                                         >
                                                           <option  [ngValue]="undefined">Select</option>
+                                                          <option  Value="Input Goods">Input Goods</option>
                                                           <option  Value="Input Services">Input Services</option>
                                                           <option  Value="Output Services">Output Services</option>
+                                                          <option  Value="Capital Goods">Capital Goods</option>  
+                                                          <option  Value="None">None</option>
                                                 </select>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -457,7 +460,7 @@
                                             </thead>
                                             <tbody>
                                                 <tr *ngFor='let obj of lowerList let i = index' >
-                                                   <td>{{i + 1}}</td>
+                                                   <td>{{obj.Slno ? obj.Slno : (i + 1)}}</td>
                                                    <td>{{obj.Ledger_Name}}</td>
                                                    <td>{{obj.Sub_Ledger_Name}}</td>
                                                    <td>{{obj.Cost_Head_Name}}</td>
@@ -478,11 +481,11 @@
                                         <table class="table">
                                             <tbody><tr>
                                                 <th style="width:30%">Total DR Amount:</th>
-                                                <td>{{totalDR ? totalDR : ""}}</td>
+                                                <td>{{totalDR ? getToFix(totalDR) : ""}}</td>
                                             </tr>
                                             <tr>
                                                 <th>Total CR Amount:</th>
-                                                <td>{{totalCR ? totalCR : ""}}</td>
+                                                <td>{{totalCR ? getToFix(totalCR) : ""}}</td>
                                             </tr>                                         
                                         </tbody></table>
                                     </div>
@@ -490,7 +493,7 @@
                                         <button class="btn btn-primary pull-right"
                                          id="load"
                                          (click)="saveJournal(journalForm.form.valid)"
-                                        [disabled]="Spinner || (totalDR != totalCR) || !lowerList.length? true : false">
+                                        [disabled]="Spinner || (getToFix(totalDR) != getToFix(totalCR)) || !lowerList.length? true : false">
                                         <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                 </button>

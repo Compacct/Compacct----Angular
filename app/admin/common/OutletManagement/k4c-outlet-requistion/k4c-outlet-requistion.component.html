@@ -178,11 +178,14 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="form-group" *ngIf="ShowRemarks">
+                                 <div style="margin-left : 40px; color: #981616; font-size : 20px;">{{ShowRemarks}}</div> <!--class="blink_me" -->
+                            </div>
 
 
                             <form name="RequistionFormSave" #RequistionFormSave="ngForm" novalidate>
                                 <div class="box-footer" *ngIf='RequisitionList.length'>
-                                    <button class="btn btn-primary pull-left" id="load" (click)="showDialog()" [disabled]="Spinner" [disabled]="buttonDis" [disabled]="disabled">
+                                    <button class="btn btn-primary pull-left" id="load" (click)="showDialog()" [disabled]="Spinner" [disabled]="buttonDis" [disabled]="disabled" [disabled]="CheckCreate === 'N'">
                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                         <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                     </button>
@@ -201,6 +204,7 @@
                                                 <th scope="col">Product Type</th>
                                                 <th scope="col">Product Description</th>
                                                 <th scope="col">Rate</th>
+                                                <th scope="col">Recommended Qty</th>
                                                 <th scope="col">Qty</th>
                                                 <th scope="col">UOM</th>
                                                 <th scope="col">Amount</th>
@@ -208,7 +212,7 @@
                                         </ng-template>
                                         <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-expanded="expanded" let-columns="columns">
                                             <tr class="ui-widget-header" *ngIf="rowGroupMetadata[rowData.Product_Type].index === rowIndex">
-                                                <td colspan="6">
+                                                <td colspan="7">
                                                     <a href="#" [pRowToggler]="rowData">
                                                         <i [ngClass]="expanded ? 'fa fa-fw fa-chevron-circle-down' : 'fa fa-fw fa-chevron-circle-right'"></i>
                                                         <span>{{rowData.Product_Type}}</span>
@@ -221,6 +225,7 @@
                                                 <td>{{rowData.Product_Type}}</td>
                                                 <td>{{rowData.Product_Description}}</td>
                                                 <td>{{rowData.Sale_rate}}</td>
+                                                <td>{{rowData.Recom_Qty}}</td>
                                                 <td><input type="text" [name]="rowData.Product_ID" [(ngModel)]='rowData.Req_Qty' (ngModelChange)='QtyChanged(rowIndex)' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                                 <td>{{rowData.UOM}}</td>
                                                 <td>{{rowData.Amount ? rowData.Amount : '-'}}</td>
@@ -258,7 +263,9 @@
                                     </tbody>
                                 </table>
                                 <p-footer>
-                                    <button type="button" pButton icon="pi pi-check" (click)="saveREquistion()" label="Yes"></button>
+                                    <button type="button" pButton icon="pi pi-check" (click)="saveREquistion()" [disabled]="indentsaveSpinner" label="Yes">
+                                        <p-progressSpinner *ngIf="indentsaveSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    </button>
                                     <button type="button" pButton icon="pi pi-close" (click)="display=false" label="No" class="ui-button-secondary"></button>
                                 </p-footer>
                             </p-dialog>

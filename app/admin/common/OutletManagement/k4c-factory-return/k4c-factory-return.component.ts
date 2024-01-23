@@ -11,6 +11,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { Console } from 'console';
 import { NgxUiLoaderService } from "ngx-ui-loader";
 declare var $:any;
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-k4c-factory-return',
@@ -20,34 +21,34 @@ declare var $:any;
   encapsulation: ViewEncapsulation.None
 })
 export class K4cFactoryReturnComponent implements OnInit {
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
   buttonname = "Save";
 
   myDate: Date;
-  selectProduct = [];
+  selectProduct:any = [];
   ObjProductaddForm : ProductaddForm  = new ProductaddForm();
   ObjSaveForm : SaveForm  = new SaveForm();
 
   public QueryStringObj : any;
-  Cost_Center = [];
-  Godown = [];
-  BatchNo = [];
+  Cost_Center:any = [];
+  Godown:any = [];
+  BatchNo:any = [];
   //Expire_BatchNo: any;
   ExProductFlag = false;
-  ReturnReasonid = [];
+  ReturnReasonid:any = [];
   GoDown_Id: void;
   RFactoryaddFormSubmitted = false;
-  productaddSubmit = [];
-  toGodownList = [];
-  dateList = [];
-  Searchedlist =[];
+  productaddSubmit:any = [];
+  toGodownList:any = [];
+  dateList:any = [];
+  Searchedlist:any =[];
   Browser = false;
 
   ObjBrowse : Browse = new Browse ();
-  editList = [];
+  editList:any = [];
   Doc_no = undefined;
   Doc_date = undefined;
   To_Cost_Cent_ID = undefined;
@@ -57,21 +58,21 @@ export class K4cFactoryReturnComponent implements OnInit {
   Return_reason = undefined;
   Batchno = undefined;
   EditPoppup = false;
-  updateData = [];
+  updateData:any = [];
   editpopupformSubmitted = false;
-  rowIndex = [];
+  rowIndex:any = [];
   ViewPoppup = false;
   Qtyflag = false;
   AQtyflag = false;
   AcceptChallanPoppup = false;
   flag = false;
   del_doc_no = undefined;
-  initDate = [];
+  initDate:any = [];
   checkSave = true;
   Fromgodownid: any;
   exProdFlag = false;
   ExpiredProductFLag = false;
-  mattypelist = [];
+  mattypelist:any = [];
   DisabledBatch = false;
   //sameProdTypeFlag = false;
   SearchFactoryFormSubmit = false;
@@ -83,8 +84,8 @@ export class K4cFactoryReturnComponent implements OnInit {
   MTdisabled = false;
 
   RTFchallanno : any;
-  FranchiseProductList = [];
-  FranchiseList = [];
+  FranchiseProductList:any = [];
+  FranchiseList:any = [];
   taxable: any;
   cgst: any;
   sgst: any;
@@ -98,13 +99,13 @@ export class K4cFactoryReturnComponent implements OnInit {
   subledgerid:any;
   franchisecostcenid:any;
 
-  Franchise = [];
+  Franchise:any = [];
   FranchiseBill:any;
   FranchiseCostCentId = undefined;
 
   checkboxdisable = false;
   TimeStatus : any;
-  FProList = [];
+  FProList:any = [];
   taxable2: any;
   cgst2: any;
   sgst2: any;
@@ -114,7 +115,7 @@ export class K4cFactoryReturnComponent implements OnInit {
   netamount2: any;
   rtfvoucherno: any;
 
-  Regeneratelist = [];
+  Regeneratelist:any = [];
   contactname = undefined;
   taxableRegenerate: any;
   cgstRegenerate: any;
@@ -136,6 +137,9 @@ export class K4cFactoryReturnComponent implements OnInit {
   Regenerategrossamount2: any;
   RegenerateRound_Off2: string;
   Regeneratenetamount2: number;
+  Refreshlist:any = [];
+
+  expotSpinner = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -169,18 +173,18 @@ export class K4cFactoryReturnComponent implements OnInit {
     this.getGodown();
     //this.getselectproduct();
     this.getReturnReason("M");
-    // this.route.queryParamMap.subscribe((val:any) => {
-    //   if(val.params) {
-    //     this.QueryStringObj = val.params;
-    //     if(this.QueryStringObj.Browse_Flag) {
-    //       this.Browser = true;
-    //       this.tabIndexToView = 0;
-    //     }
-    //     if(this.QueryStringObj.Create_Flag) {
-    //       this.tabIndexToView = 1;
-    //     }
-    //   }
-    // } );
+    this.route.queryParamMap.subscribe((val:any) => {
+      if(val.params) {
+        this.QueryStringObj = val.params;
+        // if(this.QueryStringObj.Browse_Flag) {
+        //   this.Browser = true;
+        //   this.tabIndexToView = 0;
+        // }
+        // if(this.QueryStringObj.Create_Flag) {
+        //   this.tabIndexToView = 1;
+        // }
+      }
+    } );
     //this.DateService.dateConvert(new Date(this.myDate));
     this.GetFranchiseBill();
     this.GetFranchiseList();
@@ -195,6 +199,7 @@ export class K4cFactoryReturnComponent implements OnInit {
     this.ExpiredProductFLag = false;
     this.getReturnReason("N");
     this.checkboxdisable = false;
+    this.seachSpinner = false;
   }
   // CREATE TAB
   getDate(){
@@ -218,11 +223,12 @@ export class K4cFactoryReturnComponent implements OnInit {
   getToCostCenter(){
     const obj = {
       "SP_String": "SP_Controller_Master",
-      "Report_Name_String": "Get - Factory Outlet",
+      // "Report_Name_String": "Get - Factory Outlet",
+      "Report_Name_String": "Get - Factory Outlet NEEW"
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.Cost_Center = data;
-       this.ObjSaveForm.Cost_Cent_ID = data[0].Cost_Cen_ID;
+       this.ObjSaveForm.Cost_Cent_ID = this.QueryStringObj.Store_Flag ? data[1].Cost_Cen_ID : data[0].Cost_Cen_ID;
        this.getToGodown();
        //console.log('Cost Center =',this.Cost_Center)
 
@@ -240,7 +246,12 @@ export class K4cFactoryReturnComponent implements OnInit {
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        this.toGodownList = data;
-       this.ObjSaveForm.Godown_ID = this.toGodownList.length ? this.toGodownList[0].godown_id : undefined;
+       if (this.QueryStringObj.Store_Flag) {
+        this.ObjSaveForm.Godown_ID = this.toGodownList.length ? 47 : undefined;
+       }
+       else {
+        this.ObjSaveForm.Godown_ID = this.toGodownList.length ? 57 : undefined;
+       }
        //console.log('To Godown =',this.toGodownList)
      })
   }
@@ -267,6 +278,14 @@ export class K4cFactoryReturnComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.mattypelist = data;
+      if (this.QueryStringObj.Store_Flag) {
+        this.ObjSaveForm.Material_Type = this.mattypelist.length ? "Store Item" : undefined;
+        this.ObjBrowse.Material_Type = this.mattypelist.length ? "Store Item" : undefined;
+       }
+       else {
+        this.ObjSaveForm.Material_Type = this.mattypelist.length ? "Finished" : undefined;
+        this.ObjBrowse.Material_Type = this.mattypelist.length ? "Finished" : undefined;
+       }
       //console.log("Material Type List ===",this.mattypelist);
     })
   }
@@ -881,6 +900,7 @@ export class K4cFactoryReturnComponent implements OnInit {
  GetSearchedlist(valid){
   this.SearchFactoryFormSubmit = true;
   this.Searchedlist = [];
+  this.seachSpinner = true;
   const start = this.ObjBrowse.start_date
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
   : this.DateService.dateConvert(new Date());
@@ -906,7 +926,38 @@ const obj = {
    this.SearchFactoryFormSubmit = false;
  })
  }
+ else {
+  this.seachSpinner = false;
  }
+ }
+ // Export Excel Browse
+exportoexcelbrowse(fileName){
+  this.expotSpinner = true;
+  const start = this.ObjBrowse.start_date
+  ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
+  : this.DateService.dateConvert(new Date());
+  const end = this.ObjBrowse.end_date
+    ? this.DateService.dateConvert(new Date(this.ObjBrowse.end_date))
+    : this.DateService.dateConvert(new Date());
+  const tempobj = {
+    From_Date : start,
+    To_Date : end,
+    Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+    Material_Type : this.ObjBrowse.Material_Type
+  }
+  const obj = {
+    "SP_String": "SP_Controller_Master",
+    "Report_Name_String": "Browse Outlet Factory Return For Excel",
+    "Json_Param_String": JSON.stringify([tempobj])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+    this.expotSpinner = false;
+    
+  })
+}
  PrintRTF(obj) {
   if (obj.Doc_No) {
     window.open("/Report/Crystal_Files/K4C/Return_To_Factory_Print.aspx?DocNo=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
@@ -1295,7 +1346,8 @@ onReject(){
 }
 
  clearData(){
-   this.ObjSaveForm.Material_Type = undefined;
+  //  this.ObjSaveForm.Material_Type = undefined;
+  this.getMaterialType();
   this.ObjProductaddForm = new ProductaddForm();
   //this.ObjSaveForm = new SaveForm();
   this.BatchNo = [];
@@ -2014,16 +2066,83 @@ SaveFranRegenerateSaleBill(){
     }
   })
 }
+Refresh(DocNo){
+  const obj = {
+    "SP_String": "SP_Add_ON",
+    "Report_Name_String": "Refresh RTF",
+    "Json_Param_String": JSON.stringify([{Doc_No : DocNo.Doc_No}])
+  }
+this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  console.log("From Api",data);
+  this.Refreshlist = data;
+  var Challan_No = data[0].Column1;
+  console.log("this.Refreshlist",this.Refreshlist);
+  if(data[0].Column1){
+  this.compacctToast.clear();
+     this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "success",
+      summary: "Distribution Challan No. " + Challan_No,
+      detail: "Succesfully Updated"
+    });
+    this.GetSearchedlist(true);
+  }
+  else {
+   this.compacctToast.clear();
+   this.compacctToast.add({
+     key: "compacct-toast",
+     severity: "error",
+     summary: "Warn Message",
+     detail: "Error Occured "
+   });
+ }
+
+ })
+}
+
+UpdateQty(objdata){
+  if(objdata.Doc_No){
+    const tempobj = {
+      Doc_No : objdata.Doc_No
+    }
+    const obj = {
+      "SP_String": "SP_Controller_Master",
+      "Report_Name_String": "RTF Update Qty For Resubmit",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data[0].Column1){
+        this.compacctToast.clear();
+           this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Doc No. " + data[0].Column1,
+            detail: "Succesfully Update Qty"
+          });
+          this.GetSearchedlist(true);
+        }
+        else {
+         this.compacctToast.clear();
+         this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "error",
+           summary: "Warn Message",
+           detail: "Error Occured "
+         });
+       }
+     })
+     }
+}
 
 
 }
 class SaveForm{
   Cost_Cent_ID : string;
-  Godown_ID : string;
+  Godown_ID : any;
   Doc_Date : string;
   Return_Reason_ID : any;
   Return_Reason : string;
-  Material_Type : string;
+  Material_Type : any;
 }
 
 class ProductaddForm{
@@ -2043,5 +2162,5 @@ class Browse {
   start_date : Date ;
   end_date : Date;
   Doc_No : string;
-  Material_Type : string;
+  Material_Type : any;
 }

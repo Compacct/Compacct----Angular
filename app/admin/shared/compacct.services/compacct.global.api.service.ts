@@ -73,4 +73,15 @@ export class CompacctGlobalApiService {
   const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
     return this.http.post(`/Common/Tutopia_Call_Common_SP_For_All`,obj , httpOptions).pipe(map((data:any) => data ? JSON.parse(data) : []));
   }
+  CommonFileUpload(ParamObj) {
+    const file = ParamObj;
+    console.log("file",file);
+     const formData: FormData = new FormData();
+    formData.append("frontfile", file);
+    const httpOptions = { headers: new HttpHeaders({ 'x-functions-key':'16S1jS9cr8TvSazPGh98dtutt7j0RS1YTH2G9NlJhD8NAzFuaOnQbQ=='}) };
+   
+    return this.http.post(`https://compacctcommon.azurewebsites.net/api/Common_File_Upload`,formData , httpOptions).pipe(map((data:any) => data ? data: []));
+  }
 }
+
+

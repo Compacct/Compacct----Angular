@@ -9,7 +9,39 @@
                 <div class="form-group">
                     <div class='col-sm-12'>
                         <label class="control-label">Order No</label>
-                        <input class="form-control" name="oRDER_nO" #oRDER_nO="ngModel" id='OrderNoCheck' (keydown)="onKeydownMain3($event, 'OrderNoCheck')" [(ngModel)]="ClickedOnlineLedger['Order_No']" placeholder="Order No">
+                        <input class="form-control" name="oRDER_nO" #oRDER_nO="ngModel" id='OrderNoCheck' oninput="event.target.value = event.target.value.replace(/[^0-9]/g, '');" (keypress)="onKeypressEvent($event)" ngModelChange="pastefunction()" (keydown)="onKeydownMain3($event, 'OrderNoCheck')" [(ngModel)]="ClickedOnlineLedger['Order_No']" placeholder="Order No">
+                    </div>
+                    <div class='col-sm-12' *ngIf="keypressmsg && !ClickedOnlineLedger['Order_No']">
+                    <p style="color:red">{{keypressmsg}}</p>
+                    </div>
+                    <div class='col-sm-12'>
+                        <label class="control-label">Order Date</label>
+                        <ejs-datepicker [format]="'dd/MMM/yyyy'" id='Customer_DOB' name="Customer_DOB" #Customer_DOB="ngModel" [(ngModel)]="ClickedOnlineLedger['Order_Date']" placeholder="dd/MMM/yyyy">
+                        </ejs-datepicker>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="row text-center" style="margin-top: 2em;">
+            <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="OrderNoZ" styleClass="custom-orderno-toast" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div class="row" style="text-align: center">
+            <i class="pi pi-id-card" style="font-size: 3em"></i>
+            <!-- <h3>{{ message.summary }}</h3>
+      <p>{{ message.detail }}</p> -->
+            <form>
+                <div class="form-group">
+                    <div class='col-sm-12'>
+                        <label class="control-label">Order No</label>
+                        <input class="form-control" name="oRDER_nO" #oRDER_nO="ngModel" id='OrderNoCheck' oninput="event.target.value = event.target.value.replace(/[^0-9]/g, '');" (keypress)="onKeypressEvent($event)" (keydown)="onKeydownMain3($event, 'OrderNoCheck')" [(ngModel)]="ClickedOnlineLedger['Order_No']" placeholder="Order No">
+                    </div>
+                    <div class='col-sm-12' *ngIf="keypressmsg && !ClickedOnlineLedger['Order_No']">
+                        <p style="color:red">{{keypressmsg}}</p>
                     </div>
                     <div class='col-sm-12'>
                         <label class="control-label">Order Date</label>
@@ -87,11 +119,21 @@
       <div class="col-sm-3">
         <button class="pos-btn pos-btn-sep shopping">TAKE AWAY</button>
       </div> -->
-            <div class="col-sm-6">
+            <!-- <div class="col-sm-6">
                 <div class="info-box btn-foursquare" (click)='ShowCustomerDetailsPopUp("./K4C_Outlet_Sale_Bill")'>
                     <span class="info-box-icon"><i class="fa fa-shopping-bag"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text" style="font-size: 1.2em;">TAKE AWAY</span>
+
+                    </div>
+                </div>
+
+            </div> -->
+            <div class="col-sm-6">
+                <div class="info-box AutoB" (click)='ShowCustomerDetailsPopUp("./Outlet_Sale_Bill_WithOut_batch_Select")'>
+                    <span class="info-box-icon"><i class="fa fa-shopping-bag" style="color: white;"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text" style="font-size: 1.2em; color: white;">TAKE AWAY (Auto Batch)</span>
 
                     </div>
                 </div>
@@ -107,11 +149,12 @@
                 </div>
 
             </div>
-            <div class="col-sm-6">
-                <div class="info-box AutoB" (click)='ShowCustomerDetailsPopUp("./Outlet_Sale_Bill_WithOut_batch_Select")'>
-                    <span class="info-box-icon"><i class="fa fa-shopping-bag" style="color: white;"></i></span>
+            
+            <div class=" col-sm-6">
+                <div class="info-box bg-purple" (click)='RedirectTo("bill")'>
+                    <span class="info-box-icon"><i class="fa fa-search"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text" style="font-size: 1.2em; color: white;">TAKE AWAY (Auto Batch)</span>
+                        <span class="info-box-text" style="font-size: 1.2em;">Browse Bill</span>
 
                     </div>
                 </div>
@@ -127,16 +170,7 @@
                 </div>
 
             </div>
-            <div class=" col-sm-6">
-                <div class="info-box bg-purple" (click)='RedirectTo("bill")'>
-                    <span class="info-box-icon"><i class="fa fa-search"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text" style="font-size: 1.2em;">Browse Bill</span>
-
-                    </div>
-                </div>
-
-            </div>
+            
             <div class=" col-sm-6">
                 <div class="info-box bg-red" (click)='RedirectTo("requisition")'>
                     <span class="info-box-icon"><i class="fa fa-file-text-o"></i></span>
@@ -147,7 +181,16 @@
                 </div>
 
             </div>
+            <div class=" col-sm-6">
+                <div class="info-box bg-olive" (click)='RedirectTo("acceptchallan")'>
+                    <span class="info-box-icon"><i class="fa fa-check-square-o"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text" style="font-size: 1.2em;">Accept Challan</span>
 
+                    </div>
+                </div>
+
+            </div>
 
             <div class="col-sm-6" *ngFor='let obj of OnlineLedgerList'>
                 <div class="info-box bg-light-blue-gradient" (click)='ShowOnlineDelOrderNo(obj)'>
@@ -164,7 +207,17 @@
                 <div class="info-box bg-fuchsia-active" (click)='RedirectTo("factory")'>
                     <span class="info-box-icon"><i class="fa fa-truck"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text" style="font-size: 1.2em;">Factory Return</span>
+                        <span class="info-box-text" style="font-size: 1.2em;">Factory Return Finished</span>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class=" col-sm-6">
+                <div class="info-box RTFstore" (click)='RedirectTo("factorystore")'>
+                    <span class="info-box-icon"><i class="fa fa-truck" style="color: white;"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text" style="font-size: 1.2em; color: white;">Factory Return Store</span>
 
                     </div>
                 </div>
@@ -181,16 +234,7 @@
 
       </div> -->
 
-            <div class=" col-sm-6">
-                <div class="info-box bg-olive" (click)='RedirectTo("acceptchallan")'>
-                    <span class="info-box-icon"><i class="fa fa-check-square-o"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text" style="font-size: 1.2em;">Accept Challan</span>
-
-                    </div>
-                </div>
-
-            </div>
+            
             <div class=" col-sm-6">
                 <div class="info-box bg-aqua" (click)='RedirectTo("outletstocktrancfer")'>
                     <span class="info-box-icon"><i class="fa fa-exchange"></i></span>
@@ -281,7 +325,7 @@
                                         <th>Total Amount</th>
                                         <th>Adv</th>
                                         <th>Due</th>
-                                        <th>Action</th>
+                                        <!-- <th>Action</th> -->
 
 
                                     </tr>
@@ -299,11 +343,11 @@
                                         <td><b>{{col.Total_Amount}}</b></td>
                                         <td class="text-success">{{col.Advance}}</td>
                                         <td class="text-danger">{{col.Net_Due}}</td>
-                                        <td>
+                                        <!-- <td>
                                             <button type="button" (click)="BillWithoutStock(col)" class="btn btn-primary">
                                              <i class="fa fa-file-text-o"></i>&nbsp;  Bill Without Stock
                                             </button>
-                                        </td>
+                                        </td> -->
 
                                     </tr>
                                 </ng-template>
@@ -449,7 +493,7 @@
                 </div>
                 <div class='col-sm-12'>
                     <label class="control-label">Customer Name <sup class="text-danger">*</sup></label>
-                    <input class="form-control" name="Customer_Name" id='CustomerName' #Customer_Name="ngModel" (keydown)="onKeydownMain2($event, 'customerNAme')" [(ngModel)]="Objcustomerdetail.Contact_Name" [disabled]="NoPhonedisable" [ngClass]="{'clearance':CustomerDetailsFormSubmitted && Customer_Name.errors?.required}"
+                    <input class="form-control" name="Customer_Name" id='CustomerName' #Customer_Name="ngModel" (keydown)="onKeydownMain2($event, 'customerNAme')" [(ngModel)]="Objcustomerdetail.Contact_Name" [disabled]="namedisabled" [ngClass]="{'clearance':CustomerDetailsFormSubmitted && Customer_Name.errors?.required}"
                         placeholder="Customer Name" required>
                 </div>
                 <div class='col-sm-12'>
@@ -528,14 +572,14 @@
     <form name="CustomerDetailsForm" #CustomerDetailsForm="ngForm" novalidate>
         <div>
             <div class="form-group">
-                <div class='col-sm-12' *ngIf="$CompacctAPI.CompacctCookies.Cost_Cen_ID == '89' || $CompacctAPI.CompacctCookies.Cost_Cen_ID == '90'">
+                <div class='col-sm-12' *ngIf="$CompacctAPI.CompacctCookies.Cost_Cen_ID == '89' || $CompacctAPI.CompacctCookies.Cost_Cen_ID == '90' || $CompacctAPI.CompacctCookies.User_Type == 'A'">
                     <label class="control-label">Customer<span class="text-danger">*</span></label>
                     <p-dropdown [options]="SubledgerList" name="subledger" [(ngModel)]="Objcustomerdetail.Sub_Ledger_ID" (onChange)='GetSubLedgerDetails()' [showClear]="true" [emptyFilterMessage]="' No Customer Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
-                        [placeholder]="'Select Customer'" [virtualScroll]="true" itemSize="30" #subledger="ngModel" [required]="true" [ngClass]="{
+                        [placeholder]="'Select Customer'" [virtualScroll]="true" itemSize="30" #subledger="ngModel" [required]="$CompacctAPI.CompacctCookies.User_Type == 'A' ? false : true" [ngClass]="{
                             clearance:
                               (CustomerDetailsFormSubmitted && subledger.errors?.required) ||
                               (subledger.errors?.minlength && subledger.touched)
-                          }" required>
+                          }" >
                     </p-dropdown>
                 </div>
                 <div class='col-sm-12'>
@@ -553,7 +597,7 @@
                 </div>
                 <div class='col-sm-12'>
                     <label class="control-label">Customer Name <sup class="text-danger">*</sup></label>
-                    <input class="form-control" name="Customer_Name" id='CustomerName' #Customer_Name="ngModel" (keydown)="onKeydownMain2($event, 'customerNAme')" [(ngModel)]="Objcustomerdetail.Contact_Name" [disabled]="NoPhonedisable" [ngClass]="{'clearance':CustomerDetailsFormSubmitted && Customer_Name.errors?.required}"
+                    <input class="form-control" name="Customer_Name" id='CustomerName' #Customer_Name="ngModel" (keydown)="onKeydownMain2($event, 'customerNAme')" [(ngModel)]="Objcustomerdetail.Contact_Name" [disabled]="namedisabled" [ngClass]="{'clearance':CustomerDetailsFormSubmitted && Customer_Name.errors?.required}"
                         placeholder="Customer Name" required>
                 </div>
                 <div class='col-sm-12'>

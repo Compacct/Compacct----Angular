@@ -24,28 +24,28 @@ export class K4CDispatchToOutletComponent implements OnInit {
   Objdispatch: dispatch = new dispatch()
   Objadditem: additem = new additem ()
   ObjBrowseData : BrowseData = new BrowseData ()
-  costcenterList = [];
+  costcenterList:any = [];
   todayDate : any = new Date();
   myDate : Date;
   ChallanDate : any = Date ;
-  productDetails = [];
+  productDetails:any = [];
   buttonname = "Create";
   Spinner = false;
   SpinnerShow = false;
-  itemList =[];
-  items = [];
+  itemList:any =[];
+  items:any = [];
   tabIndexToView = 0;
-  menuList = [];
+  menuList:any = [];
   brandInput = false ;
-  NativeitemList = [];
-  FromGodownList = [];
+  NativeitemList:any = [];
+  FromGodownList:any = [];
   adlist: any = {};
-  EditList = [];
+  EditList:any = [];
   inList = false;
-  saveData = [];
+  saveData:any = [];
   outLetDis = false;
-  GetAllDataList = [];
-  VehicleList = [];
+  GetAllDataList:any = [];
+  VehicleList:any = [];
   AddtionalFormSubmit = false;
   matchflag = true;
   AdditioanFormSubmit = false;
@@ -53,14 +53,14 @@ export class K4CDispatchToOutletComponent implements OnInit {
   DispatchFormSubmit = false;
   disabled: boolean = true;
   seachSpinner = false;
-  outletList = [];
-  brandList = [];
-  brandListBro = [];
+  outletList:any = [];
+  brandList:any = [];
+  brandListBro:any = [];
   doc_no : any;
-  toGodownList = [];
-  BatchList = [];
+  toGodownList:any = [];
+  BatchList:any = [];
   reqNumber:any;
-  outletListBro = [];
+  outletListBro:any = [];
   data = "(Show All Products)";
   inputBoxDisabled = false;
   indentdateDisabled = true;
@@ -71,7 +71,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
   To_Godown_ID_Dis = false;
   From_Godown_ID_Dis = false;
   editPopUp = false;
-  editdataList = [];
+  editdataList:any = [];
   brand = undefined;
   toOutlet = undefined;
   OutletStokePoint = undefined;
@@ -83,19 +83,19 @@ export class K4CDispatchToOutletComponent implements OnInit {
   editDis = false;
   reqQTYdis = true;
   AccQtydis = false;
-  initDate = [];
+  initDate:any = [];
   doc_date: any;
-  filteredData = [];
+  filteredData:any = [];
   displaysavepopup = false;
-  IndentNoList = [];
-  BackupIndentList = [];
-  IndentFilter = [];
+  IndentNoList:any = [];
+  BackupIndentList:any = [];
+  IndentFilter:any = [];
   SelectedIndent: any;
-  TIndentList = [];
-  BackUpproductDetails = [];
-  Refreshlist = [];
-  RefreshData = [];
-  editIndentList = [];
+  TIndentList:any = [];
+  BackUpproductDetails:any = [];
+  Refreshlist:any = [];
+  RefreshData:any = [];
+  editIndentList:any = [];
   Auto_Accepted: any;
   totalqty: any;
   totalaccpqty: any;
@@ -104,9 +104,9 @@ export class K4CDispatchToOutletComponent implements OnInit {
 
   FranchiseBill:any;
   dispatchchallanno: any;
-  FranchiseProductList = [];
+  FranchiseProductList:any = [];
   currentDate : any = new Date();
-  FranchiseList = [];
+  FranchiseList:any = [];
   subledgerid:any;
   franchisecostcenid:any;
 
@@ -119,13 +119,13 @@ export class K4CDispatchToOutletComponent implements OnInit {
   Round_Off: any;
   editdocno: any;
 
-  viewproductDetails = [];
+  viewproductDetails:any = [];
   viewDocNO = undefined;
   viewFromStokePoint = undefined;
   viewdate = undefined;
   tabView = false;
 
-  Regeneratelist = [];
+  Regeneratelist:any = [];
   contactname = undefined;
   taxableRegenerate: any;
   cgstRegenerate: any;
@@ -140,6 +140,16 @@ export class K4CDispatchToOutletComponent implements OnInit {
   RegenerateDocDate = undefined;
   RegenerateBillNo = undefined;
   franchisechallandate: any = Date;
+
+  updateQtyPopUp = false;
+  updateproductDetails:any = [];
+  updateDocNO = undefined;
+  updateFromStokePoint = undefined;
+  updatedate = undefined;
+  billnumber = undefined;
+  expotSpinner = false;
+  generatedisabledbutton: boolean = true;
+  generatedisabled: boolean = false;
 
   constructor(
     private $http: HttpClient,
@@ -189,10 +199,13 @@ export class K4CDispatchToOutletComponent implements OnInit {
     this.ObjBrowseData.Brand_ID = undefined;
     this.ObjBrowseData.Cost_Cen_ID = undefined;
     this.clearData();
+    this.seachSpinner = false;
     this.todayDate = new Date();
     this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
     this.SelectedIndent = [];
     this.IndentFilter = [];
+    this.generatedisabledbutton = true;
+    this.generatedisabled = false;
   }
   onConfirm(){
     if(this.doc_no){
@@ -457,7 +470,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
   }
   // FOR SAVE DISPATCH
   getReqNo(){
-    let Rarr =[]
+    let Rarr:any =[]
     if(this.SelectedIndent.length) {
       this.SelectedIndent.forEach(el => {
         if(el){
@@ -784,7 +797,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
  getdataforSaveFranchise(){
     //this.currentDate = this.DateService.dateConvert(new Date(this.currentDate));
     if(this.FranchiseProductList.length) {
-      let tempArr =[]
+      let tempArr:any =[]
       this.FranchiseProductList.forEach(item => {
         if (Number(item.Taxable) && Number(item.Taxable) != 0) {
      const TempObj = {
@@ -1087,6 +1100,7 @@ getConfirmDateRange(dateRangeObj) {
 }
 searchData(valid){
   this.RequistionSearchFormSubmit = true;
+  this.seachSpinner = true;
   if(valid){
     console.log("this.ObjBrowseData.Cost_Cen_ID",this.ObjBrowseData.Cost_Cen_ID);
     const start = this.ObjBrowseData.From_Date
@@ -1114,8 +1128,12 @@ searchData(valid){
       this.clearData();
       this.todayDate = new Date();
       this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+      this.seachSpinner = false;
      // this.Objdispatch.From_Godown_ID = this.FromGodownList.length === 1 ? this.FromGodownList[0].From_Godown_ID : undefined;
     })
+  }
+  else {
+    this.seachSpinner = false;
   }
 
 }
@@ -1163,6 +1181,30 @@ editmaster(masterProduct){
   this.tabIndexToView = 1;
   this.items = ["BROWSE", "UPDATE"];
   this.buttonname = "Update";
+  this.brandInput = true;
+  this.editDis = true;
+  //this.adDisabled = false;
+  this.inputBoxDisabled = true;
+  this.indentdateDisabled = false;
+  this.reqQTYdis = false;
+  this.AccQtydis = true;
+  this.geteditmaster(masterProduct);
+  this.getIndentForEdit(masterProduct);
+  }
+}
+GeneratingBillNo(masterProduct){
+  this.productDetails = [];
+  //this.BackUpproductDetails = [];
+  this.clearData();
+  this.todayDate = new Date();
+  this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+  this.outLetDis = true;
+  if(masterProduct.Doc_No){
+  this.tabIndexToView = 1;
+  this.items = ["BROWSE", "UPDATE"];
+  this.buttonname = "Update";
+  this.generatedisabledbutton = false;
+  this.generatedisabled = true;
   this.brandInput = true;
   this.editDis = true;
   //this.adDisabled = false;
@@ -1237,7 +1279,7 @@ getIndentForEdit(masterProduct){
   })
 }
 GetIndentdist(){
-  let DIndentBy = [];
+  let DIndentBy:any = [];
   this.IndentFilter = [];
   this.SelectedIndent =[];
   //this.SelectedDistOrderBy1 = [];
@@ -1318,8 +1360,17 @@ refreshEditmaster(DocNo){
            summary: "Distribution Challan No. " + Challan_No,
            detail: "Succesfully Updated"
          });
+         this.searchData(true);
        }
-        console.log("this.Objdispatch",this.productDetails);
+       else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
 
       })
 }
@@ -1523,7 +1574,7 @@ GetSelectedBatchqty() {
   // }
    }
    GetIndent(){
-     let DIndent = [];
+     let DIndent:any = [];
      this.IndentFilter = [];
      this.SelectedIndent = [];
      this.BackupIndentList.forEach((item) => {
@@ -1573,7 +1624,7 @@ GetSelectedBatchqty() {
   // TABLE DATA
   dataforShowproduct(){
     if(this.SelectedIndent.length) {
-      let Arr =[]
+      let Arr:any =[]
       this.SelectedIndent.forEach(el => {
         if(el){
           const Dobj = {
@@ -1713,6 +1764,8 @@ clearbutton(){
   this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
   this.SelectedIndent = [];
   this.IndentFilter = [];
+  this.generatedisabledbutton = true;
+  this.generatedisabled = false;
 }
 deleteDispatch(masterProduct){
  console.log("deleteCol",masterProduct)
@@ -1738,33 +1791,88 @@ Print(Doc_No){
     );
   }
 }
-// editmaster(masterProduct){
-//   if(masterProduct.Doc_No){
-//     this.doc_no = masterProduct.Doc_No ;
-//     const obj = {
-//           "SP_String": "SP_Production_Voucher",
-//           "Report_Name_String": "Get Dispatch Details For Edit",
-//           "Json_Param_String": JSON.stringify([{Doc_No : masterProduct.Doc_No}])
-//         }
-//         this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-//           let editdata = data;
-//           this.editdataList = data;
-//           console.log("editdataList",this.editdataList);
-//           if(editdata.length){
-//             this.editPopUp = true;
-//           }
-//           this.brand = data[0].Brand_Name;
-//           this.toOutlet = data[0].To_Location;
-//           this.OutletStokePoint = data[0].To_godown_name;
-//           this.challanDate = new Date(data[0].Doc_Date);
-//           this.fromStokePoint =  data[0].F_godown_name;
-//           this.VehicleDetails = data[0].Vehicle_Details;
-//           this.Remarks = data[0].REMARKS === "NA" ? "  " : data[0].REMARKS ;
-//           this.GetProductBatch();
+DownloadEINV(obj) {
+  if (obj) {
+      window.open(obj, '_self');
+    
+  }
+}
+// UPDATE QTY START
+dataforUpdateQty(docnoobj){
+  this.clearData();
+  this.billnumber = undefined;
+ if(docnoobj.Doc_No){
+   this.updateproductDetails = [];
+   this.billnumber = docnoobj.Bill_No;
+  const obj = {
+    "SP_String": "SP_Production_Voucher",
+    "Report_Name_String": "Get Data For Accepted Receive Distribution Challan",
+    "Json_Param_String": JSON.stringify([{Doc_No : docnoobj.Doc_No}])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log("Api update",data);
+    this.updateproductDetails = data;
+    this.updateDocNO = data[0].Doc_No,
+    this.updateFromStokePoint = data[0].From_godown_name,
+    this.updatedate = new Date(data[0].Doc_Date)
 
-//         })
-//   }
-// }
+    //console.log("this.EditList",this.productDetails);
+
+  this.updateQtyPopUp = true;
+  })
+ }
+}
+UpdateQty (updateobj){
+  if(updateobj.Txn_ID && updateobj.Qty && updateobj.Accepted_Qty) {
+    const tempObj = {
+      Txn_ID : updateobj.Txn_ID,
+      Doc_No : updateobj.Doc_No,
+      Product_ID : updateobj.Product_ID,
+      Qty : updateobj.Qty,
+      Accepted_Qty : updateobj.Qty
+    }
+   const obj = {
+    "SP_String": "SP_Add_ON",
+    "Report_Name_String": "Update_Dispatch_Challan_Finished_Item_Qty",
+    "Json_Param_String": JSON.stringify([tempObj])
+   }
+   this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+         // console.log(data);
+         var msg = this.billnumber === "NA" ? "Need to Refresh this Challan once." : "Need to Refresh and Regenerate this bill once."
+          if(data[0].Column1 === "Done") {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              //summary: 'SKU ID : ' + obj.Product_ID,
+              detail: "Succesfully Updated ! " + msg
+            });
+            this.searchData(true);
+            // this.billnumber = undefined;
+            //this.dataforregeneratingbill(true);
+            //this.GetViewData(true);
+          }else{
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Error",
+              detail: "Error Occured"
+            });
+          }
+    });
+  }
+  if(!updateobj.Qty || !updateobj.Accepted_Qty){
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Please Enter Qty"
+    });
+  }
+}
+// UPDATE QTY END
 GetProductBatch(){
   this.EditList.forEach(item=>{
     const tempObj = {
@@ -1817,6 +1925,43 @@ exportoexcel(tempobj,fileName){
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
     const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
     XLSX.writeFile(workbook, fileName+'.xlsx');
+    
+  })
+}
+// Export Excel Browse
+// exportoexcelbrowse(arr,fileName){
+//   this.expotSpinner = true;
+//     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(arr);
+//     const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+//     XLSX.writeFile(workbook, fileName+'.xlsx');
+//     this.expotSpinner = false;
+// }
+exportoexcelbrowse(fileName){
+  this.expotSpinner = true;
+  const start = this.ObjBrowseData.From_Date
+        ? this.DateService.dateConvert(new Date(this.ObjBrowseData.From_Date))
+        : this.DateService.dateConvert(new Date());
+      const end = this.ObjBrowseData.To_Date
+        ? this.DateService.dateConvert(new Date(this.ObjBrowseData.To_Date))
+        : this.DateService.dateConvert(new Date());
+      const tempDate = {
+        From_Date :start,
+        To_Date :end,
+        Cost_Cen_ID :this.ObjBrowseData.Cost_Cen_ID ? this.ObjBrowseData.Cost_Cen_ID : 0,
+        //Cost_Cen_ID :30
+        Brand_ID : this.ObjBrowseData.Brand_ID ? this.ObjBrowseData.Brand_ID : 0
+      }
+
+     const obj = {
+      "SP_String": "SP_Production_Voucher",
+      "Report_Name_String": "Get Dispatch Details For Excel",
+      "Json_Param_String": JSON.stringify([tempDate])
+     }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+    this.expotSpinner = false;
     
   })
 }
@@ -1972,6 +2117,40 @@ RegenerateBill(){
           });
         }
      })
+}
+
+UpdateAcceptedQty(objdata){
+  if(objdata.Doc_No){
+    const tempobj = {
+      Doc_No : objdata.Doc_No
+    }
+    const obj = {
+      "SP_String": "SP_Production_Voucher",
+      "Report_Name_String": "Update Accepted Qty For ReAccept dispatch",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data[0].Column1){
+        this.compacctToast.clear();
+           this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Doc No. " + data[0].Column1,
+            detail: "Succesfully Update Qty"
+          });
+          this.searchData(true);
+        }
+        else {
+         this.compacctToast.clear();
+         this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "error",
+           summary: "Warn Message",
+           detail: "Error Occured "
+         });
+       }
+     })
+     }
 }
 
 }

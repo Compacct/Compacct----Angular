@@ -67,6 +67,9 @@ export class K4cOutletRequistionComponent implements OnInit {
   Boutletdisableflag = false;
   outletdisableflag = false;
   excelList = [];
+  ShowRemarks: any;
+  CheckCreate: any;
+  indentsaveSpinner = false;
 
   constructor(
     private $http: HttpClient,
@@ -94,6 +97,7 @@ export class K4cOutletRequistionComponent implements OnInit {
     });
  this.onload();
  this.GetOutletName();
+ this.CheckRequisitionForCreate();
   }
 
   async onload() {
@@ -189,6 +193,7 @@ TabClick(e) {
   //this.onload();
   this.RequisitionList =[];
   this.clearData();
+  this.indentsaveSpinner = false;
 }
 clearData(){
   //this.ObjRequistion= new Requistion();
@@ -442,6 +447,7 @@ getTotalValue(){
 showDialog() {
   this.display = true;
   this.filteredData = [];
+  this.indentsaveSpinner = false;
   this.RequisitionList.forEach(obj => {
     if(obj.Req_Qty && Number(obj.Req_Qty) !== 0 ){
     //  console.log(filteredData.push(obj.Product_ID));
@@ -462,6 +468,7 @@ saveREquistion(){
   // console.log("this.filteredData",this.filteredData);
    if(this.requistionId){
     this.ngxService.start();
+    this.indentsaveSpinner = true;
     this.Product_ID = [];
     // console.log("Update");
 
@@ -475,7 +482,7 @@ saveREquistion(){
         Product_Description : el.Product_Description,
         Rate : el.Sale_rate,
         Amount : el.Amount,
-   User_ID : this.$CompacctAPI.CompacctCookies.User_ID
+        User_ID : this.$CompacctAPI.CompacctCookies.User_ID
   }
   this.Product_ID.push({...this.ObjRequistion,...obj})
     })
@@ -493,6 +500,7 @@ saveREquistion(){
       this.valid = true;
       this.SearchStockBill(this.valid);
       this.ngxService.stop();
+      this.indentsaveSpinner = false;
       this.compacctToast.clear();
       this.compacctToast.add({
        key: "compacct-toast",
@@ -515,6 +523,7 @@ saveREquistion(){
       this.status = "Indent Time is crossed, You Can not edit this Indent" ; ;
    }
    else{
+    this.indentsaveSpinner = false;
     this.ngxService.stop();
     this.compacctToast.clear();
         this.compacctToast.add({
@@ -531,6 +540,7 @@ saveREquistion(){
    else{
     this.ngxService.start();
     this.Product_ID = [];
+    this.indentsaveSpinner = true;
     // console.log("Save");
     this.filteredData.forEach(el =>{
       const obj = {
@@ -560,6 +570,7 @@ saveREquistion(){
       this.ObjBrowseData. Cost_Cen_ID_B = this.ObjRequistion.Cost_Cen_ID;
       this.SearchStockBill(this.valid);
       this.ngxService.stop();
+      this.indentsaveSpinner = false;
       this.compacctToast.clear();
       this.compacctToast.add({
        key: "compacct-toast",
@@ -581,6 +592,7 @@ saveREquistion(){
        this.status = "Indent Time is crossed, You Can not Save this Indent" ;
     }
     else{
+      this.indentsaveSpinner = false;
       this.ngxService.stop();
       this.compacctToast.clear();
           this.compacctToast.add({
@@ -770,6 +782,24 @@ exportoexcel(tempobj,fileName){
     
   })
 }
+CheckRequisitionForCreate() {
+  this.ShowRemarks = undefined;
+  this.CheckCreate = undefined;
+    const object = {
+      Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
+    }
+      const objj = {
+        "SP_String": "SP_Add_ON",
+        "Report_Name_String": "Credit_Limit_Check",
+        "Json_Param_String": JSON.stringify([object])
+      }
+      this.GlobalAPI.getData(objj).subscribe((data:any)=>{
+        this.ShowRemarks = data[0].Remarks;
+        this.CheckCreate = data[0].Allow_Requisition;
+
+       console.log("ShowRemarks",this.ShowRemarks)
+      })
+  }
 }
 class Requistion {
   Cost_Cen_ID : any;

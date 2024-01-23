@@ -54,6 +54,7 @@ export class JournalVoucherComponent implements OnInit {
   projectDataList = [];
   DynamicHeader = [];
   VoucherTypeID = undefined;
+
   constructor(
     private $http: HttpClient,
     private urlService: CompacctGlobalUrlService,
@@ -95,10 +96,12 @@ export class JournalVoucherComponent implements OnInit {
   }
   clearData(){
     this.journallowerFormSubmitted = false;
+    this.journalFormSubmitted = false;
     this.objjournal = new journalTopper()
     this.getTotalDRCR();
     this.lowerList = [];
     this.RefDocDate = new Date();
+    this.voucherdata = new Date();
     this.buttonname = "Create";
     this.seachSpinner = false;
     this.objjournal = new journalTopper();
@@ -108,7 +111,11 @@ export class JournalVoucherComponent implements OnInit {
     this.objsearch.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.totalDR = undefined;
     this.totalCR = undefined;
-
+    this.initDate = [new Date(),new Date()];
+    this.getCostCenter();
+    this.AlljournalData = [];
+    this.objsearch.Voucher_Type_ID = undefined
+    this.Spinner = false;
   }
  
   lowerAdd(valid){
@@ -121,6 +128,7 @@ export class JournalVoucherComponent implements OnInit {
     let costCernterFilter = this.costHeadDataList.filter((el)=>el.Cost_Head_ID === Number(this.objjournalloweer.Cost_Head_ID))
     console.log("this.objjournalloweer.ITC_Eligibility",this.objjournalloweer.ITC_Eligibility);
     this.lowerList.push({
+     Slno: this.lowerList.length + 1,
      Ledger_Name : LedgerFilter[0].Ledger_Name,
      Ledger_ID: this.objjournalloweer.Ledger_ID,
      Sub_Ledger_ID : this.objjournalloweer.Sub_Ledger_ID,
@@ -132,9 +140,10 @@ export class JournalVoucherComponent implements OnInit {
      HSN_NO : this.objjournalloweer.HSN_NO,
      GST_Per : Number(this.objjournalloweer.GST_Per),
      ITC_Eligibility : this.objjournalloweer.ITC_Eligibility ? this.objjournalloweer.ITC_Eligibility : "",
-     DR_Amt : this.objjournalloweer.DrCrdata === "DR" ? Number(this.objjournalloweer.Amount) : 0,
-     CR_Amt : this.objjournalloweer.DrCrdata === "CR" ? Number(this.objjournalloweer.Amount) : 0,
-     Fin_Year_ID : this.$CompacctAPI.CompacctCookies.Fin_Year_ID
+     DR_Amt : this.objjournalloweer.DrCrdata === "DR" ? Number(Number(this.objjournalloweer.Amount).toFixed(2)) : 0,
+     CR_Amt : this.objjournalloweer.DrCrdata === "CR" ? Number(Number(this.objjournalloweer.Amount).toFixed(2)) : 0,
+     Fin_Year_ID : this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
+     Is_Topper: "N"
       })
       console.log("lowerList",this.lowerList)
     this.journallowerFormSubmitted = false;
@@ -279,18 +288,18 @@ ShowSearchData(valid){
 getTotalDRCR(){
   this.totalDR = 0;
   this.totalCR = 0;
-  if(this.objjournal.DrCrdata === "DR"){
-    this.totalDR = Number(this.objjournal.Amount);
+  if(this.objjournal.DrCrdata === "DR" && this.objjournal.Amount){
+    this.totalDR = Number(Number((this.objjournal.Amount)).toFixed(2));
    }
-   else if(this.objjournal.DrCrdata === "CR"){
-    this.totalCR = Number(this.objjournal.Amount);
+   else if(this.objjournal.DrCrdata === "CR" && this.objjournal.Amount){
+    this.totalCR = Number(Number((this.objjournal.Amount)).toFixed(2));
    }
    else {
-     console.error("objjournal.DrCrdata Not Found",this.objjournal.DrCrdata);
+     console.log("objjournal.DrCrdata Not Found",this.objjournal.DrCrdata);
    }
  this.lowerList.forEach(el=>{
-   this.totalDR += Number(el.DR_Amt);
-   this.totalCR += Number(el.CR_Amt);
+  this.totalDR += Number(Number(el.DR_Amt).toFixed(2));
+  this.totalCR += Number(Number(el.CR_Amt).toFixed(2));
  })
 
  
@@ -321,6 +330,7 @@ saveJournal(valid){
  this.journalFormSubmitted = true;
  if(valid){
    let savedata = {};
+   this.Spinner = true;
    let msg = "";
    let report = "";
     if(this.VoucherNo){
@@ -329,15 +339,15 @@ saveJournal(valid){
       savedata = {
         User_ID: Number(this.$CompacctAPI.CompacctCookies.User_ID),
         Voucher_No : this.VoucherNo,
-        Voucher_Type_ID	: this.VoucherTypeID,
+        Voucher_Type_ID	: Number(this.VoucherTypeID),
 				Voucher_Date: this.DateService.dateConvert(new Date(this.voucherdata)), 
 				Ledger_ID	: this.objjournal.Ledger_ID,
 				Sub_Ledger_ID	: this.objjournal.Sub_Ledger_ID,
 				Cost_Cen_ID	: this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
 				Cost_Cen_ID_Trn	: this.objjournal.Cost_Cen_ID_Trn,
 				Cost_Head_ID: this.objjournal.Cost_Head_ID,
-				DR_Amt: this.objjournal.DrCrdata === "DR" ? Number(this.objjournal.Amount) : 0,
-				CR_Amt: this.objjournal.DrCrdata === "CR" ? Number(this.objjournal.Amount) : 0,
+				DR_Amt: this.objjournal.DrCrdata === "DR" ? Number(Number(this.objjournal.Amount).toFixed(2)) : 0,
+				CR_Amt: this.objjournal.DrCrdata === "CR" ? Number(Number(this.objjournal.Amount).toFixed(2)) : 0,
 				Naration: this.objjournal.Naration,
 				Project_ID: this.objjournal.Project_ID,
 				Is_Topper	: "Y",
@@ -351,7 +361,7 @@ saveJournal(valid){
       report = "BL_Txn_Acc_Journal_Create";
       savedata = {
         User_ID: Number(this.$CompacctAPI.CompacctCookies.User_ID),
-        Voucher_Type_ID	: this.VoucherTypeID,
+        Voucher_Type_ID	: Number(this.VoucherTypeID),
 				Voucher_Date: this.DateService.dateConvert(new Date(this.voucherdata)), 
 				Ledger_ID	: this.objjournal.Ledger_ID,
 				Sub_Ledger_ID	: this.objjournal.Sub_Ledger_ID,
@@ -377,6 +387,19 @@ saveJournal(valid){
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      if(data[0].Column1 === "Done"){
+      if(this.VoucherNo){
+        this.tabIndexToView = 0;
+        this.items = ["BROWSE", "CREATE"];
+        this.buttonname = "Create";
+        this.ShowSearchData(true)
+      }
+      else {
+        this.initDate = [new Date(),new Date()];
+      }
+      this.getCostCenter();
+      this.Spinner = false;
+      this.AlljournalData = [];
+      this.objsearch.Voucher_Type_ID = undefined
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "compacct-toast",
@@ -384,7 +407,18 @@ saveJournal(valid){
         summary: "Journal",
         detail: "Succesfully "+msg
       });
+      this.totalDR = undefined;
+      this.totalCR = undefined;
       this.clearData();
+     }
+     else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error",
+        detail: "Something wrong"
+      });
      }
     })
  }
@@ -428,7 +462,7 @@ EditJournal(col){
     this.GetEditMasterUom(col.Voucher_No)
   }
 }
-  GetEditMasterUom(V_NO){
+GetEditMasterUom(V_NO){
   const obj = {
     "SP_String": "Sp_Acc_Journal",
     "Report_Name_String":"BL_Txn_Acc_Journal_Get",
@@ -440,14 +474,14 @@ EditJournal(col){
      this.objjournal = data[0];
      this.lowerList = data[0].L_element;
       this.getsubLedgertop(data[0].Ledger_ID,data[0].Sub_Ledger_ID);
-      
+      this.voucherdata = new Date(data[0].Voucher_Date)
      if(data[0].DR_Amt){
-      this.objjournal.Amount = data[0].DR_Amt
+      this.objjournal.Amount = Number((data[0].DR_Amt).toFixed(2))
       this.objjournal.DrCrdata = "DR";
       this.getTotalDRCR()
     }
     else if (data[0].CR_Amt){
-      this.objjournal.Amount = data[0].CR_Amt
+      this.objjournal.Amount = Number((data[0].CR_Amt).toFixed(2))
       this.objjournal.DrCrdata = "CR";
       this.getTotalDRCR()
     }
@@ -479,7 +513,7 @@ onConfirm(){
     const obj = {
       "SP_String": "Sp_Acc_Journal",
       "Report_Name_String":"BL_Txn_Acc_Journal_Delete",
-      "Json_Param_String": JSON.stringify([{Voucher_No : this.VoucherNo}]) 
+      "Json_Param_String": JSON.stringify([{Voucher_No : this.VoucherNo,User_ID : this.$CompacctAPI.CompacctCookies.User_ID}]) 
       }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("data ==",data[0].Column1);
@@ -506,6 +540,11 @@ validcheck(){
 }
 validchecklow(){
   return this.SubLedgerListlow.length ? true : false
+}
+getToFix(number){
+ if(number){
+  return Number(Number(number).toFixed(2))
+ }
 }
 }
 class journalTopper{

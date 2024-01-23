@@ -1,0 +1,78 @@
+#ui-tabpanel-0>div>p-table>div>div.ui-table-wrapper.ng-star-inserted {
+    width: auto !important;
+}
+div.table-responsive.table-id>p-table>div>div {
+    width: auto !important;
+}
+.custombutton {
+    margin-top: 25px;
+}
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+div.label-t {
+    padding: 6px 12px;
+    background: rgb(206 216 216 / 51%);
+}
+#red{
+    color: red;
+    cursor: pointer;
+    font-size: 18px;
+}
+#ui-tabpanel-0>div>p-table>div>div.ui-table-wrapper.ng-star-inserted {
+    width: auto !important;
+}
+.ui-table-auto-layout>.ui-table-wrapper {
+    width: auto !important;
+    min-height: 170px !important;
+}
+.Outlet {
+    display: inline-block !important;
+}
+body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+    border-bottom: 1px solid #c1c1c1 !important;
+    margin-bottom: 0px;
+}
+.buttonleft1{
+    margin-left: 380px;
+    background-color: #3c8dbc;
+    border-color: #367fa9;
+    border-radius: 3px;
+    box-shadow: none;
+    border: 1px solid transparent;
+    color: #fff;
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+}
+.buttonleft2{
+    margin-left: 688px;
+    background-color: #3c8dbc;
+    border-color: #367fa9;
+    border-radius: 3px;
+    box-shadow: none;
+    border: 1px solid transparent;
+    color: #fff;
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+}

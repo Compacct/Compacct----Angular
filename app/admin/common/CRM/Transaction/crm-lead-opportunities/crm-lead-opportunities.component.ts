@@ -7,6 +7,9 @@ import { DateTimeConvertService } from '../../../../shared/compacct.global/dateT
 import { CompacctCommonApi } from '../../../../shared/compacct.services/common.api.service';
 import { CompacctGetDistinctService } from '../../../../shared/compacct.services/compacct-get-distinct.service';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { DateNepalConvertService } from '../../../../shared/compacct.global/dateNepal.service';
+import * as XLSX from 'xlsx'
+declare var NepaliFunctions: any;
 @Component({
   selector: 'app-crm-lead-opportunities',
   templateUrl: './crm-lead-opportunities.component.html',
@@ -35,6 +38,7 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
   AssignToFilterList = [];
 
   SelectedLeadFilterList1 = [];
+  SelectedLeadDateFilterList1 = [];
   SelectedStatusFilterList1 = [];
   SelectedAssignToFilterList1 = [];
 
@@ -60,6 +64,7 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
   ExistingLead = undefined;
 
   LeadStatusList = [];
+  LeadDateFilterList = [];
   EnqSourceModel = [];
   customertype = [];
   ReferencebyCustomer = [];
@@ -75,6 +80,7 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
   LeadCreateModal = false;
 
   FromQueryString = false;
+  clms = [];
   constructor(
     private $http: HttpClient,
     private Header: CompacctHeader,
@@ -84,7 +90,8 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
     private route: ActivatedRoute,
     private router : Router,
     public $CompacctAPI: CompacctCommonApi,
-    private distService : CompacctGetDistinctService
+    private distService : CompacctGetDistinctService,
+    private DateNepalConvertService : DateNepalConvertService,
   ) { 
     this.route.queryParams.subscribe((val:any) => {
       this.QueryStringUserID = undefined;
@@ -122,6 +129,19 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
   this.GetEnqSrc();
   this.Getcustomertype();
   this.GetReferencebyCustomer();
+
+  this.clms = [
+    { field: 'Org_Name', header: 'Company Name' },
+    { field: 'Lead_Date', header: 'Lead Date' },
+    { field: 'Contact_Name', header: 'Contact Person' },
+    { field: 'Mobile', header: 'Phone' },
+    { field: 'Email', header: 'Email' },
+    { field: 'Phone', header: 'Mobile' },
+    { field: 'Address', header: 'Address' },
+    { field: 'Status', header: 'Sales Stage' },
+    { field: 'Enq_Source_Name', header: 'Source' },
+    { field: 'StatAssign_To_Nameus', header: 'Assigned To' }
+  ];
   }
 
 
@@ -133,6 +153,20 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
     this.clearData();
 
   }
+  ReturnNepaliDate (engDate) {
+    if (engDate) {
+        const EngDateObj = {
+            'year': new Date(engDate).getFullYear(),
+            'month': new Date(engDate).getMonth() + 1,
+            'day': new Date(engDate).getDate()
+        }
+        const NepaliDateObj = NepaliFunctions.AD2BS(EngDateObj);
+        const FormattedNepaliDate = NepaliFunctions.ConvertDateFormat(NepaliDateObj, "DD/MM/YYYY");
+        return FormattedNepaliDate;
+    } else {
+        return '-';
+    }
+}
   // GET
   GetSubject() {
     const objj = {
@@ -250,11 +284,15 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
       this.LeadList = data;
       this.BackupLeadList = data;
       this.TableLeadList = data;
+      for(let i = 0; i < this.TableLeadList.length ; i++){
+        this.TableLeadList[i]['Lead_Date'] = this.ReturnNepaliDate(this.TableLeadList[i]['Lead_Date']);
+     }  
       this.FilterColLeadList = this.TableLeadList.length ? Object.keys(this.TableLeadList[0]) : [];
-      const FilterArr = this.distService.GetMultipleDistinct(this.BackupLeadList,['Org_Name','Status','Assign_To_Name']);
+      const FilterArr = this.distService.GetMultipleDistinct(this.BackupLeadList,['Org_Name','Lead_Date','Status','Assign_To_Name']);
       this.LeadFilterList = FilterArr[0];
-      this.StatusFilterList = FilterArr[1];
-      this.AssignToFilterList = FilterArr[2];
+      this.LeadDateFilterList = FilterArr[1];
+      this.StatusFilterList = FilterArr[2];
+      this.AssignToFilterList = FilterArr[3];
       console.log(this.LeadList)
     })
 
@@ -262,12 +300,17 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
   GlobalFilterChange1 () {
     let searchFields = [];
     let LeadFilter = [];
+    let LeadDateFilter = [];
     let StatusFilterList = [];
     let AssignToFilterList = [];
     if (this.SelectedLeadFilterList1.length) {
       searchFields.push('Org_Name');
       LeadFilter = this.SelectedLeadFilterList1;
     }    
+    if (this.SelectedLeadDateFilterList1.length) {
+      searchFields.push('Lead_Date');
+      LeadDateFilter = this.SelectedLeadDateFilterList1;
+    } 
     if (this.SelectedStatusFilterList1.length) {
       searchFields.push('Status');
       StatusFilterList = this.SelectedStatusFilterList1;
@@ -282,6 +325,7 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
       const ctrl = this;
       const LeadArr = this.BackupLeadList.filter(function (e) {
         return ((LeadFilter.length ? LeadFilter.includes(e['Org_Name']) : true) 
+        && (LeadDateFilter.length ?  LeadDateFilter.includes(e['Lead_Date']) : true)
         && (StatusFilterList.length ?  StatusFilterList.includes(e['Status']) : true)
         && (AssignToFilterList.length ?  AssignToFilterList.includes(e['Assign_To_Name']) : true)
         );
@@ -503,6 +547,32 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
       queryParams: obj,
     };
     this.router.navigate(['./BL_CRM_Lead_Details_Nepal'], navigationExtras);
+  }
+  // Export To Excel
+  exportoexcel(fileName){
+    if(this.TableLeadList.length){
+      let exportList:any = []
+      this.TableLeadList.forEach((ele:any) => {
+        exportList.push({
+          ['Company Name'] : ele.Org_Name,
+          ['Lead Date'] : ele.Lead_Date,
+          ['Contact Person'] : ele.Contact_Name,
+          ['Phone'] : ele.Mobile ? ele.Mobile : '',
+          ['Email'] : ele.Email ? ele.Email : '-',
+          ['Mobile'] : ele.Phone ? ele.Phone :'-',
+          ['Address'] : ele. Address ? ele.Address : '-',
+          ['Sales Stage'] : ele.Status ? ele.Status :'-',
+          ['Source'] : ele.Enq_Source_Name ? ele.Enq_Source_Name : '-',
+          ['Assigned To'] :ele.Assign_To_Name ? ele.Assign_To_Name : '-'
+     })
+      });
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportList);
+      const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+      XLSX.writeFile(workbook, fileName+'.xlsx');
+    }
+      
+      
+  
   }
 }
 

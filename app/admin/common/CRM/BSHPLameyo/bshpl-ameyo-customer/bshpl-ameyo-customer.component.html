@@ -1,0 +1,342 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-user" >
+                            <form name="ameyoCustomarForm" #ameyoCustomarForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Patient List<sup class="text-danger">*</sup></label>
+                                        <p-dropdown 
+                                        [options]="PatientList" 
+                                        name="Patient"
+                                        [(ngModel)]="PatientName"
+                                        #Patient="ngModel" 
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Patient Found'" 
+                                        [filter]="true" filterBy="label,value.name" 
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select Patient Type'" 
+                                        [virtualScroll]="true" 
+                                        itemSize="30"
+                                        (onChange)="PatientChange(PatientName)"
+                                        [ngClass]="{'clearance': ameyoCustomarFormSubmit && Patient.errors?.required}"required>
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <button class="btn btn-primary" 
+                                        style="margin-top: 28px" 
+                                        data-toggle="modal" 
+                                        (click)="EditCustomer(ameyoCustomarForm.form.valid)" 
+                                        >
+                                         <span class="glyphicon glyphicon-edit"></span>&nbsp;Edit
+                                         </button>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-primary" 
+                                        style="margin-top: 28px" 
+                                        data-toggle="modal" 
+                                        (click)="Appointment(ameyoCustomarForm.form.valid)" 
+                                        >
+                                         <span class="fa fa-fw fa-calendar-times-o"></span>&nbsp;Appointment
+                                         </button>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-primary" 
+                                        style="margin-top: 28px" 
+                                        data-toggle="modal" 
+                                        (click)="redirectPatientDetails()" 
+                                        >
+                                         <span class="fa fa-fw fa fa-clone"></span>&nbsp;Details
+                                         </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <form name="FollowupModalUpdate" #FollowupModalUpdate="ngForm" novalidate>
+                                <!-- <div class="form-group" *ngIf='objFollowupDetails?.Contact_Name'>
+                                    <div class="col-sm-12" style="padding: 0.5em 0;background-color: #0080002e;text-align: center;border-radius: 5px;">
+                                        <b>{{objFollowupDetails.Contact_Name.toUpperCase()}}</b> / {{objFollowupDetails.Mobile ? objFollowupDetails.Mobile : '-'}}
+                                    </div>
+                                </div> -->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-6">
+                                            <div class="form-horizontal">
+                                                <div class="box-body ">
+                                                    <div class="timelinescroll style-3">
+                                                        <ul class="timeline ">
+                                                            <li class="time-label" style="margin-bottom: -20px" *ngFor="let objMain of distinctDateArray">
+                                                                <span class="" style="background-color:rgb(236, 205, 51)">{{objMain}}</span>
+                                                                <ul class="timeline" style="margin: 7px 0 30px 0">
+                                                                    <li *ngFor="let objSub of getFollowupByDate(objMain)">
+                                                                        <i class="fa fa-user bg-blue"></i>
+                                                                        <div class="timeline-item">
+                                                                            <!-- <span class="time" *ngIf="false"><i class="fa fa-clock-o"></i> 12:05</span> -->
+                                                                            <h3 class="timeline-header"><a href="#">{{objSub.CreatedBy}}</a>
+                                                                                <!-- <font size="2"> <strong>{{objSub.Current_Action}}</strong></font> -->
+                                                                            </h3>
+                                                                            <div class="timeline-body">
+                                                                                {{objSub.Last_Remarks}}
+                                                                            </div>
+                                                                            <div class="timeline-footer" style="padding-bottom: 10px">
+                                                                                <a class="btn btn-primary btn-social  btn-xs" *ngIf="objSub.CreatedBy != objSub.SentTo_Name">
+                                                                                    <i class="fa fa-user"></i>&nbsp;{{objSub.SentTo_Name}}
+                                                                                </a>
+                                                                                <div class="btn btn-reddit btn-social  btn-xs" style="white-space: pre-line;width: 82%;">
+                                                                                    <i class="fa fa-comments"></i> Remarks : <span style="font-weight: 600;">{{objSub.Followup_Details}}</span>
+                                                                                    <hr style="margin:1px"> Follow up Date&Time :<b>&nbsp;{{objSub.Posted_On | date:"dd/MMM/yyyy h:mma"}}</b>
+                        
+                                                                                </div>
+                                                                                <!-- <a class="btn btn-reddit btn-social  btn-xs">
+                                                                                  Remarks :
+                                                                                    <i class="fa fa-comments"></i>&nbsp;
+                                                                                </a> -->
+                                                                                <a class="btn btn-danger btn-social  btn-xs">
+                                                                                    Action Taken :
+                                                                                    <i class="fa fa-angle-double-right"></i>&nbsp;{{objSub.Current_Action}}
+                                                                                </a>
+                                                                                <br>
+                                                                                <!-- <div *ngIf='objFollowUpCreation?.Lead_ID && objSub?.Call_ID && objSub?.Call_ID.toString() !=="0"' (click)='GetCallDetails(objSub)' class="btn btn-soundcloud btn-social  btn-xs" style="margin-top:0.5em;">
+                                                                                    <i class="fa fa-info-circle"></i>&nbsp;CALL DETAILS
+                                                                                </div>
+                                                                                <a *ngIf="objSub.PDF_File" ng-click="viewPDF(objSub.PDF_File)">
+                                                                                    <img src="~/PDF_Logo/PDF-logo.png" class='pdf' style="width:20px; height:20px ">
+                                                                                </a> -->
+                                                                            </div>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-horizontal">
+                                                <div class="box-body">
+                                                    <form name="followup" #followup="ngForm" role="form" novalidate>
+                                                        <div class="form-group">
+                                                            <div class="col-sm-12">
+                                                                <label class="control-label">Action Taken<sup class="text-danger">*</sup></label>
+                                                                <select class="form-control" [ngClass]="{'clearance':folloupFormSubmit && actiontakenFollowUpCreation?.errors?.required}" name="actiontakenFollowUpCreation" #actiontakenFollowUpCreation="ngModel" [(ngModel)]="objFollowUpCreation.Followup_Action" (change)="FollowupActionChanged()"
+                                                                    required>
+                                                                    <option [ngValue]="undefined">Select</option>
+                                                                    <option *ngFor=" let data of ActionList" value="{{data.Request_Type}}">
+                                                                        {{data.Request_Type}}</option>
+                                                                </select>
+                                                            </div>
+                                                           <div class="col-sm-12">
+                                                                <label class="control-label">Remarks<sup class="text-danger">*</sup></label>
+                                                                <textarea class="form-control" rows="2" name="remarkFollowUpCreation" #remarkFollowUpCreation="ngModel" [ngClass]="{'clearance':folloupFormSubmit && remarkFollowUpCreation?.errors?.required}" [(ngModel)]="objFollowUpCreation.Followup_Details" placeholder="Remarks"
+                                                                    required></textarea>
+                                                            </div>
+                                                            <div class="col-sm-12">
+                                                                <label class="control-label">Next Followup<sup class="text-danger">*</sup></label>
+                                                                <input type="datetime-local" class="form-control" id="NextFollowup" #NextFollowup="ngModel" name="NextFollowup" [ngModel]="NxtFollowupDate | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="NxtFollowupDate = $event" [ngClass]="{'clearance':folloupFormSubmit && NextFollowup?.errors?.required}"
+                                                                    [min]="TodayDate" required>
+                                                            </div>
+                                                            <!-- <div class="col-sm-12">
+                                                                <label class="control-label">Next Followup<sup class="text-danger">*</sup></label>
+                                                                <p class="input-group">
+                                                                    <input type="text" name="nextfolloupFollowUpCreation" class="form-control"
+                                                                        placeholder="Next Followup Date" datetime-picker="dd/MM/yyyy HH:mm"
+                                                                        [(ngModel)]="nextFollowUpForFollowupCreation.data"
+                                                                        datepicker-options="datePickerForFollowUp.config"
+                                                                        is-open="nextFollowUpForFollowupCreation.open"
+                                                                        [ngClass]="{'clearance': folloupFormSubmit && followup.nextfolloupFollowUpCreation.$error.required ||(folloupFormSubmit && nextFollowUpForFollowupCreation.date==null)}"
+                                                                        required />
+                                                                    <span class="input-group-btn">
+                                                                        <button type="button" class="btn btn-default"
+                                                                            (click)="openCalendar($event, 'nextFollowUpForFollowupCreation')">
+                                                                            <i class="fa fa-calendar"></i>
+                                                                        </button>
+                                                                    </span>
+                                                                </p>
+                                                            </div> -->
+                        
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <!-- @*<div class="col-sm-6">
+                                                                <label class="control-label">Next Action<sup class="text-danger">*</sup></label>
+                                                                <select class="form-control"
+                                                                    [ngClass]="{'clearance':folloupFormSubmit && followup.nextactionFollowUpCreation.$error.required}"
+                                                                    name="nextactionFollowUpCreation"
+                                                                    [(ngModel)]="objFollowUpCreation.Followup_Action" required>
+                                                                    <option value="">Select</option>
+                                                                    <option *ngFor=" let data of nextActionLists" value="{{data.Request_Type}}">
+                                                                        {{data.Request_Type}}</option>
+                                                                </select>
+                                                            </div>*@ -->
+                                                        </div>
+                                                        <div class="box-footer">
+                                                            <button class="btn btn-primary pull-right" (click)="SaveFollowUp(followup.form.valid)" id="load" [disabled]="followupSpinner">
+                                                                <p-progressSpinner *ngIf="followupSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                            <span *ngIf="!followupSpinner" class="glyphicon glyphicon-save"></span> Save
+                                                        </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-blackboard" >
+                            <form name="Followuppartient" #Followuppartient="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Mobile No.
+                                            <sup class="text-danger">*</sup></label>
+                                            <input class="form-control" 
+                                            name="Mobile" 
+                                            #Mobile="ngModel"
+                                            maxlength = "10"
+                                            minlength = "10"
+                                            [(ngModel)]="objpartient.Mobile" 
+                                            placeholder="Mobile No" 
+                                           disabled
+                                            >
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Name.
+                                            <sup class="text-danger">*</sup></label>
+                                        <div class="input-group" style="width: 100%;">
+                                            <select class="form-control"
+                                            name="Prefix" 
+                                            #Prefix="ngModel"
+                                           [(ngModel)]="objpartient.Prefix"
+                                           [ngClass]="{'clearance': FollowuppartientSubmit && Prefix?.errors?.required }" 
+                                           required
+                                          >
+                                              <option  [ngValue]="undefined">Select</option>
+                                              <option value="Mr">Mr</option>
+                                              <option value="Mrs">Mrs</option>
+                                              <option value="Miss">Miss</option>
+                                              <option value="Ms">Ms</option>
+                                              <option value="Sir">Sir</option>
+                                              <option value="Dr">Dr</option>
+                                              <option value="Master">Master</option>
+                                              <option value="Srimati">Srimati</option>
+                                              <option value="Baby">Baby</option>
+                                              <option value="Baby of">Baby of</option>
+                                            </select>
+                                            <span class="input-group-addon" style="border-color: #ffffff; padding:0px"></span>
+                                            <input type="text" 
+                                            class="form-control" 
+                                            name="Contact_Name" 
+                                            #Contact_Name="ngModel"
+                                           [(ngModel)]="objpartient.Contact_Name"
+                                           placeholder="Name" 
+                                           [ngClass]="{'clearance': FollowuppartientSubmit && Contact_Name?.errors?.required }" 
+                                           required
+                                            >
+                                          </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Age<sup class="text-danger"></sup></label>
+                                        <div class="input-group" style="width:100%">
+                                          <input class="form-control" 
+                                          name="Age" 
+                                          #Age="ngModel"
+                                         [(ngModel)]="objpartient.Age"
+                                          [ngClass]="{'clearance': FollowuppartientSubmit && Age?.errors?.required }" 
+                                         placeholder="Age" 
+                                          required>
+            
+                                          <span class="input-group-addon" style="border-color: #ffffff; padding:0px"></span>
+                                          <select class="form-control"
+                                          name="Age_Unit" 
+                                          #Age_Unit="ngModel"
+                                         [(ngModel)]="objpartient.Age_Unit"
+                                          [ngClass]="{'clearance': FollowuppartientSubmit && Age_Unit?.errors?.required }"
+                                          required>
+                                            <option value="Years">Years </option>
+                                            <option value="Months">Months</option>
+                                            <option value="Days">Days</option>
+                                          </select>
+                                        </div>
+                                       
+                                      </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Date of Birth</label>
+                                        <ejs-datepicker [(value)]="DOB" 
+                                         [format]="'dd/MMM/yyyy'" 
+                                       ></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Gender<span class="text-danger">*</span></label>
+                                        <select class="form-control " 
+                                        name="Gender" 
+                                        #Gender="ngModel"
+                                        [(ngModel)]="objpartient.Gender"
+                                        [ngClass]="{'clearance': FollowuppartientSubmit && Gender?.errors?.required }" 
+                                        required >
+                                        <option  [ngValue]="undefined">Select</option>
+                                          <option value="Male">Male</option>
+                                          <option value="Female">Female</option>
+                                          <option value="Other">Other</option>
+                                        </select>
+                                      </div>
+                                      <div class="col-sm-4">
+                                        <label class="control-label">Enquiry Source <span class="text-danger">*</span></label>
+                                        <select class="form-control " 
+                                        name="Enq_Source_ID" 
+                                        #Enq_Source_ID="ngModel"
+                                        [(ngModel)]="objpartient.Enq_Source_ID"
+                                        [ngClass]="{'clearance': FollowuppartientSubmit && Enq_Source_ID?.errors?.required }" 
+                                        required >
+                                        <option  [ngValue]="undefined">Select</option>
+                                          <option *ngFor="let option of EnqSourceList" value="{{option.Enq_Source_ID}}">
+                                            {{option.Enq_Source_Name}}
+                                            </option>
+                                        </select>
+                                      </div>
+                                      <div class="col-sm-3">
+                                        <label class="control-label">Next Followup</label>
+                                        <ejs-datepicker [(value)]="FollowupDate" 
+                                         [format]="'dd/MMM/yyyy'" 
+                                       ></ejs-datepicker>
+                                      </div>
+                                    </div>
+                                </form>
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right" (click)="SavenewPatient(Followuppartient.form.valid)" id="load1" [disabled]="Spinner">
+                                       <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Save
+                                       </button>
+                                </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+             </div>
+         </div>
+    </div>
+</div>
+<!-- 9007716803 -->
+
+<!-- http://localhost:50063/BSHPL_Ameyo_KB?sessionId=10&campaignId=5&crtObjectId=10&userCrtObjectId=11&userId=61397&customerId=10&phone=9007716803&crmSessionId=61397 -->

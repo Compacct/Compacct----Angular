@@ -1,0 +1,20 @@
+.doc{
+    cursor: pointer;
+    color: #007ad9;
+    font-size: 30px;
+}
+.doc:hover{
+    cursor: pointer;
+    color: #07487a;
+    font-size: 35px;
+}
+
+.closeBtn{
+    position: absolute;
+    font-size: 18px;
+    color: red;
+    cursor: pointer;
+}
+.closeBtn:hover{
+    font-size: 25px;
+}

@@ -1,0 +1,412 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6" *ngIf="Del && !Save">
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="Save && !Del">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="JournalSearchForm" #JournalSearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date </label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">CostCentre <sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Cost_Cen_ID" #Cost_Cen_ID="ngModel" [(ngModel)]="objsearch.Cost_Cen_ID" [ngClass]="{'clearance': JournalSearchFormSubmit && Cost_Cen_ID?.errors?.required}" required>
+                                                  <option  [ngValue]="undefined">Select</option>
+                                           <option *ngFor = "let option of costHeadList" [value] ="option.Cost_Cen_ID">
+                                              {{option.Cost_Cen_Name}}
+                                            </option>
+                                      </select>
+                                    </div>
+
+
+                                    <!-- <div class="col-sm-3"> -->
+                                    <div>
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="ShowSearchData(JournalSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                              <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                              <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span> Search
+                                           </button>
+                                    </div>
+                                    <!-- </div> -->
+                                </div>
+
+                            </form>
+                            <div class="table-responsive no-padding productTable">
+                                <p-table #dt [value]="AlljournalData" [globalFilterFields]="['Voucher_No', 'Dated','Ref_Doc_No','Ref_Doc_Date', 'Ledger_Name', 'Sub_Ledger_Name', 'DR_Amt', 'CR_Amt', 'Cost_Cen_Name', 'Cost_Cen_trn_Name', 'Fin_Year_Name']" [paginator]="AlljournalData.length ? true:false"
+                                    [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [rowHover]="true">
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right;">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap>Voucher No</th>
+                                            <th nowrap>Voucher Date</th>
+                                            <th nowrap>Ref Doc No</th>
+                                            <th nowrap>Ref Doc Date</th>
+                                            <th nowrap>Ledger Name</th>
+                                            <th nowrap>Sub Ledger Name</th>
+                                            <!-- <th nowrap>Adjustment Doc No</th>
+                                            <th nowrap>Adjustment Amt</th> -->
+                                            <th nowrap>Amount</th>
+                                            
+                                            <th nowrap>Cost Cen Name</th>
+                                            <th nowrap>Cost Cen trn Name</th>
+                                            <th nowrap>Fin Year Name</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr [class]='col.Is_Visiable === "N" ? "text-red-active" : ""'>
+
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                                <span class="caret"></span>
+                                                                            </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="EditJournal(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> Edit
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="User_Type =='A'">
+                                                            <a (click)="DeleteJournal(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                        <!-- <li *ngIf="col.Is_Visiable == 'N'">
+                                                            <a (click)="Active(col)">
+                                                                <i class="fa fa-power-off"></i> Active
+                                                            </a>
+                                                        </li> -->
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td nowrap>{{col.Voucher_No ? col.Voucher_No : '-'}}</td>
+                                            <td nowrap>{{col.Dated | date: "dd/MMM/yyyy"}}</td>
+                                            <td nowrap>{{col.Ref_Doc_No ? col.Ref_Doc_No : '-'}}</td>
+                                            <td nowrap>{{col.Ref_Doc_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td nowrap>{{col.Ledger_Name ? col.Ledger_Name : '-'}} </td>
+                                            <td nowrap>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
+                                            <!-- <td nowrap>{{col.Adjustment_Doc_No ? col.Adjustment_Doc_No : '-'}}</td>
+                                            <td nowrap>{{col.Adjustment_Amt ? col.Adjustment_Amt : '-'}}</td> -->
+                                            
+                                            <td nowrap>{{col.Amount ? col.Amount : '-'}}</td>
+                                            <td nowrap>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
+                                            <td nowrap>{{col.Cost_Cen_trn_Name ? col.Cost_Cen_trn_Name : '-'}}</td>
+                                            <td nowrap>{{col.Fin_Year_Name ? col.Fin_Year_Name : '-'}}</td>
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="JournalForm" #JournalForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Company" #Company="ngModel" [(ngModel)]="objJournal.Company_ID" 
+                                        [ngClass]="{'clearance ': JournalFormSubmitted && Company.errors?.required}" required  [disabled]="buttonname == 'Create' ? JournalListAdd.length : false" >
+                                        <option  [ngValue]="undefined">Select</option>
+                                    <option  *ngFor="let option of companyList" value="{{option.Company_ID}}">
+                                      {{option.Company_Name}}
+                                    </option>
+                                   </select>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Voucher No</label>
+                                        <input class="form-control" placeholder="Voucher No" name="Voucher_No" #Voucher_No="ngModel" [(ngModel)]="objJournal.Voucher_No" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Voucher Date<sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Voucher_Date' name="Date_Voucher"  (change)="getDocNo()" [enabled]="buttonname == 'Update' ? true : !JournalListAdd.length" ></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Cost Cent Trn<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Cost_Cent_Trn" #Cost_Cent_Trn="ngModel" 
+                                        [(ngModel)]="objJournal.Cost_Cen_ID_Trn" [ngClass]="{'clearance ': JournalFormSubmitted && Cost_Cent_Trn.errors?.required}" 
+                                        [disabled]="buttonname == 'Create' ? JournalListAdd.length : false"
+                                        required >
+                                        <option  [ngValue]="undefined">Select</option>
+                                    <option  *ngFor="let option of costHeadList" value="{{option.Cost_Cen_ID}}">
+                                      {{option.Cost_Cen_Name}}
+                                    </option>
+                                   </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-8">
+                                        <label class="control-label">Naration</label>
+                                        <input class="form-control" placeholder="Naration" name="Naration" #Naration="ngModel" [(ngModel)]="objJournal.Naration" [disabled]="buttonname == 'Create' ? JournalListAdd.length : false" >
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Journal Type<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="journal_type" #journal_type="ngModel" [(ngModel)]="objJournal.JV_Type" 
+                                        (change)="getDocType(objJournal.JV_Type)"
+                                         [ngClass]="{'clearance ': JournalFormSubmitted && journal_type.errors?.required}" 
+                                         [disabled]="buttonname == 'Create' ? JournalListAdd.length : false"
+                                         required>
+                                        <option  [ngValue]="undefined">Select</option>
+                                    <option  *ngFor="let option of JournalList" value="{{option}}">
+                                      {{option}}
+                                    </option>
+                                   </select>
+                                    </div>
+                                </div>
+
+                                <hr class="box boxboxDivide-primary">
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Ledger<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="LedgerList" name="Ledger" [(ngModel)]="objJournal.Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true"
+                                            itemSize="30" #Ledger="ngModel" [styleClass]="
+                                            JournalFormSubmitted && Ledger.errors?.required
+                                                  ? 'clearance'
+                                                  : ''
+                                              " [required]="true" (onChange)="getsubLedger(objJournal.Ledger_ID)">
+                                        </p-dropdown>
+                                    </div>
+                                    <!-- <div class="col-sm-4" *ngIf="this.SubLedgerDataListlow.length == 0">
+                                        <label class="control-label">Sub Ledger</label>
+                                        <p-dropdown [options]="SubLedgerListlow" name="Sub_Ledger" [(ngModel)]="objJournal.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'"
+                                            [virtualScroll]="true" itemSize="30" #Sub_Ledger="ngModel">
+                                        </p-dropdown>
+                                    </div> -->
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Sub Ledger&nbsp;<span *ngIf = "SubLedgerDataListlow.length" class="text-danger">*</span></label>
+                                        <p-dropdown [options]="SubLedgerDataListlow" name="Sub_Ledger" [(ngModel)]="objJournal.Sub_Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'"
+                                            [virtualScroll]="true" itemSize="30" #Sub_Ledger="ngModel" (onChange)="getDocNo()" [styleClass]="
+                                            JournalFormSubmitted && Sub_Ledger.errors?.required && validcheck()? 'clearance': ''" [required]="validcheck()">
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Cost Head</label>
+                                        <select class="form-control" name="Cost_Head" #Cost_Head="ngModel" [(ngModel)]="objJournal.Cost_Head_ID">
+                                        <option  [ngValue]="undefined">Select</option>
+                                    <option  *ngFor="let option of costHeadDataList" value="{{option.Cost_Head_ID}}">
+                                      {{option.Cost_Head_Name}}
+                                    </option>
+                                   </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Ref Doc No</label>
+                                        <input class="form-control" placeholder="Ref Doc No" name="Ref_Doc_No" #Ref_Doc_No="ngModel" [(ngModel)]="objJournal.Ref_Doc_No" (ngModelChange)="RefDate(objJournal.Ref_Doc_No)">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Ref Doc Date<sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Ref_Doc_Date' name="Ref_Date" [enabled]="IsEnabled"></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">HSN NO</label>
+                                        <input class="form-control" placeholder="HSN NO" name="HSN_NO" #HSN_NO="ngModel" [(ngModel)]="objJournal.HSN_NO">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="col-sm-6">
+                                            <label class="control-label">Amount<sup class="text-danger">*</sup></label>
+                                            <input class="form-control" placeholder="Amount" name="Amount" #Amount="ngModel" CompacctDigitonly="true" [(ngModel)]="objJournal.Amount" [ngClass]="{'clearance ': JournalFormSubmitted && Amount.errors?.required}" required>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label class="control-label">DR/CR</label>
+                                            <select class="form-control" name="DR" #DR="ngModel" [(ngModel)]="objJournal.DR">
+                                                <option  *ngFor="let option of DrList" value="{{option}}">
+                                                    {{option}}
+                                                  </option>
+                                         </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">GST Per</label>
+                                        <input class="form-control" placeholder="GST Per" name="GST_Per" #GST_Per="ngModel" CompacctDigitonly="true" [(ngModel)]="objJournal.GST_Per">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">ITC Eligibility</label>
+                                        <select class="form-control" name="ITC_Eligibility" #ITC_Eligibility="ngModel" [(ngModel)]="objJournal.ITC_Eligibility">
+                                                          <option  [ngValue]="undefined">Select</option>
+                                                          <option  Value="Input Goods">Input Goods</option>
+                                                          <option  Value="Input Services">Input Services</option>
+                                                          <option  Value="Output Services">Output Services</option>
+                                                          <option  Value="Capital Goods">Capital Goods</option>  
+                                                          <option  Value="None">None</option>
+                                                </select>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Against Ref Type</label>
+                                        <select class="form-control" name="AD_doc_type" #AD_doc_type="ngModel" [(ngModel)]="objJournal.Adj_Doc_Type" (change)="getDocNo()">
+                                        <option  [ngValue]="undefined">Select</option>
+                                    <option  *ngFor="let option of docTypeList" value="{{option}}">
+                                      {{option}}
+                                    </option>
+                                   </select>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Against Doc No</label>
+                                        <select class="form-control" name="AD_doc_no" #AD_doc_no="ngModel" [(ngModel)]="objJournal.Adjustment_Doc_No">
+                                        <option  [ngValue]="undefined">Select</option>
+                                    <option  *ngFor="let option of doNoList" value="{{option.Doc_No}}">
+                                      {{option.Doc_No}}
+                                    </option>
+                                   </select>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton pull-right" style="margin-top: 27px;" (click)="AddJournalVoucher(JournalForm.form.valid)"><span class="glyphicon glyphicon-plus"></span>Add </button>
+                                    </div>
+
+                                </div>
+                            </form>
+                            <div class="table-responsive no-padding" style="margin-top: 16px;">
+                                <table class="table table-bordered">
+                                    <thead style="background-color:#4fa1d1;color:white;">
+                                        <tr>
+                                            <th nowrap="nowrap">Sl.No.</th>
+                                            <th nowrap="nowrap">Ledger</th>
+                                            <th nowrap="nowrap"> SubLedger Name</th>
+                                            <th nowrap="nowrap">Cost Head Name</th>
+                                            <th nowrap="nowrap">Amount(DR)</th>
+                                            <th nowrap="nowrap">Amount(CR)</th>
+                                            <th nowrap="nowrap">Ref Doc No</th>
+                                            <th nowrap="nowrap">Ref Doc Date</th>
+                                            <th nowrap="nowrap">HSN NO</th>
+                                            <th nowrap="nowrap">ITC Eligibility</th>
+                                            <th nowrap="nowrap">GST Per</th>
+                                            <th nowrap="nowrap">Adjustment Doc Type</th>
+                                            <th nowrap="nowrap">Adjustment Doc No</th>
+                                            <th nowrap="nowrap"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let col of JournalListAdd let i = index">
+                                            <!-- <td nowrap="nowrap">{{i + 1}}</td> -->
+                                            <td nowrap="nowrap">{{col.SL_NO}}</td>
+                                            <td nowrap="nowrap">{{col.Ledger_Name}}</td>
+                                            <td nowrap="nowrap">{{col.Sub_Ledger_Name}}</td>
+                                            <td nowrap="nowrap">{{col.Cost_Head_Name}}</td>
+                                            <td nowrap="nowrap">{{col.DR_Amt? col.DR_Amt : ""}}</td>
+                                            <td nowrap="nowrap">{{col.CR_Amt? col.CR_Amt : ""}}</td>
+                                            <td nowrap="nowrap">{{col.Ref_Doc_No}}</td>
+                                            <td nowrap="nowrap">{{col.Ref_Doc_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td nowrap="nowrap">{{col.HSN_NO}}</td>
+                                            <td nowrap="nowrap">{{col.ITC_Eligibility}}</td>
+                                            <td nowrap="nowrap">{{col.GST_Per}}</td>
+                                            <td nowrap="nowrap">{{col.Adj_Doc_Type}}</td>
+                                            <!-- <td nowrap="nowrap">{{col.Doc_No}}</td> -->
+                                            <td nowrap="nowrap">{{col.Adjustment_Doc_No}}</td>
+                                            <td><button (click)="DeleteProduct(i)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-xs-6">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <th style="width:30%">Total DR Amount:</th>
+                                            <td>{{DRSum ? getToFix(DRSum) : ""}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total CR Amount:</th>
+                                            <td>{{CRSum ? getToFix(CRSum) : ""}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Balance:</th>
+                                            <td style="font-weight: bold;">{{balance ? getToFix(balance) : ""}} &nbsp;&nbsp;{{balance > 0? this.objJournal.DR : ""}}</td>
+                                            <!-- <td *ngIf="balance > 0" style="text-align:left;">{{this.objJournal.DR}}</td> -->
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- <div class="table-responsive no-padding" style="margin-top: 13px;">
+                                <p-table [value]="JournalListAdd" [rowHover]="true">
+
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th nowrap="nowrap">Sl.No.</th>
+                                            <th nowrap="nowrap">Ledger</th>
+                                            <th nowrap="nowrap"> SubLedger Name</th>
+                                            <th nowrap="nowrap">Cost Head Name</th>
+                                            <th nowrap="nowrap">Amount(DR)</th>
+                                            <th nowrap="nowrap">Amount(CR)</th>
+                                            <th nowrap="nowrap">Ref Doc No</th>
+                                            <th nowrap="nowrap">Ref Doc Date</th>
+                                            <th nowrap="nowrap">HSN NO</th>
+                                            <th nowrap="nowrap">ITC Eligibility</th>
+                                            <th nowrap="nowrap">GST Per</th>
+                                            <th nowrap="nowrap"></th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                        <tr>
+                                            <td nowrap="nowrap">{{col.HR_Year_Name ? col.HR_Year_Name : '-'}}</td>
+                                            <td nowrap="nowrap"></td>
+                                            <td nowrap="nowrap"></td>
+                                            <td nowrap="nowrap"></td>
+                                            <td nowrap="nowrap"></td>
+                                            <td nowrap="nowrap"></td>
+                                            <td nowrap="nowrap"></td>
+                                            <td nowrap="nowrap"></td>
+                                            <td nowrap="nowrap"></td>
+                                            <td nowrap="nowrap"></td>
+                                            <td nowrap="nowrap"></td>
+                                            <td nowrap="nowrap"></td>
+
+                                             <td style="text-align:center;"><button (click)="Holidaydelete(rowIndex)" class="btn danger"><i class="fa fa-trash"></i></button></td> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div> -->
+                            <div class="box-footer">
+                                <button class="btn btn-primary pull-right" (click)="JournalSave()" id="load" [disabled]="Spinner || (getToFix(DRSum) != getToFix(CRSum)) || !JournalListAdd.length? true : false">
+                                   <p-progressSpinner *ngIf="TabSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                  <span *ngIf="!TabSpinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
+                                </button>
+                            </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

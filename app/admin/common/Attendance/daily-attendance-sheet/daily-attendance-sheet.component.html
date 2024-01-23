@@ -1,0 +1,258 @@
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <!-- <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div> -->
+            <div class="ui-g-6">
+                <!-- <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button> -->
+                <button type="button" pButton (click)="onReject()" label="Ok" class="ui-button-danger" style="margin-left: 70px;"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="re" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="SaveDailyAttendance()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <!-- <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)"> 
+                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                           
+                        </p-tabPanel> -->
+                        <div class="form-group">
+                        <div class="col-sm-3">
+                            <label class="control-label">Date  <sup class="text-danger">*</sup></label>
+                            <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Daily_Atten_Date'></ejs-datepicker>
+                        </div>
+                            <div class="col-sm-1">
+                                <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetEmpData()" id="load" [disabled]="seachSpinner">
+                          <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                          <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                       </button>
+                            </div>
+                            <div class="col-sm-2">
+                                <button class="btn btn-warning custombutton" data-toggle="modal" (click)="GetReCaptureData()" id="load" [disabled]="recaptureSpinner">
+                          <p-progressSpinner *ngIf="recaptureSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                          Re-Capture bio matric data
+                       </button>
+                            </div>
+                                <div class="col-sm-3" *ngIf="databaseName == 'GN_CCSAHA_Kolkata'">
+                                    <label class="control-label">Work Location <span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="DistWorkLocation" [(ngModel)]="SelectedDistWorkLocation" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Work_Location"></p-multiSelect>
+                                </div>
+                            <div class="databaseName == 'GN_CCSAHA_Kolkata' ? 'col-sm-2' : 'col-sm-5'">
+                                <span  class="fa fa-question-circle pull-right"  (click)="information()"></span>
+                            </div>
+                        </div>
+
+                            <div class="clearfix"></div>
+                            <div class="no-padding">
+                                <p-table *ngIf="EmpDailyAttenList.length" [value]="EmpDailyAttenList" [paginator]="true" [rows]="100" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]="['Emp_Code','Emp_Name','Atten_Type_ID']" [rowHover]="true" 
+                                          #dt1>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th width='3%'>Employee Code</th>
+                                            <th width='20%'>Employee Name</th>
+                                            <th *ngIf="databaseName == 'GN_CCSAHA_Kolkata'" width='9%'>Work Location</th>
+                                            <th width='4%'>Attendance Type</th>
+                                            <th width='33%'>In Time</th>
+                                            <th width='33%'>Out Time</th>
+                                            <th width='4%'>Working Minutes</th>
+                                            <th width='4%'>OT Minutes</th>
+                                            <th width='4%'>Remarks</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td>{{col.Emp_Code}}</td>
+                                            <td>{{col.Emp_Name}}</td>
+                                            <td *ngIf="databaseName == 'GN_CCSAHA_Kolkata'">{{col.Work_Location}}</td>
+                                            <td [class]="col.Atten_Type_ID" (click)="ShowAttendancePopup(col)">{{col.Atten_Type_ID}}</td>
+                                            <td><ejs-datetimepicker [(ngModel)]='col.Off_In_Time' [value]="col.Off_In_Time" [min]='col.InTimeminDate' [format]="'dd/MMM/yyyy hh:mm a'" (ngModelChange)="CalculateTime(col)" style="width: 250px;"></ejs-datetimepicker ></td>
+                                            <td><ejs-datetimepicker [(ngModel)]='col.Off_Out_Time' [value]="col.Off_Out_Time"  [min]='col.minDate' [format]="'dd/MMM/yyyy hh:mm a'" (ngModelChange)="CalculateTime(col)" style="width: 250px;"></ejs-datetimepicker ></td>
+                                            <td><input type="text" [name]="col.Emp_ID+2" [(ngModel)]='col.Work_Minute' [ngClass]="{'clearance' : flag}" class="form-control" style="width: 70px;" disabled/></td>
+                                            <td><input type="text" [name]="col.Emp_ID+3" [disabled]="col.OTdisabled" [(ngModel)]='col.OT_Minutes' [ngClass]="{'clearance' : flag}" class="form-control" style="width: 70px;" /></td>
+                                            <td><input type="text" [name]="col.Emp_ID+4" [(ngModel)]='col.Remarks' [ngClass]="{'clearance' : flag}" class="form-control" style="width: 140px;" /></td>
+                                        </tr>
+                                    </ng-template>
+
+                                </p-table>
+                            </div>
+                            
+                            <div class="table-responsive no-padding">
+                                <table class="table bidopen table-bordered" *ngIf="EmpDailyAttenList.length">
+                                    <thead>
+                                      <tr>
+                                            <th style=" width: 7% ;" *ngIf="Total_Present">Present</th>
+                                            <th style=" width: 8% ;" *ngIf="Total_Present_in_Weekly_Off">Present in Weekly Off</th>
+                                            <th style=" width: 8% ;" *ngIf="Total_Present_in_Public_Holiday">Present in Public Holiday</th>
+                                            <th style=" width: 7% ;" *ngIf="Total_Holiday">Holiday</th>
+                                            <th style=" width: 8% ;" *ngIf="Total_Public_Holiday">Public Holiday</th>
+                                            <th style=" width: 8% ;" *ngIf="Total_Weekly_Off">Weekly Off</th>
+                                            <th style=" width: 8% ;" *ngIf="Total_Sick_Leave">Sick Leave</th>
+                                            <th style=" width: 8% ;" *ngIf="Total_Casual_Leave">Casual Leave</th>
+                                            <th style=" width: 8% ;" *ngIf="Total_Prevlage_Leave">Prevlage Leave</th>
+                                            <th style=" width: 8% ;" *ngIf="Total_Compensatory_Off">Compensatory Off</th>
+                                            <th style=" width: 7% ;" *ngIf="Total_Absent">Absent</th>
+                                            <th style=" width: 7% ;" *ngIf="ESI">ESI</th>
+                                            <th style=" width: 8% ;" *ngIf="Leave_Without_Pay">Leave Without Pay</th>
+                                            <th style=" width: 7% ;" *ngIf="Total_Left">Left</th>
+                                            <th style=" width: 7% ;" *ngIf="Total_Late">Late</th>
+                                            <th style=" width: 7% ;" *ngIf="Half_Day">Half Day</th>
+                                            <th style=" width: 7% ;" *ngIf="Annual_Leave">Annual Leave</th>
+                                            <th style=" width: 7% ;" *ngIf="Out_Side_Duty">Out Side Duty</th>
+                                      </tr>
+                                      <tr>
+                                        <th style=" width: 7% ;" *ngIf="Total_Present">{{Total_Present ? Total_Present : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Total_Present_in_Weekly_Off">{{Total_Present_in_Weekly_Off ? Total_Present_in_Weekly_Off : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Total_Present_in_Public_Holiday">{{Total_Present_in_Public_Holiday ? Total_Present_in_Public_Holiday : 0}}</th>
+                                        <th style=" width: 7% ;" *ngIf="Total_Holiday">{{Total_Holiday ? Total_Holiday : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Total_Public_Holiday">{{Total_Public_Holiday ? Total_Public_Holiday : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Total_Weekly_Off">{{Total_Weekly_Off ? Total_Weekly_Off : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Total_Sick_Leave">{{Total_Sick_Leave ? Total_Sick_Leave : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Total_Casual_Leave">{{Total_Casual_Leave ? Total_Casual_Leave : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Total_Prevlage_Leave">{{Total_Prevlage_Leave ? Total_Prevlage_Leave : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Total_Compensatory_Off">{{Total_Compensatory_Off ? Total_Compensatory_Off : 0}}</th>
+                                        <th style=" width: 7% ;" *ngIf="Total_Absent">{{Total_Absent ? Total_Absent : 0}}</th>
+                                        <th style=" width: 7% ;" *ngIf="ESI">{{ESI ? ESI : 0}}</th>
+                                        <th style=" width: 8% ;" *ngIf="Leave_Without_Pay">{{Leave_Without_Pay ? Leave_Without_Pay : 0}}</th>
+                                        <th style=" width: 7% ;" *ngIf="Total_Left">{{Total_Left ? Total_Left : 0}}</th>
+                                        <th style=" width: 7% ;" *ngIf="Total_Late">{{Total_Late ? Total_Late : 0}}</th>
+                                        <th style=" width: 7% ;" *ngIf="Half_Day">{{Half_Day ? Half_Day : 0}}</th>
+                                        <th style=" width: 7% ;" *ngIf="Annual_Leave">{{Annual_Leave ? Annual_Leave : 0}}</th>
+                                        <th style=" width: 7% ;" *ngIf="Out_Side_Duty">{{Out_Side_Duty ? Out_Side_Duty : 0}}</th>
+                                  </tr>
+                              
+                                    </thead>
+                                    
+                                  </table>
+                            </div>
+
+                           <div class="row">
+                               <div class="col-sm-8">
+                                   <h5><strong></strong></h5>
+                               </div>
+                           </div>
+                           <div class="box-footer">
+                               <button *ngIf="EmpDailyAttenList.length" class="btn btn-primary pull-right" (click)="Showdialog()" id="load" [disabled]="Spinner || SaveButtonDisabled">
+                                   <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                   <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                   </button>
+                           </div>
+                        <!-- </p-tabPanel>
+                    </p-tabView> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FOR ONE EMPLOYEE (ONE CELL)  -->
+<p-dialog header="Update Attendance" [appendTo]="'body'" [(visible)]="AttendancePopup" [modal]="true" [responsive]="true" [minY]="70" [closeOnEscape]="true" [style]="{ width: '35%', minWidth: '350px' }">
+    <form name="attendancetypeForm" #attendancetypeForm="ngForm" novalidate>
+        <div class="col-sm-12">
+            <label>Employee Name:</label>&nbsp; {{employeename}}
+        </div>
+        <!-- <div class="col-sm-12">
+            <label>Date:</label>&nbsp; {{Doc_date}}
+
+        </div> -->
+        <div class="col-sm-12" *ngIf="databaseName != 'GN_JOH_HR'">
+            <label>Attendance Type <sup class="text-danger">*</sup></label>&nbsp;
+            <select name="attentype" #attentype="ngModel" [(ngModel)]="Atten_Type" [ngClass]="{'clearance': attendancetypeFormSubmitted && attentype?.errors?.required}" required>
+           <option  [ngValue]="undefined">Select</option>
+           <option *ngFor = "let option of AttendanceTypeList" value="{{option.Atten_Type_ID}}">
+             {{option.Atten_Type}}
+            </option>
+           </select>
+        </div>
+        <div class="col-sm-12" *ngIf="databaseName === 'GN_JOH_HR'">
+            <label>Attendance Type <sup class="text-danger">*</sup></label>&nbsp;
+            <select name="attentype" #attentype="ngModel" [(ngModel)]="Atten_Type" [ngClass]="{'clearance': attendancetypeFormSubmitted && attentype?.errors?.required}" required>
+           <option  [ngValue]="undefined">Select</option>
+           <option *ngFor = "let option of AttenTypelist" value="{{option.Atten_Type_ID}}">
+             {{option.Atten_Type}}
+            </option>
+           </select>
+        </div>
+    </form>
+        <hr>
+        <p-footer>
+            <div class="text-right">
+                <button type="button" (click)="AttendancePopup = false" class="btn btn-default"><i class="fa fa-time"></i>&nbsp; Close</button>&nbsp;
+                <button type="button" (click)="CheckApproveStatus(attendancetypeForm.form.valid)" class="btn btn-success">
+           <i class="fa fa-check"></i>&nbsp;  Done
+         </button>
+            </div>
+        </p-footer>
+</p-dialog>
+
+<!-- INFORMATION -->
+<p-dialog header="" appendTo="body" [(visible)]="DetailsModal" [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;" [minY]="80" 
+[maximizable]="true" [baseZIndex]="10000">
+
+<p><b>Type of Attendence:</b></p>
+<br>
+<p>Present</p>
+<p>Present in Weekly Off</p> 
+<p>Present in Public Holiday</p>
+<p>Holiday</p>
+<p>Public Holiday</p>
+<p>Weekly Off</p>
+<p>Sick Leave</p> 
+<p>Casual Leave</p>
+<p>Prevlage Leave</p>
+<p>Compensatory Off</p>
+<p>Absent</p>
+<p>Leave Without Pay</p>
+<p>Left</p>
+<br>
+<p>Present = Present + Present in Weekly Off + Present in Public Holiday</p>
+<br>
+<p>Holiday = Holiday+ Public Holiday + Weekly Off</p>
+<br>
+<p>Leave =Sick Leave + Casual Leave + Prevlage Leave + Compensatory Off</p>
+<br>
+<p>Without Pay = Leave Without Pay + Left</p>
+<br>
+<p>Paid Days = Present + Holiday + Leave</p>
+
+</p-dialog>

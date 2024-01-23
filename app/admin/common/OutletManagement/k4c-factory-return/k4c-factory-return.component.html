@@ -37,7 +37,7 @@
                                     </div>
                                     <div class="col-sm-2">
                                         <label class="control-label">Material Type <sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="mattype" #mattype="ngModel" [(ngModel)]="ObjBrowse.Material_Type" [ngClass]="{'clearance':SearchFactoryFormSubmit && mattype?.errors?.required}" required>
+                                        <select class="form-control" name="mattype" #mattype="ngModel" [(ngModel)]="ObjBrowse.Material_Type" [attr.disabled]="true" [ngClass]="{'clearance':SearchFactoryFormSubmit && mattype?.errors?.required}" required>
                                             <option  [ngValue]="undefined">Select</option>
                                      <option *ngFor = "let option of mattypelist" [value] ="option.Material_Type">
                                         {{option.Material_Type}}
@@ -45,7 +45,7 @@
                                 </select>
                                     </div>
 
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-2">
                                         <button class="btn btn-primary pull-right1" data-toggle="modal" (click)="GetSearchedlist(SearchFactoryForm.form.valid)" id="load" [disabled]="seachSpinner">
                                       <p-progressSpinner
                                         *ngIf="seachSpinner"
@@ -59,6 +59,12 @@
                                       ></span
                                       >&nbsp;Search
                                     </button>
+                                    </div>
+                                    <div class="col-sm-2">
+                                    <button class="btn btn-success custombutton" data-toggle="modal" (click)="exportoexcelbrowse('RTF_Browse')" id="load" [disabled]="expotSpinner || !Searchedlist.length">
+                                      <p-progressSpinner *ngIf="expotSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!expotSpinner" class="glyphicon glyphicon-save"></span>&nbsp;Export to excel
+                                   </button>
                                     </div>
                                 </div>
 
@@ -89,6 +95,7 @@
                                             <th>To Stock Point</th>
                                             <th>Total Qty</th>
                                             <th>Accepted Qty</th>
+                                            <th>Total Amount</th>
                                             <th>Transaction Date & Time</th>
                                         </tr>
                                     </ng-template>
@@ -101,6 +108,11 @@
                                                             <span class="caret"></span>
                                                         </button>
                                                     <ul class="dropdown-menu">
+                                                        <li *ngIf="col.Toyal_Qty === col.Accepted_Qty && $CompacctAPI.CompacctCookies.User_Type === 'A'">
+                                                            <a (click)="Refresh(col)">
+                                                                <i class="fa fa-refresh"></i> Refresh
+                                                            </a>
+                                                        </li>
                                                         <li>
                                                             <a (click)="view(col)">
                                                                 <i class="fa fa-fw fa-eye" aria-hidden="true"></i> View
@@ -122,12 +134,17 @@
                                                                 <i class="fa fa-print" aria-hidden="true"></i> Print
                                                             </a>
                                                         </li>
+                                                        <li *ngIf="col.CR_No === 'NA' && col.Bill_No === 'NA' && col.franchise === 'Y'">
+                                                            <a (click)="UpdateQty(col)">
+                                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update Accepted Qty
+                                                            </a>
+                                                        </li>
                                                         <li *ngIf="col.Accepted_Qty == 0  &&  $CompacctAPI.CompacctCookies.Cost_Cen_ID != col.To_Cost_Cen_ID">
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-trash" aria-hidden="true"></i> Delete
                                                             </a>
                                                         </li>
-                                                        <li *ngIf='col.CR_No != "NA" && $CompacctAPI.CompacctCookies.User_Type != "U"'>
+                                                        <li *ngIf='col.CR_No != "NA" && $CompacctAPI.CompacctCookies.User_Type != "U" && !col.E_Invoice_PDF_Link'>
                                                             <a (click)="dataforregeneratingcrnote(col)">
                                                                 <i class="fa fa-bars" aria-hidden="true"></i> Regenerate Bill
                                                             </a>
@@ -153,6 +170,7 @@
                                             <td>{{col.To_godown_name}}</td>
                                             <td>{{col.Toyal_Qty}}</td>
                                             <td>{{col.Accepted_Qty}}</td>
+                                            <td>{{col.Total_Amount}}</td>
                                             <td>{{col.Transaction_Date_Time}}</td>
                                         </tr>
                                     </ng-template>
@@ -292,7 +310,12 @@
                                             <td>{{col.Batch_No_Show}}</td>
                                             <td>{{col.Return_Reason}}</td>
                                             <!-- <td>{{col.Qty}}</td> -->
-                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Qty' (ngModelChange)='getbatchQty(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                            <td *ngIf="ObjBrowse.Material_Type === 'Finished' || 'undefined' && ObjBrowse.Material_Type != 'Store Item'">
+                                                <input class="form-control" type="text" onkeydown="if(event.key==='.'){event.preventDefault();}" oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');" [name]="col.Product_ID" [(ngModel)]='col.Qty' (ngModelChange)='getbatchQty(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" style="width: 71px;">
+                                            </td>
+                                            <td *ngIf="ObjBrowse.Material_Type === 'Store Item'">
+                                                <input type="text" [name]="col.Product_ID" [(ngModel)]='col.Qty' (ngModelChange)='getbatchQty(col)' [ngClass]="{'clearance' : flag}" CompacctDigitonly="true" class="form-control" style="width: 71px;" />
+                                            </td>
                                             <td>{{col.Accepted_Qty}}</td>
                                             <!-- <td><input type="text"
                                                   [name]="col.Product_ID"
@@ -385,7 +408,12 @@
                                                             [disabled] = "Qtyflag"
                                                             class="form-control" style="width: 71px;" /></td> -->
                                             <!-- <td>{{col.Accepted_Qty}}</td> -->
-                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Accepted_Qty' CompacctDigitonly="true" (ngModelChange)="changeRemarks(col)" class="form-control" style="width: 71px;" /></td>
+                                            <td *ngIf="ObjBrowse.Material_Type === 'Finished' || 'undefined' && ObjBrowse.Material_Type != 'Store Item'">
+                                                <input class="form-control" type="text" onkeydown="if(event.key==='.'){event.preventDefault();}" oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');" [name]="col.Product_ID" [(ngModel)]='col.Accepted_Qty' (ngModelChange)="changeRemarks(col)" CompacctDigitonly="true" style="width: 71px;">
+                                            </td>
+                                            <td *ngIf="ObjBrowse.Material_Type === 'Store Item'">
+                                                <input type="text" [name]="col.Product_ID" [(ngModel)]='col.Accepted_Qty' CompacctDigitonly="true" (ngModelChange)="changeRemarks(col)" class="form-control" style="width: 71px;" />
+                                            </td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Remarks' [disabled]="col.Accepted_Qty == col.Qty" class="form-control" style="width: 200px;" /></td>
                                             <td>{{col.Outlet_Remarks}}</td>
 
@@ -428,7 +456,7 @@
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="control-label">To Stock Point <sup class="text-danger">*</sup></label>
-                                            <select class="form-control" name="ToGodown" #ToGodown="ngModel" [(ngModel)]="ObjSaveForm.Godown_ID" [ngClass]="{'clearance': RFactoryaddFormSubmitted && ToGodown?.errors?.required}" required>
+                                            <select class="form-control" name="ToGodown" #ToGodown="ngModel" [(ngModel)]="ObjSaveForm.Godown_ID" [disabled]="true" [ngClass]="{'clearance': RFactoryaddFormSubmitted && ToGodown?.errors?.required}" required>
                                   <option  [ngValue]="undefined">Select</option>
                                     <option *ngFor = "let option of toGodownList" value="{{option.godown_id}}">
                                       {{option.godown_name}}
@@ -437,8 +465,8 @@
                                         </div>
 
                                         <div class="col-sm-3">
-                                            <label class="control-label">Material Type <sup class="text-danger">*</sup></label>
-                                            <select class="form-control" name="materialtype" #materialtype="ngModel" [(ngModel)]="ObjSaveForm.Material_Type" (ngModelChange)="getselectproduct()" [ngClass]="{'clearance':RFactoryaddFormSubmitted && materialtype?.errors?.required}" [disabled]="MTdisabled"
+                                             <label class="control-label">Material Type <sup class="text-danger">*</sup></label>  <!-- [disabled]="MTdisabled" -->
+                                            <select class="form-control" name="materialtype" #materialtype="ngModel" [(ngModel)]="ObjSaveForm.Material_Type" (ngModelChange)="getselectproduct()" [ngClass]="{'clearance':RFactoryaddFormSubmitted && materialtype?.errors?.required}" [disabled]="true"
                                                 required>
                                         <option  [ngValue]="undefined">Select</option>
                                  <option *ngFor = "let option of mattypelist" [value] ="option.Material_Type">
@@ -474,7 +502,11 @@
                                             <label class="control-label">Available Qty <sup class="text-danger">*</sup></label>
                                             <input class="form-control" name="AvlQty" #AvlQty="ngModel" [(ngModel)]="ObjProductaddForm.Avl_Qty" CompacctDigitonly="true" disabled="true" [ngClass]="{'clearance':RFactoryaddFormSubmitted && AvlQty?.errors?.required}">
                                         </div> -->
-                                        <div class="col-sm-1">
+                                        <div class="col-sm-1" *ngIf="ObjSaveForm.Material_Type === 'Finished' || 'undefined' && ObjSaveForm.Material_Type != 'Store Item'">
+                                            <label class="control-label">Qty <sup class="text-danger">*</sup></label>
+                                            <input class="form-control" onkeydown="if(event.key==='.'){event.preventDefault();}" oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');" name="Qty" #Qty="ngModel" [(ngModel)]="ObjProductaddForm.Stock_Qty" CompacctDigitonly="true" [ngClass]="{'clearance':RFactoryaddFormSubmitted && Qty?.errors?.required}" required>
+                                        </div>
+                                        <div class="col-sm-1" *ngIf="ObjSaveForm.Material_Type === 'Store Item'">
                                             <label class="control-label">Qty <sup class="text-danger">*</sup></label>
                                             <input class="form-control" name="Qty" #Qty="ngModel" [(ngModel)]="ObjProductaddForm.Stock_Qty" CompacctDigitonly="true" [ngClass]="{'clearance':RFactoryaddFormSubmitted && Qty?.errors?.required}" required>
                                         </div>

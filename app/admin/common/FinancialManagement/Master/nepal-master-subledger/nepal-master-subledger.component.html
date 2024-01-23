@@ -822,10 +822,10 @@
                                                 <input
                                                     class="form-control"
                                                     type="text"
-                                                    name="Location_Name"
+                                                    name="LocationName"
                                                     placeholder="Location Name"
-                                                    #Location_Name="ngModel"
-                                                    [ngClass]="{'clearance': SubledgerLocationSubmitted &&  Location_Name?.errors?.required}"
+                                                    #LocationName="ngModel"
+                                                    [ngClass]="{'clearance': SubledgerLocationSubmitted &&  LocationName?.errors?.required}"
                                                     [(ngModel)]="ObjLocation.Location_Name"
                                                     required/>
                                             </div>
@@ -947,21 +947,18 @@
                                                 <option value="Plant Manager">Plant Manager</option>
                                                 <option value="Accounts">Accounts</option>
                                                 <option value="Owner">Owner</option>
+                                                <option value="Other">Other</option>
                                                 </select>
                                             </div>
                                             <div class="col-sm-4">
                                                 <label>Location<sup class="text-danger">*</sup></label>
-                                                <select class="form-control" 
-                                                name="Location" 
-                                                #Location="ngModel" 
-                                                [(ngModel)]="ObjContact.Location_ID" 
-                                                [ngClass]="{clearance: SubledgerContactPersonSubmitted && Location.errors?.required}"
-                                                required>
+                                                <select class="form-control" name="Location" #Location="ngModel" [(ngModel)]="ObjContact.Location_ID"
+                                                    [ngClass]="{clearance: SubledgerContactPersonSubmitted && Location.errors?.required}" required>
                                                     <option [ngValue]="undefined">Select</option>
-                                                    <option *ngFor="let option of LocationList" value="{{ option.Location_ID  }}">
-                                                    {{ option.Location_Name}}
+                                                    <option *ngFor="let item of LocationList" value="{{item.Location_ID}}">                              
+                                                       {{item.Location_Name}}
                                                     </option>
-                                                </select>
+                                                </select>                                                           
                                             </div>
                                             <div class="col-sm-4">
                                                 <label>Email<span class="text-danger">*</span></label>
@@ -981,12 +978,22 @@
                                                     class="form-control" 
                                                     name="Mobile_No" 
                                                     #Mobile_No="ngModel" 
-                                                    CompacctDigitonly="true" 
+                                                    pattern="[0-9]+"
                                                     [ngClass]="{clearance: (SubledgerContactPersonSubmitted && Mobile_No.errors?.required) ||
-                                                        (Mobile_No.errors?.minlength && Mobile_No.touched)}"
-                                                    [(ngModel)]="ObjContact.Contact_Number" placeholder="Mobile Number" minlength="10" maxlength="10" required />
+                                                        (Mobile_No.errors?.pattern && Mobile_No.touched)}"
+                                                    [(ngModel)]="ObjContact.Contact_Number" placeholder="Mobile Number" required />
                                             </div>
                                             <div class="col-sm-4">
+                                                <label>Country Code<span class="text-danger"></span></label>
+                                                <input 
+                                                    class="form-control" 
+                                                    name="CountryCode" 
+                                                    #CountryCode="ngModel" 
+                                                    [(ngModel)]="ObjContact.Country_Code" placeholder="Country Code" />
+                                            </div>
+                                            <!-- <div class="col-sm-4"> -->
+                                            <div class="box-footer">
+                                            <div class="pull-right">
                                                 <button class="btn btn-primary custombutton" (click)='SaveContactForm(ContactDetailsForm.form.valid)'>
                                                     <i class="glyphicon glyphicon-plus"></i>&nbsp;{{ ContactEditFlag ? 'UPDATE' : 'ADD'}}
                                                 </button>
@@ -994,6 +1001,8 @@
                                                     <i class="fa fa-fw fa-ban"></i>&nbsp;CANCEL
                                                 </button>
                                             </div>
+                                            </div>
+                                            <!-- </div> -->
                                         </div>    
                                         <div class="form-group" style="margin-top:1em;">                        
                                             <table class="table table-bordered table-striped">
@@ -1004,7 +1013,9 @@
                                                         <th nowrap>Location</th>
                                                         <th nowrap>Email</th>
                                                         <th nowrap>Contact No</th>
-                                                        <th>Edit</th>
+                                                        <th nowrap>Country Code</th>
+                                                        <!-- <th>Edit</th> -->
+                                                        <th  class="text-center">Action</th>
                                                         <!-- <th nowrap>Active / Deactive</th> -->
                                                     </tr>
                                                 </thead>
@@ -1015,9 +1026,18 @@
                                                         <td>{{obj.Location_ID ? getLocationName(obj.Location_ID) : '-'}}</td>
                                                         <td>{{obj.Email_ID}}</td>
                                                         <td>{{obj.Contact_Number}}</td>
-                                                        <td class="text-center">
+                                                        <td>{{obj.Country_Code}}</td>
+                                                        <!-- <td class="text-center">
                                                             <a *ngIf='!ContactEditFlag' class="btn btn-sm btn-primary" (click)='EditContactList(i)'>
                                                                 <i class='fa fa-fw fa-pencil'></i>&nbsp;Edit
+                                                            </a>
+                                                        </td> -->
+                                                        <td class="text-center">
+                                                            <a *ngIf='!ContactEditFlag' class="btn btn-xs btn-primary" (click)='EditContactList(i)'>
+                                                                <i class='fa fa-fw fa-pencil'></i>&nbsp;
+                                                            </a>&nbsp;&nbsp;
+                                                            <a  class="btn btn-xs btn-pinterest" (click)='DeleteContact(obj)'>
+                                                                <i class='fa fa-fw fa-trash'></i>&nbsp;
                                                             </a>
                                                         </td>
                                                         <!-- <td>

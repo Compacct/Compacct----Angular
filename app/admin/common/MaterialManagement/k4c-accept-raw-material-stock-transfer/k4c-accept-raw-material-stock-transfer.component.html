@@ -1,0 +1,292 @@
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    
+                            <form name="RawMaterialIssueSearchForm" #RawMaterialIssueSearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">To Cost Cent</label>
+                                        <select class="form-control" name="BTo_Cost_Cen_ID" #BTo_Cost_Cen_ID="ngModel" [(ngModel)]="ObjBrowse.To_Cost_Cen_ID" [ngClass]="{'clearance': RawMaterialIssueSearchFormSubmitted && BTo_Cost_Cen_ID?.errors?.required}" (change)="GetBToGodown()" [attr.disabled]="TBCdisableflag? true: null">
+                              <option  [ngValue]="undefined">Select</option>
+                              <option  *ngFor="let option of ToBcostcenlist" value="{{option.Cost_Cen_ID}}">
+                                {{option.Cost_Cen_Name}}
+                              </option>
+                        </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">To Stock Point</label>
+                                        <select class="form-control" name="BTo_godown_id" #BTo_godown_id="ngModel" [(ngModel)]="ObjBrowse.To_godown_id" [ngClass]="{'clearance': RawMaterialIssueSearchFormSubmitted && BTo_godown_id?.errors?.required}" [attr.disabled]="TBGdisableflag? true: null">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  *ngFor="let option of ToBGodownList" value="{{option.godown_id}}">
+                                {{option.godown_name}}
+                              </option>
+                      </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="col-sm-3">
+                                            <button class="btn btn-primary" style="margin-top: 28px;margin-left: 85%;" data-toggle="modal" (click)="GetSearchedList(RawMaterialIssueSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                      <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                   </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="table-responsive no-padding">
+                                <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Doc_No','Doc_Date','From_Godown_Name','To_Godown_Name','Qty']" [rowHover]="true"
+                                    #dt>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-1" *ngIf="Searchedlist.length">
+                                                <button class="btn btn-success custombutton1" (click)="exportoexcel(Searchedlist,'Raw_Material_Stock_Transfer')">
+                                                   <span  class="glyphicon glyphicon-save"></span> Export to Excel
+                                                </button>
+                                            </div>
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th>Doc No</th>
+                                            <th>Doc Date</th>
+                                            <th>From Stock Point</th>
+                                            <th>To Stock Point</th>
+                                            <th>Total Qty</th>
+                                            <th>Accepted Qty</th>
+                                            <th>Total Amount</th>
+                                            <th>Created By</th>
+                                            <th>Accepted By</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr [class]='col.Qty != col.Accepted_Qty ? "text-red-active" : ""'>
+
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                <span class="caret"></span>
+                                                            </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="View(col)">
+                                                                <i class="fa fa-fw fa-eye"></i> View
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Qty != col.Accepted_Qty && $CompacctAPI.CompacctCookies.User_Type === 'A' && $CompacctAPI.CompacctCookies.Del_Right === 'Y'">
+                                                            <a (click)="AcceptST(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> Accept stock transfer
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td>{{col.Doc_No }}</td>
+                                            <td>{{col.Doc_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td>{{col.From_Godown_Name}}</td>
+                                            <td>{{col.To_Godown_Name}}</td>
+                                            <td>{{col.Qty}}</td>
+                                            <td>{{col.Accepted_Qty}}</td>
+                                            <td>{{col.Total_Amount ? col.Total_Amount : '-'}}</td>
+                                            <td>{{col.Store_User ? col.Store_User : '-'}}</td>
+                                            <td>{{col.Accept_User ? col.Accept_User : '-'}}</td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                    
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- VIEW POPUP -->
+<p-dialog header="Details" [appendTo]="'body'" [(visible)]="ViewPoppup" [modal]="true" [responsive]="true" [minY]="70" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '80%', minWidth: '300px'}">
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Doc No</label>
+            <div class="label-t">{{Doc_No}}</div>
+        </div>
+
+        <div class="col-sm-3">
+            <label class="control-label">Date</label>
+            <div class="label-t">{{Doc_date | date :"dd/MMM/yyyy"}}</div>
+
+        </div>
+        <!-- </div>
+    <div class="form-group"> -->
+        <div class="col-sm-3">
+            <label class="control-label">From Stock Point</label>
+            <div class="label-t">{{Formstockpoint}}</div>
+
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">To Stock Point</label>
+            <div class="label-t">{{Tostockpoint}}</div>
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="table-responsive table-id no-padding" style="overflow-x: hidden !important;">
+        <p-table [value]="Viewlist" [globalFilterFields]='["Product_Type","Product_Description","UOM","Stock_Qty","Batch_No","Batch_Qty","Qty"]' [rowHover]="true" [autoLayout]="true" #dt2>
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-3 pull-left" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                    </div>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Product Type</th>
+                    <th>Product Description</th>
+                    <th>UOM</th>
+                    <!-- <th>Stock Qty</th>
+                    <th>Batch No</th>
+                    <th>Batch Qty</th> -->
+                    <th>Qty</th>
+                    <th>Accepted Qty</th>
+                    <th>Remarks</th>
+                    <th>Store Remarks</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col>
+                <tr>
+
+                    <td>{{col.Product_Type}}</td>
+                    <td>{{col.Product_Description }}</td>
+                    <td>{{col.UOM}}</td>
+                    <!-- <td>{{col.Stock_Qty}}</td>
+                    <td>{{col.Batch_No}}</td>
+                    <td>{{col.Batch_Qty}}</td> -->
+                    <td>{{col.Qty}}</td>
+                    <td>{{col.Accepted_Qty}}</td>
+                    <td>{{col.Remarks}}</td>
+                    <td>{{col.Store_Remarks}}</td>
+
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+
+    <p-footer>
+        <button type="button" (click)="ViewPoppup = false" class="btn btn-default">
+<i class="fa fa-close"></i>&nbsp;  Close
+</button>
+    </p-footer>
+</p-dialog>
+
+<!-- EDIT POPUP  -->
+<p-dialog header="Edit Details" [appendTo]="'body'" [(visible)]="AcceptChallanPoppup" [modal]="true" [baseZIndex]="9999" [responsive]="true" [minY]="70" [maximizable]="true" [closeOnEscape]="true" [style]="{width: '80%', minWidth: '300px'}">
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Date</label>
+            <div class="label-t">{{Doc_date | date :"dd/MMM/yyyy"}}</div>
+
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Doc No</label>
+            <div class="label-t">{{Doc_No}}</div>
+        </div>
+
+        <div class="col-sm-3">
+            <label class="control-label">From Cost Center</label>
+            <div class="label-t">{{From_outlet}}</div>
+
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">To Stock Point</label>
+            <div class="label-t">{{To_Godown_ID}}</div>
+
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+        <p-table [value]="editList" [globalFilterFields]="['Product_Description','Batch_No','Accepted_Qty','Qty']" [rowHover]="true" [autoLayout]="true" #dt4>
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt4.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                    </div>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Product Type</th>
+                    <th>Product Description</th>
+                    <th>UOM</th>
+                    <th>Qty</th>
+                    <th>Accepted Qty</th>
+                    <th style="width: 200px;">Remarks</th>
+                    <th>Store Remarks</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                    <td>{{col.Product_Type}}</td>
+                    <td>{{col.Product_Description}}</td>
+                    <td>{{col.UOM}}</td>
+                    <td>{{col.Qty}}</td>
+                    <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Accepted_Qty' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                    <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Remarks' [disabled]="col.Accepted_Qty == col.Qty" [ngClass]="{'clearance': CheckRemarks(col)}" class="form-control" style="width: 200px;" /></td>
+                    <td>{{col.Store_Remarks}}</td>
+                </tr>
+                <tr *ngIf='i === (editList.length - 1)'>
+                    <td colspan="3" class="text-right">Total</td>
+                    <td>{{getTotalValue('Qty')}}</td>
+                    <td>{{getTotalValue('Accepted_Qty')}}</td>
+                    <td colspan="2"></td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+
+    <p-footer>
+        <button type="button" (click)="Accept()" class="btn btn-success">
+       <i class="fa fa-check"></i>&nbsp;  Update
+     </button>
+    </p-footer>
+</p-dialog>

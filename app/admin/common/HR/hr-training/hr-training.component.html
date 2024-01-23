@@ -1,0 +1,318 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+	<ng-template let-message pTemplate="message">
+		<div style="text-align: center">
+			<i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+			<h3>{{ message.summary }}</h3>
+			<p>{{ message.detail }}</p>
+		</div>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-6">
+				<button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+			</div>
+			<div class="ui-g-6">
+				<button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+			</div>
+		</div>
+	</ng-template>
+</p-toast>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box box-primary">
+			<div class="form-horizontal">
+				<div class="box-body">
+					<p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+						<p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[0]" leftIcon="glyphicon glyphicon-list-alt">
+							<p-table
+								[value]="browseTableData"
+								[paginator]="true"
+								[rows]="10"
+								[rowHover]="true"
+								[autoLayout]="true"
+								sortMode="multiple"
+								[rowsPerPageOptions]="[10, 20, 50, 100, 200, 300]"
+								[globalFilterFields]="browseTableFilterField"
+								[rowHover]="true"
+								#dt1>
+								<ng-template pTemplate="caption">
+									<div class="row">
+										<div class="col-sm-3 pull-right" style="text-align: right">
+											<input
+												type="text"
+												pInputText
+												size="50"
+												placeholder="Search"
+												(input)="dt1.filterGlobal($event.target.value, 'contains')"
+												class="searchInput form-control" />
+										</div>
+									</div>
+								</ng-template>
+								<ng-template pTemplate="header">
+									<tr>
+										<th style="width: 5em">Action</th>
+										<th style="text-align: center" nowrap>Training From Date</th>
+										<th style="text-align: center" nowrap>Training To Date</th>
+										<th style="text-align: center" nowrap>Training Mode</th>
+										<th style="text-align: center" nowrap>Learning Object</th>
+										<th style="text-align: center" nowrap>Deferred</th>
+										<th style="text-align: center" nowrap>Deferred Remarks</th>
+									</tr>
+								</ng-template>
+								<ng-template pTemplate="body" let-col>
+									<tr>
+										<td>
+											<div class="dropdown">
+												<button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height: 27px">
+													<i class="fa fa-fw fa-bars"></i>
+													<span class="caret"></span>
+												</button>
+												<ul class="dropdown-menu">
+													<li>
+														<a (click)="Edit(col)"> <i class="fa fa-fw fa-edit"></i> Edit </a>
+													</li>
+												</ul>
+											</div>
+										</td>
+										<td style="text-align: center" nowrap>{{ col.Training_From_Date | date : "dd/MMM/yyyy" }}</td>
+										<td style="text-align: center" nowrap>{{ col.Training_To_Date | date : "dd/MMM/yyyy" }}</td>
+										<td style="text-align: center" nowrap>{{ col.Training_Mode ? col.Training_Mode : "-" }}</td>
+										<td style="text-align: center" nowrap>{{ col.Learning_Object ? col.Learning_Object : "-" }}</td>
+										<td style="text-align: center" nowrap>{{ col.Deferred_Or_Not ? col.Deferred_Or_Not : "-" }}</td>
+										<td style="text-align: center" nowrap>{{ col.Deferred_Remarks ? col.Deferred_Remarks : "-" }}</td>
+									</tr>
+								</ng-template>
+								<ng-template pTemplate="paginatorright" let-state>
+									Showing {{ state.first + 1 }} of {{ state.first + state.rows }} of {{ state.totalRecords }}
+								</ng-template>
+							</p-table>
+						</p-tabPanel>
+						<p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+							<form name="HR_Training_Form" #HR_Training_Form="ngForm">
+								<div class="form-group">
+									<div class="col-sm-4">
+										<label class="control-label">Date Range<sup class="text-danger">*</sup></label>
+										<app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate" [DefaultEnable]="TableArray.length"></app-compacct-daterangepicker>
+									</div>
+									<div class="col-sm-4">
+										<label class="control-label">Training Mode<sup class="text-danger">*</sup></label>
+										<select
+											name="traning_Mode"
+											class="form-control"
+											#traning_Mode="ngModel"
+											[(ngModel)]="objTraining.Training_Mode"
+											[ngClass]="{ clearance: HR_Training_From_Submit && traning_Mode?.errors?.required }"
+											[disabled]="TableArray.length"
+											required>
+											<option [ngValue]="undefined">Select</option>
+											<option value="Online">Online</option>
+											<option value="On-the-job observation">On-the-job observation</option>
+											<option value="In Clinic">In Clinic</option>
+											<option value="Classroom training">Classroom training</option>
+											<option value="eLearning">eLearning</option>
+											<option value="Offline">Offline</option>
+										</select>
+									</div>
+									<div class="col-sm-4">
+										<label class="control-label">Training Details<sup class="text-danger">*</sup></label>
+										<select
+											name="traning_Details"
+											class="form-control"
+											#traning_Details="ngModel"
+											[(ngModel)]="objTraining.Training_Details"
+											[ngClass]="{ clearance: HR_Training_From_Submit && traning_Details?.errors?.required }"
+											[disabled]="TableArray.length"
+											required>
+											<option [ngValue]="undefined">Select</option>
+											<option value="Total Training">Total Training</option>
+											<option value="Special Training">Special Training</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-4">
+										<label class="control-label">Department<sup class="text-danger">*</sup></label>
+										<p-dropdown
+											[options]="departmentList"
+											name="DeptLists"
+											#DeptLists="ngModel"
+											[(ngModel)]="objTraining.Dept_ID"
+											[showClear]="true"
+											[emptyFilterMessage]="'No Department Found'"
+											[filter]="true"
+											filterBy="label,value"
+											[resetFilterOnHide]="true"
+											[placeholder]="'Select Department'"
+											[virtualScroll]="true"
+											itemSize="30"
+											[disabled]="TableArray.length"
+											(onChange)="callDropDowns(objTraining.Dept_ID, objTraining.Location_ID)"
+											[styleClass]="HR_Training_From_Submit && DeptLists.errors?.required ? 'clearance' : ''"
+											[required]="true">
+										</p-dropdown>
+									</div>
+									<div class="col-sm-4">
+										<label class="control-label">Location<sup class="text-danger">*</sup></label>
+										<p-dropdown
+											[options]="locationList"
+											name="locationLists"
+											#locationLists="ngModel"
+											[(ngModel)]="objTraining.Location_ID"
+											[showClear]="true"
+											[emptyFilterMessage]="'No Location Found'"
+											[filter]="true"
+											filterBy="label,value"
+											[resetFilterOnHide]="true"
+											[placeholder]="'Select Location'"
+											[virtualScroll]="true"
+											itemSize="30"
+											[disabled]="TableArray.length"
+											(onChange)="callDropDowns(objTraining.Dept_ID, objTraining.Location_ID)"
+											[styleClass]="HR_Training_From_Submit && locationLists.errors?.required ? 'clearance' : ''"
+											[required]="true">
+										</p-dropdown>
+									</div>
+									<div class="col-sm-4">
+										<label class="control-label">Trainer Name<sup class="text-danger">*</sup></label>
+										<p-dropdown
+											[options]="TrainerList"
+											name="TrainerLists"
+											#TrainerLists="ngModel"
+											[(ngModel)]="objTraining.Emp_Trainer_ID"
+											[showClear]="true"
+											[emptyFilterMessage]="'No Trainer Found'"
+											[filter]="true"
+											filterBy="label,value"
+											[resetFilterOnHide]="true"
+											[placeholder]="'Select Trainer'"
+											[virtualScroll]="true"
+											itemSize="30"
+											[styleClass]="HR_Training_From_Submit && TrainerLists.errors?.required ? 'clearance' : ''"
+											[required]="true">
+										</p-dropdown>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-4">
+										<label class="control-label">Attendees Name<sup class="text-danger">*</sup></label>
+										<p-multiSelect
+											[options]="AttandeesList"
+											defaultLabel="Select Attendees"
+											[filter]="true"
+											filterBy="label,value.name"
+											name="Attendees_Name"
+											#Attendees_Name="ngModel"
+											[(ngModel)]="selectedEmp_Attendees_ID"
+											[ngClass]="{clearance: HR_Training_From_Submit && Attendees_Name?.errors?.required }" 
+											[styleClass]="'compacct-multiselect'" 
+											[required]="true"
+											>
+										</p-multiSelect>
+									</div>
+									<div class="col-sm-4">
+										<label class="control-label">Learning Object<sup class="text-danger">*</sup></label>
+										<input
+											type="text"
+											class="form-control"
+											placeholder="Learning Object"
+											name="Learning_Object"
+											#Learning_Object="ngModel"
+											[(ngModel)]="objTraining.Learning_Object"
+											[ngClass]="{ clearance: HR_Training_From_Submit && Learning_Object?.errors?.required }"
+											[disabled]="TableArray.length"
+											required />
+									</div>
+									<div class="col-sm-4">
+										<button class="btn btn-primary pull-right custom-btn" (click)="AddRow(HR_Training_Form.form.valid)" id="load">
+											<span *ngIf="!Spinner" class="glyphicon glyphicon-plus"></span>Add
+										</button>
+									</div>
+								</div>
+							</form>
+							<br />
+							<br />
+							<p-table
+								[value]="TableArray"
+								[paginator]="true"
+								[rows]="10"
+								[rowHover]="true"
+								[autoLayout]="true"
+								sortMode="multiple"
+								[rowHover]="true"
+								#dt>
+								<ng-template pTemplate="header">
+									<tr>
+										<th style="text-align: center" nowrap>Training Mode</th>
+										<th style="text-align: center" nowrap>Training Details</th>
+										<th style="text-align: center" nowrap>Department</th>
+										<th style="text-align: center" nowrap>Location</th>
+										<th style="text-align: center" nowrap>Trainer</th>
+										<th style="text-align: center" nowrap>Attandees Name</th>
+										<th style="text-align: center" nowrap>Learning Object</th>
+										<th style="text-align: center; width: 5rem" nowrap>Delete</th>
+									</tr>
+								</ng-template>
+								<ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+									<tr>
+										<td style="text-align: center" nowrap>{{ col.Training_Mode ? col.Training_Mode : "-" }}</td>
+										<td style="text-align: center" nowrap>{{ col.Training_Details ? col.Training_Details : "-" }}</td>
+										<td style="text-align: center" nowrap>{{ col.Dept_Name ? col.Dept_Name : "-" }}</td>
+										<td style="text-align: center" nowrap>{{ col.Location_Name ? col.Location_Name : "-" }}</td>
+										<td style="text-align: center" nowrap>{{ col.Emp_Trainer_Name ? col.Emp_Trainer_Name : "-" }}</td>
+										<td style="text-align: center" nowrap>{{ col.Emp_Attendees_Name ? col.Emp_Attendees_Name : "-" }}</td>
+										<td style="text-align: center" nowrap>{{ col.Learning_Object ? col.Learning_Object : "-" }}</td>
+										<td style="text-align: center" nowrap>
+											<button type="button" class="btn btn-sm btn-danger" (click)="deleteTableRow(rowIndex)">
+												<span class="glyphicon glyphicon-trash"></span>
+											</button>
+										</td>
+									</tr>
+								</ng-template>
+							</p-table>
+							<form name="Save_Form" #Save_Form="ngForm">
+								<div class="form-group" *ngIf="editMode">
+									<div class="col-sm-4">
+										<label class="control-label">Deferred<sup class="text-danger">*</sup></label>
+										<select
+											name="Deferred"
+											class="form-control"
+											#Deferred="ngModel"
+											[(ngModel)]="Deferred_Or_Not"
+											[ngClass]="{ clearance: Save_From_Submit && Deferred?.errors?.required }"
+											>
+											<option [ngValue]="''">Select</option>
+											<option value="Yes">Yes</option>
+											<option value="No">No</option>
+										</select>
+									</div>
+									<div class="col-sm-4">
+										<label class="control-label">Deferred Remarks<sup class="text-danger">*</sup></label>
+										<input
+											type="text"
+											class="form-control"
+											placeholder="Deferred Remarks"
+											name="DeferredRemarks"
+											#DeferredRemarks="ngModel"
+											[(ngModel)]="Deferred_Remarks"
+											[ngClass]="{ clearance: Save_From_Submit && DeferredRemarks?.errors?.required }"
+											/>
+									</div>
+									<div class="col-sm-4"></div>
+								</div>
+								<div class="form-group">
+									<button class="btn btn-primary pull-right" (click)="SaveFormData(Save_Form.form.valid)" id="load" [disabled]="Spinner">
+										<p-progressSpinner
+											*ngIf="Spinner"
+											[style]="{ width: '15px', height: '15px' }"
+											strokeWidth="8"
+											animationDuration=".5s"></p-progressSpinner>
+										<span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{ buttonname }}
+									</button>
+								</div>
+							</form>
+						</p-tabPanel>
+					</p-tabView>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

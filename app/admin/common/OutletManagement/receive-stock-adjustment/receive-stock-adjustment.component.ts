@@ -55,6 +55,9 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
 
   batchreq = false;
   customBacth= undefined;
+  del_doc_no = undefined;
+  updexp_pop = false;
+  del_pop = false;
   constructor(
     private Header: CompacctHeader,
     private $http : HttpClient,
@@ -283,6 +286,8 @@ export class ReceiveStockAdjustmentComponent implements OnInit {
       //if(noexpirydate.length) {
       //if(this.ExpdatimelistWrtBatch = []){
       if(data[0].Column1 === "Not Found") {
+      this.updexp_pop = true;
+      this.del_pop = false;  
       this.compacctToast.clear();
       this.compacctToast.add({
       key: "c",
@@ -544,6 +549,51 @@ const obj = {
       this.ViewPoppup = true;
     })
   }
+  DeleteAdjustment(row){
+    // console.log("delete",row)
+     this.del_doc_no = undefined;
+     if (row.Doc_No) {
+      this.del_pop = true;
+      this.updexp_pop = false;
+      this.del_doc_no = row.Doc_No;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+   }
+    onConfirm2(){
+     if(this.del_doc_no){
+       const TempObj = {
+         Doc_No : this.del_doc_no
+       }
+       const obj = {
+         "SP_String": "SP_Add_ON",
+         "Report_Name_String": "Delete_Stock_Adjustment",
+         "Json_Param_String": JSON.stringify([TempObj])
+       }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        // console.log("del Data===", data[0].Column1)
+          if (data[0].Column1 === "Done"){
+            this.onReject();
+            this.GetSearchedList(true);
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: "Doc No.: " + this.del_doc_no.toString(),
+              detail: "Succesfully Deleted"
+            });
+            this.clearData();
+          }
+        })
+     }
+   }
+   
   clearData(){
     if(this.$CompacctAPI.CompacctCookies.User_Type != "A"){
       this.ObjReceiveStockAd.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;

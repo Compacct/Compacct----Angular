@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MessageService } from "primeng/api";
 import {CompacctHeader} from "../../../shared/compacct.services/common.header.service"
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, JsonpClientBackend } from '@angular/common/http';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
 import { DatePickerComponent, DateTimePickerModule, TimePickerComponent } from "@syncfusion/ej2-angular-calendars";
@@ -22,23 +22,24 @@ declare var $:any;
   encapsulation: ViewEncapsulation.Emulated
 })
 export class K4cOutletAdvanceOrderComponent implements OnInit {
-  items = [];
+  items:any = [];
   Spinner = false;
+  mobSpinner = false;
   tabIndexToView = 0;
   buttonname = "Save & Print Bill";
   searchObj : search = new search();
   seachSpinner = false;
   seachSpinner1 = false;
-  Searchlist = [];
+  Searchlist:any = [];
   MobileSubmitFormSubmitted = false;
-  Searchbymobilelist = [];
+  Searchbymobilelist:any = [];
   Search_By = "Delivery Date";
   dateList: any;
   myDate: Date;
-  returnedID = [];
-  selectitem = [];
+  returnedID:any = [];
+  selectitem:any = [];
   ObjaddbillForm : addbillForm  = new addbillForm();
-  productSubmit = [];
+  productSubmit:any = [];
 
   Objcustomerdetail : customerdetail = new customerdetail();
   GSTvalidFlag = false;
@@ -51,7 +52,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   Total: any;
   Round_Off: any;
   Amount_Payable: any;
-  FlavourList = [];
+  FlavourList:any = [];
   Amount: any;
   withoutdisamt:any;
   taxb4disamt:any;
@@ -102,7 +103,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   Cancle_Remarks : string;
   cancleFormSubmitted = false;
   Can_Remarks = false;
-  BackupproductSubmit = [];
+  BackupproductSubmit:any = [];
   ProductType = undefined;
 
   PDFViewFlag = false;
@@ -111,12 +112,40 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   ProductPDFLink = undefined;
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
   PhotoUploadPopup = false;
-  photoforproductList = [];
+  photoforproductList:any = [];
   adornumber = undefined;
   Uploadbutton = "Upload"
   uploadbuttondisabled = false;
 
   CostcentState : any;
+
+  UpdatePayModeModal = false;
+  UpdatePayModeList:any = [];
+  ObjUpdatePayMode : UpdatePayMode =  new  UpdatePayMode();
+  Ord_No = undefined;
+
+  BrandList:any = [];
+  Brand_ID:any;
+  minDelDate: Date;
+
+  rp_username: any;
+  rp_appkey: any;
+  rp_device_Id: any;
+  txnidAsRefNumber: any;
+  RequestId:any;
+  confirmtxnflag:boolean = true;
+  transactionStatus: any;
+  tid: any;
+  txndisabled:boolean = false;
+  LedgerNameforupi: any;
+  txnbuttondisabled:boolean = false;
+  txndisabledupi:boolean = false;
+  confirmtxnflagupi:boolean = false;
+  txnbuttondisabledupi:boolean = false;
+  txnidAsRefNumberupi: any;
+  RequestIdupi: any;
+  transactionStatusupi: any;
+  tidupi: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -174,16 +203,19 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
      this.getcredittoaccount();
      this.getwalletamount();
      this.getAdvOrderfield();
+     this.GetBrand();
      
      //Delivery Date
    //this.DateService.dateConvert(new Date (this.delivery_Date));
+   if(this.buttonname != "Update"){
    this.delivery_Date.setDate(new Date(this.delivery_Date).getDate() + 1);
+   }
    this.minTime = this.setHours(new Date(), "10:00am");
    this.maxTime = this.setHours(new Date(), "06:00pm");
    //this.DateService.dateTimeConvert(new Date(this.Delivey_Time));
   }
   setHours(dt, h):any {
-    const s = /(\d+):(\d+)(.+)/.exec(h);
+    const s:any = /(\d+):(\d+)(.+)/.exec(h);
     dt.setHours(s[3] === "pm" ?
       12 + parseInt(s[1], 10) :
       parseInt(s[1], 10));
@@ -308,6 +340,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   Showdatabymobile(valid){
     this.Searchlist = [];
     this.MobileSubmitFormSubmitted = true;
+    this.mobSpinner = true;
     if(valid){
     const tempobj = {
       User_Id : this.$CompacctAPI.CompacctCookies.User_ID,
@@ -324,7 +357,11 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
        //console.log('Searchbymobilelist=====',this.Searchlist)
        //this.seachSpinner = false;
        this.MobileSubmitFormSubmitted = false;
+       this.mobSpinner = false;
      })
+    }
+    else {
+      this.mobSpinner = false;
     }
   }
 
@@ -438,6 +475,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   }
 
 getorderdate(){
+  this.minDelDate = new Date();
      const obj = {
       "SP_String": "SP_Controller_Master",
       "Report_Name_String": "Get - Outlet Order Date",
@@ -448,6 +486,7 @@ getorderdate(){
       this.dateList = data;
     //console.log("this.dateList  ===",this.dateList);
    this.myDate =  new Date(data[0].Outlet_Order_Date);
+   this.minDelDate = new Date(data[0].Outlet_Order_Date);
     // on save use this
    // this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));
 
@@ -466,8 +505,8 @@ getcostcenid(){
    this.FromCostCentId = data[0].Cost_Cen_ID ? data[0].Cost_Cen_ID : 0;
    this.CostcentState = data[0].State;
    console.log('this.CostcentState',this.CostcentState)
-   //this.ObjaddbillForm.selectitem = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-   this.ObjaddbillForm.selectitem = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
+   this.ObjaddbillForm.selectitem = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+  //  this.ObjaddbillForm.selectitem = this.returnedID.length === 1 ? this.returnedID[0].Cost_Cen_ID : undefined;
    if(this.$CompacctAPI.CompacctCookies.User_Type == 'U'){
    this.ObjaddbillForm.BrowserDeliveryto = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
    } else {
@@ -499,6 +538,17 @@ getcostcenid(){
 
   // });
 }
+GetcostcenterDetails(){
+  this.rp_username = undefined;
+  this.rp_appkey = undefined;
+  this.rp_device_Id = undefined;
+if(this.ObjaddbillForm.selectitem) {
+  const ccdetails = this.returnedID.filter(ele=> Number(ele.Cost_Cen_ID) === Number(this.ObjaddbillForm.selectitem))
+  this.rp_username = ccdetails.length ? ccdetails[0].rp_username : undefined;
+  this.rp_appkey = ccdetails.length ? ccdetails[0].rp_appkey : undefined;
+  this.rp_device_Id = ccdetails.length ? ccdetails[0].rp_device_Id : undefined;
+}
+ }
 getgodownid(){
   const TempObj = {
     Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
@@ -530,6 +580,7 @@ getdellocation(){
 }
 
 getselectitem(){
+  this.GetcostcenterDetails();
    //if(this.ObjaddbillForm.Cost_Cen_ID){
     this.Objcustomerdetail.Doc_Date = this.DateService.dateConvert(new Date(this.myDate));
     //console.log("this.ObjaddbillForm.Doc_Date ===",this.ObjaddbillForm.Doc_Date)
@@ -831,10 +882,12 @@ add(valid) {
     Acompanish : Number(this.ObjaddbillForm.Acompanish).toFixed(2),
     Amount :Number(totalAmt).toFixed(2),
     Amount_berore_Tax : Number(Amtbeforetax).toFixed(2),
-    Taxable : Number(taxable).toFixed(2),
+    // Taxable : Number(taxable).toFixed(2),
+    Taxable : Number(Amtbeforetax).toFixed(2),
     Max_Discount : Number(this.ObjaddbillForm.Max_Discount),
     Dis_Amount : Number(Dis_Amount).toFixed(2),
-    Gross_Amount : Number(Number(Amount) - Number(Dis_Amount)).toFixed(2),
+    Gross_Amount : Number(Amtbeforetax).toFixed(2),
+    // Gross_Amount : Number(Number(Amount) - Number(Dis_Amount)).toFixed(2),
     SGST_Per : Number(GST_Tax_Per_Amt) ? 0 : Number(SGST_Per).toFixed(2),
     SGST_Amount : Number(SGST_Amount).toFixed(2),
     CGST_Per : Number(GST_Tax_Per_Amt) ? 0 : Number(CGST_Per).toFixed(2),
@@ -882,7 +935,7 @@ add(valid) {
   const selectedCostCenter = this.ObjaddbillForm.selectitem;
   this.ObjaddbillForm = new addbillForm();
   this.ObjaddbillForm.selectitem = selectedCostCenter;
-  this.getselectitem();
+  // this.getselectitem();
   this.addbillFormSubmitted = false;
   this.CalculateTotalAmt();
   this.listofamount();
@@ -970,8 +1023,9 @@ listofamount(){
   this.taxb4disamt = (count8).toFixed(2);
   this.Dis_Amount = (count1).toFixed(2);
   this.Totaltaxable = (count6).toFixed(2);
+  this.Gross_Amount = (count8).toFixed(2);
   //this.Gross_Amount = (count2).toFixed(2);
-  this.Gross_Amount = (Number(this.Totaltaxable) - Number(this.Dis_Amount)).toFixed(2);
+  // this.Gross_Amount = (Number(this.Totaltaxable) - Number(this.Dis_Amount)).toFixed(2);
   this.SGST_Amount = (count3).toFixed(2);
   this.CGST_Amount = (count4).toFixed(2);
   this.GST_Tax_Per_Amt = (count5).toFixed(2);
@@ -1062,7 +1116,7 @@ CalculateDiscount(){
       damt = Number((Number(el.Amount_berore_Tax) / Number(this.taxb4disamt)) * Number(this.ObjcashForm.Credit_To_Amount));
       el.Dis_Amount = Number(damt).toFixed(2);
       var da = Number(el.Dis_Amount);
-      var grossamt = Number(Number(el.Taxable) - Number(el.Dis_Amount));
+      // var grossamt = Number(Number(el.Taxable) - Number(el.Dis_Amount));
       //var amt = (Number(el.Amount) - Number(da)).toFixed(2);
       var sgstperamt = (Number(((Number(el.Amount_berore_Tax) - Number(da)) * Number(el.SGST_Per)) / 100)).toFixed(2);
       var cgstperamt = (Number(((Number(el.Amount_berore_Tax) - Number(da)) * Number(el.CGST_Per)) / 100)).toFixed(2);
@@ -1079,7 +1133,7 @@ CalculateDiscount(){
       netamount = Number(Number(taxamount) + Number(totalgstamt)).toFixed(2);
       //this.Dis_Amount = undefined;
 
-      el.Gross_Amount = Number(grossamt).toFixed(2);
+      // el.Gross_Amount = Number(grossamt).toFixed(2);
       el.SGST_Amount = Number(sgstperamt).toFixed(2);
       el.CGST_Amount = Number(cgstperamt).toFixed(2);
       el.Taxable = Number(taxamount).toFixed(2);
@@ -1094,7 +1148,7 @@ CalculateDiscount(){
    } else {
     this.productSubmit.forEach(el=>{
       el.Dis_Amount = 0 ;
-      el.Gross_Amount = Number(Number(el.Amount_berore_Tax) - Number(el.Dis_Amount)).toFixed(2);
+      // el.Gross_Amount = Number(Number(el.Amount_berore_Tax) - Number(el.Dis_Amount)).toFixed(2);
       el.SGST_Amount = Number((Number(el.Amount_berore_Tax) * Number(el.SGST_Per)) / 100).toFixed(2); 
       el.CGST_Amount = Number((Number(el.Amount_berore_Tax) * Number(el.CGST_Per)) / 100).toFixed(2);
       el.GST_Tax_Per_Amt = Number((Number(el.Amount_berore_Tax) * Number(el.GST_Tax_Per)) / 100).toFixed(2);
@@ -1178,6 +1232,374 @@ checkdiscountamt(){
     this.listofamount();
   }
   }
+  })
+}
+
+// Check Transaction Details
+// For CARD
+getdataforrequestdetails(){
+  this.txnidAsRefNumber = undefined;
+  const objsend = {
+    Txn_Type : "A",
+    Txn_amount: this.ObjcashForm.Card_Amount,
+    rp_payment_type: "CARD"
+  }
+  const obj = {
+    "SP_String": "SP_rp_txn",
+    "Report_Name_String": "rp_gen_request",
+    "Json_Param_String": JSON.stringify([objsend])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log(data)
+    if(data[0].Column1){
+      this.txnidAsRefNumber = data[0].Column1;
+      this.RequestPayment();
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Something wrong."
+      });
+    }
+    
+  })
+}
+RequestPayment(){
+  this.RequestId = undefined;
+  const obj = {
+    username: this.rp_username,
+    appKey: this.rp_appkey,
+    amount: this.ObjcashForm.Card_Amount,
+    customerMobileNumber: this.Objcustomerdetail.Costomer_Mobile,
+    externalRefNumber: this.txnidAsRefNumber,
+    pushTo: {
+        deviceId: this.rp_device_Id
+    },
+    mode: "CARD"
+}
+console.log("sendobj===",obj)
+  this.$http.post('https://k4crzpayment.azurewebsites.net/api/rz_request?code=4klJypmsNXuEg925xXsUBY4jQZEn6CPR1W5vKU-GrHfUAzFufZc9kA==',obj)
+        .subscribe((data: any) => {
+     console.log('getdata===',data)
+     this.RequestId = data.p2pRequestId
+     if(this.RequestId){
+     this.confirmtxnflag = this.RequestId ? false : true;
+     this.txnbuttondisabled = this.RequestId ? true : false;
+     const senddata = {
+      Txn_ID : this.txnidAsRefNumber,
+      rp_req_id : this.RequestId,
+      rp_status : 'PENDING',
+      tid : 'NA'
+     }
+     this.Updaterequestdetails(senddata);
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: data.realCode
+      });
+    }
+   })  
+}
+CheckTransaction(){
+  this.transactionStatus = undefined;
+  this.tid = undefined;
+  const obj = {
+    username: this.rp_username,
+    appKey: this.rp_appkey,
+    origP2pRequestId: this.RequestId
+}
+console.log("sendobj===",obj)
+  this.$http.post('https://k4crzpayment.azurewebsites.net/api/get_status?code=x4u-RtD7ZkaZC1SZjgalnnrpPOesMg34WSqliOedceA1AzFuVH2DEQ==',obj)
+        .subscribe((data: any) => {
+     console.log('getdata===',data)
+     this.transactionStatus = data.realCode;
+     this.tid = data.tid;
+
+     if(this.transactionStatus === "P2P_DEVICE_CANCELED"){
+      this.txnbuttondisabled = false;
+      const senddata = {
+        Txn_ID : this.txnidAsRefNumber,
+        rp_status : 'CANCELED', 
+        rp_req_id : 'NA',
+        tid : 'NA'
+      }
+      this.Updaterequestdetails(senddata);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Transaction Cancelled."
+      });
+    }
+    else if(this.transactionStatus === "P2P_DEVICE_TXN_DONE"){
+      const senddata = {
+        Txn_ID : this.txnidAsRefNumber,
+        rp_status : 'DONE', 
+        rp_req_id : this.RequestId,
+        tid : this.tid
+      }
+      this.ObjcashForm.Card_Amount = data.amount;
+      this.txndisabled = true;
+      this.AmountChange();
+      this.Updaterequestdetails(senddata);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Success Message",
+        detail: "Transaction Successful."
+      });
+    }
+    else if(this.transactionStatus === "P2P_DEVICE_RECEIVED"){
+      this.txnbuttondisabled = true;
+      const senddata = {
+        Txn_ID : this.txnidAsRefNumber,
+        rp_status : 'PENDING',
+        rp_req_id : this.RequestId,
+        tid : 'NA'
+      }
+      this.Updaterequestdetails(senddata);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Transaction Pending."
+      });
+    }
+    else {
+      this.txnbuttondisabled = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: this.transactionStatus
+      });
+    }
+     
+   })  
+}
+Updaterequestdetails(dataobj){
+  const obj = {
+    "SP_String": "SP_rp_txn",
+    "Report_Name_String": "rp_update_req_return",
+    "Json_Param_String": JSON.stringify([dataobj])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log(data)
+  })
+}
+// For UPI
+getledgername(){
+  this.LedgerNameforupi = undefined;
+  this.txndisabledupi = false;
+  if(this.ObjcashForm.Wallet_Ac_ID){
+  const ledgername = this.walletlist.filter(el=> Number(el.Txn_ID) === Number(this.ObjcashForm.Wallet_Ac_ID));
+    this.LedgerNameforupi = ledgername.length ? ledgername[0].Ledger_Name : undefined;
+  }
+}
+getdataforrequestdetailsupi(){
+  this.txnidAsRefNumberupi = undefined;
+  const objsend = {
+    Txn_Type : "A",
+    Txn_amount: this.ObjcashForm.Wallet_Amount,
+    rp_payment_type: "UPI"
+  }
+  const obj = {
+    "SP_String": "SP_rp_txn",
+    "Report_Name_String": "rp_gen_request",
+    "Json_Param_String": JSON.stringify([objsend])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log(data)
+    if(data[0].Column1){
+      this.txnidAsRefNumberupi = data[0].Column1;
+      this.RequestPaymentupi();
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Something wrong."
+      });
+    }
+    
+  })
+}
+RequestPaymentupi(){
+  this.RequestIdupi = undefined;
+  const obj = {
+    username: this.rp_username,
+    appKey: this.rp_appkey,
+    amount: this.ObjcashForm.Wallet_Amount,
+    customerMobileNumber: this.Objcustomerdetail.Costomer_Mobile,
+    externalRefNumber: this.txnidAsRefNumberupi,
+    pushTo: {
+        deviceId: this.rp_device_Id
+    },
+    mode: "UPI"
+}
+console.log("sendobj===",obj)
+  this.$http.post('https://k4crzpayment.azurewebsites.net/api/rz_request?code=4klJypmsNXuEg925xXsUBY4jQZEn6CPR1W5vKU-GrHfUAzFufZc9kA==',obj)
+        .subscribe((data: any) => {
+     console.log('getdata===',data)
+     this.RequestIdupi = data.p2pRequestId
+     if(this.RequestIdupi){
+      this.confirmtxnflagupi = this.RequestIdupi ? false : true;
+      this.txnbuttondisabledupi = this.RequestIdupi ? true : false;
+     const senddata = {
+      Txn_ID : this.txnidAsRefNumberupi,
+      rp_req_id : this.RequestIdupi,
+      rp_status : 'PENDING',
+      tid : 'NA'
+     }
+     this.Updaterequestdetailsupi(senddata);
+    }
+    else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: data.realCode
+      });
+    }
+   })  
+}
+CheckTransactionupi(){
+  this.transactionStatusupi = undefined;
+  this.tidupi = undefined;
+  const obj = {
+    username: this.rp_username,
+    appKey: this.rp_appkey,
+    origP2pRequestId: this.RequestIdupi
+}
+console.log("sendobj===",obj)
+  this.$http.post('https://k4crzpayment.azurewebsites.net/api/get_status?code=x4u-RtD7ZkaZC1SZjgalnnrpPOesMg34WSqliOedceA1AzFuVH2DEQ==',obj)
+        .subscribe((data: any) => {
+     console.log('getdata===',data)
+     this.transactionStatusupi = data.realCode;
+     this.tidupi = data.tid;
+     
+     if(this.transactionStatusupi === "P2P_DEVICE_CANCELED"){
+      this.txnbuttondisabledupi = false;
+      const senddata = {
+        Txn_ID : this.txnidAsRefNumberupi,
+        rp_status : 'CANCELED', 
+        rp_req_id : 'NA',
+        tid : 'NA'
+      }
+      this.Updaterequestdetailsupi(senddata);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Transaction Cancelled."
+      });
+    }
+    else if(this.transactionStatusupi === "P2P_DEVICE_TXN_DONE"){
+      const senddata = {
+        Txn_ID : this.txnidAsRefNumberupi,
+        rp_status : 'DONE', 
+        rp_req_id : this.RequestIdupi,
+        tid : this.tidupi
+      }
+      this.ObjcashForm.Wallet_Amount = data.amount;
+      this.txndisabledupi = true;
+      this.AmountChange();
+      this.Updaterequestdetailsupi(senddata);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Success Message",
+        detail: "Transaction Successful."
+      });
+    }
+    else if(this.transactionStatusupi === "P2P_DEVICE_RECEIVED"){
+      this.txnbuttondisabledupi = true;
+      const senddata = {
+        Txn_ID : this.txnidAsRefNumberupi,
+        rp_status : 'PENDING',
+        rp_req_id : this.RequestIdupi,
+        tid : 'NA'
+      }
+      this.Updaterequestdetailsupi(senddata);
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Transaction Pending."
+      });
+    }
+    else {
+      this.txnbuttondisabledupi = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: this.transactionStatusupi
+      });
+    }
+     
+   })  
+}
+Updaterequestdetailsupi(dataobj){
+  const obj = {
+    "SP_String": "SP_rp_txn",
+    "Report_Name_String": "rp_update_req_return",
+    "Json_Param_String": JSON.stringify([dataobj])
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log(data)
+  })
+}
+Updaterequestdetailsaftersave(billno){
+  let arr:any = [];
+  let senddata:any = {};
+  let senddataupi:any = {};
+  if((this.RequestId) && (this.transactionStatus === "P2P_DEVICE_TXN_DONE")){
+   senddata = {
+    Txn_ID : this.txnidAsRefNumber,
+    rp_status : 'DONE', 
+    rp_req_id : this.RequestId,
+    tid : this.tid,
+    Bill_No : billno
+  }
+  arr.push(senddata)
+  }
+  if((this.RequestIdupi) && (this.transactionStatusupi === "P2P_DEVICE_TXN_DONE")){
+   senddataupi = {
+    Txn_ID : this.txnidAsRefNumberupi,
+    rp_status : 'DONE', 
+    rp_req_id : this.RequestIdupi,
+    tid : this.tidupi,
+    Bill_No : billno
+  }
+  arr.push(senddataupi)
+  }
+  console.log('rp_update_bill_no==',JSON.stringify(arr))
+  const obj = {
+    "SP_String": "SP_rp_txn",
+    "Report_Name_String": "rp_update_bill_no",
+    "Json_Param_String": JSON.stringify(arr)
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log(data)
   })
 }
 
@@ -1326,6 +1748,9 @@ saveprintandUpdate(){
       this.adornumber = data[0].Column1;
       if(data[0].Column1){
       //this.geteditlist(data[0].Column1);
+      if((this.RequestId && this.transactionStatus === "P2P_DEVICE_TXN_DONE") || (this.RequestIdupi && this.transactionStatusupi === "P2P_DEVICE_TXN_DONE")) {
+      this.Updaterequestdetailsaftersave(data[0].Column1);
+      }
        this.getPhotoprolist(true);
         this.compacctToast.clear();
         const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "Updated";
@@ -1397,6 +1822,7 @@ saveprintandUpdate(){
        })
        this.photoforproductList = data;
        this.PhotoUploadPopup = true;
+       this.Brand_ID = undefined;
       //  this.clearData();
       //  this.productSubmit =[];
       //  this.clearlistamount();
@@ -1443,7 +1869,7 @@ if((this.ObjHomeDelivery.Delivery_Mobile_No == undefined || this.ObjHomeDelivery
   //console.log("this.ObjcashForm.Card_Ac",this.productSubmit);
 
   if(this.productSubmit.length) {
-    let tempArr =[];
+    let tempArr:any =[];
     const Deltime = new Date(this.Objcustomerdetail.Del_Date_Time);
      var hr = Deltime.getHours();
      let min:any = Deltime.getMinutes();
@@ -1451,6 +1877,7 @@ if((this.ObjHomeDelivery.Delivery_Mobile_No == undefined || this.ObjHomeDelivery
          this.Objcustomerdetail.Del_Date_Time = hr+ ":" +min
      console.log("time ==" , this.Objcustomerdetail.Del_Date_Time)
     this.productSubmit.forEach(item => {
+      if (Number(item.Amount_berore_Tax) && Number(item.Amount_berore_Tax) != 0) {
       const obj = {
           Product_ID : item.Product_ID,
           Product_Description : item.Product_Description,
@@ -1489,6 +1916,7 @@ if((this.ObjHomeDelivery.Delivery_Mobile_No == undefined || this.ObjHomeDelivery
       }
 
     const TempObj = {
+      Brand_ID : this.Brand_ID,
       Created_By : this.$CompacctAPI.CompacctCookies.User_ID,
       Foot_Fall_ID : this.Objcustomerdetail.Foot_Fall_ID,
       Order_Date : this.DateService.dateConvert(new Date(this.myDate)),
@@ -1506,6 +1934,20 @@ if((this.ObjHomeDelivery.Delivery_Mobile_No == undefined || this.ObjHomeDelivery
       Fin_Year_ID : Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
     }
     tempArr.push({...obj,...TempObj,...this.Objcustomerdetail,...this.ObjcashForm,...this.ObjHomeDelivery})
+  
+      } else {
+        setTimeout(()=>{
+        this.Spinner = false;
+        this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+         key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error in Taxable amount"
+      });
+      },600)
+  }
   });
   console.log(tempArr)
   return JSON.stringify(tempArr);
@@ -1527,6 +1969,7 @@ EditFromBrowse(Erow){
   //this.DocNO = undefined;
     //console.log("Edit",eROW);
     this.clearData();
+    this.minDelDate = new Date();
     if(Erow.Adv_Order_No){
     this.Objcustomerdetail.Adv_Order_No = Erow.Adv_Order_No;
    // console.log('advance order id ==',eROW.Adv_Order_No)
@@ -1542,6 +1985,7 @@ Edit(eROW){
   //this.DocNO = undefined;
     //console.log("Edit",eROW);
     this.clearData();
+    this.minDelDate = new Date();
     if(eROW.Adv_Order_No){
     this.Objcustomerdetail.Adv_Order_No = eROW.Adv_Order_No;
    // console.log('advance order id ==',eROW.Adv_Order_No)
@@ -1555,6 +1999,7 @@ Edit(eROW){
   }
 geteditlist(Adv_Order_No){
     //this.DocNO = Adv_Order_No;
+    // window.location.reload();
       const Tempobj = {
         Doc_No : this.Objcustomerdetail.Adv_Order_No
       }
@@ -1566,6 +2011,8 @@ geteditlist(Adv_Order_No){
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        console.log(data);
        this.editList = data;
+       this.myDate = new Date(data[0].Order_Date);
+       this.minDelDate = new Date(data[0].Order_Date);
        this.Objcustomerdetail.Costomer_Mobile = data[0].Costomer_Mobile;
        this.Objcustomerdetail.Customer_Name= data[0].Customer_Name;
       //  this.Objcustomerdetail.Customer_DOB = data[0].Customer_DOB;
@@ -1604,8 +2051,10 @@ geteditlist(Adv_Order_No){
         Delivery_Charge : Number(element.Delivery_Charge),
         Stock_Qty :  Number(element.Qty),
         Amount :Number(element.Amount).toFixed(2),
+        Amount_berore_Tax : Number(element.Taxable).toFixed(2),
         Max_Discount : Number(element.Discount_Per),
         Dis_Amount : Number(element.Discount_Amt).toFixed(2),
+        Taxable : Number(Number(element.Taxable) - Number(element.Discount_Amt)).toFixed(2),
         Gross_Amount : Number(element.Gross_Amt).toFixed(2),
         SGST_Per : Number(element.SGST_Per).toFixed(2),
         SGST_Amount : Number(element.SGST_Amt).toFixed(2),
@@ -1635,8 +2084,8 @@ geteditlist(Adv_Order_No){
     //this.ObjaddbillForm.Doc_Date = data[0].Order_Date;
     this.Objcustomerdetail.Adv_Order_No = data[0].Adv_Order_No;
 
-    this.myDate = data[0].Order_Date;
-    this.delivery_Date = data[0].Del_Date;
+    // this.myDate = data[0].Order_Date;
+    this.delivery_Date = new Date(data[0].Del_Date);
     this.Total = data[0].Net_Amount;
     this.Amount_Payable = data[0].Amount_Payable;
     this.Round_Off = data[0].Rounded_Off;
@@ -1800,7 +2249,7 @@ this.ObjcashForm.Wallet_Amount = this.ObjcashForm.Wallet_Amount ? this.ObjcashFo
 this.ObjcashForm.Cash_Amount = this.ObjcashForm.Cash_Amount ? this.ObjcashForm.Cash_Amount : 0;
 this.ObjcashForm.Card_Amount = this.ObjcashForm.Card_Amount ? this.ObjcashForm.Card_Amount : 0;
 
-let temparr = []
+let temparr:any = []
 const TempObj = {
   Payment_Ref_No : "a",
   Doc_No : this.Objcustomerdetail.Adv_Order_No,
@@ -1983,10 +2432,13 @@ clearData(){
   this.addbillFormSubmitted = false;
   this.SavePrintFormSubmitted = false;
   this.seachSpinner = false;
+  this.Spinner = false;
   this.getorderdate();
   //this.delivery_Date;
   this.delivery_Date = new Date();
+  if(this.buttonname != "Update"){
   this.delivery_Date.setDate(this.delivery_Date.getDate() + 1);
+  }
   //console.log('Delivery Date ===' , this.delivery_Date)
   this.Objcustomerdetail.Del_Cost_Cent_ID ='32';
   this.Hold_Order_Flag = false;
@@ -2016,7 +2468,7 @@ this.ObjRefundcashForm.Wallet_Ac = this.ObjRefundcashForm.Wallet_Ac ? this.ObjRe
 this.ObjRefundcashForm.Wallet_Amount = this.ObjRefundcashForm.Wallet_Amount ? this.ObjRefundcashForm.Wallet_Amount : 0;
 this.ObjRefundcashForm.Cash_Amount = this.ObjRefundcashForm.Cash_Amount ? this.ObjRefundcashForm.Cash_Amount : 0;
 
-let temparr = []
+let temparr:any = []
 const TempObj = {
   Doc_No : this.Adv_Order_No,
   Cost_Cent_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
@@ -2074,6 +2526,227 @@ RefundSave(){
     }
   })
 }
+
+// UPDATE PAYMENT MODE
+UpdatePaymentMode(ordno){
+  this.UpdatePayModeList = [];
+  if(ordno.Adv_Order_No) {
+  const obj = {
+    "SP_String": "SP_Add_ON",
+    "Report_Name_String": "Get_Advance_Order_Payment_Details",
+    "Json_Param_String": JSON.stringify([{Doc_No : ordno.Adv_Order_No}])
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    //console.log(data);
+    this.UpdatePayModeList = data;
+    this.ObjUpdatePayMode.Amount_Payable = data[0].Amount_Payable ? data[0].Amount_Payable : undefined;
+    this.ObjUpdatePayMode.Credit_To_Ac_ID = data[0].Credit_To_Ac_ID ? data[0].Credit_To_Ac_ID : undefined;
+    this.ObjUpdatePayMode.Credit_To_Ac = data[0].Credit_To_Ac ? data[0].Credit_To_Ac : undefined;
+    this.ObjUpdatePayMode.Credit_To_Amount = data[0].Credit_To_Amount ? data[0].Credit_To_Amount : undefined;
+    this.ObjUpdatePayMode.Wallet_Ac_ID = data[0].Wallet_Ac_ID ? data[0].Wallet_Ac_ID : undefined;
+    this.ObjUpdatePayMode.Wallet_Ac = data[0].Wallet_Ac ? data[0].Wallet_Ac : undefined;
+    this.ObjUpdatePayMode.Wallet_Amount = data[0].Wallet_Amount ? data[0].Wallet_Amount : undefined;
+    this.ObjUpdatePayMode.Cash_Amount = data[0].Cash_Amount ? data[0].Cash_Amount : undefined;
+    this.ObjUpdatePayMode.Card_Amount = data[0].Card_Amount ? data[0].Card_Amount : undefined;
+    this.ObjUpdatePayMode.Total_Paid = data[0].Total_Paid ? data[0].Total_Paid : undefined;
+    this.ObjUpdatePayMode.Net_Due = data[0].Net_Due ? data[0].Net_Due : undefined;
+    this.ObjUpdatePayMode.Doc_No = data[0].Adv_Order_No;
+    this.ObjUpdatePayMode.Order_Date = this.DateService.dateConvert(new Date(data[0].Order_Date));
+    this.ObjUpdatePayMode.Cost_Cent_ID = data[0].Cost_Cent_ID;
+    this.ObjUpdatePayMode.Del_Cost_Cent_ID = data[0].Del_Cost_Cent_ID;
+    this.ObjUpdatePayMode.Del_Date = this.DateService.dateConvert(new Date(data[0].Del_Date));
+    this.ObjUpdatePayMode.Del_Date_Time = this.DateService.dateTimeConvert(new Date(data[0].Del_Date_Time));
+    this.ObjUpdatePayMode.Foot_Fall_ID = data[0].Foot_Fall_ID;
+    this.ObjUpdatePayMode.Costomer_Mobile = data[0].Costomer_Mobile;
+    this.ObjUpdatePayMode.Customer_Name = data[0].Customer_Name;
+    this.ObjUpdatePayMode.Customer_DOB = this.DateService.dateConvert(new Date(data[0].Customer_DOB));
+    this.ObjUpdatePayMode.Customer_Anni = this.DateService.dateConvert(new Date(data[0].Customer_Anni));
+    this.ObjUpdatePayMode.Customer_GST = data[0].Customer_GST;
+    this.ObjUpdatePayMode.Net_Payable = data[0].Net_Payable;
+    this.UpdatePayModeModal = true;
+  })
+  }
+}
+UpdatePMode(){
+  if((this.ObjUpdatePayMode.Cash_Amount > this.ObjUpdatePayMode.Total_Paid) ||
+     (this.ObjUpdatePayMode.Wallet_Amount > this.ObjUpdatePayMode.Total_Paid) ||
+     (this.ObjUpdatePayMode.Card_Amount > this.ObjUpdatePayMode.Total_Paid)){
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Amount can't be more than Total Paid"
+    });
+    return false;
+  }
+  if((this.ObjUpdatePayMode.Wallet_Ac_ID == undefined && this.ObjUpdatePayMode.Wallet_Amount) ||
+     (!this.ObjUpdatePayMode.Wallet_Amount && this.ObjUpdatePayMode.Wallet_Ac_ID )){
+      this.Spinner = false;
+      this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Error in wallet Amount"
+    });
+    return false;
+  }
+  if((!this.ObjUpdatePayMode.Cash_Amount) && (!this.ObjUpdatePayMode.Wallet_Amount) && (!this.ObjUpdatePayMode.Card_Amount)){
+      this.Spinner = false;
+      this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Enter Amount"
+    });
+    return false;
+  }
+  this.ObjUpdatePayMode.Cash_Amount = this.ObjUpdatePayMode.Cash_Amount ? Number(this.ObjUpdatePayMode.Cash_Amount) : 0;
+  this.ObjUpdatePayMode.Wallet_Ac_ID = this.ObjUpdatePayMode.Wallet_Ac_ID ? Number(this.ObjUpdatePayMode.Wallet_Ac_ID) : 0;
+  this.ObjUpdatePayMode.Wallet_Amount = this.ObjUpdatePayMode.Wallet_Amount ? Number(this.ObjUpdatePayMode.Wallet_Amount) : 0;
+  this.ObjUpdatePayMode.Card_Amount = this.ObjUpdatePayMode.Card_Amount ? Number(this.ObjUpdatePayMode.Card_Amount) : 0;
+  this.ObjUpdatePayMode.Credit_To_Ac_ID = this.ObjUpdatePayMode.Credit_To_Ac_ID ? Number(this.ObjUpdatePayMode.Credit_To_Ac_ID) : 0;
+  this.ObjUpdatePayMode.Credit_To_Amount = this.ObjUpdatePayMode.Credit_To_Amount ? Number(this.ObjUpdatePayMode.Credit_To_Amount) : 0;
+  this.ObjUpdatePayMode.Fin_Year_ID = Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID);
+
+  const obj = {
+    "SP_String": "SP_Add_ON",
+    "Report_Name_String": "Update_Advance_Order_Payment_Details",
+    "Json_Param_String": JSON.stringify([this.ObjUpdatePayMode])
+   }
+   this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+    //console.log(data);
+    var tempID = data[0].Column1;
+    // this.Adv_Order_No = data[0].Column1;
+    if(data[0].Column1){
+      this.compacctToast.clear();
+     // const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "success",
+       summary: " " + tempID,
+       detail: "Succesfully Updated" 
+     });
+     this.UpdatePayModeModal = false;
+     this.Showdata();
+     this.Showdatabymobile(true);
+     this.ObjUpdatePayMode = new UpdatePayMode();
+    } else{
+
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Error Occured "
+      });
+    }
+  })
+}
+DelMulPayments(obj){
+    //console.log(this.Objcustomerdetail.Adv_Order_No)
+    this.Ord_No = undefined;
+    if(obj.Adv_Order_No){
+      this.checkSave = true;
+      this.Can_Remarks = false;
+    this.Ord_No = obj.Adv_Order_No;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "c",
+      sticky: true,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+      });
+    }
+}
+onConfirm2(){
+  this.Can_Remarks = false;
+    const Tempobj = {
+      Doc_No : this.Ord_No
+    }
+    const obj = {
+      "SP_String": "SP_Add_ON",
+      "Report_Name_String": "Delete_Multiple_Payment",
+      "Json_Param_String": JSON.stringify([Tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      // var msg = data[0].Column1;
+      //console.log(data);
+      //if(data[0].Column1 === "Cancel Successfully") {
+        if(data[0].Column1) {
+        this.Showdata();
+        this.Showdatabymobile(true);
+        this.cancleFormSubmitted = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "success",
+          summary: "Adv_Order_No : " + this.Ord_No,
+          detail:  "Successfully Deleted"
+        });
+        this.Ord_No = undefined;
+
+      } else{
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
+    })
+}
+myFunction() {
+  var doc:any = document.getElementById("myDropdown");
+  doc.classList.toggle("show");
+}
+GetBrand(){
+  this.BrandList = [];
+  const obj = {
+    "SP_String": "SP_Issue_Stock_Adjustment",
+    "Report_Name_String": "Get - Brand"
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.BrandList = data;
+  })
+}
+GetProduct(){
+  this.selectitem = [];
+  this.ObjaddbillForm.Product_ID = '';
+  const TempObj = {
+    Brand_ID : this.Brand_ID,
+    Product_Type_ID : 0
+   }
+   const obj = {
+    "SP_String": "SP_Controller_Master",
+    "Report_Name_String": "Product For Adv Order For User A",
+   "Json_Param_String": JSON.stringify([TempObj])
+
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    if(data.length) {
+      data.forEach(element => {
+        element['label'] = element.Product_Description,
+        element['value'] = element.Product_ID
+      });
+      this.selectitem = data;
+
+    } else {
+      this.selectitem = [];
+
+    }
+    console.log("select Product======",this.selectitem);
+
+
+  });
+}
+
 
 }
  class search{
@@ -2178,5 +2851,32 @@ class RefundcashForm{
   Wallet_Amount : number;
   Cash_Amount: number;
   // Refund_Amount : number = 0;
+}
+class UpdatePayMode{
+  Doc_No : any;
+  Amount_Payable : any;
+  Credit_To_Ac_ID : any;
+  Credit_To_Ac : string;
+  Credit_To_Amount: any;
+  Wallet_Ac_ID : any;
+  Wallet_Ac : string;
+  Wallet_Amount : number;
+  Cash_Amount: number;
+  Card_Amount: number;
+  Total_Paid : any;
+  Net_Due : any;
+  Order_Date : any;
+  Cost_Cent_ID : number;
+  Del_Cost_Cent_ID : number;
+  Del_Date : any;
+  Del_Date_Time : any;
+  Foot_Fall_ID : number;
+  Costomer_Mobile : any;
+  Customer_Name : string;
+  Customer_DOB : any;
+  Customer_Anni : any;
+  Customer_GST : string;
+  Net_Payable : number;
+  Fin_Year_ID : number;
 }
 

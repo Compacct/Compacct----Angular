@@ -28,13 +28,19 @@
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
 
-                            <div class="table-responsive no-padding productTable">
+                            <div class="table-responsive no-padding">
                                 <p-table #dt [value]="BrowseList" [globalFilterFields]="['Product_ID','Product_Type','Product_Sub_Type','Cat_Name','Product_Description','MOC_Description','Capacity_Size_Desc','Product_Feature_Desc','Grade_Description','Remarks','HSN_NO','GST_Percentage','UOM','Mfg_Company']"
                                     [paginator]="BrowseList.length ? true:false" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,300,500]" [rowHover]="true">
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right;">
                                                 <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                            <div class="col-sm-3 pull-right" style="text-align: right;">
+                                                <button *ngIf="BrowseList.length" class="btn btn-success" data-toggle="modal" (click)="exportexcel(BrowseList)" id="load1" [disabled]="EXCELSpinner">
+                                                    <p-progressSpinner *ngIf="EXCELSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                    <span *ngIf="!EXCELSpinner" class="fa fa-file-excel-o"></span>&nbsp;EXPORT TO EXCEL
+                                                </button>
                                             </div>
                                         </div>
 
@@ -45,9 +51,10 @@
                                             <th>Product Code</th>
                                             <th>Make (Multiple)</th>
                                             <th>Product Description</th>
+                                            <th>Material Type</th>
                                             <th>Product Type</th>
                                             <th>Product Sub Type</th>
-                                            <th>Product Category</th>
+                                            <th>GST Category</th>
                                             <th>Material of Cons.</th>
                                             <th>Capacity</th>
                                             <th>Product Feature</th>
@@ -69,7 +76,7 @@
                                                                                 <span class="caret"></span>
                                                                             </button>
                                                     <ul class="dropdown-menu">
-                                                        <li>
+                                                        <li *ngIf="col.Is_Visiable == 'Y'">
                                                             <a (click)="Edit(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
@@ -84,6 +91,11 @@
                                                                 <i class="fa fa-times"></i> Inactive
                                                             </a>
                                                         </li>
+                                                        <li *ngIf="col.Product_Image && databaseName === 'MICL'">
+                                                            <a (click)="showDocument(col.Product_Image)">
+                                                                <i class="fa fa-fw fa-file-text-o"></i> Show Document
+                                                            </a>
+                                                        </li>
                                                         <!-- <li>
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
@@ -95,16 +107,17 @@
                                             <td>{{col.Product_ID}}</td>
                                             <td>{{col.Mfg_Company}}</td>
                                             <td>{{col.Product_Description}}</td>
+                                            <td>{{col.Material_Type}}</td>
                                             <td>{{col.Product_Type}}</td>
                                             <td>{{col.Product_Sub_Type}}</td>
                                             <td>{{col.Cat_Name}}</td>
-                                            <td>{{col.MOC_Description}}</td>
-                                            <td>{{col.Capacity_Size_Desc}}</td>
+                                            <td>{{col.MOC_Description ? col.MOC_Description : '-'}}</td>
+                                            <td>{{col.Capacity_Size_Desc ? col.Capacity_Size_Desc : '-'}}</td>
                                             <td>{{col.Product_Feature_Desc}}</td>
-                                            <td>{{col.Grade_Description}}</td>
-                                            <td>{{col.Remarks}}</td>
-                                            <td>{{col.HSN_NO}}</td>
-                                            <td>{{col.GST_Percentage}}</td>
+                                            <td>{{col.Grade_Description ? col.Grade_Description : '-'}}</td>
+                                            <td>{{col.Remarks ? col.Remarks : '-'}}</td>
+                                            <td>{{col.HSN_NO ? col.HSN_NO : '-'}}</td>
+                                            <td>{{col.Cat_Name}}</td>
                                             <td>{{col.UOM}}</td>
                                             <!-- <td>{{col.Mfg_Company ? col.Mfg_Company : '-' }}</td> -->
                                         </tr>
@@ -118,48 +131,60 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                             <form name="MasterProductmForm" #MasterProductmForm="ngForm" novalidate>
                                 <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Product Type<sup class="text-danger">*</sup></label>
+                                <div class="col-sm-6">
+                                    <label class="control-label">Material Type
+                                        <sup class="text-danger">*</sup></label>
                                         <div class="pull-right">
-                                            <button (click)="ViewProductType()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
-                                            <button (click)="ProTypePopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                            <button (click)="ViewMaterialType()" class="btn btn-primary  createPatient" required ><i class="fa fa-fw  fa-eye"></i> View</button>
+                                            &nbsp; 
+                                            <button (click)="MatTypePopup()" class="btn btn-primary  createPatient" required ><i class="fa fa-fw  fa-plus">
+                                            </i> Create</button>
                                         </div>
-                                        <select class="form-control" name="producttype" #producttype="ngModel" [(ngModel)]="ObjMasterProductm.Product_Type_ID" (change)="GetProductSubType()" [ngClass]="{'clearance': MasterProductmFormSubmitted && producttype.errors?.required}" required>
-                                                <option  [ngValue]="undefined">Select</option>
-                                            <option *ngFor="let option of ProductTypeList" [ngValue]="option.Product_Type_ID">
-                                                {{option.Product_Type}}
-                                                </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Product Sub Type<sup class="text-danger">*</sup></label>
-                                        <div class="pull-right">
-                                            <button (click)="ViewProductSubType()" class="btn btn-primary  createPatient" [disabled]="!ObjMasterProductm.Product_Type_ID"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
-                                            <button (click)="ProSubTypePopup()" class="btn btn-primary  createPatient" [disabled]="!ObjMasterProductm.Product_Type_ID"><i class="fa fa-fw  fa-plus"></i> Create</button>
-                                        </div>
-                                        <select class="form-control" name="productsubtype" #productsubtype="ngModel" [(ngModel)]="ObjMasterProductm.Product_Sub_Type_ID" [ngClass]="{'clearance': MasterProductmFormSubmitted && productsubtype.errors?.required}" required>
-                                                                    <option  [ngValue]="undefined">Select</option>
-                                                                <option *ngFor="let option of ProductSubTypeList" [ngValue]="option.Product_Sub_Type_ID">
-                                                                    {{option.Product_Sub_Type}}
-                                                                    </option>
-                                                            </select>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Product Category<sup class="text-danger">*</sup></label>
-                                        <select class="form-control" name="productcategory" #productcategory="ngModel" [(ngModel)]="ObjMasterProductm.Cat_ID" [ngClass]="{'clearance': MasterProductmFormSubmitted && productcategory.errors?.required}" required>
-                                                                    <option  [ngValue]="undefined">Select</option>
-                                                                <option *ngFor="let option of ProductCategoryList" [ngValue]="option.Cat_ID">
-                                                                    {{option.Cat_Name}}
-                                                                    </option>
-                                                            </select>
-                                    </div>
+                                        <p-dropdown 
+                                        [options]="AllMaterialData" 
+                                        name="Material_Type"
+                                        [(ngModel)]="ObjMasterProductm.Material_ID"
+                                        #Material_Type="ngModel" 
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Item Found'" 
+                                        (onChange)="MaterialChange()"
+                                        [filter]="true" filterBy="label,value.name" 
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select Material Type'" 
+                                        [virtualScroll]="true" 
+                                        itemSize="30"
+                                        [ngClass]="{'clearance': MasterProductmFormSubmitted && Material_Type.errors?.required}"required>
+                                        </p-dropdown>
                                 </div>
-                                <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Product Description<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="prodescription" #prodescription="ngModel" [(ngModel)]="ObjMasterProductm.Product_Description" placeholder="Product Description" [ngClass]="{'clearance': MasterProductmFormSubmitted && prodescription.errors?.required}"
-                                            required>
-                                    </div>
+                                </div>
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                        padding: 0.5em 1em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;
+                                        margin-top: 15px;
+                                        ">
+                                        <i class="fa fa-fw fa-fax">
+                                        </i> &nbsp;<strong>Product Details :</strong></h5>
+                                        <app-compacct-product-details
+                                        [requirPro]="MasterProductmFormSubmitted"
+                                        (ProDetailsObj)="getProDetailsData($event)"
+                                        #Product>
+                                       </app-compacct-product-details>
+                            
+                                </div>
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>Additional Info.</strong></h5> 
+                                    
                                     <div class="col-sm-4">
                                         <label class="control-label">Material of Cons.</label>
                                         <div class="pull-right">
@@ -186,9 +211,6 @@
                                                     </option>
                                             </select>
                                     </div>
-
-                                </div>
-                                <div class="form-group">
                                     <div class="col-sm-4">
                                         <label class="control-label">Product Feature<sup class="text-danger">*</sup></label>
                                         <div class="pull-right">
@@ -216,63 +238,124 @@
                                                               </option>
                                                       </select>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">Remarks<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="remarks" #remarks="ngModel" [(ngModel)]="ObjMasterProductm.Remarks" placeholder="Remarks" [ngClass]="{'clearance': MasterProductmFormSubmitted && remarks.errors?.required}" required>
-                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <div class="col-sm-4">
-                                        <label class="control-label">HSN Code<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="hsncode" #hsncode="ngModel" [(ngModel)]="ObjMasterProductm.HSN_NO" placeholder="HSN Code" [ngClass]="{'clearance': MasterProductmFormSubmitted && hsncode.errors?.required}" required>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label class="control-label">GST Percentage<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="gstper" #gstper="ngModel" [(ngModel)]="ObjMasterProductm.GST_Percentage" CompacctDigitonly="true" placeholder="GST %" [ngClass]="{'clearance': MasterProductmFormSubmitted && gstper.errors?.required}" required>
-                                    </div>
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>Financial Details:</strong></h5>
+                                    <app-compacct-financial-details
+                                            [requirFinancial]="MasterProductmFormSubmitted"
+                                            [Edit]="ObjFinancialComponentData"
+                                            (FinacialDetailsObj)="FinancialDetailsData($event)"
+                                            #FinacialDetails>
+                                    </app-compacct-financial-details>
+                                </div>
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>TAX & Custom Duty:</strong></h5> 
+                                    <app-compacctgstandcustomduty
+                                    [requirGst]="MasterProductmFormSubmitted"
+                                    (GstandCustonDutyObj)="getGstAndCustDutyData($event)"
+                                    #GstAndCustomDuty
+                                    [labelChange]="LAbelName">
+                                    </app-compacctgstandcustomduty>
+                                </div>
+                                <div class="form-group"style="padding: 1em;">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>UOM</strong></h5> 
                                     <div class="col-sm-4">
                                         <label class="control-label">UOM<sup class="text-danger">*</sup></label>
-                                        <input class="form-control" name="uom" #uom="ngModel" [(ngModel)]="ObjMasterProductm.UOM" placeholder="UOM" [ngClass]="{'clearance': MasterProductmFormSubmitted && uom.errors?.required}" required>
+                                        <div class="pull-right">
+                                            <button (click)="ViewUomType()" class="btn btn-primary  createPatient">
+                                            <i class="fa fa-fw  fa-eye"></i> View</button> &nbsp; 
+                                            <button (click)="ProUomPopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus">
+                                            </i> Create
+                                            </button>
+                                        </div>
+                                        <p-dropdown 
+                                        [options]="UomDataList" 
+                                        name="MainUOM"
+                                        [(ngModel)]="ObjMasterProductm.UOM"
+                                        #MainUOM="ngModel" 
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No UOM Found'" 
+                                        [filter]="true" filterBy="label,value.name" 
+                                        [resetFilterOnHide]="true" 
+                                        [placeholder]="'Select UOM'" 
+                                        [virtualScroll]="true" 
+                                        itemSize="30"
+                                        [ngClass]="{'clearance': MasterProductmFormSubmitted && MainUOM.errors?.required}"required>
+                                        </p-dropdown>
                                     </div>
-
-                                </div>
-                                <div class="form-group">
                                     <div class="col-sm-4">
-                                        <label class="control-label">Make (Multiple)<sup class="text-danger">*</sup></label>
-                                        <p-multiSelect itemSize="30" [options]="MakeList" [styleClass]="'compacct-multiselect'" name="make" #make="ngModel" [(ngModel)]="Product_Mfg_Comp_ID" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [disabled]="makedisabled" [ngClass]="{'clearance': MasterProductmFormSubmitted && make.errors?.required}"
+                                        <label class="control-label" *ngIf="buttonname === 'Create'">Manufacturer<sup class="text-danger">*</sup></label>
+                                        <label class="control-label" *ngIf="buttonname != 'Create'">Manufacturer<sup class="text-danger">*</sup></label>
+                                        <div class="pull-right">
+                                            <button (click)="ViewMakeMul()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
+                                            <button (click)="MakeMulPopup()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
+                                        </div>
+                                        <p-multiSelect *ngIf="buttonname === 'Create'" itemSize="30" [options]="MakeList" [styleClass]="'compacct-multiselect'" name="make" #make="ngModel" [(ngModel)]="Product_Mfg_Comp_ID" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [disabled]="makedisabled" [ngClass]="{'clearance': MasterProductmFormSubmitted && make.errors?.required}"
                                             required>
                                         </p-multiSelect>
-                                        <!-- <select class="form-control" name="make" #make="ngModel" [(ngModel)]="ObjMasterProductm.Product_Mfg_Comp_ID" [ngClass]="{'clearance': MasterProductmFormSubmitted && make.errors?.required}" required>
-                                                              <option  [ngValue]="undefined">Select</option>
-                                                          <option *ngFor="let option of MakeList" [ngValue]="option.Product_Mfg_Comp_ID">
-                                                              {{option.Mfg_Company}}
-                                                              </option>
-                                                      </select> -->
+                                        <select *ngIf="buttonname != 'Create'" 
+                                        class="form-control" 
+                                        name="make1" 
+                                        #make1="ngModel" [(ngModel)]="MakeEdit" [ngClass]="{'clearance': MasterProductmFormSubmitted && make1.errors?.required}" required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of MakeList" value={{option.Product_Mfg_Comp_ID}}>
+                                                    {{option.Mfg_Company}}
+                                                </option>
+                                            </select>
                                     </div>
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-4"></div>
+                                </div> 
+                                <div class="form-group">
+                                    <div *ngIf="databaseName === 'Harbauer'" class="col-sm-6" style="margin-left:15px;">
                                         <label class="control-label">File Upload</label>
                                         <p-fileUpload #fileInput *ngIf="!PDFViewFlag" name="aFile" accept="image/*,application/pdf" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" (onSelect)="FetchPDFFile($event)" url="/Harbauer_Master_Product_mechanical/Upload_Doc">
-                                            <!-- <ng-template let-aFile pTemplate='aFile'>
-                                                <div class="ui-fileupload-row">
-                                                    <div><img [src]="aFile.type.includes('image') ? aFile.objectURL :'/PDF_Logo/PDF-logo.png'" width="50"></div>
-                                                    <div>{{aFile.name}}</div>
-                                                    <div>{{aFile.size}} bytes</div>
-                                                    <div>
-                                                        <button type="button" class="btn btn-danger" (click)="onClear($event,aFile)"><i class="fa fa-fw fa-close"></i></button>
-                                                    </div>
-                                                </div>
-                                            </ng-template> -->
                                         </p-fileUpload>
                                         <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
-                                        <!-- <p-fileUpload name="myfile[]" customUpload="true" multiple="multiple" (uploadHandler)="onUpload($event)" accept=""image/*,.csv,.xml,.doc,.docx,.pdf""></p-fileUpload> -->
+                                    </div>
+                                    <div *ngIf="databaseName === 'MICL_Demo' || databaseName === 'MICL'" class="col-sm-6" style="margin-left:15px;">
+                                        <label class="control-label">File Upload</label>
+                                        <span class="btn btn-xs btn-danger pull-right" (click)="ClearUploadInpt(UploadFile)"
+                                            *ngIf="file"><i class="fa fa-close"></i></span>
+                                        <p-fileUpload #UploadFile *ngIf="uploaddoc" name="filedoc" accept="image/*,application/pdf" customUpload="true" [chooseLabel]="'Browse'" [showUploadButton]="false" [showCancelButton]="false" (onSelect)="fileSelect($event)">
+                                        </p-fileUpload> 
+                                        <button name="pan" *ngIf="!uploaddoc" pButton pRipple type="button"
+                                            label="Show Document" (click)="showDoc()"></button>
                                     </div>
                                 </div>
 
                                 <div class="box-footer">
-                                    <button class="btn btn-primary pull-right" type="button" (click)="SaveMasterProductM(MasterProductmForm.form.valid)" id="load" [disabled]="Spinner">
+                                    <button *ngIf="databaseName === 'Harbauer'" class="btn btn-primary pull-right" type="button" (click)="SaveMasterProductM(MasterProductmForm.form.valid)" id="load" [disabled]="Spinner">
                                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                                         <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
-                                                    </button>
+                                    </button>
+                                    <button *ngIf="databaseName === 'MICL_Demo' || databaseName === 'MICL'" class="btn btn-primary pull-right" type="button" (click)="onBasicUpload(MasterProductmForm.form.valid)" id="load" [disabled]="Spinner">
+                                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                    </button>
                                 </div>
                             </form>
                         </p-tabPanel>
@@ -284,6 +367,53 @@
     </div>
 </div>
 
+<!--Material Type -->                                           
+<p-dialog 
+[header]="'Create Material Type'" 
+[appendTo]="'body'" 
+[visible]="MatTypeModal" 
+[closeOnEscape]="true" 
+[closable]="false" 
+[modal]="true" 
+[responsive]="true"
+[style]="{ width: '40%', minWidth: '200px' }" 
+style="text-align: center;" 
+[minY]="70"
+[maximizable]="true" 
+[baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="MaterialTypeForm" #MaterialTypeForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Material Type<sup class="text-danger">*</sup></label>
+                    <input type="text"
+                    class="form-control" 
+                    name="MT" #MT="ngModel" 
+                    [(ngModel)]="MaterialTypeName" 
+                    placeholder="Material Type" 
+                    allow-pattern="([a-z ]|\.)" 
+                    [ngClass]="{clearance: MaterialTypeFormSubmitted && MT?.errors?.required}" required />
+                </div>
+            </div>
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="MatTypeModal = false" class="btn btn-default">CANCEL</button>
+            <button type="submit" 
+            name="bill" 
+            class="btn btn-primary pull-right custombutton" 
+            (click)="CreateMaterialType(MaterialTypeForm.form.valid)" 
+            id="load2" [disabled]="Spinner">
+                <p-progressSpinner
+                    *ngIf="Spinner"
+                    [style]="{ width: '15px', height: '15px' }"
+                    strokeWidth="8"
+                    animationDuration=".5s">
+                </p-progressSpinner>
+            <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>&nbsp;CREATE
+        </button>
+    </p-footer>
+</p-dialog>
 <!-- CREATE -->
 <p-dialog [header]="'Create Product Type'" [appendTo]="'body'" [visible]="ProTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70"
     [maximizable]="true" [baseZIndex]="10000">
@@ -495,10 +625,121 @@
 </button>
     </p-footer>
 </p-dialog>
+<p-dialog [header]="'Create Make (Multiple)'" [appendTo]="'body'" [visible]="MakeMulModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="MakeMulForm" #MakeMulForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Make (Multiple)<sup class="text-danger">*</sup
+  ></label>
+                    <input type="text" class="form-control" name="makemulname" #makemulname="ngModel" [(ngModel)]="MakeMulName" placeholder="Make (Multiple)" [ngClass]="{
+          clearance: MakeMulFormSubmitted && makemulname?.errors?.required
+        }" required />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="MakeMulModal = false" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreateMakeMul(MakeMulForm.form.valid)" id="load2" [disabled]="Spinner">
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;CREATE
+</button>
+    </p-footer>
+</p-dialog>
+
+<!--UOM-->
+<p-dialog 
+[header]="'Create UOM Type'" 
+[appendTo]="'body'" 
+[visible]="UOMTypeModal" 
+[closeOnEscape]="true" 
+[closable]="false" 
+[modal]="true" 
+[responsive]="true"
+[style]="{ width: '40%', minWidth: '200px' }" 
+style="text-align: center;" 
+[minY]="70"
+[maximizable]="true" 
+[baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="UomTypeForm" #UomTypeForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">UOM<sup class="text-danger">*</sup></label>
+                    <input type="text" 
+                    class="form-control" 
+                    name="UOM" #UOM="ngModel" 
+                    [(ngModel)]="UOMTypeName" 
+                    placeholder="UOM" 
+                    allow-pattern="([a-z ]|\.)" 
+                    [ngClass]="{clearance: UOMTypeFormSubmitted && UOM?.errors?.required}" required />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="UOMTypeModal = false" class="btn btn-default">
+        CANCEL
+        </button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="CreateUomType(UomTypeForm.form.valid)" id="load2" [disabled]="Spinner">
+<p-progressSpinner
+  *ngIf="Spinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!Spinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;CREATE
+</button>
+    </p-footer>
+</p-dialog>
 
 <!-- VIEWS -->
+<!--Material Type -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewMetTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+       <p-table [value]="MaterialData"  [rowHover]="true">
+             <ng-template pTemplate="header">
+                <tr>
+                    <th>Material Type </th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                     <td>{{col.Material_Type}}</td>
+                    <td><button class="btn btn-sm btn-danger" 
+                        (click)="deleteMaterialType(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewMetTypeModal = false" class="btn btn-default">
+  CANCEL
+       </button>
+    </p-footer>
+</p-dialog>
 <!-- Product Type -->
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewProTypeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewProTypeModal" [closeOnEscape]="true" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">
     <div class="table-responsive no-padding">
         <p-table [value]="ProductTypeList">
@@ -532,7 +773,7 @@
     </p-footer>
 </p-dialog>
 <!-- Product Sub Type -->
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewProSubTModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewProSubTModal" [closeOnEscape]="true" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">
     <div class="table-responsive no-padding">
         <p-table [value]="ProductSubTypeList">
@@ -558,7 +799,7 @@
     </p-footer>
 </p-dialog>
 <!-- Material Of Cons. -->
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewMocModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewMocModal" [closeOnEscape]="true" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">
     <div class="table-responsive no-padding">
         <p-table [value]="MocList">
@@ -584,7 +825,7 @@
     </p-footer>
 </p-dialog>
 <!-- Capacity / Size -->
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewCapacityModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewCapacityModal" [closeOnEscape]="true" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">
     <div class="table-responsive no-padding">
         <p-table [value]="CapacitySizeList">
@@ -610,7 +851,7 @@
     </p-footer>
 </p-dialog>
 <!-- Product Feature -->
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewProFeatureModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewProFeatureModal" [closeOnEscape]="true" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">
     <div class="table-responsive no-padding">
         <p-table [value]="ProductFeatureList">
@@ -636,7 +877,7 @@
     </p-footer>
 </p-dialog>
 <!-- Grade -->
-<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewGradeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewGradeModal" [closeOnEscape]="true" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
     [baseZIndex]="10000">
     <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
         <p-table [value]="GradeList">
@@ -661,3 +902,55 @@
 </button>
     </p-footer>
 </p-dialog>
+<!-- Make (Multiple) -->
+<p-dialog [header]="'View'" [appendTo]="'body'" [(visible)]="ViewMakeMulModal" [closeOnEscape]="true" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+        <p-table [value]="MakeList">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Make (Multiple)</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Mfg_Company}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteMakeMul(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewMakeMulModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+
+<!--UOM-->
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewUomModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="UOMData">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>UOM</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                    <td>{{col.UOM}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteProUom(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewUomModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog> 

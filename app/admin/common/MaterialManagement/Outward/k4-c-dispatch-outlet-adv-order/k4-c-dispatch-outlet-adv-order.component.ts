@@ -20,27 +20,27 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
   encapsulation: ViewEncapsulation.None
 })
 export class K4CDispatchOutletAdvOrderComponent implements OnInit {
-  items = [];
-  menuList = [];
+  items:any = [];
+  menuList:any = [];
   tabIndexToView = 0;
   brandInput = false ;
   buttonname = "Create";
   myDate : Date;
   ChallanDate : any = Date ;
-  brandList = [];
-  toGodownList = [];
-  costcenterList = [];
-  VehicleList = [];
-  itemList =[];
-  NativeitemList = [];
-  FromGodownList = [];
-  productDetails = [];
-  saveList = [];
-  saveData = [];
-  outletListBro = [];
-  GetAllDataList = [];
-  OutletFilter = [];
-  BackUPGetAllDataList = [];
+  brandList:any = [];
+  toGodownList:any = [];
+  costcenterList:any = [];
+  VehicleList:any = [];
+  itemList:any =[];
+  NativeitemList:any = [];
+  FromGodownList:any = [];
+  productDetails:any = [];
+  saveList:any = [];
+  saveData:any = [];
+  outletListBro:any = [];
+  GetAllDataList:any = [];
+  OutletFilter:any = [];
+  BackUPGetAllDataList:any = [];
   SelectedOutLet :any;
   OutletFormSubmit = false;
   outLetDis = false;
@@ -60,8 +60,8 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   Auto_Accepted: any;
 
   dispatchchallanno : any;
-  FranchiseProductList = [];
-  FranchiseList = [];
+  FranchiseProductList:any = [];
+  FranchiseList:any = [];
   taxable: any;
   cgst: any;
   sgst: any;
@@ -77,11 +77,11 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
 
   totalaccpqty: any;
   totaldelqty: any;
-  Franchise = [];
+  Franchise:any = [];
   FranchiseBill:any;
   ToCostCentId = undefined;
 
-  Regeneratelist = [];
+  Regeneratelist:any = [];
   contactname = undefined;
   taxableRegenerate: any;
   cgstRegenerate: any;
@@ -98,14 +98,17 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   salebillno: any;
 
   ViewPoppup = false;
-  viewList = [];
+  viewList:any = [];
   view_Doc_No = undefined;
   view_Doc_date = undefined;
   view_Order_No = undefined;
+  viewbuttondisabled = false;
   flagbox = false;
 
   Cancle_Remarks : string;
   remarksFormSubmitted = false;
+  advordernumber: any;
+  viewgenerateList: any=[];
 
   constructor(
     private $http: HttpClient,
@@ -150,12 +153,14 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
     this.inputDate = true;
     this.Delivery_Date = new Date();
     this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+    this.viewgenerateList = [];
   }
   clearData(){
     //this.ObjadvDispat= new advDispat();
     this.OutletFormSubmit = false;
     this.flag = false;
     this.ngxService.stop();
+    this.viewgenerateList = [];
    }
   GetDate(){
     const obj = {
@@ -486,7 +491,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
                     detail: "Something Wrong"
                   });
             }
-        }
+  }
 // saveboxcharge(){
   // this.flagbox = false;
   // for(let i = 0; i < this.productDetails.length ; i++){
@@ -792,6 +797,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   // }
 
   searchData(){
+    this.seachSpinner = true;
     this.ObjBrowseData.Cost_Cen_ID = this.ObjBrowseData.Cost_Cen_ID === undefined ? 0 : this.ObjBrowseData.Cost_Cen_ID ;
     console.log("this.ObjBrowseData.Cost_Cen_ID",this.ObjBrowseData.Cost_Cen_ID);
     const start = this.ObjBrowseData.From_Date
@@ -816,6 +822,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
       this.BackUPGetAllDataList = data;
       console.log("this.GetAllDataList",this.GetAllDataList);
       this.GetDist1();
+      this.seachSpinner = false;
       })
 
   }
@@ -824,6 +831,12 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   this.clearData();
   if(row.Doc_No){
   this.view_Doc_No = row.Doc_No;
+  if (row.E_Invoice_PDF_Link) {
+    this.viewbuttondisabled = true;
+  }
+  else {
+    this.viewbuttondisabled = false;
+  }
   //this.ViewPoppup = true;
   this.GetViewData(this.view_Doc_No);
   }
@@ -839,14 +852,12 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("Data From Api",data);
       this.viewList = data;
-       this.view_Doc_No = data[0].Doc_No;
-       this.view_Doc_date = new Date(data[0].Doc_Date);
-       this.view_Order_No = data[0].Adv_Order_No;
-    
-    this.ViewPoppup = true;
+      //  this.view_Doc_No = data[0].Doc_No;
+      //  this.view_Doc_date = new Date(data[0].Doc_Date);
+      //  this.view_Order_No = data[0].Adv_Order_No;
 
     // console.log("this.viewList  ===",this.viewList);
-
+    this.ViewPoppup = true;
   })
   }
   UpdateBox (viewobj){
@@ -897,6 +908,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
       });
     }
   }
+  
   GetDist1() {
     let DOrderBy = [];
     this.OutletFilter = [];
@@ -933,6 +945,12 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
     window.open("/Report/Crystal_Files/K4C/Adv_Custom_Order_Dispatch.aspx?DocNo=" + Objp.Adv_Order_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
     );
   }
+  }
+  DownloadEINV(obj) {
+    if (obj) {
+        window.open(obj, '_self');
+      
+    }
   }
   exportoexcel(Arr,fileName): void {
     let temp = [];
@@ -974,10 +992,12 @@ PrintOrder(obj) {
     this.remarksFormSubmitted = false;
     this.doc_no = undefined;
     this.salebillno = undefined;
+    this.advordernumber = undefined;
     if (masterProduct.Doc_No) {
      this.doc_no = masterProduct.Doc_No;
      this.doc_date = masterProduct.Doc_Date;
      this.salebillno = masterProduct.Bill_NO;
+     this.advordernumber = masterProduct.Adv_Order_No
      this.compacctToast.clear();
      this.compacctToast.add({
        key: "c",
@@ -997,7 +1017,8 @@ PrintOrder(obj) {
         User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
         Doc_Date : this.doc_date,
         Sale_Bill_No : this.salebillno,
-        Remarks : this.Cancle_Remarks
+        Remarks : this.Cancle_Remarks,
+        Adv_Order_No : this.advordernumber
        }
        if (valid) {
        const objj = {
@@ -1006,7 +1027,8 @@ PrintOrder(obj) {
         "Json_Param_String": JSON.stringify([Tempdata])
        }
        this.GlobalAPI.getData(objj).subscribe((data:any)=>{
-         if (data[0].Column1 === "Done"){
+         var msg = data[0].Column1;
+         if (data[0].Column1){
            //this.onReject();
            this.remarksFormSubmitted = false;
            this.searchData();
@@ -1015,7 +1037,7 @@ PrintOrder(obj) {
              key: "compacct-toast",
              severity: "success",
              summary: "Doc No.: " + this.doc_no.toString(),
-             detail: "Succesfully Deleted"
+             detail: msg
            });
            this.clearData();
      }
@@ -1192,6 +1214,168 @@ RegenerateBill(){
           });
         }
      })
+}
+
+// GENERATE BILL NO
+GeneratingBillNo(row){
+  //console.log("View ==",DocNo);
+this.clearData();
+if(row.Doc_No){
+this.view_Doc_No = row.Doc_No;
+//this.ViewPoppup = true;
+this.GetViewDataforgeneratebillno(this.view_Doc_No);
+}
+}
+GetViewDataforgeneratebillno(Doc_No){
+  this.viewgenerateList = [];
+  const obj = {
+    "SP_String": "SP_Controller_Master",
+    "Report_Name_String": "View Custom Order Dispatch Details",
+    "Json_Param_String": JSON.stringify([{Doc_No : this.view_Doc_No}])
+
+  }
+  this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    console.log("Data From Api",data);
+    this.viewgenerateList = data;
+    //  this.view_Doc_No = data[0].Doc_No;
+    //  this.view_Doc_date = new Date(data[0].Doc_Date);
+    //  this.view_Order_No = data[0].Adv_Order_No;
+
+  // console.log("this.viewList  ===",this.viewList);
+  this.saveAdvGenerate();
+
+})
+}
+saveAdvGenerate(){
+  console.log(this.saveqty());
+  console.log(this.viewgenerateList.length && this.saveqty());
+  if(this.viewgenerateList.length && this.saveqty()){
+    this.ngxService.start();
+        this.saveData = [];
+           this.viewgenerateList.forEach(el=>{
+             if(Number(el.Delivery_Qty) && Number(el.Delivery_Qty) !== 0 ){
+               if(el.Franchise === 'Y') {//(Number(el.Box_Charge) || Number(el.Box_Charge) === 0)) {
+              this.flagbox = false;
+                 if(el.Box_Charge) {
+             const saveObj = {
+               Doc_No: el.Doc_No,
+               Doc_Date: el.Doc_Date,
+               F_Cost_Cen_ID: el.F_Cost_Cen_ID,
+               F_Godown_ID: el.F_Godown_ID,
+               To_Cost_Cen_ID: el.To_Cost_Cen_ID,
+               To_Godown_ID: el.To_Godown_ID,
+               Batch_No : el.Batch_NO,
+               Product_ID: el.Product_ID,
+               Qty: el.Delivery_Qty,
+               Accepted_Qty : el.Delivery_Qty,
+               Rate: 0,
+               UOM: el.UOM,
+               User_ID: el.User_ID,
+               REMARKS: el.REMARKS,
+               Fin_Year_ID: this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
+               Vehicle_Details : el.Vehicle_Details,
+               Adv_Order_No : el.Adv_Order_No,
+               Status : this.Auto_Accepted == "Y" ? "Updated" : "Not Updated",
+               Box_Charge : el.Box_Charge, //? el.Box_Charge : 0,
+               Box_Charge_Remarks : el.Box_Charge_Remarks,
+               Order_Cost_Centre_ID : el.Order_Cost_Centre_ID
+             }
+             this.saveData.push(saveObj)
+            }
+            else {
+                this.flagbox = true;
+                 }
+                }
+                 else {
+                  const saveObj = {
+                    Doc_No: el.Doc_No,
+                    Doc_Date: el.Doc_Date,
+                    F_Cost_Cen_ID: el.F_Cost_Cen_ID,
+                    F_Godown_ID: el.F_Godown_ID,
+                    To_Cost_Cen_ID: el.To_Cost_Cen_ID,
+                    To_Godown_ID: el.To_Godown_ID,
+                    Batch_No : el.Batch_NO,
+                    Product_ID: el.Product_ID,
+                    Qty: el.Delivery_Qty,
+                    Accepted_Qty : el.Delivery_Qty,
+                    Rate: 0,
+                    UOM: el.UOM,
+                    User_ID: el.User_ID,
+                    REMARKS: el.REMARKS,
+                    Fin_Year_ID: this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
+                    Vehicle_Details : el.Vehicle_Details,
+                    Adv_Order_No : el.Adv_Order_No,
+                    Status : this.Auto_Accepted == "Y" ? "Updated" : "Not Updated",
+                    Box_Charge : el.Box_Charge ? el.Box_Charge : 0,
+                    Box_Charge_Remarks : el.Box_Charge_Remarks,
+                    Order_Cost_Centre_ID : el.Order_Cost_Centre_ID
+                  }
+                  this.saveData.push(saveObj)
+                 }
+                 }
+          })
+           if(this.saveData.length){
+            const obj = {
+              "SP_String": "SP_Production_Voucher",
+               "Report_Name_String": "Add K4C Txn Distribution For Custom Order",
+               "Json_Param_String": JSON.stringify(this.saveData)
+             }
+             this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+              this.dispatchchallanno = data[0].Column1;
+               var tempID = data[0].Column1;
+               if(data[0].Column1){
+                if(this.FranchiseBill != "N") {
+                  this.SaveFranchisechallan();
+                }
+                this.ngxService.stop();
+                 this.compacctToast.clear();
+               this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "success",
+               summary: "Distribution Challan No. " + tempID,
+               detail: "Distribution Challan Entry Succesfully"
+             });
+             this.productDetails = [];
+             this.tabIndexToView = 0;
+             this.items = ["BROWSE", "CREATE"];
+             this.buttonname = "Create";
+             this.clearData();
+             this.searchData();
+            // this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
+               } else{
+                this.ngxService.stop();
+                this.compacctToast.clear();
+                    this.compacctToast.add({
+                      key: "compacct-toast",
+                      severity: "error",
+                      summary: "Warn Message",
+                      detail: "Something Wrong"
+                    });
+              }
+             })
+           }
+           else{
+            this.ngxService.stop();
+            this.compacctToast.clear();
+                this.compacctToast.add({
+                  key: "compacct-toast",
+                  severity: "error",
+                  summary: "Warn Message",
+                  detail: "Something Wrong"
+                });
+          }
+
+          }
+          else{
+            this.ngxService.stop();
+            this.compacctToast.clear();
+                this.compacctToast.add({
+                  key: "compacct-toast",
+                  severity: "error",
+                  summary: "Warn Message",
+                  detail: "Something Wrong"
+                });
+          }
 }
 
 }

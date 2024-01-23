@@ -54,7 +54,7 @@
                                           >
                                         </select>
                                       </div>
-                                    <div class="col-sm-4">                                            
+                                    <!-- <div class="col-sm-4">                                            
                                         <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
                                         <p-dropdown [options]="CostCenterList"
                                         name="costcenter1"
@@ -70,7 +70,7 @@
                                         [styleClass]="ACOpeningBalcSearhFormSubmitted &&  costcenter1.errors?.required ? 'clearance' :''"
                                         [required]="true">
                                         </p-dropdown>
-                                    </div>
+                                    </div> -->
                                     <div class="col-sm-4">
                                         <button
                                           class="btn btn-primary custombutton"
@@ -114,7 +114,7 @@
                                                     <tr>
                                                         <th>Action</th>
                                                         <th>Fin Year Name</th>
-                                                        <th>Cost Center</th>
+                                                        <!-- <th>Cost Center</th> -->
                                                         <th>DR Amt</th>
                                                         <th>CR Amt</th>
                                                       </tr>
@@ -128,12 +128,19 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                                 <ul class="dropdown-menu">
-                                                                    <li><a  (click)="EditACOpeningBal(col)"><i class="fa fa-fw fa-pencil"></i>Edit</a></li>
+                                                                    <li>
+                                                                        <a  (click)="EditACOpeningBal(col)"><i class="fa fa-fw fa-pencil"></i>Edit</a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a (click)="exportoexcel(col,'Opening_Balance')">
+                                                                            <i class="glyphicon glyphicon-save" aria-hidden="true"></i> export to excel
+                                                                        </a>
+                                                                    </li>
                                                                 </ul>
                                                             </div>
                                                         </td>
                                                         <td>{{col.Fin_Year_Name}} </td>
-                                                        <td>{{col.Location}}</td>
+                                                        <!-- <td>{{col.Location}}</td> -->
                                                         <td>{{col.DR_Amt}}</td>
                                                         <td>{{col.CR_Amt}}</td>
                                                    </tr>

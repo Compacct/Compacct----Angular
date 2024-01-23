@@ -66,7 +66,7 @@ import {TooltipModule} from 'primeng/tooltip';
 import {DataViewModule} from 'primeng/dataview';
 import {PanelModule} from 'primeng/panel';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
-
+import {SliderModule} from 'primeng/slider';
 // SPINNER
 import { NgxUiLoaderModule } from "ngx-ui-loader";
 // SYN
@@ -279,16 +279,249 @@ import { TutoBdaJoiningComponent } from './common/CRM/Transaction/tuto-bda-joini
 import { TutoAspUnavaliblityComponent } from './common/CRM/Master/tuto-asp-unavaliblity/tuto-asp-unavaliblity.component'
 
 import { SortService, FilterService, ColumnMenuService  } from '@syncfusion/ej2-angular-gantt';
+import { RetailBrowseComponent } from './common/FinancialManagement/Retail/retail-browse/retail-browse.component';
+import { RetailBrowseReceiveComponent } from './common/FinancialManagement/Retail/retail-browse-receive/retail-browse-receive.component';
+import { RetailBrowseAdvanceComponent } from './common/FinancialManagement/Retail/retail-browse-advance/retail-browse-advance.component';
+import { PurchaseOrderComponent } from "./common/MaterialManagement/Inward/purchase-order/purchase-order.component";
+import { JournalVoucherComponent } from "./common/FinancialManagement/Transaction/Voucher/journal-voucher/journal-voucher.component";
+import { MasterCompanyComponent } from "./common/FinancialManagement/Master/master-company/master-company.component";
+import { UserMasterComponent } from "./common/UserManagement/Master/user-master/user-master.component";
 import { AttendanceSheetComponent } from './common/Attendance/attendance-sheet/attendance-sheet.component';
-import { MasterCompanyComponent } from './common/FinancialManagement/Master/master-company/master-company.component';
-import { JournalVoucherComponent } from './common/FinancialManagement/Transaction/Voucher/journal-voucher/journal-voucher.component';
-import { UserMasterComponent } from './common/UserManagement/Master/user-master/user-master.component';
 import { K4cProductCategoryUpdateComponent } from './common/MaterialManagement/k4c-product-category-update/k4c-product-category-update.component';
-import { PurchaseOrderComponent } from './common/MaterialManagement/Inward/purchase-order/purchase-order.component';
-import { TutoAspMaxAppoComponent } from './common/CRM/Master/tuto-asp-max-appo/tuto-asp-max-appo.component';
+import { TutoAspMaxAppoComponent } from "./common/CRM/Master/tuto-asp-max-appo/tuto-asp-max-appo.component";
+import { TutoBdaAttendanceComponent } from './common/CRM/Master/tuto-bda-attendance/tuto-bda-attendance.component';
+import { HrLeaveOpeningComponent } from './common/MICL/hr-leave-opening/hr-leave-opening.component';
+import { TutoBdaWiseTargetComponent } from './common/CRM/Master/tuto-bda-wise-target/tuto-bda-wise-target.component';
+import { TutoSalesTreeComponent } from './common/CRM/Master/tuto-sales-tree/tuto-sales-tree.component';
+import { GrnComponent } from './common/MICL/grn/grn.component';
+import { MiclRequisitionComponent } from './common/MaterialManagement/Outward/micl-requisition/micl-requisition.component';
+import { MiclDispatchChallanComponent } from './common/MICL/micl-dispatch-challan/micl-dispatch-challan.component';
+import { HrLeaveApplyComponent } from "./common/MICL/hr-leave-apply/hr-leave-apply.component";
+import { SubledgerForAccountsComponent } from "./common/FinancialManagement/Master/subledger-for-accounts/subledger-for-accounts.component";
+import { MasterProductGeneralConsumablesComponent } from "./common/MICL/master-product-general-consumables/master-product-general-consumables.component";
+import { HarbaTaskListComponent } from './common/TenderManagement/harba-task-list/harba-task-list.component';
+import { RdbComponent } from "./common/MICL/rdb/rdb.component";
+import { PurchaseBillFromGrnComponent } from './common/MICL/purchase-bill-from-grn/purchase-bill-from-grn.component';
+import { BdaWiseTargetAchievementComponent } from './common/CRM/Master/bda-wise-target-achievement/bda-wise-target-achievement.component';
+// import { TaxCategoryComponent } from './common/Master/Acc/tax-category/tax-category.component';
+import { ProductMasterComponent } from "./common/MICL/product-master/product-master.component";
+import { CompacctgstandcustomdutyComponent } from './shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
+import { CompacctProductDetailsComponent } from './shared/compacct.components/compacct.forms/compacct-product-details/compacct-product-details.component';
+import { CompacctFinancialDetailsComponent } from "./shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component";
+import { BSHPLAmeyoCustomerComponent } from './common/CRM/BSHPLameyo/bshpl-ameyo-customer/bshpl-ameyo-customer.component';
+import { BSHPAmeyoKBComponent } from './common/CRM/BSHPLameyo/bshp-ameyo-kb/bshp-ameyo-kb.component';
+import { SubLedgerComponent } from './common/FinancialManagement/Master/sub-ledger/sub-ledger.component';
+import { TaxCategoryComponent } from "./common/MICL/tax-category/tax-category.component";
+import { CompacctProjectComponent } from './shared/compacct.components/compacct.forms/compacct-project/compacct-project.component';
+import { K4cConversionOfProductComponent } from './common/MaterialManagement/Outward/k4c-conversion-of-product/k4c-conversion-of-product.component';
+import { PurchaseBillComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill/purchase-bill.component';
+import { FinancialVoucherComponent } from './common/FinancialManagement/Transaction/Voucher/financial-voucher/financial-voucher.component';
+import { WastageComponent } from "./common/MaterialManagement/Outward/wastage/wastage.component";
+import { HIPLPaymentRequisitionComponent } from "./common/FinancialManagement/Transaction/Voucher/hipl-payment-requisition/hipl-payment-requisition.component";
+import { CCSahaProfundComponent } from "./common/PatientManagement/Transaction/cc-saha-profund/cc-saha-profund.component";
+import { REPStockReportComponent } from './common/MaterialManagement/Report/rep-stock-report/rep-stock-report.component';
+import { StockReportComponent } from './shared/compacct.components/stock-report/stock-report.component'
+import { ContractVoucherV2Component } from "./common/FinancialManagement/Voucher/contract-voucher-v2/contract-voucher-v2.component";
+import { IssueChallanComponent } from './common/Harbauer/issue-challan/issue-challan.component';
+import { HRTxnSpecialAllowanceDeductionComponent } from "./common/MICL/hr-txn-special-allowance-deduction/hr-txn-special-allowance-deduction.component";
+import { ProcessSalaryComponent } from './common/Attendance/process-salary/process-salary.component';
+import { LeaveApprovalComponent } from './common/MICL/leave-approval/leave-approval.component';
+import { ConsumptionComponent } from "./common/MICL/consumption/consumption.component";
+import { DebitNoteWoStockComponent } from './common/FinancialManagement/Transaction/Purchase/debit-note-wo-stock/debit-note-wo-stock.component';
+import { FinancialReminderComponent } from "./common/FinancialManagement/Transaction/Voucher/financial-reminder/financial-reminder.component";
+import { InflowPlaningComponent } from "./common/Harbauer/inflow-planing/inflow-planing.component";
+import { WorkOrderComponent } from './common/MICL/RepairAndMaintenance/work-order/work-order.component';
+import { ReturnableGatePassComponent } from "./common/MICL/RepairAndMaintenance/returnable-gate-pass/returnable-gate-pass.component";
+import { RepairAndMaintenanceRdbComponent } from './common/MICL/RepairAndMaintenance/repair-and-maintenance-rdb/repair-and-maintenance-rdb.component';
+import { K4cProductionClosingStockComponent } from './common/MaterialManagement/Production/k4c-production-closing-stock/k4c-production-closing-stock.component';
+import { EmployeeSalaryMasterMiclComponent } from './common/MICL/employee-salary-master-micl/employee-salary-master-micl.component';
+import { HrEmployeeSalaryMasterHarbComponent } from './common/Harbauer/hr-employee-salary-master-harb/hr-employee-salary-master-harb.component';
+import { RepairAndMantainceGRNComponent } from "./common/MICL/RepairAndMaintenance/repair-and-mantaince-grn/repair-and-mantaince-grn.component";
+import { HREmployeeMasterComponent } from "./common/MICL/hr-employee-master/hr-employee-master.component";
+import { HarbProjectBillComponent } from './common/Harbauer/harb-project-bill/harb-project-bill.component';
+import { NepalSubledgerAliasCategoryComponent } from './common/FinancialManagement/Master/nepal-subledger-alias-category/nepal-subledger-alias-category.component';
+import { PatientCouponComponent } from "./common/PatientManagement/Transaction/patient-coupon/patient-coupon.component";
+import { HearingCaseHistoryComponent } from "./common/PatientManagement/hearing-case-history/hearing-case-history.component";
+import { GoodReceiveDetailsComponent } from './common/MICL/good-receive-details/good-receive-details.component';
+import { MasterHolidayComponent } from "./common/MICL/master-holiday/master-holiday.component";
+import { MICLDispatchChallanChargeableComponent } from "./common/MICL/micl-dispatch-challan-chargeable/micl-dispatch-challan-chargeable.component";
+import { DailyAttendanceSheetComponent } from './common/Attendance/daily-attendance-sheet/daily-attendance-sheet.component';
+import { MasterConsultancyV3Component } from "./common/PatientManagement/Master/master-consultancy-v3/master-consultancy-v3.component";
+import { MICLJournalVoucherComponent } from "./common/MICL/micl-journal-voucher/micl-journal-voucher.component";
+import { POAuthorizationComponent } from "./common/MICL/po-authorization/po-authorization.component";
+import { BranchRequisitionComponent } from './common/Patna/branch-requisition/branch-requisition.component';
+import { RequisitionAuthorizationComponent } from "./common/MICL/requisition-authorization/requisition-authorization.component";
+import { BOMAuthorizationComponent } from "./common/Harbauer/bom-authorization/bom-authorization.component";
+import { ProjectPlanApproveComponent } from "./common/Harbauer/project-plan-approve/project-plan-approve.component";
+import { POAuthorizationHarbauerComponent } from "./common/Harbauer/po-authorization-harbauer/po-authorization-harbauer.component";
+import { HarbProjectDesignApprovalComponent } from './common/Harbauer/harb-project-design-approval/harb-project-design-approval.component';
+import { NepalRequisitionFromSalesmanComponent } from './common/MaterialManagement/Outward/nepal-requisition-from-salesman/nepal-requisition-from-salesman.component';
+import { NepalPurchaseRequestComponent } from './common/MaterialManagement/Outward/nepal-purchase-request/nepal-purchase-request.component';
+import { MeterialInspectionOfRDBComponent } from './common/MICL/meterial-inspection-of-rdb/meterial-inspection-of-rdb.component';
+import { BLTxnWorkOrderSaleBillComponent } from "./common/Harbauer/bl-txn-work-order-sale-bill/bl-txn-work-order-sale-bill.component";
+import { HREventUploadComponent } from './common/Attendance/hr-event-upload/hr-event-upload.component';
+import { MasterSubContractorComponent } from './common/MICL/SubContractor/master-sub-contractor/master-sub-contractor.component';
+import { SubContractorEmployeeMasterComponent } from './common/MICL/SubContractor/sub-contractor-employee-master/sub-contractor-employee-master.component';
+import { SubContractorAttendanceComponent } from './common/MICL/SubContractor/sub-contractor-attendance/sub-contractor-attendance.component';
+import { NonReturnableGatePassComponent } from "./common/MICL/non-returnable-gate-pass/non-returnable-gate-pass.component";
+import { MiclRawMaterialComponent } from './common/ProductionManagement/Master/micl-raw-material/micl-raw-material.component';
+import { NepalPurchaseRequestVendorSelectionComponent } from './common/Procurement/nepal-purchase-request-vendor-selection/nepal-purchase-request-vendor-selection.component';
+import { NepalPurchaseRequestNegotiatePriceComponent } from './common/Procurement/nepal-purchase-request-negotiate-price/nepal-purchase-request-negotiate-price.component';
+import { MICLMasterConsumbleComponent } from './common/ProductionManagement/Master/micl-master-consumble/micl-master-consumble.component';
+import { MICLCostCenterMasterComponent } from './common/MICL/micl-cost-center-master/micl-cost-center-master.component';
+import { JOHEarMoldComponent } from "./common/PatientManagement/joh-ear-mold/joh-ear-mold.component";
+import { SubledgerReportForFranchiseComponent } from "./common/FinancialManagement/Master/subledger-report-for-franchise/subledger-report-for-franchise.component";
+import { K4CStockDetailsComponent } from './common/FinancialManagement/Master/k4-c-stock-details/k4-c-stock-details.component';
+import { RawMaterialReceiveComponent } from './common/ProductionManagement/Master/raw-material-receive/raw-material-receive.component';
+import { PurchaseOrderRawMaterialComponent } from "./common/ProductionManagement/Master/purchase-order-raw-material/purchase-order-raw-material.component";
+import { RawMaterialRequisitionComponent } from './common/MICL/RawMaterial/raw-material-requisition/raw-material-requisition.component';
+import { MiclRawMaterialIssueComponent } from './common/MICL/RawMaterial/micl-raw-material-issue/micl-raw-material-issue.component';
+import { NepalBLTxnPurchaseOrderComponent } from "./common/Procurement/nepal-bl-txn-purchase-order/nepal-bl-txn-purchase-order.component";
+import { JOHRealisticExpectationFormComponent } from "./common/PatientManagement/joh-realistic-expectation-form/joh-realistic-expectation-form.component";
+import { FurnaceMisInputComponent } from './common/MICL/RawMaterial/furnace-mis-input/furnace-mis-input.component';
+import { MiclRawMaterialIssueNewComponent } from './common/MICL/RawMaterial/micl-raw-material-issue-new/micl-raw-material-issue-new.component';
+import { RequisitionForIssueChargeableComponent } from './common/MICL/requisition-for-issue-chargeable/requisition-for-issue-chargeable.component';
+import { JohValidationProcessComponent } from "./common/PatientManagement/joh-validation-process/joh-validation-process.component";
+import { ReturnMaterialComponent } from './common/MICL/return-material/return-material.component';
+import { K4cPremixInventoryComponent } from './common/MaterialManagement/Production/k4c-premix-inventory/k4c-premix-inventory.component';
+import { K4cPremixStockTransferComponent } from './common/MaterialManagement/Production/k4c-premix-stock-transfer/k4c-premix-stock-transfer.component';
+import { NepalBLTxnPurchaseOrderApproveComponent } from './common/Procurement/nepal-bl-txn-purchase-order-approve/nepal-bl-txn-purchase-order-approve.component';
+import { DoctorAppointmentComponent } from './common/PatientManagement/doctor-appointment/doctor-appointment.component';
+import { MiclPurchaseBillComponent } from './common/MICL/micl-purchase-bill/micl-purchase-bill.component';
+import { DoctorsAppointmentNewABRComponent } from './common/PatientManagement/doctors-appointment-new-abr/doctors-appointment-new-abr.component';
+import { K4CBillDateUpdateComponent } from "./common/OutletManagement/k4-c-bill-date-update/k4-c-bill-date-update.component";
+import { UpdateConsultancyComponent } from './shared/compacct.components/compacct.forms/update-consultancy/update-consultancy.component';
+import { DoctorApptNewImpedanceAudiometryComponent } from "./common/PatientManagement/doctor-appt-new-impedance-audiometry/doctor-appt-new-impedance-audiometry.component";
+import { NepalPurchaseOrderStatusMasterComponent } from './common/Procurement/nepal-purchase-order-status-master/nepal-purchase-order-status-master.component';
+import { DailyAttendanceForContractorComponent } from './common/Attendance/daily-attendance-for-contractor/daily-attendance-for-contractor.component';
+import { NepalPurchaseOrderDocumenMasterComponent } from './common/Procurement/nepal-purchase-order-documen-master/nepal-purchase-order-documen-master.component';
+import { RawMaterialStockReportComponent } from './common/MaterialManagement/Report/raw-material-stock-report/raw-material-stock-report.component';
+import { BSHPLHfFollowUpComponent } from './common/CRM/BSHPL-FOLLOWUP/bshpl-hf-follow-up/bshpl-hf-follow-up.component';
+import { DoctorsAppointmentNewOAEComponent } from "./common/PatientManagement/doctors-appointment-new-oae/doctors-appointment-new-oae.component";
+import { DoctorsAppointmentNewSpTestComponent } from "./common/PatientManagement/doctors-appointment-new-sp-test/doctors-appointment-new-sp-test.component";
+import { DoctorsAppointmentNewGlycerolTestComponent } from "./common/PatientManagement/doctors-appointment-new-glycerol-test/doctors-appointment-new-glycerol-test.component";
+import { AcceptReturnMaterialComponent } from './common/MICL/accept-return-material/accept-return-material.component';
+import { EInvoiceConfirmationFormComponent } from './common/OutletManagement/e-invoice-confirmation-form/e-invoice-confirmation-form.component';
+import { MiclFinishMasterProductComponent } from './common/ProductionManagement/Master/micl-finish-master-product/micl-finish-master-product.component';
+import { DoctorsAppointmentNewTinnitusReportComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-report/doctors-appointment-new-tinnitus-report.component";
+import { DoctorsAppointmentNewTinnitusTherapyTrackerComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-therapy-tracker/doctors-appointment-new-tinnitus-therapy-tracker.component";
+import { MiclWastageMasterProductComponent } from './common/ProductionManagement/Master/micl-wastage-master-product/micl-wastage-master-product.component';
+import { DoctorsAppointmentNewTinnitusEvaluationComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-evaluation/doctors-appointment-new-tinnitus-evaluation.component";
+import { DoctorsAppointmentNewTinnitusHandicapComponent } from "./common/PatientManagement/doctors-appointment-new-tinnitus-handicap/doctors-appointment-new-tinnitus-handicap.component";
+import { TinnitusTherapyTrackerDashboardComponent } from "./common/PatientManagement/tinnitus-therapy-tracker-dashboard/tinnitus-therapy-tracker-dashboard.component";
+import { TinnitusEvauationReportDashboardComponent } from "./common/PatientManagement/tinnitus-evauation-report-dashboard/tinnitus-evauation-report-dashboard.component";
+import { PrintTinnitusTherapyTrackerDashboardComponent } from "./common/PatientManagement/print-tinnitus-therapy-tracker-dashboard/print-tinnitus-therapy-tracker-dashboard.component";
+import { PrintTinnitusEvauationReportDashboardComponent } from "./common/PatientManagement/print-tinnitus-evauation-report-dashboard/print-tinnitus-evauation-report-dashboard.component";
+import { OutwardChallanComponent } from './common/MICL/outward-challan/outward-challan.component';
+import { NepalVendorInteractionComponent } from "./common/Procurement/nepal-vendor-interaction/nepal-vendor-interaction.component";
+import { K4cPremixItemClosingStockComponent } from './common/MaterialManagement/Production/k4c-premix-item-closing-stock/k4c-premix-item-closing-stock.component';
+import { SaleBillComponent } from './common/MICL/sale-bill/sale-bill.component';
+import { DoctorsAppoNewFluencyEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-fluency-evaluation/doctors-appo-new-fluency-evaluation.component";
+import { PrintSpeechEvauationReportDashboardComponent } from "./common/PatientManagement/print-speech-evauation-report-dashboard/print-speech-evauation-report-dashboard.component";
+import { SpeechEvauationReportDashboardComponent } from "./common/PatientManagement/speech-evauation-report-dashboard/speech-evauation-report-dashboard.component";
+import { DoctorsAppoNewChildSpeechEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-child-speech-evaluation/doctors-appo-new-child-speech-evaluation.component";
+import { DoctorsAppoNewAdultSpeechEvaluationComponent } from "./common/PatientManagement/doctors-appo-new-adult-speech-evaluation/doctors-appo-new-adult-speech-evaluation.component";
+import { SaleBillNewComponent } from './common/FinancialManagement/Transaction/Sales/sale-bill-new/sale-bill-new.component';
+import { DoctorsAppointmentNewFineTuningComponent } from "./common/PatientManagement/doctors-appointment-new-fine-tuning/doctors-appointment-new-fine-tuning.component";
+import { DoctorsAppointmentNewFineTuningHearingComponent } from "./common/PatientManagement/doctors-appointment-new-fine-tuning-hearing/doctors-appointment-new-fine-tuning-hearing.component";
+import { GoogleReviewComponent } from './common/PatientManagement/google-review/google-review.component';
 
-
-
+import { PurchaseBillGSTOneSPComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill-gst-one-sp/purchase-bill-gst-one-sp.component';
+import { PurchaseOrderHarbauerComponent } from './common/MaterialManagement/Inward/purchase-order-harbauer/purchase-order-harbauer.component';
+import { ParameterMasterComponent } from "./common/MICL/parameter-master/parameter-master.component";
+import { DoctorsAppoTherapPlanComponent } from './common/PatientManagement/doctors-appo-therap-plan/doctors-appo-therap-plan.component';
+import { MICLRawMaterialQAComponent } from "./common/MICL/micl-raw-material-qa/micl-raw-material-qa.component";
+import { BLTxnGrnNPComponent } from './common/Procurement/bl-txn-grn-np/bl-txn-grn-np.component';
+import { HrLateArrivalEarlyDepartureComponent } from './common/MICL/hr-late-arrival-early-departure/hr-late-arrival-early-departure.component';
+import { K4cSwiggyZomatoFileUploadComponent } from './common/OutletManagement/k4c-swiggy-zomato-file-upload/k4c-swiggy-zomato-file-upload.component';
+import { HrLoanApplicationComponent } from './common/MICL/hr-loan-application/hr-loan-application.component';
+import { TherapyAttendanceEntryComponent } from './common/PatientManagement/therapy-attendance-entry/therapy-attendance-entry.component';
+import { NepalSupTktCustomerAccountCreationComponent } from './common/TicketManagement/nepal-sup-tkt-customer-account-creation/nepal-sup-tkt-customer-account-creation.component';
+import { FinsCreateProjectComponent } from './common/Finshore/fins-create-project/fins-create-project.component';
+import { FinsBrowseProjectComponent } from './common/Finshore/fins-browse-project/fins-browse-project.component';
+import { StockInterchangeComponent } from './common/MICL/RawMaterial/stock-interchange/stock-interchange.component';
+import { SaleOrderComponent } from './common/MICL/sale-order/sale-order.component';
+import { QcApprovalComponent } from './common/MICL/qc-approval/qc-approval.component';
+import { PatientCreateBrunchComponent } from './common/PatientManagement/patient-create-brunch/patient-create-brunch.component';
+import { HrLoanApprovalComponent } from './common/MICL/hr-loan-approval/hr-loan-approval.component';
+import { CreateCookieComponent } from './common/UserManagement/Createt_Desktop_Cookies/create-cookie/create-cookie.component';
+import { NPSupTktSalesReturnRequestComponent } from './common/TicketManagement/np-sup-tkt-sales-return-request/np-sup-tkt-sales-return-request.component';
+import { MICLCouponIssueComponent } from './common/MICL/micl-coupon-issue/micl-coupon-issue.component';
+import { CouponCreationComponent } from './common/MICL/coupon-creation/coupon-creation.component';
+import { CouponExpensesComponent } from './common/MICL/coupon-expenses/coupon-expenses.component';
+import { CouponUtilizationComponent } from './common/MICL/coupon-utilization/coupon-utilization.component';
+import { NepalSupTktSalesReturnApproveComponent } from './common/TicketManagement/nepal-sup-tkt-sales-return-approve/nepal-sup-tkt-sales-return-approve.component';
+import { BSHPLAudiologistAppoComponent } from "./common/PatientManagement/bshpl-audiologist-appo/bshpl-audiologist-appo.component";
+import { EmployeeMasterContractorComponent } from './common/MICL/employee-master-contractor/employee-master-contractor.component';
+import { LetterOfIntentComponent } from './common/MICL/letter-of-intent/letter-of-intent.component';
+import { ProformaInvoiceComponent } from './common/MICL/proforma-invoice/proforma-invoice.component';
+import { SalesMisComponent } from './common/MICL/sales-mis/sales-mis.component';
+import { ViewOutcomesComponent } from "./common/PatientManagement/view-outcomes/view-outcomes.component";
+import { TransferTransectionComponent } from './common/Patna/transfer-transection/transfer-transection.component';
+import { HarbTxnRequisitionComponent } from './common/Harbauer/harb-txn-requisition/harb-txn-requisition.component';
+import { PurchaseOrderHarbauerTermsComponent } from './common/Harbauer/purchase-order-harbauer-terms/purchase-order-harbauer-terms.component';
+import { AudiologistTargetComponent } from './common/PatientManagement/Audiologist/audiologist-target/audiologist-target.component';
+import { CommonPurchaseBillGstComponent } from './common/FinancialManagement/Transaction/Purchase/common-purchase-bill-gst/common-purchase-bill-gst.component';
+import { FullAndFinalSettlementComponent } from './common/MICL/full-and-final-settlement/full-and-final-settlement.component';
+import { NPSupTktSalesReturnWarehouseComponent } from './common/TicketManagement/np-sup-tkt-sales-return-warehouse/np-sup-tkt-sales-return-warehouse.component';
+import { NPSupTktSalesReturnAccountsComponent } from './common/TicketManagement/np-sup-tkt-sales-return-accounts/np-sup-tkt-sales-return-accounts.component';
+import { EmployeeSalaryMasterJohComponent } from './common/Attendance/employee-salary-master-joh/employee-salary-master-joh.component';
+import { OldProjectMasterComponent } from './common/Harbauer/old-project-master/old-project-master.component';
+import { MasterProjectTeamComponent } from './common/Harbauer/master-project-team/master-project-team.component';
+import { HrCouponReportComponent } from './common/MICL/hr-coupon-report/hr-coupon-report.component';
+import { JohDailyAttendanceComponent } from './common/Attendance/joh-daily-attendance/joh-daily-attendance.component';
+import { CandidateInterviewProcessComponent } from './common/Attendance/candidate-interview-process/candidate-interview-process.component';
+import { ConsultancyPaymentComponent } from './common/Attendance/consultancy-payment/consultancy-payment.component';
+import { AppraisalFormComponent } from './common/Attendance/appraisal-form/appraisal-form.component';
+import { PendingOutcomesComponent } from './common/PatientManagement/pending-outcomes/pending-outcomes.component';
+import { BLTxnProductReturnFromProjectComponent } from './common/Harbauer/bl-txn-product-return-from-project/bl-txn-product-return-from-project.component';
+import { MasterCompanyUpdateComponent } from './common/FinancialManagement/Master/master-company-update/master-company-update.component';
+import { BlTxnProjectwiseReportComponent } from './common/FinancialManagement/Report/bl-txn-projectwise-report/bl-txn-projectwise-report.component';
+import { BlCRMWPMSTTemplateComponent } from './common/PatientManagement/Transaction/bl-crm-wp-mst-template/bl-crm-wp-mst-template.component';
+import { K4cAcceptRawMaterialStockTransferComponent } from './common/MaterialManagement/k4c-accept-raw-material-stock-transfer/k4c-accept-raw-material-stock-transfer.component';
+import { AttendanceRegularizationComponent } from './common/Attendance/attendance-regularization/attendance-regularization.component';
+import { ApproveAttendanceRegularizationComponent } from './common/Attendance/approve-attendance-regularization/approve-attendance-regularization.component';
+import { EmployeeTransferComponent } from './common/Attendance/employee-transfer/employee-transfer.component';
+import { HearingCRMLeadFollowupComponent } from './common/CRM/Followup/hearing-crm-lead-followup/hearing-crm-lead-followup.component';
+import { HrRequisitionFormComponent } from './common/Attendance/hr-requisition-form/hr-requisition-form.component';
+import { ApproveHrRequisitionFormComponent } from './common/Attendance/approve-hr-requisition-form/approve-hr-requisition-form.component';
+import { RetailAdvanceOrderComponent } from './common/FinancialManagement/Retail/retail-advance-order/retail-advance-order.component';
+import { SalesmanTargetComponent } from './common/PatientManagement/Audiologist/salesman-target/salesman-target.component';
+import { HRAttnDetalisComponent } from './common/HR/hr-attn-detalis/hr-attn-detalis.component';
+import {GMapModule} from 'primeng/gmap';
+import { AgmCoreModule } from '@agm/core';
+import { EmployeeBonusComponent } from './common/MICL/employee-bonus/employee-bonus.component';
+import { HrRecruitmentTrackerComponent } from './common/Attendance/hr-recruitment-tracker/hr-recruitment-tracker.component';
+import { EmployeeSynchroniseWithAppComponent } from './common/HR/employee-synchronise-with-app/employee-synchronise-with-app.component';
+import { REPStockReportHBRComponent } from './common/Harbauer/rep-stock-report-hbr/rep-stock-report-hbr.component';
+import { SlagToRmStockTransferComponent } from './common/MICL/RawMaterial/slag-to-rm-stock-transfer/slag-to-rm-stock-transfer.component';
+import { CommonStockTransferComponent } from './common/MICL/RawMaterial/common-stock-transfer/common-stock-transfer.component';
+import { BillNoChangeComponent } from './common/MICL/bill-no-change/bill-no-change.component';
+import { CostcenterTargetJohComponent } from './common/PatientManagement/Audiologist/costcenter-target-joh/costcenter-target-joh.component';
+import { LeaveRegisterComponent } from './common/MICL/leave-register/leave-register.component';
+import { HrReportsComponent } from './common/Attendance/hr-reports/hr-reports.component';
+import { FinsSubLedgerComponent } from './common/Finshore/fins-sub-ledger/fins-sub-ledger.component';
+import { AdvanceOrderAdjustmentComponent } from './common/OutletManagement/advance-order-adjustment/advance-order-adjustment.component';
+import { AssetMasterComponent } from './common/MICL/asset-master/asset-master.component';
+import { HrTrainingComponent } from './common/HR/hr-training/hr-training.component';
+import { EvaluateForTrainingComponent } from './common/Attendance/evaluate-for-training/evaluate-for-training.component';
+import { SofthearAudiologistTargetComponent } from './common/PatientManagement/Audiologist/softhear-audiologist-target/softhear-audiologist-target.component';
+import { SalarySlipComponent } from './common/HR/salary-slip/salary-slip.component';
+import { ApproveEvaluateForTraningComponent } from './common/Attendance/approve-evaluate-for-traning/approve-evaluate-for-traning.component';
+import { EmployeeRelatedReportComponent } from './common/HR/employee-related-report/employee-related-report.component';
+import { ServiceEngineeringTeamComponent } from "./common/Harbauer/Service/service-engineering-team/service-engineering-team.component";
+import { ProjectMasterComponent } from './common/Harbauer/Service/project-master/project-master.component';
+import { TrainingGradeModuleComponent } from './common/HR/training-grade-module/training-grade-module.component';
+import { K4cVoucherComponent } from './common/FinancialManagement/Transaction/Voucher/k4c-voucher/k4c-voucher.component';
+import { SalesmanTargetForJohComponent } from './common/PatientManagement/Audiologist/salesman-target-for-joh/salesman-target-for-joh.component';
+import { ServiceProblemTypeComponent } from './common/Harbauer/Service/service-problem-type/service-problem-type.component';
+import { ServiceSupportTicketComponent } from './common/Harbauer/Service/service-support-ticket/service-support-ticket.component';
+import { QuizModuleComponent } from './common/Attendance/quiz-module/quiz-module.component';
+import { K4cAllDiagnosisComponent } from './common/OutletManagement/k4c-all-diagnosis/k4c-all-diagnosis.component';
+import { PatientCreateWithInformationComponent } from './common/PatientManagement/patient-create-with-information/patient-create-with-information.component';
+import { DailyAttendanceJohForEmployeeComponent } from './common/Attendance/daily-attendance-joh-for-employee/daily-attendance-joh-for-employee.component';
+import { LeaveEncashmentComponent } from './common/HR/leave-encashment/leave-encashment.component';
+import { DoctorSchedulComponent } from './common/PatientManagement/doctor-schedul/doctor-schedul.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -487,15 +720,246 @@ import { TutoAspMaxAppoComponent } from './common/CRM/Master/tuto-asp-max-appo/t
     UserAbsentComponent,
     TutoBdaJoiningComponent,
     TutoAspUnavaliblityComponent,
-    AttendanceSheetComponent,
-    MasterCompanyComponent,
+    RetailBrowseComponent,
+    RetailBrowseReceiveComponent,
+    RetailBrowseAdvanceComponent,
+    PurchaseOrderComponent,
     JournalVoucherComponent,
+    MasterCompanyComponent,
     UserMasterComponent,
+    AttendanceSheetComponent,
     K4cProductCategoryUpdateComponent,
-    PurchaseOrderComponent
-    TutoAspMaxAppoComponent
-
- ],
+    TutoAspMaxAppoComponent,
+    TutoBdaAttendanceComponent,
+    HrLeaveOpeningComponent,
+    TutoBdaWiseTargetComponent,
+    TutoSalesTreeComponent,
+    GrnComponent,
+    MiclRequisitionComponent,
+    MiclDispatchChallanComponent,
+    HrLeaveApplyComponent,
+    SubledgerForAccountsComponent,
+    MasterProductGeneralConsumablesComponent,
+    HarbaTaskListComponent,
+    RdbComponent,
+    PurchaseBillFromGrnComponent,
+    BdaWiseTargetAchievementComponent,
+    ProductMasterComponent,
+    CompacctgstandcustomdutyComponent,
+    CompacctProductDetailsComponent,
+    CompacctFinancialDetailsComponent,
+    BSHPLAmeyoCustomerComponent,
+    BSHPAmeyoKBComponent,
+    SubLedgerComponent,
+    TaxCategoryComponent,
+    CompacctProjectComponent,
+    K4cConversionOfProductComponent,
+    PurchaseBillComponent,
+    FinancialVoucherComponent,
+    WastageComponent,
+    HIPLPaymentRequisitionComponent,
+    CCSahaProfundComponent,
+    REPStockReportComponent,
+    StockReportComponent,
+    ContractVoucherV2Component,
+    IssueChallanComponent,
+    HRTxnSpecialAllowanceDeductionComponent,
+    ProcessSalaryComponent,
+    LeaveApprovalComponent,
+    ConsumptionComponent,
+    DebitNoteWoStockComponent,
+    FinancialReminderComponent,
+    InflowPlaningComponent,
+    WorkOrderComponent,
+    ReturnableGatePassComponent,
+    RepairAndMaintenanceRdbComponent,
+    K4cProductionClosingStockComponent,
+    EmployeeSalaryMasterMiclComponent,
+    HrEmployeeSalaryMasterHarbComponent,
+    RepairAndMantainceGRNComponent,
+    HREmployeeMasterComponent,
+    HarbProjectBillComponent,
+    NepalSubledgerAliasCategoryComponent,
+    PatientCouponComponent,
+    HearingCaseHistoryComponent,
+    GoodReceiveDetailsComponent,
+    MasterHolidayComponent,
+    MICLDispatchChallanChargeableComponent,
+    DailyAttendanceSheetComponent,
+    MasterConsultancyV3Component,
+    MICLJournalVoucherComponent,
+    POAuthorizationComponent,
+    BranchRequisitionComponent,
+    RequisitionAuthorizationComponent,
+    BOMAuthorizationComponent,
+    ProjectPlanApproveComponent,
+    POAuthorizationHarbauerComponent,
+    HarbProjectDesignApprovalComponent,
+    NepalRequisitionFromSalesmanComponent,
+    NepalPurchaseRequestComponent,
+    MeterialInspectionOfRDBComponent,
+    BLTxnWorkOrderSaleBillComponent,
+    HREventUploadComponent,
+    MasterSubContractorComponent,
+    SubContractorEmployeeMasterComponent,
+    SubContractorAttendanceComponent,
+    NonReturnableGatePassComponent,
+    MiclRawMaterialComponent,
+    NepalPurchaseRequestVendorSelectionComponent,
+    NepalPurchaseRequestNegotiatePriceComponent,
+    MICLMasterConsumbleComponent,
+    MICLCostCenterMasterComponent,
+    JOHEarMoldComponent,
+    SubledgerReportForFranchiseComponent,
+    K4CStockDetailsComponent,
+    RawMaterialReceiveComponent,
+    PurchaseOrderRawMaterialComponent,
+    RawMaterialRequisitionComponent,
+    MiclRawMaterialIssueComponent,
+    NepalBLTxnPurchaseOrderComponent,
+    JOHRealisticExpectationFormComponent,
+    FurnaceMisInputComponent,
+    MiclRawMaterialIssueNewComponent,
+    RequisitionForIssueChargeableComponent,
+    JohValidationProcessComponent,
+    ReturnMaterialComponent,
+    K4cPremixInventoryComponent,
+    K4cPremixStockTransferComponent,
+    NepalBLTxnPurchaseOrderApproveComponent,
+    DoctorAppointmentComponent,
+    MiclPurchaseBillComponent,
+    DoctorsAppointmentNewABRComponent,
+    K4CBillDateUpdateComponent,
+    UpdateConsultancyComponent,
+    DoctorApptNewImpedanceAudiometryComponent,
+    NepalPurchaseOrderStatusMasterComponent,
+    DailyAttendanceForContractorComponent,
+    NepalPurchaseOrderDocumenMasterComponent,
+    RawMaterialStockReportComponent,
+    BSHPLHfFollowUpComponent,
+    DoctorsAppointmentNewOAEComponent,
+    DoctorsAppointmentNewSpTestComponent,
+    DoctorsAppointmentNewGlycerolTestComponent,
+    AcceptReturnMaterialComponent,
+    EInvoiceConfirmationFormComponent,
+    MiclFinishMasterProductComponent,
+    DoctorsAppointmentNewTinnitusReportComponent,
+    DoctorsAppointmentNewTinnitusTherapyTrackerComponent,
+    MiclWastageMasterProductComponent,
+    DoctorsAppointmentNewTinnitusEvaluationComponent,
+    DoctorsAppointmentNewTinnitusHandicapComponent,
+    TinnitusTherapyTrackerDashboardComponent,
+    TinnitusEvauationReportDashboardComponent,
+    PrintTinnitusTherapyTrackerDashboardComponent,
+    PrintTinnitusEvauationReportDashboardComponent,
+    OutwardChallanComponent,
+    NepalVendorInteractionComponent,
+    K4cPremixItemClosingStockComponent,
+    SaleBillComponent,
+    DoctorsAppoNewFluencyEvaluationComponent,
+    PrintSpeechEvauationReportDashboardComponent,
+    SpeechEvauationReportDashboardComponent,
+    DoctorsAppoNewChildSpeechEvaluationComponent,
+    DoctorsAppoNewAdultSpeechEvaluationComponent,
+    SaleBillNewComponent,
+    DoctorsAppointmentNewFineTuningComponent,
+    DoctorsAppointmentNewFineTuningHearingComponent,
+    GoogleReviewComponent,
+    PurchaseBillGSTOneSPComponent,
+    PurchaseOrderHarbauerComponent,
+    ParameterMasterComponent,
+    DoctorsAppoTherapPlanComponent,
+    MICLRawMaterialQAComponent,
+    BLTxnGrnNPComponent,
+    HrLateArrivalEarlyDepartureComponent,
+    K4cSwiggyZomatoFileUploadComponent,
+    HrLoanApplicationComponent,
+    TherapyAttendanceEntryComponent,
+    NepalSupTktCustomerAccountCreationComponent,
+    FinsCreateProjectComponent,
+    FinsBrowseProjectComponent,
+    StockInterchangeComponent,
+    SaleOrderComponent,
+    QcApprovalComponent,
+    PatientCreateBrunchComponent,
+    HrLoanApprovalComponent,
+    CreateCookieComponent,
+    NPSupTktSalesReturnRequestComponent,
+    MICLCouponIssueComponent,
+    CouponCreationComponent,
+    CouponExpensesComponent,
+    CouponUtilizationComponent,
+    NepalSupTktSalesReturnApproveComponent,
+    BSHPLAudiologistAppoComponent,
+    EmployeeMasterContractorComponent,
+    LetterOfIntentComponent,
+    ProformaInvoiceComponent,
+    SalesMisComponent,
+    ViewOutcomesComponent,
+    TransferTransectionComponent,
+    HarbTxnRequisitionComponent,
+    PurchaseOrderHarbauerTermsComponent,
+    AudiologistTargetComponent,
+    CommonPurchaseBillGstComponent,
+    FullAndFinalSettlementComponent,
+    NPSupTktSalesReturnWarehouseComponent,
+    NPSupTktSalesReturnAccountsComponent,
+    EmployeeSalaryMasterJohComponent,
+    OldProjectMasterComponent,
+    MasterProjectTeamComponent,
+    HrCouponReportComponent,
+    JohDailyAttendanceComponent,
+    CandidateInterviewProcessComponent,
+    ConsultancyPaymentComponent,
+    AppraisalFormComponent,
+    PendingOutcomesComponent,
+    BLTxnProductReturnFromProjectComponent,
+    MasterCompanyUpdateComponent,
+    BlTxnProjectwiseReportComponent,
+    BlCRMWPMSTTemplateComponent,
+    K4cAcceptRawMaterialStockTransferComponent,
+    AttendanceRegularizationComponent,
+    ApproveAttendanceRegularizationComponent,
+    EmployeeTransferComponent,
+    HearingCRMLeadFollowupComponent,
+    HrRequisitionFormComponent,
+    ApproveHrRequisitionFormComponent,
+    RetailAdvanceOrderComponent,
+    SalesmanTargetComponent,
+    HRAttnDetalisComponent,
+    EmployeeBonusComponent,
+    HrRecruitmentTrackerComponent,
+    EmployeeSynchroniseWithAppComponent,
+    REPStockReportHBRComponent,
+    SlagToRmStockTransferComponent,
+    CommonStockTransferComponent,
+    BillNoChangeComponent,
+    CostcenterTargetJohComponent,
+    LeaveRegisterComponent,
+    HrReportsComponent,
+    FinsSubLedgerComponent,
+    AdvanceOrderAdjustmentComponent,
+    AssetMasterComponent,
+    HrTrainingComponent,
+    EvaluateForTrainingComponent,
+    SofthearAudiologistTargetComponent,
+    SalarySlipComponent,
+    ApproveEvaluateForTraningComponent,
+    EmployeeRelatedReportComponent,
+    ServiceEngineeringTeamComponent,
+    ProjectMasterComponent,
+    TrainingGradeModuleComponent,
+    K4cVoucherComponent,
+    SalesmanTargetForJohComponent,
+    ServiceProblemTypeComponent,
+    ServiceSupportTicketComponent,
+    QuizModuleComponent,
+    K4cAllDiagnosisComponent,
+    PatientCreateWithInformationComponent,
+    DailyAttendanceJohForEmployeeComponent,
+    LeaveEncashmentComponent,
+    DoctorSchedulComponent
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -540,7 +1004,15 @@ import { TutoAspMaxAppoComponent } from './common/CRM/Master/tuto-asp-max-appo/t
     GanttAllModule,
     ChipsModule,
     NpDatepickerModule,
-    SplitButtonModule
+    SplitButtonModule,
+    SliderModule,
+    GMapModule,
+    AgmCoreModule.forRoot({
+      // please get your own API key here:
+      // https://developers.google.com/maps/documentation/javascript/get-api-key?hl=en
+      apiKey: 'AIzaSyDSloRmchjfZhHX2u-vXo1i9uGX7Qj7AV0'
+    })
+  
   ],
   exports: [],
   providers: [

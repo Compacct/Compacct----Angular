@@ -70,7 +70,7 @@
           <div class="form-group">
             <div class="col-sm-4">
               <label class="control-label">State<sup class="text-danger">*</sup></label>
-              <input class="form-control" name="Contact" #Contact="ngModel" [(ngModel)]="ObjTender.State" disabled>
+              <input class="form-control" name="State" #State="ngModel" [(ngModel)]="ObjTender.State" disabled>
 
             </div>
             <div class="col-sm-8">
@@ -137,8 +137,8 @@
           <div class="form-group">
             <div class="col-sm-4">
               <label class="control-label">Information From<sup class="text-danger"></sup></label>
-              <input class="form-control" name="Tender_Publishing_Info_From" #Tender_Publishing_Info_From="ngModel"
-                [(ngModel)]="ObjTender.Enq_Source_ID" disabled>
+              <input class="form-control" name="Enq_Source_Name" #Enq_Source_Name="ngModel"
+                [(ngModel)]="ObjTender.Enq_Source_Name" disabled>
             </div>
             <div class="col-sm-4">
               <label class="control-label">Informed Date <sup class="text-danger">*</sup></label>
@@ -209,9 +209,16 @@
                 <td>{{rowData.Sale_Amount}}</td>
                 <td>{{rowData.Rate}}</td>
                 <td>{{rowData.Amount}}</td>
+                <td>{{rowData.Changed_Sale_Rate}}</td>
+                <td>{{rowData.Changed_Sale_Amount}}</td>
+                <td>{{rowData.Changed_Rate}}</td>
+                <td>{{rowData.Changed_Amount}}</td>
               </tr>
               <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
-                <td colspan="15" class="text-bold text-right"> Purchase Amount : {{getPurchaseAmt()}}</td>
+                <td colspan="15" class="text-bold text-right"> Purchase Amount : {{getPurchaseAmt() | currency:'INR'}}</td>
+              </tr>
+              <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+                <td colspan="15" class="text-bold text-right"> Sale  Amount : {{getSaleAmt() | currency:'INR'}}</td>
               </tr>
               <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
                 <td colspan="15" class="text-bold text-right"> No of Site :
@@ -219,7 +226,11 @@
               </tr>
               <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
                 <td colspan="15" class="text-bold text-right"> Total Purchase Amount :
-                  {{getTotalPurchaseAmt()}}</td>
+                  {{getTotalPurchaseAmt()  | currency:'INR'}}</td>
+              </tr>
+              <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+                <td colspan="15" class="text-bold text-right"> Total Sale Amount :
+                  {{getTotalSaleAmt()  | currency:'INR'}}</td>
               </tr>
             </ng-template>
           </p-table>
@@ -707,6 +718,51 @@
               </div>
             </form>
           </div>
+        </div>
+      </p-tabPanel>
+      <p-tabPanel headerStyleClass="compacct-tabs" [header]="TabItems[6]" leftIcon="fa fa-file">
+       <div class="form-horizontal" style="margin-top: 15px;">
+          <div class="no-padding">
+            <p-table [value]="multipalDocTypeList"
+            [paginator]="multipalDocTypeList.length ? true : false"
+           [paginator]="true" 
+            [rows]="100" 
+            [rowHover]="true" 
+            [autoLayout]="true" 
+            sortMode="multiple" 
+            [rowsPerPageOptions]="[100,200,300]" 
+            [globalFilterFields]='["Document_Date","Document_Type","File_Name","Name"]'
+                [rowHover]="true" #doc>
+                <ng-template pTemplate="caption">
+                    <div class="row">
+                        <div class="col-sm-3 pull-right" style="text-align: right">
+                            <input type="text" pInputText size="50" placeholder="Search" (input)="doc.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                        </div>
+                    </div>
+      
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <!-- <th style="width:5em">Action</th> -->
+                        <th nowrap="nowrap">Document Date</th>
+                        <th nowrap="nowrap">Document Type</th> 
+                        <th nowrap="nowrap">File</th>
+                        <th nowrap="nowrap">Upload By</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-col>
+                    <tr>
+                     <td>{{col.Document_Date | date: 'dd-MMM-yy'}}</td>
+                     <td>{{col.Document_Type}}</td>
+                     <td class="text-center"><a (click)="showImg(col.File_Name)" ><div style="font-size:2rem"><i style="color: #b14020;cursor: pointer;" class="fa fa-file-text-o"> </i></div></a></td>
+                     <td>{{col.Name}}</td>
+                     </tr>
+                </ng-template>
+                <ng-template pTemplate="paginatorright" let-state>
+                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                </ng-template>
+            </p-table>
+        </div>
         </div>
       </p-tabPanel>
     </p-tabView>

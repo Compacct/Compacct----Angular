@@ -1,0 +1,538 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c4"  (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <form #BillingTypeForm="ngForm" novalidate>
+            <div class="text-center" style="margin-top: 25px;">
+                <span class="text-black text-bold">{{EditDistributorObj?.label}}</span>
+                <div class="text-center ui-g ui-fluid">
+                    <div class="ui-g-12">
+                        <button *ngIf='EditDistributorObj?.Sub_Dept === "TELE SALES"' (click)="OpenSaleFieldModal(EditDistributorObj?.Sub_Dept,EditDistributorObj)"  class="btn btn-facebook btn-sm btn-social"><i class="fa fa-fw fa-pencil"></i>&nbsp;EDIT</button>
+                        <button *ngIf='EditDistributorObj?.Sub_Dept === "ZONAL HEAD"' (click)="InactiveZonalHead(EditDistributorObj)" class="btn btn-danger btn-sm btn-social"><i class="fa fa-fw fa-trash"></i>&nbsp; INACTIVE</button>
+                        
+                        <!-- <button *ngIf='EditDistributorObj?.Sub_Dept === "BDA - GROUP 1" || "BDA - GROUP 2" || "BDA - GROUP 3"' (click)="InactiveZonalHead(EditDistributorObj)" class="btn btn-danger btn-sm btn-social"><i class="fa fa-fw fa-trash"></i>&nbsp; INACTIVE</button> -->
+                    </div>
+                </div>
+            </div>
+        </form>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-header with-border">
+                    <div class="form-group">
+                    <button class="btn btn-primary btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal2("LEAD MANAGER")'>
+                  <span class="glyphicon glyphicon-plus"></span> Create LEAD MANAGER
+                </button>
+                    <button class="btn btn-primary btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal2("Sr. MANAGER")'>
+                    <span class="glyphicon glyphicon-plus"></span> Create Sr. MANAGER
+                  </button>
+                    <button class="btn btn-primary btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal2("ISM")'>
+                    <span class="glyphicon glyphicon-plus"></span> Create ISM
+                  </button>
+                    <button class="btn btn-primary btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal2("BDA")'>
+                    <span class="glyphicon glyphicon-plus"></span> Create BDA
+                  </button>
+                  <button class="btn btn-primary btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal2("BDA - GROUP1")'>
+                    <span class="glyphicon glyphicon-plus"></span> Create BDA - GROUP1
+                  </button>
+                  <button class="btn btn-primary btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal2("BDA - GROUP2")'>
+                    <span class="glyphicon glyphicon-plus"></span> Create BDA - GROUP2
+                  </button>
+                  <button class="btn btn-primary btn-sm" (click)='OpenSaleFieldModal2("BDA - GROUP3")'>
+                    <span class="glyphicon glyphicon-plus"></span> Create BDA - GROUP3
+                  </button>
+                </div>
+
+                <div class="form-group">
+                  <button class="btn btn-warning btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal("Zonal Head")'>
+                    <span class="glyphicon glyphicon-plus"></span> Create Zonal Head
+                  </button>
+                      <!-- <button class="btn btn-primary btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal("DISTRIBUTOR")'>
+                      <span class="glyphicon glyphicon-plus"></span> Create DISTRIBUTOR
+                    </button> -->
+                      <button class="btn btn-warning btn-sm" style="margin-right:0.5em" (click)='OpenSaleFieldModal("ASP")'>
+                      <span class="glyphicon glyphicon-plus"></span> Create ASP
+                    </button>
+                      <button class="btn btn-warning btn-sm" (click)='OpenSaleFieldModal("School")'>
+                      <span class="glyphicon glyphicon-plus"></span> Create School
+                    </button>
+                </div>
+                </div>
+                <div class="box-body">
+                    <div class="form-group">
+                        <div class="col-sm-12 text-right" style="margin: 0.5em 0;">
+                            <span class='pull-left'>Tree View Tools</span>
+                            <button type="button" class="btn btn-xs btn-microsoft" style="margin-right: 0.2em;" title="Expand all" (click)="expandAll()"><i class="fa fa-fw fa-expand"></i></button>
+                            <button type="button" class="btn btn-xs btn-microsoft" style="margin-right: 0.2em;" title="Collapse all" (click)="collapseAll()"><i class="fa fa-fw fa-compress"></i></button>
+                            <button type="button" class="btn btn-xs btn-microsoft" style="margin-right: 0.2em;" title="View Change" (click)="ToggleView()"><i class="fa fa-fw fa-arrows"></i></button>
+                        </div>
+                        <div class="col-sm-12">
+                            <p-tree scrollHeight="300px" selectionMode="single" [(selection)]="selectedFile" (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)" [value]="TreeDataList" [loading]="loading" layout="{{layoutString}}"></p-tree>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- DYNAMIC POPUP  -->
+<p-dialog *ngIf="SaleTree"[header]="'Create '+ CreateFieldModalTitle" [appendTo]="'body'" [visible]="CreateFieldModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '50%', minWidth: '300px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <form name="CreateSalesUpdate" #CreateSalesUpdate="ngForm" novalidate>
+        <div class="form-group" style='padding-bottom: 12em;'>
+            <div class="col-sm-12">
+                <label class="control-label">{{IntroducerTitle}}&nbsp;<span class="text-danger"
+                    >*</span
+                  ></label
+                >
+                <p-dropdown
+                  [options]="IntroducerList"
+                  name="Introducer"
+                  [(ngModel)]="ObjSaleField.Intro_Member_ID"
+                  [showClear]="true"
+                  [emptyFilterMessage]="' No Introducer Found'"
+                  [filter]="true"
+                  filterBy="label,value.name"
+                  [resetFilterOnHide]="true"
+                  [placeholder]="'Select Introducer'"
+                  [virtualScroll]="true"
+                  itemSize="30"
+                  #Introducer="ngModel"
+                  [styleClass]="
+                  CreateFieldModalFormSubmitted && Introducer.errors?.required
+                      ? 'clearance'
+                      : ''
+                  "
+                  [required]="true"
+                >
+                </p-dropdown>
+              </div>
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && (CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP"|| CreateFieldModalTitle === "School")'>
+                <label class="control-label">{{CreateFieldModalTitle}} Name<sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" [placeholder]="CreateFieldModalTitle + ' Name'" name="studName" #studName="ngModel" [(ngModel)]="ObjSaleField.Member_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && studName.errors?.required}" required>
+            </div>
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && (CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP")'>
+                <label class="control-label">User Name<sup class="text-danger">*</sup></label>
+                 <button *ngIf="ObjSaleField.User_Name  && CreateFieldModalTitle === 'ASP'" (click)="AspNameExist()" class="btn btn-xs btn-primary pull-right"><i class='fa fa-fw fa-refresh'></i>&nbsp;Verify</button>
+               
+                <input type="text" class="form-control" placeholder="User name" autocomplete="off" name="User_Name001" #User_Name001="ngModel" [(ngModel)]="ObjSaleField.User_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && User_Name001.errors?.required}" required>
+            </div>
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && CreateFieldModalTitle === "ASP"'>
+                <label class="control-label">Contact Name<sup class="text-danger">*</sup>
+                </label>
+                <input type="text" class="form-control" placeholder="Contact Name" name="Contact_Name" #Contact_Name="ngModel" [(ngModel)]="ObjSaleField.Contact_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Contact_Name?.errors?.required}" required>
+            </div>
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && CreateFieldModalTitle === "ASP"'>
+                <label class="control-label">Contact No<sup class="text-danger">*</sup> </label>
+                <input class="form-control"
+                name="Contact_No"
+                #Contact_No="ngModel"
+                CompacctDigitonly="true"
+                [ngClass]="{
+                  clearance:
+                    (CreateFieldModalFormSubmitted && Contact_No.errors?.required) ||
+                    (Contact_No.errors?.minlength && Contact_No.touched)
+                }"
+                [(ngModel)]="ObjSaleField.Contact_No"
+                placeholder="Contact No"
+                minlength="10"
+                maxlength="10"
+                required>
+             </div>
+
+                <!-- <input type="text" class="form-control"  [(ngModel)]="ObjSaleField.Contact_No" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Contact_No?.errors?.required}" required> -->
+          
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && (CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP")'>
+                <label class="control-label">Password<sup class="text-danger">*</sup></label>
+                <input type="password" placeholder="Password" autocomplete="off" class="form-control" name="pass001" #pass001="ngModel" [(ngModel)]="ObjSaleField.Password" [ngClass]="{clearance: CreateFieldModalFormSubmitted && pass001.errors?.required}" maxlength="10" required>
+            </div>
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && CreateFieldModalTitle === "School"'>
+                <label class="control-label">Location<sup class="text-danger"></sup></label>
+                <input type="text" #location Compacct-Place (setAddress)="getAddressOnChange($event)" name="Location" placeholder="Area" class="form-control" >
+            </div>
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && CreateFieldModalTitle === "School"'>
+                <label class="control-label">Address<sup class="text-danger"></sup></label>
+                <textarea class="form-control" name="Address" #Address="ngModel" [(ngModel)]="ObjSaleField.School_Address" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Address.errors?.required}" >
+                 </textarea>
+            </div>
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && (CreateFieldModalTitle === "School" || CreateFieldModalTitle === "ASP")'>
+                <label class="control-label">PIN<sup *ngIf='CreateFieldModalTitle === "School"'  class="text-danger">*</sup></label>
+                <input class="form-control" name="Pin" #Pin="ngModel" [(ngModel)]="ObjSaleField.PIN_Code" placeholder="PIN" (ngModelChange)="stateDistrictChange(ObjSaleField.PIN_Code)" minlength="6" maxlength="6" CompacctDigitonly="true" [ngClass]="{'clearance':CreateFieldModalFormSubmitted && Pin?.errors?.required ||
+                      (Pin.errors?.minlength && Pin.touched)}"  [required]="CreateFieldModalTitle === 'School'">
+
+            </div>
+            <div class="col-sm-12" *ngIf='!EditDistributorObj?.Sub_Dept && (CreateFieldModalTitle === "School" || CreateFieldModalTitle === "ASP")'>
+                <label class="control-label">District<sup *ngIf='CreateFieldModalTitle === "School"'  class="text-danger">*</sup></label>
+                <select class="form-control" name="District" #District="ngModel" [(ngModel)]="ObjSaleField.District" [ngClass]="{'clearance':CreateFieldModalFormSubmitted && District?.errors?.required ||
+                      (District.errors?.minlength && District.touched)}"  [required]="CreateFieldModalTitle === 'School'">
+
+                       <option  [ngValue]="undefined" > Select</option>
+                         <option *ngFor="let option of DistrictList" value={{option.Districtname}} >
+                          {{option.Districtname}}
+                        </option>
+                    </select>
+
+            </div>
+
+
+        </div>
+    </form>
+
+    <p-footer>
+        <button type="button" (click)="CreateFieldModal = false" class="btn btn-default">
+      CANCEL
+    </button>
+        <button type="button" class="btn btn-primary" (click)="SaveUpdateField(CreateSalesUpdate.form.valid)">
+      SAVE
+    </button>
+    </p-footer>
+</p-dialog>
+
+<!-- EDIT POPUP -->
+<p-dialog *ngIf="SaleTree"[header]="'Update '+ CreateFieldModalTitle" [appendTo]="'body'" [visible]="UpdateFieldModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '50%', minWidth: '300px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <form name="CreateSalesUpdate2" #CreateSalesUpdate2="ngForm" novalidate>
+        <div class="form-group" style='padding-bottom: 3em;border-bottom: 2px solid gray;text-align: center;'>
+            <div class="col-sm-12">
+                <button class="btn btn-danger btn-primary" (click)="DeleteSalesTeam()">
+                    <i class="fa fa-fw fa-trash"></i>&nbsp;Delete this {{CreateFieldModalTitle}}
+                </button>
+            </div>
+        </div>
+        <div class="form-group" style='padding-bottom: 12em;'>
+            <div class="col-sm-12">
+                <label class="control-label">{{IntroducerTitle}}&nbsp;<span class="text-danger"
+                    >*</span
+                  ></label
+                >
+                <p-dropdown
+                  [options]="IntroducerList"
+                  name="Introducer"
+                  [(ngModel)]="ObjSaleField.Intro_Member_ID"
+                  [showClear]="true"
+                  [emptyFilterMessage]="' No Introducer Found'"
+                  [filter]="true"
+                  filterBy="label,value.name"
+                  [resetFilterOnHide]="true"
+                  [placeholder]="'Select Introducer'"
+                  [virtualScroll]="true"
+                  itemSize="30"
+                  #Introducer="ngModel"
+                  [styleClass]="
+                  CreateFieldModalFormSubmitted && Introducer.errors?.required
+                      ? 'clearance'
+                      : ''
+                  "
+                >
+                </p-dropdown>
+              </div>
+            <div class="col-sm-12" *ngIf='(CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP"|| CreateFieldModalTitle === "School")'>
+                <label class="control-label">{{CreateFieldModalTitle}} Name<sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" [placeholder]="CreateFieldModalTitle + ' Name'" name="studName" #studName="ngModel" [(ngModel)]="ObjSaleField.Member_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && studName.errors?.required}" required [disabled]="CreateFieldModalTitle != 'ASP'">
+            </div>
+            <div class="col-sm-12" *ngIf='(CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP")'>
+                <label class="control-label">User Name<sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" placeholder="User name" name="User_Name002" autocomplete="off" #User_Name002="ngModel" [(ngModel)]="ObjSaleField.User_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && User_Name002.errors?.required}" required disabled>
+            </div>
+            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "ASP"'>
+                <label class="control-label">Contact Name<sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" placeholder="Contact Name" name="Contact_Name" #Contact_Name="ngModel" [(ngModel)]="ObjSaleField.Contact_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Contact_Name.errors?.required}" required >
+            </div>
+            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "ASP"'>
+                <label class="control-label">Contact No<sup class="text-danger">*</sup> </label>
+                <input class="form-control"
+                name="Contact_No"
+                #Contact_No="ngModel"
+                CompacctDigitonly="true"
+                [ngClass]="{
+                  clearance:
+                    (CreateFieldModalFormSubmitted && Contact_No.errors?.required) ||
+                    (Contact_No.errors?.minlength && Contact_No.touched)
+                }"
+                [(ngModel)]="ObjSaleField.Contact_No"
+                placeholder="Contact No"
+                minlength="10"
+                maxlength="10"
+                required>
+                <!-- <input type="text" class="form-control" placeholder="Contact No" name="Contact_No" #Contact_No="ngModel" [(ngModel)]="ObjSaleField.Contact_No" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Contact_No?.errors?.required}" required> -->
+            </div>
+            <div class="col-sm-12" *ngIf='(CreateFieldModalTitle === "Zonal Head" || CreateFieldModalTitle === "ASP")'>
+                <label class="control-label">Password<sup class="text-danger">*</sup></label>
+                <input type="password" placeholder="Password" class="form-control" name="pass002" #pass002="ngModel" [(ngModel)]="ObjSaleField.Password" [ngClass]="{clearance: CreateFieldModalFormSubmitted && pass002.errors?.required}" maxlength="10" autocomplete="off" required>
+            </div>
+            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "School"'>
+                <label class="control-label">Location<sup class="text-danger"></sup></label>
+                <input type="text" #location id="locationcatch" Compacct-Place (setAddress)="getAddressOnChange($event)" name="Location" placeholder="Area" class="form-control" >
+            </div>
+            <div class="col-sm-12" *ngIf='CreateFieldModalTitle === "School"'>
+                <label class="control-label">Address<sup class="text-danger"></sup></label>
+                <textarea class="form-control" name="Address" #Address="ngModel" [(ngModel)]="ObjSaleField.School_Address" [ngClass]="{clearance:CreateFieldModalFormSubmitted && Address.errors?.required}" >
+                 </textarea>
+            </div>
+            <div class="col-sm-12" *ngIf='(CreateFieldModalTitle === "School" || CreateFieldModalTitle === "ASP")'>
+                <label class="control-label">PIN<sup *ngIf='CreateFieldModalTitle === "School"' class="text-danger">*</sup></label>
+                <input class="form-control" name="Pin" #Pin="ngModel" [(ngModel)]="ObjSaleField.PIN_Code" placeholder="PIN" (ngModelChange)="stateDistrictChange(ObjSaleField.PIN_Code)" minlength="6" maxlength="6" CompacctDigitonly="true" [ngClass]="{'clearance':CreateFieldModalFormSubmitted && Pin?.errors?.required ||
+                      (Pin.errors?.minlength && Pin.touched)}" [required]="CreateFieldModalTitle === 'School'" [disabled]="CreateFieldModalTitle === 'ASP'">
+
+            </div>
+            <div class="col-sm-12" *ngIf='(CreateFieldModalTitle === "School" || CreateFieldModalTitle === "ASP")'>
+                <label class="control-label">District<sup *ngIf='CreateFieldModalTitle === "School"' class="text-danger">*</sup></label>
+                <select class="form-control" name="District" #District="ngModel" [(ngModel)]="ObjSaleField.District" [ngClass]="{'clearance':CreateFieldModalFormSubmitted && District?.errors?.required ||
+                      (District.errors?.minlength && District.touched)}" [required]="CreateFieldModalTitle === 'School'" [disabled]="CreateFieldModalTitle === 'ASP'">
+
+                       <option  [ngValue]="undefined" > Select</option>
+                         <option *ngFor="let option of DistrictList" value={{option.Districtname}} >
+                          {{option.Districtname}}
+                        </option>
+                    </select>
+
+            </div>
+
+
+        </div>
+    </form>
+
+    <p-footer>
+        <button type="button" (click)="UpdateFieldModal = false" class="btn btn-default">
+      CANCEL
+    </button>
+        <button type="button" class="btn btn-primary" (click)="SaveUpdateField2(CreateSalesUpdate2.form.valid)">
+      UPDATE
+    </button>
+    </p-footer>
+</p-dialog>
+
+<!-- DYNAMIC POPUP  INSIDE SALES-->
+<p-dialog *ngIf="!SaleTree" [header]="SaveFlag ? 'Create '+ CreateFieldModalTitle2 : 'Update '+ CreateFieldModalTitle2" [appendTo]="'body'" [visible]="CreateFieldModal2" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '300px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-horizontal">
+      <form name="CreateSalesUpdate2"  #CreateSalesUpdate2="ngForm" style="margin:1.5em 0" novalidate>
+        <div class="form-group" *ngIf='!ShowDisabled'>
+            <div class="col-sm-12">
+                <label class="control-label">{{IntroducerTitle2}}&nbsp;<span class="text-danger" >*</span></label>
+                <p-dropdown
+                  [options]="IntroducerList2"
+                  name="Introducer2"
+                  [(ngModel)]="ObjinsideSalesTreeField.Intro_Member_ID"
+                  [showClear]="true"
+                  [emptyFilterMessage]="' No Introducer Found'"
+                  [filter]="true"
+                  filterBy="label,value.name"
+                  [resetFilterOnHide]="true"
+                  [placeholder]="'Select Introducer'"
+                  [virtualScroll]="true"
+                  itemSize="30"
+                  #Introducer2="ngModel"
+                  [styleClass]="
+                  CreateFieldModalFormSubmitted2 && Introducer2.errors?.required
+                      ? 'clearance'
+                      : ''
+                  "
+                  [required]="true"
+                >
+                </p-dropdown>
+              </div>
+              <div class="col-sm-12" *ngIf='!UserNameDisabled && !SaveFlag'>
+                <label class="control-label">Sub Department<sup class="text-danger">*</sup></label>
+                <select class="form-control" 
+                name="Sub_Dept_ID2" 
+                #Sub_Dept_ID2="ngModel" 
+                [(ngModel)]="ObjinsideSalesTreeField.Sub_Dept_ID" 
+                [ngClass]="{clearance: CreateFieldModalFormSubmitted2 && Sub_Dept_ID2.errors?.required}"
+                required>
+                    <option [ngValue]="undefined">Select</option>
+                    <option *ngFor="let option of SubDeptList" value="{{ option.Sub_Dept_ID  }}">
+                    {{ option.Sub_Dept_Name}}
+                    </option>
+                </select>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">{{CreateFieldModalTitle2}} Name<sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" [placeholder]="CreateFieldModalTitle2+' Name'" name="studName2" #studName2="ngModel" [(ngModel)]="ObjinsideSalesTreeField.Member_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted2 && studName2.errors?.required}" required>
+            </div>
+            <div class="col-sm-12" *ngIf='!UserNameDisabled'>
+                <label class="control-label">User Name<sup class="text-danger">*</sup></label>
+                <input type="text" class="form-control" placeholder="User name" name="User_Name2"  #User_Name2="ngModel" [(ngModel)]="ObjinsideSalesTreeField.User_Name" [ngClass]="{clearance:CreateFieldModalFormSubmitted2 && User_Name2.errors?.required}" required>
+            </div>
+            <div class="col-sm-12">
+                <label class="control-label">Password<sup class="text-danger">*</sup></label>
+                <input type="password" placeholder="Password" class="form-control" name="pass2" #pass2="ngModel" [(ngModel)]="ObjinsideSalesTreeField.Password" [ngClass]="{clearance: CreateFieldModalFormSubmitted2 && pass2.errors?.required}" maxlength="10" required>
+            </div>
+
+
+        </div>
+    </form>
+    <div class="row text-center" style="padding: 1em;background: #d8d8d8;" *ngIf='!SaveFlag'>
+      <div class="col-sm-6">
+        <p-radioButton name="groupname" [(ngModel)]="ShowDisabled" (onClick)='ForwardDisableActive()' label='Show Disable Option' value="Disable"></p-radioButton> 
+      </div>
+      <div class="col-sm-6">
+        <p-radioButton name="groupname" [(ngModel)]="ShowDisabled" (onClick)='ForwardDisableActive()'  label='Transfer Designation' value="Forward"></p-radioButton>         
+      </div>
+    </div>
+    <div *ngIf='ShowDisabled ==="Disable" && !SaveFlag' class="alert text-center" style="background: #ff00003d;margin-top:1.8em">
+      <strong>Do You Want to disabled {{ObjinsideSalesTreeField.Member_Name}}!</strong> 
+      <br><br>
+      <div class="text-center">
+        <button *ngIf='ObjinsideSalesTreeField.Member_ID' (click)='DisableUser(ObjinsideSalesTreeField.Member_ID)' class="btn btn-danger">DISABLE</button>
+      </div>
+      
+    </div>
+    <div class="row" *ngIf='ShowDisabled === "Forward" && !SaveFlag' style="margin-top:1.8em;margin-bottom:4.8em">
+      <div class="col-sm-12">
+        <label class="control-label">{{IntroducerTitle2}}&nbsp;<span class="text-danger" >*</span></label>
+        <p-dropdown
+          [options]="IntroducerList2"
+          name="Introducer2"
+          [(ngModel)]="ObjinsideSalesTreeField.Intro_Member_ID"
+          [showClear]="true"
+          [emptyFilterMessage]="' No '+IntroducerTitle2+' Found'"
+          [filter]="true"
+          filterBy="label,value.name"
+          [resetFilterOnHide]="true"
+          [placeholder]="'Select '+IntroducerTitle2"
+          [virtualScroll]="true"
+          itemSize="30"
+          #Introducer2="ngModel"
+          [styleClass]="
+          CreateFieldModalFormSubmitted2 && Introducer2.errors?.required
+              ? 'clearance'
+              : ''
+          "
+          [required]="true"
+        >
+        </p-dropdown>
+      </div>
+      <div class="col-sm-12" *ngIf="ObjinsideSalesTreeField.Sales_Type.includes('SALES HEAD')">
+        <label class="control-label">Sub Department<sup class="text-danger">*</sup></label>
+        <select class="form-control" 
+        name="Sub_Dept_ID2" 
+        #Sub_Dept_ID2="ngModel" 
+        [(ngModel)]="ObjinsideSalesTreeField.Sub_Dept_ID" 
+        [ngClass]="{clearance: CreateFieldModalFormSubmitted2 && Sub_Dept_ID2.errors?.required}"
+        required>
+            <option [ngValue]="undefined">Select</option>
+            <option *ngFor="let option of SubDeptList" value="{{ option.Sub_Dept_ID  }}">
+            {{ option.Sub_Dept_Name}}
+            </option>
+        </select>
+    </div>
+      <div class="col-sm-12 text-right" style="margin-top:1em">
+        <button *ngIf='ObjinsideSalesTreeField.Member_ID' (click)='ForwardUser(ObjinsideSalesTreeField.Member_ID,ObjinsideSalesTreeField.Intro_Member_ID)' class="btn btn-primary">FORWARD</button>
+      </div>
+      
+    </div>
+    </div>
+   
+
+    <p-footer>
+        <button type="button" (click)="CreateFieldModal2 = false" class="btn btn-default">
+      CANCEL
+    </button>
+        <button type="button" *ngIf='SaveFlag' class="btn btn-primary" (click)="SaveUpdateFieldinsidesales(CreateSalesUpdate2.form.valid)">
+      SAVE
+    </button>
+    <button type="button" *ngIf='!SaveFlag && !ShowDisabled' class="btn btn-primary" (click)="UpdateField(CreateSalesUpdate2.form.valid)">
+      UPDATE
+    </button>
+    </p-footer>
+</p-dialog>
+
+<!-- BDA POPUP -->
+<p-dialog  header={{BDAname}} [appendTo]="'body'" [(visible)]="BDAinactivePopup" [closeOnEscape]="true"  [modal]="true" [responsive]="true" [style]="{ width: '50%', minWidth: '400px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-group" style="margin-left:15px">
+      <button (click)="InactiveBDA()" class="btn btn-danger btn-sm btn-social"><i class="fa fa-fw fa-trash"></i>&nbsp; INACTIVE</button>
+    </div>
+      <form name="SelectISMForm"  #SelectISMForm="ngForm" style="margin:1.5em 0" novalidate>
+        <div class="form-group">
+            <div class="col-sm-9">
+                <label class="control-label">Select ISM &nbsp;<span class="text-danger" >*</span></label>
+                <p-dropdown
+                  [options]="ISMIntroducerList"
+                  name="ISM"
+                  [(ngModel)]="Intro_Member_ID"
+                  [showClear]="true"
+                  [emptyFilterMessage]="' No Introducer Found'"
+                  [filter]="true"
+                  filterBy="label,value.name"
+                  [resetFilterOnHide]="true"
+                  [placeholder]="'Select Introducer'"
+                  [virtualScroll]="true"
+                  itemSize="30"
+                  #ISM="ngModel"
+                  [styleClass]="
+                  SelectISMFormSubmitted && ISM.errors?.required
+                      ? 'clearance'
+                      : ''
+                  "
+                  [required]="true"
+                >
+                </p-dropdown>
+              </div> 
+            <div class="col-sm-3" style="margin-top:25px;">
+              <button type="button" class="btn btn-primary" (click)="SaveSelectISM(SelectISMForm.form.valid)">
+                SAVE
+              </button>
+            </div>
+        </div>
+    </form>
+    <div class="form-group">
+        <form name="updateMemNameForm"  #updateMemNameForm="ngForm" style="margin:1.5em 0" novalidate>
+            <div class="col-sm-9">
+              <label class="control-label">Name<sup class="text-danger">*</sup></label>
+              <input type="text" class="form-control" placeholder=Name name="changename" #changename="ngModel" [(ngModel)]="changeName" [ngClass]="{clearance:updateMemNameFormSubmitted && changename.errors?.required}" required>
+          </div>
+          <div class="col-sm-3" style="margin-top:25px;">
+            <button type="button" class="btn btn-primary" (click)="UpdateMemberName(updateMemNameForm.form.valid)">
+              Update Name
+            </button>
+          </div>
+        </form>
+    </div>
+    <form name="SelectSrManagerForm"  #SelectSrManagerForm="ngForm" style="margin:1.5em 0" novalidate>
+      <div class="form-group">
+          <div class="col-sm-9">
+              <label class="control-label">Select Sr Manager &nbsp;<span class="text-danger" >*</span></label>
+              <p-dropdown
+                [options]="SrManagerList"
+                name="srmanager"
+                [(ngModel)]="Select_Sr_Manager"
+                [showClear]="true"
+                [emptyFilterMessage]="' No Data Found'"
+                [filter]="true"
+                filterBy="label,value.name"
+                [resetFilterOnHide]="true"
+                [placeholder]="'Select Sr Manager'"
+                [virtualScroll]="true"
+                itemSize="30"
+                #srmanager="ngModel"
+                [styleClass]="
+                SelectSrManagerFormSubmitted && srmanager.errors?.required
+                    ? 'clearance'
+                    : ''
+                "
+                [required]="true"
+              >
+              </p-dropdown>
+            </div> 
+          <div class="col-sm-3" style="margin-top:25px;">
+            <button type="button" class="btn btn-primary" (click)="SaveSrManager(SelectSrManagerForm.form.valid)">
+              Upgrade to ISM
+            </button>
+          </div>
+      </div>
+  </form>
+      
+    <p-footer>
+        <button type="button" (click)="BDAinactivePopup = false" class="btn btn-default">
+      CANCEL
+    </button>
+        <!-- <button type="button" *ngIf='SaveFlag' class="btn btn-primary" (click)="SaveSelectISM(SelectISMForm.form.valid)">
+      SAVE
+    </button> -->
+    </p-footer>
+</p-dialog>

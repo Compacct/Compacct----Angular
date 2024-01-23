@@ -1,0 +1,558 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true" baseZIndex="99999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid" *ngIf="!deleteError">
+            <div class="ui-g-6" *ngIf="Save && !Del">
+                <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="Del && !Save">
+              <button type="button" pButton (click)="onConfirmDel()" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+        <div class="ui-g ui-fluid" *ngIf="deleteError">
+            <div class="ui-g-12">
+                <button type="button" pButton (click)="onReject()" label="ok" class="ui-button-danger" style="font-size: 20px;"></button>
+            </div>
+         
+           
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="ramRDBSearchForm" #ramRDBSearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                            <select class="form-control" 
+                                            name="browsecompany" 
+                                            #browsecompany="ngModel" 
+                                            [(ngModel)]="ObjBrowse.Company_ID"
+                                            [ngClass]="{'clearance': ramRDBSearchFormSubmitted && browsecompany?.errors?.required}"
+                                            required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                               <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                                  {{option.Company_Name}}
+                                                </option>
+                                          </select>
+                                        </div>
+                                        <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="col-sm-3">
+                                            <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetAllData(ramRDBSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                      <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                   </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="table-id">
+                                <p-table [value]="AllProductList" #dt1 
+                                [paginator]="true" [rows]="100" 
+                                [loading]="seachSpinner" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                [responsive]="true"
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]"
+                                 [rowHover]="true" 
+                                 [globalFilterFields]='["RDB_No","RDB_Date","Sub_Ledger_Name","Cost_Cen_Name","godown_name","Return_Gate_Pass_No","Return_Gate_Pass_Date","Mode_Of_transport",
+                                 "LR_No_Date","Vehicle_No","Remarks"]'>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap="nowrap">RDB No</th>
+                                            <th nowrap="nowrap">RDB Date</th>
+                                            <th nowrap="nowrap">Supplier</th>
+                                            <th nowrap="nowrap">Cost Center</th>
+                                            <th nowrap="nowrap">Godown</th>
+                                            <th nowrap="nowrap">WO Doc No</th>
+                                            <th nowrap="nowrap">WO Doc Date</th>
+                                            <th nowrap="nowrap">Mode Of Transport</th>
+                                            <th nowrap="nowrap">LR No Date</th>
+                                            <th nowrap="nowrap">Vehicle No</th>
+                                            <th nowrap="nowrap">Remarks</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr >
+
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                                <span class="caret"></span>
+                                                                            </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li >
+                                                            <a (click)="Printrdb(col.RDB_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="Edit(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> Edit
+                                                            </a>
+                                                        </li>
+                                                        <li >
+                                                            <a (click)="Deleterdb(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td nowrap="nowrap">{{col.RDB_No ? col.RDB_No : '-'}}</td>
+                                            <td nowrap="nowrap">{{col.RDB_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td nowrap="nowrap">{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
+                                            <td nowrap="nowrap">{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
+                                            <td nowrap="nowrap">{{col.godown_name ? col.godown_name : '-'}}</td>
+                                            <td nowrap="nowrap">{{col.PO_Doc_No ? col.PO_Doc_No : '-'}}</td>
+                                            <td nowrap="nowrap">{{col.PO_Doc_Date | date : 'dd/MMM/yyyy' }}</td>
+                                            <td nowrap="nowrap">{{col.Mode_Of_transport ? col.Mode_Of_transport : '-'}}</td>
+                                            <td nowrap="nowrap">{{col.LR_No_Date ? col.LR_No_Date : '-'}}</td>
+                                            <td nowrap="nowrap">{{col.Vehicle_No ? col.Vehicle_No : '-'}}</td>
+                                            <td nowrap="nowrap">{{col.Remarks ? col.Remarks : '-'}}</td>
+                                     </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <div class="panel-group">
+                                <div class="panel panel-primary">
+                                    <div class="panel-body">
+                                        <form name="RepairAndMaintRDBForm" #RepairAndMaintRDBForm="ngForm" novalidate>
+                                            <div class="form-group">
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">RDB Date<sup class="text-danger">*</sup></label>
+                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="RDB_Date" name="RDB_Date" required [enabled]= "!RDBListAdd.length"></ejs-datepicker>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                                    <select class="form-control" 
+                                                    name="company" 
+                                                    #company="ngModel" 
+                                                    [(ngModel)]="ObjRepaAndMaintRdb.Company_ID"
+                                                    [disabled]="createrdbdisabled"
+                                                    [ngClass]="{'clearance': RepairAndMaintRDBFormSubmit && company.errors?.required}"
+                                                    required>
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                       <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                                          {{option.Company_Name}}
+                                                        </option>
+                                                  </select>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Supplier<sup class="text-danger">*</sup></label>
+                                                    <p-dropdown [options]="SupplierList" name="Supplier" [(ngModel)]="ObjRepaAndMaintRdb.Sub_Ledger_ID"  [disabled]="RDBListAdd.length" [showClear]="true" [emptyFilterMessage]="' No Supplier Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Supplier Name'" [virtualScroll]="true"
+                                                        itemSize="30" #Supplier="ngModel" [styleClass]="RepairAndMaintRDBFormSubmit && Supplier.errors?.required? 'clearance': ''" [required]="true" (onChange)="getGeturnableGatePass(ObjRepaAndMaintRdb.Sub_Ledger_ID)">
+                                                    </p-dropdown>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
+                                                    <p-dropdown [options]="CostList" name="Cost_Center" [(ngModel)]="ObjRepaAndMaintRdb.Cost_Cen_ID"  [disabled]="RDBListAdd.length" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true"
+                                                        itemSize="30" #Cost_Center="ngModel" [styleClass]="
+                                                              RepairAndMaintRDBFormSubmit && Cost_Center.errors?.required? 'clearance': ''" [required]="true" (onChange)="getStockPoint(ObjRepaAndMaintRdb.Cost_Cen_ID)">
+                                                    </p-dropdown>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
+                                                    <p-dropdown [options]="StockList" name="Stack_Point" [(ngModel)]="ObjRepaAndMaintRdb.godown_id"  [disabled]="RDBListAdd.length" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true"
+                                                        itemSize="30" #Stack_Point="ngModel" [styleClass]="RepairAndMaintRDBFormSubmit && Stack_Point.errors?.required ? 'clearance' : '' " 
+                                                        [required]="true">
+                                                    </p-dropdown>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">SE No<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="SE_NO" #SE_NO="ngModel" [(ngModel)]="ObjRepaAndMaintRdb.SE_No" [disabled]="RDBListAdd.length" placeholder="SE NO" [ngClass]="{'clearance': RepairAndMaintRDBFormSubmit && SE_NO.errors?.required}" required>
+                                                 </div>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">SE Date<sup class="text-danger">*</sup></label>
+                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="SE_Date" name="SE_Date" [enabled]= "!RDBListAdd.length" required></ejs-datepicker>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">INV No<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="INV_NO" #INV_NO="ngModel" [(ngModel)]="ObjRepaAndMaintRdb.Inv_No" [disabled]="RDBListAdd.length" placeholder="INV NO" [ngClass]="{'clearance': RepairAndMaintRDBFormSubmit && INV_NO.errors?.required}" required>
+                                                 </div>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">INV Date<sup class="text-danger">*</sup></label>
+                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="INV_Date" name="Inv_Date" [enabled]= "!RDBListAdd.length" required></ejs-datepicker>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Work Order No.<sup class="text-danger">*</sup></label>
+                                                    <p-dropdown [options]="ReturnableGPNList" 
+                                                    name="Wo_Order" 
+                                                    [(ngModel)]="ObjRepaAndMaintRdb.Return_Gate_Pass_No" 
+                                                    [showClear]="true" 
+                                                    [emptyFilterMessage]="' No Item Found'" 
+                                                    [filter]="true" 
+                                                    filterBy="label,value.name" 
+                                                    [resetFilterOnHide]="true" 
+                                                    [placeholder]="'Select Item'"
+                                                     [virtualScroll]="true"
+                                                    itemSize="30" 
+                                                    #Wo_Order="ngModel" 
+                                                    [styleClass]="RepairAndMaintRDBFormSubmit && Wo_Order.errors?.required ? 'clearance': ''" 
+                                                    [required]="true" 
+                                                    (onChange)="getProductDetails(ObjRepaAndMaintRdb.Return_Gate_Pass_No)"
+                                                    [disabled]="RDBListAdd.length"
+                                                   >
+                                                    
+                                                    </p-dropdown>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                 <label class="control-label">Work Order Date<sup class="text-danger">*</sup></label>
+                                                 <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="Return_Gate_Pass_Date" name="Wo_date" [enabled]= "dateDis" required></ejs-datepicker>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                 <label class="control-label">Mode Of Transport<sup class="text-danger">*</sup></label>
+                                                 <input class="form-control" name="Transport" #Transport="ngModel" [(ngModel)]="ObjRepaAndMaintRdb.Mode_Of_transport" [disabled]="RDBListAdd.length" placeholder="Mode Of Transport" [ngClass]="{'clearance': RepairAndMaintRDBFormSubmit && Transport.errors?.required}" required>
+                                                </div>
+                                             </div>
+                                       
+                                            <div class="form-group">
+                                                <div class="col-sm-3">
+                                                     <label class="control-label">LR No. & Date<sup class="text-danger">*</sup></label>
+                                                     <input class="form-control" name="LR_No" #LR_No="ngModel" [(ngModel)]="ObjRepaAndMaintRdb.LR_No_Date" [disabled]="RDBListAdd.length" placeholder="LR No. & Date" [ngClass]="{'clearance': RepairAndMaintRDBFormSubmit && LR_No.errors?.required}" required>
+             
+                                                </div>
+                                                 <div class="col-sm-2">
+                                                     <label class="control-label">Vehicle No.<sup class="text-danger">*</sup></label>
+                                                     <input class="form-control" name="Vehicle_No" #Vehicle_No="ngModel" [(ngModel)]="ObjRepaAndMaintRdb.Vehicle_No" [disabled]="RDBListAdd.length" placeholder="Vehicle No" [ngClass]="{'clearance': RepairAndMaintRDBFormSubmit && Vehicle_No.errors?.required}" required>
+                                                 </div>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Product details<sup class="text-danger">*</sup></label>
+                                                    <p-dropdown [options]="ProductList" 
+                                                    name="Product_details" [(ngModel)]="ObjRepaAndMaintRdb1.Product_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'"
+                                                        [virtualScroll]="true" itemSize="30" #Product_details="ngModel" [styleClass]="
+                                                        RepairAndMaintRDBFormSubmit && Product_details.errors?.required? 'clearance': ''" [required]="true"
+                                                        (onChange)="ProductDetailsChange(ObjRepaAndMaintRdb1.Product_ID)">
+                                                    </p-dropdown>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Unit<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="Unit" #Unit="ngModel" [(ngModel)]="ObjRepaAndMaintRdb1.UOM" placeholder="Unit" [ngClass]="{'clearance': RepairAndMaintRDBFormSubmit && Unit.errors?.required}" required>
+                                                </div>
+                                             </div>
+                                          <div class="form-group">
+                                            <div class="col-sm-3">
+                                                <label class="control-label">HSN code<sup class="text-danger">*</sup></label>
+                                                <input class="form-control" 
+                                                name="HSN_code"
+                                                 #HSN_code="ngModel" 
+                                                 [(ngModel)]="ObjRepaAndMaintRdb1.HSN_Code" 
+                                                 placeholder="HSN code" 
+                                                 disabled>
+                                            </div> 
+                                           <div class="col-sm-2">
+                                            <label class="control-label">WO QTY<sup class="text-danger">*</sup></label>
+                                            <input class="form-control" 
+                                            name="WO_QTY" 
+                                            #WO_QTY="ngModel" 
+                                            [(ngModel)]="ObjRepaAndMaintRdb1.PO_QTY" 
+                                            placeholder="WO QTY"
+                                            disabled>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Pending WO QTY<sup class="text-danger">*</sup></label>
+                                            <input class="form-control" 
+                                            name="Pending_WO_QTY" 
+                                            #Pending_WO_QTY="ngModel" 
+                                            [(ngModel)]="ObjRepaAndMaintRdb1.Pending_PO_QTY" 
+                                            placeholder="Pending WO QTY"
+                                            disabled>
+                                        </div>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Challan Qty<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="Challan_Qty" #Challan_Qty="ngModel" [(ngModel)]="ObjRepaAndMaintRdb1.Challan_Qty" placeholder="Challan Qty" CompacctDigitonly="true" [ngClass]="{'clearance': RepairAndMaintRDBFormSubmit && Challan_Qty.errors?.required}" required>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Received Qty<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="Received_Qty" #Received_Qty="ngModel" [(ngModel)]="ObjRepaAndMaintRdb1.Received_Qty" placeholder="Received Qty" CompacctDigitonly="true" [ngClass]="{'clearance': RepairAndMaintRDBFormSubmit && Received_Qty.errors?.required}" required>
+                                                </div>
+                                                <div class="col-sm-1">
+                                                    <button class="btn btn-primary custombuttons" (click)="Add(RepairAndMaintRDBForm.form.valid)">
+                                                        <span class="glyphicon glyphicon-plus"> </span>Add
+                                                        </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="table-responsive no-padding" style="margin-top: 19px;">
+                                <table class="table table-bordered">
+                                    <thead style="background-color:#4fa1d1;color:white;">
+                                        <tr>
+                                            <th rowspan="2">Sl.No.</th>
+                                            <th rowspan="2">Material Description</th>
+                                            <th rowspan="2">HSN Code</th>
+                                            <th rowspan="2">Unit</th>
+                                            <th colspan="2" style="text-align:center;">Quantity</th>
+                                            <th rowspan="2">Rate</th>
+                                            <th rowspan="2">Discount Amt</th>
+                                            <th rowspan="2">Taxable Value (Rs.)</th>
+                                            <th rowspan="2">Gst%</th>
+                                            <th rowspan="2">Tax</th>
+                                            <th rowspan="2">Total Amount (Rs.)</th>
+                                            <th rowspan="2" *ngIf="buttonname === 'Update'">Edit</th>
+                                            <th rowspan="2">Delete</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Challan</th>
+                                            <th>Received</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let obj of RDBListAdd ; let ind = index; let odd = odd;" [class.even]="odd">
+                                            <!--let ind = index; -->
+                                            <td>{{ ind + 1 }}</td>
+                                            <td>{{obj.Product_Name}}</td>
+                                            <td>{{obj.HSN_Code ? obj.HSN_Code : "-"}}</td>
+                                            <td>{{obj.UOM}}</td>
+                                            <td>{{obj.Challan_Qty}}</td>
+                                            <td>{{obj.Received_Qty}}</td>
+                                            <td>{{obj.Rate}}</td>
+                                            <td>{{obj.Discount_Amount}}</td>
+                                            <td>{{getTofix(obj.Taxable_Value)}}</td>
+                                            <td>{{obj.Tax_Percentage}}</td>
+                                            <td>{{getTofix(obj.Total_Tax_Amount)}}</td>
+                                            <td>{{getTofix(obj.Total_Amount)}}</td>
+                                            <td *ngIf="buttonname === 'Update'"> <a class="btn btn-sm btn-warning" (click)="EditAdd(ind)"
+                                                ><div><i class="fa fa-fw fa-edit"> </i></div>
+                                              </a></td>
+                                              <td> <a class="btn btn-sm btn-danger" (click)="delete(ind)"
+                                                ><div><i class="fa fa-fw fa-trash"> </i></div>
+                                              </a></td>
+                                            <!-- <td *ngIf="!obj?.deleteflag"><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td> -->
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <form name="RepAndMaintRDBForm2" #RepAndMaintRDBForm2="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Remarks<sup class="text-danger"></sup></label>
+                                        <textarea class="form-control" name="Remarks" #Remarks="ngModel" [(ngModel)]="objRepAndMaintRdb2.Remarks" rows="2" placeholder="Remarks"></textarea>
+                                    </div>
+                                 </div>
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right" (click)="ShowDeptUserPopUp(RepAndMaintRDBForm2.form.valid)" id="load" [disabled]="Spinner">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                    </button>
+                                </div>
+                            </form>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-hourglass">
+                            <form name="PendingPOForm" #PendingPOForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" 
+                                    name="ppocompany" 
+                                    #ppocompany="ngModel" 
+                                    [(ngModel)]="ObjPendingPO.Company_ID"
+                                    [ngClass]="{'clearance': PendingPOFormSubmitted && ppocompany?.errors?.required}"
+                                    required>
+                                    <option  [ngValue]="undefined">Select</option>
+                                       <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                          {{option.Company_Name}}
+                                        </option>
+                                  </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Date</label>
+
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRangeppo($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPendingPO(PendingPOForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="seachSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!seachSpinner"
+                                        class="glyphicon glyphicon-search"
+                                      ></span
+                                      >&nbsp;Search
+                                    </button>
+                                </div>
+                            </div>
+                            </form> 
+                            <div class="no-padding">
+                                <p-table [value]="PendingPOList"
+                                [paginator]="PendingPOList.length ? true : false"
+                                *ngIf='PendingPOList.length'
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeaderforPPO'
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforPPO | slice:1">{{option.replace('_',' ')}}</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+    
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <!-- <li>
+                                                                <a (click)="Edit(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li> -->
+                                                        <li>
+                                                            <a (click)="CreateRDB(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Create RDB 
+                                                            </a>
+                                                        </li>
+                                                        <!-- <li>
+                                                            <a (click)="PrintPPO(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li> -->
+                                                        <!-- <li>
+                                                            <a (click)="Delete(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li> -->
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <ng-container *ngFor="let option of DynamicHeaderforPPO | slice:1">
+                                                <td nowrap="nowrap">{{col[option]}}</td>
+                                            </ng-container>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-dialog  [appendTo]="'body'" [visible]="DeptUserModel" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="DeptUserForm" #DeptUserForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Department<sup class="text-danger">*</sup></label>
+                    <select class="form-control" 
+                            name="department" 
+                            #department="ngModel" 
+                            [(ngModel)]="objDeptUser.Ins_Dept_ID"
+                            [ngClass]="{'clearance': DeptUserFormSubmitted && department.errors?.required}"
+                            required>
+                            <option  [ngValue]="undefined">Select</option>
+                                <option *ngFor = "let option of DepartmentList" [value] ="option.Dept_ID">
+                                  {{option.Dept_Name}}
+                                </option>
+                    </select>
+                </div>
+                <div class="col-sm-12">
+                    <label class="control-label">User<sup class="text-danger">*</sup></label>
+                    <select class="form-control" 
+                            name="user" 
+                            #user="ngModel" 
+                            [(ngModel)]="objDeptUser.Ins_USER_ID"
+                            [ngClass]="{'clearance': DeptUserFormSubmitted && user.errors?.required}"
+                            required>
+                            <option  [ngValue]="undefined">Select</option>
+                                <option *ngFor = "let option of UsertList" [value] ="option.User_ID">
+                                  {{option.Name}}
+                                </option>
+                    </select>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="Cancle()" class="btn btn-default">
+  CANCEL
+</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton" (click)="SaveRDB(DeptUserForm.form.valid)" id="load2" [disabled]="DeptUserSpinner">
+<p-progressSpinner
+  *ngIf="DeptUserSpinner"
+  [style]="{ width: '15px', height: '15px' }"
+  strokeWidth="8"
+  animationDuration=".5s"
+></p-progressSpinner>
+<span
+  *ngIf="!DeptUserSpinner"
+  class="glyphicon glyphicon-save"
+></span
+>&nbsp;{{buttonname}}
+</button>
+    </p-footer>
+</p-dialog>

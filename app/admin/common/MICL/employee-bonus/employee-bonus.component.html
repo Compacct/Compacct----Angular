@@ -1,0 +1,106 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                        <form name="BonusForm" #BonusForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-2">
+                                    <label class="control-label">Bonus for the month  </label>
+                                    <input class="form-control" type="month" name="bonusmonth" [(ngModel)]="Bonus_Month" (change)="GetMonthData()">
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Bonus calculation period  <sup class="text-danger">*</sup></label>
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Bonus(%) <sup class="text-danger">*</sup></label>
+                                    <input class="form-control" name="bonusper" #bonusper="ngModel" [(ngModel)]="Bonus_Per" placeholder="Bonus Percentage" CompacctDigitonly="true"
+                                    [ngClass]="{'clearance':BonusFormSubmitted && bonusper?.errors?.required}" required>
+                                </div>
+                            <!-- </div>
+                            <br>
+                            <div class="form-group"> -->
+                                <div class="col-sm-2">
+                                    <button  class="btn btn-primary" style="margin-top: 29px;" (click)="SearchBonusData(BonusForm.form.valid)" >Process Data</button>
+                                </div>
+                            </div>
+                        </form>
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <h5><strong></strong></h5>
+                                    </div>
+                                </div>
+                                <div class="no-padding">
+                                    <p-table *ngIf="EmpBonuslist.length" [value]="EmpBonuslist" [paginator]="true" [rows]="100" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" 
+                                    [globalFilterFields]="['Emp_Code','Emp_Name','Total_Earning_Basic','Bonus_Amount','Remarks']" [rowHover]="true" 
+                                              #dt1>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+    
+                                            </div>
+    
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th>Employee Code</th>
+                                                <th>Employee Name</th>
+                                                <th>Total Earning Basic Amount</th>
+                                                <th>Bonus Amount</th>
+                                                <th>Remarks</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <td>{{col.Emp_Code}}</td>
+                                                <td>{{col.Emp_Name}}</td>
+                                                <td>{{col.Total_Earning_Basic}}</td>
+                                                <td><input type="text" [name]="col.Emp" CompacctDigitonly="true"  [(ngModel)]='col.Bonus_Amount' class="form-control" style="width: 140px;" /></td>
+                                                <td><input type="text" [name]="col.Emp" [(ngModel)]='col.Remarks' class="form-control" style="width: 210px;" /></td>
+                                            </tr>
+                                        </ng-template>
+    
+                                    </p-table>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <h5><strong></strong></h5>
+                                    </div>
+                                </div>
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right" (click)="SaveBonus()" id="load" [disabled]="Spinner">
+                                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                        </button>
+                                </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

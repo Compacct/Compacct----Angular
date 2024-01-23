@@ -36,7 +36,7 @@ export class OutletStockMovementComponent implements OnInit {
   Reportlist = [];
   Searchfundlist = [];
   exceldisable = true;
-
+  ChooseReport:string=""
   constructor(
     private route : ActivatedRoute,
     private Header: CompacctHeader,
@@ -166,6 +166,7 @@ export class OutletStockMovementComponent implements OnInit {
     this.ViewStockFormSubmitted = true;
     this.DynamicHeader = [];
     this.Searchlist = [];
+    this.ChooseReport = ""
     const start = this.ObjBrowseStockView.start_date
       ? this.DateService.dateConvert(new Date(this.ObjBrowseStockView.start_date))
       : this.DateService.dateConvert(new Date());
@@ -195,6 +196,7 @@ export class OutletStockMovementComponent implements OnInit {
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.DynamicHeader = Object.keys(data[0]);
        this.Searchlist = data;
+       this.ChooseReport = this.ObjBrowseStockView.Choose_Report
        console.log('Stock list=====',this.Searchlist)
        this.seachSpinner = false;
        this.ViewStockFormSubmitted = false;
@@ -223,6 +225,17 @@ export class OutletStockMovementComponent implements OnInit {
     //      this.seachSpinner = false;
     //    })
     //   }
+    }
+    getTotalValue(key){
+      if (this.ObjBrowseStockView.Choose_Report === "Sales Register") {
+        let Total = 0;
+      this.Searchlist.forEach((item)=>{
+        Total += Number(item[key]);
+      });
+    
+      return Total ? Total.toFixed(2) : '-';
+      }
+      
     }
     exportoexcel(Arr,fileName): void {
       const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);

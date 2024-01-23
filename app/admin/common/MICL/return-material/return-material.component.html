@@ -1,0 +1,581 @@
+<p-toast key="compacct-toast" baseZIndex="99999999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" baseZIndex="99999999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="s" (onClose)="onReject()" [modal]="true" baseZIndex="99999999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="BrowseForm" #BrowseForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">From Cost Cent<sup class="text-danger"></sup></label>
+                                        <select class="form-control" name="BTo_Cost_Cen_ID" #BTo_Cost_Cen_ID="ngModel" [(ngModel)]="ObjBrowse.Cost_Cen_ID" [ngClass]="{'clearance': BrowseFormSubmitted && BTo_Cost_Cen_ID?.errors?.required}" >
+                                      <option  [ngValue]="undefined">Select</option>
+                                  <option  *ngFor="let option of ToBcostcenlist" value="{{option.Cost_Cen_ID}}">
+                                    {{option.Cost_Cen_Name}}
+                                  </option>
+                                 </select>
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary" style="margin-top: 28px;margin-left: 40%;" data-toggle="modal" (click)="Getsearchlist(BrowseForm.form.valid)" id="load20" [disabled]="seachSpinner">
+                              <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                              <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                           </button>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="table-responsive no-padding">
+                                <p-table [value]="Browselist" [paginator]="Browselist.length ? true : false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30]" [globalFilterFields]="['Cost_Cen_Name','Doc_Date','Doc_No','godown_name']"
+                                    [rowHover]="true" #dt11>
+
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt11.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th>Doc No</th>
+                                            <th>Doc Date</th>
+                                            <th>Cost Center Name</th>
+                                            <th>Godown name</th>
+                                            <th>Total Qty</th>
+                                            <th>Total Accepted Qty</th>
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr [class]='col.Total_Qty != col.Total_Accepted_Qty ? "text-red-active" : ""'>
+
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                        <i class="fa fa-fw fa-bars"></i>
+                                                                        <span class="caret"></span>
+                                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="View(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-eye"></i> View
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="Del_Right == 'Y' && col.Total_Qty != col.Total_Accepted_Qty">
+                                                            <a (click)="Edit(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-edit"></i> Edit
+                                                            </a>
+                                                        </li>
+                                                        <!-- <li>
+                                                            <a (click)="Delete(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li> -->
+                                                        <!-- <li *ngIf="col.Is_Active == 'N'" >
+                                                            <a (click)="Active(col)">
+                                                                  <i class="fa fa-power-off"></i> Active
+                                                            </a>
+                                                       </li> -->
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td>{{col.Doc_No ? col.Doc_No:"-"}}</td>
+                                            <td>{{col.Doc_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td>{{col.Cost_Cen_Name ? col.Cost_Cen_Name:"-"}}</td>
+                                            <td>{{col.godown_name ? col.godown_name:"-"}}</td>
+                                            <td>{{col.Total_Qty ? col.Total_Qty:"-"}}</td>
+                                            <td>{{col.Total_Accepted_Qty ? col.Total_Accepted_Qty:"-"}}</td>
+
+                                        </tr>
+                                    </ng-template>
+                                    <!-- <ng-template pTemplate="paginatorright" let-state> </ng-template> -->
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="ReturnMaterialForm" #ReturnMaterialForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Entry_Date'></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">From Cost Cent<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="To_Cost_Cen_ID" #To_Cost_Cen_ID="ngModel" [(ngModel)]="ObjReturnMat.Cost_Cen_ID" [ngClass]="{'clearance': ReturnMaterialFormSubmitted && To_Cost_Cen_ID?.errors?.required}" (change)="GetGodown()" required>
+                                      <option  [ngValue]="undefined">Select</option>
+                                  <option  *ngFor="let option of ToBcostcenlist" value="{{option.Cost_Cen_ID}}">
+                                    {{option.Cost_Cen_Name}}
+                                  </option>
+                                 </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">From Stock Point<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="To_godown_id" #To_godown_id="ngModel" [(ngModel)]="ObjReturnMat.godown_id" [ngClass]="{'clearance': ReturnMaterialFormSubmitted && To_godown_id?.errors?.required}" required>
+                               <option  [ngValue]="undefined">Select</option>
+                              <option  *ngFor="let option of ToBGodownList" value="{{option.godown_id}}">
+                              {{option.godown_name}}
+                             </option>
+                            </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary" style="margin-top: 28px;margin-left: 40%;" data-toggle="modal" (click)="CreateSearchedList(ReturnMaterialForm.form.valid)" id="load" [disabled]="seachSpinner">
+                              <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                              <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                           </button>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="table-responsive no-padding">
+                                <!-- <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Contact_Name','Mobile','Appo_Dt','Doctor_Name','PT_LEFT', 'PT_RIGHT']"
+                                    [rowHover]="true" #dt> -->
+                                <p-table [value]="Searchedlist" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [globalFilterFields]="['Material_Type','Product_Type', 'Product_Sub_Type', 'Balance_Qty']" [rowHover]="true" #dt>
+                                    <ng-template pTemplate="caption">
+                                        <div *ngIf="Searchedlist.length">
+                                            <button class="btn btn-primary pull-right" (click)="SaveAllowance()" id="load2" [disabled]="Spinner">
+                                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                        </button>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <!-- <th style="width:5em">Action</th> -->
+                                            <th nowrap>Type Of Product</th>
+                                            <th nowrap>Product Description</th>
+                                            <th nowrap>Product Type</th>
+                                            <th nowrap>Product Sub Type</th>
+                                            <th nowrap>Balance Qty</th>
+                                            <th nowrap>Consumption Qty</th>
+                                            <th>Remarks</th>
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+
+                                            <!-- <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                <span class="caret"></span>
+                                                            </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="redirectPatientDetails(col)">
+                                                                <i class="fa fa-fw fa-eye"></i> View Patient
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="PrintBill(col)">
+                                                                <i class="fa fa-fw fa-print"></i> Print Page1
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="PrintBill2(col)">
+                                                                <i class="fa fa-fw fa-print"></i> Print Page2
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td> -->
+                                            <td nowrap>{{col.Type_Of_Product ? col.Type_Of_Product : '-' }}</td>
+                                            <td>{{col.Product_Description ? col.Product_Description : '-' }}</td>
+                                            <td nowrap>{{col.Product_Type ? col.Product_Type : '-'}}</td>
+                                            <td nowrap>{{col.Product_Sub_Type ? col.Product_Sub_Type : '-'}}</td>
+                                            <td>{{col.Balance_Qty ? col.Balance_Qty : '-'}}</td>
+                                            <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Issue_Qty' CompacctDigitonly="true" (ngModelChange)="qtycheck(col)" [ngClass]="{'clearance' : flag }" class="form-control" style="width: 71px;" /></td>
+                                            <td><input type="text" [name]="col.Product_ID+'remark'" [(ngModel)]='col.Remarks' class="form-control" style="width: 120px;" /></td>
+
+                                        </tr>
+                                    </ng-template>
+                                    <!-- <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template> -->
+                                </p-table>
+                            </div>
+                            <hr class="box boxboxDivide-primary ng-scope" *ngIf="Searchedlist.length">
+
+                            <div class="box-footer" *ngIf="Searchedlist.length">
+                                <button class="btn btn-primary pull-right" (click)="SaveAllowance()" id="load3" [disabled]="Spinner">
+                           <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                       <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                   </button>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-hourglass" >
+                            <!-- <form name="PendingIndentForm" #PendingIndentForm="ngForm" novalidate> -->
+                            <div class="form-group">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Date</label>
+
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRangePenReturn($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPenReturn()" id="load" [disabled]="seachSpinnerPendReturn">
+                                      <p-progressSpinner
+                                        *ngIf="seachSpinnerPendReturn"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!seachSpinnerPendReturn"
+                                        class="glyphicon glyphicon-search"
+                                      ></span
+                                      >&nbsp;Search
+                                    </button>
+                                </div>
+                                <div class="col-sm-2">  
+                                    <button class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcelPenUtil(PendReturnList, 'Pending_Return')" id="load1" [disabled]="PendReturnList.length ? false : true">
+                                    <span class="fa fa-fw  fa-download"></span>&nbsp;EXPORT TO EXCEL
+                                 </button>
+                                 <!-- <button *ngIf="ClosingReportList.length" class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcel2(ClosingReportList,'Closing_Stock_Report')" id="load1" [disabled]="EXCELClosingSpinner">
+                                    <p-progressSpinner *ngIf="EXCELClosingSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!EXCELClosingSpinner" class="fa fa-file-excel-o"></span>&nbsp;EXPORT TO EXCEL
+                                </button> -->
+                                </div>
+                            </div>
+                            <!-- </form>  -->
+                            <br>
+                            <div class="form-group" *ngIf="PendReturnList.length">
+    
+                                <fieldset class="col-md-12">
+                                    <legend>Filter</legend>
+                            
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Department <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistDepartmentPendReturn" [(ngModel)]="SelectedDistDepartmentPendReturn" itemSize="30" (onChange)='FilterDistPenReturn("Dept_Name")' [styleClass]="'compacct-multiselect'" name="Department"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Cost Center <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistCostCen" [(ngModel)]="SelectedDistCostCen" itemSize="30" (onChange)='FilterDistPenReturn("Cost_Cen_Name")' [styleClass]="'compacct-multiselect'" name="Cost_Cen_Name"></p-multiSelect>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Stock Point <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistStockPoint" [(ngModel)]="SelectedDistStockPoint" itemSize="30" (onChange)='FilterDistPenReturn("Stock_Point")' [styleClass]="'compacct-multiselect'" name="Stock_Point"></p-multiSelect>
+                                        </div>
+                                    </div>
+                            
+                                </fieldset>
+                            </div>
+                            <br>
+                            <div class="no-padding">
+                                <p-table [value]="PendReturnList"
+                                [paginator]="PendReturnList.length ? true : false"
+                                *ngIf='PendReturnList.length'
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeaderforPendReturnList'
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <!-- <th style="width:5em">Action</th> -->
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforPendReturnList">{{option.replaceAll('_',' ')}}</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+    
+                                            <!-- <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                                <a (click)="CreateChallan(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Issue Material 
+                                                                </a>
+                                                            </li>
+                                                        <li>
+                                                            <a (click)="PrintIndent(col.Req_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="Delete(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td> -->
+                                            <ng-container *ngFor="let option of DynamicHeaderforPendReturnList">
+                                                <td nowrap="nowrap">{{col[option]}}</td>
+                                            </ng-container>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                            <div class="table-responsive no-padding">
+                                <table class="table bidopen table-bordered" *ngIf="PendReturnList.length">
+                                    <thead>
+                                      <tr>
+                                            <th style=" width: 50% ;" ></th>
+                                            <th style=" width: 10% ;" >Total Value </th>
+                                      </tr>
+                                      <tr>
+                                        <th style=" width: 50% ;" ></th>
+                                        <th style=" width: 10% ;" >{{allTotalObj.Value ? allTotalObj.Value : 0}}</th>
+                                  </tr>
+                              
+                                    </thead>
+                                    
+                                  </table>
+                            </div>
+
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-dialog [header]="'Edit'" [appendTo]="'body'" [visible]="EditModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '70%', minWidth: '400px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="100">
+    <form name="ApproveForm" #ApproveForm="ngForm" novalidate>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Doc Date</label>
+                <div class="label-t">{{EditListobj?.Doc_Date ? (EditListobj?.Doc_Date | date: "dd/MMM/yyyy"): '-' }}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Cost Center Name</label>
+                <div class="label-t">{{EditListobj?.Cost_Cen_Name ? EditListobj?.Cost_Cen_Name : '-' }}</div>
+            </div>
+
+            <div class="col-sm-4">
+                <label class="control-label">godown name</label>
+                <div class="label-t">{{EditListobj?.godown_name ? EditListobj?.godown_name : '-' }}</div>
+            </div>
+
+
+        </div>
+        <div class="clearfix"></div>
+        <div class="table-responsive table-id no-padding" style="overflow-x: hidden !important;">
+            <p-table [value]="EditList" [globalFilterFields]='["Type_Of_Product","Product_Type","Product_Sub_Type","Product_Description","UOM","Batch_No","Issue_Qty", "Remarks"]' [rowHover]="true" [autoLayout]="true" #dt2>
+                <ng-template pTemplate="caption">
+                    <div class="row">
+                        <div class="col-sm-3 pull-right" style="text-align: right">
+                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                        </div>
+                    </div>
+
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <!-- <th width='50%'>Product Description</th>
+                    <th width='25%'>Batch No</th>
+                    <th width='25%'>Receive Qty</th> -->
+                        <th>Type Of Product</th>
+                        <th>Product Type</th>
+                        <th>Product Sub Type</th>
+                        <th>Product Description</th>
+                        <th>UOM</th>
+                        <th>Batch No</th>
+                        <!-- <th >Current Stock in Department</th> -->
+                        <th>Qty</th>
+                        <th>Accepted Qty</th>
+                        <th>Remarks</th>
+                        <th>Store Remarks</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-col>
+                    <tr>
+
+                        <!-- <td>{{col.Product_Description}}</td>
+                    <td>{{col.Batch_No}}</td>
+                    <td>{{col.Rcv_Qty}}</td> -->
+                        <td>{{col.Type_Of_Product}}</td>
+                        <td>{{col.Product_Type}}</td>
+                        <td>{{col.Product_Sub_Type}}</td>
+                        <td>{{col.Product_Description }}</td>
+                        <td>{{col.UOM}}</td>
+                        <td>{{col.Batch_No}}</td>
+                        <!-- <td>{{col.Issue_Qty}}</td> -->
+                        <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Qty' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                        <td>{{col.Accepted_Qty}}</td>
+                        <td><input type="text" [name]="col.Product_ID+'remark'" [(ngModel)]='col.Remarks' class="form-control" style="width: 120px;" /></td>
+                        <td><input type="text" [name]="col.Product_ID+'storeremark'" [(ngModel)]='col.Store_Remarks' [disabled]="true" class="form-control" style="width: 120px;" /></td>
+                        <!-- <td>{{col.Remarks}}</td> -->
+                        <!-- <td><button (click)="Delete(col)" class="btn danger"><i class="fa fa-trash"></i></button></td> -->
+
+                    </tr>
+                    <tr *ngIf='i === (EditList.length - 1)'>
+                        <td colspan="2" class="text-right">Total</td>
+                        <td>{{getTotal('Qty')}}</td>
+                        <td>{{getTotal('Accepted_Qty')}}</td>
+                        <td></td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+
+    </form>
+    <p-footer>
+        <button type="button" (click)="EditModal = false" class="btn btn-default"> CLOSE </button>
+        <button type="button" class="btn btn-primary pull-right" (click)="saveeditreturn()" id="load" [disabled]="editSpinner">
+            <p-progressSpinner *ngIf="editSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+            <span *ngIf="!editSpinner" class="glyphicon glyphicon-save"></span> Update
+        </button>
+    </p-footer>
+</p-dialog>
+
+
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '70%', minWidth: '400px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="100">
+    <form name="ApproveForm" #ApproveForm="ngForm" novalidate>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Doc Date</label>
+                <div class="label-t">{{ViewListobj2?.Doc_Date ? (ViewListobj2?.Doc_Date | date: "dd/MMM/yyyy"): '-' }}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Cost Center Name</label>
+                <div class="label-t">{{ViewListobj2?.Cost_Cen_Name ? ViewListobj2?.Cost_Cen_Name : '-' }}</div>
+            </div>
+
+            <div class="col-sm-4">
+                <label class="control-label">godown name</label>
+                <div class="label-t">{{ViewListobj2?.godown_name ? ViewListobj2?.godown_name : '-' }}</div>
+            </div>
+
+
+        </div>
+        <div class="clearfix"></div>
+        <div class="table-responsive table-id no-padding" style="overflow-x: hidden !important;">
+            <p-table [value]="ViewList" [globalFilterFields]='["Type_Of_Product","Product_Type","Product_Sub_Type","Product_Description","UOM","Batch_No","Issue_Qty", "Remarks"]' [rowHover]="true" [autoLayout]="true" #dt25>
+                <ng-template pTemplate="caption">
+                    <div class="row">
+                        <div class="col-sm-3 pull-right" style="text-align: right">
+                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt25.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                        </div>
+                    </div>
+
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <!-- <th width='50%'>Product Description</th>
+                    <th width='25%'>Batch No</th>
+                    <th width='25%'>Receive Qty</th> -->
+                        <th>Type Of Product</th>
+                        <th>Product Type</th>
+                        <th>Product Sub Type</th>
+                        <th>Product Description</th>
+                        <th>UOM</th>
+                        <th>Batch No</th>
+                        <!-- <th >Current Stock in Department</th> -->
+                        <th>Qty</th>
+                        <th>Accepted Qty</th>
+                        <th>Remarks</th>
+                        <th>Store Remarks</th>
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-col>
+                    <tr>
+
+                        <!-- <td>{{col.Product_Description}}</td>
+                    <td>{{col.Batch_No}}</td>
+                    <td>{{col.Rcv_Qty}}</td> -->
+                        <td>{{col.Type_Of_Product}}</td>
+                        <td>{{col.Product_Type}}</td>
+                        <td>{{col.Product_Sub_Type}}</td>
+                        <td>{{col.Product_Description }}</td>
+                        <td>{{col.UOM}}</td>
+                        <td>{{col.Batch_No}}</td>
+                        <td>{{col.Qty}}</td>
+                        <td>{{col.Accepted_Qty}}</td>
+                        <td>{{col.Remarks}}</td>
+                        <td>{{col.Store_Remarks}}</td>
+
+
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+
+    </form>
+    <p-footer>
+        <button type="button" (click)="ViewModal = false" class="btn btn-default">
+CLOSE
+</button>
+    </p-footer>
+</p-dialog>

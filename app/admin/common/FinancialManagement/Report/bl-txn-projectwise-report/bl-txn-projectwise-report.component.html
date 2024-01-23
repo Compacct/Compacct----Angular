@@ -1,0 +1,127 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView">
+                        <div class="row">
+                            <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 0px; width: 97.2%; margin-left: 15px;
+                                    "><strong>Project:</strong> </h5>
+                        </div>
+                        <div class="panel panel-primary">
+                            <div class="panel-body" style="padding: 10px;">
+                            <form name="BrowseForm" #BrowseForm="ngForm" novalidate style="margin-bottom: 20px;">
+                                <div class="form-group">
+                                    <!-- <div class="col-sm-4">
+                                        <label class="control-label">Period<sup class="text-danger"></sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)">
+                                            </app-compacct-daterangepicker>
+                                         </div>
+                                    </div> -->
+                                    <div class="col-sm-5">
+                                        <label class="control-label">Project<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="ProjectList" name="Project" #Project="ngModel" [(ngModel)]="Project_Id"
+                                            [showClear]="true" [emptyFilterMessage]="' No Project Found'" [filter]="true" filterBy="label,value.name"
+                                            [resetFilterOnHide]="true" [placeholder]="'Select Project'" [virtualScroll]="true" itemSize="30"
+                                            [ngClass]="{'clearance':BrowseFromSubmit && Project?.errors?.required}"
+                                            required>
+                                        </p-dropdown>
+                                    </div>
+                                    
+                                    <button class="btn btn-primary custombutton"(click)="BrowseExcel(BrowseForm.form.valid)">
+                                        <span class="fa fa-file-excel-o"></span> Download Excel
+                                    </button>
+                                </div>
+                            </form>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 0px; width: 97.2%; margin-left: 15px;
+                                    "><strong>Date Range Inflow-Outflow :</strong> </h5>
+                        </div>
+                        <div class="panel panel-primary">
+                            <div class="panel-body" style="padding: 10px;">
+                            <form name="BrowseForm1" #BrowseForm1="ngForm" novalidate style="margin-bottom: 20px;">
+                                <div class="form-group">
+                                    <div class="col-sm-5">
+                                        <label class="control-label">Date Range Inflow Outflow<sup class="text-danger"></sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange1($event)">
+                                            </app-compacct-daterangepicker>
+                                        </div>
+                                    </div>
+                            
+                                    <button class="btn btn-primary custombutton" (click)="BrowseExcelDateInfol()">
+                                        <span class="fa fa-file-excel-o"></span> Download Excel
+                                    </button>
+                                </div>
+                            </form>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <h5 style="
+                              padding: 0.5em 1em;
+                              background: #c1c1c185;
+                              border-top: 5px solid #3c8dbc;
+                              border-bottom: 1px solid #c6c6c6;
+                              margin-top: 0px; width: 97.2%; margin-left: 15px;
+                              "><strong>Projected Vs Actual :</strong> </h5>
+                        </div>
+                        <div class="panel panel-primary">
+                            <div class="panel-body" style="padding: 10px;">
+                                <form name="BrowseForm2" #BrowseForm2="ngForm" novalidate style="margin-bottom: 20px;">
+                                    <div class="form-group">
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Financial Year<sup class="text-danger">*</sup></label>
+                                            <select class="form-control " name="finyear" #finyear="ngModel" [(ngModel)]="Fin_Year_ID"
+                                                [ngClass]="{'clearance': projectFromSubmit && finyear?.errors?.required }" required>
+                                                <option [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of FinyearList" [value]="option.Fin_Year_ID">
+                                                    {{option.Fin_Year_Name}}
+                                                </option>
+                                            </select>
+                                        </div>    
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Project<sup class="text-danger">*</sup></label>
+                                                <p-dropdown [options]="ProjectList2" name="Project1" #Project1="ngModel" [(ngModel)]="Project_Id2" [showClear]="true"
+                                                    [emptyFilterMessage]="' No Project Found'" [filter]="true" filterBy="label,value.name"
+                                                    [resetFilterOnHide]="true" [placeholder]="'Select Project'" [virtualScroll]="true" itemSize="30"
+                                                    [ngClass]="{'clearance':projectFromSubmit && Project1?.errors?.required}" required>
+                                                </p-dropdown>
+                                            </div>
+                                        
+                        
+                                        <button class="btn btn-primary custombutton" (click)="BrowseExcelFin(BrowseForm2.form.valid)">
+                                            <span class="fa fa-file-excel-o"></span> Download Excel
+                                        </button>
+                                    </div>
+                                </form> 
+                            </div>                          
+                        </div>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

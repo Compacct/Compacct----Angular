@@ -1,11 +1,13 @@
-.productTable .ui-table-auto-layout>.ui-table-wrapper {
+/* .productTable .ui-table-auto-layout>.ui-table-wrapper {
     width: 100% !important;
     min-height: 170px !important;
-}
-
-#ui-tabpanel-0>div>p-table>div>div.ui-table-wrapper.ng-star-inserted {
+} */
+.ui-table-auto-layout>.ui-table-wrapper {
     width: auto !important;
 }
+/* #ui-tabpanel-0>div>p-table>div>div.ui-table-wrapper.ng-star-inserted {
+    width: auto !important;
+} */
 
 .custombutton {
     margin-top: 25px;

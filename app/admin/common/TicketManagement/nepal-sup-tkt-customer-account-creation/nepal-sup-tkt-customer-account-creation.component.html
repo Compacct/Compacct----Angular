@@ -1,0 +1,1087 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
+<p-toast position="center" baseZIndex="99999" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="custometFormsBrowse" #custometFormsBrowse="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">From Date<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input CompacctNepaliDatepicker id="BSdate" name="BSdate" #BSdate="ngModel" Class="form-control"
+                                                (ngModelChange)="BrowseStartDate= $event" [(ngModel)]="BrowseStartDate"
+                                                [ngClass]="{'clearance': SearchFormSubmit && BSdate?.errors?.required}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">To Date<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input CompacctNepaliDatepicker id="Btdate" name="Btdate" #Btdate="ngModel" Class="form-control"
+                                                (ngModelChange)="BrowseEndDate= $event" [(ngModel)]="BrowseEndDate"
+                                                [ngClass]="{'clearance': SearchFormSubmit && Btdate?.errors?.required}" required>
+                                        </div>
+                                    </div>                              
+                                        <div class="col-sm-2">
+                                            <button class="btn btn-primary custombutton" type="button" (click)="getbrowseData(custometFormsBrowse.form.valid)">
+                                                <span class="glyphicon glyphicon-search"></span> Search
+                                            </button>
+                                        </div>
+                                </div>
+                            </form>
+                            <div class="table-responsive no-padding">
+                                <p-table #dt [value]="SearchedBrowselist" [columns]="ApproveKye1"
+                                    [globalFilterFields]="SearchedBrowselistHeader" *ngIf="SearchedBrowselist.length"
+                                    [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true"
+                                    sortMode="multiple" [rowsPerPageOptions]="[100,300,500]" [rowHover]="true">
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right;">
+                                                <input type="text" pInputText size="50" placeholder="Search"
+                                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                    class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header" let-columns>
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th [pSortableColumn]="columns[0].header">Support Ticket No
+                                                <p-sortIcon [field]="columns[0].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th [pSortableColumn]="columns[2].header">Date
+                                                <p-sortIcon [field]="columns[2].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th [pSortableColumn]="columns[11].header">User Name
+                                                <p-sortIcon [field]="columns[11].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th [pSortableColumn]="columns[1].header">Executive Name
+                                                <p-sortIcon [field]="columns[1].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th [pSortableColumn]="columns[4].header">Type of company
+                                                <p-sortIcon [field]="columns[4].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th [pSortableColumn]="columns[5].header">Nature of Company
+                                                <p-sortIcon [field]="columns[5].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th [pSortableColumn]="columns[3].header">Registered Company Name
+                                                <p-sortIcon [field]="columns[3].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th [pSortableColumn]="columns[13].header">Ticket Status
+                                                <p-sortIcon [field]="columns[13].header" ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                            </th>
+                                            <th>Company Registration Certificate</th>
+                                            <th>Pan or Vat Registration Certificate</th>
+                                            <th>Citizenship of Owner/Director</th>
+                                            <th>Share Lagat Document</th>
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                        type="button" data-toggle="dropdown" style="height:27px">
+                                                        <i class="fa fa-fw fa-bars"></i>
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li *ngIf="col.Ticket_Status == 'Pending'" >
+                                                            <a (click)="EditCustomar(col,'Edit')">
+                                                                <i class="fa fa-fw fa-pencil"></i> Edit
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Ticket_Status == 'Pending' && (SubDeptID == 25 || SubDeptID == 1)" >
+                                                            <a (click)="DeleteCustomar(col)">
+                                                                <i class="fa fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                        <li >
+                                                            <a (click)="EditCustomar(col,'view')">
+                                                                <i class="fa fa-eye"></i> View
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Ticket_Status == 'Pending' && (SubDeptID== 25 || SubDeptID == 1)" >
+                                                            <a (click)="updatecustomer(col)">
+                                                                <i class="fa fa-refresh"></i> INTERNAL PURPOSE
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td>{{col.Support_Ticket_No ? col.Support_Ticket_No : '-'}}</td>
+                                            <td>{{col.Trn_Date ? col.Trn_Date : '-'}}</td>
+                                            <td>{{col.User_Name ? col.User_Name : '-'}}</td>
+                                            <td>{{col.Executive_Name ? col.Executive_Name : '-'}}</td>
+                                            <td>{{col.Type_of_company ? col.Type_of_company : '-'}}</td>
+                                            <td>{{col.Nature_of_Company ? col.Nature_of_Company : '-'}}</td> 
+                                            <td>{{col.Registered_Company_Name ? col.Registered_Company_Name : '-'}}</td>
+                                            <td><span [ngClass]="'badge bg-'+ getStatusWiseColor(col)" >{{col.Ticket_Status ? col.Ticket_Status : '-'}}</span></td> 
+                                            <td style="text-align: center;"><i (click)="opneFile(col.URL_Comp_Registration)" class="fa fa-file-text doc" ></i> 
+                                            </td>
+                                            <td style="text-align: center;"><i (click)="opneFile(col.URL_PAN_VAT_Registration)" class="fa fa-file-text doc" ></i> 
+                                            </td>                                    
+                                            <td style="text-align: center;"><i (click)="opneFile(col.URL_Citizenship_Owner)" class="fa fa-file-text doc" ></i> 
+                                            </td>
+                                            <td style="text-align: center;"><i (click)="opneFile(col.URL_Share_Lagat_Document)" class="fa fa-file-text doc"></i>
+                                            </td>
+                                        </tr>
+                                    </ng-template>                                 
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="cusacccreationForms" #cusacccreationForms="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-6" >
+                                        <label class="control-label">Executive Name<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="ExecutiveList" 
+                                                    [showClear]="true" 
+                                                    name="Executive_Name" 
+                                                    #Executive_Name="ngModel"
+                                                    [(ngModel)]="objcusacccre.Sales_Man_ID" 
+                                                    [emptyFilterMessage]="' No Executive Name Found'" 
+                                                    [filter]="true"
+                                                    filterBy="label,value.name" 
+                                                    [resetFilterOnHide]="true" 
+                                                    [placeholder]="'Select Executive Name'" 
+                                                    [virtualScroll]="true"
+                                                    itemSize="30" 
+                                                    [styleClass]="cusacccreationFormsSubmitted &&  Executive_Name.errors?.required ? 'clearance' :''"
+                                                     required
+                                                     [disabled]="view" >
+                                                    </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-6" >
+                                        <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input CompacctNepaliDatepicker id="Docdate" name="Docdate" #Docdate="ngModel" Class="form-control"
+                                                (ngModelChange)="DocDate= $event" [(ngModel)]="DocDate"
+                                                [ngClass]="{'clearance': cusacccreationFormsSubmitted && Docdate?.errors?.required}" 
+                                            required 
+                                            [disabled]="view">                                      
+                                        </div> 
+                                    </div>
+                                 </div>
+                                 <div class="form-group">
+                                    <div style="margin-top: 14px; background-color: #3c8dbc;color: #ffff;height: 29px; margin-left: 10px;">
+                                        <p style="padding: 5px;font-size: 1.4rem;font-weight: 800;">
+                                            <span class="glyphicon glyphicon-book">&nbsp;</span>
+                                            Company information:-
+                                        </p>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Registered Company Name<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="Registered_Company_Name"
+                                        #Registered_Company_Name="ngModel"
+                                        [(ngModel)]="objcusacccre.Registered_Company_Name"
+                                        placeholder="Company Name"
+                                        [ngClass]="{'clearance': cusacccreationFormsSubmitted && Registered_Company_Name.errors?.required}"
+                                        required
+                                        [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <label class="control-label">Type of company<sup class="text-danger">*</sup></label>
+                                        <select
+                                          class="form-control"
+                                          name="Type_of_company"
+                                          #Type_of_company="ngModel"
+                                          (change)="selectTypeOfCompany()"
+                                          [(ngModel)]="objcusacccre.Type_of_company"
+                                          [ngClass]="{'clearance': cusacccreationFormsSubmitted && Type_of_company.errors?.required}"
+                                          required
+                                          [disabled]="view"
+                                        >
+                                          <option [ngValue]="undefined">Select</option>
+                                          <option *ngFor="let option of companyTypeList" [ngValue]='option'>{{option}}</option>
+                                         </select>
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <label class="control-label">Nature of Company<sup class="text-danger">*</sup></label>
+                                        <select
+                                          class="form-control"
+                                          name="Nature_of_Company"
+                                          #Nature_of_Company="ngModel"
+                                          [(ngModel)]="objcusacccre.Nature_of_Company"
+                                         [ngClass]="{'clearance': cusacccreationFormsSubmitted && Nature_of_Company.errors?.required}"
+                                          required
+                                          [disabled]="view"
+                                        >
+                                          <option [ngValue]="undefined">Select</option>
+                                          <option *ngFor="let option of companyNatureList" [ngValue]='option.Sub_Ledger_Cat_Name' >{{option.Sub_Ledger_Cat_Name}}</option>
+                                         </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Alias Name<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="Alias" #Alias="ngModel"
+                                            [(ngModel)]="objcusacccre.Alias_Name" placeholder="Alias Name"
+                                            [ngClass]="{'clearance': cusacccreationFormsSubmitted && Alias.errors?.required}" required
+                                            [disabled]="view">
+                                    </div>
+                                 </div>
+                                 <div class="form-group">
+                                  <div class="col-sm-3">
+                                    <label class="control-label">VAT/Pan no<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="VAT_Pan_no"
+                                        #VAT_Pan_no="ngModel"
+                                        [(ngModel)]="objcusacccre.VAT_Pan_no"
+                                        placeholder="VAT/Pan no"
+                                        [ngClass]="{'clearance': cusacccreationFormsSubmitted && VAT_Pan_no.errors?.required}"
+                                        required
+                                        [disabled]="view">
+                                  </div>
+                                  <div class="col-sm-3">
+                                    <label class="control-label">Address<sup class="text-danger">*</sup></label>
+                                    <textarea class="form-control" 
+                                    name="Address" 
+                                    #Address="ngModel"
+                                    [(ngModel)]="objcusacccre.Address"
+                                    rows="2" 
+                                    placeholder="Address"
+                                    [ngClass]="{'clearance': cusacccreationFormsSubmitted && Address.errors?.required}"
+                                    required
+                                    [disabled]="view"></textarea>
+                                  </div>
+                                  <div class="col-sm-3">
+                                    <label class="control-label">Manufacturing Address<sup class="text-danger">*</sup></label>
+                                    <textarea class="form-control" 
+                                    name="Manufacturing_Address"
+                                    #Manufacturing_Address="ngModel"
+                                    [(ngModel)]="objcusacccre.Manufacturing_Address" 
+                                    rows="2" 
+                                    placeholder="Manufacturing Address"
+                                    [ngClass]="{'clearance': cusacccreationFormsSubmitted && Manufacturing_Address.errors?.required}"
+                                    required
+                                    [disabled]="view"></textarea>
+                                  </div>
+                                  <div class="col-sm-3">
+                                    <label class="control-label">Main Office address<sup class="text-danger">*</sup></label>
+                                    <textarea class="form-control" 
+                                    name="Main_Office_Address" 
+                                    #Main_Office_Address="ngModel"
+                                    [(ngModel)]="objcusacccre.Main_Office_Address"
+                                    rows="2" 
+                                    placeholder="Main Office Address"
+                                    [ngClass]="{'clearance': cusacccreationFormsSubmitted && Main_Office_Address.errors?.required}"
+                                    required
+                                    [disabled]="view"></textarea>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                    <div style="margin-top: 14px; background-color: #3c8dbc;color: #ffff;height: 29px; margin-left: 10px;">
+                                        <p style="padding: 5px;font-size: 1.4rem;font-weight: 800;">
+                                            <span class="glyphicon glyphicon-book">&nbsp;</span>Owner/Director:-</p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="Owner_Name"
+                                        #Owner_Name="ngModel"
+                                        [(ngModel)]="objcusacccre.Owner_Name"
+                                        placeholder="Owner Name"
+                                        [ngClass]="{'clearance': cusacccreationFormsSubmitted && Owner_Name.errors?.required}"
+                                        required
+                                        [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Mobile 1<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="Owner_Mobile_1"
+                                        #Owner_Mobile_1="ngModel"
+                                        [(ngModel)]="objcusacccre.Owner_Mobile_1"
+                                        placeholder="Mobile 1"
+                                        maxlength="10"
+                                        minlength="10"
+                                        [CompacctDigitonly]="true"
+                                        [ngClass]="{'clearance': cusacccreationFormsSubmitted && (Owner_Mobile_1.errors?.required || Owner_Mobile_1.errors?.maxlength || Owner_Mobile_1.errors?.minlength)}"
+                                        required
+                                        [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">(W/A) Mobile no 2<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="Owner_Mobile_2"
+                                        #Owner_Mobile_2="ngModel"
+                                        [(ngModel)]="objcusacccre.Owner_Mobile_2"
+                                        placeholder="(W/A) Mobile no 2"
+                                        maxlength="10"
+                                        minlength="10"
+                                        [CompacctDigitonly]="true"
+                                        [ngClass]="{'clearance': cusacccreationFormsSubmitted && (Owner_Mobile_2.errors?.minlength|| Owner_Mobile_2.errors?.maxlength)}"
+                                        [disabled]="view">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Landline<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="Owner_Landline"
+                                        #Owner_Landline="ngModel"
+                                        [CompacctDigitonly]="true"
+                                        [(ngModel)]="objcusacccre.Owner_Landline"
+                                        placeholder="Landline"
+                                        [disabled]="view"
+                                        >
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Ext no<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="Owner_Ext_no"
+                                        #Owner_Ext_no="ngModel"
+                                        [(ngModel)]="objcusacccre.Owner_Ext_no"
+                                        placeholder="Ext no"
+                                        [CompacctDigitonly]="true"
+                                        [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Email id<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="Owner_Email_ID"
+                                        #Owner_Email_ID="ngModel"
+                                        [(ngModel)]="objcusacccre.Owner_Email_ID"
+                                        placeholder="Email id"
+                                        pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$"
+                                        [ngClass]="{'clearance': cusacccreationFormsSubmitted && (Owner_Email_ID.errors?.required || Owner_Email_ID.errors?.pattern )}"
+                                        required
+                                        [disabled]="view">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div style="margin-top: 14px; background-color: #3c8dbc;color: #ffff;height: 29px; margin-left: 10px;">
+                                        <p style="padding: 5px;font-size: 1.4rem;font-weight: 800;">
+                                            <span class="glyphicon glyphicon-book">&nbsp;</span>Purchase Manager:-</p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Name<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="PM_Name"
+                                        #PM_Name="ngModel"
+                                        [(ngModel)]="objcusacccre.PM_Name"
+                                        placeholder="Name"
+                                         [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Mobile 1<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="PM_Mobile_1"
+                                        #PM_Mobile_1="ngModel"
+                                        [(ngModel)]="objcusacccre.PM_Mobile_1"
+                                        placeholder="Mobile 1"
+                                        maxlength="10"
+                                        minlength="10"
+                                        [CompacctDigitonly]="true"
+                                        [ngClass]="{'clearance': cusacccreationFormsSubmitted && (PM_Mobile_1.errors?.maxlength || PM_Mobile_1.errors?.minlength )}"
+                                        [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">(W/A) Mobile no 2<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="PM_Mobile_2"
+                                        #PM_Mobile_2="ngModel"
+                                        [(ngModel)]="objcusacccre.PM_Mobile_2"
+                                        placeholder="(W/A) Mobile no 2"
+                                        maxlength="10"
+                                        minlength="10"
+                                        [CompacctDigitonly]="true"
+                                        [ngClass]="{'clearance': cusacccreationFormsSubmitted && (PM_Mobile_2.errors?.minlength || PM_Mobile_2.errors?.maxlength )}"
+                                        [disabled]="view">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Landline<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="PM_Landline"
+                                        #PM_Landline="ngModel"
+                                        [CompacctDigitonly]="true"
+                                        [(ngModel)]="objcusacccre.PM_Landline"
+                                        placeholder="Landline"
+                                        [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Ext no<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="PM_Ext_no"
+                                        #PM_Ext_no="ngModel"
+                                        [(ngModel)]="objcusacccre.PM_Ext_no"
+                                        placeholder="Ext no"
+                                        [CompacctDigitonly]="true"
+                                        [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Email id<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="PM_Email_ID"
+                                        #PM_Email_ID="ngModel"
+                                        [(ngModel)]="objcusacccre.PM_Email_ID"
+                                        placeholder="Email id"
+                                        pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$"
+                                        [ngClass]="{'clearance': cusacccreationFormsSubmitted && (PM_Email_ID.errors?.pattern)}"
+                                         [disabled]="view">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div style="margin-top: 14px; background-color: #3c8dbc;color: #ffff;height: 29px; margin-left: 10px;">
+                                        <p style="padding: 5px;font-size: 1.4rem;font-weight: 800;">
+                                            <span class="glyphicon glyphicon-book">&nbsp;</span>Account Manager:-</p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Name<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="AM_Name"
+                                        #AM_Name="ngModel"
+                                        [(ngModel)]="objcusacccre.AM_Name"
+                                        placeholder="Name"
+                                        [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Mobile 1<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="AM_Mobile_1"
+                                        #AM_Mobile_1="ngModel"
+                                        [(ngModel)]="objcusacccre.AM_Mobile_1"
+                                        placeholder="Mobile 1"
+                                        maxlength="10"
+                                        minlength="10"
+                                        [CompacctDigitonly]="true"
+                                        [ngClass]="{'clearance': cusacccreationFormsSubmitted && (AM_Mobile_1.errors?.maxlength || AM_Mobile_1.errors?.minlength)}"
+                                        [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">(W/A) Mobile no 2<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="AM_Mobile_2"
+                                        #AM_Mobile_2="ngModel"
+                                        [(ngModel)]="objcusacccre.AM_Mobile_2"
+                                        placeholder="(W/A) Mobile no 2"
+                                        maxlength="10"
+                                        minlength="10"
+                                        [CompacctDigitonly]="true"
+                                        [ngClass]="{'clearance': cusacccreationFormsSubmitted && ( AM_Mobile_2.errors?.maxlength || AM_Mobile_2.errors?.minlength)}"
+                                        [disabled]="view">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Landline<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="AM_Landline"
+                                        #AM_Landline="ngModel"
+                                        [CompacctDigitonly]="true"
+                                        [(ngModel)]="objcusacccre.AM_Landline"
+                                        placeholder="Landline"
+                                        [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Ext no<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="AM_Ext_no"
+                                        #AM_Ext_no="ngModel"
+                                        [(ngModel)]="objcusacccre.AM_Ext_no"
+                                        placeholder="Ext no"
+                                        [CompacctDigitonly]="true"
+                                        [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Email id<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="AM_Email_ID"
+                                        #AM_Email_ID="ngModel"
+                                        [(ngModel)]="objcusacccre.AM_Email_ID"
+                                        placeholder="Email id"
+                                        pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$"
+                                        [ngClass]="{'clearance': cusacccreationFormsSubmitted && ( AM_Email_ID.errors?.pattern)}"
+                                         [disabled]="view">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div style="margin-top: 14px; background-color: #3c8dbc;color: #ffff;height: 29px; margin-left: 10px;">
+                                        <p style="padding: 5px;font-size: 1.4rem;font-weight: 800;">
+                                            <span class="glyphicon glyphicon-book">&nbsp;</span>Production manager:-</p>
+                                    </div>
+                                    <div class="col-sm-3" >
+                                        <label class="control-label">Designation<sup class="text-danger"></sup></label>
+                                    <textarea class="form-control" 
+                                    name="Pro_M_Designation" 
+                                    #Pro_M_Designation="ngModel"
+                                    [(ngModel)]="objcusacccre.Pro_M_Designation"
+                                    rows="2" 
+                                    placeholder="Designation"
+                                   [disabled]="view"></textarea>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Name<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="Pro_M_Name"
+                                        #Pro_M_Name="ngModel"
+                                        [(ngModel)]="objcusacccre.Pro_M_Name"
+                                        placeholder="Name"
+                                       [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Mobile 1<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="Pro_M_Mobile_1"
+                                        #Pro_M_Mobile_1="ngModel"
+                                        [(ngModel)]="objcusacccre.Pro_M_Mobile_1"
+                                        placeholder="Mobile 1"
+                                        maxlength="10"
+                                        minlength="10"
+                                        [CompacctDigitonly]="true"
+                                        [ngClass]="{'clearance': cusacccreationFormsSubmitted && (Pro_M_Mobile_1.errors?.maxlength || Pro_M_Mobile_1.errors?.minlength)}"
+                                        [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">(W/A) Mobile no 2<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="Pro_M_Mobile_2"
+                                        #Pro_M_Mobile_2="ngModel"
+                                        [(ngModel)]="objcusacccre.Pro_M_Mobile_2"
+                                        placeholder="(W/A) Mobile no 2"
+                                        maxlength="10"
+                                        minlength="10"
+                                        [CompacctDigitonly]="true"
+                                        [ngClass]="{'clearance': cusacccreationFormsSubmitted && ( Pro_M_Mobile_2.errors?.maxlength || Pro_M_Mobile_2.errors?.minlength)}"
+                                        [disabled]="view">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Landline<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="Pro_M_Landline"
+                                        #Pro_M_Landline="ngModel"
+                                        [(ngModel)]="objcusacccre.Pro_M_Landline"
+                                        [CompacctDigitonly]="true"
+                                        placeholder="Landline" 
+                                        [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Ext no<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="Pro_M_Ext_no"
+                                        #Pro_M_Ext_no="ngModel"
+                                        [(ngModel)]="objcusacccre.Pro_M_Ext_no"
+                                        placeholder="Ext no"
+                                        [CompacctDigitonly]="true"
+                                        [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Email id<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="Pro_M_Email_ID"
+                                        #Pro_M_Email_ID="ngModel"
+                                        [(ngModel)]="objcusacccre.Pro_M_Email_ID"
+                                        placeholder="Email id"
+                                        pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$"
+                                        [ngClass]="{'clearance': cusacccreationFormsSubmitted && (Pro_M_Email_ID.errors?.pattern)}"
+                                        
+                                        [disabled]="view">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div style="margin-top: 14px; background-color: #3c8dbc;color: #ffff;height: 29px; margin-left: 10px;">
+                                        <p style="padding: 5px;font-size: 1.4rem;font-weight: 800;">
+                                            <span class="glyphicon glyphicon-book">&nbsp;</span>Banking Information:-</p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Bank Name 1<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="Bank_1_Name"
+                                        #Bank_1_Name="ngModel"
+                                        [(ngModel)]="objcusacccre.Bank_1_Name"
+                                        placeholder="Bank Name"
+                                        [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Branch 1<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="Bank_1_Branch"
+                                        #Bank_1_Branch="ngModel"
+                                        [(ngModel)]="objcusacccre.Bank_1_Branch"
+                                        placeholder="Branch"
+                                        [disabled]="view"  >
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Account no 1<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="Bank_1_Account_No"
+                                        #Bank_1_Account_No="ngModel"
+                                        [(ngModel)]="objcusacccre.Bank_1_Account_No"
+                                        placeholder="Account no"
+                                        [CompacctDigitonly]="true"
+                                        [disabled]="view">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Bank Name 2<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="Bank_2_Name"
+                                        #Bank_2_Name="ngModel"
+                                        [(ngModel)]="objcusacccre.Bank_2_Name"
+                                        placeholder="Bank Name"
+                                        [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Branch 2<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="Bank_2_Branch"
+                                        #Bank_2_Branch="ngModel"
+                                        [(ngModel)]="objcusacccre.Bank_2_Branch"
+                                        placeholder="Branch"
+                                        [disabled]="view">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Account no 2<sup class="text-danger"></sup></label>
+                                        <input class="form-control"
+                                        name="Bank_2_Account_No"
+                                        #Bank_2_Account_No="ngModel"
+                                        [(ngModel)]="objcusacccre.Bank_2_Account_No"
+                                        placeholder="Account no"
+                                        [CompacctDigitonly]="true"
+                                        [disabled]="view">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div style="margin-top: 14px; background-color: #3c8dbc;color: #ffff;height: 29px; margin-left: 10px;">
+                                        <p style="padding: 5px;font-size: 1.4rem;font-weight: 800;">
+                                            <span class="glyphicon glyphicon-book">&nbsp;</span>Documents to be Attached:-</p>
+                                    </div>
+                                    <div class="col-sm-4" >
+                                        <label class="control-label">Company Registration Certificate<sup class="text-danger"></sup></label>
+                                        <p-fileUpload *ngIf="!imageCompRegistration && !view" #crcDoc mode="advanced" [multiple]="false" [fileLimit]="1" name="crc-Doc" accept=".pdf, .jpg, .png, .doc, .docx, .csv, .jfif" [chooseLabel]="'Browse'" [customUpload]="true" [showUploadButton]="false" (onSelect)="handlecrcSelect($event)"></p-fileUpload>
+                                        <div>
+                                            <div class="col-sm-12" *ngIf="imageCompRegistration" >
+                                                <i   (click)="opneFile(imageCompRegistration)" class="fa fa-file-text doc" ></i>
+                                                <i *ngIf="!view" (click)="closeBtn('imageCompRegistration')" class="fa fa-times-circle closeBtn" aria-hidden="true"></i>
+                                            </div>
+                                         </div>
+                                        
+                                    </div>
+                                    <div class="col-sm-4" >
+                                        <label class="control-label">Pan or Vat Registration Certificate<sup class="text-danger"></sup></label>
+                                        <div class="col-sm-12" >
+                                            <p-fileUpload *ngIf="!imagePANVATRegistration && !view" #pvrcDoc mode="advanced" [multiple]="false" [fileLimit]="1" name="pvc-Doc" accept=".pdf, .jpg, .png, .doc, .docx, .csv, .jfif" [chooseLabel]="'Browse'" [customUpload]="true" [showUploadButton]="false" (onSelect)="handlepvrcSelect($event)"></p-fileUpload>
+                                            <div class="col-sm-12" *ngIf="imagePANVATRegistration" >
+                                                <i   (click)="opneFile(imagePANVATRegistration)" class="fa fa-file-text doc" ></i>
+                                                <i *ngIf="!view" (click)="closeBtn('imagePANVATRegistration')"  class="fa fa-times-circle closeBtn" aria-hidden="true"></i>
+                                            </div>
+                                        </div>
+                                        <div>
+                                     </div>
+                                    </div>
+                                    <div class="col-sm-4" >
+                                        <label class="control-label">Citizenship of Owner/Director<sup class="text-danger"></sup></label>
+                                        <p-fileUpload *ngIf="!imageCitizenshipOwner && !view" #cwDoc mode="advanced" [multiple]="false" [fileLimit]="1" name="cwrc-Doc" accept=".pdf, .jpg, .png, .doc, .docx, .csv, .jfif" [chooseLabel]="'Browse'" [customUpload]="true" [showUploadButton]="false" (onSelect)="handlecwSelect($event)"></p-fileUpload>
+                                        
+                                        <div class="col-sm-12" *ngIf="imageCitizenshipOwner" >
+                                            <i  (click)="opneFile(imageCitizenshipOwner)" class="fa fa-file-text doc" ></i>
+                                            <i *ngIf="!view" (click)="closeBtn('imageCitizenshipOwner')" class="fa fa-times-circle closeBtn" aria-hidden="true"></i>
+                                        </div>
+                                     
+                                    </div>                                   
+                                </div>
+                                <div class="form-group">                                  
+                                    <div class="col-sm-4" *ngIf="!(objcusacccre.Type_of_company=='Proprietorship' || objcusacccre.Type_of_company=='Others')">
+                                        <label *ngIf="objcusacccre.Type_of_company!='Partnership'" class="control-label">Share Lagat Document<sup class="text-danger"></sup></label>
+                                        <label *ngIf="objcusacccre.Type_of_company=='Partnership'" class="control-label">Partnership Deed<sup class="text-danger"></sup></label>
+                                        <p-fileUpload *ngIf="!imageLagatDocumentOwner && !view" #LargeDoc mode="advanced" [multiple]="false"
+                                            [fileLimit]="1" name="large-Doc" accept=".pdf, .jpg, .png, .doc, .docx, .csv, .jfif"
+                                            [chooseLabel]="'Browse'" [customUpload]="true" [showUploadButton]="false"
+                                            (onSelect)="handleDocSelect($event)"></p-fileUpload>
+                                    </div>
+                                        <div class="col-sm-12" *ngIf="imageLagatDocumentOwner">
+                                            <i (click)="opneFile(imageLagatDocumentOwner)" class="fa fa-file-text doc"></i>
+                                            <i *ngIf="!view" (click)="closeBtn('imageLagatDocumentOwner')" class="fa fa-times-circle closeBtn"
+                                                aria-hidden="true"></i>
+                                        </div>                                                                 
+                                </div>
+                                <div class="box-footer"  *ngIf="!view" >
+                                    <button class="btn btn-primary pull-right"
+                                            (click)="Savecusacccre(cusacccreationForms.form.valid)"
+                                            id="load"
+                                            [disabled]="Spinner">
+                                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                    </button>
+                                </div>
+                            </form>
+                            <div *ngIf="view && (SubDeptID == 1 || SubDeptID == 25) && TicketStatus != 'Pending'" class="form-group" >
+                                <div style="margin-top: 14px; background-color: #3c8dbc;color: #ffff;height: 29px;margin-left: 10px;">
+                                    <p style="padding: 5px;font-size: 1.4rem;font-weight: 800;">
+                                        <span class="glyphicon glyphicon-book">&nbsp;</span>FOR INTERNAL PURPOSE ONLY:-</p>
+                                </div>
+                                <div style="margin-left: 14px;" >
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                             <label class="control-label">VAT<sup class="text-danger">*</sup></label>
+                                             <input class="form-control"
+                                             name="Internal_P_VAT"
+                                             #Internal_P_VAT="ngModel"
+                                             [(ngModel)]="objupdate.Internal_P_VAT"
+                                             placeholder="VAT"
+                                            disabled
+                                             >
+                                         </div>
+                                         <div class="col-sm-4" >
+                                             <label class="control-label">Bank<sup class="text-danger">*</sup></label>
+                                             <input class="form-control"
+                                             name="Internal_P_Bank"
+                                             #Internal_P_Bank="ngModel"
+                                             [(ngModel)]="objupdate.Internal_P_Bank"
+                                             placeholder="Bank"
+                                             disabled
+                                             >
+                                         </div>
+                                         <div class="col-sm-4" >
+                                             <label class="control-label">Income Tax<sup class="text-danger">*</sup></label>
+                                             <input class="form-control"
+                                             name="Internal_P_Income_Tax"
+                                             #Internal_P_Income_Tax="ngModel"
+                                             [(ngModel)]="objupdate.Internal_P_Income_Tax"
+                                             placeholder="Income Tax"
+                                             disabled
+                                             >
+                                         </div>
+                                      </div>
+                                      <div class="form-group">
+                                         <div class="col-sm-3">
+                                             <label class="control-label">Property<sup class="text-danger">*</sup></label>
+                                                 <select
+                                                   class="form-control"
+                                                   name="Internal_P_Property"
+                                                   #Internal_P_Property="ngModel"
+                                                   [(ngModel)]="objupdate.Internal_P_Property"
+                                                   disabled>
+                                                   <option [ngValue]="undefined">Select</option>
+                                                   <option [ngValue]="'Y'">YES</option>
+                                                   <option [ngValue]="'N'">NO</option>
+                                                  </select>
+                                          </div>
+                                          <div class="col-sm-3" >
+                                              <label class="control-label">Agreement Contract<sup class="text-danger">*</sup></label>
+                                              <select
+                                              class="form-control"
+                                              name="Internal_P_Agreement_Contract"
+                                              #Internal_P_Agreement_Contract="ngModel"
+                                              [(ngModel)]="objupdate.Internal_P_Agreement_Contract"
+                                              disabled>
+                                              <option [ngValue]="undefined">Select</option>
+                                              <option [ngValue]="'Y'">YES</option>
+                                              <option [ngValue]="'N'">NO</option>
+                                             </select>
+                                          </div>
+                                          <div class="col-sm-3" >
+                                              <label class="control-label">House Owners Name<sup class="text-danger">*</sup></label>
+                                              <input class="form-control"
+                                              name="Internal_P_House_Owners_Name"
+                                              placeholder="House Owners Name"
+                                              #Internal_P_House_Owners_Name="ngModel"
+                                              [(ngModel)]="objupdate.Internal_P_House_Owners_Name"
+                                              disabled
+                                              >
+                                          </div>
+                                          <div class="col-sm-3">
+                                             <label class="control-label">House Owners Contact No<sup class="text-danger">*</sup></label>
+                                             <input class="form-control"
+                                             name="Internal_P_House_Owners_Contact_No"
+                                             placeholder="House Owners Contact No"
+                                             #Internal_P_House_Owners_Contact_No="ngModel"
+                                             [(ngModel)]="objupdate.Internal_P_House_Owners_Contact_No"
+                                             disabled
+                                             >
+                                         </div>
+                                       </div>
+                                       <div class="form-group">
+                                          <div class="col-sm-3" >
+                                              <label class="control-label">Citizenship No<sup class="text-danger">*</sup></label>
+                                              <input class="form-control"
+                                              name="Internal_P_Citizenship_No"
+                                              placeholder="Citizenship No"
+                                              #Internal_P_Citizenship_No="ngModel"
+                                             [(ngModel)]="objupdate.Internal_P_Citizenship_No"
+                                             disabled
+                                              >
+                                          </div>
+                                          <div class="col-sm-3" >
+                                              <label class="control-label">Credit Period<sup class="text-danger">*</sup></label>
+                                              <input class="form-control"
+                                              name="Internal_P_Credit_Period"
+                                              placeholder="Credit Period"
+                                              #Internal_P_Credit_Period="ngModel"
+                                             [(ngModel)]="objupdate.Internal_P_Credit_Period"
+                                             disabled
+                                              >
+                                          </div>
+                                          <div class="col-sm-3" >
+                                             <label class="control-label">Credit Limit<sup class="text-danger">*</sup></label>
+                                             <input class="form-control"
+                                             name="Internal_P_Credit_Limit"
+                                             placeholder="Credit Period"
+                                             #Internal_P_Credit_Limit="ngModel"
+                                            [(ngModel)]="objupdate.Internal_P_Credit_Limit"
+                                            disabled
+                                             >
+                                         </div>
+                                          <div class="col-sm-3" >
+                                             <label class="control-label">Area<sup class="text-danger">*</sup></label>
+                                             <input class="form-control"
+                                             name="Internal_P_Area"
+                                             placeholder="Area"
+                                             #Internal_P_Area="ngModel"
+                                             [(ngModel)]="objupdate.Internal_P_Area"
+                                             disabled
+                                             >
+                                         </div>
+                                       </div>
+                                </div>
+                               
+                            </div>
+                            
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<p-dialog [header]="'INTERNAL PURPOSE'" [appendTo]="'body'" [visible]="updateModal" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '200px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <div class="form-horizontal">
+                    <div class="box-body">
+                         <form name="UpdatecusacccreationForms" #UpdatecusacccreationForms="ngForm" style="margin-left: 14px;
+                                " novalidate>
+                                    <div class="form-group">
+                                       <div class="col-sm-4">
+                                            <label class="control-label">VAT<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                            name="Internal_P_VAT"
+                                            #Internal_P_VAT="ngModel"
+                                            [(ngModel)]="objupdate.Internal_P_VAT"
+                                            placeholder="VAT"
+                                            [ngClass]="{'clearance': UpdatecusacccreationFormsSubmitted && Internal_P_VAT.errors?.required}"
+                                            required
+                                            >
+                                        </div>
+                                        <div class="col-sm-4" >
+                                            <label class="control-label">Bank<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                            name="Internal_P_Bank"
+                                            #Internal_P_Bank="ngModel"
+                                            [(ngModel)]="objupdate.Internal_P_Bank"
+                                            placeholder="Bank"
+                                            [ngClass]="{'clearance': UpdatecusacccreationFormsSubmitted && Internal_P_Bank.errors?.required}"
+                                            required
+                                            >
+                                        </div>
+                                        <div class="col-sm-4" >
+                                            <label class="control-label">Income Tax<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                            name="Internal_P_Income_Tax"
+                                            #Internal_P_Income_Tax="ngModel"
+                                            [(ngModel)]="objupdate.Internal_P_Income_Tax"
+                                            placeholder="Income Tax"
+                                            [ngClass]="{'clearance': UpdatecusacccreationFormsSubmitted && Internal_P_Income_Tax.errors?.required}"
+                                            required
+                                            >
+                                        </div>
+                                     </div>
+                                     <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Property<sup class="text-danger">*</sup></label>
+                                                <select
+                                                  class="form-control"
+                                                  name="Internal_P_Property"
+                                                  #Internal_P_Property="ngModel"
+                                                  [(ngModel)]="objupdate.Internal_P_Property"
+                                                  [ngClass]="{'clearance': UpdatecusacccreationFormsSubmitted && Internal_P_Property.errors?.required}"
+                                                  required>
+                                                  <option [ngValue]="undefined">Select</option>
+                                                  <option [ngValue]="'Y'">YES</option>
+                                                  <option [ngValue]="'N'">NO</option>
+                                                 </select>
+                                         </div>
+                                         <div class="col-sm-3" >
+                                             <label class="control-label">Agreement Contract<sup class="text-danger">*</sup></label>
+                                             <select
+                                             class="form-control"
+                                             name="Internal_P_Agreement_Contract"
+                                             #Internal_P_Agreement_Contract="ngModel"
+                                             [(ngModel)]="objupdate.Internal_P_Agreement_Contract"
+                                             [ngClass]="{'clearance': UpdatecusacccreationFormsSubmitted && Internal_P_Agreement_Contract.errors?.required}"
+                                             required>
+                                             <option [ngValue]="undefined">Select</option>
+                                             <option [ngValue]="'Y'">YES</option>
+                                             <option [ngValue]="'N'">NO</option>
+                                            </select>
+                                         </div>
+                                         <div class="col-sm-3" >
+                                             <label class="control-label">House Owners Name<sup class="text-danger">*</sup></label>
+                                             <input class="form-control"
+                                             name="Internal_P_House_Owners_Name"
+                                             placeholder="House Owners Name"
+                                             #Internal_P_House_Owners_Name="ngModel"
+                                             [(ngModel)]="objupdate.Internal_P_House_Owners_Name"
+                                             [ngClass]="{'clearance': UpdatecusacccreationFormsSubmitted && Internal_P_House_Owners_Name.errors?.required}"
+                                             required
+                                             >
+                                         </div>
+                                         <div class="col-sm-3">
+                                            <label class="control-label">House Owners Contact No<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                            name="Internal_P_House_Owners_Contact_No"
+                                            placeholder="House Owners Contact No"
+                                            #Internal_P_House_Owners_Contact_No="ngModel"
+                                            [(ngModel)]="objupdate.Internal_P_House_Owners_Contact_No"
+                                            [ngClass]="{'clearance': UpdatecusacccreationFormsSubmitted && Internal_P_House_Owners_Contact_No.errors?.required}"
+                                            required
+                                            >
+                                        </div>
+                                      </div>
+                                      <div class="form-group">
+                                         <div class="col-sm-3" >
+                                             <label class="control-label">Citizenship No<sup class="text-danger">*</sup></label>
+                                             <input class="form-control"
+                                             name="Internal_P_Citizenship_No"
+                                             placeholder="Citizenship No"
+                                             #Internal_P_Citizenship_No="ngModel"
+                                            [(ngModel)]="objupdate.Internal_P_Citizenship_No"
+                                            [ngClass]="{'clearance': UpdatecusacccreationFormsSubmitted && Internal_P_Citizenship_No.errors?.required}"
+                                            required
+                                             >
+                                         </div>
+                                         <div class="col-sm-3" >
+                                             <label class="control-label">Credit Period<sup class="text-danger">*</sup></label>
+                                             <input class="form-control"
+                                             name="Internal_P_Credit_Period"
+                                             placeholder="Credit Period"
+                                             #Internal_P_Credit_Period="ngModel"
+                                            [(ngModel)]="objupdate.Internal_P_Credit_Period"
+                                            [ngClass]="{'clearance': UpdatecusacccreationFormsSubmitted && Internal_P_Credit_Period.errors?.required}"
+                                            required
+                                             >
+                                         </div>
+                                         <div class="col-sm-3" >
+                                            <label class="control-label">Credit Limit<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                            name="Internal_P_Credit_Limit"
+                                            placeholder="Credit Period"
+                                            #Internal_P_Credit_Limit="ngModel"
+                                           [(ngModel)]="objupdate.Internal_P_Credit_Limit"
+                                           [ngClass]="{'clearance': UpdatecusacccreationFormsSubmitted && Internal_P_Credit_Limit.errors?.required}"
+                                           required
+                                            >
+                                        </div>
+                                         <div class="col-sm-3" >
+                                            <label class="control-label">Area<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                            name="Internal_P_Area"
+                                            placeholder="Area"
+                                            #Internal_P_Area="ngModel"
+                                            [(ngModel)]="objupdate.Internal_P_Area"
+                                            [ngClass]="{'clearance': UpdatecusacccreationFormsSubmitted && Internal_P_Area.errors?.required}"
+                                            required
+                                            >
+                                        </div>
+                                      </div>
+                                      <div class="form-group">
+                                        <div class="col-sm-3" >
+                                            <label class="control-label">SWS GL Code<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                            name="SWS_GL_Code"
+                                            placeholder="SWS GL Code"
+                                            #SWS_GL_Code="ngModel"
+                                           [(ngModel)]="objupdate.SWS_GL_Code"
+                                           [ngClass]="{'clearance': UpdatecusacccreationFormsSubmitted && SWS_GL_Code.errors?.required}"
+                                           required
+                                            >
+                                        </div>
+                                        <div class="col-sm-3" >
+                                            <label class="control-label">SWS GL Short Name<sup class="text-danger">*</sup></label>
+                                            <input class="form-control"
+                                            name="SWS_GL_ShortName"
+                                            placeholder="SWS GL Short Name"
+                                            #SWS_GL_ShortName="ngModel"
+                                           [(ngModel)]="objupdate.SWS_GL_ShortName"
+                                           [ngClass]="{'clearance': UpdatecusacccreationFormsSubmitted && SWS_GL_ShortName.errors?.required}"
+                                           required
+                                            >
+                                        </div>
+                                        </div>
+                                </form>
+                                <div class="box-footer" >
+                                    <button class="btn btn-primary pull-right"
+                                            (click)="Updatecusacccre(UpdatecusacccreationForms.form.valid)"
+                                            [disabled]="UpdateSpinner">
+                                            <p-progressSpinner *ngIf="UpdateSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!UpdateSpinner" class="glyphicon glyphicon-save"></span> Update
+                                    </button>
+                                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p-footer>
+        <button type="button" (click)="updateModal = false" class="btn btn-info">
+            Close
+        </button>
+    </p-footer>
+</p-dialog>

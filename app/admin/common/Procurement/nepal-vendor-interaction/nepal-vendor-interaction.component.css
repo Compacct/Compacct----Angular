@@ -1,0 +1,52 @@
+#ui-tabpanel-0>div>p-table>div>div.ui-table-wrapper.ng-star-inserted {
+    width: auto !important;
+}
+
+div.table-responsive.table-id>p-table>div>div {
+    width: auto !important;
+}
+
+.custombutton {
+    margin-top: 25px;
+}
+
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.text-red-active>td {
+    color: red;
+}
+
+.custombutton1 {
+    margin-top: 2px;
+    margin-left: 600px;
+}
+
+body .ui-dropdown.ui-dropdown-clearable .ui-dropdown-label {
+    text-align: left !important;
+}
+
+.ui-dropdown-panel .ui-dropdown-empty-message {
+    text-align: left !important;
+}
+
+.table-header {
+    color: #ffffff !important;
+    background-color: #3c8dbc !important;
+  }
+  th{
+    text-align: center;
+  }
+  table, th, td {
+    border: 1px solid #ffffff !important;
+    padding: 5px;
+    text-align: center;
+  }
+  .pd{
+    padding: 7px 45px;
+  }
+ 

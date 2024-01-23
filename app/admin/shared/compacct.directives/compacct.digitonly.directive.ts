@@ -33,5 +33,8 @@ export class CompacctDigitonlyDirective {
         }
       }
   }
+  @HostListener('paste', ['$event']) blockPaste(e: KeyboardEvent) {
+    e.preventDefault();
+  }
 
 }

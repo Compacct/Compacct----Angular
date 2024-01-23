@@ -1,0 +1,408 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6"  *ngIf="!Save && del">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="Save && !del">
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+            </div> 
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="joh" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirmjoh()" label="Yes" class="ui-button-success"></button>
+            </div> 
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="johAU" (onClose)="onReject()" [modal]="true"  baseZIndex="99999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirmjohAutoUp()" label="Yes" class="ui-button-success"></button>
+            </div> 
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <div class="form-horizontal">
+                    <div class="box-body">
+                         <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)"> 
+                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                                <form name="HrLeaveAOpenSearchForm" #HrLeaveAOpenSearchForm="ngForm" novalidate>
+                                    <div class="form-group">
+                                        <div class="col-sm-2">
+                                            <label class="control-label">HR Year
+                                                <sup class="text-danger">*</sup></label>
+                                                <select class="form-control" name="HRYear"
+                                                    #HRYear ="ngModel"
+                                                    [(ngModel)]="ObjBrowse.HR_Year_ID"
+                                                    [ngClass]="{'clearance': HrLeaveAOpenSearchFormSubmitted && HRYear?.errors?.required}" 
+                                                    required>
+                                                    <option [ngValue]="undefined">Select</option>
+                                                    <option *ngFor="let year of hrYeatList"  value ={{year.HR_Year_ID}} >{{year.HR_Year_Name}}</option>
+                                                </select>
+                                        </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Leave Type<sup class="text-danger">*</sup></label>
+                                                <select class="form-control" 
+                                                name="browseleavetype" 
+                                                #browseleavetype="ngModel" 
+                                                [(ngModel)]="ObjBrowse.Leave_Type"
+                                                [ngClass]="{'clearance': HrLeaveAOpenSearchFormSubmitted && browseleavetype?.errors?.required}"
+                                                required>
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let type of leaveList" value="{{type.Atten_Type_ID}}">{{type.Leave_Type}}</option>
+                                              </select>
+                                            </div>
+                                        <div [class]="databaseName === 'GN_JOH_HR' ? 'col-sm-1' : 'col-sm-2'">
+                                                <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetAllData(HrLeaveAOpenSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                          <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                          <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                       </button>
+                                        </div>
+                                        <div class="col-sm-2" *ngIf="databaseName === 'GN_JOH_HR'">
+                                            <button class="btn btn-primary custombutton" (click)="AutoUpdatePopup()">
+                                            Auto Update
+                                       </button>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Employee Name <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistEmpName" [(ngModel)]="SelectedDistEmpName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="empname"></p-multiSelect>
+                                        </div>
+                                    </div>
+    
+                                </form>
+                                <div class="table-responsive no-padding">
+                                    <div class="table-responsive no-padding">
+                                        <p-table [value]="AllData" 
+                                        [paginator]="AllData.length ? true : false" 
+                                        [rows]="10" [rowHover]="true"
+                                         [autoLayout]="true" 
+                                         sortMode="multiple" 
+                                         [rowsPerPageOptions]="[10,20,30]"
+                                          [globalFilterFields]="['Emp_Name','HR_Year_Name','LEAVE_TYPE','Tran_Type','DR_Leave','CR_Leave','Remarks']"[rowHover]="true" #dt>
+
+                                            <ng-template pTemplate="caption">
+                                                <div class="row">
+                                                    <div class="col-sm-3 pull-right" style="text-align: right">
+                                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                    </div>
+                                                </div>
+    
+                                            </ng-template>
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th style="width:5em">Action</th>
+                                                    <th>Emp Name</th>
+                                                    <th>HR Year Name</th>
+                                                    <th>Validity</th>
+                                                    <th>Leave TYPE</th>
+                                                    <th>Tran Type</th>
+                                                    <th>DR Leave</th>
+                                                    <!-- <th>CR Leave</th> -->
+                                                    <th>Remarks</th>
+                                                </tr>
+                                            </ng-template> 
+                                            <ng-template pTemplate="body" let-col>
+                                                <tr>
+    
+                                                    <td>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-default btn-sm tableButton dropdown-toggle" 
+                                                            type="button" data-toggle="dropdown" style="height:27px">
+                                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                                <span class="caret"></span>
+                                                                            </button>
+                                                            <ul class="dropdown-menu">
+                                                                <li *ngIf="databaseName != 'GN_JOH_HR'">
+                                                                    <a (click)="EditLeave(col)">
+                                                                        <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                    </a>
+                                                                </li>
+                                                                <li *ngIf="databaseName === 'GN_JOH_HR'">
+                                                                    <a (click)="Editleaveop(col)">
+                                                                        <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a (click)="DeleteLeave(col)">
+                                                                        <i class="fa fa-fw fa-trash"></i> Delete
+                                                                    </a>
+                                                                </li>
+                                                                <!-- <li *ngIf="col.Is_Active == 'N'" >
+                                                                    <a (click)="Active(col)">
+                                                                          <i class="fa fa-power-off"></i> Active
+                                                                    </a>
+                                                               </li> -->
+                                                            </ul>
+                                                        </div>
+                                                    </td> 
+                                                    
+                                                    <td>{{col.Emp_Name ? col.Emp_Name:"-"}}</td>
+                                                    <td>{{col.HR_Year_Name ? col.HR_Year_Name:"-"}}</td> 
+                                                    <td>{{col.From_Date | date : 'dd/MMM/yyyy'}} - {{col.To_Date | date : 'dd/MMM/yyyy'}}</td>
+                                                    <td>{{col.LEAVE_TYPE ? col.LEAVE_TYPE:"-"}}</td>
+                                                    <td>{{col.Tran_Type ? col.Tran_Type:"-"}}</td>
+                                                    <td>{{col.DR_Leave ? col.DR_Leave:"-"}}</td>
+                                                    <!-- <td>{{col.CR_Leave ? col.CR_Leave:"-"}}</td> -->
+                                                    <td>{{col.Remarks ? col.Remarks:"-"}}</td>
+                                                </tr>
+                                            </ng-template>
+                                             <!-- <ng-template pTemplate="paginatorright" let-state> </ng-template> -->
+                                    </p-table>
+                                </div>
+
+                                </div>
+
+                            </p-tabPanel>
+                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="leaveForm" #leaveForm="ngForm" novalidate >
+                        <div class="form-group">
+                            <div class="col-sm-2" *ngIf="databaseName != 'GN_JOH_HR'">
+                                <label class="control-label">HR Year <sup class="text-danger">*</sup></label>
+                                    <select *ngIf="buttonname === 'Create'" class="form-control" name="HR_Year_ID"
+                                        #HR_Year_ID ="ngModel"
+                                        [(ngModel)]="Objleave.HR_Year_ID"
+                                        [ngClass]="{'clearance': leaveFormSubmitted && HR_Year_ID?.errors?.required}" 
+                                        (change)="leaveChange()"
+                                        [disabled]="Editdisable"
+                                        required>
+                                        <option [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let year of hrYeatList"  value ={{year.HR_Year_ID}} >{{year.HR_Year_Name}}</option>
+                                    </select>
+                                        <div *ngIf="buttonname != 'Create' && databaseName != 'GN_JOH_HR'" class="label-t">{{hryear ? hryear : "-"}}</div>
+                            </div>
+                            <div class="col-sm-2" *ngIf="databaseName === 'GN_JOH_HR'">
+                                <label class="control-label">HR Year <sup class="text-danger">*</sup></label>
+                                    <select class="form-control" name="HR_Year_ID"
+                                        #HR_Year_ID ="ngModel"
+                                        [(ngModel)]="Objleave.HR_Year_ID"
+                                        [ngClass]="{'clearance': leaveFormSubmitted && HR_Year_ID?.errors?.required}" 
+                                        (change)="leaveChange()"
+                                        [disabled]="Editdisable"
+                                        required>
+                                        <option [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let year of hrYeatList"  value ={{year.HR_Year_ID}} >{{year.HR_Year_Name}}</option>
+                                    </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Transaction Date <sup class="text-danger">*</sup></label>
+                                <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='Transaction_Date'></ejs-datepicker>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Validity<sup class="text-danger">*</sup></label>
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                     </div>
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]= "initDate">
+                                    </app-compacct-daterangepicker>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Employees<sup class="text-danger">*</sup></label>
+                                   <p-dropdown [options]="empDataList" name="Employee" #Employee="ngModel" [(ngModel)]="Objleave.Emp_ID" [disabled]="Editdisable" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Employee'"
+                                        [virtualScroll]="true" itemSize="30" (onChange)="getbalancedata()" [styleClass]="leaveFormSubmitted &&  Employee.errors?.required ? 'clearance' :''" [required] = "true">
+                                    </p-dropdown>
+                                    <!-- <select class="form-control" name="Emp_Name"
+                                    #Emp_Name ="ngModel"
+                                    [(ngModel)]="Objleave.Emp_ID" 
+                                    (change)="getbalancedata()"
+                                    [disabled]="Editdisable">
+                                    <option [ngValue]="undefined">All</option>
+                                    <option  *ngFor="let Emp of empDataList"  value ={{Emp.Emp_ID}}>{{Emp.Emp_Name}}</option>
+                                 </select> -->
+                            </div>
+                                   
+                            </div>
+                           <div class="form-group">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Leave Type
+                                        <sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="LEAVETYPE"
+                                        #LEAVETYPE ="ngModel"
+                                        [(ngModel)]="Objleave.LEAVE_TYPE"
+                                        (change)="getbalancedata()"
+                                        [ngClass]="{'clearance': leaveFormSubmitted && LEAVETYPE?.errors?.required}" 
+                                        [disabled]="Editdisable"
+                                        required>
+                                        <option [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let leave of leaveList"  value ={{leave.Atten_Type_ID}} >{{leave.Leave_Type}}</option>
+                                        
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Opening <sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{Opening ? Opening : "-"}}</div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Availed <sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{Availed ? Availed : "-"}}</div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Balance <sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{Balance ? Balance : "-"}}</div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Number Of Days
+                                        <sup class="text-danger">*</sup></label>
+                                  <input  class="form-control" placeholder="Number Of Days" CompacctDigitonly="true"
+                                   name="leave_days"
+                                    #leave_days ="ngModel"
+                                   [(ngModel)]="Objleave.DR_Leave"
+                                   [ngClass]="{'clearance': leaveFormSubmitted && leave_days?.errors?.required}"
+                                   required>
+                                </div>
+                            </div>
+                                <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Remarks</label>
+                                    <textarea class="form-control"name="Remarks"
+                                    #Remarks ="ngModel"[(ngModel)]="Objleave.Remarks"></textarea>
+                                </div>
+                                <div class="col-sm-2" *ngIf="databaseName === 'GN_JOH_HR' && buttonname != 'Create'">
+                                    <button type="submit" class="btn btn-primary custombutton" (click)="Addleaveop(leaveForm.form.valid)">
+                                        <span class="glyphicon glyphicon-plus"></span> Add
+                                    </button>
+                                </div>
+                           </div> 
+                           <br>
+                            <div class="clearfix"></div>
+                            <div class="table-responsive no-padding" *ngIf="databaseName === 'GN_JOH_HR' && buttonname != 'Create'">
+                                <table class="table table-bordered">
+                                 <thead style="background-color:#3c8dbc;color:white;">
+                                    <tr style="background-color:#3c8dbc;color:white;">
+                                      <th>HR Year</th>
+                                      <th>Transaction Date</th>
+                                      <th>Validity</th>
+                                      <th>Employees</th>
+                                      <th>Leave Type</th>
+                                      <th>Number Of Days</th>
+                                      <th>Remarks</th>
+                                      <th>Detete</th>
+                                    </tr>
+                                 </thead>
+                                <tbody>
+                                    <tr *ngFor=" let col of AddleaveopList; let ind = index;">
+                                      <td>{{ col.HR_Year_Name ? col.HR_Year_Name : "-"}}</td>
+                                      <td>{{ col.Transaction_Date | date:'dd/MMM/yyyy' }}</td>
+                                      <td>{{ col.From_Date | date:'dd/MMM/yyyy' }} - {{ col.To_Date | date:'dd/MMM/yyyy'}}</td>
+                                      <td>{{ col.Emp_Name ? col.Emp_Name : "-" }}</td>
+                                      <td>{{ col.LEAVE_TYPE_Name ? col.LEAVE_TYPE_Name : "-" }}</td>
+                                      <td>{{ col.DR_Leave ? col.DR_Leave : "-"}}</td>
+                                      <td>{{ col.Remarks ? col.Remarks : "-" }}</td>
+                                      <td><button (click)="Deleteaddlist(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                    </tr>
+                                </tbody>
+                               </table>
+                            </div>
+                                <div class="box-footer">
+                                    <button *ngIf="databaseName != 'GN_JOH_HR'" class="btn btn-primary pull-right"  id="load" (click)="saveData(leaveForm.form.valid)"   [disabled]="Spinner">
+                                        <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                     </button>
+                                     <button *ngIf="databaseName === 'GN_JOH_HR'" class="btn btn-primary pull-right"  id="load" (click)="Getsavestatus(leaveForm.form.valid)"   [disabled]="Spinner">
+                                        <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                     </button>
+                                </div>
+                            </form>
+                        </p-tabPanel>
+                 </p-tabView>  
+                   </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- AUTO UPDATE -->
+<p-dialog [header]="'Auto Update'" [appendTo]="'body'" [visible]="AutoUpdateModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '50%', minWidth: '300px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+ [baseZIndex]="10000">
+ <form name="AutoUpdateleaveForm" #AutoUpdateleaveForm="ngForm" novalidate >
+        <div class="col-sm-12">
+            <label class="control-label">HR Year
+                <sup class="text-danger">*</sup></label>
+                <select class="form-control" name="AU_HR_Year_ID"
+                    #AU_HR_Year_ID ="ngModel"
+                    [(ngModel)]="ObjAutoUpdateleave.HR_Year_ID"
+                    [ngClass]="{'clearance': AutoUpdateleaveFormSubmitted && AU_HR_Year_ID?.errors?.required}"
+                    required>
+                    <option [ngValue]="undefined">Select</option>
+                    <option *ngFor="let year of AUhrYeatList"  value ={{year.HR_Year_ID}} >{{year.HR_Year_Name}}</option>
+                </select>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Transaction Date <sup class="text-danger">*</sup></label>
+            <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='AutoU_Transaction_Date'></ejs-datepicker>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Validity<sup class="text-danger">*</sup></label>
+            <div class="input-group date">
+                <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                 </div>
+                <app-compacct-daterangepicker (DaterangeObj)="getAutoUDateRange($event)" [HardCodeDateOpt]= "initDate">
+                </app-compacct-daterangepicker>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <label class="control-label">Employees<sup class="text-danger">*</sup></label>
+                <!-- <select class="form-control" name="AU_Emp_Name"
+                #AU_Emp_Name ="ngModel"
+                [(ngModel)]="ObjAutoUpdateleave.Emp_ID" >
+                <option [ngValue]="undefined">All</option>
+                <option  *ngFor="let Emp of AutoUpdateempDataList"  value ={{Emp.Emp_ID}}>{{Emp.Emp_Name}}</option>
+             </select> -->
+            <p-multiSelect itemSize="30" [options]="AutoUpdateempDataList" [styleClass]="'compacct-multiselect'" name="AU_Emp_Name" [(ngModel)]="SelectedEmployee" [virtualScroll]="true" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true">
+            </p-multiSelect>
+        </div>
+               
+         <hr>
+            <div class="box-footer pull-right">
+                <p-footer>
+                    <button type="button" pButton icon="pi pi-check" (click)="GetAutoUpsavestatus(AutoUpdateleaveForm.form.valid)" label="Auto Update"></button>
+                    <button type="button" (click)="AutoUpdateModal = false" class="btn btn-default">
+                      CLOSE
+                    </button>
+                </p-footer>
+            </div>
+        </form>
+</p-dialog>
+
+    
+

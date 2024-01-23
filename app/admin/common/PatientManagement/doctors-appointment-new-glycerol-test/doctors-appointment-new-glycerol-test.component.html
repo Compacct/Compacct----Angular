@@ -1,0 +1,544 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+           <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" header="Appointment"
+                            leftIcon="glyphicon glyphicon-user">
+
+                            <form name="DoctorsAppointmentNewGlycerolTest" #DoctorsAppointmentNewGlycerolTestForm="ngForm" novalidate>
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="Name"
+                                        #Name="ngModel" 
+                                        [(ngModel)]="ObjGlycerolTest.Name"
+                                        placeholder="Write Your Name"
+                                        disabled
+                                        > 
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Patient ID<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="PatientID"
+                                        #PatientID="ngModel"
+                                        [(ngModel)]="ObjGlycerolTest.PatientID" 
+                                        CompacctDigitonly="true"
+                                        placeholder="Type Patient ID"
+                                        disabled
+                                        > 
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Sex<sup class="text-danger">*</sup></label>
+                                        <select class="form-control"
+                                        name="Sex"
+                                        #Sex="ngModel"
+                                        [(ngModel)]="ObjGlycerolTest.Sex"
+                                        disabled
+                                         >
+                                         <option  [ngValue]="undefined">Select</option>
+                                         <option  *ngFor="let option of GenderList" value="{{option}}">
+                                             {{option}}
+                                         </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Age<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="Age"
+                                        #Age="ngModel"
+                                        [(ngModel)]="ObjGlycerolTest.Age" 
+                                        CompacctDigitonly="true"
+                                        placeholder="Put Your Age"
+                                        disabled
+                                        > 
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                        <div class="label-t">{{Appo_Date ? (Appo_Date | date: "dd/MMM/yyyy") : '-'}}</div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Reffered By<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="RefferedBy"
+                                        #RefferedBy="ngModel"
+                                        [(ngModel)]="ObjGlycerolTest.RefferedBy" 
+                                        placeholder="Type Reffered By"
+                                        disabled
+                                        > 
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Centre<sup class="text-danger">*</sup></label>                                 
+                                        <p-dropdown [options]="CentreList"
+                                                name="Centre" 
+                                                #Centre="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Centre"
+                                                [showClear]="true" 
+                                                [emptyFilterMessage]="' No Centre Found'" 
+                                                [filter]="true" filterBy="label,value.name" 
+                                                [resetFilterOnHide]="true" 
+                                                [placeholder]="'Select Centre'" 
+                                                [virtualScroll]="true"
+                                                itemSize="30"
+                                                [required]="true"
+                                                disabled> 
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-3">
+                                    </div>
+                                </div>
+                                <hr class="box boxboxDivide-primary">
+
+                                <div class="row">
+                                    <table style="width:100%">
+                                        <tr>
+                                            <th class="table-header">EAR</th>
+                                            <th class="table-header">TIME</th>
+                                            <th class="table-header">500Hz</th>
+                                            <th class="table-header">1000Hz</th>
+                                            <th class="table-header">2000Hz</th>
+                                            <th class="table-header">4000Hz</th>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 100px;" rowspan="4">Right</th>
+                                            <th style="width: 100px;">Baseline</th>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_right_baseline_500"
+                                                #Gly_right_baseline_500="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_right_baseline_500"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_right_baseline_1000"
+                                                #Gly_right_baseline_1000="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_right_baseline_1000"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_right_baseline_2000"
+                                                #Gly_right_baseline_2000="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_right_baseline_2000"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_right_baseline_4000"
+                                                #Gly_right_baseline_4000="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_right_baseline_4000"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 100px;">1 Hour</th>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Right_Ear_1_500Hz"
+                                                #Gly_Right_Ear_1_500Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Right_Ear_1_500Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Right_Ear_1_1000Hz"
+                                                #Gly_Right_Ear_1_1000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Right_Ear_1_1000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Right_Ear_1_2000Hz"
+                                                #Gly_Right_Ear_1_2000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Right_Ear_1_2000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Right_Ear_1_4000Hz"
+                                                #Gly_Right_Ear_1_4000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Right_Ear_1_4000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 100px;">2 Hour</th>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Right_Ear_2_500Hz"
+                                                #Gly_Right_Ear_2_500Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Right_Ear_2_500Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Right_Ear_2_1000Hz"
+                                                #Gly_Right_Ear_2_1000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Right_Ear_2_1000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Right_Ear_2_2000Hz"
+                                                #Gly_Right_Ear_2_2000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Right_Ear_2_2000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Right_Ear_2_4000Hz"
+                                                #Gly_Right_Ear_2_4000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Right_Ear_2_4000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 100px;">3 Hour</th>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Right_Ear_3_500Hz"
+                                                #Gly_Right_Ear_3_500Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Right_Ear_3_500Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Right_Ear_3_1000Hz"
+                                                #Gly_Right_Ear_3_1000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Right_Ear_3_1000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Right_Ear_3_2000Hz"
+                                                #Gly_Right_Ear_3_2000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Right_Ear_3_2000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Right_Ear_3_4000Hz"
+                                                #Gly_Right_Ear_3_4000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Right_Ear_3_4000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                        </tr>
+
+                                        <hr style="width: 100%;">
+
+                                        <tr>
+                                            <th style="width: 100px;" rowspan="4">LEFT</th>
+                                            <th style="width: 100px;">BaseLine</th>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_left_baseline_500"
+                                                #Gly_left_baseline_500="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_left_baseline_500"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_left_baseline_1000"
+                                                #Gly_left_baseline_1000="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_left_baseline_1000"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_left_baseline_2000"
+                                                #Gly_left_baseline_2000="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_left_baseline_2000"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_left_baseline_4000"
+                                                #Gly_left_baseline_4000="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_left_baseline_4000"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 100px;">1 Hour</th>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Left_Ear_1_500Hz"
+                                                #Gly_Left_Ear_1_500Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Left_Ear_1_500Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Left_Ear_1_1000Hz"
+                                                #Gly_Left_Ear_1_1000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Left_Ear_1_1000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Left_Ear_1_2000Hz"
+                                                #Gly_Left_Ear_1_2000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Left_Ear_1_2000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Left_Ear_1_4000Hz"
+                                                #Gly_Left_Ear_1_4000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Left_Ear_1_4000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 100px;">2 Hour</th>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Left_Ear_2_500Hz"
+                                                #Gly_Left_Ear_2_500Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Left_Ear_2_500Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Left_Ear_2_1000Hz"
+                                                #Gly_Left_Ear_2_1000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Left_Ear_2_1000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Left_Ear_2_2000Hz"
+                                                #Gly_Left_Ear_2_2000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Left_Ear_2_2000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Left_Ear_2_4000Hz"
+                                                #Gly_Left_Ear_2_4000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Left_Ear_2_4000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 100px;">3 Hour</th>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Left_Ear_3_500Hz"
+                                                #Gly_Left_Ear_3_500Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Left_Ear_3_500Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Left_Ear_3_1000Hz"
+                                                #Gly_Left_Ear_3_1000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Left_Ear_3_1000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Left_Ear_3_2000Hz"
+                                                #Gly_Left_Ear_3_2000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Left_Ear_3_2000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                            <td>
+                                                <input class="form-control"
+                                                name="Gly_Left_Ear_3_4000Hz"
+                                                #Gly_Left_Ear_3_4000Hz="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Left_Ear_3_4000Hz"
+                                                placeholder="Write Here..."
+                                                > 
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <hr class="box boxboxDivide-primary">
+
+                                <div class="row">
+                                    <label class="labelGly"> The glycerol test is considered positive if: </label><br>
+                                    <label class="labelGlySub"> 1. When the hearing threshold is lowered (improvement) at least 15 dB at minimum three frequencies or </label><br>
+                                    <label class="labelGlySub"> 2. When there is a total pure tone threshold shift of 25 dB at three consecutive frequencies (AAO-HNS). </label><br>
+                                    <label class="labelGlySub"> 3. When there is a 16% improvement in speech discrimination (AAO-HNS) </label>
+                                </div>
+                                <hr class="box boxboxDivide-primary">
+
+                                <div class="row">
+                                    <table style="width:100%">
+                                        <tr>
+                                            <th colspan="2" class="table-header">INTERPRETATION</th>
+                                        </tr>
+                                        <tr>
+                                            <th style="width: 100px;">Right Ear</th>
+                                            <td>
+                                                <select class="form-control"
+                                                name="Gly_Right_Ear_INTERPRETATION"
+                                                #Gly_Right_Ear_INTERPRETATION="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Right_Ear_INTERPRETATION"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of GlyTestList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th  style="width: 100px;">Left Ear</th>
+                                            <td>
+                                                <select class="form-control"
+                                                name="Gly_Left_Ear_INTERPRETATION"
+                                                #Gly_Left_Ear_INTERPRETATION="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Left_Ear_INTERPRETATION"
+                                                >
+                                                 <option  [ngValue]="undefined">Select</option>
+                                                 <option  *ngFor="let option of GlyTestList" value="{{option}}">
+                                                     {{option}}
+                                                 </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                <div class="row">
+                                    <br>
+                                    <table style="width:100%">
+                                        <tr>
+                                            <th style="width: 100px;">COMMENT</th>
+                                            <td>
+                                                <input 
+                                                class="form-control"
+                                                style="width: 100%; height: 35px;"
+                                                name="Gly_Comment"
+                                                #Gly_Comment="ngModel" 
+                                                [(ngModel)]="ObjGlycerolTest.Gly_Comment"
+                                                placeholder="Write Here...">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <hr class="box boxboxDivide-primary">
+
+                                <div class="row mrg"> 
+                                    <label class="control-label">RECOMMENDATION:</label>
+                                    <br>
+                                    <p-checkbox 
+                                    label="Consult Back to Doctor"
+                                    value="Consult Back to Doctor"
+                                    name="RECOMMENDATION"
+                                    [(ngModel)]="CheckBoxRECOMMENDATION"
+                                    inputId="RC1">
+                                    </p-checkbox>
+                                    <br>
+                                    <p-checkbox 
+                                    label="To be Correlated with Clinical Findings" 
+                                    value="To be Correlated with Clinical Findings" 
+                                    name="RECOMMENDATION"
+                                    [(ngModel)]="CheckBoxRECOMMENDATION"
+                                    inputId="RC2">
+                                    </p-checkbox>
+                                    <br>
+                                    <p-checkbox 
+                                    label="Counselling"
+                                    value="Counselling"
+                                    name="RECOMMENDATION"
+                                    [(ngModel)]="CheckBoxRECOMMENDATION"
+                                    inputId="RC3">
+                                    </p-checkbox>
+                                    <br>
+                                    <p-checkbox 
+                                    label="Follow Up"
+                                    value="Follow Up"
+                                    name="RECOMMENDATION"
+                                    [(ngModel)]="CheckBoxRECOMMENDATION"
+                                    inputId="RC4">
+                                    </p-checkbox>
+                                </div>
+                                <hr class="box boxboxDivide-primary">
+
+                                <div class="form-group">
+                                    <update-consultancy #consultancy (saveData)="updateConsultancysave($event)"></update-consultancy>
+                                </div>
+
+                                <div class="form-group" style="padding: 1em;">
+                                    <div class="col-sm-4"></div>
+                                    <div class="col-sm-4"></div>
+                                    <div class="col-sm-2"></div>
+                                    <div class="col-sm-2">
+                                        <button *ngIf="buttonValid" class="btn btn-primary pull-right" (click)="saveDocAppo(DoctorsAppointmentNewGlycerolTestForm.form.valid)"  id="load"   [disabled]="">
+                                            <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                          <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                        </button>
+                                    </div> 
+                                </div> 
+
+                            </form>
+
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,26 @@
+.ui-table-auto-layout>.ui-table-wrapper {
+    width: auto !important;
+}
+
+.custombutton {
+    margin-top: 25px;
+}
+
+div.undefined.ng-star-inserted > a > img {
+    width: 20%;
+ }
+ .ui-lightbox-content{
+    width: 40px;
+ }
+ .iconClass {
+    font-size: 37px;
+    color: #E34E4C;
+    cursor: pointer;
+ }
+ .iconClass:hover{
+    font-size: 47px;
+    color: #EE0B08 ;
+ }
+ agm-map {
+   height: 300px;
+ }

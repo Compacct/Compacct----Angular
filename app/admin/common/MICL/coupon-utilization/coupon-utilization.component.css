@@ -1,0 +1,54 @@
+.custombutton {
+    margin-top: 28px;
+    margin-left: 40px;
+}
+.custombutton1 {
+    margin-top: 28px;
+}
+
+div.table-responsive.table-id>p-table>div>div {
+    width: auto !important;
+}
+ 
+.ta-editor {
+    min-height: 160px;
+}
+            
+body .ui-widget {
+    font-family: source sans pro, sans-serif !important;
+}
+            
+textarea.form-control {
+    height: auto;
+}
+            
+.btn {
+    border: red;
+}
+            
+.box.boxboxDivide-primary {
+    border-top-color: #f3efec;
+    height: 10px;
+    border: 0;
+    box-shadow: 0 10px 10px -10px #8c8b8b inset;
+}
+            
+.ui-table-auto-layout>.ui-table-wrapper {
+    width: auto !important;
+}
+            
+            
+div.label-t {
+    padding: 6px 12px;
+    background: rgb(206 216 216 / 51%);
+}
+.TableRow{
+    background: #c1c1c185;
+    border-top: 5px solid #3c8dbc;
+    border-bottom: 1px solid #c6c6c6;
+    margin-top: -20px;
+    width: 15em;
+    text-align: center;
+}
+            
+            

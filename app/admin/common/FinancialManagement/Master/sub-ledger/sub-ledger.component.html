@@ -1,0 +1,942 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6" *ngIf="can_popup && !act_popup">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="act_popup && !can_popup">
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <div class="table-responsive no-padding productTable">
+                                <p-table #dt [value]="AllProductList" [globalFilterFields]="['Ledger_ID', 'Ledger_Name', 'Sub_Ledger_Name']" [paginator]="AllProductList.length ? true:false" [rows]="10" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,30]"
+                                    [rowHover]="true">
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right;">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th>Ledger Name</th>
+                                            <th>SubLedger Name</th>
+                                            <th>Address</th>
+                                            <th>Mobile_No</th>
+                                            <th>Email</th>
+                                            <th>GST No.</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr [class]='col.Is_Visiable === "N" ? "text-red-active" : ""'>
+
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                                <i class="fa fa-fw fa-bars"></i>
+                                                                                <span class="caret"></span>
+                                                                            </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li *ngIf="col.Is_Visiable == 'Y'">
+                                                            <a (click)="EditSubLedger(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> Edit
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Is_Visiable == 'Y'">
+                                                            <a (click)="DeleteSubLedger(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Is_Visiable == 'N'">
+                                                            <a (click)="Active(col)">
+                                                                <i class="fa fa-power-off"></i> Active
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td>{{col.Ledger_Name ? col.Ledger_Name : '-'}}</td>
+                                            <td>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
+                                            <td>{{col.Address_1 ? col.Address_1 : '-'}}</td>
+                                            <td>{{col.Mobile_No ? col.Mobile_No : '-'}}</td>
+                                            <td>{{col.Email ? col.Email : '-'}}</td>
+                                            <td>{{col.GST ? col.GST : '-'}}</td>
+
+
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="SubLedgerForm" #SubLedgerForm="ngForm" novalidate>
+                                <h5><strong>Sub Ledger Details</strong></h5>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Ledger<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="ledgerList" name="Ledger" [(ngModel)]="objSubLedger.Ledger_ID" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Item'" [virtualScroll]="true"
+                                            itemSize="30" #Ledger="ngModel" [styleClass]="
+                                                            SubLedgerFormSubmit && Ledger.errors?.required
+                                                  ? 'clearance'
+                                                  : ''
+                                              " [required]="true">
+                                        </p-dropdown>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="Sub_Ledger_Name" #Sub_Ledger_Name="ngModel" [(ngModel)]="objSubLedger.Sub_Ledger_Name" placeholder="Sub Ledger Name" [ngClass]="{'clearance': SubLedgerFormSubmit && Sub_Ledger_Name.errors?.required}" required>
+                                    </div>
+
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Email</label>
+                                        <input class="form-control" name="Email" #Email="ngModel" [(ngModel)]="objSubLedger.Email" placeholder="Email">
+                                    </div>
+
+
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Contact No<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="Mobile" #Mobile="ngModel" CompacctDigitonly="true" minlength="10" maxlength="10" [(ngModel)]="objSubLedger.Mobile_No" placeholder="Contact No" [ngClass]="{'clearance': SubLedgerFormSubmit && Mobile.errors?.required}"
+                                            required>
+                                    </div>
+
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Land Line</label>
+                                        <input class="form-control" name="Phone" #Phone="ngModel" CompacctDigitonly="true" [(ngModel)]="objSubLedger.Phone" placeholder="Phone">
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Sales Man</label>
+                                        <select class="form-control" name="Sales_Man" #Sales_Man="ngModel" [(ngModel)]="objSubLedger.Sales_Man_ID">
+                                    <option  [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of AllSales" [ngValue]="option.Member_ID">
+                                    {{option.Member_Name}}
+                                    </option>
+                                </select>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">User</label>
+                                        <select class="form-control" name="User" #User="ngModel" [(ngModel)]="objSubLedger.User_ID">
+                                <option  [ngValue]="undefined">Select</option>
+                                    <option *ngFor="let option of AllUser" [ngValue]="option.User_ID">
+                                {{option.User_Name}}
+                                </option>
+                            </select>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Subledger Type<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Subledger_Type" #Subledger_Type="ngModel" [(ngModel)]="objSubLedger.Subledger_Type" (change)="changeSubledrType()" [ngClass]="{'clearance': SubLedgerFormSubmit && Subledger_Type.errors?.required}" required>
+                                <option  [ngValue]="undefined">Select</option>
+                                <option *ngFor="let option of SubledgerTypeList" [ngValue]="option">
+                                {{option}}
+                                </option>
+                            </select>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Subledger Category<sup class="text-danger">*</sup></label>
+                                        <p-multiSelect [options]="catagoryListFilter" [(ngModel)]="SelectedCatagoryType" [styleClass]="'compacct-multiselect'" name="CatagorytType" (onChange)="filterCatagory()" #CatagorytType="ngModel" [ngClass]="{'clearance': SubLedgerFormSubmit && CatagorytType.errors?.required}"
+                                            required></p-multiSelect>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Route Name</label>
+                                        <select class="form-control" name="Route_Name" #Route_Name="ngModel" [(ngModel)]="objSubLedger.Route_ID">
+                        <option  [ngValue]="undefined">Select</option>
+                            <!-- <option *ngFor="let option of AllRoute" [ngValue]="option.Route_ID">
+                        {{option.Ledger}}
+                        </option> -->
+                    </select>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Weekly Closing</label>
+                                        <select class="form-control" name="Weekly_Closing_Name" #Weekly_Closing_Name="ngModel" [(ngModel)]="objSubLedger.Weekly_Closing">
+                        <option  [ngValue]="undefined">Select</option>
+                            <option *ngFor="let option of WeeklyClosingList" [ngValue]="option">
+                        {{option}}
+                        </option>
+                    </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Subledger Class<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Sub_Ledger_Class_Name" #Sub_Ledger_Class_Name="ngModel" [(ngModel)]="objSubLedger.Sub_Ledger_Class_ID" [ngClass]="{'clearance': SubLedgerFormSubmit && Sub_Ledger_Class_Name.errors?.required}" required>
+                        <option  [ngValue]="undefined">Select</option>
+                            <option *ngFor="let option of subledgerClassList" [ngValue]="option.Sub_Ledger_Class_ID">
+                        {{option.Sub_Ledger_Class}}
+                        </option>
+                    </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Parent Sub Ledger</label>
+                                        <select class="form-control" name="Parent_Sub_Ledger_Name" #Parent_Sub_Ledger_Name="ngModel" [(ngModel)]="objSubLedger.Parent_Sub_Ledger_ID">
+                               <option  [ngValue]="undefined">Select</option>
+                    <option *ngFor="let option of AllparentLedger" [ngValue]="option.Sub_Ledger_ID">
+                        {{option.Sub_Ledger_Name}}
+                </option>
+                                        </select>
+                                    </div>
+                                    <!-- <div class="col-sm-4">
+                                        <label class="control-label">Credit Days</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Credit Days" name="CR_Days" CompacctDigitonly="true" [(ngModel)]="objSubLedger.CR_Days" />
+                                            <span class="input-group-addon"></span>
+                                            <input type="text" class="form-control" [(ngModel)]="objSubLedger.CR_Limit" name="CR_Limit" CompacctDigitonly="true" placeholder="Credit Limit" />
+                                        </div>
+                                    </div> -->
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Credit Days</label>
+                                        <input class="form-control" name="CR_Days" #CR_Days="ngModel" [(ngModel)]="objSubLedger.CR_Days" CompacctDigitonly="true" placeholder="Credit Days">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Credit Limit</label>
+                                        <input class="form-control" name="CR_Limit" #CR_Limit="ngModel" [(ngModel)]="objSubLedger.CR_Limit" CompacctDigitonly="true" placeholder="Credit Limit">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">PAN<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="PAN" #PAN="ngModel" [(ngModel)]="objSubLedger.PAN_No" [disabled]="this.objSubLedger.Country!='India'" placeholder="PAN" maxlength="10" [ngClass]="{'clearance': SubLedgerFormSubmit && PAN.errors?.required}" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">GST No.<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="GST_NO" #GST_NO="ngModel" [(ngModel)]="objSubLedger.GST" [disabled]="this.objSubLedger.Country!='India' || gstdisabled"
+                                        placeholder="GST NO." (onChange)='checkGSTvalid(objSubLedger.GST)' minlength="15" maxlength="15" [ngClass]="{
+                                            clearance:
+                                              (GSTvalidFlag) ||
+                                              (GST_NO.errors?.minlength && GST_NO.touched)
+                                          }" required>
+                                        <!---pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$"-->
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">FSSAI No</label>
+                                        <input class="form-control" name="FSSAI_NO" #FSSAI_NO="ngModel" [(ngModel)]="objSubLedger.FSSAI_No" placeholder="FSSAI No">
+                                    </div>
+
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">WORLD WIDE REGION<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="WORLD_WIDE_REGION" #WORLD_WIDE_REGION="ngModel" [(ngModel)]="objSubLedger.WORLD_WIDE_REGION" [ngClass]="{'clearance': SubLedgerFormSubmit && WORLD_WIDE_REGION.errors?.required}" required>
+                                       
+                                            <option  [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of RegionList" [ngValue]="option">
+                                    {{option}}
+                                    </option>
+                                </select>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">CIN</label>
+                                        <input class="form-control" name="CIN" #CIN="ngModel" [(ngModel)]="objSubLedger.CIN" placeholder="CIN">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Batch Code</label>
+                                        <input class="form-control" name="Batch_Code" #Batch_Code="ngModel" [(ngModel)]="objSubLedger.Batch_Code" placeholder="3 Digit Batch Code">
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Excise No</label>
+                                        <input class="form-control" name="Excise_No" #Excise_No="ngModel" [(ngModel)]="objSubLedger.EXID_NO" placeholder=" Excise Reg. No">
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Composite GST / Unregistered</label>
+                                        <div class="input-group" style="margin-top: 15px;">
+                                            <p-radioButton name="gst1" value="Yes" [(ngModel)]="objSubLedger.Composite_GST" label="Yes" (click)="changecompositegst()" [disabled]="this.objSubLedger.Country!='India'"
+                                            ></p-radioButton>&nbsp;&nbsp;
+                                            <p-radioButton name="gst2" value="No" [(ngModel)]="objSubLedger.Composite_GST" label="No" (click)="changecompositegst()" [disabled]="this.objSubLedger.Country!='India'"
+                                            ></p-radioButton>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="box boxboxDivide-primary">
+                                <h5><strong>Billing Details</strong></h5>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Billing Name<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="Billing_Name" #Billing_Name="ngModel" [(ngModel)]="objSubLedger.Billing_Name" placeholder="Billing Name" [ngClass]="{'clearance': SubLedgerFormSubmit && Billing_Name.errors?.required}" required>
+                                    </div>
+
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Address<sup class="text-danger">*</sup></label>
+                                        <input class="form-control" name="Address_1" #Address_1="ngModel" [(ngModel)]="objSubLedger.Address_1" placeholder="Address Line One" [ngClass]="{'clearance': SubLedgerFormSubmit && Address_1.errors?.required}" required>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Address2</label>
+                                        <input class="form-control" name="Address_2" #Address_2="ngModel" [(ngModel)]="objSubLedger.Address_2" placeholder="Address Line Two">
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Address3</label>
+                                        <input class="form-control" name="Address_3" #Address_3="ngModel" [(ngModel)]="objSubLedger.Address_3" placeholder="Address Line Three">
+                                    </div>
+
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Land Mark</label>
+                                        <input class="form-control" name="Land_Mark" #Land_Mark="ngModel" [(ngModel)]="objSubLedger.Land_Mark" placeholder="Land Mark">
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Country</label>
+                                        <select class="form-control" name="Country" #Country="ngModel" [(ngModel)]="objSubLedger.Country"  (change)="countryChange()">
+                                    <option  [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of AllCountryList" [ngValue]="option.Country">
+                                    {{option.Country}}
+                                    </option>
+                                       </select>
+                                    </div>
+
+
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">PIN</label>
+                                        <input class="form-control" name="Pin" #Pin="ngModel" [(ngModel)]="objSubLedger.Pin" placeholder="PIN" (ngModelChange)="stateDistrictChange(objSubLedger.Pin)" minlength="6" maxlength="6" CompacctDigitonly="true" [disabled]="this.objSubLedger.Country!='India'">
+                                    </div>
+
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">State</label>
+                                        <select class="form-control" name="State" #State="ngModel" [(ngModel)]="objSubLedger.State" disabled>
+                                    <option  [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of AllStateList" [ngValue]="option.StateName">
+                                    {{option.StateName}}
+                                    </option>
+                                       </select>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">District</label>
+                                        <select class="form-control" name="District" #District="ngModel" [(ngModel)]="objSubLedger.District" disabled>
+                                    <option  [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of AllStateList" [ngValue]="option.DistrictName">
+                                    {{option.DistrictName}}
+                                    </option>
+                                       </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Export / Domestic</label>
+                                        <div class="input-group" style="margin-top: 15px;">
+                                            <p-radioButton name="Export" value="Export" [(ngModel)]="objSubLedger.Export_Domestic" label="Export"></p-radioButton>&nbsp;&nbsp;
+                                            <p-radioButton name="Domestic" value="Domestic" [(ngModel)]="objSubLedger.Export_Domestic" label="Domestic"></p-radioButton>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Brand</label>
+                                        <input class="form-control" name="Brand" #Brand="ngModel" [(ngModel)]="objSubLedger.Brand" placeholder="Brand">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Website</label>
+                                        <input class="form-control" name="Website" #Website="ngModel" [(ngModel)]="objSubLedger.Website" placeholder="Website">
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">TDS Deduction</label>
+                                        <select class="form-control" name="TDS_Deduction" #TDS_Deduction="ngModel" [(ngModel)]="objSubLedger.TDS_Deduction">
+                                    <option  [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of TDSDeduction" [ngValue]="option">
+                                    {{option}}
+                                    </option>
+                                       </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Circle</label>
+                                        <input class="form-control" name="CIRCLE" #CIRCLE="ngModel" [(ngModel)]="objSubLedger.CIRCLE" placeholder="Circle">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">SEZ</label>
+                                        <div class="input-group" style="margin-top: 10px;">
+                                            <p-radioButton name="sez1" value="Yes" [(ngModel)]="objSubLedger.IS_SEZ" label="Yes"></p-radioButton>&nbsp;&nbsp;
+                                            <p-radioButton name="sez2" value="No" [(ngModel)]="objSubLedger.IS_SEZ" label="No"></p-radioButton>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Recurring Order Days</label>
+                                        <input class="form-control" name="Recurring_Order_Days" #Recurring_Order_Days="ngModel" CompacctDigitonly="true" [(ngModel)]="objSubLedger.Recurring_Order_Days" placeholder="Recurring Order Days">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Tag Ledger<sup class="text-danger">*</sup></label>
+                                        <p-multiSelect [options]="TagledgerList" [(ngModel)]="SelectedTagLedger" [styleClass]="'compacct-multiselect'" name="Tagledger" (onChange)="TagLedgerCatagory()" #Tagledger="ngModel" [ngClass]="{'clearance': SubLedgerFormSubmit && Tagledger.errors?.required}"
+                                            required></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Amount Business Expected</label>
+                                        <div class="input-group" style="width:100%">
+                                            <input class="form-control" name="Amount_Business_Expected" #Amount_Business_Expected="ngModel" CompacctDigitonly="true" [(ngModel)]="objSubLedger.Amount_Business_Expected" placeholder="Amount Business Expected">
+                                            <span class="input-group-addon" style="border-color: #ffffff; padding:0px"></span>
+                                            <select class="form-control" name="PerYear_Onetime" #PerYear_Onetime="ngModel" [(ngModel)]="objSubLedger.PerYear_Onetime">
+                                                <option value="PerYear">Per Year</option>
+                                                <option value="OneTime">One Time</option>
+                                      </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Special Note</label>
+                                        <textarea class="form-control" name="Special_Note" [(ngModel)]="objSubLedger.Special_Note" rows="2" placeholder="Special Note"></textarea>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Client Brief Description</label>
+                                        <textarea class="form-control" name="Client_Brief_Description" [(ngModel)]="objSubLedger.Client_Brief_Description" rows="2" placeholder="Client Brief Description"></textarea>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Remarks</label>
+                                        <textarea class="form-control" name="Remarks" [(ngModel)]="objSubLedger.Remarks" rows="2" placeholder="Remarks"></textarea>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Visiting card</label>
+                                        <input class="form-control" name="Vcard" #Website1="ngModel" [(ngModel)]="objSubLedger.Vcard" placeholder="Vcard">
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Enquiry Source<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Enq_Source" #Enq_Source="ngModel" [(ngModel)]="objSubLedger.Enq_Source_ID" [ngClass]="{'clearance': SubLedgerFormSubmit && Enq_Source.errors?.required}" required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                             <option *ngFor="let option of AllEnquirySource" [ngValue]="option.Enq_Source_ID">
+                                            {{option.Enq_Source_Name}}
+                                            </option>
+                                               </select>
+                                    </div>
+                                </div>
+                                <hr class="box boxboxDivide-primary">
+                                <div class="col-lg-12">
+                                    <h5><strong>Transaction Management</strong></h5>
+                                    <div class="form-group">
+
+                                        <div class="col-sm-3">
+
+                                            <div class="checkBox">
+                                                <p-checkbox [(ngModel)]="objSubLedger.Is_Sale_Bill_Enabled" name="Product_Expiry1" binary="true"></p-checkbox> &nbsp; Sale Bill
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="checkBox">
+                                                <p-checkbox [(ngModel)]="objSubLedger.Is_Purchase_Bill_Enabled" name="Product_Expiry2" binary="true"></p-checkbox> &nbsp; Purchase Bill
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="checkBox">
+                                                <p-checkbox [(ngModel)]="objSubLedger.Is_Payment_Enabled" name="Product_Expiry3" binary="true"></p-checkbox> &nbsp; Payment
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="checkBox">
+                                                <p-checkbox [(ngModel)]="objSubLedger.Is_Reciept_Enabled" name="Product_Expiry4" binary="true"></p-checkbox> &nbsp; Reciept
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+
+                                        <div class="col-sm-3">
+
+                                            <div class="checkBox">
+                                                <p-checkbox [(ngModel)]="objSubLedger.Is_Journal_Enabled" name="Product_Expiry5" binary="true"></p-checkbox> &nbsp; Journal
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="checkBox">
+                                                <p-checkbox [(ngModel)]="objSubLedger.Is_CR_Note_Enabled" name="Product_Expiry6" binary="true"></p-checkbox> &nbsp; CR Note
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="checkBox">
+                                                <p-checkbox [(ngModel)]="objSubLedger.Is_DR_Enabled" name="Product_Expiry7" binary="true"></p-checkbox> &nbsp; DR Note
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="checkBox">
+                                                <p-checkbox [(ngModel)]="objSubLedger.Is_Adj_Enabled" name="Product_Expiry8" binary="true"></p-checkbox> &nbsp; Adj
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right" (click)="SaveSubLedgerMaster(SubLedgerForm.form.valid)" id="load" [disabled]="Spinner">
+                                       <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                       <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                     </button>
+                                </div>
+                            </form>
+                            <hr class="box boxboxDivide-primary">
+                            <p-tabView *ngIf="SubLedgerID" [activeIndex]="tabIndex" (onChange)="TabClick2($event)">
+                                <p-tabPanel header="Address Details" headerStyleClass="compacct-tabs" leftIcon="glyphicon glyphicon-list-alt">
+                                    <form name="AddressForm" #AddressForm="ngForm" novalidate>
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Address Caption<sup class="text-danger">*</sup></label>
+                                                <input class="form-control" name="Address_Caption" #Address_Caption="ngModel" [(ngModel)]="objAddress.Address_Caption" placeholder="Address Caption" [ngClass]="{'clearance':AddressFormSubmit && Address_Caption.errors?.required}" required>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Contact Person Name<sup class="text-danger">*</sup></label>
+                                                <input class="form-control" name="Contact_Person_Name" #Contact_Person_Name="ngModel" [(ngModel)]="objAddress.Contact_Person_Name" placeholder="Contact Person Name" [ngClass]="{'clearance': AddressFormSubmit && Contact_Person_Name.errors?.required}" required>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Department</label>
+                                                <select class="form-control" name="Department" #Department="ngModel" [(ngModel)]="objAddress.Department">
+                                            <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of DepartmentList" [ngValue]="option">
+                                            {{option}}
+                                            </option>
+                                               </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Address<sup class="text-danger">*</sup></label>
+                                                <input class="form-control" name="Address1" #Address1="ngModel" [(ngModel)]="objAddress.Address1" placeholder="Address Line One" [ngClass]="{'clearance':  AddressFormSubmit && Address1.errors?.required}" required>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Address2</label>
+                                                <input class="form-control" name="Address2" #Address2="ngModel" [(ngModel)]="objAddress.Address2" placeholder="Address Line Two">
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Address3</label>
+                                                <input class="form-control" name="Address3" #Address3="ngModel" [(ngModel)]="objAddress.Address3" placeholder="Address Line Three">
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">PIN</label>
+                                                <input class="form-control" name="PIN2" #PIN2="ngModel" [(ngModel)]="objAddress.Pin" placeholder="PIN" (ngModelChange)="stateDistrictChange(objAddress.Pin)" minlength="6" maxlength="6" CompacctDigitonly="true">
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">State</label>
+                                                <select class="form-control" name="State" #State="ngModel" [(ngModel)]="objAddress.State" disabled>
+                                            <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of AllStateList" [ngValue]="option.StateName">
+                                            {{option.StateName}}
+                                            </option>
+                                               </select>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">District</label>
+                                                <select class="form-control" name="District" #District="ngModel" [(ngModel)]="objAddress.District" disabled>
+                                            <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of AllStateList" [ngValue]="option.DistrictName">
+                                            {{option.DistrictName}}
+                                            </option>
+                                               </select>
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">GST No.<sup class="text-danger">*</sup></label>
+                                                <input class="form-control" name="GST" #GST="ngModel" [(ngModel)]="objAddress.GST" id='GST' placeholder="GST No" (onChange)='checkGSTvalid(objAddress.GST)' minlength="15" maxlength="15" [ngClass]="{
+                                                    clearance:
+                                                      (GSTvalidFlag) ||
+                                                      (GST.errors?.minlength && GST.touched)
+                                                  }" required>
+                                                <!-- pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$" [ngClass]="{'clearance': AddressFormSubmit && GST.errors?.required}"-->
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">FSSAI No.</label>
+                                                <input class="form-control" name="FSSAI_No1" #FSSAI_No1="ngModel" [(ngModel)]="objAddress.FSSAI_No" placeholder="FSSAI No">
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Country<sup class="text-danger">*</sup></label>
+                                                <select class="form-control" name="Country2" #Country2="ngModel" [(ngModel)]="objAddress.Country" [ngClass]="{'clearance': AddressFormSubmit && Country2.errors?.required}" required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of AllCountryList" [ngValue]="option.Country">
+                                            {{option.Country}}
+                                            </option>
+                                               </select>
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">WORLD WIDE REGION<sup class="text-danger">*</sup></label>
+                                                <select class="form-control" name="WORLD_WIDE_REGION2" #WORLD_WIDE_REGION2="ngModel" [(ngModel)]="objAddress.WORLD_WIDE_REGION" [ngClass]="{'clearance': AddressFormSubmit && WORLD_WIDE_REGION2.errors?.required}" required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                               <option *ngFor="let option of RegionList" [ngValue]="option">
+                                            {{option}}
+                                            </option>
+                                               </select>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Route Name</label>
+                                                <select class="form-control" name="Route_ID" #Route_ID="ngModel" [(ngModel)]="objAddress.Route_ID">
+                                            <option  [ngValue]="undefined">Select</option>
+                                               <!---- <option *ngFor="let option of AllRoute" [ngValue]="option.Route_ID">
+                                            {{option.Ledger}}
+                                            </option>-->
+                                               </select>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Weekly Closing</label>
+                                                <select class="form-control" name="Weekly_Closing" #Weekly_Closing="ngModel" [(ngModel)]="objAddress.Weekly_Closing">
+                                            <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of WeeklyClosingList" [ngValue]="option">
+                                            {{option}}
+                                            </option>
+                                               </select>
+                                            </div>
+
+                                        </div>
+                                        <div class="box-footer">
+                                            <button class="btn btn-primary pull-right" (click)="SaveTabCommon(AddressForm.form.valid ,'address')">
+                                             <span class="glyphicon glyphicon-plus"></span>Add
+                                            </button>
+                                        </div>
+                                    </form>
+                                    <div class="table-responsive no-padding productTable">
+                                        <p-table [value]="AddressListAdd" [rowHover]="true">
+
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th>Address Caption</th>
+                                                    <th>Contact Person Name</th>
+                                                    <th>Address</th>
+                                                    <th>District</th>
+                                                    <th>Pin</th>
+                                                    <th>State</th>
+                                                    <th>GST No</th>
+                                                    <th></th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                                <tr>
+                                                    <td>{{col.Address_Caption ? col.Address_Caption : '-'}}</td>
+                                                    <td>{{col.Contact_Person_Name ? col.Contact_Person_Name : '-'}}</td>
+                                                    <td>{{col.Address1 ? col.Address1 : '-'}}</td>
+                                                    <td>{{col.District ? col.District : '-'}}</td>
+                                                    <td>{{col.Pin ? col.Pin : '-'}}</td>
+                                                    <td>{{col.State ? col.State : '-'}}</td>
+                                                    <td>{{col.GST ? col.GST : '-'}}</td>
+                                                    <td align="center"><button (click)="commondelete(rowIndex,'address')" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="paginatorright" let-state>
+                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                            </ng-template>
+                                        </p-table>
+                                    </div>
+                                </p-tabPanel>
+                                <p-tabPanel header="Contact Persons" headerStyleClass="compacct-tabs" leftIcon="glyphicon glyphicon-list-alt">
+                                    <form name="ContactForm" #ContactForm="ngForm" novalidate>
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Contact Person Name<sup class="text-danger">*</sup></label>
+                                                <input class="form-control" name="Contact_Person_Name2" #Contact_Person_Name2="ngModel" [(ngModel)]="objContact.Contact_Person_Name" placeholder="Contact Person Name" [ngClass]="{'clearance':ContactFormSubmit && Contact_Person_Name2.errors?.required}"
+                                                    required>
+                                            </div>
+
+
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Department</label>
+                                                <select class="form-control" name="Department" #Department="ngModel" [(ngModel)]="objContact.Department">
+                                            <option  [ngValue]="undefined">Select</option>
+                                               <option *ngFor="let option of DepartmentList" [ngValue]="option">
+                                            {{option}}
+                                            </option>
+                                               </select>
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Location</label>
+                                                <select class="form-control" name="Location" #Location="ngModel" [(ngModel)]="objContact.Location">
+                                            <option  [ngValue]="undefined">Select</option>
+                                               <!---- <option *ngFor="let option of userList" [ngValue]="option.Ledger_ID">
+                                            {{option.Ledger}}
+                                            </option>-->
+                                               </select>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Designation</label>
+                                                <input class="form-control" name="Designation" #Designation="ngModel" [(ngModel)]="objContact.Designation" placeholder="Designation">
+                                            </div>
+
+
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Email</label>
+                                                <input class="form-control" name="Email_ID" #Email_ID="ngModel" [(ngModel)]="objContact.Email_ID" placeholder="Email">
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Mobile No</label>
+                                                <input class="form-control" name="Mobile_No" #Mobile_No="ngModel" maxlength="10" minlength="10" [(ngModel)]="objContact.Mobile_No" CompacctDigitonly="true" placeholder="Mobile No">
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Land Line No</label>
+                                                <input class="form-control" name="Land_Line_No" #Land_Line_No="ngModel" [(ngModel)]="objContact.Land_Line_No" placeholder="Land Line No">
+                                            </div>
+                                        </div>
+                                        <div class="box-footer">
+                                            <button class="btn btn-primary pull-right" (click)="SaveTabCommon(ContactForm.form.valid , 'contact')">
+                                            <span class="glyphicon glyphicon-plus"></span> Add
+                                             </button>
+                                        </div>
+                                    </form>
+                                    <div class="table-responsive no-padding productTable">
+                                        <p-table [value]="contactListAdd" [rowHover]="true">
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th>Contact Person Name</th>
+                                                    <th>Department</th>
+                                                    <th>Location</th>
+                                                    <th>Designation</th>
+                                                    <th>Mobile</th>
+                                                    <th>Land Line No</th>
+                                                    <th></th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                                <tr>
+                                                    <td>{{col.Contact_Person_Name ? col.Contact_Person_Name : '-'}}</td>
+                                                    <td>{{col.Department ? col.Department : '-'}}</td>
+                                                    <td>{{col.Location ? col.Location : '-'}}</td>
+                                                    <td>{{col.Designation ? col.Designation : '-'}}</td>
+                                                    <td>{{col.Mobile_No ? col.Mobile_No : '-'}}</td>
+                                                    <td>{{col.Land_Line_No ? col.Land_Line_No : '-'}}</td>
+                                                    <td align="center"><button (click)="commondelete(rowIndex,'contact')" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="paginatorright" let-state>
+                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                            </ng-template>
+                                        </p-table>
+                                    </div>
+                                </p-tabPanel>
+                                <p-tabPanel header="Document Vault" headerStyleClass="compacct-tabs" leftIcon="glyphicon glyphicon-list-alt">
+                                    <form name="DocumentForm" #DocumentForm="ngForm" novalidate>
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Document Type<sup class="text-danger">*</sup></label>
+                                                <select class="form-control" name="Document_Type_ID" #Document_Type_ID="ngModel" [(ngModel)]="objDocument.Document_Type_ID" [ngClass]="{'clearance': DocumentFormSubmit && Document_Type_ID.errors?.required}" required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of AllDocument" [ngValue]="option.Document_Type_ID">
+                                            {{option.Document_Type_Name}}
+                                            </option>
+                                               </select>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Upload File</label>
+                                                <p-fileUpload #fileInput 
+                                                            *ngIf="!PDFViewFlag" 
+                                                            name="aFile566" 
+                                                            accept=".pdf, .png" 
+                                                            [customUpload]="true" 
+                                                            [chooseLabel]="'Browse'" 
+                                                            [showUploadButton]="false" 
+                                                            (onSelect)="handleFileSelect($event)">
+                                                        </p-fileUpload>
+                                                <a [href]="ProductPDFLink" 
+                                                    *ngIf="PDFViewFlag" 
+                                                    style="display: block;">
+                                                    <img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
+                                            </div>
+
+                                        </div>
+                                        <div class="box-footer">
+                                            <button class="btn btn-primary pull-right" (click)="SaveTabCommon(DocumentForm.form.valid , 'DocumentVault')">
+                                              <span *ngIf="!Spinner" class="glyphicon glyphicon-plus"></span> Add
+                                              </button>
+                                        </div>
+
+                                    </form>
+                                    <div class="table-responsive no-padding productTable">
+                                        <p-table [value]="DocumentListAdd" [rowHover]="true">
+
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Created By</th>
+                                                    <th>Document Type</th>
+                                                    <th>View image</th>
+                                                    <th></th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                                <tr>
+                                                    <td>{{ col.Upload_Date | date : 'dd/MMM/yyyy'}}</td>
+                                                    <td>{{col.Upload_Name ? col.Upload_Name : '-'}}</td>
+                                                    <td>{{col.Document_Type_Name ? col.Document_Type_Name : '-'}}</td>
+                                                    <td><button (click)="openImg(col.Upload_File)" class="btn btn-primary"><i class="fa fa-picture-o"></i></button></td>
+                                                    <td align="center"><button (click)="commondelete(rowIndex,'DocumentVault')" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="paginatorright" let-state>
+                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                            </ng-template>
+                                        </p-table>
+                                    </div>
+
+                                </p-tabPanel>
+                                <p-tabPanel header="Bank Details" headerStyleClass="compacct-tabs" leftIcon="glyphicon glyphicon-list-alt">
+                                    <form name="BankForm" #BankForm="ngForm" novalidate>
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Bank Name<sup class="text-danger">*</sup></label>
+                                                <input class="form-control" name="Bank_Name" #Bank_Name="ngModel" [(ngModel)]=" objBank.Bank_Name" placeholder="Bank Name" [ngClass]="{'clearance':BankFormSubmit && Bank_Name.errors?.required}" required>
+                                            </div>
+
+
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Branch<sup class="text-danger">*</sup></label>
+                                                <input class="form-control" name="Branch" #Branch="ngModel" [(ngModel)]="objBank.Branch" placeholder="Branch" [ngClass]="{'clearance':BankFormSubmit && Branch.errors?.required}" required>
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Account Number<sup class="text-danger">*</sup></label>
+                                                <input class="form-control" name="Ac_No" #Ac_No="ngModel" [(ngModel)]="objBank.Ac_No" placeholder="Account Number" [ngClass]="{'clearance':BankFormSubmit && Ac_No.errors?.required}" required>
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Account Type<sup class="text-danger">*</sup></label>
+                                                <select class="form-control" name="Bank_Ac_Type" #Bank_Ac_Type="ngModel" [(ngModel)]="objBank.Bank_Ac_Type" placeholder="Branch" [ngClass]="{'clearance':BankFormSubmit && Bank_Ac_Type.errors?.required}" required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of AccountTypeList" [ngValue]="option">
+                                            {{option}}
+                                            </option>
+                                               </select>
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <label class="control-label">MICR Code</label>
+                                                <input class="form-control" name="MICR_Code" #MICR_Code="ngModel" [(ngModel)]="objBank.MICR_Code" placeholder="MICR Code">
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <label class="control-label">IFSC Code<sup class="text-danger">*</sup></label>
+                                                <input class="form-control" name="IFSC_Code" #IFSC_Code="ngModel" [(ngModel)]="objBank.IFSC_Code" placeholder="IFSC Code" [ngClass]="{'clearance':BankFormSubmit && IFSC_Code.errors?.required}" required>
+                                            </div>
+
+                                        </div>
+                                        <div class="box-footer">
+                                            <button class="btn btn-primary pull-right" (click)="SaveTabCommon(BankForm.form.valid , 'bank')">
+                                               <span class="glyphicon glyphicon-plus"></span><!--{{buttonname}}-->Add
+                                            </button>
+                                        </div>
+                                    </form>
+                                    <div class="table-responsive no-padding productTable">
+                                        <p-table [value]="bankListAdd" [rowHover]="true">
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th>Bank Name</th>
+                                                    <th>Branch</th>
+                                                    <th>Account Type</th>
+                                                    <th>Account No.</th>
+                                                    <th>MICR</th>
+                                                    <th>IFSC</th>
+                                                    <th></th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                                <tr>
+                                                    <td>{{col.Bank_Name ? col.Bank_Name : '-'}}</td>
+                                                    <td>{{col.Branch ? col.Branch : '-'}}</td>
+                                                    <td>{{col.Bank_Ac_Type ? col.Bank_Ac_Type : '-'}}</td>
+                                                    <td>{{col.Ac_No ? col.Ac_No : '-'}}</td>
+                                                    <td>{{col.MICR_Code ? col.MICR_Code : '-'}}</td>
+                                                    <td>{{col.IFSC_Code ? col.IFSC_Code : '-'}}</td>
+                                                    <td align="center"><button (click)="commondelete(rowIndex,'bank')" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="paginatorright" let-state>
+                                                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                            </ng-template>
+                                        </p-table>
+                                    </div>
+
+                                </p-tabPanel>
+                            </p-tabView>
+                            <div class="box-footer" *ngIf="SubLedgerID">
+                                <button class="btn btn-primary pull-right" (click)="SaveTab()" id="load" [disabled]="Spinner">
+                                   <p-progressSpinner *ngIf="TabSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                  <span *ngIf="!TabSpinner" class="glyphicon glyphicon-save"></span> {{Tabbuttonname}}
+                                </button>
+                            </div>
+                        </p-tabPanel>
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon glyphicon-file">
+
+                        </p-tabPanel>
+
+                    </p-tabView>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

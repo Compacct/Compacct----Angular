@@ -17,7 +17,7 @@ import * as XLSX from 'xlsx';
   encapsulation: ViewEncapsulation.None
 })
 export class K4cPurchasePlaningComponent implements OnInit {
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
@@ -29,52 +29,52 @@ export class K4cPurchasePlaningComponent implements OnInit {
   uomdisabeld = false;
   PurchaseFormSubmitted = false;
   localpurchaseFLag = false;
-  Productlist = [];
-  productaddSubmit = [];
+  Productlist:any = [];
+  productaddSubmit:any = [];
   vendordisabled = false;
   vendorlist :any = [];
-  materialtypelist = [];
-  producttypelist = [];
-  SelectedProductType :any = [];
-  productListFilter = [];
-  backUpproductList = [];
+  materialtypelist:any = [];
+  producttypelist:any = [];
+  SelectedProductType:any = [];
+  productListFilter:any = [];
+  backUpproductList:any = [];
   data = "(Show Requisition Products)";
 
   ObjBrowse : Browse = new Browse ();
-  Searchedlist = [];
+  Searchedlist:any = [];
   ApprovedFLag = false;
   AuthPoppup = false;
   Doc_no = undefined;
   Doc_date = undefined;
-  AuthorizedList = [];
-  BackupSearchedlist = [];
+  AuthorizedList : any= [];
+  BackupSearchedlist:any = [];
   todayDate : any = new Date();
   LastPurDate : any = new Date();
   ovaldisabled = false;
   stockqtydisabled = false;
   ViewPoppup = false;
-  ViewList = [];
-  exceldataList = [];
+  ViewList:any = [];
+  exceldataList:any = [];
   //filteredData = [];
   ObjStockLevel : StockLevel = new StockLevel ();
   StockLevelFormSubmitted = false;
-  costcenlist = [];
-  GodownList = [];
-  StockReportSearchlist = [];
-  Orderlist = [];
+  costcenlist:any = [];
+  GodownList:any = [];
+  StockReportSearchlist:any = [];
+  Orderlist:any = [];
   productdisabled = false;
-  BackupStockReportSearchlist = [];
-  DistMaterialType = [];
-  SelectedDistMaterialType = [];
-  DistProductType = [];
-  SelectedDistProductType = [];
-  SearchFields = [];
+  BackupStockReportSearchlist:any = [];
+  DistMaterialType:any = [];
+  SelectedDistMaterialType:any = [];
+  DistProductType:any = [];
+  SelectedDistProductType:any = [];
+  SearchFields:any = [];
   Appbuttonname = "Approved"
 
   Vendor_ID : any;
   Credit_Days : number;
   PPdoc_no : any;
-  EditList = [];
+  EditList:any = [];
   
 
   constructor(
@@ -120,6 +120,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
       this.ObjMPtype.Product_Type = this.tabIndexToView ? this.ObjMPtype.Product_Type : undefined;
       this.productdisabled = this.tabIndexToView ? this.productdisabled : false;
       this.uomdisabeld = this.tabIndexToView ? this.uomdisabeld : false;
+      this.Orderlist = this.tabIndexToView ? this.Orderlist : [];
+      this.Productlist = this.tabIndexToView ? this.Productlist : this.getproduct();
      // this.data = "(Show Requisition Products)"
      //this.Productlist = [];
       this.PPdoc_no = undefined;
@@ -420,7 +422,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
   //this.ExpiredProductFLag = false;
  if(this.ObjPurchasePlan.Product_ID) {
    const ctrl = this;
-   const productObj = $.grep(ctrl.Productlist,function(item) {return item.Product_ID == ctrl.ObjPurchasePlan.Product_ID})[0];
+   const productObj:any = $.grep(ctrl.Productlist,function(item:any) {return item.Product_ID == ctrl.ObjPurchasePlan.Product_ID})[0];
    //console.log(productObj);
    //this.ObjPurchasePlan.Product_Type = productObj.Product_Type;
    this.ObjPurchasePlan.Product_Description = productObj.Product_Description;
@@ -430,6 +432,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
    this.ObjPurchasePlan.Indent_Qty = productObj.Indent_Qty;
    this.uomdisabeld = true;
    this.ObjPurchasePlan.Last_Purchase_Rate =  productObj.Last_Purchase_Rate;
+   this.ObjPurchasePlan.GST_Percentage = productObj.GST_Tax_Per;
    this.ObjPurchasePlan.Last_Purchase_Qty = productObj.Last_Puchase_Qty;
    this.ObjPurchasePlan.Current_Stock =  productObj.Current_Stock;
    this.ObjPurchasePlan.Due_Payment = productObj.Due_Payment;
@@ -522,11 +525,11 @@ export class K4cPurchasePlaningComponent implements OnInit {
      }
   }
   OrderValueChange(){
-    var ordervalue = 0;
-    var stockoty = 0;
-    ordervalue = Number(this.ObjPurchasePlan.Sale_rate * this.ObjPurchasePlan.Order_Qty);
+    var ordervalue:any = 0;
+    var stockoty:any = 0;
+    ordervalue = Number(this.ObjPurchasePlan.Sale_rate * this.ObjPurchasePlan.Order_Qty).toFixed(2);
     this.ObjPurchasePlan.Order_Value = ordervalue;
-    stockoty = Number(this.ObjPurchasePlan.Order_Qty * this.ObjPurchasePlan.UOM_Qty);
+    stockoty = Number(this.ObjPurchasePlan.Order_Qty * this.ObjPurchasePlan.UOM_Qty).toFixed(2);
     this.ObjPurchasePlan.Stock_Qty = stockoty;
     this.ovaldisabled = true;
     this.stockqtydisabled = true;
@@ -562,7 +565,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
       Sale_rate : this.ObjPurchasePlan.Sale_rate,
       // Order_Qty :  this.ObjPurchasePlan.Stock_Qty,
       // Current_Rate : this.ObjPurchasePlan.Sale_rate,
-      Order_Value : Number(Amount),
+      Order_Value : Number(Amount).toFixed(2),
       Stock_Qty : this.ObjPurchasePlan.Stock_Qty,
       Stock_UOM : this.ObjPurchasePlan.Stock_UOM,
       Estimated_Time_Of_Delivery : this.ObjPurchasePlan.Estimated_Time_Of_Delivery,
@@ -596,7 +599,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
     // this.ObjSaveForm.Doc_Date = this.DateService.dateConvert(new Date(this.myDate));
     if(this.productaddSubmit.length) {
-      let tempArr =[]
+      let tempArr:any =[]
       this.productaddSubmit.forEach(item => {
         const obj = {
             //Product_Type_ID : item.Product_Type_ID,
@@ -808,6 +811,9 @@ export class K4cPurchasePlaningComponent implements OnInit {
      //console.log('Search list=====',this.Searchedlist)
      this.seachSpinner = false;
     // this.SearchFactoryFormSubmit = false;
+    for(let i = 0; i < this.Searchedlist.length ; i++){
+      this.Searchedlist[i].Doc_Date = this.DateService.dateConvert(new Date(this.Searchedlist[i].Doc_Date))
+     }
    })
   // }
    }
@@ -836,7 +842,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
       Amtval += Number(item[key]);
     });
 
-    return Amtval ? Amtval : '-';
+    return Amtval ? Amtval.toFixed(2) : '-';
   }
   // getTotalGSTAmtValue(){
   //   let GSTAmtval = 0;
@@ -925,7 +931,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     XLSX.writeFile(workbook, fileName+'.xlsx');
   }
   exportoexcel3(Arr,fileName): void {
-    let temp = [];
+    let temp:any = [];
      Arr.forEach(element => {
        const obj = {
         Product_Type : element.Product_Type,
@@ -933,7 +939,10 @@ export class K4cPurchasePlaningComponent implements OnInit {
         Product_Description : element.Product_Description,
         UOM : element.UOM,
         Last_Purchase_Qty : element.Last_Purchase_Qty,
+        Last_Purchase_Rate : element.Last_Purchase_Rate,
         Last_Purchase_Date : this.DateService.dateConvert(new Date(element.Last_Purchase_Date)),
+        Weekly_Avg_Cons : element.Weekly_Avg_Cons,
+        Monthly_Avg_Cons : element.Monthly_Avg_Cons,
         Stock_Qty : element.Stock_Qty,
         Reorder_Level : element.Reorder_Level,
         Critical_Level : element.Critical_Level
@@ -990,8 +999,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
       for(let i = 0; i < this.AuthorizedList.length ; i++){
       this.AuthorizedList[i].Confirm_Qty = this.AuthorizedList[i].Order_Qty;
       this.AuthorizedList[i].Confirm_Rate = this.AuthorizedList[i].Rate;
-      this.AuthorizedList[i].Confirm_Amount = this.AuthorizedList[i].Confirm_Qty * this.AuthorizedList[i].Confirm_Rate;
-      this.AuthorizedList[i].Confirm_Amount_With_GST = ((this.AuthorizedList[i].Confirm_Qty * this.AuthorizedList[i].Confirm_Rate) * this.AuthorizedList[i].GST_PER) / 100;
+      this.AuthorizedList[i].Confirm_Amount = Number(this.AuthorizedList[i].Confirm_Qty * this.AuthorizedList[i].Confirm_Rate).toFixed(2);
+      this.AuthorizedList[i].Confirm_Amount_With_GST = Number(((this.AuthorizedList[i].Confirm_Qty * this.AuthorizedList[i].Confirm_Rate) * this.AuthorizedList[i].GST_PER) / 100).toFixed(2);
       //this.AuthorizedList[i].Vendor_Name = this.AuthorizedList[i].Sub_Ledger_ID;
       }
        this.AuthPoppup = true;
@@ -1000,15 +1009,18 @@ export class K4cPurchasePlaningComponent implements OnInit {
    confirmamountcalculate(indx){
     this.AuthorizedList[indx]['Confirm_Amount'] =  undefined;
     if(this.AuthorizedList[indx]['Order_Qty'] && this.AuthorizedList[indx]['Rate']){
-      this.AuthorizedList[indx]['Confirm_Amount'] = this.AuthorizedList[indx]['Confirm_Qty'] * this.AuthorizedList[indx]['Confirm_Rate'];
-      this.AuthorizedList[indx]['Confirm_Amount_With_GST'] = ((this.AuthorizedList[indx]['Confirm_Qty'] * this.AuthorizedList[indx]['Confirm_Rate']) * this.AuthorizedList[indx]['GST_PER']) / 100;
+      this.AuthorizedList[indx]['Confirm_Amount'] = Number(this.AuthorizedList[indx]['Confirm_Qty'] * this.AuthorizedList[indx]['Confirm_Rate']).toFixed(2);
+      this.AuthorizedList[indx]['Confirm_Amount_With_GST'] = Number(((this.AuthorizedList[indx]['Confirm_Qty'] * this.AuthorizedList[indx]['Confirm_Rate']) * this.AuthorizedList[indx]['GST_PER']) / 100).toFixed(2);
     }
+   }
+   getTofix(key){
+    return Number(Number(key).toFixed(2))
    }
    dataforApproved(){
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
     // this.ObjSaveForm.Doc_Date = this.DateService.dateConvert(new Date(this.myDate));
     if(this.AuthorizedList.length) {
-      let Arr =[]
+      let Arr:any =[]
       this.AuthorizedList.forEach(item => {
         const Obj = {
             //Product_Type : item.Product_Type,
@@ -1127,10 +1139,10 @@ export class K4cPurchasePlaningComponent implements OnInit {
       "Json_Param_String": JSON.stringify([tempobj])
     }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-      const Red = [];
-      const Orange = [];
-      const Blue = [];
-      const Other = [];
+      const Red:any = [];
+      const Orange:any = [];
+      const Blue:any = [];
+      const Other:any = [];
       data.forEach(e=>{
         if(e.Color_Code === 'Red'){
           e['textClass'] = 'text-red';
@@ -1158,8 +1170,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
   }
   // DISTINCT & FILTER
   GetDistinct() {
-    let DMaterialType = [];
-    let DProductType = [];
+    let DMaterialType:any = [];
+    let DProductType:any = [];
     this.DistMaterialType =[];
     this.SelectedDistMaterialType =[];
     this.DistProductType =[];
@@ -1178,8 +1190,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
      this.BackupStockReportSearchlist = [...this.StockReportSearchlist];
   }
   FilterDist() {
-    let DMaterialType = [];
-    let DProductType = [];
+    let DMaterialType:any = [];
+    let DProductType:any = [];
     this.SearchFields =[];
   if (this.SelectedDistMaterialType.length) {
     this.SearchFields.push('Material_Type');
@@ -1237,17 +1249,22 @@ export class K4cPurchasePlaningComponent implements OnInit {
        this.ObjPurchasePlan.Weekly_Avg_Cons = data[0].Weekly_Avg_Cons;
        this.ObjPurchasePlan.UOM = data[0].UOM;
        this.ObjPurchasePlan.Weekly_Cons_Value = data[0].Weekly_Cons_Value;
-       this.LastPurDate = this.DateService.dateConvert(new Date(data[0].Last_Purchase_Date));
+      //  this.LastPurDate = this.DateService.dateConvert(new Date(data[0].Last_Purchase_Date));
+       this.LastPurDate = data[0].Last_Purchase_Date === null ? '01/Jan/1900' : new Date(data[0].Last_Purchase_Date);
        this.ObjPurchasePlan.Last_Purchase_Qty = data[0].Last_Purchase_Qty;
        this.ObjPurchasePlan.AL_UOM = data[0].Alt_UOM;
        this.ObjPurchasePlan.Last_Purchase_Rate = data[0].Last_Purchase_Rate;
+       this.ObjPurchasePlan.GST_Percentage = data[0].GST_Tax_Per;
        this.ObjPurchasePlan.Current_Stock = data[0].Stock_Qty;
        this.ObjPurchasePlan.Pcs_UOM = data[0].UOM;
        this.ObjPurchasePlan.Alt_UOM = data[0].Alt_UOM;
        this.ObjPurchasePlan.Stock_UOM = data[0].UOM;
        this.ObjPurchasePlan.UOM_Qty = data[0].UOM_Qty;
        this.ObjPurchasePlan.Due_Payment = data[0].Due_Payment;
+       this.ObjPurchasePlan.Order_Qty = data[0].Last_Purchase_Qty;
        this.ObjPurchasePlan.Sale_rate = data[0].Last_Purchase_Rate;
+       this.OrderValueChange();
+       this.Vendor_ID = data[0].Sub_Ledger_ID;
 
      })
   }
@@ -1318,6 +1335,7 @@ class PurchasePlan {
   Vendor : string;
   Vendor_ID : any;
   Last_Purchase_Rate : number;
+  GST_Percentage : any;
   Last_Purchase_Qty : number;
   Last_Purchase_With_GST : number;
   Current_Stock : number;

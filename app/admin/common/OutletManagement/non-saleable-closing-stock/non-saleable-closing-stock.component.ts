@@ -17,40 +17,41 @@ import * as XLSX from 'xlsx';
 })
 export class NonSaleableClosingStockComponent implements OnInit {
   Remarks:any;
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
   buttonname = "Save"
   ObjNsOTclosingStock : NsOTclosingStock = new NsOTclosingStock ();
-  BrandList = [];
-  CostCenter = [];
+  BrandList:any = [];
+  CostCenter:any = [];
   costcentdisableflag = false;
-  GodownId = [];
+  GodownId:any = [];
   godowndisableflag = false;
-  productlist = [];
+  productlist:any = [];
   flag = false;
   BillDate : Date;
   dateList: any;
   NsOTclosingstockFormSubmitted = false;
   ObjBrowse : Browse  = new Browse();
-  Searchedlist = [];
+  Searchedlist:any = [];
   nsSearchFormSubmitted = false;
   checkSave = false;
   BrandDisable = false;
   Doc_No = undefined;
-  ViewList = [];
+  ViewList:any = [];
   ViewPoppup = false;
   Doc_date = undefined;
   Cost_Cent_ID = undefined;
   Godown_ID = undefined;
   BrandId = undefined;
   remarks = undefined;
-  editList = [];
+  editList:any = [];
   del_doc_no: any;
   minDate:Date;
   maxDate:Date;
   EODstatus: any;
+  docdate: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -205,10 +206,10 @@ export class NonSaleableClosingStockComponent implements OnInit {
   }
   GetDataForSave(){
     if(this.productlist.length) {
-      let tempArr =[];
+      let tempArr:any =[];
       const TempObj = {
         Doc_No	 : this.Doc_No ? this.Doc_No : "A",
-        Doc_Date : this.DateService.dateConvert(new Date(this.BillDate)),
+        Doc_Date : this.docdate ? this.DateService.dateConvert(new Date(this.docdate)) : this.DateService.dateConvert(new Date(this.BillDate)),
         Cost_Cen_ID	: this.ObjNsOTclosingStock.Cost_Cen_ID,
         Godown_ID	: this.ObjNsOTclosingStock.godown_id,
         //Narration	: this.ObjOTclosingwithbatch.Remarks,
@@ -222,6 +223,7 @@ export class NonSaleableClosingStockComponent implements OnInit {
             Product_ID : item.Product_ID,
             UOM : item.UOM,
             Batch_No : item.Batch_No,
+            Batch_Qty : item.Batch_Qty,
            // System_Qty : item.batch_Qty,
             Closing_Qty	: item.Closing_Qty,
           //  Varience_Qty : item.varience_Qty,
@@ -329,6 +331,8 @@ const obj = {
      this.productlist = [];
      this.items = ["BROWSE", "UPDATE"];
      this.buttonname = "Update";
+     this.BillDate = new Date(DocNo.Doc_Date);
+     this.docdate = new Date(DocNo.Doc_Date);
      // console.log("this.EditDoc_No ==", this.Objproduction.Doc_No);
      this.GetdataforEdit(this.Doc_No);
      }
@@ -346,8 +350,11 @@ const obj = {
        this.editList = data;
           this.ObjNsOTclosingStock.Brand_ID = data[0].Brand_ID;
             this.ObjNsOTclosingStock.Cost_Cen_ID = data[0].Cost_Cen_ID;
+            this.getGodown();
             this.ObjNsOTclosingStock.godown_id = data[0].godown_id;
-            this.BillDate = data[0].Doc_Date;
+            // this.minDate = undefined;
+            // this.maxDate = undefined;
+            // this.BillDate = new Date(data[0].Doc_Date);
             data.forEach(element => {
               const  productObj = {
                Product_Type_ID : element.Product_Type_ID,
@@ -356,7 +363,7 @@ const obj = {
                Product_Description : element.Product_Description,
                UOM : element.UOM,
                Batch_No : element.Batch_No,
-               batch_Qty : element.batch_Qty,
+               Batch_Qty : element.batch_Qty ?  element.batch_Qty : element.Batch_Qty,
                Closing_Qty : element.Closing_Qty,
                Varience_Qty : element.Varience_Qty,
                Remarks : element.Remarks
@@ -449,7 +456,7 @@ const obj = {
      this.compacctToast.clear("c");
    }
    exportoexcel(Arr,fileName): void {
-     let temp = [];
+     let temp:any = [];
      Arr.forEach(element => {
        const obj = {
         Product_Type : element.Product_Type,
@@ -458,8 +465,11 @@ const obj = {
         UOM : element.UOM,
         Batch_No : element.Batch_No,
         Expiry_Date : element.Expiry_Date,
-        batch_Qty : element.batch_Qty,
+        batch_Qty : element.batch_Qty ? element.batch_Qty : element.Batch_Qty,
         Closing_Qty : element.Closing_Qty,
+        Consumption_Qty : element.Consumption_Qty,
+        Issue_Qty : element.Issue_Qty,
+        RTF_Qty : element.RTF_Qty,
         Remarks : element.Remarks,
         Total_Amount : element.Total_Amount
        }
@@ -494,7 +504,10 @@ const obj = {
     this.ObjNsOTclosingStock.Remarks = [];
     this.productlist = [];
     this.editList = [];
+    this.docdate = undefined;
     this.getbilldate();
+    this.items = ["BROWSE", "CREATE"];
+    this.buttonname = "Save";
   }
 
 }

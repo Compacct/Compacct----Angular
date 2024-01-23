@@ -1,5 +1,5 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
-<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+<p-toast position="center" baseZIndex="99999" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
   <ng-template let-message pTemplate="message">
     <div style="text-align: center">
       <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
@@ -124,12 +124,16 @@
                     <input class="form-control" name="Budget_Short_Description" #Budget_Short_Description="ngModel"
                       [(ngModel)]="ObjEstimate.Budget_Short_Description"
                       [ngClass]="{'clearance': EstimateInfoSubmitted && Budget_Short_Description?.errors?.required}"
-                      placeholder="Project Name" [required]="true" (change)='getSiteList()' [disabled]='EditSiteFlag'/>
+                      placeholder="Project Name" [required]="true" (change)='getSiteList()' [disabled]='true'/>
                   </div>
                   <div class="col-sm-4">
                     <label class="control-label">Site Name&nbsp;<span class="text-danger">*</span></label>
-                    <span *ngIf='ObjEstimate.Budget_Short_Description' (click)="ToggleSite()" class="btn-vk  pull-right createPatient"><i
-                        class="fa fa-fw  fa-plus"></i> Create</span>
+                    <div class="pull-right" *ngIf='ObjEstimate.Budget_Short_Description'>
+                      <button (click)="ViewSite()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
+                      <button (click)="ToggleSite()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
+                  </div>
+                    <!-- <span *ngIf='ObjEstimate.Budget_Short_Description' (click)="ToggleSite()" class="btn-vk  pull-right createPatient"><i
+                        class="fa fa-fw  fa-plus"></i> Create</span> -->
                     <p-dropdown [options]="siteList" name="siteName" [(ngModel)]="ObjEstimate.site_ID"
                       [showClear]="true" [emptyFilterMessage]="' No Site Found'"
                       (onChange)="testchange(ObjEstimate.site_ID)" [filter]="true" filterBy="label,value.name"
@@ -157,9 +161,10 @@
                 <div class="form-group" style="padding: 0 1em;">
                   <div class="col-sm-6">
                     <label class="control-label">Estimate Group Name&nbsp;<span class="text-danger">*</span></label>
-                    <span (click)="ToggleEstimateGrp()" class="btn-vk  pull-right createPatient"><i
-                        class="fa fa-fw  fa-plus"></i> Create</span>
-
+                    <div class="pull-right">
+                      <button (click)="ViewEstimateGrp()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
+                      <button (click)="ToggleEstimateGrp()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
+                  </div>
                     <p-dropdown [options]="EstimateGroupList" name="EstimateGroup"
                       [(ngModel)]="ObjEstimate.Budget_Group_ID" [showClear]="true"
                       [emptyFilterMessage]="' No Estimate Group Found'"
@@ -172,8 +177,10 @@
                   </div>
                   <div class="col-sm-6">
                     <label class="control-label">Estimate Sub Group Name&nbsp;<span class="text-danger">*</span></label>
-                    <span (click)="ToggleEstimateSubGrp()" *ngIf='ObjEstimate.Budget_Group_ID'
-                      class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                    <div class="pull-right" *ngIf='ObjEstimate.Budget_Group_ID'>
+                      <button (click)="ViewEstimateSubGrp()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
+                      <button (click)="ToggleEstimateSubGrp()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
+                  </div>
                     <p-dropdown [options]="EstimateSubGroupList" name="EstimateSubGroup"
                       [(ngModel)]="ObjEstimate.Budget_Sub_Group_ID" [showClear]="true"
                       [emptyFilterMessage]="' No Estimate Sub Group Found'"
@@ -189,8 +196,10 @@
                   <div class="clearfix"></div>
                   <div class="col-sm-4">
                     <label class="control-label">Work Details&nbsp;<span class="text-danger">*</span></label>
-                    <span (click)="Toggleworkdetalis()" *ngIf='ObjEstimate.Budget_Group_ID'
-                      class="btn-vk  pull-right createPatient"><i class="fa fa-fw  fa-plus"></i> Create</span>
+                    <div class="pull-right" *ngIf='ObjEstimate.Budget_Group_ID'>
+                      <button (click)="ViewWorkDetails()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i> View</button> &nbsp;
+                      <button (click)="Toggleworkdetalis()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-plus"></i> Create</button>
+                  </div>
                     <p-dropdown [options]="workdetalisList" name="Work_Details"
                       [(ngModel)]="ObjEstimate.Work_Details_ID" [showClear]="true"
                       [emptyFilterMessage]="' No Work Details Found'"
@@ -234,7 +243,7 @@
                   <div class="col-sm-2">
                     <label class="control-label">Qty<sup class="text-danger">*</sup></label>
                     <input class="form-control" name="Qty" #Qty="ngModel" [(ngModel)]="ObjEstimate.Qty"
-                      (ngModelChange)="CalculateEstimateQty()" CompacctDigitonly="true"
+                      (change)="CalculateEstimateQty()" CompacctDigitonly="true"  (keypress)="validate3($event)"
                       [ngClass]="{'clearance': EstimateInfoSubmitted && Qty?.errors?.required}" placeholder="Qty"
                       [required]="true" />
                   </div>
@@ -264,7 +273,7 @@
                     <label class="control-label">Purchase Rate<sup class="text-danger">*</sup></label>
                     <input class="form-control" name="rate" type="text"
                       [ngClass]="{'clearance':EstimateInfoSubmitted && rate?.errors?.required }" #rate="ngModel"
-                      [(ngModel)]="ObjEstimate.Rate" (ngModelChange)="CalculateEstimateAmount()"
+                      [(ngModel)]="ObjEstimate.Rate"  (keypress)="validate2($event)" (change)="CalculateEstimateAmount()"
                       CompacctDigitonly="true" [required]="true" placeholder="Rate" />
                   </div>
                   <div class="col-sm-2">
@@ -275,7 +284,7 @@
                   <div class="col-sm-2">
                     <label class="control-label">Sale Rate</label>
                     <input class="form-control" name="saleRate" #saleRate="ngModel" [(ngModel)]="ObjEstimate.saleRate"
-                      (ngModelChange)="CalculateEstimatesaleAmount()" placeholder="Sale Rate" />
+                    (keypress)="validate2($event)" (change)="CalculateEstimatesaleAmount()" placeholder="Sale Rate" />
                   </div>
                   <div class="col-sm-2">
                     <label class="control-label">Sale Amount</label>
@@ -385,6 +394,10 @@
                         </tr>
                         <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
                           <td colspan="15" class="text-bold text-right"> Purchase Amount : {{getPurchaseAmt()}}</td>
+                        </tr>
+                        
+                        <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+                          <td colspan="15" class="text-bold text-right"> Sale  Amount : {{getSaleAmt()}}</td>
                         </tr>
                       </ng-template>
                     </p-table>
@@ -523,6 +536,7 @@
   </div>
 </div>
 
+<!-- CREATE -->
 <p-dialog [header]="'Create Estimate Group'" [appendTo]="'body'" [visible]="EstimateGrpModal" [closeOnEscape]="true"
   [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
   style="text-align: center;" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
@@ -590,10 +604,10 @@
       <div class="form-group">
         <div class="col-sm-12">
           <label class="control-label">Work Details<sup class="text-danger">*</sup></label>
-          <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="workdetalisName"
+          <textarea rows="2" class="form-control" name="name" #name="ngModel" [(ngModel)]="workdetalisName"
             placeholder="Work Details" allow-pattern="([a-z ]|\.)" [ngClass]="{
             clearance: workdetalisSubmitted && name?.errors?.required
-          }" required />
+          }" required ></textarea>
         </div>
       </div>
 
@@ -678,6 +692,112 @@
       <span *ngIf="!Spinnersite" class="glyphicon glyphicon-save"></span>&nbsp;{{ buttonname }}
     </button>
   </p-footer>
+</p-dialog>
+<!-- VIEW -->
+<p-dialog [header]="'View Site'" [appendTo]="'body'" [(visible)]="ViewSiteModal" [closeOnEscape]="true" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="siteList">
+            <!-- <p-table [value]="vieworgList" [globalFilterFields]="['Tender_Organization']" [rowHover]="true" [autoLayout]="true" #dt>
+             <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                    </div>
+                </div>
+
+            </ng-template> -->
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Site Name</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Site_Description}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteSite(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewSiteModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+<p-dialog [header]="'View Estimate Group'" [appendTo]="'body'" [(visible)]="ViewEstimateGrpModal" [closeOnEscape]="true" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="EstimateGroupList">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Estimate Group Name</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Budget_Group_Name}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteEstimateGrp(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewEstimateGrpModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+<p-dialog [header]="'View Estimate Sub Group'" [appendTo]="'body'" [(visible)]="ViewEstimateSubGrpModal" [closeOnEscape]="true" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="EstimateSubGroupList">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Estimate Sub Group Name</th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Budget_Sub_Group_Name}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteEstimateSubGrp(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewEstimateSubGrpModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
+</p-dialog>
+<p-dialog [header]="'View Work Details'" [appendTo]="'body'" [(visible)]="ViewWorkDetailsModal" [closeOnEscape]="true" [modal]="true" [responsive]="true" [style]="{ width: '70%', minWidth: '300px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="workdetalisList">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width:80%">Work Details Name</th>
+                    <th style="width:20%">Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+
+                    <td>{{col.Work_Details}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteWorkDetails(col)"><i class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewWorkDetailsModal = false" class="btn btn-default">
+  CANCEL
+</button>
+    </p-footer>
 </p-dialog>
 
 <p-dialog [header]="'View Budget'" [appendTo]="'body'" [visible]="ShowDetailsModalFlag" [closeOnEscape]="true"

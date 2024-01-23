@@ -350,6 +350,7 @@
                                     <th>Resi Pin </th>
                                     <th>School Pin </th>
                                     <th>School Name </th>
+                                    <th>Class Name</th>
                                     <th>Address</th>
                                     <th>Landmark</th>
                                     <th>Appointment Type</th>
@@ -579,6 +580,7 @@
                                     <td>{{col.Pin ? col.Pin : '-' }}</td>
                                     <td>{{col.School_PIN ? col.School_PIN : '-' }}</td>
                                     <td>{{col.School_Name ? col.School_Name : '-' }}</td>
+                                    <td>{{col.Class_Name ? col.Class_Name : '-' }}</td>
                                     <td>{{col.Address ? col.Address : '-'}}</td>
                                     <td>{{col.Landmark ? col.Landmark : '-'}}</td>
                                     <td>{{col.Appo_To_Type ? col.Appo_To_Type : '-'}}</td>
@@ -764,6 +766,7 @@
                                         <th>Resi Pin </th>
                                         <th>School Pin </th>
                                         <th>School Name </th>
+                                        <th>Class Name</th>
                                         <th>Address</th>
                                         <th>Landmark</th>
                                         <th>Appointment Type</th>
@@ -773,6 +776,7 @@
                                         <th>ASP Journey Time</th>
                                         <th>ASP Confirm On</th>
                                         <th>ASP Journey Confirm On</th>
+                                        <th>Enroled Date</th>
                                         <!-- <th>Viewed </th> 
                                         <th>City </th>
                                         <th>Created On</th>
@@ -814,6 +818,7 @@
                                         <td>{{col.Pin ? col.Pin : '-' }}</td>
                                         <td>{{col.School_PIN ? col.School_PIN : '-' }}</td>
                                         <td>{{col.School_Name ? col.School_Name : '-' }}</td>
+                                        <td>{{col.Class_Name ? col.Class_Name : '-' }}</td>
                                         <td>{{col.Address ? col.Address : '-'}}</td>
                                         <td>{{col.Landmark ? col.Landmark : '-'}}</td>
                                         <td>{{col.Appo_To_Type ? col.Appo_To_Type : '-'}}</td>
@@ -823,6 +828,7 @@
                                         <td>{{col.ASP_Journey_Time ? col.ASP_Journey_Time : '-'}}</td>
                                         <td>{{col.ASP_Confirm_On ? (col.ASP_Confirm_On | date : "dd/MMM/yyyy") : '-'}}</td>
                                         <td>{{col.ASP_Journey_Confirm_On ? (col.ASP_Journey_Confirm_On | date : "dd/MMM/yyyy") : '-'}}</td>
+                                        <td>{{col.Enroled_Date ? (col.Enroled_Date | date : "dd/MMM/yyyy") : '-'}}</td>
                                         <!-- <td>{{col.City ? col.City : '-'}}</td>
                                         <td>{{col.Posted_On | date:"dd/MMM/yyyy h:mma"}}</td>
                                         <td>{{col.Next_Followup | date:"dd/MMM/yyyy h:mma"}}</td>
@@ -999,6 +1005,7 @@
                                         <th>Resi Pin </th>
                                         <th>School Pin </th>
                                         <th>School Name </th>
+                                        <th>Class Name</th>
                                         <th>Address</th>
                                         <th>Landmark</th>
                                         <th>Appointment Type</th>
@@ -1008,6 +1015,7 @@
                                         <th>ASP Journey Time</th>
                                         <th>ASP Confirm On</th>
                                         <th>ASP Journey Confirm On</th>
+                                        <th>Cancel Date</th>
                                         <!-- <th>Viewed </th> 
                                         <th>City </th>
                                         <th>Created On</th>
@@ -1062,6 +1070,7 @@
                                         <td>{{col.Pin ? col.Pin : '-' }}</td>
                                         <td>{{col.School_PIN ? col.School_PIN : '-' }}</td>
                                         <td>{{col.School_Name ? col.School_Name : '-' }}</td>
+                                        <td>{{col.Class_Name ? col.Class_Name : '-' }}</td>
                                         <td>{{col.Address ? col.Address : '-'}}</td>
                                         <td>{{col.Landmark ? col.Landmark : '-'}}</td>
                                         <td>{{col.Appo_To_Type ? col.Appo_To_Type : '-'}}</td>
@@ -1071,6 +1080,7 @@
                                         <td>{{col.ASP_Journey_Time ? col.ASP_Journey_Time : '-'}}</td>
                                         <td>{{col.ASP_Confirm_On ? (col.ASP_Confirm_On | date : "dd/MMM/yyyy") : '-'}}</td>
                                         <td>{{col.ASP_Journey_Confirm_On ? (col.ASP_Journey_Confirm_On | date : "dd/MMM/yyyy") : '-'}}</td>
+                                        <td>{{col.Cancel_Date  ? (col.Cancel_Date | date : "dd/MMM/yyyy") : '-'}}</td>
                                         <!-- <td>{{col.City ? col.City : '-'}}</td>
                                         <td>{{col.Posted_On | date:"dd/MMM/yyyy h:mma"}}</td>
                                         <td>{{col.Next_Followup | date:"dd/MMM/yyyy h:mma"}}</td>

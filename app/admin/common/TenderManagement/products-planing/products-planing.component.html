@@ -17,7 +17,7 @@
         </div>
     </ng-template>
 </p-toast>
-<p-toast position="center" key="c2" (onClose)="onRejectClear()" [modal]="true"  [styleClass]="'Custom-Popup'" [autoZIndex]="true">
+<p-toast position="center" key="c2" (onClose)="onRejectClear()" [modal]="true"  [autoZIndex]="true">
     <ng-template let-message pTemplate="message">
         <div style="text-align: center">
             <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
@@ -34,6 +34,24 @@
             </div>
         </div>
     </ng-template>
+</p-toast>
+<p-toast position="center" key="c3" (onClose)="onReject()" [modal]="true"[autoZIndex]="true">
+  <ng-template let-message pTemplate="message">
+    <div style="text-align: center">
+      <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+      <h3>{{message.summary}}</h3>
+      <p>{{message.detail}}</p>
+    </div>
+
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-6">
+        <button type="button" pButton (click)="onConfirm3()" label="Yes" class="ui-button-success"></button>
+      </div>
+      <div class="ui-g-6">
+        <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+      </div>
+    </div>
+  </ng-template>
 </p-toast>
 
 <div class="row">
@@ -103,18 +121,36 @@
                                                                 <span class="caret"></span>
                                                             </button>
                                                             <ul class="dropdown-menu">
-                                                                <li>
+                                                              <li  *ngIf="col.Approver_Final_Status =='Insert'">
+                                                                <a (click)="AprovedFinal(col)">
+                                                                <i class="fa fa-save"></i>
+                                                                  Final Save
+                                                                </a>
+                                                              </li>
+                                                                <li  *ngIf="col.Approver_Final_Status =='Insert'">
                                                                     <a (click)="EditProductPlan(col)">
                                                                         <i class="fa fa-fw fa-pencil"></i>
                                                                         Edit
                                                                     </a>
-                                                                </li>
+                                                                </li> 
                                                                 <li>
+                                                                  <a (click)="viewProductPlan(col)">
+                                                                      <i class="fa fa-eye"></i>
+                                                                      View
+                                                                  </a>
+                                                              </li>
+                                                                <li  *ngIf="col.Approver_Final_Status =='Insert'">
                                                                     <a (click)="DeletePlan(col)">
                                                                         <i class="fa fa-fw fa-trash"></i>
                                                                         Delete
                                                                     </a>
                                                                 </li>
+                                                                <li  *ngIf="col.Approver_Final_Status =='Insert'">
+                                                                  <a (click)="UploadDoc(col)">
+                                                                      <i class="fa fa-file"></i>
+                                                                      Upload/Show Document
+                                                                  </a>
+                                                              </li>
                                                             </ul>
                                                         </div>
                                                 </td>
@@ -134,7 +170,8 @@
                             <div class="form-group">
                                 <div class="col-sm-5">
                                     <label class="control-label">Project Name&nbsp;<span class="text-danger">*</span></label>
-                                 
+                                    <span *ngIf='ObjProdPlan.Tender_Doc_ID' (click)="GetEditSingleScheme()" class="btn-vk  pull-right createPatient"style="cursor: pointer;"><i
+                                        class="fa fa-fw  fa-list"></i> Product Details</span>
                                     <p-dropdown [options]="ProjectList" name="ProjectName" [(ngModel)]="ObjProdPlan.Tender_Doc_ID"
                                       [showClear]="true" [emptyFilterMessage]="' No Project Found'"
                                       (onChange)="ProjectChange()" [filter]="true" filterBy="label,value.name"
@@ -146,7 +183,7 @@
                                 </div>
                                 <div class="col-sm-5">
                                     <label class="control-label">Site Name&nbsp;<span class="text-danger">*</span></label>
-                                    <span *ngIf='SiteList.length === 0' (click)="ToggleSite()" class="btn-vk  pull-right createPatient"><i
+                                    <span *ngIf='ObjProdPlan.Tender_Doc_ID' (click)="ToggleSite()" class="btn-vk  pull-right createPatient"style="cursor: pointer"><i
                                         class="fa fa-fw  fa-plus"></i> Create</span>
                                     <p-dropdown [options]="SiteList" name="siteName" [(ngModel)]="ObjProdPlan.Site_ID"
                                       [showClear]="true" [emptyFilterMessage]="' No Site Found'"
@@ -180,6 +217,16 @@
                                     </p-dropdown>
                                 </div>
                                 <div class="col-sm-4">
+                                  <label class="control-label">Sub Group Name&nbsp;<span class="text-danger">*</span></label>
+                                  <p-dropdown [options]="SubGroupList" name="SubGroup" [(ngModel)]="ObjProdPlan.Budget_Sub_Group_ID"
+                                      [showClear]="true" [emptyFilterMessage]="' No Sub Group Found'"
+                                      [filter]="true" filterBy="label,value.name"
+                                      [placeholder]="'Select Sub Group Name'" [virtualScroll]="true" itemSize="30" #SubGroup="ngModel"
+                                      [styleClass]="PlanedProductFormSubmit && SubGroup.errors?.required? 'clearance': ''" [required]="true"
+                                      >
+                                  </p-dropdown>
+                              </div>
+                                <div class="col-sm-4">
                                 <label class="control-label">Material Type<sup class="text-danger">*</sup></label>
                                     <select class="form-control"
                                         name="Type_Of_Product"
@@ -194,6 +241,7 @@
                                     <option Value="Others">Other Products</option>
                                 </select>
                                 </div>
+                                <div class="clearfix"></div>
                                 <div class="col-sm-4">
                                     <label class="control-label">Product&nbsp;<span class="text-danger">*</span></label>
                                     <p-dropdown [options]="ProductList" name="Product" [(ngModel)]="ObjProdPlan.Product_ID"
@@ -205,12 +253,42 @@
                                         >
                                     </p-dropdown>
                                 </div>
+                                <div class="col-sm-8">
+                                  <label class="control-label">Work Details&nbsp;<span class="text-danger">*</span></label>
+                                  <p-dropdown [options]="WorkData" name="Work_Details" [(ngModel)]="ObjProdPlan.Work_Details_ID"
+                                      [showClear]="true" [emptyFilterMessage]="' No Work Details Found'"
+                                      [filter]="true" filterBy="label,value.name"
+                                      [placeholder]="'Select Group Name'" [virtualScroll]="true" itemSize="30" #Work_Details="ngModel"
+                                      [styleClass]="
+                                      PlanedProductFormSubmit && Work_Details.errors?.required? 'clearance': ''" [required]="true"
+                                      >
+                                  </p-dropdown>
+                              </div>
                                 <div class="col-sm-2">
                                 <label class="control-label">Qty<sup class="text-danger">*</sup></label>
                                 <input class="form-control" name="Qty" #Qty="ngModel" [(ngModel)]="ObjProdPlan.Qty"
                                     CompacctDigitonly="true"
+                                    (ngModelChange)="dataChange()"
                                     [ngClass]="{'clearance': PlanedProductFormSubmit && Qty?.errors?.required}" placeholder="Qty"
                                     [required]="true" />
+                                </div>
+                                <div class="col-sm-2">
+                                  <label class="control-label">UOM<sup class="text-danger">*</sup></label>
+                                  <input class="form-control" name="UOM" #UOM="ngModel" [(ngModel)]="ObjProdPlan.UOM" 
+                                  [ngClass]="{'clearance': PlanedProductFormSubmit && UOM?.errors?.required}"
+                                  placeholder="Unit"required>
+                                </div>
+                                <div class="col-sm-2">
+                                  <label class="control-label">Rate<sup class="text-danger">*</sup></label>
+                                  <input class="form-control" name="Rate" #Rate="ngModel" 
+                                  [(ngModel)]="ObjProdPlan.Rate" 
+                                  [ngClass]="{'clearance': PlanedProductFormSubmit && Rate?.errors?.required}"
+                                  (ngModelChange)="dataChange()"
+                                  placeholder="Rate"required>
+                                </div> <div class="col-sm-2">
+                                  <label class="control-label">Amount</label>
+                                  <input class="form-control" name="Amount" #Amount="ngModel" [(ngModel)]="ObjProdPlan.Amount" placeholder="Amount" 
+                                  disabled>
                                 </div>
                                 <div class="col-sm-2">
                                     <button (click)="AddProductPlan(ProductForm.form.valid)" class="btn btn-primary custombutton"><i class="fa fa-plus"></i>&nbsp;ADD</button>
@@ -222,9 +300,12 @@
                                     <tr style="background-color:#3c8dbc;color:white;">
                                       <th>SL NO</th>
                                       <th>GROUP WORK</th>
+                                      <th>SUB GROUP</th>
                                       <th>MATERIAL TYPE</th>
                                       <th>PRODUCT</th>
                                       <th>QTY</th>
+                                      <th>RATE</th>
+                                      <th>AMOUNT</th>  
                                       <th>DELETE</th>
                           
                                     </tr>
@@ -233,13 +314,24 @@
                                     <tr *ngFor="let d of AddedPlanedProductList;let odd = odd;let index = index" [class.even]="odd">
                                       <td>{{ index + 1 }}</td>
                                       <td>{{d.Budget_Group_Name}}</td>
+                                      <td>{{d.Budget_Sub_Group_Name}}</td>
                                       <td>{{d.Type_Of_Product}}</td>
                                       <td>{{d.Product_Description}}</td>
-                                      <td>{{d.Qty}}</td>
+                                      <!-- <td>{{getToFix(d.Qty)}}</td> -->
+                                      <td><input type="text" [name]="index+1" [(ngModel)]='d.Qty' (ngModelChange)='culAmount(index)' [ngClass]="{'clearance' : !d.Qty}" CompacctDigitonly="true" class="form-control" style="width: 71px;"
+                                        /></td>
+                                        <td><input type="text" [name]="index+1+'rate'" [(ngModel)]='d.Rate' (ngModelChange)='culAmount(index)' [ngClass]="{'clearance' : !d.Rate}" CompacctDigitonly="true" class="form-control" style="width: 71px;"
+                                          /></td>
+                                      <!-- <td>{{getToFix(d.Rate)}}</td> -->
+                                      <td>{{getToFix(d.Amount)}}</td>
                                       <td class="text-center">
-                                           <a (click)="DeleteProductPlan(d)"><div><i class="fa fa-fw fa-trash"> </i></div></a>
+                                           <a (click)="DeleteProductPlan(index)"><div><i class="fa fa-fw fa-trash"> </i></div></a>
                                         </td>
                                     </tr>
+                                    <tr>
+                                      <td colspan="8"> <div class="pull-right" style="font-weight: 700;">Total Amount- {{getGrTotal('Create')}}</div> </td>
+                                      <td ></td>
+                                     </tr>
                                   </tbody>
                                 </table>
                               </div>
@@ -292,3 +384,269 @@
     </button>
   </p-footer>
 </p-dialog>
+
+<p-dialog [header]="'Product Details'" [appendTo]="'body'" [visible]="ProductsModal" [closeOnEscape]="true" [closable]="false"
+  [modal]="true" [responsive]="true" [style]="{ width: '70%', minWidth: '200px' }" style="text-align: center;"
+  [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <div class="form-horizontal">
+    <div class="table-responsive no-padding" style="margin-top: 15px;">
+
+        <p-table [value]="ShowAddedEstimateProductList" sortField="Budget_Group_Name" sortMode="single"
+          [rowHover]="true" [autoLayout]="true" (onSort)="onSort()">
+          <ng-template pTemplate="header">
+            <tr>
+              <th *ngFor="let col of cols">
+                {{col.header}}
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+            <tr>
+              <td>{{rowData.SL_No}}</td>
+              <td *ngIf="rowGroupMetadata[rowData.Budget_Group_Name].index === rowIndex"
+                [attr.rowspan]="rowGroupMetadata[rowData.Budget_Group_Name].size">
+                {{rowData.Budget_Group_Name}}
+              </td>
+              <td>{{rowData.Budget_Sub_Group_Name}}</td>
+              <td>{{rowData.Work_Details}}</td>
+              <td>{{rowData.Site_Description}}</td>
+              <td>{{rowData.Product_Description}}</td>
+              <td>{{rowData.unit}}</td>
+              <td>{{rowData.Qty}}</td>
+              <td>{{rowData.Nos}}</td>
+              <td>{{rowData.TQty}}</td>
+              <td>{{rowData.UOM}}</td>
+            </tr>
+            <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+              <td colspan="9" class="text-bold text-right"> Purchase Amount : {{getPurchaseAmt()}}</td>
+            </tr>
+            <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+              <td colspan="9" class="text-bold text-right"> Sale  Amount : {{getSaleAmt()}}</td>
+            </tr>
+            <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+              <td colspan="9" class="text-bold text-right"> No of Site :
+                {{ShowAddedEstimateProductList.length ? ShowAddedEstimateProductList[0].No_of_Site : '-'}}</td>
+            </tr>
+            <tr *ngIf='(rowIndex + 1)  === ShowAddedEstimateProductList.length'>
+              <td colspan="9" class="text-bold text-right"> Total Purchase Amount :
+                {{getTotalPurchaseAmt()}}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+  </div>
+  <p-footer>
+    <button type="button" (click)="ProductsModal = false" class="btn btn-default">
+      CANCEL
+    </button>
+  </p-footer>
+</p-dialog>
+
+<p-dialog [header]="'View'" [appendTo]="'body'" [visible]="ViewModel" [closeOnEscape]="true" [closable]="false"
+  [modal]="true" [responsive]="true" [style]="{ width: '70%', minWidth: '200px' }" style="text-align: center;"
+  [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+  <div class="form-horizontal">
+    <div class="form-group">
+      <div class="col-sm-5">
+          <label class="control-label">Project Name&nbsp;<span class="text-danger">*</span></label>
+           <p-dropdown [options]="ProjectList" name="ProjectName" [(ngModel)]="ObjProdPlan.Tender_Doc_ID"
+            [showClear]="true" [emptyFilterMessage]="' No Project Found'"
+            (onChange)="ProjectChange()" [filter]="true" filterBy="label,value.name"
+            [placeholder]="'Select Project Name'" [virtualScroll]="true" itemSize="30" #ProjectName="ngModel"
+            [styleClass]="
+            PlanedProductFormSubmit && ProjectName.errors?.required? 'clearance': ''" [required]="true"
+             [disabled]='true'>
+          </p-dropdown>
+      </div>
+      <div class="col-sm-5">
+          <label class="control-label">Site Name&nbsp;<span class="text-danger">*</span></label>
+          <p-dropdown [options]="SiteList" name="siteName" [(ngModel)]="ObjProdPlan.Site_ID"
+            [showClear]="true" [emptyFilterMessage]="' No Site Found'"
+            [filter]="true" filterBy="label,value.name" (onChange)="ChangeSiteName()"
+            [placeholder]="'Select Site Name'" [virtualScroll]="true" itemSize="30" #siteName="ngModel"
+            [styleClass]="
+            PlanedProductFormSubmit && siteName.errors?.required? 'clearance': ''" [required]="true"
+             [disabled]='true'>
+          </p-dropdown>
+      </div>
+        <button *ngIf="viewList.length" class="btn btn-success custombutton" data-toggle="modal" (click)="exportoexcel()">
+          <span  class="glyphicon glyphicon-save-file"></span>&nbsp;Export To Excel
+           </button>
+  </div>
+  <div class="table-responsive no-padding" style="margin-top:2em;">
+    <table class="table table-bordered">
+      <thead>
+        <tr style="background-color:#3c8dbc;color:white;">
+          <th>SL NO</th>
+          <th>GROUP WORK</th>
+          <th>SUB GROUP</th>
+          <th>MATERIAL TYPE</th>
+          <th>PRODUCT</th>
+          <th>QTY</th>
+          <th>RATE</th>
+          <th>AMOUNT</th>  
+         </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of viewList;let odd = odd;let index = index" [class.even]="odd">
+          <td>{{ index + 1 }}</td>
+          <td>{{d.Budget_Group_Name}}</td>
+          <td>{{d.Budget_Sub_Group_Name}}</td>
+          <td>{{d.Type_Of_Product}}</td>
+          <td>{{d.Product_Description}}</td>
+          <td>{{getToFix(d.Qty)}}</td>
+          <td>{{getToFix(d.Rate)}}</td>
+          <td>{{getToFix(d.Amount)}}</td>
+          
+        </tr>
+        <tr>
+          <td colspan="8"> <div class="pull-right" style="font-weight: 700;">Total Amount- {{getGrTotal('view')}}</div> </td>
+          <td ></td>
+         </tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
+  <p-footer>
+    <button type="button" (click)="ViewModel = false" class="btn btn-default">
+      CANCEL
+    </button>
+  </p-footer>
+</p-dialog>
+
+  <!-- UPLOAD DOCUMENT -->
+ <p-dialog
+  [header]="'Upload/Show Document'"
+  [appendTo]="'body'"
+  [visible]="uploadModel"
+  [closeOnEscape]="true"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '75%', minWidth: '200px' }"
+  style="text-align: center;"
+  [minY]="70"
+  [maximizable]="true"
+  [baseZIndex]="10000"
+  >
+  <div class="form-horizontal">
+    <form name="doctypeForm" #doctypeForm="ngForm" novalidate>
+      <div class="form-group">
+      
+        <div class="col-sm-3">
+          <label class="control-label">Doc Type<sup class="text-danger">*</sup></label>
+          <select class="form-control"
+                  name="type"
+                  #type="ngModel"
+                  [(ngModel)]="docType"
+                  [ngClass]="{'clearance': doctypeFormSubmit && type.errors?.required}" required>
+                  <option  [ngValue]="undefined">Select</option>
+                  <option *ngFor='let option of doctypeList' [ngValue]="option.Document_Name">{{option.Document_Name }}</option>
+           </select>
+        </div>
+        <div class="col-sm-3" *ngIf="docType == 'Other'">
+          <label class="control-label">Other<sup class="text-danger">*</sup></label>
+          <input class="form-control"
+                  name="Other"
+                  #Other="ngModel"
+                  [(ngModel)]="docTypeOther"
+                  placeholder="Other"
+                  [ngClass]="{'clearance': doctypeFormSubmit && Other.errors?.required}"
+                  [required]="docType == 'Other'">
+        </div>
+        <div class="col-sm-6">
+          <label class="control-label">Upload Document</label>
+          <p-fileUpload #fileInput 
+                      *ngIf="!PDFViewFlag" 
+                      name="aFile566" 
+                      accept=".pdf, .png, .jpg, .jpeg, .xls, .xlsx" 
+                      [customUpload]="true" 
+                      [chooseLabel]="'Browse'" 
+                      [showUploadButton]="false" 
+                      (onSelect)="handleFileSelect($event)">
+                  </p-fileUpload>
+          <a [href]="ProductPDFLink" 
+              *ngIf="PDFViewFlag" 
+              style="display: block;">
+              <img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
+        </div>
+       </div>
+      <div class="box-footer">
+        <button
+        class="btn btn-primary pull-right custombutton"
+        (click)="SaveUploadDoc(doctypeForm.form.valid)"
+        id="load2"
+        [disabled]="SpinnerUpload"
+        >
+        <p-progressSpinner
+        *ngIf="SpinnerUpload"
+        [style]="{ width: '15px', height: '15px' }"
+        strokeWidth="8"
+        animationDuration=".5s"
+        ></p-progressSpinner>
+        <span
+        *ngIf="!SpinnerUpload"
+        class="glyphicon glyphicon-cloud-upload"
+        ></span
+        >&nbsp;UPLOAD
+        </button>
+      </div>
+      <div class="no-padding">
+        <p-table [value]="multipalDocTypeList"
+        [paginator]=""
+       [paginator]="true" 
+        [rows]="100" 
+        [rowHover]="true" 
+        [autoLayout]="true" 
+        sortMode="multiple" 
+        [rowsPerPageOptions]="[100,200,300]" 
+        [globalFilterFields]='["Document_Date","Document_Type","File_Name","Name"]'
+            [rowHover]="true" #doc>
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="doc.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                    </div>
+                </div>
+  
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <!-- <th style="width:5em">Action</th> -->
+                    <th nowrap="nowrap">Document Date</th>
+                    <th nowrap="nowrap">Document Type</th> 
+                    <th nowrap="nowrap">File</th>
+                    <th nowrap="nowrap">Upload By</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col>
+                <tr>
+                 <td>{{col.Document_Date | date: 'dd-MMM-yy'}}</td>
+                 <td>{{col.Document_Type}}</td>
+                 <td class="text-center"><a (click)="showImg(col.File_Name)" ><div style="font-size:2rem"><i style="color: #b14020;cursor: pointer;" class="fa fa-file-text-o"> </i></div></a></td>
+                 <td>{{col.Name}}</td>
+                 </tr>
+            </ng-template>
+            <ng-template pTemplate="paginatorright" let-state>
+                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+            </ng-template>
+        </p-table>
+    </div>
+     
+    </form>
+    
+  </div>
+  <p-footer>
+  <button
+    type="button"
+    (click)="uploadModel = false"
+    class="btn btn-info"
+  >  <span
+  class="glyphicon glyphicon-remove"
+  ></span
+  >&nbsp;
+    CLOSE
+  </button>
+  
+  </p-footer>
+  </p-dialog>

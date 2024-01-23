@@ -1,0 +1,374 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12">
+                <button type="button" pButton (click)="onReject()" label="ok" class="ui-button-danger" style="font-size: 20px;"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="d" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirmdel()" label="Yes" class="ui-button-success"></button>
+            </div>
+           <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Date Range</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getAlldata()" id="load" [disabled]="">
+                                            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                        </button>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Sub Ledger Name <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="DistSubledgerName" [(ngModel)]="SelectedDistSubledgerName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="subledgername"></p-multiSelect>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <div class="table-responsive no-padding">
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="Searchedlist" [paginator]="Searchedlist.length ? true : false"
+                                        [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                        [rowsPerPageOptions]="[100,200,300]"
+                                        [globalFilterFields]="SearchedlistHeader" [rowHover]="true" #dt1>
+    
+                                        <ng-template pTemplate="caption"  >
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                                        class="searchInput form-control">
+                                                </div>
+                                            </div>
+                                        </ng-template>
+    
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th>QC Doc No</th>
+                                                <th>QA Doc Date</th>
+                                                <th>Vendor</th>
+                                                <th>PO Doc No</th>
+                                                <th>PO Doc Date</th>
+                                                <th>PO Ref No</th>
+                                                <th>Created By</th>
+                                            </tr>
+                                        </ng-template>
+    
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr> 
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                        <i class="fa fa-fw fa-bars"></i>
+                                                                        <span class="caret"></span>
+                                                                    </button>
+                                                        <ul class="dropdown-menu">
+                                                                <li>
+                                                                    <a (click)="Print(col.Doc_No)">
+                                                                        <i class="fa fa-fw fa-print"></i> Print
+                                                                    </a>
+                                                                </li>
+                                                            <li>
+                                                                <a (click)="Delete(col)">
+                                                                    <i class="fa fa-fw fa-trash"></i> Delete
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                <td>{{col.Doc_No}}</td>
+                                                <td>{{ (col.Doc_Date | date: "dd/MMM/yyyy") }}</td>
+                                                <td>{{col.Sub_Ledger_Name}}</td>
+                                                <td>{{col.PO_Doc_No}}</td>
+                                                <td>{{ (col.PO_Doc_Date  | date: "dd/MMM/yyyy") }}</td>
+                                                <td>{{col.Ref_No}}</td>
+                                                <td>{{col.User_Name}}</td>
+                                            </tr>
+                                        </ng-template>
+    
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                                            {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                        </p-tabPanel>
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+
+                        <form name="QualityCheck" #QualityCheckForm="ngForm" novalidate>
+
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label class="control-label">PO No<sup class="text-danger">*</sup></label>                                 
+                                <p-dropdown [options]="RecvDocList"
+                                name="RecvDoc" 
+                                #RecvDoc="ngModel" 
+                                [(ngModel)]="ObjRaw.RecvDoc"
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Doc Found'" 
+                                [filter]="true" filterBy="label,value.name" 
+                                [resetFilterOnHide]="true" 
+                                [placeholder]="'Select Doc'" 
+                                [virtualScroll]="true"
+                                itemSize="30"
+                                [ngClass]="{clearance: QualityCheckFormSubmitted && RecvDoc?.errors?.required }" 
+                                required
+                                (onChange)="getDetails(ObjRaw.RecvDoc)"   
+                                > 
+                                </p-dropdown>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Vendor Name</label>
+                                <div class="label-t">{{this.ObjRaw.VendorName ? this.ObjRaw.VendorName : '-'}}</div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">PO Date</label>
+                                <div class="label-t">{{this.ObjRaw.PO_Doc_Date ? (this.ObjRaw.PO_Doc_Date | date: "dd/MMM/yyyy") : '-'}}</div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Reference No</label>
+                                <div class="label-t">{{this.ObjRaw.Ref_No ? this.ObjRaw.Ref_No : '-'}}</div>
+                            </div>
+                        </div>  
+                        
+                        <div class="row">
+                            <!-- <div class="col-sm-3">
+                                <label class="control-label">Vendor Inv Date</label>
+                                <div class="label-t">{{this.ObjRaw.VendorInvDate ? this.ObjRaw.VendorInvDate : '-'}}</div>
+                            </div> -->
+                            <div class="col-sm-3">
+                                <label class="control-label">Select Product<sup class="text-danger">*</sup></label>
+                                <p-dropdown [options]="SelectProductList"
+                                name="SelectProduct" 
+                                #SelectProduct="ngModel" 
+                                [(ngModel)]="ObjRaw.SelectProduct"
+                                [showClear]="true" 
+                                [emptyFilterMessage]="' No Product Found'" 
+                                [filter]="true" filterBy="label,value.name" 
+                                [resetFilterOnHide]="true" 
+                                [placeholder]="'Select Product'" 
+                                [virtualScroll]="true"
+                                itemSize="30"  
+                                [ngClass]="{clearance: QualityCheckFormSubmitted && SelectProduct?.errors?.required }" 
+                                required
+                                (onChange)="getParameterDetails(ObjRaw.SelectProduct)"   
+                                > 
+                                </p-dropdown>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive no-padding">
+                            <div class="table-responsive no-padding">
+                                <p-table [value]="RecDetalis" [paginator]="RecDetalis.length ? true : false"
+                                    [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                    [rowsPerPageOptions]="[100,200,300]"
+                                    [globalFilterFields]="RecDetalisHeader" [rowHover]="true" #dt>
+
+                                    <ng-template pTemplate="caption"  >
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search"
+                                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                    class="searchInput form-control">
+                                            </div>
+                                        </div>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th></th>
+                                            <th>Doc No</th>
+                                            <th>Doc Date</th>
+                                            <th>Inv No Date</th>
+                                            <th>Total Qty</th>
+                                            <th>SE No Date</th>
+                                            <th>Vehicle No</th>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td>
+                                                <!-- <input type="checkbox" id="col.confirmationInv" name="col.confirmationInv" value="col.confirmation_Inv"> -->
+                                                <p-checkbox name="col.Doc_No" value="col.RecNo" [(ngModel)]="col.Confirm_Rec_No" [binary]="true"></p-checkbox>
+                                            </td>
+                                            <td>{{col.Doc_No}}</td>
+                                            <td>{{col.Doc_Date | date: "dd/MMM/yyyy"}}</td>
+                                            <td>{{col.Inv_No_Date}}</td>
+                                            <td>{{col.Total_Qty}}</td>
+                                            <td>{{col.SE_No_Date}}</td>
+                                            <td>{{col.Vehicle_No}}</td>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                                        {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+
+                        <div class="table-responsive no-padding">
+                            <div class="table-responsive no-padding">
+                                <p-table [value]="allDetalis" [paginator]="allDetalis.length ? true : false"
+                                    [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                    [rowsPerPageOptions]="[100,200,300]"
+                                    [globalFilterFields]="allDetalisHeader" [rowHover]="true" #dt2>
+
+                                    <ng-template pTemplate="caption"  >
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search"
+                                                    (input)="dt2.filterGlobal($event.target.value, 'contains')"
+                                                    class="searchInput form-control">
+                                            </div>
+                                        </div>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="header">
+                                        <!-- <tr>
+                                            <th>Parameter Name</th>
+                                            <th>value</th>
+                                            <th></th>
+                                            <th>Remarks</th>
+                                        </tr> -->
+                                        <tr>
+                                            <th colspan="5" style="text-align: center;">As Per PO</th>
+                                            <th colspan="3" style="text-align: center;">As Per QA</th>
+                                            <th rowspan="3" style="text-align: center;">Deduction %</th>
+                                        </tr>
+                                        <tr>
+                                            <th rowspan="2" style="text-align: center;">Parameter Name</th>
+                                            <th colspan="2" style="text-align: center;">Required Value</th>
+                                            <th colspan="2" style="text-align: center;">Tolerance Level</th>
+                                            <th rowspan="2" style="text-align: center;">value</th>
+                                            <th rowspan="2" style="text-align: center;"></th>
+                                            <th rowspan="2" style="text-align: center;">Remarks</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Min</th>
+                                            <th>Max</th>
+                                            <th>Min</th>
+                                            <th>Max</th>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td>{{col.Parameter_Name}}</td>
+                                            <td>{{col.Min_Value}}</td>
+                                            <td>{{col.Max_Value}}</td>
+                                            <td>{{col.Min_Tolerance_Level}}%</td>
+                                            <td>{{col.Max_Tolerance_Level}}%</td>
+                                            <td>
+                                                <input class="form-control"
+                                                    CompacctDigitonly="true"
+                                                    name="QAvalue"
+                                                    [(ngModel)]="col.QA_Value" 
+                                                    style="width: 71px;"
+                                                    [ngClass]="{clearance: QualityCheckFormSubmitted && QAvalue?.errors?.required }" 
+                                                    required>     
+                                            </td>
+                                            <td>{{col.UOM}}</td>
+                                            <td><input type="text" name="col.Product_ID" [(ngModel)]='col.Remarks' class="form-control" style="width: 200px;" /></td>
+                                            <td>
+                                                <input class="form-control"
+                                                    CompacctDigitonly="true"
+                                                    name="deductionper"
+                                                    [(ngModel)]="col.Deduction_Perc" 
+                                                    style="width: 71px;"
+                                                    [ngClass]="{clearance: QualityCheckFormSubmitted && deductionper?.errors?.required }" 
+                                                    required>     
+                                            </td>
+                                        </tr>
+                                        <!-- <tr>
+                                            <td>{{col.Parameter_Name}}</td>
+                                            <td>
+                                                <input class="form-control"
+                                                    CompacctDigitonly="true"
+                                                    name="QAvalue"
+                                                    [(ngModel)]="col.QA_Value" 
+                                                    style="width: 71px;"
+                                                    [ngClass]="{clearance: QualityCheckFormSubmitted && QAvalue?.errors?.required }" 
+                                                    required
+                                                >     
+                                            </td>
+                                            <td>{{col.UOM}}</td>
+                                            <td><input type="text" name="col.Product_ID" [(ngModel)]='col.Remarks' class="form-control" style="width: 200px;" /></td>
+                                        </tr> -->
+                                    </ng-template>
+
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                                        {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+
+                        <div class="clearfix">
+                            <div class="col-sm-4">
+                                <label class="control-label">Remarks</label>
+                                <textarea class="form-control" name="Remarks" #Remarks="ngModel" [(ngModel)]="ObjRaw.Remarks" rows="2" placeholder="Remarks"></textarea>
+                            </div>
+                         </div>
+
+                        <br>
+                        <div class="row">
+                            <button class="btn btn-primary pull-right" (click)="SaveDoc(QualityCheckForm.form.valid)"  id="load"   [disabled]="">
+                                <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                              <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                            </button>
+                        </div>
+
+                        </form>
+
+                        </p-tabPanel>
+
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -44,6 +44,7 @@ export class IssueStockAdjustmentComponent implements OnInit {
   BrandId = undefined;
   remarks = undefined;
   dateList: any;
+  del_doc_no = undefined;
 
   constructor(
     private Header: CompacctHeader,
@@ -64,8 +65,6 @@ export class IssueStockAdjustmentComponent implements OnInit {
     this.GetBrand();
     this.getCostCenter();
   }
-  onReject(){}
-  onConfirm(){}
   TabClick(e){
     //console.log(e)
     this.tabIndexToView = e.index;
@@ -364,6 +363,51 @@ const obj = {
 
       this.ViewPoppup = true;
     })
+  }
+  DeleteAdjustment(row){
+    // console.log("delete",row)
+     this.del_doc_no = undefined;
+     if (row.Doc_No) {
+      this.del_doc_no = row.Doc_No;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+   }
+    onConfirm(){
+     if(this.del_doc_no){
+       const TempObj = {
+         Doc_No : this.del_doc_no
+       }
+       const obj = {
+         "SP_String": "SP_Add_ON",
+         "Report_Name_String": "Delete_Stock_Adjustment",
+         "Json_Param_String": JSON.stringify([TempObj])
+       }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        // console.log("del Data===", data[0].Column1)
+          if (data[0].Column1 === "Done"){
+            this.onReject();
+            this.GetSearchedList(true);
+            this.compacctToast.clear();
+            this.compacctToast.add({
+              key: "compacct-toast",
+              severity: "success",
+              summary: "Doc No.: " + this.del_doc_no.toString(),
+              detail: "Succesfully Deleted"
+            });
+            this.clearData();
+          }
+        })
+     }
+   }
+   onReject() {
+    this.compacctToast.clear("c");
   }
   clearData(){
     if(this.$CompacctAPI.CompacctCookies.User_Type != "A"){

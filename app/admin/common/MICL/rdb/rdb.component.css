@@ -1,0 +1,137 @@
+
+div.label-t {
+    padding: 6px 12px;
+    background: rgb(206 216 216 / 51%);
+  }
+#ui-tabpanel-0>div>p-table>div>div.ui-table-wrapper.ng-star-inserted {
+    width: auto !important;
+}
+div.table-responsive.table-id>p-table>div>div {
+    width: auto !important;
+}
+.ui-table-auto-layout > .ui-table-wrapper{
+    width: auto !important;
+}
+.box-body {
+    padding-top: 10px !important;
+    padding-left: 10px !important;
+}
+body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+    border-bottom: 1px solid #c1c1c1 !important;
+    margin-bottom: 0px;
+}
+
+/* .ta-editor {
+    min-height: 160px;
+} */
+
+/* body .ui-widget {
+    font-family: source sans pro, sans-serif !important;
+} */
+
+textarea.form-control {
+    height: auto;
+}
+
+.btn {
+    border: red;
+}
+
+.box.boxboxDivide-primary {
+    border-top-color: #f3efec;
+    height: 10px;
+    border: 0;
+    box-shadow: 0 10px 10px -10px #8c8b8b inset;
+}
+.pull-right {
+    float: right!important;
+}
+
+.custombutton {
+    margin-top: 28px;
+    /* margin-left: 130px; */
+}
+.custombutton1 {
+    margin-top: 22px;
+    /* margin-left: 130px; */
+}
+
+
+/* .custombutton1 {
+    margin-top: 28px;
+  } */
+
+.custombutton3 {
+    margin-top: 28px;
+}
+
+.pullright2 {
+    margin-left: -80px;
+    /* margin-top: 25px; */
+}
+
+
+/* .col-sm-2 {
+    width: 40%;
+} */
+
+div.label-t {
+    padding: 6px 12px;
+    background: rgb(206 216 216 / 51%);
+}
+
+.text-red-active>td {
+    color: red;
+}
+
+.bg-color {
+    background-color: #F5B7B1 !important;
+}
+
+.text-green-active>td {
+    color: rgb(33, 110, 17);
+}
+
+.custombutton2 {
+    margin-top: 21px;
+    margin-left: 10px;
+}
+
+.col-sm-1 {
+    width: 8.33333333%;
+    margin-top: 7px;
+}
+
+.text-red-active>td {
+    color: red;
+}
+
+.text-orange-active>td {
+    color: rgb(236, 97, 3);
+}
+
+.text-blue-active>td {
+    color: rgb(16, 24, 131);
+}
+
+fieldset {
+    border: 1px solid #ddd !important;
+    margin: 0;
+    min-width: 0;
+    padding: 10px;
+    position: relative;
+    border-radius: 4px;
+    background-color: #f5f5f5;
+    padding-left: 10px!important;
+}
+
+legend {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 0px;
+    width: fit-content;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0px 10px 0px 10px;
+    background-color: #ffffff;
+}

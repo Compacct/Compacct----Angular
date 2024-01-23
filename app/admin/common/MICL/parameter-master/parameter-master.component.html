@@ -1,0 +1,222 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+           <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<p-toast position="center" key="d" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm1()" label="Yes" class="ui-button-success"></button>
+            </div>
+           <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <div class="table-responsive no-padding">
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="allDetalis" [paginator]="allDetalis.length ? true : false"
+                                        [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                        [rowsPerPageOptions]="[100,200,300]"
+                                        [globalFilterFields]="allDetalisHeader" [rowHover]="true" #dt>
+
+                                        <ng-template pTemplate="caption"  >
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                        class="searchInput form-control">
+                                                </div>
+                                                <!-- <div class="col-sm-1 pull-right">
+                                                    <button class="btn btn-primary" (click)="BrowseParameter()">
+                                                    <span class="glyphicon glyphicon-refresh"></span>
+                                                </button>
+                                                </div> -->
+                                            </div>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width: 5em">Action</th>
+                                                <th>Parameter Name</th>
+                                                <th>UOM</th>
+                                                <th>DR Note Criteria</th>
+                                                <th>Effect In</th>
+                                                <th>Tolerance Level</th>
+                                            </tr>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr [class]='col.Is_Active === "N" ? "text-red-active" : ""'>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button
+                                                            class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                            type="button" data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+
+                                                         <ul class="dropdown-menu">
+                                                            <li *ngIf="col.Is_Active == 'Y'">
+                                                                <a (click)="EditParameter(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li>
+
+                                                            <li *ngIf="col.Is_Active == 'Y'" >
+                                                                <a (click)="InactiveParameter(col)">
+                                                                    <i class="fa fa-fw fa-trash"></i> Inactive
+                                                                </a>
+                                                            </li>
+
+                                                            <li *ngIf="col.Is_Active == 'N'" >
+                                                                <a (click)="ActiveParameter(col)">
+                                                                    <i class="fa fa-power-off"></i> Active
+                                                                </a>
+                                                            </li> 
+                                                         </ul>
+
+                                                    </div>
+                                                </td>
+                                                <td>{{col.Parameter_Name}}</td>
+                                                <td>{{col.UOM}}</td>
+                                                <td>{{col.DR_Note_Criteria}}</td>
+                                                <td>{{col.Effect_In}}</td>
+                                                <td>{{col.Tolerance_Level}}</td>
+                                            </tr>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                                            {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                        </p-tabPanel>
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="ParameterMaster" #ParameterMasterForm="ngForm" novalidate>
+                                
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Parameter Name<sup class="text-danger">*</sup></label>                                 
+                                        <input class="form-control"
+                                        name="Parameter_Name"
+                                        #Parameter_Name="ngModel"
+                                        [(ngModel)]="ObjMaster.Parameter_Name" 
+                                        [ngClass]="{clearance: ParameterMasterFormSubmitted && Parameter_Name?.errors?.required }" 
+                                        required
+                                        > 
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">UOM<sup class="text-danger">*</sup></label>                                 
+                                        <input class="form-control"
+                                        name="UOM"
+                                        #UOM="ngModel"
+                                        [(ngModel)]="ObjMaster.UOM" 
+                                        [ngClass]="{clearance: ParameterMasterFormSubmitted && UOM?.errors?.required }"
+                                        required
+                                        > 
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">DR Note Criteria<sup class="text-danger">*</sup></label>                                 
+                                        <select class="form-control"
+                                                name="DR_Note_Criteria"
+                                                #DR_Note_Criteria="ngModel" 
+                                                [(ngModel)]="ObjMaster.DR_Note_Criteria"
+                                                [ngClass]="{clearance: ParameterMasterFormSubmitted && DR_Note_Criteria?.errors?.required }"
+                                                required
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of DRList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                        </select> 
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Effect In<sup class="text-danger">*</sup></label>                             
+                                        <select class="form-control"
+                                                name="Effect_In"
+                                                #Effect_In="ngModel" 
+                                                [(ngModel)]="ObjMaster.Effect_In"
+                                                [ngClass]="{clearance: ParameterMasterFormSubmitted && Effect_In?.errors?.required }"
+                                                required
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of EffectList" value="{{option}}">
+                                                    {{option}}
+                                                </option>
+                                        </select> 
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Tolerance Level<sup class="text-danger">*</sup></label>
+                                        <div class="input-group">
+                                            <input class="form-control"
+                                            CompacctDigitonly="true"
+                                            name="Tolerance_Level"
+                                            #Tolerance_Level="ngModel"
+                                            [(ngModel)]="ObjMaster.Tolerance_Level" 
+                                            [ngClass]="{clearance: ParameterMasterFormSubmitted && Tolerance_Level?.errors?.required }"
+                                            required
+                                            maxlength="2"> 
+
+                                            <div class="input-group-addon">
+                                                %
+                                            </div> 
+
+                                        </div>
+                                    </div>
+                                </div>  
+                                
+                                <br>
+
+                                <div class="row">
+                                    <button class="btn btn-primary pull-right" (click)="SaveParameter(ParameterMasterForm.form.valid)"  id="load"   [disabled]="">
+                                        <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                    </button>
+                                </div> 
+
+                            </form>
+                        </p-tabPanel>
+
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

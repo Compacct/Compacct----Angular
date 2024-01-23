@@ -1,0 +1,1042 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+           <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                        <form name="SearchSalesMISForm" #SearchSalesMISForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Date</label>
+                                     <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetSalesMIS()" id="load" [disabled]="seachSpinner">
+                                      <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Show MIS
+                                   </button>
+                                </div>
+                                <div class="col-sm-2" *ngIf="SalesMISList.length">
+                                    <button  class="btn btn-success custombutton"  (click)="ExportToExcel()">Export To Excel</button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr>
+                        <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt"> -->
+                            <div class="table-responsive no-padding" *ngIf="SalesMISList.length">
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="SalesMISList" [paginator]="SalesMISList.length ? true : false"
+                                        [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                        [rowsPerPageOptions]="[100,200,300]"
+                                        [globalFilterFields]="SalesMISListHeader" [rowHover]="true" #dt>
+
+                                        <ng-template pTemplate="caption"  >
+                                            <div class="row">
+                                                <div class="col-sm-2 custombutton1">
+                                                    <p-multiSelect [options]="DistLiCustomer" defaultLabel="Select a Customer" [(ngModel)]="SelectedDistLiCustomer" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="LI_Customer"></p-multiSelect>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <p-multiSelect [options]="DistProductName" defaultLabel="Select a Product" [(ngModel)]="SelectedDistProductName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Product_Name"></p-multiSelect>
+                                                </div>
+                                                <div class="col-sm-2 custombutton2">
+                                                    <label class="control-label"></label>
+                                                    <div class="checkBox">
+                                                        <label class="pull-right">
+                                                       <p-checkbox  [(ngModel)]="PendingLIfilterFLag"  name="pendinglifilter"  (onChange)="PendingLIFilter()"  binary="true" ></p-checkbox>
+                                                       Show Only Pending LI
+                                                   </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2 custombutton2">
+                                                    <label class="control-label"></label>
+                                                    <div class="checkBox">
+                                                        <label class="pull-right">
+                                                       <p-checkbox  [(ngModel)]="PendingSOfilterFLag"  name="pendingsofilter"  (onChange)="PendingSOFilter()"  binary="true" ></p-checkbox>
+                                                       Show Only Pending SO
+                                                   </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                        class="searchInput form-control">
+                                                </div>
+                                                <!-- <div class="col-sm-1 pull-right">
+                                                    <button class="btn btn-primary" (click)="GetSalesMIS()">
+                                                    <span class="glyphicon glyphicon-refresh"></span>
+                                                </button>
+                                                </div> -->
+                                            </div>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <!-- <th style="width: 5em">Action</th> -->
+                                                <th nowrap colspan="7" style="text-align: center; color: black !important;
+                                                background-color: #9ab8cb !important; border: 1px solid black !important;">AS PER LETTER OF INTENT
+                                                </th>
+                                                <!-- <th nowrap colspan="3" style="text-align: center; color: black !important;
+                                                background-color: #e5b694 !important; border: 1px solid black !important;">AS PER PROFORMA INVOICE
+                                                </th> -->
+                                                <th nowrap colspan="3" style="text-align: center; color: black !important;
+                                                background-color: #f6d889 !important; border: 1px solid black !important;">AS PER SALES ORDER
+                                                </th>
+                                                <th nowrap colspan="2" style="text-align: center; color: black !important;
+                                                background-color: #9ec990 !important; border: 1px solid black !important;">AS PER DELIVERY CHALLAN
+                                                </th>
+                                                <th nowrap colspan="2" style="text-align: center; color: black !important;
+                                                background-color: #d9d8db !important; border: 1px solid black !important;">AS PER INVOICE
+                                                </th>
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #8691ce !important; border: 1px solid black !important;">RECEIPT / ADJUSTMENT
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #9ab8cb !important; border: 1px solid black !important;">Doc No</th>
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #9ab8cb !important; border: 1px solid black !important;">Date</th>
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #9ab8cb !important; border: 1px solid black !important;">Customer</th>
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #9ab8cb !important; border: 1px solid black !important;">Product Name</th>
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #9ab8cb !important; border: 1px solid black !important;">Qty</th>
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #9ab8cb !important; border: 1px solid black !important;">Amount</th>
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #9ab8cb !important; border: 1px solid black !important;">Pending Qty</th>
+
+                                                <!-- <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #e5b694 !important; border: 1px solid black !important;">Qty</th>
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #e5b694 !important; border: 1px solid black !important;">Amount</th>
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #e5b694 !important; border: 1px solid black !important;">Pending Qty</th> -->
+
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #f6d889 !important; border: 1px solid black !important;">Qty</th>
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #f6d889 !important; border: 1px solid black !important;">Amount</th>
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #f6d889 !important; border: 1px solid black !important;">Pending Qty</th>
+
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #9ec990 !important; border: 1px solid black !important;">Qty</th>
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #9ec990 !important; border: 1px solid black !important;">Amount</th>
+
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #d9d8db !important; border: 1px solid black !important;">Qty</th>
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #d9d8db !important; border: 1px solid black !important;">Amount</th>
+                                                
+                                                <th nowrap style="text-align: center; color: black !important;
+                                                background-color: #8691ce !important; border: 1px solid black !important;">Amount</th>
+                                            </tr>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <!-- <td>
+                                                    <div class="dropdown">
+                                                        <button
+                                                            class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                            type="button" data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+
+                                                         <ul class="dropdown-menu">
+                                                            <li *ngIf="col.Is_Active == 'Y'">
+                                                                <a (click)="EditParameter(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li>
+
+                                                            <li *ngIf="col.Is_Active == 'Y'" >
+                                                                <a (click)="InactiveParameter(col)">
+                                                                    <i class="fa fa-fw fa-trash"></i> Inactive
+                                                                </a>
+                                                            </li>
+
+                                                            <li *ngIf="col.Is_Active == 'N'" >
+                                                                <a (click)="ActiveParameter(col)">
+                                                                    <i class="fa fa-power-off"></i> Active
+                                                                </a>
+                                                            </li> 
+                                                         </ul>
+
+                                                    </div>
+                                                </td> -->
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetLIview(col)">{{col.LI_Doc_No}}</a></td>
+                                                <td nowrap style="text-align: center;">{{col.LI_Doc_Date | date:"dd/MMM/yyyy"}}</td>
+                                                <td nowrap style="text-align: center;">{{col.LI_Customer}}</td>
+                                                <td nowrap style="text-align: center;">{{col.Product_Name}}</td>
+                                                <td nowrap style="text-align: center;">{{col.LI_Qty}}</td>
+                                                <td nowrap style="text-align: center;">{{col.LI_Amount}}</td>
+                                                <td nowrap style="text-align: center;">{{col.Pending_LI_Qty}}</td>
+                                                <!-- <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetPI(col)">{{col.PI_Qty}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetPI(col)">{{col.PI_Total_Amount}}</a></td>
+                                                <td nowrap style="text-align: center;">{{col.Pending_PI_Qty}}</td> -->
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetSO(col)">{{col.SO_Qty}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetSO(col)">{{col.SO_Total_Amount}}</a></td>
+                                                <td nowrap style="text-align: center;">{{col.Pending_SO_Qty}}</td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetOC(col)">{{col.SC_Qty}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetOC(col)">{{col.SC_Total_Amount}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetSB(col)">{{col.SB_Qty}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetSB(col)">{{col.SB_Total_Amount}}</a></td>
+                                                <td nowrap style="text-align: center;"><a class="btn btn-link" (click)="GetRA(col)">{{col.RA_Total_Amount}}</a></td>
+                                            </tr>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                                            {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt">
+                        <form name="SearchSalesMISForm" #SearchSalesMISForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Date</label>
+                                     <app-compacct-daterangepicker (DaterangeObj)="getDispatchMISDateRange($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetDispatchMIS()" id="load" [disabled]="seachSpinner">
+                                      <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Show Dispatch MIS
+                                   </button>
+                                </div>
+                                <div class="col-sm-2" *ngIf="DispatchMISList.length">
+                                    <button  class="btn btn-success custombutton"  (click)="ExportToExcelDispatchMIS()">Export To Excel</button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr>
+                            <div class="table-responsive no-padding" *ngIf="DispatchMISList.length">
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="DispatchMISList" [paginator]="DispatchMISList.length ? true : false"
+                                        [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                        [rowsPerPageOptions]="[100,200,300]"
+                                        [globalFilterFields]="DispatchMISListHeader" [rowHover]="true" #dt>
+
+                                        <ng-template pTemplate="caption"  >
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                        class="searchInput form-control">
+                                                </div>
+                                            </div>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th rowspan="2">SL NO</th>
+                                                <th rowspan="2">NAME OF THE CUSTOMER</th>
+                                                <th [attr.colspan]="DispatchMISListHeader.length - 3" nowrap="nowrap" style="text-align: center;">Grade</th>
+                                                <th rowspan="2">Total</th>
+                                            </tr>
+                                            <tr>
+                                                <ng-container *ngFor="let option of DispatchMISListHeader">
+                                                    <th *ngIf="option != 'SlNo' && option != 'Sub_Ledger_Billing_Name' && option != 'Total'" nowrap="nowrap" >
+                                                    {{option.replaceAll('_',' ')}}
+                                                </th>
+                                                </ng-container>
+                                            </tr>
+                                                
+                                                
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                            <tr>
+                                                <ng-container *ngFor="let option of DispatchMISListHeader">
+                                                    <td nowrap="nowrap">{{col[option]}}</td>
+                                                </ng-container>
+                                                
+                                            </tr>
+                                            <tr *ngIf='rowIndex === (DispatchMISList.length - 1)'>
+                                                <ng-container *ngFor="let option of DispatchMISListHeader">
+                                                     <td *ngIf="option == 'SlNo'" colspan="2" style="text-align: right;">Total</td>
+                                                     <td *ngIf="option != 'SlNo' && option != 'Sub_Ledger_Billing_Name' " >{{CalculateColumn(option)}}</td>
+                                                </ng-container>
+                                                    
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                        </ng-template>
+
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                                            {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                    </p-tabPanel>
+
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- LI view -->
+<p-dialog
+[header]="'LI VIEW'"
+[appendTo]="'body'"
+[(visible)]="LIviewPopup"
+[draggable]="true"
+[closeOnEscape]="true"
+[closable]="true"
+[modal]="true"
+[responsive]="true"
+[style]="{width: '80%', minWidth: '300px'}"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+        <h3>Buyer's Details/Challan to:</h3>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Buyer's</label>
+                <div class="label-t">{{LIviewData?.Sub_Ledger_Name ? LIviewData?.Sub_Ledger_Name : '-' }}</div>
+            </div>
+            <!-- <div class="col-sm-4">
+                <label class="control-label">Choose Address</label>
+                <div class="label-t">{{LIviewData?.Choose_Address}}</div>
+            </div> -->
+
+            <div class="col-sm-4">
+                <label class="control-label">Address </label>
+                <div class="label-t">{{LIviewData?.Sub_Ledger_Address_1 ? LIviewData?.Sub_Ledger_Address_1 : '-' }}</div>
+
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">District </label>
+                <div class="label-t">{{LIviewData?.Sub_Ledger_District ? LIviewData?.Sub_Ledger_District : '-' }}</div>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">State </label>
+                <div class="label-t">{{LIviewData?.Sub_Ledger_State ? LIviewData?.Sub_Ledger_State : '-' }}</div>
+
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">PIN </label>
+                <div class="label-t">{{LIviewData?.Sub_Ledger_Pin ? LIviewData?.Sub_Ledger_Pin : '-' }}</div>
+
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">GST No </label>
+                <div class="label-t">{{LIviewData?.Sub_Ledger_GST_No ? LIviewData?.Sub_Ledger_GST_No : '-' }}</div>
+
+            </div>
+        </div>
+        <div class="clearfix"></div>
+<br>
+        <h3>CostCente Details :</h3>
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="control-label">CostCenter </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_Name ? LIviewData?.Cost_Cen_Name : '-' }}</div>
+
+                </div>
+                <div class="col-sm-6">
+                    <label class="control-label">Address1 </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_Address1 ? LIviewData?.Cost_Cen_Address1 : '-' }}</div>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="control-label">Address2 </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_Address2 ? LIviewData?.Cost_Cen_Address2 : '-' }}</div>
+
+                </div>
+                <div class="col-sm-6">
+                    <label class="control-label">State </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_State ? LIviewData?.Cost_Cen_State : '-' }}</div>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="control-label">GST No </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_GST_No ? LIviewData?.Cost_Cen_GST_No : '-' }}</div>
+
+                </div>
+                <div class="col-sm-6">
+                    <label class="control-label">Location </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_Location ? LIviewData?.Cost_Cen_Location : '-' }}</div>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="control-label">PIN </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_PIN ? LIviewData?.Cost_Cen_PIN : '-' }}</div>
+
+                </div>
+                <div class="col-sm-6">
+                    <label class="control-label">District </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_District ? LIviewData?.Cost_Cen_District : '-' }}</div>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="control-label">Country </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_Country ? LIviewData?.Cost_Cen_Country : '-' }}</div>
+
+                </div>
+                <div class="col-sm-6">
+                    <label class="control-label">Mobile </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_Phone ? LIviewData?.Cost_Cen_Phone : '-' }}</div>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="control-label">Phone </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_Phone ? LIviewData?.Cost_Cen_Phone : '-' }}</div>
+
+                </div>
+                <div class="col-sm-6">
+                    <label class="control-label">Email </label>
+                    <div class="label-t">{{LIviewData?.Cost_Cen_Email ? LIviewData?.Cost_Cen_Email : '-' }}</div>
+    
+                </div>
+            </div>
+    <br>
+    <div class="clearfix"></div>
+    <br>
+<div class="table-responsive no-padding">
+<table class="table table-bordered">
+<thead style="background-color:#3c8dbc;color:white;">
+<tr style="background-color:#3c8dbc;color:white;">
+<!-- <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Cost Center</th>
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Stock Point</th> -->
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Type</th>
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Sub Type</th>
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Description</th>
+<!-- <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Lot No./Batch No.</th> -->
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">QTY</th>
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">UOM</th>
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Rate</th>
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Taxable Amount</th>
+<th colspan="2" scope="colgroup" class="text-center">CGST</th>
+<th colspan="2" scope="colgroup" class="text-center">SGST</th>
+<th colspan="2" scope="colgroup" class="text-center">IGST</th>
+<th rowspan="2" class="text-center" style="vertical-align:middle">Net Amount</th>
+</tr>
+<tr style="background-color:#3c8dbc;color:white">
+<th scope="col" class="text-center">Rate</th>
+<th scope="col" class="text-center">Amt.</th>
+<th scope="col" class="text-center">Rate</th>
+<th scope="col" class="text-center">Amt.</th>
+<th scope="col" class="text-center">Rate</th>
+<th scope="col" class="text-center">Amt.</th>
+</tr>
+</thead>
+<tbody>
+<tr *ngFor=" let tabledata of AddProdList; let ind = index;">
+<!-- <td>{{ tabledata.Cost_Cen_Name }}</td>
+<td>{{ tabledata.godown_name }}</td> -->
+<td>{{ tabledata.Product_Type ? tabledata.Product_Type : '-' }}</td>
+<td>{{ tabledata.Product_Sub_Type ? tabledata.Product_Sub_Type : '-' }}</td>
+<td>{{ tabledata.Product_Specification ? tabledata.Product_Specification : '-' }}</td>
+<!-- <td>{{ tabledata.Batch_No_Show }}</td> -->
+<td>{{ tabledata.Qty ? tabledata.Qty : '-' }}</td>
+<td>{{ tabledata.UOM ? tabledata.UOM : '-' }}</td>
+<td>{{ tabledata.Rate ? tabledata.Rate : '-' }}</td>
+<td>{{ tabledata.Taxable_unt ? tabledata.Taxable_unt : '-'}}</td>
+<td>{{ tabledata.CGST_Rate ? tabledata.CGST_Rate : '-' }}</td>
+<td>{{ tabledata.CGST_Amt ? tabledata.CGST_Amt : '-' }}</td>
+<td>{{ tabledata.SGST_Rate ? tabledata.SGST_Rate : '-' }}</td>
+<td>{{ tabledata.SGST_Amt ? tabledata.SGST_Amt : '-' }}</td>
+<td>{{ tabledata.IGST_Rate ? tabledata.IGST_Rate : '-' }}</td>
+<td>{{ tabledata.IGST_Amt ? tabledata.IGST_Amt : '-' }}</td>
+<td>{{ tabledata.Line_Total_Amount ? tabledata.Line_Total_Amount : '-' }}</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="col-xs-12">
+<div class="table-responsive">
+<table class="table">
+<tbody>
+<tr>
+<th>Taxable Amount :</th>
+<td class="amt-td ng-binding">{{Tax}}</td>
+</tr>
+<tr>
+<th>CGST Amount :</th>
+<td class="amt-td ng-binding">{{CGST}}</td>
+<th>SGST Amount :</th>
+<td class="amt-td ng-binding">{{SGST}}</td>
+<th>IGST Amount :</th>
+<td class="amt-td ng-binding">{{IGST}}</td>
+</tr>
+<tr>
+<th>Net Amount : </th>
+<td class="amt-td ng-binding">{{NetAMT}}</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>                         
+
+    
+
+<p-footer>
+    <button
+    type="button"
+    (click)="LIpopupCancle()"
+    class="btn btn-default"
+    ><span class="glyphicon glyphicon-remove"></span>
+    CLOSE
+    </button>
+
+</p-footer>
+</p-dialog>
+
+<!-- PI -->
+<p-dialog
+[header]="'PI'"
+[appendTo]="'body'"
+[(visible)]="PIPopup"
+[closeOnEscape]="true"
+[closable]="true"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '65%', minWidth: '200px' }"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+    <p-table [value]="PIList" 
+    [globalFilterFields]='PIListHeader' [rowHover]="true" [autoLayout]="true" #dt2>
+        <ng-template pTemplate="caption">
+            <div class="row">
+                <div class="col-sm-3 pull-right" style="text-align: right">
+                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                </div>
+            </div> <br>
+
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>PI No</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Qty</th>
+                <th>Amount</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+            <tr>
+                <td><a class="btn btn-link" (click)="GetPIviewDetails(col)">{{col.PI_Doc_No}}</a></td>
+                <td>{{col.PI_Doc_Date | date : "dd/MMM/yy"}}</td>
+                <td>{{col.PI_Customer ? col.PI_Customer : '-'}}</td>
+                <td>{{col.PI_Qty ? col.PI_Qty : '-'}}</td>
+                <td>{{col.PI_Amount ? col.PI_Amount : '-'}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="PIPopup = false"
+    class="btn btn-default"
+    >
+    CANCEL
+    </button>
+
+</p-footer>
+</p-dialog>
+<!-- PI view -->
+<p-dialog
+[header]="'PI VIEW'"
+[appendTo]="'body'"
+[(visible)]="PIviewPopup"
+[draggable]="true"
+[closeOnEscape]="true"
+[closable]="true"
+[modal]="true"
+[responsive]="true"
+[style]="{width: '80%', minWidth: '300px'}"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+    <h3>Buyer's Details/Challan to:</h3>
+            <div class="form-group">
+                <div class="col-sm-4">
+                    <label class="control-label">Buyer's</label>
+                    <div class="label-t">{{PIviewData?.Sub_Ledger_Name ? PIviewData?.Sub_Ledger_Name : '-' }}</div>
+                </div>
+                <!-- <div class="col-sm-4">
+                    <label class="control-label">Choose Address</label>
+                    <div class="label-t">{{LIviewData?.Choose_Address}}</div>
+                </div> -->
+
+                <div class="col-sm-4">
+                    <label class="control-label">Address </label>
+                    <div class="label-t">{{PIviewData?.Sub_Ledger_Address_1 ? PIviewData?.Sub_Ledger_Address_1 : '-' }}</div>
+
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">District </label>
+                    <div class="label-t">{{PIviewData?.Sub_Ledger_District ? PIviewData?.Sub_Ledger_District : '-' }}</div>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-4">
+                    <label class="control-label">State </label>
+                    <div class="label-t">{{PIviewData?.Sub_Ledger_State ? PIviewData?.Sub_Ledger_State : '-' }}</div>
+
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">PIN </label>
+                    <div class="label-t">{{PIviewData?.Sub_Ledger_Pin ? PIviewData?.Sub_Ledger_Pin : '-' }}</div>
+
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">GST No </label>
+                    <div class="label-t">{{PIviewData?.Sub_Ledger_GST_No ? PIviewData?.Sub_Ledger_GST_No : '-' }}</div>
+
+                </div>
+            </div> 
+            <div class="clearfix"></div>
+    <br>
+            <h3>CostCente Details :</h3>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        <label class="control-label">CostCenter </label>
+                        <div class="label-t">{{PIviewData?.Cost_Cen_Name ? PIviewData?.Cost_Cen_Name : '-' }}</div>
+    
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="control-label">Address1 </label>
+                        <div class="label-t">{{PIviewData?.Cost_Cen_Address1 ? PIviewData?.Cost_Cen_Address1 : '-' }}</div>
+    
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="control-label">Address2 </label>
+                        <div class="label-t">{{PIviewData?.Cost_Cen_Address2 ? PIviewData?.Cost_Cen_Address2 : '-' }}</div>
+    
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">State </label>
+                        <div class="label-t">{{PIviewData?.Cost_Cen_State ? PIviewData?.Cost_Cen_State : '-' }}</div>
+    
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">GST No </label>
+                        <div class="label-t">{{PIviewData?.Cost_Cen_GST_No ? PIviewData?.Cost_Cen_GST_No : '-' }}</div>
+    
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Location </label>
+                        <div class="label-t">{{PIviewData?.Cost_Cen_Location ? PIviewData?.Cost_Cen_Location : '-' }}</div>
+    
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">PIN </label>
+                        <div class="label-t">{{PIviewData?.Cost_Cen_PIN ? PIviewData?.Cost_Cen_PIN : '-' }}</div>
+    
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">District </label>
+                        <div class="label-t">{{PIviewData?.Cost_Cen_District ? PIviewData?.Cost_Cen_District : '-' }}</div>
+    
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Country </label>
+                        <div class="label-t">{{PIviewData?.Cost_Cen_Country ? PIviewData?.Cost_Cen_Country : '-' }}</div>
+    
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Mobile </label>
+                        <div class="label-t">{{PIviewData?.Cost_Cen_Phone ? PIviewData?.Cost_Cen_Phone : '-' }}</div>
+    
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Phone </label>
+                        <div class="label-t">{{PIviewData?.Cost_Cen_Phone ? PIviewData?.Cost_Cen_Phone : '-' }}</div>
+    
+                    </div>
+                </div>
+            <div class="form-group">
+                <div class="col-sm-3">
+                    <label class="control-label">Email </label>
+                    <div class="label-t">{{PIviewData?.Cost_Cen_Email ? PIviewData?.Cost_Cen_Email : '-' }}</div>
+
+                </div>
+            </div>
+        <br>
+    <div class="clearfix"></div>
+    <br>
+<div class="table-responsive no-padding">
+<table class="table table-bordered">
+<thead style="background-color:#3c8dbc;color:white;">
+<tr style="background-color:#3c8dbc;color:white;">
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">LI Doc No</th>
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">LI Doc Date</th>
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Ref Doc No</th>
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Ref Doc Date</th>
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Description</th>
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">LI QTY</th>
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">PI QTY</th>
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Sale Order QTY</th>
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Sale Bill QTY</th>
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">UOM</th>
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Rate</th>
+<th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Taxable Amount</th>
+<th colspan="2" scope="colgroup" class="text-center">CGST</th>
+<th colspan="2" scope="colgroup" class="text-center">SGST</th>
+<th colspan="2" scope="colgroup" class="text-center">IGST</th>
+<th rowspan="2" class="text-center" style="vertical-align:middle">Net Amount</th>
+</tr>
+<tr style="background-color:#3c8dbc;color:white">
+<th scope="col" class="text-center">Rate</th>
+<th scope="col" class="text-center">Amt.</th>
+<th scope="col" class="text-center">Rate</th>
+<th scope="col" class="text-center">Amt.</th>
+<th scope="col" class="text-center">Rate</th>
+<th scope="col" class="text-center">Amt.</th>
+</tr>
+</thead>
+<tbody>
+<tr *ngFor=" let tabledata of AddPIProdList; let ind = index;">
+<td>{{ tabledata.LI_Doc_No }}</td>
+<td>{{ tabledata.LI_Doc_Date | date : "dd/MMM/yy" }}</td>
+<td>{{ tabledata.Ref_Doc_No }}</td>
+<td>{{ tabledata.Ref_Doc_Date | date : "dd/MMM/yy" }}</td>
+<td>{{ tabledata.Product_Specification ? tabledata.Product_Specification : '-' }}</td>
+<!-- <td>{{ tabledata.Batch_No_Show }}</td> -->
+<td>{{ tabledata.LI_Qty }}</td>
+<td>{{ tabledata.Qty }}</td>
+<td>{{ tabledata.Sale_Order_Qty }}</td>
+<td>{{ tabledata.Sale_Bill_Qty }}</td>
+<td>{{ tabledata.UOM ? tabledata.UOM : '-' }}</td>
+<td>{{ tabledata.Rate ? tabledata.Rate : '-' }}</td>
+<td>{{ tabledata.Taxable_unt ? tabledata.Taxable_unt : '-'}}</td>
+<td>{{ tabledata.CGST_Rate ? tabledata.CGST_Rate : '-' }}</td>
+<td>{{ tabledata.CGST_Amt ? tabledata.CGST_Amt : '-' }}</td>
+<td>{{ tabledata.SGST_Rate ? tabledata.SGST_Rate : '-' }}</td>
+<td>{{ tabledata.SGST_Amt ? tabledata.SGST_Amt : '-' }}</td>
+<td>{{ tabledata.IGST_Rate ? tabledata.IGST_Rate : '-' }}</td>
+<td>{{ tabledata.IGST_Amt ? tabledata.IGST_Amt : '-' }}</td>
+<td>{{ tabledata.Line_Total_Amount ? tabledata.Line_Total_Amount : '-' }}</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="col-xs-12">
+<div class="table-responsive">
+<table class="table">
+<tbody>
+<tr>
+<th>Taxable Amount :</th>
+<td class="amt-td ng-binding">{{PITax}}</td>
+</tr>
+<tr>
+<th>CGST Amount :</th>
+<td class="amt-td ng-binding">{{PICGST}}</td>
+<th>SGST Amount :</th>
+<td class="amt-td ng-binding">{{PISGST}}</td>
+<th>IGST Amount :</th>
+<td class="amt-td ng-binding">{{PIIGST}}</td>
+</tr>
+<tr>
+<th>Net Amount : </th>
+<td class="amt-td ng-binding">{{PINetAMT}}</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>                         
+
+    
+
+<p-footer>
+    <button
+    type="button"
+    (click)="PIviewPopup = false"
+    class="btn btn-default"
+    ><span class="glyphicon glyphicon-remove"></span>
+    CLOSE
+    </button>
+
+</p-footer>
+</p-dialog>
+
+<!-- SO -->
+<p-dialog
+[header]="'Sales Order'"
+[appendTo]="'body'"
+[(visible)]="SOPopup"
+[closeOnEscape]="true"
+[closable]="true"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '65%', minWidth: '200px' }"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+    <p-table [value]="SOList" 
+    [globalFilterFields]='SOListHeader' [rowHover]="true" [autoLayout]="true" #dt3>
+        <ng-template pTemplate="caption">
+            <div class="row">
+                <div class="col-sm-3 pull-right" style="text-align: right">
+                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt3.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                </div>
+            </div> <br>
+
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Sale Order No</th>
+                <th>Customer P.O No</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Qty</th>
+                <th>Amount</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+            <tr>
+                <td><a class="btn btn-link" (click)="GetSOviewDetails(col.SO_Doc_No)">{{col.SO_Doc_No}}</a></td>
+                <td>{{col.Customer_PO_No ? col.Customer_PO_No : '-'}}</td>
+                <td>{{col.SO_Doc_Date | date : "dd/MMM/yy"}}</td>
+                <td>{{col.SO_Customer ? col.SO_Customer : '-'}}</td>
+                <td>{{col.SO_Qty ? col.SO_Qty : '-'}}</td>
+                <td>{{col.SO_Amount ? col.SO_Amount : '-'}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="SOPopup = false"
+    class="btn btn-default"
+    >
+    CANCEL
+    </button>
+
+</p-footer>
+</p-dialog>
+
+<!-- SC -->
+<p-dialog
+[header]="'Sales Challan'"
+[appendTo]="'body'"
+[(visible)]="OCPopup"
+[closeOnEscape]="true"
+[closable]="true"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '65%', minWidth: '200px' }"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+    <p-table [value]="OCList" 
+    [globalFilterFields]='OCListHeader' [rowHover]="true" [autoLayout]="true" #dt4>
+        <ng-template pTemplate="caption">
+            <div class="row">
+                <div class="col-sm-3 pull-right" style="text-align: right">
+                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt4.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                </div>
+            </div> <br>
+
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Sale Challan No</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Qty</th>
+                <th>Amount</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+            <tr>
+                <td><a class="btn btn-link" (click)="GetOCviewDetails(col.SC_Doc_No)">{{col.SC_Doc_No}}</a></td>
+                <td>{{col.SC_Doc_Date | date : "dd/MMM/yy"}}</td>
+                <td>{{col.SC_Customer ? col.SC_Customer : '-'}}</td>
+                <td>{{col.SC_Qty ? col.SC_Qty : '-'}}</td>
+                <td>{{col.SC_Amount ? col.SC_Amount : '-'}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="OCPopup = false"
+    class="btn btn-default"
+    >
+    CANCEL
+    </button>
+
+</p-footer>
+</p-dialog>
+
+<!-- SB -->
+<p-dialog
+[header]="'Sales Bill'"
+[appendTo]="'body'"
+[(visible)]="SBillPopup"
+[closeOnEscape]="true"
+[closable]="true"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '65%', minWidth: '200px' }"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+    <p-table [value]="SBillList" 
+    [globalFilterFields]='SBillListHeader' [rowHover]="true" [autoLayout]="true" #dt5>
+        <ng-template pTemplate="caption">
+            <div class="row">
+                <div class="col-sm-3 pull-right" style="text-align: right">
+                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt5.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                </div>
+            </div> <br>
+
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Sale Bill No</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Qty</th>
+                <th>Amount</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+            <tr>
+                <td><a class="btn btn-link" (click)="GetSBviewDetails(col.SB_Doc_No)">{{col.SB_Doc_No}}</a></td>
+                <td>{{col.SB_Doc_Date | date : "dd/MMM/yy"}}</td>
+                <td>{{col.SB_Customer ? col.SB_Customer : '-'}}</td>
+                <td>{{col.SB_Qty ? col.SB_Qty : '-'}}</td>
+                <td>{{col.SB_Amount ? col.SB_Amount : '-'}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="SBillPopup = false"
+    class="btn btn-default"
+    >
+    CANCEL
+    </button>
+
+</p-footer>
+</p-dialog>
+
+<!-- RA -->
+<p-dialog
+[header]="'Reciept / Adjustment'"
+[appendTo]="'body'"
+[(visible)]="RAPopup"
+[closeOnEscape]="true"
+[closable]="true"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '65%', minWidth: '200px' }"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+    <p-table [value]="RAList" 
+    [globalFilterFields]='RAListHeader' [rowHover]="true" [autoLayout]="true" #dt5>
+        <ng-template pTemplate="caption">
+            <div class="row">
+                <div class="col-sm-3 pull-right" style="text-align: right">
+                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt5.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                </div>
+            </div> <br>
+
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Voucher No</th>
+                <th>Date</th>
+                <th>Voucher Type</th>
+                <th>Amount</th>
+                <th>Paid Bank / Adjusted with</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+            <tr>
+                <td><a class="btn btn-link" (click)="GetRAviewDetails(col.Voucher_No)">{{col.Voucher_No}}</a></td>
+                <td>{{col.Voucher_Date | date : "dd/MMM/yy"}}</td>
+                <td>{{col.Voucher_Type ? col.Voucher_Type : '-'}}</td>
+                <td>{{col.Amount ? col.Amount : '-'}}</td>
+                <td>{{col.Paid_Bank_Adjusted_with ? col.Paid_Bank_Adjusted_with : '-'}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="RAPopup = false"
+    class="btn btn-default"
+    >
+    CANCEL
+    </button>
+
+</p-footer>
+</p-dialog>

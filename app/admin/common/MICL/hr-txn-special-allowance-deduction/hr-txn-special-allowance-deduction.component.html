@@ -1,0 +1,147 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6" *ngIf="Save">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="act_popup && !can_popup">
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView">
+                        <form name="AllowanceForm" #AllowanceForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Effect For The Month</label>
+                                    <input type="month" class="form-control" name="month" [(ngModel)]="Month_Name">
+                                </div>
+                                <div class="col-sm-4" *ngIf="URLid === '0'">
+                                    <label class="control-label">Allowance/Deduction<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" name="Canteen" #Canteen="ngModel" [(ngModel)]="objAllowance.Allowance_Deduction_ID" [ngClass]="{'clearance': AllowanceFormSubmit && Canteen.errors?.required}" required>
+                                        <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of AllowanceList2" [ngValue]="option.Allowance_Deduction_ID">
+                                        {{option.Allowance_Deduction}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4" *ngIf="URLid != '0'">
+                                    <label class="control-label">Allowance/Deduction<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" name="Canteen2" #Canteen2="ngModel" [(ngModel)]="objAllowance.Allowance_Deduction_ID" [ngClass]="{'clearance': AllowanceFormSubmit && Canteen2.errors?.required}" selected="selected" disabled required>
+                                        
+                                            <option *ngFor="let option of Allowancefilter" [ngValue]="option.Allowance_Deduction_ID">
+                                        {{option.Allowance_Deduction}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetSearchedList(AllowanceForm.form.valid, objAllowance.Allowance_Deduction_ID)" id="load" [disabled]="seachSpinner">
+                                    <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                        </button> &nbsp;&nbsp;
+                                        <button type="button" (click)="exportoexcel(Searchedlist,'Allowance/Deduction')" [disabled]='!Searchedlist.length' class="btn btn-success custombutton">
+                                        <i class="glyphicon glyphicon-save"></i>&nbsp;  export to excel
+                                    </button>
+                                </div>
+                            </div>
+
+                        </form>
+
+                        <div class="table-responsive no-padding" *ngIf="Searchedlist.length">
+                            <!-- <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Contact_Name','Mobile','Appo_Dt','Doctor_Name','PT_LEFT', 'PT_RIGHT']"
+                                [rowHover]="true" #dt> -->
+                            <p-table [value]="Searchedlist" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [globalFilterFields]="['Emp_ID','Emp_Name']" [rowHover]="true" #dt>
+                                <ng-template pTemplate="caption">
+                                    <div>
+                                        <button class="btn btn-primary pull-right" (click)="SaveAllowance()" id="load" [disabled]="Spinner">
+                                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                    </button> 
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                                    </div>
+
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <!-- <th style="width:5em">Action</th> -->
+                                        <th nowrap>Employee Code</th>
+                                        <th nowrap>Employee Name</th>
+                                        <th nowrap>{{Allowancehead}}</th>
+                                        <th nowrap>Remarks</th>
+
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr>
+
+                                        <!-- <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <a (click)="redirectPatientDetails(col)">
+                                                            <i class="fa fa-fw fa-eye"></i> View Patient
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a (click)="PrintBill(col)">
+                                                            <i class="fa fa-fw fa-print"></i> Print Page1
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a (click)="PrintBill2(col)">
+                                                            <i class="fa fa-fw fa-print"></i> Print Page2
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td> -->
+                                        <td nowrap *ngIf="databaseName === 'GN_JOH_HR'">{{col.Emp_Code ? col.Emp_Code : '-' }}</td>
+                                        <td nowrap *ngIf="databaseName != 'GN_JOH_HR'">{{col.Emp_ID ? col.Emp_ID : '-' }}</td>
+                                        <td nowrap>{{col.Emp_Name ? col.Emp_Name : '-'}}</td>
+                                        <td><input type="text" [name]="col.Emp_ID" [(ngModel)]='col.Allowance_Deduction_Value' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                                        <td><input type="text" [name]="col.Emp_ID+'remark'" [(ngModel)]='col.Remarks' class="form-control" style="width: 240px;" /></td>
+
+                                    </tr>
+                                </ng-template>
+                                <!-- <ng-template pTemplate="paginatorright" let-state>
+                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                </ng-template> -->
+                            </p-table>
+                        </div>
+                        <hr class="box boxboxDivide-primary ng-scope" *ngIf="Searchedlist.length">
+
+                        <div class="box-footer" *ngIf="Searchedlist.length">
+                            <button class="btn btn-primary pull-right" (click)="SaveAllowance()" id="load" [disabled]="Spinner">
+                       <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                   <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+               </button>
+                        </div>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

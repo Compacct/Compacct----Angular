@@ -26,6 +26,7 @@ import {
 import {
   CompacctGetDistinctService
 } from "../../../../shared/compacct.services/compacct-get-distinct.service"
+import { FileUpload } from "primeng/primeng";
 import * as moment from "moment";
 declare var $: any;
 import * as XLSX from 'xlsx';
@@ -70,7 +71,7 @@ export class TenderViewDetailsCompComponent implements OnInit {
   TenderPublishDate = new Date()
 
 
-  TabItems = ['Tender Details', 'Budget Details', 'Finance Details', 'Tender Log', 'Bidder List', 'Bid Opening & AOC Details']
+  TabItems = ['Tender Details', 'Pre Bid Budget', 'Finance Details', 'Tender Log', 'Bidder List', 'Bid Opening & AOC Details', 'Upload/Show Document']
   BudgetDetails$: Observable < [any] > ;
   FinanceDetails$: Observable < [any] > ;
   TenderLogDetails$: Observable < [any] > ;
@@ -139,6 +140,22 @@ export class TenderViewDetailsCompComponent implements OnInit {
     {
       field: 'Amount',
       header: 'Purchase Amount'
+    },
+    {
+      field: 'Changed_Sale_Rate',
+      header: 'Changed Sale Rate'
+    },
+    {
+      field: 'Changed_Sale_Amount',
+      header: 'Changed Sale Amount'
+    },
+    {
+      field: 'Changed_Rate',
+      header: 'Changed Purchase Rate'
+    },
+    {
+      field: 'Changed_Amount',
+      header: 'Changed Purchase Amount'
     }
   ];
 
@@ -170,9 +187,23 @@ export class TenderViewDetailsCompComponent implements OnInit {
 
   CompletionDate = new Date();
   CommencementDate = new Date();
-
+  // Upload Document
+  uploadModel:boolean = false;
+  PDFFlag:boolean = false;
+  ProductPDFFile:any = {};
+  SpinnerUpload:boolean = false
+  PDFViewFlag:boolean = false;
+  ProductPDFLink:any = undefined;
+  DocTenderDocID:any = undefined;
+  pImg:any = undefined
+  doctypeList:any = [];
+  docType:any = undefined
+  docTypeOther:any = undefined
+  doctypeFormSubmit:boolean = false
+  multipalDocTypeList:any = [];
   TenderLogList = [];
   distinctDateArray =[];
+  @ViewChild("fileInput", { static: false }) fileInput!: FileUpload;
   @Input() set TenderId(val: any) {
     this._TenderId = val;
     this.FetchValues();
@@ -314,7 +345,7 @@ export class TenderViewDetailsCompComponent implements OnInit {
           const tenderCategory = this.tenderCategoryList.filter(el => Number(el.Tender_Category_ID) === Number(data[0].Tender_Category_ID));
           this.ObjTender.Tender_Category_ID = tenderCategory.length ? tenderCategory[0].Tender_Category_Name : '';
           const tendrInformation = this.TenderInfoEnqList.filter(el => Number(el.Enq_Source_ID) === Number(data[0].Enq_Source_ID));
-          this.ObjTender.State = tendrInformation.length ? tendrInformation[0].Enq_Source_Name : '';
+          this.ObjTender.Enq_Source_Name = tendrInformation.length ? tendrInformation[0].Enq_Source_Name : '';
           const tendrAssign = this.UserList.filter(el => Number(el.User_ID) === Number(data[0].User_ID));
           this.ObjTender.User_ID = tendrAssign.length ? tendrAssign[0].User_Name : '';
         }
@@ -377,7 +408,7 @@ export class TenderViewDetailsCompComponent implements OnInit {
     if (this._TenderId) {
       const obj = {
         "SP_String": "SP_Tender_Management_All",
-        "Report_Name_String": "Get Data Tender Estimate",
+        "Report_Name_String": "Get Data Tender Estimate_With_Changed_Amount",
         "Json_Param_String": JSON.stringify([{
           'Tender_Doc_ID': this._TenderId
         }])
@@ -395,10 +426,18 @@ export class TenderViewDetailsCompComponent implements OnInit {
   getPurchaseAmt() {
     return this.ShowAddedEstimateProductList.reduce((n, {
       Amount
-    }) => n + Number(Amount), 0)
+    }) => n + Number(Amount), 0).toFixed(2)
+  }
+  getSaleAmt() {
+    return this.ShowAddedEstimateProductList.reduce((n, {
+      Sale_Amount
+    }) => n + Number(Sale_Amount), 0).toFixed(2)
   }
   getTotalPurchaseAmt() {
-    return this.ShowAddedEstimateProductList.length ? Number(this.ShowAddedEstimateProductList[0].No_of_Site) * this.getPurchaseAmt() : '-';
+    return this.ShowAddedEstimateProductList.length ? (Number(this.ShowAddedEstimateProductList[0].No_of_Site) * this.getPurchaseAmt()).toFixed(2) : '-';
+  }
+  getTotalSaleAmt() {
+    return this.ShowAddedEstimateProductList.length ? (Number(this.ShowAddedEstimateProductList[0].No_of_Site) * this.getSaleAmt()).toFixed(2) : '-';
   }
   // Finance Details 
   GetPaymentList() {
@@ -530,14 +569,15 @@ export class TenderViewDetailsCompComponent implements OnInit {
         }),
       }
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
-        if (data.length && data[0].Status) {
+         if (data.length && data[0].Status) {
+          
           if (data[0].Status === 'AWARDING THE TENDER' && data[0].Agreement_Number) {
             this.ObjBidOpening.Financial_Bid_Status = data[0].Status;
             this.AgreementList = data;
             this.ObjAgreement = data[0];
             this.CompletionDate = new Date(data[0].Date_of_Completion);
             this.CommencementDate = new Date(data[0].Date_of_Commencement);
-            this.ObjAgreement.Tender_Negotiated_Value = data[0].Agreement_Number;
+            this.ObjAgreement.Tender_Negotiated_Value = data[0].Tender_Negotiated_Value;
             this.ObjAgreement.Tender_Doc_ID = this._TenderId;
           }
           if (data[0].Status === 'NOT- AWARDING THE TENDER' && data[0].Not_Awarding_Reason) {
@@ -688,7 +728,10 @@ export class TenderViewDetailsCompComponent implements OnInit {
       this.GetBidOpenList();
       this.GetAgreementList();
       this.GetTenderLogList();
+
+      this.UploadDoc(this._TenderId)
     }
+    console.log("fjh")
   }
   clearData() {
     this.AllPSdata = [];
@@ -721,7 +764,149 @@ export class TenderViewDetailsCompComponent implements OnInit {
     this.TenderLogList = [];
     this.distinctDateArray =[];
   }
-
+  // Upload Doc
+  UploadDoc(TenderDocID){
+    console.log(TenderDocID)
+    if(TenderDocID){
+      //this.getUploadData(col.Tender_Doc_ID);
+      this.DocTenderDocID = undefined
+      this.DocTenderDocID = TenderDocID
+      this.PDFFlag = false;
+      this.ProductPDFFile = {};
+      this.docTypeOther = undefined;
+      this.docType = undefined;
+      this.SpinnerUpload = false;
+      this.PDFViewFlag = false;
+      this.ProductPDFLink = undefined;
+      this.pImg = undefined
+      this.doctypeFormSubmit = false
+      this.getDocType()
+      this.GetTenderDocMultiple()
+      if(this.fileInput){
+        this.fileInput.clear();
+      }
+      console.log("fileInput",this.fileInput)
+    }
+  }
+  getUploadData(TenderDocID){
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Get_Tender_Document",
+      "Json_Param_String": JSON.stringify({Tender_Doc_ID: Number(TenderDocID)})
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+    this.pImg = data[0].Product_Image
+    
+    })
+  }
+  handleFileSelect(event:any) {
+    this.PDFFlag = false;
+    this.ProductPDFFile = {};
+    if (event) {
+      console.log(event)
+      this.ProductPDFFile = event.files[0];
+      this.PDFFlag = true;
+  }
+  }
+  SaveUploadDoc(valid:any){
+    this.doctypeFormSubmit = true
+    console.log(valid)
+    if(valid){
+      if(this.ProductPDFFile['size']){
+        this.SpinnerUpload =true
+        this.GlobalAPI.CommonFileUpload(this.ProductPDFFile)
+        .subscribe((data : any)=>
+        {
+          if(data.file_url){
+            this.saveDoc(data.file_url)
+          }
+          else {
+            this.compacctToast.clear();
+            this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error",
+            detail: "Fail to upload"
+          });
+          }
+        })  
+      }
+    }
+    
+  }
+  saveDoc(fileUrl){
+    const tempSaveDataObj = {
+      Tender_Doc_ID: Number(this.DocTenderDocID),
+      Document_Type: this.docType == 'Other' ? this.docTypeOther : this.docType,
+      File_Name: fileUrl,
+      User_ID : this.commonApi.CompacctCookies.User_ID
+    }
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      // "Report_Name_String": "Update_Tender_Document",
+      "Report_Name_String": "Update_Tender_Document_Multiple",
+      "Json_Param_String": JSON.stringify(tempSaveDataObj)
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+        console.log(data)
+        if(data[0].message == "Update done"){
+          this.PDFFlag = false;
+          this.ProductPDFFile = {};
+        // this.uploadModel = false;
+        this.docType = undefined;
+          this.GetTenderDocMultiple()
+          this.SpinnerUpload = false;
+          this.PDFViewFlag = false;
+          this.ProductPDFLink = undefined;
+          this.pImg = undefined;
+          this.doctypeFormSubmit = false
+          
+          this.fileInput.clear();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            // summary: "File Succesfully Upload",
+            detail: "File Succesfully Upload"
+          });
+        }
+        else {
+          this.SpinnerUpload =false 
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+        }
+    })
+  }
+  showImg(img:any){
+    window.open(img)
+  }
+  getDocType(){
+    this.doctypeList = []
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Get_Document_Type"
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+    console.log(data);
+    this.doctypeList = data
+    })
+  }
+  GetTenderDocMultiple(){
+    const obj = {
+      "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
+      "Report_Name_String": "Get_Tender_Document_Multiple",
+      "Json_Param_String": JSON.stringify({Tender_Doc_ID : this.DocTenderDocID})
+    }
+    this.GlobalAPI.postData(obj).subscribe((data: any) => {
+    console.log("multi Data",data)
+    this.multipalDocTypeList = data;
+    })
+  }
 }
 
 class Tender {
@@ -747,11 +932,12 @@ class Tender {
   EMD_Amount: string;
   T_Fee_Amount: string;
   Enq_Source_ID: number;
+  Enq_Source_Name: string;
   Tender_Informed_Date: string;
   Period_Of_Working: string;
   Budget_Required_By: string;
   Govt_Proposal: string;
-  Tender_Publishing_Info_From: any
+  Tender_Publishing_Info_From: any;
 }
 class BidOpeningList {
   Schedule_ID: string;

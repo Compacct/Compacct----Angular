@@ -6,8 +6,8 @@
             <h3>{{message.summary}}</h3>
             <p *ngIf="checkSave">{{message.detail}}</p>
         </div>
-        <form name="cancleForm" #cancleForm="ngForm" novalidate>
-            <div style="text-align: center">
+        <form  name="cancleForm" #cancleForm="ngForm" novalidate>
+            <div style="text-align: center" *ngIf="Can_Remarks">
                 <label class="control-label">Remarks <sup class="text-danger">*</sup></label>
                 <input class="form-control" name="cancleremarks" #cancleremarks="ngModel" [(ngModel)]="Cancle_Remarks" [ngClass]="{'clearance':cancleFormSubmitted && cancleremarks?.errors?.required}" required>
             </div>
@@ -17,7 +17,7 @@
                 <button type="button" pButton (click)="onConfirm(cancleForm.form.valid)" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6" *ngIf="!Can_Remarks">
-                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6">
                 <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
@@ -93,9 +93,9 @@
                                                     </div>
 
                                                     <div class="col-sm-3">
-                                                        <button class="btn btn-primary custombutton3" data-toggle="modal" (click)="Showdatabymobile(MobileSubmitForm.form.valid)" id="load2" [disabled]="Spinner">
-                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                         <span *ngIf="!Spinner"></span>Show
+                                                        <button class="btn btn-primary custombutton3" data-toggle="modal" (click)="Showdatabymobile(MobileSubmitForm.form.valid)" id="load2" [disabled]="mobSpinner">
+                                             <p-progressSpinner *ngIf="mobSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                         <span *ngIf="!mobSpinner"></span>Show
                                      </button>
                                                     </div>
                                                 </div>
@@ -148,11 +148,11 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                     <ul class="dropdown-menu">
-                                                        <!-- <li *ngIf='col.Cancel_Order === "N" && col.Can_Modify ==="Y" && !col.Bill_No' a>
+                                                        <li *ngIf='col.Cancel_Order === "N" && col.Can_Modify ==="Y" && !col.Bill_No'>
                                                             <a (click)="CreateBill(col,'editorder')">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
-                                                        </li> -->
+                                                        </li>
                                                         <li>
                                                             <a (click)="PrintOrder(col)">
                                                                 <i class="fa fa-print" aria-hidden="true"></i> Order Print
@@ -178,7 +178,7 @@
                                                                 <i class="fa fa-inr" aria-hidden="true"></i> Make Payment
                                                             </a>
                                                         </li>
-                                                        <li>
+                                                        <li *ngIf='col.Cancel_Order === "N"'>
                                                             <a (click)="Refund(col)">
                                                                 <i class="fa fa-money" aria-hidden="true"></i> Refund
                                                             </a>
@@ -186,6 +186,16 @@
                                                         <li *ngIf='col.Cancel_Order === "N" && col.Can_Modify ==="Y" && !col.Bill_No'>
                                                             <a (click)="getPhotoprolist(col)">
                                                                 <i class="fa fa-picture-o"></i> Show Image
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf='$CompacctAPI.CompacctCookies.User_Type === "A" && col.Total_Paid && col.Cancel_Order === "N"'>
+                                                            <a (click)="UpdatePaymentMode(col)">
+                                                                <i class="fa fa-money"></i> Update Payment Mode
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf='$CompacctAPI.CompacctCookies.User_Type === "A" && col.Cancel_Order === "N"'>
+                                                            <a (click)="DelMulPayments(col)">
+                                                                <i class="fa fa-trash"></i> Delete Multiple Payments
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -218,7 +228,7 @@
                                     </ng-template>
                                 </p-table>
                             </div>
-
+                            <!-- MAKE PAYMENT -->
                             <p-dialog header="PAYMENT" [appendTo]="'body'" [visible]="MakePaymentModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;" [minY]="80" [maximizable]="true"
                                 [baseZIndex]="10000">
                                 <div class="col-sm-6">
@@ -301,7 +311,7 @@
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="control-label">Delivery Date</label>
-                                            <ejs-datepicker [(value)]="delivery_Date" [format]="'dd/MMM/yyyy'" name="Del_Date" #Del_Date2 #Del_Date="ngModel" [ngModel]="delivery_Date" (change)='DeliveryChange($event)'></ejs-datepicker>
+                                            <ejs-datepicker [(value)]="delivery_Date" [format]="'dd/MMM/yyyy'" name="Del_Date" #Del_Date2 #Del_Date="ngModel" [ngModel]="delivery_Date" [min]='minDelDate' (change)='DeliveryChange($event)'></ejs-datepicker>
                                             <!-- (close)="enableButton($event)" <input class="form-control"
                                      type="date"
                                      name="Delivey_Date"
@@ -353,9 +363,23 @@
                                 </option>
                           </select>
                                         </div>
-                                        <div class="col-sm-3">
-                                            <label class="control-label">Product <sup class="text-danger">*</sup> &nbsp;
-                              </label>
+                                        <div class="col-sm-3" *ngIf="$CompacctAPI.CompacctCookies.User_Type === 'A'">
+                                            <label class="control-label">Product <sup class="text-danger">*</sup> &nbsp;</label>
+                                            <div class="dropdown pull-right">
+                                                <select class="dropdown-content" name="brandid" #brandid="ngModel" [(ngModel)]="Brand_ID" (change)="GetProduct()" [disabled]="productSubmit.length">
+                                                 <option  [ngValue]="undefined">Select Brand</option>
+                                                 <option *ngFor="let option of BrandList" value="{{option.Brand_ID}}">
+                                                 {{option.Brand_INI}}
+                                                 </option>
+                                                </select>
+                                              </div>
+                                            <p-dropdown [options]="selectitem" name="Product" #Product2 [(ngModel)]="ObjaddbillForm.Product_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="ProductChange()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                                [placeholder]="'Select Product'" [disabled]="selectitem.length === 0" [virtualScroll]="true" itemSize="30" #Product="ngModel" [required]="true" (keydown)="onKeydownMain($event,'Net_Price')" [ngClass]="{'clearance':addbillFormSubmitted && Product?.errors?.required}"
+                                                required>
+                                            </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-3" *ngIf="$CompacctAPI.CompacctCookies.User_Type != 'A'">
+                                            <label class="control-label">Product <sup class="text-danger">*</sup> &nbsp;</label>
                                             <p-dropdown [options]="selectitem" name="Product" #Product2 [(ngModel)]="ObjaddbillForm.Product_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="ProductChange()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                                 [placeholder]="'Select Product'" [disabled]="selectitem.length === 0" [virtualScroll]="true" itemSize="30" #Product="ngModel" [required]="true" (keydown)="onKeydownMain($event,'Net_Price')" [ngClass]="{'clearance':addbillFormSubmitted && Product?.errors?.required}"
                                                 required>
@@ -451,7 +475,24 @@
                                     <div class="form-group">
                                         <div class="col-sm-2">
                                             <label class="control-label">Changes On Cake</label>
-                                            <textarea class="form-control" name="Changes_on_Cake" #Changes_on_Cake="ngModel" id='Changes_On_Cake' [(ngModel)]="ObjaddbillForm.Changes_on_Cake"></textarea>
+                                            <!-- <textarea class="form-control" name="Changes_on_Cake" #Changes_on_Cake="ngModel" id='Changes_On_Cake' [(ngModel)]="ObjaddbillForm.Changes_on_Cake"></textarea> -->
+                                            <!-- <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                                <p-editor name= "Changes_on_Cake"
+                                                #Changes_on_Cake="ngModel"
+                                                [(ngModel)]="ObjaddbillForm.Changes_on_Cake"
+                                                [style]="{'height':'200px'}">
+                                                </p-editor>
+                                            </div> -->
+                                            <p-editor 
+                                            name= "Changes_on_Cake" #Changes_on_Cake="ngModel" [(ngModel)]="ObjaddbillForm.Changes_on_Cake" [style]="{'height':'80px'}">
+                                                <p-header>
+                                                    <!-- <span class="ql-formats">
+                                                        <button class="ql-bold" aria-label="Bold"></button>
+                                                        <button class="ql-italic" aria-label="Italic"></button>
+                                                        <button class="ql-underline" aria-label="Underline"></button>
+                                                    </span> -->
+                                                </p-header>
+                                            </p-editor>
                                         </div>
                                         <div class="col-sm-2">
                                             <label class="control-label">Order Taken By</label>
@@ -525,10 +566,10 @@
                                         {{obj.Modifier}}
                                       </i>  -->
                                                         <i><tr *ngIf="obj.Modifier1">Message 1 -<td>{{obj.Modifier1}}</td></tr>
-                                      <tr *ngIf="obj.Modifier2">Message 2 -<td>{{obj.Modifier2}}</td></tr>
-                                      <tr *ngIf="obj.Modifier3">Message 3 -<td>{{obj.Modifier3}}</td></tr>
-                                      <tr *ngIf="obj.Modifier4">Message 4 -<td>{{obj.Modifier4}}</td></tr>
-                                      <tr *ngIf="obj.Modifier5">Message 5 -<td>{{obj.Modifier5}}</td></tr></i><br>
+                                                        <tr *ngIf="obj.Modifier2">Message 2 -<td>{{obj.Modifier2}}</td></tr>
+                                                        <tr *ngIf="obj.Modifier3">Message 3 -<td>{{obj.Modifier3}}</td></tr>
+                                                        <tr *ngIf="obj.Modifier4">Message 4 -<td>{{obj.Modifier4}}</td></tr>
+                                                        <tr *ngIf="obj.Modifier5">Message 5 -<td>{{obj.Modifier5}}</td></tr></i><br>
 
                                                         <tr *ngIf="obj.Flavour">Flavour -
                                                             <td class="text-muted">{{obj.Flavour}}</td>
@@ -549,7 +590,13 @@
                                                             <td class="text-muted">{{obj.Boxes}}</td>
                                                         </tr>
                                                         <tr *ngIf="obj.Changes_on_Cake">Changes On Cake -
-                                                            <td class="text-muted">{{obj.Changes_on_Cake}}</td>
+                                                            <!-- <td class="text-muted">{{obj.Changes_on_Cake}}</td> -->
+                                                            <!-- <td><textarea [name]="obj.Product_ID" [(ngModel)]="obj.Changes_on_Cake" class="form-control" style="width: 200px;"></textarea></td> -->
+                                                            <td><p-editor 
+                                                            [name]="obj.Changes_on_Cake" [(ngModel)]="obj.Changes_on_Cake" [style]="{'height':'80px'}" [readonly]="true">
+                                                            <p-header>
+                                                            </p-header>
+                                                            </p-editor></td>
                                                         </tr>
                                                         <tr *ngIf="obj.Order_Taken_By">Order Taken By -
                                                             <td class="text-muted">{{obj.Order_Taken_By}}</td>
@@ -741,22 +788,30 @@
                                                     </div>
                                                     <div class='col-sm-12' *ngIf="!QueryStringObj?.Sub_Ledger_ID">
                                                         <label class="control-label">Other Payment Mode: </label>
+                                                        <div *ngIf="LedgerNameforupi === 'UPI' && ObjcashForm.Wallet_Amount" class="pull-right" style="margin-top: -2px;">
+                                                            <button (click)="getdataforrequestdetailsupi()" class="btn createPatient" [disabled]="txnbuttondisabledupi" style="background-color: #587ea3; color: white;"> Request</button> &nbsp; 
+                                                            <button  (click)="CheckTransactionupi()" class="btn createPatient" [disabled]="confirmtxnflagupi" style="background-color: #587ea3; color: white;"> Confirm</button>
+                                                        </div>
                                                         <div class="input-group">
                                                             <div class="input-group-addon">
-                                                                <select name="wallet" #wallet="ngModel" [(ngModel)]="ObjcashForm.Wallet_Ac_ID" [disabled]='QueryStringObj?.Txn_ID'>
+                                                                <select name="wallet" #wallet="ngModel" [(ngModel)]="ObjcashForm.Wallet_Ac_ID" [disabled]='QueryStringObj?.Txn_ID || txndisabledupi' (change)="getledgername()">
                                                                     <option [ngValue]="undefined">select</option>
                                                                     <option *ngFor = "let option of walletlist" [value] ="option.Txn_ID">
                                                                         {{option.Ledger_Name}}
                                                                     </option>
                                                                 </select>
                                                             </div>
-                                                            <input type="text" class="form-control" id="exampleInputAmount" name="Wallet" #Wallet="ngModel" [(ngModel)]="ObjcashForm.Wallet_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true" [disabled]='QueryStringObj?.Txn_ID'>
+                                                            <input type="text" class="form-control" id="exampleInputAmount" name="Wallet" #Wallet="ngModel" [(ngModel)]="ObjcashForm.Wallet_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true" [disabled]='QueryStringObj?.Txn_ID || txndisabledupi'>
                                                         </div>
                                                     </div>
 
                                                     <div class='col-sm-12' *ngIf="!QueryStringObj?.Sub_Ledger_ID">
                                                         <label class="control-label">Card Amount: </label>
-                                                        <input class="form-control" type="text" style="text-align: center" name="card" #card="ngModel" [(ngModel)]="ObjcashForm.Card_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true">
+                                                        <div *ngIf="ObjcashForm.Card_Amount" class="pull-right" style="margin-top: -2px;">
+                                                            <button (click)="getdataforrequestdetails()" class="btn createPatient" [disabled]="txnbuttondisabled" style="background-color: #587ea3; color: white;"> Request</button> &nbsp; 
+                                                            <button  (click)="CheckTransaction()" class="btn createPatient" [disabled]="confirmtxnflag" style="background-color: #587ea3; color: white;"> Confirm</button>
+                                                        </div>
+                                                        <input class="form-control" type="text" style="text-align: center" name="card" #card="ngModel" [disabled]='txndisabled' [(ngModel)]="ObjcashForm.Card_Amount" (ngModelChange)="AmountChange()" CompacctDigitonly="true">
                                                     </div>
                                                     <div class='col-sm-12' *ngIf="!QueryStringObj?.Sub_Ledger_ID">
                                                         <div class="form-group">
@@ -1007,4 +1062,76 @@
             CLOSE
        </button>
     </p-footer>
+</p-dialog>
+
+<!-- UPDATE PAYMENT MODE -->
+<p-dialog header="Update Payment Mode" [appendTo]="'body'" [(visible)]="UpdatePayModeModal" [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;" [minY]="80" [maximizable]="true"
+                                [baseZIndex]="10000">
+                                <div class="col-sm-6">
+                                    <div class="box box-successMP wellMP well-smMP shadow">
+                                        <div class="form-horizontal">
+                                            <div class="box-body">
+                                                <div class="form-group">
+                                                    <div class='col-sm-12'>
+                                                        <label class="control-label">Amount Payable:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ObjUpdatePayMode.Amount_Payable}}
+                                                    </div>
+                                                    <div class='col-sm-12'>
+                                                        <label class="control-label">Cash Amount:</label>
+                                                        <input class="form-control" type="text" style="text-align: center" name="cash" #cash="ngModel" [(ngModel)]="ObjUpdatePayMode.Cash_Amount"  CompacctDigitonly="true">
+                                                    </div>
+                                                    <div class='col-sm-12'>
+                                                        <label class="control-label">Wallet Amount: </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-addon">
+                                                                <select name="wallet" #wallet="ngModel" [(ngModel)]="ObjUpdatePayMode.Wallet_Ac_ID" >
+                                                              <option [ngValue]="undefined">select</option>
+                                                              <option *ngFor = "let option of walletlist" [value] ="option.Txn_ID">
+                                                                  {{option.Ledger_Name}}
+                                                              </option>
+                                                          </select>
+                                                            </div>
+                                                            <input type="text" class="form-control" id="exampleInputAmount" name="Wallet" #Wallet="ngModel" [(ngModel)]="ObjUpdatePayMode.Wallet_Amount"  CompacctDigitonly="true">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class='col-sm-12'>
+                                                        <label class="control-label">Card Amount: </label>
+                                                        <input class="form-control" type="text" style="text-align: center" name="card" #card="ngModel" [(ngModel)]="ObjUpdatePayMode.Card_Amount"  CompacctDigitonly="true">
+                                                    </div>
+                                                    <div class='col-sm-12'>
+                                                        <label class="control-label">Credit to Account:</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-addon">
+                                                                <select name="Credit" #Credit="ngModel" [(ngModel)]="ObjUpdatePayMode.Credit_To_Ac_ID">
+                                                                    <option [ngValue]="undefined">select</option>
+                                                                    <option *ngFor = "let option of creditlist" [value] ="option.Txn_ID">
+                                                                        {{option.Ledger_Name}}
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                            <input type="text" class="form-control" id="exampleInputAmount1" name="credit" #credit="ngModel" [(ngModel)]="ObjUpdatePayMode.Credit_To_Amount" [disabled]="true" CompacctDigitonly="true">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class='col-sm-12'>
+                                                        <label class="control-label">Total Paid:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ObjUpdatePayMode.Total_Paid}}
+                                                    </div>
+                                                    <div class='col-sm-12'>
+                                                        <label class="control-label">Net Due:</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ObjUpdatePayMode.Net_Due}}
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p-footer>
+                                    <button type="button" (click)="UpdatePayModeModal = false" class="btn btn-default">
+                                  CLOSE
+                                </button>
+                                    <button type="button" (click)="UpdatePMode()" class="btn btn-success">
+                                  UPDATE
+                                </button>
+                                </p-footer>
 </p-dialog>

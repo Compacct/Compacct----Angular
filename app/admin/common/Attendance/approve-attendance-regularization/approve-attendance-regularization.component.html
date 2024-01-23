@@ -1,0 +1,435 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+   <ng-template let-message pTemplate="message">
+      <div style="text-align: center">
+         <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+         <h3>{{message.summary}}</h3>
+         <p>{{message.detail}}</p>
+      </div>
+      <form name="disapprovedForm" #disapprovedForm="ngForm">
+         <div class="ui-g ui-fluid">
+            <div class="ui-g-12" *ngIf="EmpID==Report_Manager_ID&&EmpID==Business_Manager_ID">
+               <label class="control-label">Remarks Of Approval<sup class="text-danger">*</sup></label>
+               <input type="text" class="form-control" placeholder="Remarks Of Approval" name="Remarks_Of_Approval"
+                  #Remarks_Of_Approval="ngModel" [(ngModel)]="Approved_Note_inGeneral"
+                  [ngClass]="{clearance: (disApprovedFormSubmit && Remarks_Of_Approval?.errors?.required) }"
+                  [required]="EmpID==Report_Manager_ID&&EmpID==Business_Manager_ID">
+            </div>
+            <div class="ui-g-12" *ngIf="EmpID==Report_Manager_ID&&EmpID!=Business_Manager_ID">
+               <label class="control-label">Remarks Of Approval 1<sup class="text-danger">*</sup></label>
+               <input type="text" class="form-control" placeholder="Remarks Of Approval 1" name="Remarks_Of_disApproval"
+                  #Remarks_Of_disApproval="ngModel" [(ngModel)]="Approved_Note_Reporting_Manager"
+                  [ngClass]="{clearance: (disApprovedFormSubmit && Remarks_Of_disApproval?.errors?.required) }"
+                  [required]="EmpID==Report_Manager_ID&&EmpID!=Business_Manager_ID">
+               <div class="ui-g-12" *ngIf="EmpID==Business_Manager_ID&&EmpID!=Report_Manager_ID">
+                  <label class="control-label">Remarks Of Approval 2<sup class="text-danger">*</sup></label>
+                  <input type="text" class="form-control" placeholder="Remarks Of Approval 2"
+                     name="Remarks_Of_disApproval2" #Remarks_Of_disApproval2="ngModel"
+                     [(ngModel)]="Approved_Note_Business_Manager"
+                     [ngClass]="{clearance: (disApprovedFormSubmit && Remarks_Of_disApproval2?.errors?.required) }"
+                     [required]="EmpID==Business_Manager_ID&&EmpID!=Report_Manager_ID">
+               </div>
+            </div>
+         </div>
+      </form>
+      <div class="ui-g ui-fluid">
+         <div class="ui-g-6">
+            <button type="button" pButton (click)="onConfirm(disapprovedForm.form.valid)" label="Yes"
+               class="ui-button-success"></button>
+         </div>
+         <div class="ui-g-6">
+            <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+         </div>
+      </div>
+   </ng-template>
+</p-toast>
+<div class="row">
+   <div class="col-xs-12">
+      <div class="box box-primary">
+         <div class="form-horizontal">
+            <div class="box-body">
+               <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                  <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[0]"
+                     leftIcon="glyphicon glyphicon-hourglass">
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <p-multiSelect [options]="Pending_EmployeeList" defaultLabel="Select Employee"
+                              [filter]="true" filterBy="label,value.name" name="emp_list"
+                              [(ngModel)]="SelectedPendingEmployeeList" (onChange)='FilterPending()'
+                              [styleClass]="'compacct-multiselect'">
+                           </p-multiSelect>
+                        </div>
+                     </div>
+                     <!-- Pending Table Data -->
+                     <p-table [value]="pendingTableData" [paginator]="true" [rows]="50" [rowHover]="true"
+                        [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100,200,300]"
+                        [globalFilterFields]="pendingTableFilterList" [rowHover]="true" #dt>
+                        <ng-template pTemplate="caption">
+                           <div class="row">
+                              <div class="col-sm-3 pull-right" style="text-align: right">
+                                 <input type="text" pInputText size="50" placeholder="Search"
+                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                    class="searchInput form-control">
+                              </div>
+                           </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                           <tr>
+                              <th style="width:5em">Action</th>
+                              <th style="text-align: center ;" nowrap>Employee Name</th>
+                              <th style="text-align: center ;" nowrap>Department Name</th>
+                              <th style="text-align: center ;" nowrap>Apply Date</th>
+                              <th style="text-align: center ;" nowrap>Attendance Date</th>
+                              <th style="text-align: center ;" nowrap>System In Time</th>
+                              <th style="text-align: center ;" nowrap>System Out Time</th>
+                              <th style="text-align: center ;" nowrap>Change In Time</th>
+                              <th style="text-align: center ;" nowrap>Change Out Time</th>
+                              <th style="text-align: center ;" nowrap>Reason</th>
+                              <th style="text-align: center ;" nowrap>Approved Note Business Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Note Reporting Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Status Business Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Status Reporting Manager</th>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-col>
+                           <tr>
+                              <td>
+                                 <div class="dropdown">
+                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button"
+                                       data-toggle="dropdown" style="height:27px">
+                                       <i class="fa fa-fw fa-bars"></i>
+                                       <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                       <li>
+                                          <a (click)="ApproveAndDisapprove(col)">
+                                             <i class="glyphicon glyphicon-ok"></i>Approve/Disapprove
+                                          </a>
+                                       </li>
+                                    </ul>
+                                 </div>
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Emp_Name ? col.Emp_Name : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Dept_Name ? col.Dept_Name : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Apply_Date | date: "dd/MMM/yyyy"}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Atten_Date | date: "dd/MMM/yyyy"}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.In_Time | date: 'h:mm a'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Out_Time | date: 'h:mm a'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Changed_In_Time | date: 'h:mm a'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Changed_Out_Time | date: 'h:mm a'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Remarks ? col.Remarks : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Note_Business_Manager ?
+                                 col.Approved_Note_Business_Manager : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Note_Reporting_Manager ?
+                                 col.Approved_Note_Reporting_Manager : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Status_Business_Manager ?
+                                 col.Approved_Status_Business_Manager : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Status_Reporting_Manager ?
+                                 col.Approved_Status_Reporting_Manager : '-'}}</td>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorright" let-state>
+                           Showing {{state.first+1}} of {{(state.first) + state.rows}} of {{state.totalRecords}}
+                        </ng-template>
+                     </p-table>
+                  </p-tabPanel>
+                  <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[1]" leftIcon="glyphicon glyphicon-ok">
+                     <!-- Approved Table Data -->
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <p-multiSelect [options]="Approve_EmployeeList" defaultLabel="Select Employee"
+                              [filter]="true" filterBy="label,value.name" name="emp_list"
+                              [(ngModel)]="SelectedApproveEmployeeList" (onChange)='FilterApprove()'
+                              [styleClass]="'compacct-multiselect'">
+                           </p-multiSelect>
+                        </div>
+                     </div>
+                     <p-table [value]="approvedTableData" [paginator]="true" [rows]="50" [rowHover]="true"
+                        [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100,200,300]"
+                        [globalFilterFields]="approvedTableFilterData" [rowHover]="true" #dt1>
+                        <ng-template pTemplate="caption">
+                           <div class="row">
+                              <div class="col-sm-3 pull-right" style="text-align: right">
+                                 <input type="text" pInputText size="50" placeholder="Search"
+                                    (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                    class="searchInput form-control">
+                              </div>
+                           </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                           <tr>
+                              <th style="width:5em">Action</th>
+                              <th style="text-align: center ;" nowrap>Employee Name</th>
+                              <th style="text-align: center ;" nowrap>Department Name</th>
+                              <th style="text-align: center ;" nowrap>Apply Date</th>
+                              <th style="text-align: center ;" nowrap>Attendance Date</th>
+                              <th style="text-align: center ;" nowrap>System In Time</th>
+                              <th style="text-align: center ;" nowrap>System Out Time</th>
+                              <th style="text-align: center ;" nowrap>Change In Time</th>
+                              <th style="text-align: center ;" nowrap>Change Out Time</th>
+                              <th style="text-align: center ;" nowrap>Reason</th>
+                              <th style="text-align: center ;" nowrap>Approved Note Business Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Note Reporting Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Status Business Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Status Reporting Manager</th>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-col>
+                           <tr>
+                              <td>
+                                 <div class="dropdown">
+                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button"
+                                       data-toggle="dropdown" style="height:27px">
+                                       <i class="fa fa-fw fa-bars"></i>
+                                       <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                       <li>
+                                          <a (click)="disapproveApproval(col)">
+                                             <i class="glyphicon glyphicon-remove"></i>Disapprove
+                                          </a>
+                                       </li>
+                                    </ul>
+                                 </div>
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Emp_Name ? col.Emp_Name : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Dept_Name ? col.Dept_Name : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Apply_Date | date: "dd/MMM/yyyy"}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Atten_Date | date: "dd/MMM/yyyy"}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.In_Time | date: 'h:mm a'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Out_Time | date: 'h:mm a'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Changed_In_Time | date: 'h:mm a'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Changed_Out_Time | date: 'h:mm a'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Remarks ? col.Remarks : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Note_Business_Manager ?
+                                 col.Approved_Note_Business_Manager : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Note_Reporting_Manager ?
+                                 col.Approved_Note_Reporting_Manager : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Status_Business_Manager ?
+                                 col.Approved_Status_Business_Manager : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Status_Reporting_Manager ?
+                                 col.Approved_Status_Reporting_Manager : '-'}}</td>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorright" let-state>
+                           Showing {{state.first+1}} of {{(state.first) + state.rows}} of {{state.totalRecords}}
+                        </ng-template>
+                     </p-table>
+                  </p-tabPanel>
+                  <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[2]"
+                     leftIcon="glyphicon glyphicon-remove">
+                     <!-- DisApprove Table -->
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <p-multiSelect [options]="DisApprove_EmployeeList" defaultLabel="Select Employee"
+                              [filter]="true" filterBy="label,value.name" name="emp_list"
+                              [(ngModel)]="SelectedDisApproveEmployeeList" (onChange)='FilterDisApprove()'
+                              [styleClass]="'compacct-multiselect'">
+                           </p-multiSelect>
+                        </div>
+                     </div>
+                     <p-table [value]="disApprovedTableData" [paginator]="true" [rows]="50" [rowHover]="true"
+                        [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100,200,300]"
+                        [globalFilterFields]="disApprovedTableFilterData" [rowHover]="true" #dt2>
+                        <ng-template pTemplate="caption">
+                           <div class="row">
+                              <div class="col-sm-3 pull-right" style="text-align: right">
+                                 <input type="text" pInputText size="50" placeholder="Search"
+                                    (input)="dt2.filterGlobal($event.target.value, 'contains')"
+                                    class="searchInput form-control">
+                              </div>
+                           </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                           <tr>
+                              <th style="text-align: center ;" nowrap>Employee Name</th>
+                              <th style="text-align: center ;" nowrap>Department Name</th>
+                              <th style="text-align: center ;" nowrap>Apply Date</th>
+                              <th style="text-align: center ;" nowrap>Attendance Date</th>
+                              <th style="text-align: center ;" nowrap>System In Time</th>
+                              <th style="text-align: center ;" nowrap>System Out Time</th>
+                              <th style="text-align: center ;" nowrap>Change In Time</th>
+                              <th style="text-align: center ;" nowrap>Change Out Time</th>
+                              <th style="text-align: center ;" nowrap>Reason</th>
+                              <th style="text-align: center ;" nowrap>Approved Note Business Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Note Reporting Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Status Business Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Status Reporting Manager</th>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-col>
+                           <tr>
+                              <td style="text-align: center ;" nowrap>{{col.Emp_Name ? col.Emp_Name : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Dept_Name ? col.Dept_Name : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Apply_Date | date: "dd/MMM/yyyy"}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Atten_Date | date: "dd/MMM/yyyy"}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.In_Time | date: 'h:mm a'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Out_Time | date: 'h:mm a'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Changed_In_Time | date: 'h:mm a'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Changed_Out_Time | date: 'h:mm a'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Remarks ? col.Remarks : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Note_Business_Manager ?
+                                 col.Approved_Note_Business_Manager : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Note_Reporting_Manager ?
+                                 col.Approved_Note_Reporting_Manager : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Status_Business_Manager ?
+                                 col.Approved_Status_Business_Manager : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Status_Reporting_Manager ?
+                                 col.Approved_Status_Reporting_Manager : '-'}}</td>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorright" let-state>
+                           Showing {{state.first+1}} of {{(state.first) + state.rows}} of {{state.totalRecords}}
+                        </ng-template>
+                     </p-table>
+                  </p-tabPanel>
+               </p-tabView>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+<!-- Popup Box -->
+<p-dialog header="Attendance Regularization Details" appendTo="body" [(visible)]="DisplayPopup" [modal]="true"
+   [responsive]="true" [style]="{ width: '75%', minWidth: '375px' }" style="text-align: center;" [minY]="70"
+   [maximizable]="true" [baseZIndex]="10000" (onHide)="ClosePopUp()">
+   <div class="panel panel-primary">
+      <div class="panel-body">
+         <div class="row">
+            <div class="col-sm-3">
+               <label class="control-label">Name</label>
+               <div class="label-t">{{disabled_Obj.Emp_Name}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Department</label>
+               <div class="label-t">{{disabled_Obj.Dept_Name}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Apply Date</label>
+               <div class="label-t">{{disabled_Obj.Apply_Date | date: "dd/MMM/yyyy"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Attendance Date</label>
+               <div class="label-t">{{disabled_Obj.Atten_Date | date: "dd/MMM/yyyy"}}</div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-3">
+               <label class="control-label">System In Time</label>
+               <div class="label-t">{{disabled_Obj.In_Time | date: 'h:mm a'}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">System In Time</label>
+               <div class="label-t">{{disabled_Obj.Out_Time | date: 'h:mm a'}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Change In Time</label>
+               <div class="label-t">{{disabled_Obj.Changed_In_Time | date: 'h:mm a'}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Change In Time</label>
+               <div class="label-t">{{disabled_Obj.Changed_Out_Time | date: 'h:mm a'}}</div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-3">
+               <label class="control-label">Reason</label>
+               <div class="label-t">{{disabled_Obj.Remarks}}</div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <h4>In Last 30 days Attendance Regularization Apply</h4>
+   <p-table [value]="popupTableData" [paginator]="true" [rows]="50" [rowHover]="true" [autoLayout]="true"
+      sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100,200,300]" [globalFilterFields]="popupTableSearchField"
+      [rowHover]="true" #dt3>
+      <ng-template pTemplate="caption">
+         <div class="row">
+            <div class="col-sm-3 pull-right" style="text-align: right">
+               <input type="text" pInputText size="50" placeholder="Search"
+                  (input)="dt3.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+            </div>
+         </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+         <tr>
+            <th style="text-align: center ;" nowrap>Employee Name</th>
+            <th style="text-align: center ;" nowrap>Apply Date</th>
+            <th style="text-align: center ;" nowrap>Attendance Date</th>
+            <th style="text-align: center ;" nowrap>System In Time</th>
+            <th style="text-align: center ;" nowrap>System Out Time</th>
+            <th style="text-align: center ;" nowrap>Change In Time</th>
+            <th style="text-align: center ;" nowrap>Change Out Time</th>
+            <th style="text-align: center ;" nowrap>Reason</th>
+            <th style="text-align: center ;" nowrap>Approved Note Business Manager</th>
+            <th style="text-align: center ;" nowrap>Approved Note Reporting Manager</th>
+            <th style="text-align: center ;" nowrap>Approved Status Business Manager</th>
+            <th style="text-align: center ;" nowrap>Approved Status Reporting Manager</th>
+         </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-col>
+         <tr>
+            <td style="text-align: center ;" nowrap>{{col.Emp_Name ? col.Emp_Name : '-'}}</td>
+            <td style="text-align: center ;" nowrap>{{col.Apply_Date | date: "dd/MMM/yyyy"}}</td>
+            <td style="text-align: center ;" nowrap>{{col.Atten_Date | date: "dd/MMM/yyyy"}}</td>
+            <td style="text-align: center ;" nowrap>{{col.In_Time | date: 'h:mm a'}}</td>
+            <td style="text-align: center ;" nowrap>{{col.Out_Time | date: 'h:mm a'}}</td>
+            <td style="text-align: center ;" nowrap>{{col.Changed_In_Time | date: 'h:mm a'}}</td>
+            <td style="text-align: center ;" nowrap>{{col.Changed_Out_Time | date: 'h:mm a'}}</td>
+            <td style="text-align: center ;" nowrap>{{col.Remarks ? col.Remarks : '-'}}</td>
+            <td style="text-align: center ;" nowrap>{{col.Approved_Note_Business_Manager ?
+               col.Approved_Note_Business_Manager : '-'}}</td>
+            <td style="text-align: center ;" nowrap>{{col.Approved_Note_Reporting_Manager ?
+               col.Approved_Note_Reporting_Manager : '-'}}</td>
+            <td style="text-align: center ;" nowrap>{{col.Approved_Status_Business_Manager ?
+               col.Approved_Status_Business_Manager : '-'}}</td>
+            <td style="text-align: center ;" nowrap>{{col.Approved_Status_Reporting_Manager ?
+               col.Approved_Status_Reporting_Manager : '-'}}</td>
+         </tr>
+      </ng-template>
+      <ng-template pTemplate="paginatorright" let-state>
+         Showing {{state.first+1}} of {{(state.first) + state.rows}} of {{state.totalRecords}}
+      </ng-template>
+   </p-table>
+   <form name="remarksForm" #remarksForm="ngForm">
+      <div class="row">
+         <div class="col-sm-4" *ngIf="EmpID==Report_Manager_ID&&EmpID==Business_Manager_ID">
+            <label class="control-label">Remarks Of Approval<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" placeholder="Remarks Of Approval" name="Remarks_Of_Approval"
+               #Remarks_Of_Approval="ngModel" [(ngModel)]="Approved_Note_inGeneral"
+               [ngClass]="{clearance: (remarksFormSubmit && Remarks_Of_Approval?.errors?.required) }"
+               [required]="EmpID==Report_Manager_ID&&EmpID==Business_Manager_ID">
+         </div>
+         <div class="col-sm-4" *ngIf="EmpID==Report_Manager_ID&&EmpID!=Business_Manager_ID">
+            <label class="control-label">Remarks Of Approval 1<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" placeholder="Remarks Of Approval 1" name="Remarks_Of_Approval1"
+               #Remarks_Of_Approval1="ngModel" [(ngModel)]="Approved_Note_Reporting_Manager"
+               [ngClass]="{clearance: (remarksFormSubmit && Remarks_Of_Approval1?.errors?.required) }"
+               [required]="EmpID==Report_Manager_ID&&EmpID!=Business_Manager_ID">
+         </div>
+         <div class="col-sm-4" *ngIf="EmpID==Business_Manager_ID&&EmpID!=Report_Manager_ID">
+            <label class="control-label">Remarks Of Approval 2<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" placeholder="Remarks Of Approval 2" name="Remarks_Of_Approval2"
+               #Remarks_Of_Approval2="ngModel" [(ngModel)]="Approved_Note_Business_Manager"
+               [ngClass]="{clearance: (remarksFormSubmit && Remarks_Of_Approval2?.errors?.required) }"
+               [required]="EmpID==Business_Manager_ID&&EmpID!=Report_Manager_ID">
+         </div>
+      </div>
+   </form>
+   <p-footer>
+      <button type="button" (click)="Disapproved(remarksForm.form.valid)" class="btn btn-danger"
+         [disabled]="Approve_Spinner || Disapprove_Spinner">
+         <i *ngIf="!Disapprove_Spinner" class="glyphicon glyphicon-ban-circle"></i>
+         <p-progressSpinner *ngIf="Disapprove_Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
+            animationDuration=".5s"></p-progressSpinner>
+         Disapprove</button>
+      <button type="button" (click)="Approved(remarksForm.form.valid)" class="btn btn-success"
+         [disabled]="Approve_Spinner || Disapprove_Spinner">
+         <i *ngIf="!Approve_Spinner" class="glyphicon glyphicon-ok"></i>
+         <p-progressSpinner *ngIf="Approve_Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
+            animationDuration=".5s"></p-progressSpinner>
+         Approve</button>
+      <button type="button" (click)="ClosePopUp()" class="btn btn-primary"
+         [disabled]="Approve_Spinner || Disapprove_Spinner"><i class="glyphicon glyphicon-remove"></i>Close</button>
+   </p-footer>
+</p-dialog>

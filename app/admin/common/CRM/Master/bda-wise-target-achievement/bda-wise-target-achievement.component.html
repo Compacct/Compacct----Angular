@@ -1,0 +1,96 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal" style="margin-top: 8px;">
+                <div class="box-body">
+                 <div class="form-group">
+                     <div class="col-sm-4">
+                     <label class="control-label">Date </label>
+                     <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [DefaultDateOpt]="'MonthStarttoEnd'" required>
+                     </app-compacct-daterangepicker>
+                 </div>
+</div>
+<br>
+<div class="form-group">
+<div class="col-lg-12">
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading" style="text-align:center; background-color: #6e777e;">
+                 {{Report_Name}}</div>
+                 <!-- <button class="btn btn-primary"><i class="fa fa-arrow-left" aria-hidden="true" (click)="Back(col)"></i>&nbsp; Back</button> -->
+            <div class="panel-body">
+                <div class="table-responsive no-padding" style="height:70vh">
+                    <table class="table table-bordered">
+                        <thead style="position: sticky;top: 0">
+                            <!-- <tr>
+                                <th rowspan="2" style="background-color:rgb(94, 103, 120) !important ; color:white">BDA <br> Call ID</th>
+                                <th class="header-width" style="background-color:rgb(70, 93, 136) !important ; color:white">
+                                    <div class="col-sm-12">
+                                        <input type="month" name="month" [(ngModel)]="Month_Name" (change)="getmonthdaydate()" style="background-color: rgb(70, 93, 136);
+                                        color: #ffff;">
+                                    </div>
+                                </th>
+                                <th *ngFor="let col of MonthdayDatelist" style="background-color:rgb(96, 129, 190) !important ; color:white">
+                                    <tr>{{col.WeekDay}} </tr>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th style="background-color:#7f7d7d !important ; color:white">BDA Name</th>
+                                <th *ngFor="let Data of dateNumber ;let ind = index;" style="background-color:rgb(111, 119, 136) !important ; color:white">
+                                    <tr><a class="btn btn-sm" style="color:white" (click)='ChangeAllRow(ind)'>{{Data.date}}</a></tr>
+                                </th>
+                            </tr> -->
+                            <tr style="background-color:#3c8dbc;color:white;">
+                                <th style="text-align:center;" colspan="2">Member Name</th>
+                                <th style="text-align:center;">Rem</th>
+                                <th style="text-align:center;">Target</th>
+                                <th style="text-align:center;">Achievement</th>
+                                <th style="text-align:center;">ACH-Per</th>
+                                <th style="text-align:center;">DIFF</th>
+                            </tr>
+                        </thead>
+                        <tbody data-spy="scroll" >
+                                <tr *ngFor="let col of MainList;let i = index;"> <!--let odd = odd;"[class.even]="odd" -->
+                                <!-- <td>{{ i + 1 }}</td> -->
+                                <ng-container *ngIf="CheckLengthMemberID(col.Member_ID)  && CheckIndexMemberID(col.Member_ID) === i;" >
+                                    <td *ngIf="Report_Name === 'Main Report'" [attr.rowspan]="CheckLengthMemberID(col.Member_ID)"></td>
+                                    <td *ngIf="Report_Name != 'Main Report'" style="vertical-align: middle;text-align: center;" [attr.rowspan]="CheckLengthMemberID(col.Member_ID)"><i class="fa fa-chevron-left" aria-hidden="true" (click)="Back(col)"> </i></td>
+                                    <td class="group" style="vertical-align: middle;"  (click)="TableChange(col)" [attr.rowspan]="CheckLengthMemberID(col.Member_ID)">
+                                        {{col.Member_Name}} </td>
+                                        <!-- <i class="fa fa-arrow-left" aria-hidden="true" (click)="Back(col)"> </i> -->
+                                            <!-- data-toggle="animation" data-animation-target="#animate-click" <i id="animate-click" data-animation="fade-in-right" data-animation-start="onClick" data-animation-reset="true"></i></td> -->
+                                </ng-container> 
+                                <!-- <ng-container>
+                                <td style="text-align:center" *ngIf="CheckLengthMemberID(col.Member_ID) !== 1;">{{ col.Member_Name }}</td>
+                                </ng-container> -->
+                                <td style="text-align:center">{{ col.Rem }}</td>
+                                <td style="text-align:center">{{ col.Target }}</td>
+                                <td style="text-align:center">{{ col.Achievement }}</td>
+                                <td style="text-align:center">{{ col.ACH_Per }}</td>
+                                <td style="text-align:center">{{ col.DIFF }}</td>
+                                <!-- <td *ngFor="let col of row.monthData;let i2 = index" (click)="getdialog(i,row,i2)" (contextmenu)="onrightclick(i,row,i2)" [class]="col">
+                                    {{col}}
+                                </td> -->
+                                <!-- [class]='getClass()' contextmenu id="noContextMenu" (dblclick)-->
+                            </tr>
+                            <tr *ngIf="tablemsg === 'False'">No Data Found.</tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- <div class="box-footer">
+    <button class="btn btn-primary pull-right" (click)="saveAttendance()" id="load" [disabled]="Spinner">
+        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+        </button>
+</div> -->
+</div>
+</div>
+</div>
+</div>
+</div>

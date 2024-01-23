@@ -31,7 +31,8 @@ export class UserMasterComponent implements OnInit {
   can_popup = false;
   act_popup = false;
   masterUserId : number;
-  passwordCheck = false
+  passwordCheck = false;
+  Underuser :any =[];
   
   constructor(
     private http: HttpClient,
@@ -40,6 +41,7 @@ export class UserMasterComponent implements OnInit {
     private GlobalAPI: CompacctGlobalApiService,
     private compacctToast:MessageService,
     private DateService: DateTimeConvertService,
+    
   ) { }
 
   ngOnInit() {
@@ -52,12 +54,14 @@ export class UserMasterComponent implements OnInit {
     this.getCostCenter();
     this.getDeptData();
     this.getMenuData();
+    this.getUnderUser();
     
   
     this.header.pushHeader({
       Header: "User Master",
       Link: " User Management -> User Master"
     })
+   
     
   }
   TabClick(e) {
@@ -75,7 +79,7 @@ export class UserMasterComponent implements OnInit {
      this.GlobalAPI.getData(obj)
      .subscribe((data:any)=>{
       this.AllData = data;
-      console.log("all data==",data);
+      //console.log("all data==",data);
       });
      
    }
@@ -87,8 +91,17 @@ export class UserMasterComponent implements OnInit {
 
      this.GlobalAPI.getData(obj)
      .subscribe((data:any)=>{
-      this.costData = data;
-      console.log("cost data==",data);
+      if(data.length){
+        data.forEach(element => {
+          element['label'] = element.Cost_Cen_Name,
+          element['value'] = element.Cost_Cen_ID								
+        });
+      //console.log("ProductList  ===",data);
+      this.costData = data;  
+    }
+    else{
+      this.costData =[];
+    }
       });
    }
    getDeptData(){
@@ -101,7 +114,7 @@ export class UserMasterComponent implements OnInit {
      this.GlobalAPI.getData(obj)
      .subscribe((data:any)=>{
       this.deptData = data;
-      console.log("Dept data==",data);
+      //console.log("Dept data==",data);
       });
     }
     getSubDeptData(){
@@ -114,7 +127,7 @@ export class UserMasterComponent implements OnInit {
       this.GlobalAPI.getData(obj)
        .subscribe((data:any)=>{
         this.subData = data;
-        console.log("Sub Dept data==",data);
+        //console.log("Sub Dept data==",data);
         });
     }
     getMenuData(){
@@ -124,10 +137,41 @@ export class UserMasterComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj)
        .subscribe((data:any)=>{
-        this.menuData = data;
-        console.log("menu data==",data);
+        if(data.length){
+          data.forEach(element => {
+            element['label'] = element.Menu_Ref_Name,
+            element['value'] = element.Menu_Ref_ID								
+          });
+        //console.log("ProductList  ===",data);
+        this.menuData = data;  
+      }
+      else{
+        this.menuData =[];
+      }
         });
     }
+    getUnderUser(){
+      const obj = {
+        "SP_String":"sp_UR_Master_User",
+        "Report_Name_String":"Dropdown_For_Under_User"
+      }
+  
+       this.GlobalAPI.getData(obj)
+       .subscribe((data:any)=>{
+        //console.log("data",data)
+        if(data.length){
+          data.forEach(element => {
+            element['label'] = element.Under_User,
+            element['value'] = element.Intro_ID								
+          });
+        //console.log("ProductList  ===",data);
+        this.Underuser = data;  
+      }
+      else{
+        this.Underuser =[];
+      }
+        });
+     }
    clearData(){
    this.userFormSubmitted = false;
    this.ObjUser = new user();
@@ -153,6 +197,9 @@ export class UserMasterComponent implements OnInit {
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
        console.log("data",data);
       this.ObjUser = data[0];
+      this.ObjUser.User_Type = data[0].User_Type;
+      this.ObjUser.User_Time = data [0].User_Time;
+      this.ObjUser.Expiry_Date = data[0].Expiry_Date;
       this.pass = data[0].Password;
       this.getSubDeptData();
      })
@@ -254,8 +301,8 @@ Active(masterUser){
         this.ObjUser.Cost_Cen_ID = Number(this.ObjUser.Cost_Cen_ID);
         this.ObjUser.Dept_ID = Number(this.ObjUser.Dept_ID);
         this.ObjUser.Sub_Dept_ID = Number(this.ObjUser.Sub_Dept_ID);
-        this.ObjUser.Menu_Ref_ID = Number(this.ObjUser.Menu_Ref_ID);
-        this.ObjUser.User_Time = this.ObjUser.User_Time ?  this.DateService.dateConvert(this.ObjUser.User_Time) : "01/Jan/1990"
+        //this.ObjUser.Menu_Ref_ID = Number(this.ObjUser.Menu_Ref_ID);
+       // this.ObjUser.User_Time = this.ObjUser.User_Time ?  this.DateService.dateConvert(this.ObjUser.User_Time) : "01/Jan/1990"
        this.ObjUser.Menu_Ref_ID = this.ObjUser.Menu_Ref_ID ? this.ObjUser.Menu_Ref_ID : 0
         const obj = {
           "SP_String": "sp_UR_Master_User",
@@ -300,24 +347,26 @@ Active(masterUser){
 
 } 
 class user {
-    User_ID:any
-    User_Name:any	
-		Password:any
-		User_Type:any	
-		User_Mobile:any	
-		User_Email:any
-		Cost_Cen_ID: number
-		Dept_ID: number
-		Sub_Dept_ID	:number
-		Del_Right	:any ="N"
-		Menu_Ref_ID	: number
-		Name:any
-		Is_Active	:any = "Y"
-		API_User_Name	:any
-		User_Pic:any
-		Expiry_Date	:any
-		User_Time:any = "N"
-		User_Start_Time:any
-		User_End_Time:any
-		Authorized_Computer:any ="N"
+    User_ID:any;
+    User_Name:any	;
+		Password:any;
+		User_Type:any	;
+		User_Mobile:any	;
+		User_Email:any;
+		Cost_Cen_ID: number;
+		Dept_ID: number;
+		Sub_Dept_ID	:number;
+		Del_Right	:any ="N";
+		Menu_Ref_ID	: number;
+		Name:any;
+		Is_Active	:any = "Y";
+		API_User_Name	:any;
+		User_Pic:any;
+		Expiry_Date	:any;
+		User_Time:any = "N";
+		User_Start_Time:any;
+		User_End_Time:any;
+		Authorized_Computer:any ="N";
+    Intro_ID :any ;
+    Apprv_Auth :any = "N";
 }

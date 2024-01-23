@@ -1,0 +1,116 @@
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+
+    </ng-template>
+</p-toast>
+<div class="row">
+<div class="col-xs-12">
+<div class="box box-primary">
+<div class="form-horizontal">
+<div class="box-body">
+<!-- <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+<p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt"> -->
+<!-- <form name="StockSearchForm" #StockSearchForm="ngForm" novalidate> -->
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Date</label>
+            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate"></app-compacct-daterangepicker>
+         </div> <!-- [minmaxValid]="initDate" -->
+        <div class="col-sm-2" >
+            <button class="btn btn-primary custombutton" data-toggle="modal" (click)="searchData()" id="load" [disabled]="seachSpinner">
+                <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+            </button>
+        </div>
+        <div class="col-sm-2">
+         <button *ngIf="BrowseList.length" class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcel(BrowseList,'Good_Receive_Details')" id="load1" [disabled]="EXCELSpinner">
+            <p-progressSpinner *ngIf="EXCELSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+            <span *ngIf="!EXCELSpinner" class="fa fa-file-excel-o"></span>&nbsp;EXPORT TO EXCEL
+        </button>
+        </div>
+    </div>
+<!-- </form> -->
+             <div class="table-responsive no-padding"> 
+                   <p-table [value]="BrowseList"
+                                [paginator]="BrowseList.length ? true : false"
+                                *ngIf='BrowseList.length'
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeader'
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <!-- <th style="width:5em">Action</th> -->
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeader">{{option.replaceAll('_',' ')}}</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+    
+                                            <!-- <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="CreateGRN(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Create GRN 
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="PrintPRDB(col.RDB_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td> -->
+                                            <ng-container *ngFor="let option of DynamicHeader">
+                                                <td nowrap="nowrap">{{col[option]}}</td>
+                                            </ng-container>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                    </p-table>
+             </div>
+<!-- </p-tabPanel>
+</p-tabView> -->
+</div>
+</div>
+</div>
+</div>
+</div>
+

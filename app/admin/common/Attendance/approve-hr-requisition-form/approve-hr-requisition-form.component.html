@@ -1,0 +1,407 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="row">
+   <div class="col-xs-12">
+      <div class="box box-primary">
+         <div class="form-horizontal">
+            <div class="box-body">
+               <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                  <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[0]"
+                     leftIcon="glyphicon glyphicon-hourglass">
+                     <p-table [value]="pendingTableData" [paginator]="true" [rows]="10" [rowHover]="true"
+                        [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100,200,300]"
+                        [globalFilterFields]="pendingTableDataSearch" [rowHover]="true" #dt>
+                        <ng-template pTemplate="caption">
+                           <div class="row">
+                              <div class="col-sm-3 pull-right" style="text-align: right">
+                                 <input type="text" pInputText size="50" placeholder="Search"
+                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                    class="searchInput form-control">
+                              </div>
+                           </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                           <tr>
+                              <th style="width:5em">Action</th>
+                              <th style="text-align: center ;" nowrap>Created By</th>
+                              <th style="text-align: center ;" nowrap>Created By Dept</th>
+                              <th style="text-align: center ;" nowrap>Position Title</th>
+                              <th style="text-align: center ;" nowrap>Position Type</th>
+                              <th style="text-align: center ;" nowrap>Position Details</th>
+                              <th style="text-align: center ;" nowrap>Approved Note Business Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Note Reporting Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Status Business Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Status Reporting Manager</th>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-col>
+                           <tr>
+                              <td>
+                                 <div class="dropdown">
+                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button"
+                                       data-toggle="dropdown" style="height:27px">
+                                       <i class="fa fa-fw fa-bars"></i>
+                                       <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                       <li>
+                                          <a (click)="ApproveDisapprove(col)">
+                                             <i class="glyphicon glyphicon-ok"></i> Approve / Disapprove
+                                          </a>
+                                       </li>
+                                    </ul>
+                                 </div>
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Created_By1 ? col.Created_By1 : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Created_By_Dept ? col.Created_By_Dept :
+                                 '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Position_Title ? col.Position_Title : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Position_Type ? col.Position_Type : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Position_Details ? col.Position_Details :
+                                 '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Note_Business_Manager ?
+                                 col.Approved_Note_Business_Manager : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Note_Reporting_Manager ?
+                                 col.Approved_Note_Reporting_Manager : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Status_Business_Manager ?
+                                 col.Approved_Status_Business_Manager : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Status_Reporting_Manager ?
+                                 col.Approved_Status_Reporting_Manager : '-'}}
+                              </td>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorright" let-state>
+                           Showing {{state.first+1}} of {{(state.first) + state.rows}} of {{state.totalRecords}}
+                        </ng-template>
+                     </p-table>
+                  </p-tabPanel>
+                  <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[1]" leftIcon="glyphicon glyphicon-ok">
+                     <p-table [value]="approveTableData" [paginator]="true" [rows]="10" [rowHover]="true"
+                        [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100,200,300]"
+                        [globalFilterFields]="approveTableDataSearch" [rowHover]="true" #dt1>
+                        <ng-template pTemplate="caption">
+                           <div class="row">
+                              <div class="col-sm-3 pull-right" style="text-align: right">
+                                 <input type="text" pInputText size="50" placeholder="Search"
+                                    (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                    class="searchInput form-control">
+                              </div>
+                           </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                           <tr>
+                              <th style="text-align: center ;" nowrap>Created By</th>
+                              <th style="text-align: center ;" nowrap>Created By Dept</th>
+                              <th style="text-align: center ;" nowrap>Position Title</th>
+                              <th style="text-align: center ;" nowrap>Position Type</th>
+                              <th style="text-align: center ;" nowrap>Position Details</th>
+                              <th style="text-align: center ;" nowrap>Approved Note Business Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Note Reporting Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Status Business Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Status Reporting Manager</th>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-col>
+                           <tr>
+                              <td style="text-align: center ;" nowrap>{{col.Created_By1 ? col.Created_By1 : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Created_By_Dept ? col.Created_By_Dept :
+                                 '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Position_Title ? col.Position_Title : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Position_Type ? col.Position_Type : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Position_Details ? col.Position_Details :
+                                 '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Note_Business_Manager ?
+                                 col.Approved_Note_Business_Manager : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Note_Reporting_Manager ?
+                                 col.Approved_Note_Reporting_Manager : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Status_Business_Manager ?
+                                 col.Approved_Status_Business_Manager : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Status_Reporting_Manager ?
+                                 col.Approved_Status_Reporting_Manager : '-'}}
+                              </td>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorright" let-state>
+                           Showing {{state.first+1}} of {{(state.first) + state.rows}} of {{state.totalRecords}}
+                        </ng-template>
+                     </p-table>
+                  </p-tabPanel>
+                  <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[2]"
+                     leftIcon="glyphicon glyphicon-remove">
+                     <p-table [value]="disapproveTableData" [paginator]="true" [rows]="10" [rowHover]="true"
+                        [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100,200,300]"
+                        [globalFilterFields]="disapproveTableDataSearch" [rowHover]="true" #dt2>
+                        <ng-template pTemplate="caption">
+                           <div class="row">
+                              <div class="col-sm-3 pull-right" style="text-align: right">
+                                 <input type="text" pInputText size="50" placeholder="Search"
+                                    (input)="dt2.filterGlobal($event.target.value, 'contains')"
+                                    class="searchInput form-control">
+                              </div>
+                           </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                           <tr>
+                              <th style="text-align: center ;" nowrap>Created By</th>
+                              <th style="text-align: center ;" nowrap>Created By Dept</th>
+                              <th style="text-align: center ;" nowrap>Position Title</th>
+                              <th style="text-align: center ;" nowrap>Position Type</th>
+                              <th style="text-align: center ;" nowrap>Position Details</th>
+                              <th style="text-align: center ;" nowrap>Approved Note Business Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Note Reporting Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Status Business Manager</th>
+                              <th style="text-align: center ;" nowrap>Approved Status Reporting Manager</th>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-col>
+                           <tr>
+                              <td style="text-align: center ;" nowrap>{{col.Created_By1 ? col.Created_By1 : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Created_By_Dept ? col.Created_By_Dept :
+                                 '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Position_Title ? col.Position_Title : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Position_Type ? col.Position_Type : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Position_Details ? col.Position_Details :
+                                 '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Note_Business_Manager ?
+                                 col.Approved_Note_Business_Manager : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Note_Reporting_Manager ?
+                                 col.Approved_Note_Reporting_Manager : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Status_Business_Manager ?
+                                 col.Approved_Status_Business_Manager : '-'}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Approved_Status_Reporting_Manager ?
+                                 col.Approved_Status_Reporting_Manager : '-'}}
+                              </td>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorright" let-state>
+                           Showing {{state.first+1}} of {{(state.first) + state.rows}} of {{state.totalRecords}}
+                        </ng-template>
+                     </p-table>
+                  </p-tabPanel>
+               </p-tabView>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+<!-- Pop Up -->
+<p-dialog header="Hr Requisition Details" appendTo="body" [(visible)]="DisplayPopup" [modal]="true" [responsive]="true"
+   [style]="{ width: '85%', minWidth: '375px' }" style="text-align: center;" [minY]="70" [maximizable]="true"
+   [baseZIndex]="10000" (onHide)="ClosePopUp()">
+   <div class="panel panel-primary">
+      <div class="panel-body">
+         <div class="row">
+            <div class="col-sm-3">
+               <label class="control-label">Position Title</label>
+               <div class="label-t">{{disableObj.Position_Title ? disableObj.Position_Title : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Position Type</label>
+               <div class="label-t">{{disableObj.Position_Type ? disableObj.Position_Type : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Source</label>
+               <div class="label-t">{{disableObj.Source ? disableObj.Source : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Position Details</label>
+               <div class="label-t">{{disableObj.Position_Details ? disableObj.Position_Details : "-"}}</div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-3">
+               <label class="control-label">Department</label>
+               <div class="label-t">{{disableObj.Dept_Name ? disableObj.Dept_Name : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Position Title</label>
+               <div class="label-t">{{disableObj.Position_Title ? disableObj.Position_Title : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Clinic Type</label>
+               <div class="label-t">{{disableObj.Clinic_Type ? disableObj.Clinic_Type : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Cost Centre Detail</label>
+               <div class="label-t">{{disableObj.Cost_Cen_Details ? disableObj.Cost_Cen_Details : "-"}}</div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-3">
+               <label class="control-label">Location</label>
+               <div class="label-t">{{disableObj.Location ? disableObj.Location : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Region</label>
+               <div class="label-t">{{disableObj.Region ? disableObj.Region : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Needed For</label>
+               <div class="label-t">{{disableObj.Needed_For ? disableObj.Needed_For : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Recruitment Urgency</label>
+               <div class="label-t">{{disableObj.Recruitment_Urgency ? disableObj.Recruitment_Urgency : "-"}}</div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-3">
+               <label class="control-label">Reporting Manager</label>
+               <div class="label-t">{{disableObj.Report_manager ? disableObj.Report_manager : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Remarks</label>
+               <div class="label-t">{{disableObj.Note ? disableObj.Note : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Level 1 Employee</label>
+               <div class="label-t">{{disableObj.Interviewer_Level_1 ? disableObj.Interviewer_Level_1 : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Level 2 Employee</label>
+               <div class="label-t">{{disableObj.Interviewer_Level_2 ? disableObj.Interviewer_Level_2 : "-"}}</div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-3">
+               <label class="control-label">Level 3 Employee</label>
+               <div class="label-t">{{disableObj.Interviewer_Level_3 ? disableObj.Interviewer_Level_3 : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Setup</label>
+               <div class="label-t">{{disableObj.Setup_Type ? disableObj.Setup_Type : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Professional Qualifications</label>
+               <div class="label-t">{{disableObj.Highest_Qualification ? disableObj.Highest_Qualification : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Years of Experience</label>
+               <div class="label-t">{{disableObj.Year_Of_Experience ? disableObj.Year_Of_Experience : "-"}}</div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-3">
+               <label class="control-label">Company Benchmark for Sourcing</label>
+               <div class="label-t">{{disableObj.Sourcing_Benchmark ? disableObj.Sourcing_Benchmark : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Preferred Companies to hire from</label>
+               <div class="label-t">{{disableObj.Hire_From_Companies ? disableObj.Hire_From_Companies : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Additional Specifications</label>
+               <div class="label-t">{{disableObj.Additional_Spec ? disableObj.Additional_Spec : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">CTC as per Budget</label>
+               <div class="label-t">{{disableObj.CTC_As_Per_Budget ? disableObj.CTC_As_Per_Budget : "-"}}</div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-3">
+               <label class="control-label">Proposed fixed CTC Band</label>
+               <div class="label-t">{{disableObj.Proposed_CTC_Bond ? disableObj.Proposed_CTC_Bond : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Max CTC Variation</label>
+               <div class="label-t">{{disableObj.Max_CTC_Varience ? disableObj.Max_CTC_Varience : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Grade as per Budget</label>
+               <div class="label-t">{{disableObj.Grade_As_Per_Budget ? disableObj.Grade_As_Per_Budget : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Proposed Grade Range</label>
+               <div class="label-t">{{disableObj.Proposed_Grade_Range_Designation ? disableObj.Proposed_Grade_Range_Designation : "-"}}</div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-3">
+               <label class="control-label">HR Remarks</label>
+               <div class="label-t">{{disableObj.Remarks ? disableObj.Remarks : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Approved Note Business Manager</label>
+               <div class="label-t">{{disableObj.Approved_Note_Business_Manager ? disableObj.Approved_Note_Business_Manager : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Approved Note Reporting Manager</label>
+               <div class="label-t">{{disableObj.Approved_Note_Reporting_Manager ? disableObj.Approved_Note_Reporting_Manager : "-"}}</div>
+            </div>
+            <div class="col-sm-3">
+               <label class="control-label">Approved Status Business Manager</label>
+               <div class="label-t">{{disableObj.Approved_Status_Business_Manager ? disableObj.Approved_Status_Business_Manager : "-"}}</div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-3">
+               <label class="control-label">Approved Status Reporting Manager</label>
+               <div class="label-t">{{disableObj.Approved_Status_Reporting_Manager ? disableObj.Approved_Status_Reporting_Manager : "-"}}</div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <hr>
+   <form name="remarksForm" #remarksForm="ngForm">
+      <div class="row">
+         <div class="col-sm-4" *ngIf="EmpID==Report_Manager_ID&&EmpID==Business_Manager_ID">
+            <label class="control-label">Remarks Of Approval<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" placeholder="Remarks Of Approval" name="Remarks_Of_Approval"
+               #Remarks_Of_Approval="ngModel" [(ngModel)]="Approved_Note_inGeneral"
+               [ngClass]="{clearance: (remarksFormSubmit && Remarks_Of_Approval?.errors?.required) }"
+               [required]="EmpID==Report_Manager_ID&&EmpID==Business_Manager_ID">
+         </div>
+         <div class="col-sm-4" *ngIf="EmpID==Report_Manager_ID&&EmpID!=Business_Manager_ID">
+            <label class="control-label">Remarks Of Approval 1<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" placeholder="Remarks Of Approval 1" name="Remarks_Of_Approval1"
+               #Remarks_Of_Approval1="ngModel" [(ngModel)]="Approved_Note_Reporting_Manager"
+               [ngClass]="{clearance: (remarksFormSubmit && Remarks_Of_Approval1?.errors?.required) }"
+               [required]="EmpID==Report_Manager_ID&&EmpID!=Business_Manager_ID">
+         </div>
+         <div class="col-sm-4" *ngIf="EmpID==Business_Manager_ID&&EmpID!=Report_Manager_ID">
+            <label class="control-label">Remarks Of Approval 2<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" placeholder="Remarks Of Approval 2" name="Remarks_Of_Approval2"
+               #Remarks_Of_Approval2="ngModel" [(ngModel)]="Approved_Note_Business_Manager"
+               [ngClass]="{clearance: (remarksFormSubmit && Remarks_Of_Approval2?.errors?.required) }"
+               [required]="EmpID==Business_Manager_ID&&EmpID!=Report_Manager_ID">
+         </div>
+      </div>
+   </form>
+   <p-footer>
+      <button type="button" (click)="Disapproved(remarksForm.form.valid)" class="btn btn-danger"
+         [disabled]="Approve_Spinner || Disapprove_Spinner">
+         <i *ngIf="!Disapprove_Spinner" class="glyphicon glyphicon-ban-circle"></i>
+         <p-progressSpinner *ngIf="Disapprove_Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
+            animationDuration=".5s"></p-progressSpinner>
+         Disapprove</button>
+      <button type="button" (click)="Approved(remarksForm.form.valid)" class="btn btn-success"
+         [disabled]="Approve_Spinner || Disapprove_Spinner">
+         <i *ngIf="!Approve_Spinner" class="glyphicon glyphicon-ok"></i>
+         <p-progressSpinner *ngIf="Approve_Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"
+            animationDuration=".5s"></p-progressSpinner>
+         Approve</button>
+      <button type="button" (click)="ClosePopUp()" class="btn btn-primary"
+         [disabled]="Approve_Spinner || Disapprove_Spinner"><i class="glyphicon glyphicon-remove"></i>Close</button>
+   </p-footer>
+</p-dialog>

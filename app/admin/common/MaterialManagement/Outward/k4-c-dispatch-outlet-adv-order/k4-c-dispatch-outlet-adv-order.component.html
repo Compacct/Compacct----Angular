@@ -122,14 +122,24 @@
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>
                                                         </li> *ngIf="col.Bill_NO != 'NA'" -->
-                                                        <li>
+                                                        <li *ngIf="!col.E_Invoice_PDF_Link && col.Bill_NO === 'NA'">
                                                             <a (click)="deleteAdvDispatch(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.Franchise != 'N'">
+                                                        <li *ngIf="col.Franchise != 'N' && !col.E_Invoice_PDF_Link">
                                                             <a (click)="dataforregeneratingbill(col)">
                                                                 <i class="fa fa-bars" aria-hidden="true"></i> Regenerate Bill
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.E_Invoice_PDF_Link && col.Bill_NO">
+                                                            <a (click)="DownloadEINV(col.E_Invoice_PDF_Link)">
+                                                                <i class="fa fa-fw fa-download"></i> Download E-INV
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Franchise === 'Y' && col.Bill_NO === 'NA' && !col.E_Invoice_PDF_Link">
+                                                            <a (click)="GeneratingBillNo(col)">
+                                                                <i class="fa fa-bars" aria-hidden="true"></i> Generate Bill No.
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -365,7 +375,7 @@
                     <td *ngIf="col.Franchise == 'Y'"><input type="text" [name]="col.Txn_ID" [(ngModel)]='col.Box_Charge' [ngClass]="{'clearance' : flagbox}" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                     <td *ngIf="col.Franchise == 'Y'"><input type="text" [name]="col.Txn_ID" [(ngModel)]='col.Box_Charge_Remarks' class="form-control" style="width: 200px;" /></td>
                     <td *ngIf="col.Franchise == 'Y'">
-                        <button class="btn btn-primary custombtn" (click)='UpdateBox(col)' type="button" [id]="col.Txn_ID" data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
+                        <button class="btn btn-primary custombtn" (click)='UpdateBox(col)' [disabled]="viewbuttondisabled" type="button" [id]="col.Txn_ID" data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
                             Update
                         </button>
                         <!-- <button type="text" [id]="'RowID'+col.Product_ID" [name]="col.Product_ID" [(ngModel)]='col.Box_Charge_Remarks' class="form-control" style="width: 200px;" > Update </button> -->

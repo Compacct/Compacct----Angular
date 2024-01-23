@@ -70,7 +70,7 @@
                                 </div>
                             </div>
                             <div class="table-responsive table-id">
-                                <p-table [value]="Searchedlist" #dt1 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Doc_No","Doc_Date","Amount","Confirm_Amount","Autho_One_Staus"]'>
+                                <p-table [value]="Searchedlist" #dt1 [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Doc_No","Doc_Date","Sub_Ledger_Name","Product_Description","Amount","Confirm_Amount","Autho_One_Staus"]'>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">
@@ -84,6 +84,8 @@
                                             <th style="width:5em">Action</th>
                                             <th>Doc No</th>
                                             <th>Date</th>
+                                            <th>Vendor</th>
+                                            <th>Product Description</th>
                                             <th>Total Amount</th>
                                             <th>Confirm Amount</th>
                                             <th>Confirm Status </th>
@@ -135,7 +137,10 @@
                                                 </div>
                                             </td>
                                             <td>{{col.Doc_No}}</td>
-                                            <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <!-- <td>{{col.Doc_Date | date : 'dd/MMM/yyyy'}}</td> -->
+                                            <td>{{col.Doc_Date}}</td>
+                                            <td>{{col.Sub_Ledger_Name}}</td>
+                                            <td>{{col.Product_Description}}</td>
                                             <td>{{col.Amount}}</td>
                                             <td>{{col.Confirm_Amount ? col.Confirm_Amount : '-'}}</td>
                                             <td>{{col.Autho_One_Staus }}</td>
@@ -187,8 +192,8 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th>Material Type</th>
-                                            <th>Product Type</th>
+                                            <!-- <th>Material Type</th>
+                                            <th>Product Type</th> -->
                                             <th>Product Description</th>
                                             <th>Weekly Avg. Cons</th>
                                             <th>Weekly Cons Value</th>
@@ -197,9 +202,9 @@
                                             <th>Last Purchase Rate</th>
                                             <!-- <th>Last Purchase With Gst</th> -->
                                             <th>Current Stock</th>
-                                            <th>Due Payment</th>
+                                            <!-- <th>Due Payment</th> -->
                                             <!-- <th>Monthly Req Value</th> -->
-                                            <th>Indent Qty</th>
+                                            <!-- <th>Indent Qty</th> -->
                                             <th>Stock Qty</th>
                                             <th>Order Qty</th>
                                             <th>Rate</th>
@@ -218,8 +223,8 @@
                                     <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
                                         <tr [class]='textcolor(col)'>
 
-                                            <td>{{col.Material_Type}}</td>
-                                            <td>{{col.Product_Type}}</td>
+                                            <!-- <td>{{col.Material_Type}}</td>
+                                            <td>{{col.Product_Type}}</td> -->
                                             <td>{{col.Product_Description}}</td>
                                             <td>{{col.Weekly_Avg_Cons}}</td>
                                             <td>{{col.Weekly_Cons_Value}}</td>
@@ -228,9 +233,9 @@
                                             <td>{{col.Last_Purchase_Rate}}</td>
                                             <!-- <td>{{col.Last_Purchase_With_GST}}</td> -->
                                             <td>{{col.Current_Stock}}</td>
-                                            <td>{{col.Due_Payment}}</td>
+                                            <!-- <td>{{col.Due_Payment}}</td> -->
                                             <!-- <td>{{col.Weekly_Avg_Cons}}</td> -->
-                                            <td>{{col.Indent_Qty}}</td>
+                                            <!-- <td>{{col.Indent_Qty}}</td> -->
                                             <td>{{col.Order_Stock_Qty}} {{col.Order_Stock_UOM}}</td>
                                             <td>{{col.Order_Qty}} {{col.Order_UOM}}</td>
                                             <td>{{col.Rate}}</td>
@@ -241,7 +246,7 @@
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Confirm_Qty' (ngModelChange)='confirmamountcalculate(rowIndex)' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
                                             <!-- <td>{{col.Confirm_Rate}}</td> -->
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Confirm_Rate' (ngModelChange)='confirmamountcalculate(rowIndex)' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
-                                            <td>{{col.Confirm_Amount ? col.Confirm_Amount : '-'}}</td>
+                                            <td>{{col.Confirm_Amount ? getTofix(col.Confirm_Amount) : '-'}}</td>
                                             <td>{{col.Confirm_Amount_With_GST}}</td>
                                             <!-- <td>{{col.Vendor_Name}}</td> -->
                                             <td>
@@ -258,7 +263,7 @@
 
                                         </tr>
                                         <tr *ngIf='rowIndex === (AuthorizedList.length - 1)'>
-                                            <td colspan="14" class="text-right">Total</td>
+                                            <td colspan="10" class="text-right">Total</td>
                                             <td>{{getTotalValue('Amount')}}</td>
                                             <!-- <td>{{getTotalValue('Total_Amount_With_GST')}}</td> -->
                                             <td colspan="3" class="text-center">-</td>
@@ -368,7 +373,7 @@
                                             <!-- <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Confirm_Qty' (ngModelChange)='confirmamountcalculate(rowIndex)' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td> -->
                                             <td>{{col.Confirm_Rate}}</td>
                                             <!-- <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Confirm_Rate' (ngModelChange)='confirmamountcalculate(rowIndex)' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td> -->
-                                            <td>{{col.Confirm_Amount ? col.Confirm_Amount : '-'}}</td>
+                                            <td>{{col.Confirm_Amount ? getTofix(col.Confirm_Amount) : '-'}}</td>
                                             <td>{{col.Confirm_Amount_With_GST}}</td>
                                             <td>{{col.Vendor_Name}}</td>
                                             <td>{{col.Remarks}}</td>
@@ -509,6 +514,10 @@
                                                     <input class="form-control" name="lastPurrate" #lastPurrate="ngModel" [(ngModel)]="ObjPurchasePlan.Last_Purchase_Rate" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && lastPurrate?.errors?.required}" required>
                                                 </div>
                                                 <div class="col-sm-2">
+                                                    <label class="control-label">GST Percentage </label>
+                                                    <input class="form-control" name="gstper" #gstper="ngModel" [(ngModel)]="ObjPurchasePlan.GST_Percentage" [(disabled)]="uomdisabeld">
+                                                </div>
+                                                <div class="col-sm-2">
                                                     <label class="control-label">Current Stock <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="currentstock" #currentstock="ngModel" [(ngModel)]="ObjPurchasePlan.Current_Stock" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && currentstock?.errors?.required}" required>
                                                 </div>
@@ -530,13 +539,13 @@
                                                     <label></label>
                                                     <input class="form-control" name="altuom" #altuom="ngModel" [(ngModel)]="ObjPurchasePlan.Alt_UOM" [(disabled)]="uomdisabeld">
                                                 </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <div class="col-sm-2">
                                                     <label class="control-label">Current Rate <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="rate" #rate="ngModel" [(ngModel)]="ObjPurchasePlan.Sale_rate" (change)='OrderValueChange()' CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && rate?.errors?.required}" required>
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="col-sm-2">
+                                                <div class="col-sm-3">
                                                     <label class="control-label">Order Value <sup class="text-danger">*</sup></label>
                                                     <input class="form-control" name="Ovalue" #Ovalue="ngModel" [(ngModel)]="ObjPurchasePlan.Order_Value" [disabled]="ovaldisabled" CompacctDigitonly="true" [ngClass]="{'clearance':PurchaseFormSubmitted && Ovalue?.errors?.required}" required>
                                                 </div>
@@ -553,12 +562,12 @@
                                                     <input class="form-control" onkeydown="if(event.key==='.'){event.preventDefault();}" oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');" CompacctDigitonly="true" name="estimedel" #estimedel="ngModel" [(ngModel)]="ObjPurchasePlan.Estimated_Time_Of_Delivery"
                                                         [ngClass]="{'clearance':PurchaseFormSubmitted && estimedel?.errors?.required}" required>
                                                 </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <div class="col-sm-3">
                                                     <label class="control-label">Remarks</label>
                                                     <textarea class="form-control" name="Remarks" #Remarks="ngModel" [(ngModel)]="ObjPurchasePlan.Remarks" [ngClass]="{'clearance':PurchaseFormSubmitted && Remarks?.errors?.required}"></textarea>
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Select Vendor <sup class="text-danger">*</sup></label>
                                                     <!-- <div class="col-sm-2 pull-right" style="width:170px;">
@@ -647,7 +656,7 @@
                                             <td>{{obj.Due_Payment}}</td>
                                             <td>{{obj.Order_Qty}} {{obj.Alt_UOM}}</td>
                                             <td>{{obj.Sale_rate}}</td>
-                                            <td>{{obj.Order_Value}}</td>
+                                            <td>{{getTofix(obj.Order_Value)}}</td>
                                             <td>{{obj.Stock_Qty}} {{obj.Stock_UOM}}</td>
                                             <td>{{obj.Estimated_Time_Of_Delivery}}</td>
                                             <td>{{obj.Remarks}}</td>
@@ -775,7 +784,10 @@
                                             <th>Product Name</th>
                                             <th>UOM</th>
                                             <th>Last Purchase Qty</th>
+                                            <th>Last Purchase Rate</th>
                                             <th>Last Purchase Date</th>
+                                            <th>Weekly Avg Cons</th>
+                                            <th>Monthly Avg Cons</th>
                                             <th>Current Stock</th>
                                             <th>Notification Level</th>
                                             <th>Critical Level</th>
@@ -791,7 +803,10 @@
                                             <td [class]='col.textClass'>{{col.Product_Description}}</td>
                                             <td [class]='col.textClass'>{{col.UOM}}</td>
                                             <td [class]='col.textClass'>{{col.Last_Purchase_Qty ? col.Last_Purchase_Qty : '-'}}</td>
+                                            <td [class]='col.textClass'>{{col.Last_Purchase_Rate ? col.Last_Purchase_Rate : '-'}}</td>
                                             <td [class]='col.textClass'>{{col.Last_Purchase_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td [class]='col.textClass'>{{col.Weekly_Avg_Cons ? col.Weekly_Avg_Cons : '-'}}</td>
+                                            <td [class]='col.textClass'>{{col.Monthly_Avg_Cons ? col.Monthly_Avg_Cons : '-'}}</td>
                                             <td [class]='col.textClass'>{{col.Stock_Qty}}</td>
                                             <!-- <td>{{col.Reorder_Level ? col.Reorder_Level : '-'}}</td> -->
                                             <td [class]='col.textClass'>{{col.Reorder_Level }}</td>

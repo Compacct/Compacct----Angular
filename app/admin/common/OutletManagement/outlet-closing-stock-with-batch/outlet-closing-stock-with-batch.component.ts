@@ -18,41 +18,44 @@ import * as XLSX from 'xlsx';
 })
 export class OutletClosingStockWithBatchComponent implements OnInit {
   Remarks:any;
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
   buttonname = "Save"
   ObjOTclosingwithbatch : OTclosingwithbatch = new OTclosingwithbatch ();
-  BrandList = [];
-  CostCenter = [];
+  BrandList:any = [];
+  CostCenter:any = [];
   costcentdisableflag = false;
-  GodownId = [];
+  GodownId:any = [];
   godowndisableflag = false;
-  productlist = [];
+  productlist:any = [];
   flag = false;
   BillDate : any = Date;
   dateList: any;
   OTclosingstockwithbatchFormSubmitted = false;
   ObjBrowse : Browse  = new Browse();
-  Searchedlist = [];
+  Searchedlist:any = [];
   SearchFormSubmitted = false;
   checkSave = false;
   BrandDisable = false;
   Doc_No = undefined;
-  ViewList = [];
+  ViewList:any = [];
   ViewPoppup = false;
   Doc_date = undefined;
   Cost_Cent_ID = undefined;
   Godown_ID = undefined;
   BrandId = undefined;
   remarks = undefined;
-  editList = [];
+  editList:any = [];
   del_doc_no: any;
   minDate:Date;
   maxDate:Date;
   EODstatus: any;
   datedisable = true;
+  ShowSpinner = false;
+  savereturndata:any = [];
+  doublebatchpopup = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -84,6 +87,9 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
     this.buttonname = "Save";
     this.clearData();
     this.getbilldate();
+    this.Doc_No = undefined;
+    this.OTclosingstockwithbatchFormSubmitted = false;
+    this.ObjOTclosingwithbatch.Daily_Weekly = undefined;
   }
   getbilldate(){
     const obj = {
@@ -203,13 +209,16 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
   EODCheck(valid){
     this.productlist = [];
     this.OTclosingstockwithbatchFormSubmitted = true;
+    this.ShowSpinner = true;
     if(valid) {
     const TempObj = {
       Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-      Date : this.DateService.dateConvert(new Date(this.BillDate))
+      Date : this.DateService.dateConvert(new Date(this.BillDate)),
+      Daily_Weekly : this.ObjOTclosingwithbatch.Daily_Weekly
    }
     const obj = {
       "SP_String": "SP_K4C_Day_End_Process",
+      // "SP_String": "SP_Outlet_Closing_Stock_With_Batch",
       "Report_Name_String": "Check_Closing_Stock_Status",
       "Json_Param_String": JSON.stringify([TempObj])
     }
@@ -220,6 +229,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
         this.GetProduct();
       } 
       else if (data[0].Closing_Stock_Status === "YES") {
+        this.ShowSpinner = false;
         this.compacctToast.clear();
         this.compacctToast.add({
           key: "compacct-toast",
@@ -230,6 +240,9 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
       }
     })
    }
+   else {
+    this.ShowSpinner = false;
+   }
   }
   GetProduct(){
     // this.OTclosingstockwithbatchFormSubmitted = true;
@@ -239,7 +252,8 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
       Cost_Cen_ID : this.ObjOTclosingwithbatch.Cost_Cen_ID,
       From_godown_id : this.ObjOTclosingwithbatch.godown_id,
       Product_Type_ID : 0,
-      Bill_Date : this.DateService.dateConvert(new Date(this.BillDate))
+      Bill_Date : this.DateService.dateConvert(new Date(this.BillDate)),
+      Daily_Weekly : this.ObjOTclosingwithbatch.Daily_Weekly
     }
     const obj = {
       "SP_String": "SP_Outlet_Closing_Stock_With_Batch",
@@ -248,14 +262,116 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.productlist = data;
+      if (data.length) {
+      this.ShowSpinner = false;
      // this.productlist[0].Issue_Qty = this.productlist[0].batch_Qty
        console.log(" product List ===",this.productlist);
        this.OTclosingstockwithbatchFormSubmitted = false;
        for(let i = 0; i < this.productlist.length ; i++){
         this.productlist[i].Closing_Qty = this.productlist[i].batch_Qty
+        this.productlist[i].Expiry_Date = this.DateService.dateTimeConverterForSearch(new Date(this.productlist[i].Expiry_Date))
        }
+       console.log("Date===",this.productlist)
+      }
+      else {
+        this.ShowSpinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "d",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+      }
     })
- // }
+  }
+  SaveOTcloingWithoutProductConfirm(){
+       this.compacctToast.clear();
+        this.compacctToast.add({
+        key: "p",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+  }
+  SaveOTcloingWithoutProduct(){
+    this.ngxService.start();
+    //if(valid){
+      const proobj = {
+        Doc_No	 : "A",
+        Doc_Date : this.DateService.dateConvert(new Date(this.BillDate)),
+        Cost_Cen_ID	: this.ObjOTclosingwithbatch.Cost_Cen_ID,
+        Godown_ID	: this.ObjOTclosingwithbatch.godown_id,
+        Daily_Weekly : this.ObjOTclosingwithbatch.Daily_Weekly,
+        User_ID	: this.$CompacctAPI.CompacctCookies.User_ID,
+        Product_Type_ID : 0,
+        Product_ID : 0,
+        UOM : 'NA',
+        Batch_No : 'NA',
+        Closing_Qty	: 0,
+        Remarks : 'NA',
+      }
+      const obj = {
+        "SP_String": "SP_Outlet_Closing_Stock_With_Batch",
+        "Report_Name_String" : "Save_Outlet_Closing_Stock_With_Batch",
+       "Json_Param_String": JSON.stringify([proobj])
+
+      }
+      this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+        //console.log(data);
+        this.savereturndata = data;
+        var tempID = data[0].Column1;
+       // this.Objproduction.Doc_No = data[0].Column1;
+        if(data[0].Column1){
+          this.ShowSpinner = false;
+          this.ngxService.stop();
+          this.compacctToast.clear();
+          this.Spinner = false;
+          const mgs = this.buttonname === "Save" ? "Saved" : "Updated";
+          this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "success",
+           summary: "Doc_No  " + tempID,
+           detail: "Succesfully  "  + mgs
+         });
+        //  if (this.buttonname == "Save & Print") {
+        //  this.saveNprintProVoucher();
+        //  }
+        if (this.buttonname != "Save") {
+          this.tabIndexToView = 0
+          this.items = ["BROWSE", "CREATE"];
+          this.buttonname = "Save";
+          this.clearData();
+          this.ObjOTclosingwithbatch.Daily_Weekly = undefined;
+          this.getbilldate();
+          this.GetSearchedList(true);
+        } else {
+         this.clearData();
+         this.ObjOTclosingwithbatch.Daily_Weekly = undefined;
+         this.getbilldate();
+        }
+        // this.IssueStockFormSubmitted = false;
+
+        } 
+        // else if (!data[0].Column1) {
+        //   this.doublebatchpopup = true;
+        // }
+        else{
+          this.ShowSpinner = false;
+          this.Spinner = false;
+          this.ngxService.stop();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+        }
+      })
+    //}
   }
   getTotalValue(key){
     let Amtval = 0;
@@ -290,14 +406,28 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
     //          }
     // }
   }
+  SaveBeforeCheck(){
+    this.Spinner = true;
+     if (this.productlist.length) {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "s",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
   GetDataForSave(){
     if(this.productlist.length) {
-      let tempArr =[];
+      let tempArr:any =[];
       const TempObj = {
         Doc_No	 : this.Doc_No ? this.Doc_No : "A",
         Doc_Date : this.DateService.dateConvert(new Date(this.BillDate)),
         Cost_Cen_ID	: this.ObjOTclosingwithbatch.Cost_Cen_ID,
         Godown_ID	: this.ObjOTclosingwithbatch.godown_id,
+        Daily_Weekly : this.ObjOTclosingwithbatch.Daily_Weekly,
         //Narration	: this.ObjOTclosingwithbatch.Remarks,
         User_ID	: this.$CompacctAPI.CompacctCookies.User_ID,
        // Process_ID : 100,
@@ -335,12 +465,15 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
       }
       this.GlobalAPI.postData(obj).subscribe((data:any)=>{
         //console.log(data);
+        this.savereturndata = data;
         var tempID = data[0].Column1;
        // this.Objproduction.Doc_No = data[0].Column1;
-        if(data[0].Column1 != "Something Wrong"){
+        if(data[0].Column1){
           this.ngxService.stop();
           this.compacctToast.clear();
+          this.Spinner = false;
           const mgs = this.buttonname === "Save" ? "Saved" : "Updated";
+          this.GetSearchedList(true);
           this.compacctToast.add({
            key: "compacct-toast",
            severity: "success",
@@ -355,15 +488,23 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
           this.items = ["BROWSE", "CREATE"];
           this.buttonname = "Save";
           this.clearData();
+          this.ObjOTclosingwithbatch.Daily_Weekly = undefined;
           this.getbilldate();
           this.GetSearchedList(true);
+          this.Doc_No = undefined;
         } else {
          this.clearData();
+         this.ObjOTclosingwithbatch.Daily_Weekly = undefined;
          this.getbilldate();
         }
         // this.IssueStockFormSubmitted = false;
 
-        } else{
+        } 
+        else if (!data[0].Column1) {
+          this.doublebatchpopup = true;
+        }
+        else{
+          this.Spinner = false;
           this.ngxService.stop();
           this.compacctToast.clear();
           this.compacctToast.add({
@@ -375,6 +516,14 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
         }
       })
     //}
+  }
+  closepopup(){
+    this.doublebatchpopup = false;
+    this.Spinner = false;
+    this.ngxService.stop();
+    this.compacctToast.clear("c");
+    this.compacctToast.clear("s");
+
   }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
@@ -420,6 +569,7 @@ const obj = {
   Edit(DocNo){
     // console.log("editmaster ==",DocNo);
      this.clearData();
+     this.ObjOTclosingwithbatch.Daily_Weekly = undefined;
      if(DocNo.Doc_No){
      this.Doc_No = DocNo.Doc_No;
      this.tabIndexToView = 1;
@@ -445,6 +595,7 @@ const obj = {
           this.ObjOTclosingwithbatch.Brand_ID = data[0].Brand_ID;
             this.ObjOTclosingwithbatch.Cost_Cen_ID = data[0].Cost_Cen_ID;
             this.ObjOTclosingwithbatch.godown_id = data[0].godown_id;
+            this.ObjOTclosingwithbatch.Daily_Weekly = data[0].Daily_Weekly;
             this.BillDate = new Date(data[0].Doc_Date);
             let Datetemp:Date =  new Date(data[0].Doc_Date)
             const Timetemp =  Datetemp.setDate(Datetemp.getDate() - 1);
@@ -463,7 +614,7 @@ const obj = {
                Expiry_Date :  element.Expiry_Date,
                batch_Qty : element.batch_Qty,
                Closing_Qty : element.Closing_Qty,
-               Varience_Qty : element.Varience_Qty,
+               Varience_Qty : Number(element.batch_Qty - element.Closing_Qty).toFixed(2),
                Remarks : element.Remarks
              };
               this.productlist.push(productObj);
@@ -552,9 +703,14 @@ const obj = {
    
    onReject(){
      this.compacctToast.clear("c");
+     this.compacctToast.clear("s");
+     this.compacctToast.clear("d");
+     this.compacctToast.clear("p");
+     this.Spinner = false;
+     this.ShowSpinner = false;
    }
    exportoexcel(Arr,fileName): void {
-     let temp = [];
+     let temp:any = [];
      Arr.forEach(element => {
        const obj = {
         Product_Type : element.Product_Type,
@@ -576,6 +732,8 @@ const obj = {
     XLSX.writeFile(workbook, fileName+'.xlsx');
   }
   clearData(){
+    this.Spinner = false;
+    this.ShowSpinner = false;
     if(this.$CompacctAPI.CompacctCookies.User_Type != "A"){
       this.ObjOTclosingwithbatch.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
       this.ObjBrowse.Brand_ID = this.BrandList.length === 1 ? this.BrandList[0].Brand_ID : undefined;
@@ -603,7 +761,7 @@ const obj = {
     this.datedisable = true;
   }
   exportoexcel3(Arr,fileName): void {
-    let temp = [];
+    let temp:any = [];
      Arr.forEach(element => {
        const obj = {
         Doc_No : element.Doc_No,
@@ -622,7 +780,7 @@ const obj = {
     XLSX.writeFile(workbook, fileName+'.xlsx');
   }
   exportoexcel4(Arr,fileName): void {
-    let temp = [];
+    let temp:any = [];
     Arr.forEach(element => {
       const obj = {
        Product_Type : element.Product_Type,
@@ -650,6 +808,7 @@ class OTclosingwithbatch {
   Cost_Cen_ID : string;
   godown_id : string;
   Remarks : any;
+  Daily_Weekly : any;
  }
  class Browse {
   start_date : Date ;

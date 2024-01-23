@@ -119,7 +119,7 @@
                             <form name="masterProduct" #masterProduct="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material'">
-                                        <label class="control-label">Brand<sup class="text-danger" *ngIf='Param_Flag !== "Store Item - Saleable"  && Param_Flag !== "Store Item - N/Saleable"'>*</sup>
+                                        <label class="control-label">Brand<sup class="text-danger" *ngIf='Param_Flag !== "Store Item - Saleable"  && Param_Flag !== "Store Item - N/Saleable" && Param_Flag !== "Maintenance"'>*</sup>
                                             </label>
                                         <select class="form-control" name="BrandID" #BrandID="ngModel" [disabled]="brandInput" (change)="getProductTypeListRow(ObjmasterProduct.Brand_ID)" [(ngModel)]="ObjmasterProduct.Brand_ID" [ngClass]="{'clearance': masterProductFormSubmitted && BrandID?.errors?.required}"
                                             [required]='Param_Flag !== "Store Item - Saleable"  && Param_Flag != "Store Item - N/Saleable"'>
@@ -203,7 +203,7 @@
                                                     </option>
                                                 </select>
                                     </div>
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Finished' && Param_Flag != 'Store Item - Saleable' && Param_Flag != 'Raw Material' && Param_Flag != 'Store Item - N/Saleable'">
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Finished' && Param_Flag != 'Store Item - Saleable' && Param_Flag != 'Raw Material' && Param_Flag != 'Store Item - N/Saleable' && Param_Flag != 'Maintenance'">
                                         <label class="control-label">Stock UOM<sup class="text-danger">*</sup></label>
                                         <select class="form-control" placeholder="Stock UOM" name="UOM1" #UOM1="ngModel" [(ngModel)]="ObjmasterProduct.UOM" (Change)="alt_uomChange()" [ngClass]="{'clearance': masterProductFormSubmitted && UOM1?.errors?.required}" required>
                                                   <option [ngValue]="undefined" >Select</option>
@@ -212,7 +212,7 @@
                                                     </option>
                                                 </select>
                                     </div>
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Raw Material' && Param_Flag != 'Store Item - N/Saleable'">
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Raw Material' && Param_Flag != 'Store Item - N/Saleable' && Param_Flag != 'Maintenance'">
                                         <label class="control-label">Sale UOM<sup class="text-danger">*</sup></label>
                                         <select class="form-control" placeholder="Sale UOM" name="UOM" #UOM="ngModel" [(ngModel)]="ObjmasterProduct.UOM" (Change)="alt_uomChange()" [ngClass]="{'clearance': masterProductFormSubmitted && Alt_UOM?.errors?.required}" required>
                                                   <option [ngValue]="undefined" >Select</option>
@@ -232,7 +232,7 @@
                                             <input class="form-control" name="ALT_UOM_Qty" #ALT_UOM_Qty="ngModel" [(ngModel)]="ObjmasterProduct.ALT_UOM_Qty" [ngClass]="{'clearance': masterProductFormSubmitted && ALT_UOM_Qty?.errors?.required}" [disabled]="disablesIndut" required>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Store Item - N/Saleable' && Param_Flag != 'Store Item - Saleable'">
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Store Item - N/Saleable' && Param_Flag != 'Store Item - Saleable' && Param_Flag != 'Maintenance'">
                                         <label class="control-label">Purchasable Product<sup class="text-danger"></sup></label>
 
                                         <div class="checkBox">
@@ -255,17 +255,18 @@
                                     </div>
                                     <!--  -->
                                     <div class="clearfix" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Store Item - Saleable'"></div>
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Raw Material'">
-                                        <label class="control-label">Saleable Product<sup class="text-danger"></sup></label>
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished'">
+                                        <label class="control-label" *ngIf="Param_Flag != 'Raw Material'">Saleable Product<sup class="text-danger"></sup></label>
+                                        <label class="control-label" *ngIf="Param_Flag === 'Raw Material'">Billable<sup class="text-danger"></sup></label>
                                         <div class="checkBox">
                                             <label>
                                        <p-checkbox  [(ngModel)]="ObjmasterProduct.Saleable_Product" #Saleable_Product="ngModel" name="Saleable_Product" binary="true"
-                                       ></p-checkbox> Enable Saleable Product
+                                       ></p-checkbox>  {{billableSaleable}}
                                    </label>
                                         </div>
                                     </div>
 
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Store Item - N/Saleable'">
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Store Item - N/Saleable' && Param_Flag != 'Maintenance'">
                                         <label class="control-label">Reorder Level</label>
                                         <input type="number" class="form-control" placeholder="Reorder Level" name="Reorder_Level" #Reorder_Level="ngModel" [(ngModel)]="ObjmasterProduct.Reorder_Level" CompacctDigitonly="true">
                                     </div>
@@ -307,11 +308,11 @@
 
 
                                     </div>
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Store Item - Saleable'">
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished'">
                                         <label class="control-label">Purchase Rate</label>
                                         <input type="number" class="form-control" placeholder="Purchase Rate" name="Purchase_Rate" #Purchase_Rate="ngModel" [(ngModel)]="ObjmasterProduct.Purchase_Rate" CompacctDigitonly="true">
                                     </div>
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Semi Finished' && Param_Flag != 'Store Item - N/Saleable'">
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Semi Finished' && Param_Flag != 'Store Item - N/Saleable' && Param_Flag != 'Maintenance'">
                                         <label class="control-label">Sale Rate</label>
                                         <input type="number" class="form-control" placeholder="Sale Rate" name="Sale_rate" #Sale_rate="ngModel" [(ngModel)]="ObjmasterProduct.Sale_rate" CompacctDigitonly="true">
                                     </div>
@@ -331,17 +332,34 @@
 
 
                                     </div>
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Semi Finished' && Param_Flag != 'Store Item - N/Saleable'">
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Semi Finished' && Param_Flag != 'Store Item - N/Saleable' && Param_Flag != 'Maintenance'">
 
                                         <label class="control-label">Online Sale Rate</label>
                                         <input class="form-control" placeholder="Online Sale Rate" name="Sale_rate_Online" #Sale_rate_Franchise_New="ngModel" CompacctDigitonly="true" [(ngModel)]="ObjmasterProduct.Sale_rate_Online">
 
 
                                     </div>
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Semi Finished' && Param_Flag != 'Store Item - N/Saleable'">
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Semi Finished' && Param_Flag != 'Store Item - N/Saleable' && Param_Flag != 'Maintenance'">
                                         <label class="control-label">Shelf Life (In Hours)<sup class="text-danger">*</sup></label>
                                         <input class="form-control" name="Shelf_Life_Hours" #Shelf_Life_Hours="ngModel" [(ngModel)]="ObjmasterProduct.Shelf_Life_Hours" placeholder="Shelf Life (In Hours)" CompacctDigitonly="true" [ngClass]="{'clearance': masterProductFormSubmitted && Shelf_Life_Hours?.errors?.required}"
                                             required>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Premix</label>
+                                        <select class="form-control" name="premix" #premix="ngModel" [(ngModel)]="ObjmasterProduct.Premix_Item" [ngClass]="{'clearance': masterProductFormSubmitted && premix?.errors?.required}">
+                                              <option  [ngValue]="undefined">Select</option>
+                                              <option  value="Y">Yes</option>
+                                              <option  value="N">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Daily/Weekly</label>
+                                        <select class="form-control" name="dailyweekly" #dailyweekly="ngModel" [(ngModel)]="ObjmasterProduct.Daily_Weekly" [ngClass]="{'clearance': masterProductFormSubmitted && dailyweekly?.errors?.required}">
+                                              <option  [ngValue]="undefined">Select</option>
+                                              <option  value="Daily">Daily</option>
+                                              <option  value="Weekly">Weekly</option>
+                                              <option  value="NA">NA</option>
+                                        </select>
                                     </div>
                                     <div class="col-sm-4">
 
@@ -365,7 +383,7 @@
 
                                     </div>
                                 </div>
-                                <div class="col-lg-12" style="margin-top: 15px" *ngIf="Param_Flag != 'Store Item' && Param_Flag != 'Finished'&& Param_Flag != 'Store Item - N/Saleable' && Param_Flag != 'Store Item - Saleable'">
+                                <div class="col-lg-12" style="margin-top: 15px" *ngIf="Param_Flag != 'Store Item' && Param_Flag != 'Finished'&& Param_Flag != 'Store Item - N/Saleable' && Param_Flag != 'Store Item - Saleable' && Param_Flag != 'Maintenance'">
                                     <div class="panel-group">
                                         <div class="panel panel-primary">
                                             <div class="panel-body">

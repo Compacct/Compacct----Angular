@@ -1,0 +1,101 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p >{{message.detail}}</p>
+        </div>
+       
+      
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView">
+                        <form name="csvUploadForm" #csvUploadForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4" >
+                                    <label class="control-label">Choose<sup class="text-danger"></sup></label>
+                                    <select class="form-control"
+                                            name="Choose"
+                                            #Choose="ngModel"
+                                            [(ngModel)]="seleteChoose"
+                                            (change)="changeChoode()"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                     <option *ngFor = "let option of ChooseList" [value] ="option.value">
+                                        {{option.value}}
+                                      </option>
+                                </select>
+                                </div>
+                                <div class="col-sm-4" *ngIf="seleteChoose" >
+                                    <label class="control-label">File<sup class="text-danger"></sup></label>
+                                    <p-fileUpload #fileInput mode="advanced" [multiple]="false" 
+                                    [fileLimit]="1" name="aFile566" 
+                                    accept=".csv,.xlsx" 
+                                    [chooseLabel]="'Browse'" 
+                                    customUpload="true" 
+                                    [showUploadButton]="false" 
+                                    (onRemove)="fileRemove($event)" 
+                                    (onSelect)="handleFileSelect($event)"></p-fileUpload>
+                                </div>
+                                <div class="col-sm-4" *ngIf='tableDataList.length' >
+                                    <button class="btn btn-primary custombutton"
+                                     (click)="SaveFileData()" 
+                                     id="load" 
+                                     [disabled]="Spinner">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Save
+                                </button>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="no-padding">
+                            <p-table [value]="tableDataList"
+                            [paginator]="tableDataList.length ? true : false"
+                            *ngIf='tableDataList.length'
+                            [paginator]="true" 
+                            [loading]="loading"
+                            [rows]="100" 
+                            [rowHover]="true" 
+                            [autoLayout]="true" 
+                            sortMode="multiple" 
+                            [rowsPerPageOptions]="[100,200,300]" 
+                            [globalFilterFields]='tableDataListHeader'
+                                [rowHover]="true" #dt2>
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                                      
+                                    </div>
+
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th nowrap="nowrap" *ngFor="let option of tableDataListHeader">{{option.replaceAll('_',' ')}}</th> 
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr>
+                                 <ng-container *ngFor="let option of tableDataListHeader">
+                                            <td >{{col[option]}}</td>
+                                         </ng-container>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorright" let-state>
+                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

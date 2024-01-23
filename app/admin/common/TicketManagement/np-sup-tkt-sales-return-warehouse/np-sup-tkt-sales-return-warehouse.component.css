@@ -1,0 +1,109 @@
+#ui-tabpanel-0>div>p-table>div>div.ui-table-wrapper.ng-star-inserted {
+    width: auto !important;
+}
+
+.ui-table-auto-layout>.ui-table-wrapper {
+    width: auto !important;
+    min-height: 170px !important;
+}
+
+element.style {
+    height: 301.5px;
+}
+
+.table-responsive {
+    min-height: .01%;
+    overflow-y: hidden;
+}
+
+div.table-responsive.table-id>p-table>div>div {
+    width: auto !important;
+}
+
+.custombutton {
+    margin-top: 25px;
+}
+
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.text-red-active>td {
+    color: red;
+}
+
+div.label-t {
+    padding: 6px 12px;
+    background: rgb(206 216 216 / 51%);
+}
+
+.custombutton1 {
+    margin-top: 2px;
+    margin-left: 600px;
+}
+
+.custombutton {
+    margin-top: 26px;
+
+}
+
+body .ui-dropdown.ui-dropdown-clearable .ui-dropdown-label {
+    text-align: left !important;
+}
+
+.ui-dropdown-panel .ui-dropdown-empty-message {
+    text-align: left !important;
+}
+
+.createPatient {
+    padding: 0 5px !important;
+    border-radius: 3px !important;
+    margin-top: 5px !important;
+}
+
+.container {
+    width: 100%;
+    background-color: rgb(235, 242, 248);
+}
+
+#H123:nth-of-type(even) {
+    background-color: #EBEDEF;
+}
+
+.text-dangerrr {
+    color: rgb(56, 141, 197);
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.text-dangerrr :hover {
+    color: red;
+}
+
+.ui-dialog .ui-dialog-content {
+    height: 45vh;
+}
+fieldset {
+    border: 1px solid #bed8e747 !important;
+    margin: 0;
+    min-width: 0;
+    padding: 10px;
+    position: relative;
+    border-radius: 4px;
+    background-color: #bed8e747;
+    padding-left: 10px !important;
+}
+
+legend {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 0px;
+    width: fit-content;
+    border: 1px solid #55627ca1;
+    border-radius: 4px;
+    padding: 0px 10px 0px 10px;
+    background-color: #55627ca1;
+}

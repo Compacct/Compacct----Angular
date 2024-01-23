@@ -1,0 +1,1584 @@
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid" *ngIf="!deleteError">
+            <div class="ui-g-6" *ngIf="Save && !Del">
+                <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="Del && !Save">
+              <button type="button" pButton (click)="onConfirmDel()" label="Yes" class="ui-button-success"></button>
+          </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+        <div class="ui-g ui-fluid" *ngIf="deleteError">
+             <div class="ui-g-12">
+                <button type="button" pButton (click)="onReject()" label="OK" class="ui-button-danger" style="font-size: 20px;"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="potext" (onClose)="onReject()" [modal]="true" [autoZIndex]="true"  baseZIndex="99999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+          <form name="potextForm" #potextForm="ngForm" novalidate>
+                <div class="form-group">
+                    <div class="col-sm-12" >
+                        <label class="control-label">Po text<sup class="text-danger"></sup></label>
+                        <input type="text"
+                        class="form-control"
+                        name="Potext"
+                        #Potext="ngModel"
+                        [(ngModel)]="objPoText.PO_Text"
+                        placeholder="Po text"
+                        [ngClass]="{'clearance': potextFormSubmit && Potext?.errors?.required }"
+                        required
+                        >
+                    </div>
+                    <div class="col-sm-12" style="text-align: right; margin: 5px; padding: 0px;" >
+                        <button type="button" pButton (click)="potextEdit(potextForm.form.valid)" label="OK" class="btn btn-default"></button>
+                    </div>
+                   
+                </div>
+            </form>
+        </div>
+   <div class="ui-g ui-fluid" >
+             <div class="ui-g-12">
+                
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" 
+                                    name="browsecompany" 
+                                    #browsecompany="ngModel" 
+                                    [(ngModel)]="ObjBrowse.Company_ID"
+                                    [ngClass]="{'clearance': SearchFormSubmitted && browsecompany?.errors?.required}"
+                                    required>
+                                    <option  [ngValue]="undefined">Select</option>
+                                       <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                          {{option.Company_Name}}
+                                        </option>
+                                  </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Date</label>
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getAllData(SearchForm.form.valid)" id="load2" [disabled]="seachSpinner">
+                                      <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                   </button>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Sub Ledger Name <span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="DistSubledgerName" [(ngModel)]="SelectedDistSubledgerName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="subledgername"></p-multiSelect>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Cost Centre Name <span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="DistCostCentreName" [(ngModel)]="SelectedDistCentreName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="costledgername"></p-multiSelect>
+                                </div>
+                            </div>
+                            </form>
+                            <div class="no-padding">
+                                <p-table [value]="getAllDataList"
+                                [paginator]="getAllDataList.length ? true : false"
+                                *ngIf='getAllDataList.length'
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeader'
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeader">{{option.replace('_',' ')}}</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+    
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                                <a (click)="Edit(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li>
+                                                        <li>
+                                                            <a (click)="Print(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="Delete(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <ng-container *ngFor="let option of DynamicHeader">
+                                                <td>{{col[option]}}</td>
+                                            </ng-container>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="WorkOrderForm" #WorkOrderForm="ngForm" novalidate>
+                                <div class="form-group">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" 
+                                    name="company" 
+                                    #company="ngModel" 
+                                    [(ngModel)]="ObjWorkOrder.Company_ID"
+                                    [ngClass]="{'clearance': validatation?.required && company?.errors?.required }"
+                                    required>
+                                    <option  [ngValue]="undefined">Select</option>
+                                       <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                          {{option.Company_Name}}
+                                        </option>
+                                  </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Vendor<sup class="text-danger">*</sup></label> 
+                                    <span class="pull-right"><a style="font-size: 1.8rem;cursor: pointer;" *ngIf = "ObjWorkOrder.Sub_Ledger_ID" (click)="getDetalis('Vendor')"><i class="fa fa-fw  fa-info-circle"></i></a></span>
+                                    <p-dropdown 
+                                    [options]="SubLedgerList" 
+                                    name="Sub_Ledger_ID" 
+                                    [(ngModel)]="ObjWorkOrder.Sub_Ledger_ID"
+                                    [showClear]="true" 
+                                    [emptyFilterMessage]="' No Vendor Found'" 
+                                    [filter]="true" 
+                                    filterBy="label,value.name" 
+                                    [resetFilterOnHide]="true"
+                                    [placeholder]="'Vendor'" 
+                                    [virtualScroll]="true" 
+                                    itemSize="30" 
+                                    #Sub_Ledger_ID="ngModel"
+                                    (onChange)="getSubLedgerDetalis()"
+                                    [styleClass]="validatation?.required && Sub_Ledger_ID.errors?.required ? 'clearance': ''" [required] = "true">
+                                </p-dropdown>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Billing To<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" 
+                                    name="Billing_To" 
+                                    #Billing_To="ngModel" 
+                                    [(ngModel)]="ObjWorkOrder.Billing_To"
+                                    [ngClass]="{'clearance': validatation?.required && Billing_To?.errors?.required }"
+                                    required
+                                    [disabled]="userType != 'A'">
+                                    <option  [ngValue]="undefined">Select</option>
+                                       <option *ngFor = "let option of costCenterList" [value] ="option.Cost_Cen_ID">
+                                          {{option.Cost_Cen_Name}}
+                                        </option>
+                                  </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Deliver To<sup class="text-danger"></sup></label>
+                                   <span class="pull-right"><a style="font-size: 1.8rem;cursor: pointer;" *ngIf = "ObjWorkOrder.Cost_Cen_ID" (click)="getDetalis('Deliver')"><i class="fa fa-fw  fa-info-circle"></i></a></span>
+                                    <select class="form-control" 
+                                        name="Cost_Cen_ID" 
+                                        #Cost_Cen_ID="ngModel"
+                                        [(ngModel)]="ObjWorkOrder.Cost_Cen_ID"
+                                        (change)="getCostCenterDetalis()">
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor = "let option of costCenterList" [value] ="option.Cost_Cen_ID">
+                                                {{option.Cost_Cen_Name}}
+                                            </option>
+                                        </select>
+                                </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Doc. Date<sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker  [(value)]="DocDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Currency<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" 
+                                        name="Currency_ID" 
+                                        #Currency_ID="ngModel" 
+                                        [(ngModel)]="ObjWorkOrder.Currency_ID"
+                                        [ngClass]="{'clearance': validatation?.required && Currency_ID?.errors?.required }"
+                                        required>
+                                        <option  [ngValue]="undefined">Select</option>
+                                           <option *ngFor = "let option of currencyList" [value] ="option.Currency_ID">
+                                              {{option.Currency_Name}}
+                                            </option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Credit Days</label>
+                                        <input type="text"                 
+                                        class="form-control"
+                                        name="Credit_Days"
+                                        #Credit_Days="ngModel"
+                                        [(ngModel)]="ObjWorkOrder.Credit_Days"
+                                        placeholder="Credit Days"
+                                        CompacctDigitonly="true">
+                                    </div>
+                                    <!-- <div class="col-sm-3">
+                                        <label class="control-label">Credit Days</label>
+                                        <input type="text"
+                                        id = "creditdays"
+                                        class="form-control"
+                                        name="Credit_Days"
+                                        #Credit_Days="ngModel"
+                                        [(ngModel)]="ObjWorkOrder.Credit_Days"
+                                        placeholder="Credit Days"
+                                        CompacctDigitonly="true"
+                                        >
+                                    </div> -->
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Ref No</label>
+                                        <input type="text" 
+                                        class="form-control"
+                                        name="Ref_No"
+                                        #Supp_Ref_No="ngModel"
+                                        [(ngModel)]="ObjWorkOrder.Production_Ref_NO"
+                                        placeholder="Ref No" >
+                                    </div> 
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Quotation No</label>
+                                        <input type="text" 
+                                        class="form-control"
+                                        name="Supp_Ref_No"
+                                        #Supp_Ref_No="ngModel"
+                                        [(ngModel)]="ObjWorkOrder.Supp_Ref_No"
+                                        placeholder="Quotation No"
+                                       >
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Quotation Date</label>
+                                        <ejs-datepicker  [(value)]="RefDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
+                                    </div>
+                                <!-- </div>
+                                <div class="form-group"> -->
+                                   <div class="col-sm-3">
+                                        <label class="control-label">Order Type<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" 
+                                        name="Type_ID" 
+                                        #Type_ID="ngModel" 
+                                        [(ngModel)]="ObjWorkOrder.Type_ID"
+                                        [ngClass]="{'clearance': validatation?.required && Type_ID?.errors?.required }"
+                                        required>
+                                        <option  [ngValue]="undefined">Select</option>
+                                           <option *ngFor = "let option of OrderTypeList" [value] ="option.Type_ID">
+                                              {{option.Txn_Type}}
+                                            </option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-3"></div>
+                                </div>
+                                <!-- <app-compacct-project *ngIf="openProject === 'Y'" 
+                                                        #project  
+                                                         [requir]="whateverCopy(validatation)"
+                                                         [DisableAllInput]="projectDisable"
+                                                         (projectObj)="getProjectData($event)"></app-compacct-project> -->
+                                <hr class="box boxboxDivide-primary">
+                               <form name="WorkAddForm" #WorkAddForm="ngForm" novalidate>
+                                    <div class="form-group">
+                                        <!-- <div class="col-sm-3">
+                                            <label class="control-label">Pending Maintenance Indent<sup class="text-danger"></sup></label>
+                                            
+                                            <p-dropdown *ngIf="!addPurchaseListInput" [options]="Requlist" name="Requisition" #Requisition="ngModel" [(ngModel)]="ObjaddWorkOrder.Req_No"  [showClear]="true" [emptyFilterMessage]="'Req No Not Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Requisition No'" [virtualScroll]="true"
+                                                        itemSize="30" #Supplier="ngModel" [styleClass]="purChaseAddFormSubmit && Requisition.errors?.required ? 'clearance' : ''"
+                                                        [required]="true" (onChange)="RequisitionChange()">
+                                                    </p-dropdown>
+                                            <div *ngIf="addPurchaseListInput" class="label-t">{{ObjaddWorkOrder.Req_No}}</div>
+
+                                       </div> -->
+                                       <div class="col-sm-3">
+                                        <label class="control-label">Material Type<sup class="text-danger">*</sup></label>
+                                            <p-dropdown 
+                                            [options]="AllMaterialData" 
+                                            name="materialtype"
+                                            [(ngModel)]="Material_Type"
+                                            #materialtype="ngModel" 
+                                            [showClear]="true" 
+                                            [emptyFilterMessage]="' No Item Found'" 
+                                            [filter]="true" filterBy="label,value.name" 
+                                            [resetFilterOnHide]="true" 
+                                            [placeholder]="'Select Material Type'" 
+                                            [virtualScroll]="true" 
+                                            (onChange)="GetProductsDetalis()"
+                                            itemSize="30"
+                                            [ngClass]="{'clearance': WorkAddFormSubmit && materialtype.errors?.required}"required>
+                                            </p-dropdown>
+                                    </div>
+                                        <div class="col-sm-6">
+                                            <label class="control-label">Grade<sup class="text-danger">*</sup></label>
+                                            <span class="pull-right"><a style="font-size: 1.8rem;" *ngIf = "ObjaddWorkOrder.Product_ID" (click)="getProductPOPUPDetalis()"><i class="fa fa-fw  fa-info-circle"></i></a></span>
+                                            <p-dropdown 
+                                            *ngIf="!addPurchaseListInput"
+                                            [options]="ProductList" 
+                                            name="Product_ID" 
+                                            [(ngModel)]="ObjaddWorkOrder.Product_ID"
+                                            [showClear]="true" 
+                                            [emptyFilterMessage]="' No Product Found'" 
+                                            [filter]="true" 
+                                            filterBy="label,value.name" 
+                                            [resetFilterOnHide]="true"
+                                            [placeholder]="'Product'" 
+                                            [virtualScroll]="true"  
+                                            itemSize="30" 
+                                            #Product_ID="ngModel"
+                                            (onChange)="GetProductSpecification()"
+                                            [styleClass]="WorkAddFormSubmit && Product_ID.errors?.required ? 'clearance': ''" [required] = "true">
+                                        </p-dropdown>
+                                        <div *ngIf="addPurchaseListInput" class="label-t">{{addPurchaseListInputField.Product_Name}}</div>
+                                        </div>
+                                        <!-- <div class="col-sm-5">
+                                            <label class="control-label">Product Specification</label>
+                                            <textarea class="form-control" 
+                                            
+                                            name="Product_Spec" 
+                                            #Product_Spec="ngModel" 
+                                            rows='2'
+                                            placeholder="Product Specification"
+                                            [(ngModel)]="ObjaddWorkOrder.Product_Spec"></textarea>
+                                        </div> -->
+                                        <!-- style="margin: 0px -16.6719px 0px 0px; width: 245px;height: 65px;"  -->
+                                        <!-- <div class="col-sm-3">
+                                            <label class="control-label">Valid Till<sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker  [(value)]="ExpectedDeliverydate" (change)="getProductDetalis()"  [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
+                                        </div> -->
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                            <input type="text"
+                                            class="form-control"
+                                            name="Qty"
+                                            #Qty="ngModel"
+                                            [(ngModel)]="ObjaddWorkOrder.Qty"
+                                            placeholder="Quantity"
+                                            CompacctDigitonly="true"
+                                            (ngModelChange)="getProductDetalis()" 
+                                            [disabled] = "!ObjaddWorkOrder.Product_ID"
+                                            [ngClass]="{'clearance': WorkAddFormSubmit && Qty?.errors?.required }"
+                                            required>
+                                        </div>
+                                     </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Unit<sup class="text-danger"></sup></label>
+                                            <input type="text"
+                                            class="form-control"
+                                            name="Unit"
+                                            #Unit="ngModel"
+                                            [(ngModel)]="ObjaddWorkOrder.Unit"
+                                            placeholder="Unit"
+                                           disabled>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Rate<sup class="text-danger">*</sup></label>
+                                            <input type="text"
+                                            class="form-control"
+                                            name="Rate"
+                                            #Rate="ngModel"
+                                            [(ngModel)]="ObjaddWorkOrder.Rate"
+                                            placeholder="Rate"
+                                            CompacctDigitonly="true"
+                                            (ngModelChange)="getProductDetalis()" 
+                                            [ngClass]="{'clearance': WorkAddFormSubmit && Rate?.errors?.required }"
+                                            required
+                                            [disabled] = 'disable'><!--(ngModelChange)="getGrsAmt()" -->
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Grs Amt<sup class="text-danger"></sup></label>
+                                            <input type="text"
+                                            class="form-control"
+                                            name="Gross_Amt"
+                                            #Gross_Amt="ngModel"
+                                            [(ngModel)]="ObjaddWorkOrder.Gross_Amt"
+                                            placeholder="Gross Amt"
+                                            CompacctDigitonly="true"
+                                            disabled>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Discount Type<sup class="text-danger"></sup></label>
+                                            <select class="form-control" 
+                                            name="Discount_Type" 
+                                            #Discount_Type="ngModel" 
+                                            [(ngModel)]="ObjaddWorkOrder.Discount_Type"
+                                            (change)="getProductDetalis()"> <!-- (change)="DisClear()" -->
+                                            <option  [ngValue]="undefined">Select</option>
+                                               <option *ngFor = "let option of DiscountTypeList" [value] ="option.Dtype">
+                                                  {{option.Dtype}}
+                                                </option>
+                                          </select>
+                                        </div>
+                                     </div>
+                                    <div class="form-group">
+                                        <!-- <div class="col-sm-2">
+                                            <label class="control-label">Excise Tax (%)<sup class="text-danger"></sup></label>
+                                            <input type="text"
+                                            class="form-control"
+                                            name="Excise_Tax_Percentage"
+                                            #Excise_Tax_Percentage="ngModel"
+                                            [(ngModel)]="ObjaddWorkOrder.Excise_Tax_Percentage"
+                                            (ngModelChange)="getExciseAmt()"
+                                            placeholder="Excise Tax (%)"
+                                            CompacctDigitonly="true"
+                                            >
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Excise Amt<sup class="text-danger"></sup></label>
+                                            <input type="text"
+                                            class="form-control"
+                                            name="Excise_Tax"
+                                            #Excise_Tax="ngModel"
+                                            [(ngModel)]="ObjaddWorkOrder.Excise_Tax"
+                                            placeholder="Excise Amt"
+                                            CompacctDigitonly="true"
+                                            disabled>
+                                        </div> -->
+                                        <div class="col-sm-3">
+                                                <label class="control-label">Discount 
+                                                    <span>{{ObjaddWorkOrder.Discount_Type}}</span>
+                                                    <sup class="text-danger"></sup></label>
+                                                <input type="text"
+                                                class="form-control"
+                                                name="Discount"
+                                                #Discount="ngModel"
+                                                [(ngModel)]="ObjaddWorkOrder.Discount"
+                                                (ngModelChange)="getProductDetalis()"
+                                                placeholder="Discount"
+                                                CompacctDigitonly="true"
+                                                [disabled] = "!ObjaddWorkOrder.Discount_Type"><!--(ngModelChange)="getDis()" -->
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Discount Amount<sup class="text-danger"></sup></label>
+                                            <input type="text"
+                                            class="form-control"
+                                            name="Discount_AMT"
+                                            #Discount_AMT="ngModel"
+                                            [(ngModel)]="ObjaddWorkOrder.Discount_AMT"
+                                            (ngModelChange)="getTaxAble()"
+                                            placeholder="Discount AMT"
+                                            CompacctDigitonly="true"
+                                             disabled>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Taxable Amount<sup class="text-danger"></sup></label>
+                                                <input type="text"
+                                            class="form-control"
+                                            name="taxable_AMT"
+                                            #taxable_AMT="ngModel"
+                                            [(ngModel)]="ObjaddWorkOrder.taxable_AMT"
+                                            placeholder="Taxable AMT"
+                                            disabled
+                                            >
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">{{taxlabelChange()}}(%)<sup class="text-danger"></sup></label>
+                                                <input type="text"
+                                                class="form-control"
+                                                name="Gst"
+                                                #Gst="ngModel"
+                                                [(ngModel)]="ObjaddWorkOrder.Gst"
+                                                placeholder="GST(%)"
+                                                CompacctDigitonly="true"
+                                                disabled>
+                                            </div>
+                                    </div>
+                                 <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">{{taxlabelChange()}} Amount<sup class="text-danger"></sup></label>
+                                        <input type="text"
+                                        class="form-control"
+                                        name="GST_AMT"
+                                        #GST_AMT="ngModel"
+                                        [(ngModel)]="ObjaddWorkOrder.GST_AMT"
+                                        placeholder="GST AMT"
+                                        CompacctDigitonly="true"
+                                        disabled
+                                        >
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Net Amount<sup class="text-danger"></sup></label>
+                                        <input type="text"
+                                        class="form-control"
+                                        name="Total_Amount"
+                                        #Total_Amount="ngModel"
+                                        [(ngModel)]="ObjaddWorkOrder.Total_Amount"
+                                        placeholder="Net Amount"
+                                        CompacctDigitonly="true"
+                                        disabled
+                                        >
+                                    </div>
+                                     <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton" 
+                                        style="margin-top: 28px;margin-left: 25%;" 
+                                        (click)="AddPurchase(WorkAddForm.form.valid)"
+                                       >
+                                         <span  class="	glyphicon glyphicon-plus"></span>&nbsp;Add
+                                         </button>
+                                     </div>
+                                    </div>
+                                    <!-- <div class="box-footer">
+                                      
+                                    </div> -->
+                                </form>
+                              
+                              <div class="table table-responsive" style="margin-top: 13px;">
+                                <table class="table table-bordered">
+                                        <thead>
+                                            <tr style="background-color:#3c8dbc;color:white;">
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Sl. No.</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Requisition</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Product Details</th>
+                                        <!-- <th nowrap="" rowspan="2" style="vertical-align:middle">Product Spec</th> -->
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Qty</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Unit</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Rate</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Gross Amt</th>
+                                        <!-- <th nowrap="" colspan="2" style="vertical-align:middle">Excise Tax</th> -->
+                                        <th nowrap="" colspan="3" style="vertical-align:middle">Discount </th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Taxable Amount</th>
+                                        <th  nowrap="" colspan="2" style="vertical-align:middle">{{taxlabelChange()}}</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Net Amount</th>
+                                        <!-- <th nowrap="" rowspan="2" style="vertical-align:middle" *ngIf="buttonname === 'Update'">Edit</th> -->
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Delete</th>
+                                         </tr>
+                                        <tr style="background-color:#3c8dbc;color:white;">
+                                            <!-- <th nowrap="" style="vertical-align:middle">Tax</th>
+                                            <th nowrap="" style="vertical-align:middle">Amt.</th> -->
+                                            <th nowrap="" style="vertical-align:middle">Disc Type</th>
+                                            <th nowrap="" style="vertical-align:middle">Disc %</th>
+                                            <th nowrap="" style="vertical-align:middle">Disc Amt</th>
+                                            <th nowrap="" style="vertical-align:middle">{{taxlabelChange()}}(%)</th>
+                                            <th nowrap="" style="vertical-align:middle">{{taxlabelChange()}} Amt</th>
+                                           
+                                            
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor='let col of addPurchaseList let i = index' >
+                                                <td>{{i + 1}}</td>
+                                                <td>{{col.Req_No ? col.Req_No : '-'}}</td>
+                                                <td>{{col.Product_Name ? col.Product_Name : '-'}} <br>
+                                                    <table class="table table-bordered">
+                                                        <tbody>
+                                                        <tr *ngFor='let data of col.Parameter_Details'> <!-- *ngFor='let data of paramlist' -->
+                                                            <td nowrap>{{data.PO_Text}}</td>
+                                                         </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                                <!-- <td>{{col.Product_Spec}}</td> -->
+                                                <td>{{col.Qty}}</td>
+                                                <td>{{col.UOM}}</td>
+                                                <td>{{col.Rate ? col.Rate : 0}}</td>
+                                                <td>{{col.Gross_Amt ? col.Gross_Amt :0}}</td>
+                                                <!-- <td>{{col.Excise_Tax_Percentage ? col.Excise_Tax_Percentage : 0}}</td>
+                                                <td>{{col.Excise_Amount ? col.Excise_Amount : 0}}</td> -->
+                                                <td>{{col.Discount_Type ? col.Discount_Type : 0}}</td>
+                                                <td>{{col.Discount ? col.Discount : 0}}</td>
+                                                <td>{{col.Discount_Amount ? col.Discount_Amount : 0}}</td>
+                                                <td>{{col.Taxable_Amount ? col.Taxable_Amount : 0}}</td>
+                                                <td>{{col.GST_Percentage ? col.GST_Percentage : 0}}</td>
+                                                <td>{{col.GST_Amount ? col.GST_Amount : 0}}</td>
+                                                <td>{{col.Net_Amount ? col.Net_Amount : 0}}</td>
+                                                <!-- <td *ngIf="buttonname === 'Update'"> <a class="btn btn-sm btn-warning" (click)="EditAddPurchase(i)"
+                                                    ><div><i class="fa fa-fw fa-edit"> </i></div>
+                                                  </a></td> -->
+                                                  <td> <a class="btn btn-sm btn-danger" (click)="DeleteAddPurchase(i)"
+                                                    ><div><i class="fa fa-fw fa-trash"> </i></div>
+                                                  </a></td>
+                                               <!-- <td> <a (click)="DeleteAddPurchase(i)"
+                                                ><div><i class="fa fa-fw fa-trash"> </i></div>
+                                              </a></td> -->
+                                           </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <br>
+                                <hr class="box boxboxDivide-primary" />
+                                <form #TermForm="ngForm" novalidate>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                             <label class="control-label">Term Name<sup class="text-danger">*</sup></label>
+                                             <select class="form-control" name="termname" #termname="ngModel" [(ngModel)]="ObjTerm.Term_ID"
+                                                [ngClass]="{clearance: TermFormSubmitted && termname?.errors?.required}"
+                                                (change)="TermChange()" required >
+                                             <option [ngValue]="undefined">Select</option>
+                                             <option *ngFor="let option of TermList" [ngValue]="option.Term_ID">{{ option.Term_Name }}</option>
+                                            </select>
+                                         </div>
+                                        <div class="col-sm-2">
+                                          <label>HSN No<sup class="text-danger"></sup></label>
+                                            <input class="form-control" name="HSNNo" [(ngModel)]="ObjTerm.HSN_No" required="true" disabled="true" placeholder="HSN No" />
+                                        </div>
+                                        <div class="col-sm-2">
+                                          <label>Term Amount<sup class="text-danger">*</sup></label>
+                                            <input class="form-control" name="termamount" #termamount="ngModel" [(ngModel)]="ObjTerm.Term_Amount"
+                                              [ngClass]="{clearance: TermFormSubmitted && termamount?.errors?.required}"
+                                              required="true" CompacctDigitonly="true" placeholder="Term Amount" />
+                                        </div>
+                                       <button type="submit" class="btn btn-primary custombutton" (click)="AddTerm(TermForm.form.valid)">
+                                        <span class="glyphicon glyphicon-plus"></span>Add
+                                       </button>
+                                    </div>
+                                <br>
+                                <div class="table-responsive no-padding">
+                                    <table class="table table-bordered">
+                                     <thead style="background-color:#3c8dbc;color:white;">
+                                        <tr style="background-color:#3c8dbc;color:white;">
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Sl. No.</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Term Name</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">HSN No</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Term Amount</th>
+                                          <th colspan="2" scope="colgroup" class="text-center">GST</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Net Amount</th>
+                                          <th rowspan="2" class="text-center" style="vertical-align:middle">Delete</th>
+                                        </tr>
+                                        <tr style="background-color:#3c8dbc;color:white">
+                                           <th scope="col" class="text-center">Rate</th>
+                                           <th scope="col" class="text-center">Amt.</th>
+                                         </tr>
+                                     </thead>
+                                    <tbody>
+                                        <tr *ngFor=" let TermTableList of AddTermList; let ind = index; let odd = odd;" [class.even]="odd">
+                                          <td>{{ ind + 1  }}</td>
+                                          <td>{{ TermTableList.Term_Name }}</td>
+                                          <td>{{ TermTableList.HSN_No }}</td>
+                                          <td>{{ TermTableList.Term_Amount }}</td>
+                                          <td>{{ TermTableList.GST_Per }}</td>
+                                          <td>{{ getTofix(TermTableList.GST_Amount )}}</td>
+                                          <td>{{ getTofix(TermTableList.Term_Amount + TermTableList.GST_Amount)}}</td>
+                                          <td><button (click)="DeteteTerm(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                   </table>
+                                </div>
+                           </form>
+                           <br>
+                           <div class="form-group" *ngIf="addPurchaseList.length">
+                            <div class="col-sm-3">
+                             <label class="control-label">TCS Tax Required <sup class="text-danger">*</sup> </label>
+                             <select class="form-control" 
+                             name="tcstaxreq" 
+                             #tcstaxreq="ngModel" 
+                             [(ngModel)]="ObjWorkOrder.TCS_Y_N"
+                             (ngModelChange)="GetTCSdat()"
+                             [ngClass]="{'clearance': TCSTaxRequiredValidation && tcstaxreq?.errors?.required}" required>
+                                <option  [ngValue]="undefined">Select</option>
+                                <option value ="YES">YES</option>
+                                <option value ="NO">NO</option>
+                             </select>
+                            </div>
+                            <div class="col-sm-3" *ngIf="ObjWorkOrder.TCS_Y_N == 'YES'">
+                                <label class="control-label">TCS % <sup class="text-danger">*</sup> </label>
+                                <select class="form-control" 
+                                name="tcsper" 
+                                #tcsper="ngModel" 
+                                [(ngModel)]="ObjWorkOrder.TCS_Per"
+                                (ngModelChange)="TcsAmtCalculation()"
+                                [ngClass]="{'clearance': TCSTaxRequiredValidation && tcsper?.errors?.required}" required>
+                                   <option  [ngValue]="undefined">Select</option>
+                                   <option *ngFor = "let option of TCSdataList" [value] ="option.TCS_Persentage">
+                                    {{option.TCS_Persentage}}
+                                  </option>
+                                </select>
+                            </div>
+                            </div>
+                            <br>
+                            <div class="clearfix"></div>
+                            <br>
+                                <div class="table-responsive">
+                                      <table class="table">
+                                        <tbody>
+                                        <tr>
+                                          <th>Total Amount:</th>
+                                          <td class="amt-td ">{{getTofix(grTotal) ? getTofix(grTotal) : 0}}</td>
+                                          <th>Term Amount:</th>
+                                          <td class="amt-td ">{{ GrTermAmount ? getTofix(GrTermAmount) : 0}}</td>
+                                          <th>TCS Amount :</th>
+                                          <td class="amt-td ng-binding">{{ObjWorkOrder.TCS_Amount}}</td>
+                                        </tr>
+                                        <tr>
+                                          <th>Discount Amount :</th>
+                                          <td class="amt-td">{{getTofix(disTotal) ? getTofix(disTotal) : 0}}</td>
+                                          <th>{{taxlabelChange()}} Amount :</th>
+                                          <!-- <td class="amt-td">{{getTofix(GSTTotal) ? getTofix(GSTTotal) : 0}}</td> -->
+                                          <td class="amt-td ng-binding">{{getTofix(GSTTotal + GrGstTermAmt)}}</td>
+                                          <!-- <td class="amt-td"></td> -->
+                                          <th>Net Amount : </th>
+                                          <!-- <td class="amt-td">{{getTofix(NetTotal) ? getTofix(NetTotal) : 0}}</td> -->
+                                          <td class="amt-td ng-binding">{{RoundOff(taxAblTotal + GrTermAmount + GSTTotal + GrGstTermAmt  + ObjWorkOrder.TCS_Amount)}}</td>
+                                          <!-- <th>Excise Amount:</th>
+                                          <td class="amt-td">{{getTofix(ExciTotal) ? getTofix(ExciTotal) : 0}}</td> -->
+                                          <!-- <th>{{taxlabelChange()}} Amount :</th> -->
+                                          <!-- <td class="amt-td">{{getTofix(GSTTotal) ? getTofix(GSTTotal) : 0}}</td> -->
+                                          <!-- <td class="amt-td ng-binding">{{getTofix(GSTTotal + GrGstTermAmt)}}</td> -->
+                                          <!-- <th>Net Amount : </th> -->
+                                          <!-- <td class="amt-td">{{getTofix(NetTotal) ? getTofix(NetTotal) : 0}}</td> -->
+                                          <!-- <td class="amt-td ng-binding">{{RoundOff(taxAblTotal + GrTermAmount + GSTTotal + GrGstTermAmt)}}</td> -->
+                                        </tr>
+                                        <tr>
+                                          <th>Taxable Amount :</th>
+                                          <td class="amt-td ">{{getTofix(taxAblTotal) ? getTofix(taxAblTotal) : 0}}</td>
+                                          <th>Rounded Off :</th>
+                                          <td class="amt-td ng-binding">{{getRoundedOff()}}</td>
+                                          <th></th>
+                                          <td class="amt-td"></td>
+                                        </tr>
+                                       </tbody>
+                                    </table>
+                                </div>
+                                    <hr class="box boxboxDivide-primary" />
+                                    <h4>
+                                        <strong>Terms & Conditions :</strong>
+                                    </h4>
+                                <div class="form-group">
+                                <div class="col-sm-6">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-tag">
+                                    </i> &nbsp;<strong>PO Header :</strong>
+                                  </h5>
+                                    <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                        <p-editor name= "PO_Header"
+                                        #PO_Header="ngModel"
+                                        [(ngModel)]="ObjWorkOrder.PO_Header"
+                                        [style]="{'height':'200px'}"
+                                        [readonly]="editorDis">
+                                        </p-editor>
+                                    </div>
+                                </div>  
+                                <!-- <div class="col-sm-6">
+                                        <h5 style="
+                                        padding: 0.5em 1em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;
+                                        margin-top: 15px;
+                                        ">
+                                        <i class="fa fa-random">
+                                        </i> &nbsp;<strong>Terms & Conditions :</strong>
+                                    </h5>
+                                    <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                        <p-editor name="Certifivates" #Certifivates="ngModel" [(ngModel)]="ObjWorkOrder.Terms_Condition"
+                                            [style]="{'height':'200px'}">
+                                        </p-editor>
+                                    </div> 
+                                </div>  -->
+                                <div class="col-sm-6">
+                                    <h5 style="
+                                   padding: 0.5em 1em;
+                                   background: #c1c1c185;
+                                   border-top: 5px solid #3c8dbc;
+                                   border-bottom: 1px solid #c6c6c6;
+                                   margin-top: 15px;
+                                   ">
+                                   <i class="fa fa-inr">
+                                   </i> &nbsp;<strong>Terms Of Price :</strong>
+                                 </h5>
+                                   <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                       <p-editor name= "Terms_Of_Price"
+                                       #Terms_Of_Price="ngModel"
+                                       [(ngModel)]="ObjWorkOrder.Terms_Of_Price"
+                                       [style]="{'height':'200px'}"
+                                       [readonly]="editorDis">
+                                       </p-editor>
+                                   </div>
+                               </div>
+                                </div>
+                                <div class="form-group">
+                                <div class="col-sm-6">
+                                    <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: 15px;
+                                ">
+                                <i class="fa fa-fw fa-fax">
+                                </i> &nbsp;<strong>Transist Insurance :</strong>
+                               </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name= "Transist_Insurance"
+                                    #Transist_Insurance="ngModel"
+                                    [(ngModel)]="ObjWorkOrder.Transist_Insurance"
+                                    [style]="{'height':'200px'}"
+                                    [readonly]="editorDis">
+                                    </p-editor>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                            <h5 style="
+                            padding: 0.5em 1em;
+                            background: #c1c1c185;
+                            border-top: 5px solid #3c8dbc;
+                            border-bottom: 1px solid #c6c6c6;
+                            margin-top: 15px;
+                            ">
+                            <i class="fa fa-fw fa-fax">
+                            </i> &nbsp;<strong>Packing And Forwarding :</strong>
+                           </h5>
+                            <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                <p-editor name= "Packing_And_Forward"
+                                #Packing_And_Forward="ngModel"
+                                [(ngModel)]="ObjWorkOrder.Packing_And_Forward"
+                                [style]="{'height':'200px'}"
+                                [readonly]="editorDis"
+                               >
+                                  
+                                </p-editor>
+                            </div>
+                            </div>
+                                </div>
+                                <div class="form-group">
+                                <div class="col-sm-6">
+                                <h5  style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: 15px;
+                                ">
+                                <i class="fa fa-fw fa-fax">
+                                </i> &nbsp;<strong>Taxes And Duties :</strong>
+                               </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name= "Taxes_And_Duties"
+                                    #Taxes_And_Duties="ngModel"
+                                    [(ngModel)]="ObjWorkOrder.Taxes_And_Duties"
+                                    [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
+                                   >
+                                      
+                                    </p-editor>
+                                </div>
+                                </div>
+                                <div class="col-sm-6">
+                                <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: 15px;
+                                ">
+                                <i class="fa fa-fw fa-file-text-o">
+                                </i> &nbsp;<strong>Delivery :</strong>
+                               </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name= "Delivery_Terms"
+                                    #Delivery_Terms="ngModel"
+                                    [(ngModel)]="ObjWorkOrder.Delivery_Terms"
+                                    [style]="{'height':'200px'}"
+                                    [readonly]="editorDis"
+                                    >
+                                      
+                                    </p-editor>
+                                </div>
+                                </div>
+                                </div>
+                                <div class="form-group">
+                                <div class="col-sm-6">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-truck">
+                                    </i> &nbsp;<strong>Transportation :</strong>
+                                   </h5>
+                                    <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                        <p-editor name= "tranportation"
+                                        #tranportation="ngModel"
+                                        [(ngModel)]="ObjWorkOrder.Transpotation"
+                                        [style]="{'height':'200px'}"
+                                        [readonly]="editorDis"
+                                        >
+                                          
+                                        </p-editor>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-pencil-square-o">
+                                    </i> &nbsp;<strong>Term And Condition :</strong>
+                                   </h5>
+                                    <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                        <p-editor name= "termconditation"
+                                        #termconditation="ngModel"
+                                        [(ngModel)]="ObjWorkOrder.Term_And_Condition"
+                                        [style]="{'height':'200px'}"
+                                        [readonly]="editorDis"
+                                        >
+                                          
+                                        </p-editor>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-truck">
+                                    </i> &nbsp;<strong>Delivery Address :</strong>
+                                   </h5>
+                                    <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                        <p-editor name= "payingofficeandworks"
+                                        #payingofficeandworks="ngModel"
+                                        [(ngModel)]="ObjWorkOrder.Paying_Office_Works_Term"
+                                        [style]="{'height':'200px'}"
+                                        [readonly]="editorDis"
+                                        >
+                                          
+                                        </p-editor>
+                                    </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <h5 style="
+                                         padding: 0.5em 1em;
+                                         background: #c1c1c185;
+                                         border-top: 5px solid #3c8dbc;
+                                         border-bottom: 1px solid #c6c6c6;
+                                         margin-top: 15px;
+                                         ">
+                                         <i class="fa fa-fw fa-file-text-o">
+                                         </i> &nbsp;<strong>Test Certificate/Analysis :</strong>
+                                        </h5>
+                                        <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                             <p-editor name= "Analysis_Report"
+                                             #Analysis_Report="ngModel"
+                                             [(ngModel)]="ObjWorkOrder.Analysis_Report"
+                                             [style]="{'height':'200px'}"
+                                             [readonly]="editorDis">
+                                             </p-editor>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                <div class="col-sm-6">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-university">
+                                    </i> &nbsp;<strong>Payment Terms :</strong>
+                                  </h5>
+                                    <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                        <p-editor name= "Payment_Terms"
+                                        #Payment_Terms="ngModel"
+                                        [(ngModel)]="ObjWorkOrder.Payment_Terms"
+                                        [style]="{'height':'200px'}"
+                                        [readonly]="editorDis">
+                                        </p-editor>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-clock-o">
+                                    </i> &nbsp;<strong>Delivery Terms :</strong>
+                                  </h5>
+                                    <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                        <p-editor name= "latedelivery"
+                                        #latedelivery="ngModel"
+                                        [(ngModel)]="ObjWorkOrder.Late_Delivery"
+                                        [style]="{'height':'200px'}"
+                                        [readonly]="editorDis">
+                                        </p-editor>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <h5 style="
+                                        padding: 0.5em 1em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;
+                                        margin-top: 15px;
+                                        ">
+                                        <i class="fa fa-university">
+                                        </i> &nbsp;<strong>Statutory Obligation :</strong>
+                                      </h5>
+                                        <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                            <p-editor name= "statutoryobligation"
+                                            #statutoryobligation="ngModel"
+                                            [(ngModel)]="ObjWorkOrder.Statutory_Obligation"
+                                            [style]="{'height':'200px'}"
+                                            [readonly]="editorDis">
+                                            </p-editor>
+                                        </div>
+                                        </div>
+                                    <div class="col-sm-6">
+                                        <h5 style="
+                                        padding: 0.5em 1em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;
+                                        margin-top: 15px;
+                                        ">
+                                        <i class="fa fa-university">
+                                        </i> &nbsp;<strong>Jurisdiction :</strong>
+                                      </h5>
+                                        <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                            <p-editor name= "jurisdiction"
+                                            #jurisdiction="ngModel"
+                                            [(ngModel)]="ObjWorkOrder.Jurisdiction"
+                                            [style]="{'height':'200px'}"
+                                            [readonly]="editorDis">
+                                            </p-editor>
+                                        </div>
+                                    </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-6">
+                                            <h5 style="
+                                            padding: 0.5em 1em;
+                                            background: #c1c1c185;
+                                            border-top: 5px solid #3c8dbc;
+                                            border-bottom: 1px solid #c6c6c6;
+                                            margin-top: 15px;
+                                            ">
+                                            <i class="fa fa-sticky-note">
+                                            </i> &nbsp;<strong>Note :</strong>
+                                          </h5>
+                                            <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                                <p-editor name= "remarks"
+                                                #remarks="ngModel"
+                                                [(ngModel)]="ObjWorkOrder.Remarks"
+                                                [style]="{'height':'200px'}"
+                                                [readonly]="editorDis">
+                                                </p-editor>
+                                            </div>
+                                        </div>
+                                    </div>
+                               <!-- <h5 style="
+                                padding: 0.5em 1em;
+                                background: #c1c1c185;
+                                border-top: 5px solid #3c8dbc;
+                                border-bottom: 1px solid #c6c6c6;
+                                margin-top: 15px;
+                                ">
+                                <i class="fa fa-comment">
+                                </i> &nbsp;<strong>Remarks :</strong>
+                               </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name= "Remarks" 
+                                    #Remarks="ngModel"
+                                    [(ngModel)]="ObjWorkOrder.Remarks"
+                                    [style]="{'height':'200px'}"
+                                    [readonly]="editorDis">
+                                    </p-editor>
+                                </div> -->
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right" 
+                                    (click)="savePurchase(WorkOrderForm.form.valid)" 
+                                    id="load3" [disabled]="Spinner">
+                                     <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                    </button>
+                                </div>
+                            </form>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="MISreportForm" #MISreportForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" 
+                                        name="miscompany" 
+                                        #miscompany="ngModel" 
+                                        [(ngModel)]="ObjMIS.Company_ID"
+                                        [ngClass]="{'clearance': MISreportFormSubmit && miscompany?.errors?.required}"
+                                        required>
+                                        <option  [ngValue]="undefined">Select</option>
+                                           <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                              {{option.Company_Name}}
+                                            </option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRangeMIS($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetMISreport(MISreportForm.form.valid)" id="load4" [disabled]="MISSpinner">
+                                          <p-progressSpinner *ngIf="MISSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                          <span *ngIf="!MISSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                       </button>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <button class="btn btn-success pull-right" style="margin-top: 26px;" (click)="exportoexcel(BackupMisReport,'MIS_Report')" [disabled]="!misReportList.length">
+                                                 <span  class="glyphicon glyphicon-save"></span> Download Report
+                                              </button>
+                                    </div>
+                                </div>
+                                </form>
+                                <!-- <div class="form-group" *ngIf="BackupMisReport.length" style="padding:15px">
+
+                                    <fieldset class="col-md-12">
+
+                                        <div class="form-group" >
+                                            <div class="col-sm-3" *ngIf="ObjMIS.Report_Name != 'Pending Purchase Indent - Details'">
+                                                <label class="control-label">Vendor Name <span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistVendorName" [(ngModel)]="SelectedDistVendorName" itemSize="30" (onChange)='FilterDistReport()' #vender [styleClass]="'compacct-multiselect'" name="Vendor_Name"></p-multiSelect>
+                                            </div>
+                                            <div class="col-sm-3" *ngIf="ObjMIS.Report_Name != 'Pending PO - Not Delivered - Summary'">
+                                                <label class="control-label">Material Type <span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistMaterialType" [(ngModel)]="SelectedDistMaterialType" itemSize="30" (onChange)='FilterDistReport()' [styleClass]="'compacct-multiselect'" name="Material_Type"></p-multiSelect>
+                                            </div>
+                                            <div class="col-sm-3" *ngIf="ObjMIS.Report_Name != 'Pending PO - Not Delivered - Summary'">
+                                                <label class="control-label">Product Type <span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistProductType"  [(ngModel)]="SelectedDistProductType" itemSize="30" (onChange)='FilterDistReport()'[styleClass]="'compacct-multiselect'" name="Product_Type"></p-multiSelect>
+                                        </div>
+                                        </div>
+
+                                    </fieldset>
+                                </div> -->
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="misReportList" 
+                                    *ngIf='misReportList.length' #dt8
+                                     [paginator]="misReportList.length ? true : false"
+                                     [rows]="100"
+                                     [rowHover]="true" 
+                                     [autoLayout]="true" 
+                                     sortMode="multiple" 
+                                     [rowsPerPageOptions]="[100,200,300]" 
+                                     [rowHover]="true"
+                                     [columns]="cols"
+                                     [globalFilterFields]='DynamicHeaderMISreport'>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt8.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+        
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <!-- <th style="width:5em">Action</th> -->
+                                                <th nowrap="nowrap" *ngFor="let option of DynamicHeaderMISreport">{{option.replaceAll('_',' ')}}</th>
+                                               </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <!-- <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button"
+                                                            data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                           <li>
+                                                                <a (click)="PrintREQ(col.Indent_No)">
+                                                                    <i class="fa fa-print" aria-hidden="true"></i>
+                                                                    Print
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td> -->
+                                                <ng-container *ngFor="let option of DynamicHeaderMISreport">
+                                                    <td [class]="ObjMIS.Report_Name != 'Pending PO - Not Delivered - Summary' ? 'Othercolor' : option === 'PO_No' ? 'QtyColor' : 'Othercolor'" (click)="getPONoforview(option,col)">{{col[option]}}</td>
+                                                </ng-container>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" *ngIf="misReportList.length" let-state>
+                                            Showing {{ state.first + 1 }} of
+                                            {{ state.first + 1 + state.rows }} of
+                                            {{ state.totalRecords }}
+                                        </ng-template>
+                                    </p-table>
+                                </div> 
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+         </div>
+    </div>
+</div>
+<p-dialog
+[header]="viewHeader"
+[appendTo]="'body'"
+[visible]="DetalisView"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '58%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="form-horizontal">
+    <div *ngIf="this.viewHeader === 'Vendor Detalis'">
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Billing Name</label>
+                <div class="label-t">{{this.DetalisObj.Sub_Ledger_Billing_Name ? this.DetalisObj.Sub_Ledger_Billing_Name : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">Email</label>
+            <div class="label-t">{{this.DetalisObj.Sub_Ledger_Email ? this.DetalisObj.Sub_Ledger_Email :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Contact No</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_Mobile_No ? this.DetalisObj.Sub_Ledger_Mobile_No : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Address</label>
+                <div class="label-t">{{this.DetalisObj.Sub_Ledger_Address_1 ? this.DetalisObj.Sub_Ledger_Address_1 : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">Land Mark</label>
+            <div class="label-t">{{this.DetalisObj.Sub_Ledger_Land_Mark ? this.DetalisObj.Sub_Ledger_Land_Mark :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">PIN</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_Pin ? this.DetalisObj.Sub_Ledger_Pin : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">District</label>
+                <div class="label-t">{{this.DetalisObj.Sub_Ledger_District ? this.DetalisObj.Sub_Ledger_District : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">State</label>
+            <div class="label-t">{{this.DetalisObj.Sub_Ledger_State ? this.DetalisObj.Sub_Ledger_State :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Country</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_Country ? this.DetalisObj.Sub_Ledger_Country : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">PAN ID</label>
+                <div class="label-t">{{this.DetalisObj.Sub_Ledger_PAN_No ? this.DetalisObj.Sub_Ledger_PAN_No : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">TIN No</label>
+            <div class="label-t">{{this.DetalisObj.Sub_Ledger_TIN_No ? this.DetalisObj.Sub_Ledger_TIN_No :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">CST No</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_CST_No ? this.DetalisObj.Sub_Ledger_CST_No : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Srv. Tax</label>
+                <div class="label-t">{{"-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">CIN</label>
+            <div class="label-t">{{"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Excise No</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_EXID_NO ? this.DetalisObj.Sub_Ledger_EXID_NO : "-"}}</div>
+    </div>
+            </div>
+    </div>
+    <div *ngIf="this.viewHeader != 'Vendor Detalis'">
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Address</label>
+                <div class="label-t">{{this.DetalisObj.Cost_Cen_Address1 ? this.DetalisObj.Cost_Cen_Address1 : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">Address</label>
+            <div class="label-t">{{this.DetalisObj.Cost_Cen_Address2 ? this.DetalisObj.Cost_Cen_Address2 :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Location</label>
+        <div class="label-t">{{this.DetalisObj.Cost_Cen_Location ? this.DetalisObj.Cost_Cen_Location : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">PIN</label>
+                <div class="label-t">{{this.DetalisObj.Cost_Cen_PIN ? this.DetalisObj.Cost_Cen_PIN : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">District</label>
+            <div class="label-t">{{this.DetalisObj.Cost_Cen_District ? this.DetalisObj.Cost_Cen_District :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">State</label>
+        <div class="label-t">{{this.DetalisObj.Cost_Cen_State ? this.DetalisObj.Cost_Cen_State : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Country</label>
+                <div class="label-t">{{this.DetalisObj.Cost_Cen_Country ? this.DetalisObj.Cost_Cen_Country : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">Mobile</label>
+            <div class="label-t">{{this.DetalisObj.Cost_Cen_Mobile ? this.DetalisObj.Cost_Cen_Mobile :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Country</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_Country ? this.DetalisObj.Sub_Ledger_Country : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Phone</label>
+                <div class="label-t">{{this.DetalisObj.Cost_Cen_Phone ? this.DetalisObj.Cost_Cen_Phone : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">TIN No</label>
+            <div class="label-t">{{this.DetalisObj.Sub_Ledger_TIN_No ? this.DetalisObj.Sub_Ledger_TIN_No :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Email</label>
+        <div class="label-t">{{this.DetalisObj.Cost_Cen_Email1 ? this.DetalisObj.Cost_Cen_Email1 : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">VAT CST</label>
+                <div class="label-t">{{this.DetalisObj.Cost_Cen_VAT_CST ? this.DetalisObj.Cost_Cen_VAT_CST : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">CST No.</label>
+            <div class="label-t">{{this.DetalisObj.Cost_Cen_CST_NO ? this.DetalisObj.Cost_Cen_CST_NO : "-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Service Tax No</label>
+        <div class="label-t">{{this.DetalisObj.Cost_Cen_SRV_TAX_NO ? this.DetalisObj.Cost_Cen_SRV_TAX_NO : "-"}}</div>
+    </div>
+            </div>
+    </div>
+    
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="DetalisView = false"
+    class="btn btn-default"
+    >
+    CANCEL
+    </button>
+
+</p-footer>
+</p-dialog>
+<p-dialog
+[header]="'Product Detalis'"
+[appendTo]="'body'"
+[visible]="productDetalisView"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '58%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="form-horizontal">
+    <div class="no-padding">
+        <p-table [value]="productDetalisViewList"
+        [paginator]="productDetalisViewList.length ? true : false"
+        *ngIf='productDetalisViewList.length'
+        [paginator]="true" 
+        [rows]="100" 
+        [rowHover]="true" 
+        [autoLayout]="true" 
+        sortMode="multiple" 
+        [rowsPerPageOptions]="[100,200,300]" 
+        [globalFilterFields]='productDetalisViewListHeader'
+            [rowHover]="true" #dtn>
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dtn.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                    </div>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                <th nowrap="nowrap" *ngFor="let option of productDetalisViewListHeader;">{{option.replaceAll('_',' ')}}</th> 
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col>
+                <tr>
+                    <ng-container *ngFor="let option of productDetalisViewListHeader; let i = index">
+                        <td nowrap="nowrap">{{col[option]}}</td>
+                    </ng-container>
+                    
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="paginatorright" let-state>
+                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+            </ng-template>
+        </p-table>
+    </div>
+    
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="productDetalisView = false"
+    class="btn btn-default"
+    ><span class="glyphicon glyphicon-remove"></span>
+    CLOSE
+    </button>
+
+</p-footer>
+</p-dialog>
+
+<!-- Parameter Details Popup -->
+<p-dialog
+[header]="'Parameter Details'"
+[appendTo]="'body'"
+[visible]="ParamDetalisPopup"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '65%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+    <p-table [value]="ParameterList" 
+    [globalFilterFields]='["Parameter_Name","Min_Value","Max_Value","UOM","Tolerance_Level","Max_Tolerance_Level","Min_Tolerance_Level","PO_Text"]' [rowHover]="true" [autoLayout]="true" #dt4>
+        <ng-template pTemplate="caption">
+            <div class="row">
+                <div class="col-sm-3 pull-right" style="text-align: right">
+                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt4.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                </div>
+            </div> <br>
+
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th rowspan="2">Parameter Name</th>
+                <th colspan="2" >Required Value</th>
+                <th rowspan="2" ></th>
+                <th colspan="2" >Tolerance Level</th>
+                <th rowspan="2" >P.O Text</th>
+            </tr>
+            <tr>
+                <th>Min</th>
+                <th>Max</th>
+                <th>Min</th>
+                <th>Max</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+            <tr>
+                <td>{{col.Parameter_Name}}</td>
+                <td><input type="text" name="{{col.Parameter_ID +'Min_Value'}}" [(ngModel)]='col.Min_Value' (ngModelChange)="genPoText(col.Parameter_ID)" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                <td><input type="text" name="{{col.Parameter_ID + col.Product_ID+'Max_Value'}}" [(ngModel)]='col.Max_Value' (ngModelChange)="genPoText(col.Parameter_ID)" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                <td>{{col.UOM ? col.UOM : '-'}}</td>
+                <td><input type="text" name="{{col.Parameter_ID +'Max_Tolerance_Level'}}" [(ngModel)]='col.Max_Tolerance_Level' (ngModelChange)="genPoText(col.Parameter_ID)" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                <td><input  type="text" name="{{col.Parameter_ID +'Min_Tolerance_Level'}}" [(ngModel)]='col.Min_Tolerance_Level' (ngModelChange)="genPoText(col.Parameter_ID)" CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
+                <td> <span data-toggle="tooltip" title="Edit PO Text" class="genPoText" (click)="editpotext(col)" >{{col.PO_Text}}</span> </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="SaveParamDetalis()"
+    class="btn btn-success"
+    >
+    Done
+    </button>
+    <button
+    type="button"
+    (click)="cancelpopUp()"
+    class="btn btn-default"
+    >
+    CANCEL
+    </button>
+
+</p-footer>
+</p-dialog>
+

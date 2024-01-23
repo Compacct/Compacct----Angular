@@ -1,0 +1,60 @@
+#ui-tabpanel-0>div>p-table>div>div.ui-table-wrapper.ng-star-inserted {
+  width: auto !important;
+}
+
+.ui-table-auto-layout>.ui-table-wrapper {
+  width: auto !important;
+  min-height: 170px !important;
+}
+
+.table-bordered>thead>tr>th {
+  color: #fff;
+  background-color: #3c8dbc;
+
+}
+
+.custombutton {
+  margin-top: 25px;
+}
+
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.Outlet {
+  display: inline-block !important;
+}
+
+div.label-t {
+  padding: 6px 12px;
+  background: rgb(241, 239, 239);
+}
+
+.text-red-active>td {
+  color: red;
+}
+
+fieldset {
+  border: 1px solid #ddd !important;
+  margin: 0;
+  min-width: 0;
+  padding: 10px;
+  position: relative;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  padding-left: 10px !important;
+}
+
+legend {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 0px;
+  width: fit-content;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0px 10px 0px 10px;
+  background-color: #ffffff;
+}

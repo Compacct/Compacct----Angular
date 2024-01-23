@@ -1,0 +1,1485 @@
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid" *ngIf="!deleteError">
+            <div class="ui-g-6" *ngIf="Save && !Del">
+                <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6" *ngIf="Del && !Save">
+              <button type="button" pButton (click)="onConfirmDel()" label="Yes" class="ui-button-success"></button>
+          </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+        <div class="ui-g ui-fluid" *ngIf="deleteError">
+             <div class="ui-g-12">
+                <button type="button" pButton (click)="onReject()" label="OK" class="ui-button-danger" style="font-size: 20px;"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<p-toast position="center" key="c1" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid" >
+            <div class="ui-g-6" >
+                <button type="button" pButton (click)="onFinalSave()" label="Yes" class="ui-button-success"></button>
+            </div>           
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="x" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid" >
+            <div class="ui-g-6" >
+                <button type="button" pButton (click)="onCancel()" label="Yes" class="ui-button-success"></button>
+            </div>           
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)" >
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" 
+                                    name="browsecompany" 
+                                    #browsecompany="ngModel" 
+                                    [(ngModel)]="ObjBrowse.Company_ID"
+                                    [ngClass]="{'clearance': SearchFormSubmitted && browsecompany?.errors?.required}"
+                                    required>
+                                    <option  [ngValue]="undefined">Select</option>
+                                       <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                          {{option.Company_Name}}
+                                        </option>
+                                  </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Date</label>
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getAllData(SearchForm.form.valid)" id="load2" [disabled]="seachSpinner">
+                                      <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                   </button>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Sub Ledger Name <span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="DistSubledgerName" [(ngModel)]="SelectedDistSubledgerName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="subledgername"></p-multiSelect>
+                                </div>
+                                <!-- <div class="col-sm-2">
+                                    <label class="control-label">Cost Centre Name <span class="text-danger"></span></label>
+                                    <p-multiSelect [options]="DistCostCentreName" [(ngModel)]="SelectedDistCentreName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="costledgername"></p-multiSelect>
+                                </div> -->
+                            </div>
+                            </form>
+                            <div class="no-padding">
+                                <p-table [value]="getAllDataList"
+                                [paginator]="getAllDataList.length ? true : false"
+                                *ngIf='getAllDataList.length'
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeader'
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeader  |  slice:1">{{option.replaceAll('_',' ')}}</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+    
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li *ngIf="col.Approve_Status =='Insert'">
+                                                            <a (click)="FinalSave(col)">
+                                                            <i class="fa fa-save"></i> Final Save
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Approve_Status =='Insert'">
+                                                                <a (click)="Edit(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="Print(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                         <li *ngIf="col.Approve_Status =='Insert'"><!-- companyname == 'HARBAUER India [P] Ltd' -->
+                                                            <a (click)="Delete(col)">
+                                                                <i class="fa fa-fw fa-trash"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                     
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <ng-container *ngFor="let option of DynamicHeader  |  slice:1">
+                                                <td *ngIf="option != 'Work_Details' && option != 'Req_No'" >{{col[option]}}</td>
+                                                <td *ngIf="option == 'Req_No'" >{{col[option].replaceAll('#',',')}}</td>
+                                                <td *ngIf="option == 'Work_Details'">
+                                                    <div (click)="selectWork($event,col[option],op)" [ngClass]="stringShort(col[option],'css')">{{stringShort(col[option],'ff').replaceAll('#',',')}}</div>
+                                                </td>
+                                            </ng-container>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="purChaseForm" #purChaseForm="ngForm" novalidate>
+                                 <div class="form-group">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" 
+                                    name="company" 
+                                    #company="ngModel" 
+                                    [(ngModel)]="objpurchase.Company_ID"
+                                    [ngClass]="{'clearance': validatation?.required && company?.errors?.required }"
+                                    required>
+                                    <option  [ngValue]="undefined">Select</option>
+                                       <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                          {{option.Company_Name}}
+                                        </option>
+                                  </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Vendor<sup class="text-danger">*</sup></label> 
+                                    <span class="pull-right"><a style="font-size: 1.8rem;" *ngIf = "objpurchase.Sub_Ledger_ID" (click)="getDetalis('Vendor')"><i class="fa fa-fw  fa-info-circle"></i></a></span>
+                                    <p-dropdown 
+                                    [options]="SubLedgerList" 
+                                    name="Sub_Ledger_ID" 
+                                    [(ngModel)]="objpurchase.Sub_Ledger_ID"
+                                    [showClear]="true" 
+                                    [emptyFilterMessage]="' No Vendor Found'" 
+                                    [filter]="true" 
+                                    filterBy="label,value.name" 
+                                    [resetFilterOnHide]="true"
+                                    [placeholder]="'Vendor'" 
+                                    [virtualScroll]="true" 
+                                    itemSize="30" 
+                                    #Sub_Ledger_ID="ngModel"
+                                    (onChange)="getSubLedgerDetalis()"
+                                    [styleClass]="validatation?.required && Sub_Ledger_ID.errors?.required ? 'clearance': ''" [required] = "true">
+                                </p-dropdown>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Billing To<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" 
+                                    name="Billing_To" 
+                                    #Billing_To="ngModel" 
+                                    [(ngModel)]="objpurchase.Billing_To"
+                                    (change)="getreq()"
+                                    [ngClass]="{'clearance': validatation?.required && Billing_To?.errors?.required }"
+                                    required
+                                    [disabled]="userType != 'A'">
+                                    <option  [ngValue]="undefined">Select</option>
+                                       <option *ngFor = "let option of costCenterList" [value] ="option.Cost_Cen_ID">
+                                          {{option.Cost_Cen_Name}}
+                                        </option>
+                                  </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Deliver To<sup class="text-danger"></sup></label>
+                                   <span class="pull-right"><a style="font-size: 1.8rem;" *ngIf = "objpurchase.Cost_Cen_ID" (click)="getDetalis('Deliver')"><i class="fa fa-fw  fa-info-circle"></i></a></span>
+                                    <select class="form-control" 
+                                        name="Cost_Cen_ID" 
+                                        #Cost_Cen_ID="ngModel"
+                                        [(ngModel)]="objpurchase.Cost_Cen_ID"
+                                        (change)="getCostCenterDetalis()">
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor = "let option of costCenterList" [value] ="option.Cost_Cen_ID">
+                                                {{option.Cost_Cen_Name}}
+                                            </option>
+                                        </select>
+                                </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Doc. Date<sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker  [(value)]="DocDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Currency<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" 
+                                        name="Currency_ID" 
+                                        #Currency_ID="ngModel" 
+                                        [(ngModel)]="objpurchase.Currency_ID"
+                                        [ngClass]="{'clearance': validatation?.required && Currency_ID?.errors?.required }"
+                                        required>
+                                        <option  [ngValue]="undefined">Select</option>
+                                           <option *ngFor = "let option of currencyList" [value] ="option.Currency_ID">
+                                              {{option.Currency_Name}}
+                                            </option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Credit Days</label>
+                                        <input type="text"
+                                        id = "creditdays"
+                                        class="form-control"
+                                        name="Credit_Days"
+                                        #Credit_Days="ngModel"
+                                        [(ngModel)]="objpurchase.Credit_Days"
+                                        placeholder="Credit Days"
+                                        CompacctDigitonly="true"
+                                        >
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Quotation No</label>
+                                        <input type="text" 
+                                        class="form-control"
+                                        name="Supp_Ref_No"
+                                        #Supp_Ref_No="ngModel"
+                                        [(ngModel)]="objpurchase.Supp_Ref_No"
+                                        placeholder="Quotation No"
+                                       >
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Quotation Date</label>
+                                        <ejs-datepicker  [(value)]="RefDate" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
+                                    </div>
+                                   <div class="col-sm-3">
+                                        <label class="control-label">Order Type<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" 
+                                        name="Type_ID" 
+                                        #Type_ID="ngModel" 
+                                        [(ngModel)]="objpurchase.Type_ID"
+                                        [ngClass]="{'clearance': validatation?.required && Type_ID?.errors?.required }"
+                                        required>
+                                        <option  [ngValue]="undefined">Select</option>
+                                           <option *ngFor = "let option of OrderTypeList" [value] ="option.Type_ID">
+                                              {{option.Txn_Type}}
+                                            </option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-3"></div>
+                                </div>
+                                <form name="purChaseAddForm" #purChaseAddForm="ngForm" novalidate>
+                                <div *ngIf="openProject == 'Y'">
+                                    <h5 style="
+                                    padding: 0.5em 1em;
+                                    background: #c1c1c185;
+                                    border-top: 5px solid #3c8dbc;
+                                    border-bottom: 1px solid #c6c6c6;
+                                    margin-top: 15px;
+                                    ">
+                                    <i class="fa fa-fw fa-fax">
+                                    </i> &nbsp;<strong>Project Detalis :</strong>
+                                    </h5>
+                                    
+                                        <div class="form-group" >
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Project<sup  class="text-danger">*</sup></label>
+                                               <p-dropdown 
+                                              [options]="ProjectList" 
+                                              name="PROJECT_ID"
+                                              [(ngModel)]="objproject.PROJECT_ID" 
+                                              [showClear]="true"
+                                              [emptyFilterMessage]="' No Project Found'"
+                                              [filter]="true"
+                                              filterBy="label,value.name" 
+                                              [placeholder]="'Select Project'" 
+                                              [virtualScroll]="true"
+                                              itemSize="30" 
+                                              #PROJECT_ID="ngModel" 
+                                              (onChange)="getSite()"
+                                              [styleClass]="
+                                              projectFromSubmit && PROJECT_ID.errors?.required? 'clearance': ''"
+                                              [required]="true"
+                                              [disabled]="addPurchaseList.length" >
+                                            </p-dropdown>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Site<sup  class="text-danger">*</sup></label>
+                                            <p-dropdown 
+                                              [options]="SiteList" 
+                                              name="SITE_ID"
+                                              [(ngModel)]="objproject.SITE_ID" 
+                                              [showClear]="true"
+                                              [emptyFilterMessage]="' No Site Found'"
+                                              [filter]="true"
+                                              filterBy="label,value.name" 
+                                              [placeholder]="'Select Site'" 
+                                              [virtualScroll]="true"
+                                              itemSize="30" 
+                                              #SITE_ID="ngModel" 
+                                              (onChange)="getGroup()"
+                                              [styleClass]="
+                                              projectFromSubmit && SITE_ID.errors?.required? 'clearance': ''"
+                                              [required]="true"></p-dropdown>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Group<sup  class="text-danger">*</sup></label>
+                                                
+                                              <p-dropdown 
+                                              [options]="groupList" 
+                                              name="Budget_Group_ID"
+                                              [(ngModel)]="objproject.Budget_Group_ID" 
+                                              [showClear]="true"
+                                              [emptyFilterMessage]="' No Group Found'"
+                                              [filter]="true"
+                                              filterBy="label,value.name" 
+                                              [placeholder]="'Select Group'" 
+                                              [virtualScroll]="true"
+                                              itemSize="30" 
+                                              #Budget_Group_ID="ngModel" 
+                                              (onChange)="getSubGroup()"
+                                              [styleClass]="
+                                              projectFromSubmit && Budget_Group_ID.errors?.required? 'clearance': ''"
+                                              [required]="true"></p-dropdown>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Sub Group<sup  class="text-danger">*</sup></label>
+                                               <p-dropdown 
+                                              [options]="subGorupList" 
+                                              name="Budget_Sub_Group_ID"
+                                              [(ngModel)]="objproject.Budget_Sub_Group_ID" 
+                                              [showClear]="true"
+                                              [emptyFilterMessage]="' No Sub Group Found'"
+                                              [filter]="true"
+                                              filterBy="label,value.name" 
+                                              [placeholder]="'Select Sub Group'" 
+                                              [virtualScroll]="true"
+                                              itemSize="30" 
+                                              #Budget_Sub_Group_ID="ngModel" 
+                                               [styleClass]="
+                                              projectFromSubmit && Budget_Sub_Group_ID.errors?.required? 'clearance': ''"
+                                              [required]="true"></p-dropdown>
+                                            </div>
+                                            <div class="col-sm-8">
+                                                <label class="control-label">Work Detalis<sup  class="text-danger">*</sup></label>
+                                              <p-dropdown [options]="workList" name="Work_Details"
+                                              [(ngModel)]="objproject.Work_Details_ID" [showClear]="true"
+                                              [emptyFilterMessage]="' No Work Details Found'"
+                                              [filter]="true"
+                                              filterBy="label,value.name" [placeholder]="'Select Work Details'" [virtualScroll]="true"
+                                              itemSize="30" #Work_Details="ngModel"
+                                              (onChange)="workChange()" [styleClass]="
+                                              projectFromSubmit && Work_Details.errors?.required? 'clearance': ''"
+                                              [required]="true">
+                                            </p-dropdown>
+                                            </div>
+                                           
+                                        </div>
+                                   
+                                </div>
+                                 <hr class="box boxboxDivide-primary">
+                               
+                                    <div class="form-group">
+                                        <div class="col-sm-4" *ngIf="openProject == 'Y'" >
+                                            <label class="control-label">Pending Purchase Indent/Requisition<sup class="text-danger"></sup></label>
+                                            
+                                            <p-dropdown *ngIf="!addPurchaseListInput" [options]="Requlist" name="Requisition" #Requisition="ngModel" [(ngModel)]="objaddPurchacse.Req_No"  [showClear]="true" [emptyFilterMessage]="' No Req No Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Requisition No'" [virtualScroll]="true"
+                                                        itemSize="30" #Supplier="ngModel" [styleClass]="purChaseAddFormSubmit && Requisition.errors?.required ? 'clearance' : ''"
+                                                        [disabled]="objaddPurchacse.Product_Type_ID" [required]="true" (onChange)="RequisitionChange()">
+                                                    </p-dropdown>
+                                            <div *ngIf="addPurchaseListInput" class="label-t">{{objaddPurchacse.Req_No}}</div>
+                                        </div>
+                                       <div class="col-sm-4" *ngIf="openProject == 'N'" >
+                                        <label class="control-label">Product Type</label>
+                                        <p-dropdown [options]="productTypeList" 
+                                        name="Product_Type_ID" 
+                                        [(ngModel)]="objaddPurchacse.Product_Type_ID"
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Product Type Found'" 
+                                        [filter]="true" 
+                                        filterBy="label,value" 
+                                        [resetFilterOnHide]="true"
+                                        [placeholder]="'Product Type'" 
+                                        [virtualScroll]="true" 
+                                        #Product_Type_ID="ngModel"
+                                        (onChange)="GetProductsDetalis()"
+                                        [styleClass]="purChaseAddFormSubmit && Product_Type_ID.errors?.required ? 'clearance': ''" 
+                                        required
+                                        [disabled]="objaddPurchacse.Req_No" >
+                                    </p-dropdown>
+                                       </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Product Details<sup class="text-danger">*</sup></label>
+                                            <p-dropdown 
+                                            *ngIf="!addPurchaseListInput"
+                                            [options]="productList" 
+                                            name="Product_ID" 
+                                            [(ngModel)]="objaddPurchacse.Product_ID"
+                                            [showClear]="true" 
+                                            [emptyFilterMessage]="' No Product Found'" 
+                                            [filter]="true" 
+                                            filterBy="label,value.name" 
+                                            [resetFilterOnHide]="true"
+                                            [placeholder]="'Product'" 
+                                            [virtualScroll]="true"  
+                                            itemSize="30" 
+                                            #Product_ID="ngModel"
+                                            (onChange)="GetProductSpecification()"
+                                            [styleClass]="purChaseAddFormSubmit && Product_ID.errors?.required ? 'clearance': ''" [required] = "true">
+                                        </p-dropdown>
+                                        <div *ngIf="addPurchaseListInput" class="label-t">{{addPurchaseListInputField.Product_Name}}</div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Product Specification</label>
+                                            <textarea class="form-control" 
+                                            style="margin: 0px -16.6719px 0px 0px; width: 100%;height: 55px;" 
+                                            name="Product_Spec" 
+                                            #Product_Spec="ngModel" 
+                                            rows='2'
+                                            placeholder="Product Specification"
+                                            [(ngModel)]="objaddPurchacse.Product_Spec"></textarea>
+                                        </div>
+                                     </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Expected Delivery<sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker  [(value)]="ExpectedDeliverydate" (change)="getProductDetalis()"  [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                            <input type="text"
+                                            class="form-control"
+                                            name="Qty"
+                                            #Qty="ngModel"
+                                            [(ngModel)]="objaddPurchacse.Qty"
+                                            placeholder="Quantity"
+                                            CompacctDigitonly="true"
+                                            (ngModelChange)="getProductDetalis()" 
+                                            [ngClass]="{'clearance': purChaseAddFormSubmit && Qty?.errors?.required }"
+                                            required
+                                            [disabled] = "!objaddPurchacse.Product_ID">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Unit<sup class="text-danger"></sup></label>
+                                            <input type="text"
+                                            class="form-control"
+                                            name="Unit"
+                                            #Unit="ngModel"
+                                            [(ngModel)]="objaddPurchacse.Unit"
+                                            placeholder="Unit"
+                                           disabled>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Rate<sup class="text-danger">*</sup></label>
+                                            <input type="text"
+                                            class="form-control"
+                                            name="Rate"
+                                            #Rate="ngModel"
+                                            [(ngModel)]="objaddPurchacse.Rate"
+                                            placeholder="Rate"
+                                            CompacctDigitonly="true"
+                                            (ngModelChange)="getProductDetalis()"
+                                            [ngClass]="{'clearance': purChaseAddFormSubmit && Rate?.errors?.required }"
+                                            required
+                                            [disabled] = 'disable'><!--[disabled] = 'disable' -->
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="control-label">Grs Amt<sup class="text-danger"></sup></label>
+                                            <input type="text"
+                                            class="form-control"
+                                            name="Gross_Amt"
+                                            #Gross_Amt="ngModel"
+                                            [(ngModel)]="objaddPurchacse.Gross_Amt"
+                                            placeholder="Gross Amt"
+                                            CompacctDigitonly="true"
+                                            disabled>
+                                        </div>
+                                     </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Discount Type<sup class="text-danger"></sup></label>
+                                            <select class="form-control" 
+                                            name="Discount_Type" 
+                                            #Discount_Type="ngModel" 
+                                            [(ngModel)]="objaddPurchacse.Discount_Type"
+                                            (change)="getProductDetalis()"
+                                            >
+                                            <option  [ngValue]="undefined">Select</option>
+                                               <option *ngFor = "let option of DiscountTypeList" [value] ="option.Dtype">
+                                                  {{option.Dtype}}
+                                                </option>
+                                          </select>
+                                        </div>
+                                        <div class="col-sm-3">
+                                                <label class="control-label">Discount <span>{{objaddPurchacse.Discount_Type}}</span><sup class="text-danger"></sup></label>
+                                                <input type="text"
+                                                class="form-control"
+                                                name="Discount"
+                                                #Discount="ngModel"
+                                                [(ngModel)]="objaddPurchacse.Discount"
+                                                (ngModelChange)="getProductDetalis()"
+                                                placeholder="Discount"
+                                                CompacctDigitonly="true"
+                                                [disabled] = "!objaddPurchacse.Discount_Type"
+                                                >
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Discount Amount<sup class="text-danger"></sup></label>
+                                            <input type="text"
+                                            class="form-control"
+                                            name="Discount_AMT"
+                                            #Discount_AMT="ngModel"
+                                            [(ngModel)]="objaddPurchacse.Discount_AMT"
+                                            (ngModelChange)="getTaxAble()"
+                                            placeholder="Discount AMT"
+                                            CompacctDigitonly="true"
+                                             disabled>
+                                        </div>
+                                        <div class="col-sm-3" >
+                                        <label class="control-label">Taxable Amount<sup class="text-danger"></sup></label>
+                                        <input type="text"
+                                        class="form-control"
+                                        name="taxable_AMT"
+                                        #taxable_AMT="ngModel"
+                                        [(ngModel)]="objaddPurchacse.taxable_AMT"
+                                        placeholder="Taxable AMT"
+                                        disabled
+                                        >
+                                        </div>
+                                    </div>
+                                 <div class="form-group">
+                                   <div class="col-sm-3">
+                                        <label class="control-label">{{taxlabelChange()}}(%)<sup class="text-danger"></sup></label>
+                                        <input type="text"
+                                        class="form-control"
+                                        name="Gst"
+                                        #Gst="ngModel"
+                                        [(ngModel)]="objaddPurchacse.Gst"
+                                        placeholder="GST(%)"
+                                        CompacctDigitonly="true"
+                                        disabled>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">{{taxlabelChange()}} Amount<sup class="text-danger"></sup></label>
+                                        <input type="text"
+                                        class="form-control"
+                                        name="GST_AMT"
+                                        #GST_AMT="ngModel"
+                                        [(ngModel)]="objaddPurchacse.GST_AMT"
+                                        placeholder="GST AMT"
+                                        CompacctDigitonly="true"
+                                        disabled
+                                        >
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Net Amount<sup class="text-danger"></sup></label>
+                                        <input type="text"
+                                        class="form-control"
+                                        name="Total_Amount"
+                                        #Total_Amount="ngModel"
+                                        [(ngModel)]="objaddPurchacse.Total_Amount"
+                                        placeholder="Net Amount"
+                                        CompacctDigitonly="true"
+                                        disabled
+                                        >
+                                    </div>
+                                     <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton" 
+                                        style="margin-top: 28px;margin-left: 25%;" 
+                                        (click)="AddPurchase(purChaseAddForm.form.valid)"
+                                       >
+                                         <span  class="	glyphicon glyphicon-plus"></span>&nbsp;Add
+                                         </button>
+                                     </div>
+                                     <div class="col-sm-2"></div>
+                                    </div>
+                                 
+                                </form>
+                              
+                              <div class="table table-responsive" style="margin-top: 13px;">
+                                <table class="table table-bordered">
+                                        <thead>
+                                            <tr style="background-color:#3c8dbc;color:white;">
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Sl. No.</th>
+
+                                     
+                                        <th *ngIf="openProject == 'Y'" nowrap="" rowspan="2" style="vertical-align:middle">Project Description</th>
+                                        <th *ngIf="openProject == 'Y'" nowrap="" rowspan="2" style="vertical-align:middle">Site Description</th>
+                                        <th *ngIf="openProject == 'Y'" nowrap="" rowspan="2" style="vertical-align:middle">Group</th>
+                                        <th *ngIf="openProject == 'Y'" nowrap="" rowspan="2" style="vertical-align:middle">Sub Group</th>
+                                        <th *ngIf="openProject == 'Y'" nowrap="" rowspan="2" style="vertical-align:middle">Work Details</th>
+
+                                        <th *ngIf="openProject == 'Y'" nowrap="" rowspan="2" style="vertical-align:middle">Requisition</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Product Details</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Product Spec</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Qty</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Unit</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Rate</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Gross Amt</th>
+                                         <th nowrap="" colspan="3" style="vertical-align:middle">Discount </th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Taxable Amount</th>
+                                        <th  nowrap="" colspan="2" style="vertical-align:middle">{{taxlabelChange()}}</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Net Amount</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Edit</th>
+                                        <th nowrap="" rowspan="2" style="vertical-align:middle">Delete</th>
+                                         </tr>
+                                        <tr style="background-color:#3c8dbc;color:white;">
+                                            <th nowrap="" style="vertical-align:middle">Disc Type</th>
+                                            <th nowrap="" style="vertical-align:middle">Disc %</th>
+                                            <th nowrap="" style="vertical-align:middle">Disc Amt</th>
+                                            <th nowrap="" style="vertical-align:middle">{{taxlabelChange()}}(%)</th>
+                                            <th nowrap="" style="vertical-align:middle">{{taxlabelChange()}} Amt</th>
+                                           
+                                            
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor='let col of addPurchaseList let i = index' >
+                                                <td>{{i + 1}}</td>
+
+                                                <td *ngIf="openProject == 'Y'" >{{col.Project_Description ? col.Project_Description : '-'}}</td>
+                                                <td *ngIf="openProject == 'Y'" >{{col.Site_Description ? col.Site_Description : '-'}}</td>
+                                                <td *ngIf="openProject == 'Y'" >{{col.Budget_Group_Name ? col.Budget_Group_Name : '-'}}</td>
+                                                <td *ngIf="openProject == 'Y'" >{{col.Budget_Sub_Group_Name ? col.Budget_Sub_Group_Name : '-'}}</td>
+                                                <td *ngIf="openProject == 'Y'" > <div (click)="selectWork($event,col.Work_Details,op)" [ngClass]="stringShort(col.Work_Details ,'css')">{{stringShort(col.Work_Details ,'ff')}}</div></td>
+
+
+                                                <td *ngIf="openProject == 'Y'" >{{col.Req_No ? col.Req_No : '-'}}</td>
+                                                <td>{{col.Product_Name ? col.Product_Name : '-'}}</td>
+                                                <td>{{col.Product_Spec}}</td>
+                                                <td>{{col.Qty}}</td>
+                                                <td>{{col.UOM}}</td>
+                                                <td>{{col.Rate ? col.Rate : 0}}</td>
+                                                <td>{{col.Gross_Amt ? col.Gross_Amt :0}}</td>
+                                                <td>{{col.Discount_Type ? col.Discount_Type : 0}}</td>
+                                                <td>{{col.Discount ? col.Discount : 0}}</td>
+                                                <td>{{col.Discount_Amount ? col.Discount_Amount : 0}}</td>
+                                                <td>{{col.Taxable_Amount ? col.Taxable_Amount : 0}}</td>
+                                                <td>{{col.GST_Percentage ? col.GST_Percentage : 0}}</td>
+                                                <td>{{col.GST_Amount ? col.GST_Amount : 0}}</td>
+                                                <td>{{col.Total_Amount ? col.Total_Amount : 0}}</td>
+                                                <td> <a class="btn btn-sm btn-warning" (click)="EditAddPurchase(i)"
+                                                    ><div><i class="fa fa-fw fa-edit"> </i></div>
+                                                  </a></td>
+                                               <td> <a class="btn btn-sm btn-danger" (click)="DeleteAddPurchase(i)"
+                                                ><div><i class="fa fa-fw fa-trash"> </i></div>
+                                              </a></td>
+                                           </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <br>
+                                <hr class="box boxboxDivide-primary" />
+                                <form name="TermForm" #TermForm="ngForm" novalidate>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                             <label class="control-label">Term Name<sup class="text-danger">*</sup></label>
+                                             <select class="form-control" name="termname" #termname="ngModel" [(ngModel)]="ObjTerm.Term_ID"
+                                                [ngClass]="{clearance: TermFormSubmitted && termname?.errors?.required}"
+                                                (change)="TermChange()" required >
+                                             <option [ngValue]="undefined">Select</option>
+                                             <option *ngFor="let option of TermList" [ngValue]="option.Term_ID">{{ option.Term_Name }}</option>
+                                            </select>
+                                         </div>
+                                        <div class="col-sm-2">
+                                          <label>HSN No<sup class="text-danger"></sup></label>
+                                            <input class="form-control" name="HSNNo" [(ngModel)]="ObjTerm.HSN_No" required="true" disabled="true" placeholder="HSN No" />
+                                        </div>
+                                        <div class="col-sm-2">
+                                          <label>Term Amount<sup class="text-danger">*</sup></label>
+                                            <input class="form-control" name="termamount" #termamount="ngModel" [(ngModel)]="ObjTerm.Term_Amount"
+                                              [ngClass]="{clearance: TermFormSubmitted && termamount?.errors?.required}"
+                                              required="true" CompacctDigitonly="true" placeholder="Term Amount" />
+                                        </div>
+                                       <button type="submit" class="btn btn-primary custombutton" (click)="AddTerm(TermForm.form.valid)">
+                                        <span class="glyphicon glyphicon-plus"></span>Add
+                                       </button>
+                                    </div>
+                                <br>
+                                <div class="table-responsive no-padding">
+                                    <table class="table table-bordered">
+                                     <thead style="background-color:#3c8dbc;color:white;">
+                                        <tr style="background-color:#3c8dbc;color:white;">
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Sl. No.</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Term Name</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">HSN No</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Term Amount</th>
+                                          <th colspan="2" scope="colgroup" class="text-center">GST</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Net Amount</th>
+                                          <th rowspan="2" class="text-center" style="vertical-align:middle">Delete</th>
+                                        </tr>
+                                        <tr style="background-color:#3c8dbc;color:white">
+                                           <th scope="col" class="text-center">Rate</th>
+                                           <th scope="col" class="text-center">Amt.</th>
+                                         </tr>
+                                     </thead>
+                                    <tbody>
+                                        <tr *ngFor=" let TermTableList of AddTermList; let ind = index; let odd = odd;" [class.even]="odd">
+                                          <td>{{ ind + 1  }}</td>
+                                          <td>{{ TermTableList.Term_Name }}</td>
+                                          <td>{{ TermTableList.HSN_No }}</td>
+                                          <td>{{ TermTableList.Term_Amount }}</td>
+                                          <td>{{ TermTableList.GST_Per }}</td>
+                                          <td>{{ getTofix(TermTableList.GST_Amount )}}</td>
+                                          <td>{{ getTofix(TermTableList.Term_Amount + TermTableList.GST_Amount)}}</td>
+                                          <td><button (click)="DeteteTerm(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                   </table>
+                                </div>
+                                </form>
+                                  <div class="table-responsive">
+                                        <table class="table">
+                                          <tbody>
+                                            <tr>
+                                            <th>Total Amount:</th>
+                                            <td class="amt-td ng-binding">{{grTotal ? getTofix2(grTotal) : 0}}</td>
+                                            <th>Term Amount :</th>
+                                            <td class="amt-td ng-binding">{{ GrTermAmount ? getTofix(GrTermAmount) : 0}}</td>
+                                            <th></th>
+                                            <td class="amt-td"></td>
+                                             </tr>
+                                            <tr>
+                                            <th>Discount Amount :</th>
+                                            <td class="amt-td ng-binding">{{disTotal ? getTofix2(disTotal) : 0}}</td>
+                                            <th>Total GST :</th>
+                                            <td class="amt-td ng-binding">{{getTofix(GSTTotal + GrGstTermAmt)}}</td>
+                                            <th>Net Amount</th>
+                                            <td class="amt-td ng-binding">{{RoundOff(taxAblTotal + GrTermAmount + GSTTotal + GrGstTermAmt)}}</td>
+                                            </tr>
+                                            <tr>
+                                            <th>Taxable Amount :</th>
+                                            <td class="amt-td ng-binding">{{ taxAblTotal ? getTofix2(taxAblTotal) : 0}}</td>
+                                            <th>Rounded Off :</th>
+                                            <td class="amt-td ng-binding">{{getRoundedOff()}}</td>
+                                            <th></th>
+                                            <td class="amt-td"></td>
+                                            </tr>
+                                            </tbody>
+                                    </table>
+                                    </div>
+                                    <hr class="box boxboxDivide-primary">
+                                    <form name="PurchaseOrderTerms" #PurchaseOrderTerms="ngForm" novalidate>
+                                        <div class="form-group" >
+                                            <div class="col-sm-6" >
+                                                <label class="control-label">Update Terms<sup class="text-danger">*</sup></label> 
+                                                <p-dropdown 
+                                                [options]="UpdateTermsList" 
+                                                name="Terms_ID" 
+                                                [(ngModel)]="ObjPurchaseOrderTerms.Terms_ID"
+                                                [showClear]="true" 
+                                                [emptyFilterMessage]="' No Terms Found'" 
+                                                [filter]="true" 
+                                                filterBy="label,value.name" 
+                                                [resetFilterOnHide]="true"
+                                                [placeholder]="'Select Terms'" 
+                                                [virtualScroll]="true" 
+                                                itemSize="30" 
+                                                #Terms_ID="ngModel"
+                                                (onChange)="getUpdateTermsDetalis()"
+                                                [styleClass]="PurchaseOrderTermsSubmit && Terms_ID.errors?.required ? 'clearance': ''" [required] = "true">
+                                            </p-dropdown>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" *ngIf="ObjPurchaseOrderTerms.Terms_ID" >
+                                            <div class="col-sm-12" >
+                                                <label class="control-label">Terms Details<sup class="text-danger">*</sup></label> 
+                                                <p-editor name= "Terms_Details"
+                                                        #Terms_Details="ngModel"
+                                                        [(ngModel)]="ObjPurchaseOrderTerms.Terms_Details"
+                                                        [style]="{'height':'150px'}"
+                                                        [styleClass]="PurchaseOrderTermsSubmit?.required && Terms_Details.errors?.required ? 'clearance': ''" [required] = "true" >
+                                            </p-editor>
+                                            </div>
+                                        </div>
+                                       
+                                        <div class="box-footer">
+                                            <button class="btn btn-primary pull-right" 
+                                            (click)="addUpdatePurchaseOrderTerms(PurchaseOrderTerms.form.valid)" 
+                                           >
+                                              <span class="	glyphicon glyphicon-plus"></span>Add
+                                            </button>
+                                        </div>
+                                    </form>
+                                    <div class="container-fluid" *ngIf="UpdatePurchaseOrderTermsList.length" style="margin-top: 5px;padding-right: 0px; padding-left: 0px;" >
+                                        <div class="panel panel-primary">
+                                          <div class="panel-heading"></div>
+                                          <div class="panel-body" style="overflow-y: auto; height: 500px;" >
+                                            <ng-container *ngFor=" let objsale of UpdatePurchaseOrderTermsList; let i = index" >
+                                                <div class="card" style="margin-top: 3px; border: 2px solid #007ad954; padding: 8px; box-shadow: 10px;box-shadow: 3px 2px lightblue;" >
+                                                    <div class="card-header" style="text-align: end;">
+                                                        <span (click)="DeleteUpdatePurchaseOrderTermsList(i)" style="color: red; cursor: pointer;"  class="glyphicon glyphicon-remove"></span>
+                                                      </div>
+                                                    <div class="card-body">
+                                                        <h5 style="
+                                                        padding: 0.5em 1em;
+                                                        background: #c1c1c185;
+                                                        border-top: 5px solid #3c8dbc;
+                                                        border-bottom: 1px solid #c6c6c6;
+                                                        margin-top: 15px;
+                                                        ">
+                                                        <i class="fa fa-fw fa-fax">
+                                                        </i> &nbsp;<strong>{{objsale.Terms_Name}} :</strong>
+                                                      </h5>
+                                                        <div [innerHTML]="objsale.Terms_Details" class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                                           
+                                                        </div>
+                                                     </div>
+                                                </div>
+                                            </ng-container>
+                                            
+                                          </div>
+                                        </div>
+                                      </div>
+                                     <div class="box-footer"*ngIf="UpdatePurchaseOrderTermsList.length" >
+                                    <button class="btn btn-primary pull-right" 
+                                    (click)="savePurchase(purChaseForm.form.valid)" 
+                                    id="load3" [disabled]="Spinner">
+                                     <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                    </button>
+                                </div>
+                            </form>
+                        </p-tabPanel>
+                        <p-tabPanel *ngIf="openProject == 'Y'"  headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-hourglass">
+                            <form name="pendingReqForm" #pendingReqForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Period</label>
+                                         <app-compacct-daterangepicker (DaterangeObj)="getConfirmDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Purchase Indent/Requisition For &nbsp;</label>
+                                        <select class="form-control" 
+                                        name="Cost_Cen_ID_Pending" 
+                                        #Cost_Cen_ID_Pending='ngModel' 
+                                        [(ngModel)]="objpendingreq.Cost_Cen_ID"
+                                        [ngClass]="{'clearance': RequistionPendingFormSubmit && Cost_Cen_ID_Pending?.errors?.required}" 
+                                        required
+                                        [disabled]="userType != 'A'"
+                                       >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of costcenterListPeding" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getPendingReq(pendingReqForm.form.valid)" id="load4" [disabled]="seachPendingReqSpinner">
+                                          <p-progressSpinner *ngIf="seachPendingReqSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                          <span *ngIf="!seachPendingReqSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                       </button>
+                                    </div>
+                                </div>
+                                </form>
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="pendingREQData" 
+                                    *ngIf='pendingREQData.length' #dt4 
+                                     [paginator]="pendingREQData.length ? true : false"
+                                     [rows]="100"
+                                     [rowHover]="true" 
+                                     [autoLayout]="true" 
+                                     sortMode="multiple" 
+                                     [rowsPerPageOptions]="[100,200,300]" 
+                                     [rowHover]="true"
+                                     [globalFilterFields]='pendingREQDataDynamicHeader'>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt4.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+        
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th *ngFor="let option of pendingREQDataDynamicHeader |  slice:1">{{option.replaceAll('_',' ')}}</th>
+                                               </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button"
+                                                            data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                           <li>
+                                                                <a (click)="PrintREQ(col.Req_No)">
+                                                                    <i class="fa fa-print" aria-hidden="true"></i>
+                                                                    Print
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                <ng-container *ngFor="let option of pendingREQDataDynamicHeader |  slice:1">
+                                                    <td>{{col[option]}}</td>
+                                                </ng-container>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" *ngIf="pendingREQData.length" let-state>
+                                            Showing {{ state.first + 1 }} of
+                                            {{ state.first + 1 + state.rows }} of
+                                            {{ state.totalRecords }}
+                                        </ng-template>
+                                    </p-table>
+                                </div> 
+                        </p-tabPanel>
+                        <p-tabPanel *ngIf="openProject == 'Y'" headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-hourglass">
+                            <form name="pendingPurIndProForm" #pendingPurIndProForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Period</label>
+                                         <app-compacct-daterangepicker (DaterangeObj)="getDateRangePenpurIndPro($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Purchase Indent/Requisition For &nbsp;</label>
+                                        <select class="form-control" 
+                                        name="Cost_Cen_ID_Pending" 
+                                        #Cost_Cen_ID_Pending='ngModel' 
+                                        [(ngModel)]="objpendingPurIndPro.Cost_Cen_ID"
+                                        [ngClass]="{'clearance': pendingPurIndProFormSubmit && Cost_Cen_ID_Pending?.errors?.required}" 
+                                        required
+                                        [disabled]="userType != 'A'"
+                                       >
+                                            <option  [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of costcenterListPeding" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getPendingPurIndPro(pendingPurIndProForm.form.valid)" id="load4" [disabled]="seachPendingPurIndProSpinner">
+                                          <p-progressSpinner *ngIf="seachPendingPurIndProSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                          <span *ngIf="!seachPendingPurIndProSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                       </button>
+                                    </div>
+                                </div>
+                                </form>
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="pendingPurIndProData" 
+                                    *ngIf='pendingPurIndProData.length' #dt5
+                                     [paginator]="pendingPurIndProData.length ? true : false"
+                                     [rows]="100"
+                                     [rowHover]="true" 
+                                     [autoLayout]="true" 
+                                     sortMode="multiple" 
+                                     [rowsPerPageOptions]="[100,200,300]" 
+                                     [rowHover]="true"
+                                     [columns]="cols"
+                                     [globalFilterFields]='pendingPurIndProDataDynamicHeader'>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt5.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+        
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th *ngFor="let option of pendingPurIndProDataDynamicHeader |  slice:2">{{option.replaceAll('_',' ')}}</th>
+                                               </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button"
+                                                            data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                           <li>
+                                                                <a (click)="PrintREQ(col.Req_No)">
+                                                                    <i class="fa fa-print" aria-hidden="true"></i>
+                                                                    Print
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                <ng-container *ngFor="let option of pendingPurIndProDataDynamicHeader |  slice:2">
+                                                    <td [class]="option === 'PO_Qty' ? 'QtyColor' : 'Othercolor'" (click)="getdataforview(option,col)">{{col[option]}}</td>
+                                                </ng-container>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" *ngIf="pendingPurIndProData.length" let-state>
+                                            Showing {{ state.first + 1 }} of
+                                            {{ state.first + 1 + state.rows }} of
+                                            {{ state.totalRecords }}
+                                        </ng-template>
+                                    </p-table>
+                                </div> 
+                        </p-tabPanel>
+                     
+                    </p-tabView>
+                </div>
+            </div>
+         </div>
+    </div>
+</div>
+
+<p-dialog
+[header]="viewHeader"
+[appendTo]="'body'"
+[visible]="DetalisView"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '58%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="form-horizontal">
+    <div *ngIf="this.viewHeader === 'Vendor Detalis'">
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Billing Name</label>
+                <div class="label-t">{{this.DetalisObj.Sub_Ledger_Billing_Name ? this.DetalisObj.Sub_Ledger_Billing_Name : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">Email</label>
+            <div class="label-t">{{this.DetalisObj.Sub_Ledger_Email ? this.DetalisObj.Sub_Ledger_Email :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Contact No</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_Mobile_No ? this.DetalisObj.Sub_Ledger_Mobile_No : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Address</label>
+                <div class="label-t">{{this.DetalisObj.Sub_Ledger_Address_1 ? this.DetalisObj.Sub_Ledger_Address_1 : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">Land Mark</label>
+            <div class="label-t">{{this.DetalisObj.Sub_Ledger_Land_Mark ? this.DetalisObj.Sub_Ledger_Land_Mark :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">PIN</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_Pin ? this.DetalisObj.Sub_Ledger_Pin : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">District</label>
+                <div class="label-t">{{this.DetalisObj.Sub_Ledger_District ? this.DetalisObj.Sub_Ledger_District : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">State</label>
+            <div class="label-t">{{this.DetalisObj.Sub_Ledger_State ? this.DetalisObj.Sub_Ledger_State :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Country</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_Country ? this.DetalisObj.Sub_Ledger_Country : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">PAN ID</label>
+                <div class="label-t">{{this.DetalisObj.Sub_Ledger_PAN_No ? this.DetalisObj.Sub_Ledger_PAN_No : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">TIN No</label>
+            <div class="label-t">{{this.DetalisObj.Sub_Ledger_TIN_No ? this.DetalisObj.Sub_Ledger_TIN_No :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">CST No</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_CST_No ? this.DetalisObj.Sub_Ledger_CST_No : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Srv. Tax</label>
+                <div class="label-t">{{"-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">CIN</label>
+            <div class="label-t">{{"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Excise No</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_EXID_NO ? this.DetalisObj.Sub_Ledger_EXID_NO : "-"}}</div>
+    </div>
+            </div>
+    </div>
+    <div *ngIf="this.viewHeader != 'Vendor Detalis'">
+        <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Address</label>
+                <div class="label-t">{{this.DetalisObj.Cost_Cen_Address1 ? this.DetalisObj.Cost_Cen_Address1 : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">Address</label>
+            <div class="label-t">{{this.DetalisObj.Cost_Cen_Address2 ? this.DetalisObj.Cost_Cen_Address2 :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Location</label>
+        <div class="label-t">{{this.DetalisObj.Cost_Cen_Location ? this.DetalisObj.Cost_Cen_Location : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">PIN</label>
+                <div class="label-t">{{this.DetalisObj.Cost_Cen_PIN ? this.DetalisObj.Cost_Cen_PIN : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">District</label>
+            <div class="label-t">{{this.DetalisObj.Cost_Cen_District ? this.DetalisObj.Cost_Cen_District :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">State</label>
+        <div class="label-t">{{this.DetalisObj.Cost_Cen_State ? this.DetalisObj.Cost_Cen_State : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Country</label>
+                <div class="label-t">{{this.DetalisObj.Cost_Cen_Country ? this.DetalisObj.Cost_Cen_Country : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">Mobile</label>
+            <div class="label-t">{{this.DetalisObj.Cost_Cen_Mobile ? this.DetalisObj.Cost_Cen_Mobile :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Country</label>
+        <div class="label-t">{{this.DetalisObj.Sub_Ledger_Country ? this.DetalisObj.Sub_Ledger_Country : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">Phone</label>
+                <div class="label-t">{{this.DetalisObj.Cost_Cen_Phone ? this.DetalisObj.Cost_Cen_Phone : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">TIN No</label>
+            <div class="label-t">{{this.DetalisObj.Sub_Ledger_TIN_No ? this.DetalisObj.Sub_Ledger_TIN_No :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Email</label>
+        <div class="label-t">{{this.DetalisObj.Cost_Cen_Email1 ? this.DetalisObj.Cost_Cen_Email1 : "-"}}</div>
+    </div>
+            </div>
+            <div class="form-group">
+            <div class="col-sm-4">
+                <label class="control-label">VAT CST</label>
+                <div class="label-t">{{this.DetalisObj.Cost_Cen_VAT_CST ? this.DetalisObj.Cost_Cen_VAT_CST : "-"}}</div>
+            </div>
+            <div class="col-sm-4">
+            <label class="control-label">CST No.</label>
+            <div class="label-t">{{this.DetalisObj.Cost_Cen_CST_NO ? this.DetalisObj.Cost_Cen_CST_NO : "-"}}</div>
+        </div>
+        <div class="col-sm-4">
+        <label class="control-label">Service Tax No</label>
+        <div class="label-t">{{this.DetalisObj.Cost_Cen_SRV_TAX_NO ? this.DetalisObj.Cost_Cen_SRV_TAX_NO : "-"}}</div>
+    </div>
+            </div>
+    </div>
+    
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="DetalisView = false"
+    class="btn btn-default"
+    >
+    CANCEL
+    </button>
+
+</p-footer>
+</p-dialog>
+
+<p-dialog
+[header]="'Product Detalis'"
+[appendTo]="'body'"
+[visible]="productDetalisView"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '58%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="form-horizontal">
+    <div class="no-padding">
+        <p-table [value]="productDetalisViewList"
+        [paginator]="productDetalisViewList.length ? true : false"
+        *ngIf='productDetalisViewList.length'
+        [paginator]="true" 
+        [rows]="100" 
+        [rowHover]="true" 
+        [autoLayout]="true" 
+        sortMode="multiple" 
+        [rowsPerPageOptions]="[100,200,300]" 
+        [globalFilterFields]='productDetalisViewListHeader'
+            [rowHover]="true" #dtn>
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dtn.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                    </div>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                <th nowrap="nowrap" *ngFor="let option of productDetalisViewListHeader;">{{option.replaceAll('_',' ')}}</th> 
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col>
+                <tr>
+                    <ng-container *ngFor="let option of productDetalisViewListHeader; let i = index">
+                        <td nowrap="nowrap">{{col[option]}}</td>
+                    </ng-container>
+                    
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="paginatorright" let-state>
+                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+            </ng-template>
+        </p-table>
+    </div>
+    
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="productDetalisView = false"
+    class="btn btn-default"
+    ><span class="glyphicon glyphicon-remove"></span>
+    CLOSE
+    </button>
+
+</p-footer>
+</p-dialog>
+
+<!-- Pending purchase Indent Product for Qty view -->
+<p-dialog
+[header]="viewHeader"
+[appendTo]="'body'"
+[visible]="ViewListForPendIndQty"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '58%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="form-horizontal">
+    <div class="no-padding">
+        <p-table [value]="pendingPurIndProViewList" #dt7
+        [paginator]="true" 
+        [rows]="100" 
+        [rowHover]="true" 
+        [autoLayout]="true" 
+        sortMode="multiple" 
+        [rowsPerPageOptions]="[100,200,300]" 
+        [rowHover]="true" 
+        [globalFilterFields]='pendPurInProViewListDynamic'>
+        <ng-template pTemplate="caption">
+            <div class="row">
+                <div class="col-sm-6 pull-right" style="text-align: right">
+                    <div class="col-sm-6">  
+                     <!-- <button *ngIf="popUpList.length" class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcelpopup(popUpList)" id="load1" [disabled]="EXCELpopSpinner">
+                       <p-progressSpinner *ngIf="EXCELpopSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                       <span *ngIf="!EXCELpopSpinner" class="fa fa-file-excel-o"></span>&nbsp;EXPORT TO EXCEL
+                   </button> -->
+                   </div>
+                    <div class="col-sm-6">
+                       <input type="text" 
+                       pInputText 
+                       size="50"
+                       style="margin-top:25px;"
+                       placeholder="Search" 
+                       (input)="dt7.filterGlobal($event.target.value, 'contains')" 
+                       class="searchInput form-control">
+                    </div>
+                  
+               </div>
+            </div>
+
+        </ng-template>
+            <ng-template pTemplate="header">
+                <tr >
+                    <th *ngFor="let option of pendPurInProViewListDynamic" nowrap="nowrap">{{option.replaceAll('_',' ')}}</th>
+                 </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col>
+                <tr>
+                    <ng-container *ngFor="let option of pendPurInProViewListDynamic">
+                        <td >{{col[option]}}</td>
+                    </ng-container>
+                </tr>
+                
+            </ng-template>
+            <ng-template pTemplate="paginatorright" let-state>
+                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+            </ng-template>
+        </p-table>
+    </div>
+    
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="ViewListForPendIndQty = false"
+    class="btn btn-default"
+    ><span class="glyphicon glyphicon-remove"></span>
+    CLOSE
+    </button>
+
+</p-footer>
+</p-dialog>
+<!-- PO No view -->
+<p-dialog
+[header]="'Pending PO Material'"
+[appendTo]="'body'"
+[visible]="ViewListForPO"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '58%', minWidth: '200px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="form-horizontal">
+    <div class="no-padding">
+        <p-table [value]="POViewList" #dt6
+        [paginator]="true" 
+        [rows]="100" 
+        [rowHover]="true" 
+        [autoLayout]="true" 
+        sortMode="multiple" 
+        [rowsPerPageOptions]="[100,200,300]" 
+        [rowHover]="true" 
+        [globalFilterFields]='DynamicPOview'>
+        <ng-template pTemplate="caption">
+            <div class="row">
+                <div class="col-sm-6 pull-right" style="text-align: right">
+                    <div class="col-sm-6">  
+                     <!-- <button *ngIf="popUpList.length" class="btn btn-success custombutton" data-toggle="modal" (click)="exportexcelpopup(popUpList)" id="load1" [disabled]="EXCELpopSpinner">
+                       <p-progressSpinner *ngIf="EXCELpopSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                       <span *ngIf="!EXCELpopSpinner" class="fa fa-file-excel-o"></span>&nbsp;EXPORT TO EXCEL
+                   </button> -->
+                   </div>
+                    <div class="col-sm-6">
+                       <input type="text" 
+                       pInputText 
+                       size="50"
+                       style="margin-top:25px;"
+                       placeholder="Search" 
+                       (input)="dt6.filterGlobal($event.target.value, 'contains')" 
+                       class="searchInput form-control">
+                    </div>
+                  
+               </div>
+            </div>
+
+        </ng-template>
+            <ng-template pTemplate="header">
+                <tr >
+                    <th *ngFor="let option of DynamicPOview" nowrap="nowrap">{{option.replaceAll('_',' ')}}</th>
+                 </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col>
+                <tr>
+                    <ng-container *ngFor="let option of DynamicPOview">
+                        <td >{{col[option]}}</td>
+                    </ng-container>
+                </tr>
+                
+            </ng-template>
+            <ng-template pTemplate="paginatorright" let-state>
+                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+            </ng-template>
+        </p-table>
+    </div>
+    
+</div>
+<p-footer>
+    <button
+    type="button"
+    (click)="ViewListForPO = false"
+    class="btn btn-default"
+    ><span class="glyphicon glyphicon-remove"></span>
+    CLOSE
+    </button>
+
+</p-footer>
+</p-dialog>
+
+<p-overlayPanel [dismissable]="true" [showCloseIcon]="true" [appendTo]="'body'" [baseZIndex]="9999999" #op>
+    <ul style="width: 215px; padding: 5px" class="overpaneltext" >
+              <li *ngFor="let ovtext of overlayPanelText.split('#')" >
+                  {{ovtext}}
+              </li>
+          </ul>
+      
+  
+  </p-overlayPanel>

@@ -2138,7 +2138,7 @@ SaveRescedAppo(valid){
     this.saveSpinner3 = true;
     this.ResceduleObj.Appo_Date = this.DateService.dateConvert(new Date(this.ResceduleDate));
       this.ResceduleObj.Sub_Status = 'RECHEDULE';
-      const temparr = $.grep(this.TimeSlotList, (value:any) => value.Time_Slot_ID !== this.ResceduleObj.Appo_Time_Slot_ID );
+      const temparr = $.grep(this.TimeSlotList, (value:any) => value.Time_Slot_ID == this.ResceduleObj.Appo_Time_Slot_ID );
       this.ResceduleObj.Appo_Time_Slot = temparr.length ? temparr[0].Time_Slot_Name : undefined;
   const obja = {
     "SP_String":"Tutopia_Followup_SP",

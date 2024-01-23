@@ -135,6 +135,10 @@ div.table-responsive.table-id>p-table>div>div {
     width: 100%;
 }
 
+.RTFstore {
+    background-color: #8d3b7b !important;
+}
+
 
 /* body, td, input, textarea {
   font-family: source sans pro, sans-serif;

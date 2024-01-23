@@ -52,7 +52,7 @@
                                 </div>
                             </form>
                             <div class="table-responsive no-padding">
-                                <p-table [value]="GetAllDataList" [paginator]="GetAllDataList.length ? true : false" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Doc_Date','Doc_No','Brand_INI','Material_Type','Production_Stock_Point','Qty','UOM','Cost_Cen_Name','To_Stock_Point']"
+                                <p-table [value]="GetAllDataList" [paginator]="GetAllDataList.length ? true : false" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Doc_Date','Doc_No','Adv_Order_No','Brand_INI','Material_Type','Production_Stock_Point','Qty','UOM','Cost_Cen_Name','To_Stock_Point']"
                                     [rowHover]="true" #dt>
                                     <ng-template pTemplate="caption">
                                         <div class="row">

@@ -1,0 +1,891 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="row">
+   <div class="col-xs-12">
+      <div class="box box-primary">
+         <div class="form-horizontal">
+            <div class="box-body">
+               <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                  <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[0]"
+                     leftIcon="glyphicon glyphicon-list-alt">
+                     <p-table [value]="tableData" [paginator]="true" [rows]="50" [rowHover]="true" [autoLayout]="true"
+                        sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100,200,300]"
+                        [globalFilterFields]="tableSearch" [rowHover]="true" #dt>
+                        <ng-template pTemplate="caption">
+                           <div class="row">
+                              <div class="col-sm-3 pull-right" style="text-align: right">
+                                 <input type="text" pInputText size="50" placeholder="Search"
+                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                    class="searchInput form-control">
+                              </div>
+                           </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                           <tr>
+                              <th style="text-align: center; width:5em;">Action</th>
+                              <th style="text-align: center ;">Name</th>
+                              <th style="text-align: center ;" nowrap>Gender</th>
+                              <th style="text-align: center ;" nowrap>Date of Birth</th>
+                              <th style="text-align: center ;" nowrap>Applied Date</th>
+                              <th style="text-align: center ;" nowrap>Referred By</th>
+                              <th style="text-align: center ;" nowrap>Reference Name</th>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-col>
+                           <tr>
+                              <td>
+                                 <div class="dropdown">
+                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button"
+                                       data-toggle="dropdown" style="height:27px">
+                                       <i class="fa fa-fw fa-bars"></i>
+                                       <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                       <li>
+                                          <a (click)="editData(col)">
+                                             <i class="fa fa-fw fa-edit"></i> Edit
+                                          </a>
+                                       </li>
+                                    </ul>
+                                 </div>
+                              </td>
+                              <td>{{col.Name ? col.Name : "-"}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Gender ? col.Gender : "-"}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.DOB | date: "dd/MMM/yyyy"}}
+                              </td>
+                              <td style="text-align: center ;" nowrap>{{col.Applied_Date | date: "dd/MMM/yyyy"}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Referred_By ? col.Referred_By : "-"}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Reference_Name ? col.Reference_Name : "-"}}
+                              </td>
+                           </tr>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorright" let-state>
+                           Showing {{state.first+1}} of {{(state.first) + state.rows}} of {{state.totalRecords}}
+                        </ng-template>
+                     </p-table>
+                  </p-tabPanel>
+                  <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[1]"
+                     leftIcon="glyphicon glyphicon-floppy-save">
+                     <form name="interviewForm" #interviewForm="ngForm" novalidate>
+                        <!--  Basic Details -->
+                        <div class="panel panel-primary">
+                           <div class="panel-heading">Basic Details</div>
+                           <div class="panel-body">
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Name" name="Name"
+                                       #Name="ngModel" [(ngModel)]="objInterview.Name"
+                                       [ngClass]="{clearance: (interviewFormSubmit && Name?.errors?.required) }"
+                                       required>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Gender<sup class="text-danger">*</sup></label>
+                                    <select name="gender" class="form-control" #gender="ngModel"
+                                       [(ngModel)]="objInterview.Gender"
+                                       [ngClass]="{clearance: (interviewFormSubmit && gender?.errors?.required) }"
+                                       required>
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Male">Male</option>
+                                       <option value="Female">Female</option>
+                                       <option value="Others">Others</option>
+                                    </select>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Date of Birth<sup class="text-danger">*</sup></label>
+                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='date_of_Birth'
+                                       name="Birth_Date">
+                                    </ejs-datepicker>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Married<sup class="text-danger">*</sup></label>
+                                    <select name="Marital_Status" class="form-control" #Marital_Status="ngModel"
+                                       [(ngModel)]="objInterview.Marital_Status"
+                                       [ngClass]="{clearance: (interviewFormSubmit && Marital_Status?.errors?.required) }"
+                                       required>
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Married">Married</option>
+                                       <option value="Unmarried">Unmarried</option>
+                                       <option value="Devorced">Devorced</option>
+                                    </select>
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Applied Date<sup class="text-danger">*</sup></label>
+                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='applied_Date'
+                                       name="applied_Date">
+                                    </ejs-datepicker>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Referred By<sup class="text-danger">*</sup></label>
+                                    <select name="Referred_By" class="form-control" #referred_by="ngModel"
+                                       [(ngModel)]="objInterview.Referred_By"
+                                       [ngClass]="{clearance: (interviewFormSubmit && referred_by?.errors?.required) }"
+                                       required>
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Consultancy">Consultancy</option>
+                                       <option value="Employee Referral">Employee Referral</option>
+                                       <option value="Marketing">Marketing</option>
+                                       <option value="Others">Others</option>
+                                    </select>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Reference Name<sup class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Reference Name"
+                                       name="Reference_Name" #ReferenceName="ngModel"
+                                       [(ngModel)]="objInterview.Reference_Name"
+                                       [ngClass]="{clearance: (interviewFormSubmit && ReferenceName?.errors?.required) }"
+                                       required>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">State<sup class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="State" name="State"
+                                       #State="ngModel" [(ngModel)]="objInterview.State"
+                                       [ngClass]="{clearance: (interviewFormSubmit && State?.errors?.required) }"
+                                       required>
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">City<sup class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="City" name="City"
+                                       #City="ngModel" [(ngModel)]="objInterview.City"
+                                       [ngClass]="{clearance: (interviewFormSubmit && City?.errors?.required) }"
+                                       required>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Post Applied<sup class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Post Applied"
+                                       name="Post_Applied" #Post_Applied="ngModel"
+                                       [(ngModel)]="objInterview.Post_Applied"
+                                       [ngClass]="{clearance: (interviewFormSubmit && Post_Applied?.errors?.required) }"
+                                       required>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Location Applied<sup
+                                          class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Location Applied"
+                                       name="Location_Applied" #Location_Applied="ngModel"
+                                       [(ngModel)]="objInterview.Location_Applied"
+                                       [ngClass]="{clearance: (interviewFormSubmit && Location_Applied?.errors?.required) }"
+                                       required>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Qualification<sup class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Qualification"
+                                       name="Qualification" #Qualification="ngModel"
+                                       [(ngModel)]="objInterview.Qualification"
+                                       [ngClass]="{clearance: (interviewFormSubmit && Qualification?.errors?.required) }"
+                                       required>
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Experience<sup class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Experience" name="Experience"
+                                       #Experience="ngModel" [(ngModel)]="objInterview.Experience"
+                                       [ngClass]="{clearance: (interviewFormSubmit && Experience?.errors?.required) }"
+                                       required>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Last Salary<sup class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Last Salary" name="Last_Salary"
+                                       #Last_Salary="ngModel" [(ngModel)]="objInterview.Last_Salary"
+                                       CompacctDigitonly="true"
+                                       [ngClass]="{clearance: (interviewFormSubmit && Last_Salary?.errors?.required) }"
+                                       required>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Expected Salary<sup class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Expected Salary"
+                                       name="Expected_Salary" #Expected_Salary="ngModel"
+                                       [(ngModel)]="objInterview.Expected_Salary" CompacctDigitonly="true"
+                                       [ngClass]="{clearance: (interviewFormSubmit && Expected_Salary?.errors?.required) }"
+                                       required>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Notice Period<sup class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Notice Period"
+                                       name="Notice_Period" #Notice_Period="ngModel"
+                                       [(ngModel)]="objInterview.Notice_Period"
+                                       [ngClass]="{clearance: (interviewFormSubmit && Notice_Period?.errors?.required) }"
+                                       required>
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Contact Number 1</label>
+                                    <input type="text" class="form-control" placeholder="Contact Number 1"
+                                       name="Contact_Number_1" [(ngModel)]="objInterview.Contact_Number_1"
+                                       CompacctDigitonly="true" maxlength="10">
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Contact Number 2</label>
+                                    <input type="text" class="form-control" placeholder="Contact Number 2"
+                                       name="Contact_Number_2" [(ngModel)]="objInterview.Contact_Number_2"
+                                       CompacctDigitonly="true" maxlength="10">
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Whatsapp Number</label>
+                                    <input type="text" class="form-control" placeholder="Whatsapp Number"
+                                       name="Whaspp_Number" [(ngModel)]="objInterview.Whaspp_Number"
+                                       CompacctDigitonly="true" maxlength="10">
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Email</label>
+                                    <input type="text" class="form-control" placeholder="Email" name="Email"
+                                       [(ngModel)]="objInterview.Email">
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Feedback by Reference</label>
+                                    <input type="text" class="form-control" placeholder="Feedback by Reference"
+                                       name="Feedback_by_Reference" [(ngModel)]="objInterview.Feedback_by_Reference">
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Interview Taken</label>
+                                    <select name="Interview_Taken" class="form-control"
+                                       [(ngModel)]="objInterview.Interview_Taken" (change)="changeInterview()">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Yes">Yes</option>
+                                       <option value="No">No</option>
+                                    </select>
+                                 </div>
+                                 <div class="col-sm-3" *ngIf="objInterview.Interview_Taken=='No'">
+                                    <label class="control-label">In case of No</label>
+                                    <select name="In_case_of_No" class="form-control"
+                                       [(ngModel)]="objInterview.In_case_of_No">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Lack of necessary qualifications or experience for the job">Lack
+                                          of
+                                          necessary qualifications or experience for the job</option>
+                                       <option value="Incomplete or unimpressive resume or cover letter">Incomplete or
+                                          unimpressive resume or cover letter</option>
+                                       <option value="Negative reference check or background check">Negative reference
+                                          check
+                                          or
+                                          background check</option>
+                                       <option value="Disqualifying answers to pre-interview questions or assessmentsr">
+                                          Disqualifying answers to pre-interview questions or assessments</option>
+                                       <option value="Failure to follow application instructions">Failure to follow
+                                          application
+                                          instructions</option>
+                                       <option value="Position may have already been filled or withdrawn">Position may
+                                          have
+                                          already been filled or withdrawn</option>
+                                       <option value="Candidate not interested">Candidate not interested</option>
+                                       <option value="Not Picking up the call">Not Picking up the call</option>
+                                       <option value="Not providing time for the interview">Not providing time for the
+                                          interview
+                                       </option>
+                                       <option value="Want to continue with previous employer">Want to continue with
+                                          previous
+                                          employer</option>
+                                       <option value="Not reached on scheduled date and time">Not reached on scheduled
+                                          date
+                                          and time</option>
+                                       <option value="Prefered location not matched ">Prefered location not matched
+                                       </option>
+                                       <option value="Applied several time but not accepting the offer ">Applied several
+                                          time
+                                          but not accepting the offer </option>
+                                    </select>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <!-- Interview Panel Start 1st round-->
+                        <div class="panel panel-primary" *ngIf="objInterview.Interview_Taken=='Yes'">
+                           <div class="panel-heading">Interview Details(1st Round)</div>
+                           <div class="panel-body">
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Interview Date (1st Round)<sup
+                                          class="text-danger">*</sup></label>
+                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Interview_Date_1_Round'
+                                       name="Interview_Date_1_Round">
+                                    </ejs-datepicker>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Mode of Interview</label>
+                                    <select name="Mode_of_Interview_1" class="form-control"
+                                       [(ngModel)]="objInterview.Mode_of_Interview_1">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Telephonic">Telephonic</option>
+                                       <option value="Face to face">Face to face</option>
+                                       <option value="Video call">Video call</option>
+                                    </select>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Inteviewer Name</label>
+                                    <input type="text" class="form-control" placeholder="Inteviewer Name"
+                                       name="Inteviewer_Name" [(ngModel)]="objInterview.Inteviewer_Name">
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Recommended Next Round</label>
+                                    <select name="Rec_Next_Round_of_Interview_1" class="form-control"
+                                       [(ngModel)]="objInterview.Rec_Next_Round_of_Interview_1"
+                                       (change)="changeInterview1stRound()">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Yes">Yes</option>
+                                       <option value="No">No</option>
+                                    </select>
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Feedback</label>
+                                    <input type="text" class="form-control" placeholder="Feedback" name="Feedback"
+                                       [(ngModel)]="objInterview.Feedback">
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <!-- Interview panel start 2nd round -->
+                        <div class="panel panel-primary"
+                           *ngIf="objInterview.Interview_Taken=='Yes' && objInterview.Rec_Next_Round_of_Interview_1=='Yes'">
+                           <div class="panel-heading">Interview Details(2nd Round)</div>
+                           <div class="panel-body">
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Interview Date (2nd Round)<sup
+                                          class="text-danger">*</sup></label>
+                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Interview_Date_2_Round'
+                                       name="Interview_Date_2_Round">
+                                    </ejs-datepicker>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Mode of Interview</label>
+                                    <select name="Mode_of_Interview_2" class="form-control"
+                                       [(ngModel)]="objInterview.Mode_of_Interview_2">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Telephonic">Telephonic</option>
+                                       <option value="Face to face">Face to face</option>
+                                       <option value="Video call">Video call</option>
+                                    </select>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Inteviewer Name</label>
+                                    <input type="text" class="form-control" placeholder="Inteviewer Name"
+                                       name="Inteviewer_Name_2" [(ngModel)]="objInterview.Inteviewer_Name_2">
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Recommended Next Round</label>
+                                    <select name="Rec_Next_Round_of_Interview_2" class="form-control"
+                                       [(ngModel)]="objInterview.Rec_Next_Round_of_Interview_2"
+                                       (change)="changeInterview2ndRound()">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Yes">Yes</option>
+                                       <option value="No">No</option>
+                                    </select>
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Feedback</label>
+                                    <input type="text" class="form-control" placeholder="Feedback" name="Feedback_2"
+                                       [(ngModel)]="objInterview.Feedback_2">
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <!-- Interview 3rd round start -->
+                        <div class="panel panel-primary"
+                           *ngIf="objInterview.Interview_Taken=='Yes' && objInterview.Rec_Next_Round_of_Interview_1=='Yes' && objInterview.Rec_Next_Round_of_Interview_2=='Yes'">
+                           <div class="panel-heading">Interview Details(3rd Round)</div>
+                           <div class="panel-body">
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Interview Date (3rd Round)<sup
+                                          class="text-danger">*</sup></label>
+                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Interview_Date_3_Round'
+                                       name="Interview_Date_3_Round">
+                                    </ejs-datepicker>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Mode of Interview</label>
+                                    <select name="Mode_of_Interview_3" class="form-control"
+                                       [(ngModel)]="objInterview.Mode_of_Interview_3">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Telephonic">Telephonic</option>
+                                       <option value="Face to face">Face to face</option>
+                                       <option value="Video call">Video call</option>
+                                    </select>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Inteviewer Name</label>
+                                    <input type="text" class="form-control" placeholder="Inteviewer Name"
+                                       name="Inteviewer_Name_3" [(ngModel)]="objInterview.Inteviewer_Name_3">
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Feedback</label>
+                                    <input type="text" class="form-control" placeholder="Feedback" name="Feedback_3"
+                                       [(ngModel)]="objInterview.Feedback_3">
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Final status</label>
+                                    <select name="Final_status" class="form-control"
+                                       [(ngModel)]="objInterview.Final_status" (change)="changeFinalStatus()">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Selected">Selected</option>
+                                       <option value="Rejected">Rejected</option>
+                                    </select>
+                                 </div>
+                                 <div class="col-sm-3" *ngIf="objInterview.Final_status=='Rejected'">
+                                    <label class="control-label">In Case of Rejected</label>
+                                    <select name="In_Case_of_Rejected" class="form-control"
+                                       [(ngModel)]="objInterview.In_Case_of_Rejected">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Lack of relevant skills or experience for the job">Lack of
+                                          relevant
+                                          skills
+                                          or experience for the job</option>
+                                       <option
+                                          value="Poor performance during the interview, such as lack of enthusiasm, inappropriate behavior or language, or failure to answer questions effectively">
+                                          Poor performance during the interview, such as lack of enthusiasm,
+                                          inappropriate
+                                          behavior or language, or failure to answer questions effectively</option>
+                                       <option value="Negative reference check or background check">Negative reference
+                                          check
+                                          or
+                                          background check</option>
+                                       <option
+                                          value="Inconsistencies or untruths discovered during the interview or background check process">
+                                          Inconsistencies or untruths discovered during the interview or background
+                                          check
+                                          process
+                                       </option>
+                                       <option value="Over or under qualified for the position">Over or under qualified
+                                          for
+                                          the
+                                          position</option>
+                                       <option value="Better qualified candidates were interviewed and selected">Better
+                                          qualified
+                                          candidates were interviewed and selected</option>
+                                       <option value="Position may have already been filled or withdrawn">Position may
+                                          have
+                                          already been filled or withdrawn</option>
+                                       <option value="The candidate has unrealistic salary or benefit expectations.">The
+                                          candidate has unrealistic salary or benefit expectations.</option>
+                                       <option
+                                          value="The candidate provides inconsistent or inaccurate information during the interview process.">
+                                          The candidate provides inconsistent or inaccurate information during the
+                                          interview
+                                          process.</option>
+                                       <option value="The candidate has poor communication or interpersonal skills.">The
+                                          candidate has poor communication or interpersonal skills.</option>
+                                       <option
+                                          value="The candidate doesn't fit well with the organizational culture or team dynamics.">
+                                          The candidate doesn't fit well with the organizational culture or team
+                                          dynamics.
+                                       </option>
+                                       <option
+                                          value="The candidate's skills or experience don't match the requirements of the position.">
+                                          The candidate's skills or experience don't match the requirements of the
+                                          position.
+                                       </option>
+                                       <option value="Not ready for the bond">Not ready for the bond</option>
+                                       <option value="Prefered location not matched ">Prefered location not matched
+                                       </option>
+                                       <option value="Applied several time but not accepting the offer ">Applied several
+                                          time
+                                          but
+                                          not accepting the offer </option>
+                                    </select>
+                                 </div>
+                                 <div class="col-sm-3" *ngIf="objInterview.Final_status=='Selected'">
+                                    <label class="control-label">Offer letter sent</label>
+                                    <select name="Offer_letter_sent" class="form-control"
+                                       [(ngModel)]="objInterview.Offer_letter_sent" (change)="offerLetterSent()">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Yes">Yes</option>
+                                       <option value="No">No</option>
+                                    </select>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <!-- Offer Letter Details -->
+                        <div class="panel panel-primary" *ngIf="objInterview.Offer_letter_sent=='Yes'">
+                           <div class="panel-heading">Offer Letter Details</div>
+                           <div class="panel-body">
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Date Offer letter sent</label>
+                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Date_Offer_letter_sent'
+                                       name="Date_Offer_letter_sent">
+                                    </ejs-datepicker>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Expected date of joining</label>
+                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Expected_date_of_joining' name="Expected_date_of_joining">
+                                    </ejs-datepicker>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Location selected for</label>
+                                    <input type="text" class="form-control" placeholder="Location selected for"
+                                       name="Location_selected_for" [(ngModel)]="objInterview.Location_selected_for">
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Offer accepted</label>
+                                    <select name="Offer_accepted" class="form-control"
+                                       [(ngModel)]="objInterview.Offer_accepted" (change)="changeOfferAccepcted()">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Yes">Yes</option>
+                                       <option value="No">No</option>
+                                    </select>
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <div class="col-sm-3" *ngIf="objInterview.Offer_accepted=='No'">
+                                    <label class="control-label">Reason</label>
+                                    <input type="text" class="form-control" placeholder="Reason" name="Reason_for_Offer"
+                                       [(ngModel)]="objInterview.Reason_for_Offer">
+                                 </div>
+                                 <div class="col-sm-3" *ngIf="objInterview.Offer_accepted=='Yes'">
+                                    <label class="control-label">Joind</label>
+                                    <select name="Joined" class="form-control" [(ngModel)]="objInterview.Joined"
+                                       (change)="changeJoined()">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Yes">Yes</option>
+                                       <option value="No">No</option>
+                                    </select>
+                                 </div>
+                                 <div class="col-sm-3" *ngIf="objInterview.Joined=='No'">
+                                    <label class="control-label">Remarks</label>
+                                    <input type="text" class="form-control" placeholder="Remarks" name="Remarks"
+                                       [(ngModel)]="objInterview.Remarks">
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <!-- Joining Details -->
+                        <div class="panel panel-primary" *ngIf="objInterview.Joined=='Yes'">
+                           <div class="panel-heading">Joining Details</div>
+                           <div class="panel-body">
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Date of Joining</label>
+                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Joining_date'
+                                       name="Joining_date">
+                                    </ejs-datepicker>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Location</label>
+                                    <input type="text" class="form-control" placeholder="Location" name="Location"
+                                       [(ngModel)]="objInterview.Location">
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Remarks if any</label>
+                                    <input type="text" class="form-control" placeholder="Remarks if any"
+                                       name="Remarks_if_any" [(ngModel)]="objInterview.Remarks_if_any">
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <br>
+                        <br>
+                        <!-- Interval -->
+                        <!-- Incase Of applid For 2nd time -->
+                        <div class="panel panel-primary">
+                           <div class="panel-heading">Applied For 2nd Time</div>
+                           <div class="panel-body">
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Incase applied 2nd time</label>
+                                    <select name="In_case_of_applied_for_2nd_time" class="form-control"
+                                       [(ngModel)]="objInterview.In_case_of_applied_for_2nd_time"
+                                       (change)="changeApplied2ndTime()">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Yes">Yes</option>
+                                       <option value="No">No</option>
+                                    </select>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <!-- 2nd Time Application Details -->
+                        <div class="panel panel-primary" *ngIf="objInterview.In_case_of_applied_for_2nd_time=='Yes'">
+                           <div class="panel-heading">Application Details</div>
+                           <div class="panel-body">
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Date of Apply</label>
+                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Date_of_apply'
+                                       name="Date_of_apply">
+                                    </ejs-datepicker>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Referred By</label>
+                                    <input type="text" class="form-control" placeholder="Referred By"
+                                       name="Referred_By_2nd_time" [(ngModel)]="objInterview.Referred_By_2nd_time">
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Reference Name</label>
+                                    <input type="text" class="form-control" placeholder="Reference Name"
+                                       name="Reference_Name_2nd_time"
+                                       [(ngModel)]="objInterview.Reference_Name_2nd_time">
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Final status</label>
+                                    <select name="Final_status_2nd_time" class="form-control"
+                                       [(ngModel)]="objInterview.Final_status_2nd_time"
+                                       (change)="changeFinalStatus2nd()">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Selected">Selected</option>
+                                       <option value="Rejected">Rejected</option>
+                                    </select>
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <div class="col-sm-3" *ngIf="objInterview.Final_status_2nd_time=='Rejected'">
+                                    <label class="control-label">In Case of Rejected</label>
+                                    <select name="In_Case_of_Rejected_2" class="form-control"
+                                       [(ngModel)]="objInterview.In_Case_of_Rejected_2">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Lack of relevant skills or experience for the job">Lack of
+                                          relevant
+                                          skills
+                                          or experience for the job</option>
+                                       <option
+                                          value="Poor performance during the interview, such as lack of enthusiasm, inappropriate behavior or language, or failure to answer questions effectively">
+                                          Poor performance during the interview, such as lack of enthusiasm,
+                                          inappropriate
+                                          behavior or language, or failure to answer questions effectively</option>
+                                       <option value="Negative reference check or background check">Negative reference
+                                          check
+                                          or
+                                          background check</option>
+                                       <option
+                                          value="Inconsistencies or untruths discovered during the interview or background check process">
+                                          Inconsistencies or untruths discovered during the interview or background
+                                          check
+                                          process
+                                       </option>
+                                       <option value="Over or under qualified for the position">Over or under qualified
+                                          for
+                                          the
+                                          position</option>
+                                       <option value="Better qualified candidates were interviewed and selected">Better
+                                          qualified
+                                          candidates were interviewed and selected</option>
+                                       <option value="Position may have already been filled or withdrawn">Position may
+                                          have
+                                          already been filled or withdrawn</option>
+                                       <option value="The candidate has unrealistic salary or benefit expectations.">The
+                                          candidate has unrealistic salary or benefit expectations.</option>
+                                       <option
+                                          value="The candidate provides inconsistent or inaccurate information during the interview process.">
+                                          The candidate provides inconsistent or inaccurate information during the
+                                          interview
+                                          process.</option>
+                                       <option value="The candidate has poor communication or interpersonal skills.">The
+                                          candidate has poor communication or interpersonal skills.</option>
+                                       <option
+                                          value="The candidate doesn't fit well with the organizational culture or team dynamics.">
+                                          The candidate doesn't fit well with the organizational culture or team
+                                          dynamics.
+                                       </option>
+                                       <option
+                                          value="The candidate's skills or experience don't match the requirements of the position.">
+                                          The candidate's skills or experience don't match the requirements of the
+                                          position.
+                                       </option>
+                                       <option value="Not ready for the bond">Not ready for the bond</option>
+                                       <option value="Prefered location not matched ">Prefered location not matched
+                                       </option>
+                                       <option value="Applied several time but not accepting the offer ">Applied several
+                                          time
+                                          but
+                                          not accepting the offer </option>
+                                    </select>
+                                 </div>
+                                 <div class="col-sm-3" *ngIf="objInterview.Final_status_2nd_time=='Selected'">
+                                    <label class="control-label">Offer letter sent</label>
+                                    <select class="form-control" name="Offer_letter_sent_2" #JoinedOffer="ngModel"
+                                       [(ngModel)]="objInterview.Offer_letter_sent_2"
+                                       (change)="changeOfferLatterSent2nd()">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Yes">Yes</option>
+                                       <option value="No">No</option>
+                                    </select>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <!-- Offer Letter Details -->
+                        <div class="panel panel-primary" *ngIf="objInterview.Offer_letter_sent_2=='Yes'">
+                           <div class="panel-heading">Offer Letter Details</div>
+                           <div class="panel-body">
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label"> Date Offer letter sent</label>
+                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Date_Offer_letter_sent_2'
+                                       name="Date_Offer_letter_sent_2">
+                                    </ejs-datepicker>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Expected date of joining</label>
+                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Expected_date_of_joining_2'
+                                       name="Expected_date_of_joining_2">
+                                    </ejs-datepicker>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Location Selected for</label>
+                                    <input type="text" class="form-control" placeholder="Location Selected for"
+                                       name="Location_selected_for_2"
+                                       [(ngModel)]="objInterview.Location_selected_for_2">
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Offer Accepted</label>
+                                    <select name="Offer_accepted_2" class="form-control" (change)="offerAccepcted2nd()"
+                                       [(ngModel)]="objInterview.Offer_accepted_2">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Yes">Yes</option>
+                                       <option value="No">No</option>
+                                    </select>
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <div class="col-sm-3" *ngIf="objInterview.Offer_accepted_2=='No'">
+                                    <label class="control-label">Reason</label>
+                                    <input type="text" class="form-control" placeholder="Reason" name="Reason_2nd_time"
+                                       [(ngModel)]="objInterview.Reason_2nd_time">
+                                 </div>
+                                 <div class="col-sm-3" *ngIf="objInterview.Offer_accepted_2=='Yes'">
+                                    <label class="control-label">Joined</label>
+                                    <select name="Joined_2nd_time" class="form-control" (change)="chnageJoind2nd()"
+                                       [(ngModel)]="objInterview.Joined_2nd_time">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Yes">Yes</option>
+                                       <option value="No">No</option>
+                                    </select>
+                                 </div>
+                                 <div class="col-sm-3" *ngIf="objInterview.Joined_2nd_time=='No'">
+                                    <label class="control-label">Remarks</label>
+                                    <input type="text" class="form-control" placeholder="Remarks" name="Remarks_2"
+                                       [(ngModel)]="objInterview.Remarks_2">
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <!-- Joing Details 2nd time -->
+                        <div class="panel panel-primary" *ngIf="objInterview.Joined_2nd_time=='Yes'">
+                           <div class="panel-heading">Joining Details</div>
+                           <div class="panel-body">
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Joining Date</label>
+                                    <ejs-datepicker [format]=" 'dd/MMM/yyyy' " [(value)]='Joining_date_2_time'
+                                       name="Joining_date_2_time">
+                                    </ejs-datepicker>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Location</label>
+                                    <input type="text" class="form-control" placeholder="Location" name="Location_2_time"
+                                       [(ngModel)]="objInterview.Location_2_time">
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Remarks</label>
+                                    <input type="text" class="form-control" placeholder="Remarks"
+                                       name="Remarks_if_any_2_time" [(ngModel)]="objInterview.Remarks_if_any_2_time">
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <!-- Blacklisted -->
+                        <div class="panel panel-primary">
+                           <div class="panel-heading">Blacklisted</div>
+                           <div class="panel-body">
+                              <div class="row">
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Blacklisted</label>
+                                    <select name="Blacklisted" class="form-control"
+                                       [(ngModel)]="objInterview.Blacklisted" (change)="changeBlacklist()">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Yes">Yes</option>
+                                       <option value="No">No</option>
+                                    </select>
+                                 </div>
+                                 <div class="col-sm-3" *ngIf="objInterview.Blacklisted=='Yes'">
+                                    <label class="control-label">If yes Reason</label>
+                                    <select name="If_Yes_Reason_blacklist" class="form-control"
+                                       [(ngModel)]="objInterview.If_Yes_Reason_blacklist">
+                                       <option [ngValue]="undefined">Select</option>
+                                       <option value="Dishonesty">Dishonesty</option>
+                                       <option value="Integrity Issue">Integrity Issue</option>
+                                       <option value="Inappropriate behavior">Inappropriate behavior</option>
+                                       <option value="Criminal record">Criminal record</option>
+                                       <option value="Refusal to accept job offers">Refusal to accept job offers
+                                       </option>
+                                       <option value="Violation of company policies">Violation of company policies
+                                       </option>
+                                       <option value="Absconding">Absconding</option>
+                                    </select>
+                                 </div>
+                                 <div class="col-sm-3">
+                                    <label class="control-label">Remark</label>
+                                    <input type="text" class="form-control" placeholder="Remark"
+                                       name="Remarks_blacklist" [(ngModel)]="objInterview.Remarks_blacklist">
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <!-- File Upload -->
+                        <div class="panel panel-primary">
+                           <div class="panel-heading">Upload Document</div>
+                           <div class="panel-body">
+                              <div class="row">
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Upload File</label>
+                                    <span class="btn btn-xs btn-danger pull-right" (click)="ClearUploadInpt(UploadFile)"
+                                       *ngIf="file"><i class="fa fa-close"></i></span>
+                                    <div>
+                                       <p-fileUpload mode="basic" name="filedoc" #UploadFile chooseLabel="BROWSE"
+                                          uploadLabel="UPLOAD" accept="image/*" [customUpload]="true"
+                                          (onSelect)="fileSelect()" *ngIf="upload"
+                                          (uploadHandler)="onBasicUpload(UploadFile)">
+                                       </p-fileUpload>
+                                       <button  *ngIf="!upload" pButton pRipple type="button"
+                                          label="Show Document" (click)="showDoc(objInterview.File_Upload)"></button>
+                                    </div>
+                                 </div>
+                                 <div class="col-sm-4">
+                                    <label class="control-label">Upload Document</label>
+                                    <span class="btn btn-xs btn-danger pull-right" (click)="ClearUploadInpt2(UploadFile2)"
+                                       *ngIf="file2"><i class="fa fa-close"></i></span>
+                                    <div>
+                                       <p-fileUpload mode="basic" name="filedoc2" #UploadFile2 chooseLabel="BROWSE"
+                                          uploadLabel="UPLOAD" accept="image/*" [customUpload]="true"
+                                          (onSelect)="fileSelect2()" *ngIf="upload2"
+                                          (uploadHandler)="onBasicUpload2(UploadFile2)">
+                                       </p-fileUpload>
+                                       <button  *ngIf="!upload2" pButton pRipple type="button"
+                                          label="Show Document" (click)="showDoc(objInterview.File_Upload2)"></button>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <br>
+                        <!-- Create Button -->
+                        <div class="form-group">
+                           <button class="btn btn-primary pull-right" (click)="SaveForm(interviewForm.form.valid)"
+                              id="load">
+                              <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}"
+                                 strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+                              <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonName}}
+                           </button>
+                        </div>
+                     </form>
+                  </p-tabPanel>
+               </p-tabView>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ElementRef, ViewChild, asNativeElements } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { MessageService } from "primeng/api";
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
@@ -6,12 +6,17 @@ import { CompacctHeader } from '../../../shared/compacct.services/common.header.
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service";
 import {CompacctGetDistinctService } from "../../../shared/compacct.services/compacct-get-distinct.service"
 import * as moment from "moment";
+
 declare var $:any;
 import * as XLSX from 'xlsx';
 import { FileUpload } from "primeng/primeng";
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { ActivatedRoute } from '@angular/router';
 import { Console } from 'console';
+import { CompacctProductDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct-product-details/compacct-product-details.component';
+import { CompacctgstandcustomdutyComponent } from '../../../shared/compacct.components/compacct.forms/compacctgstandcustomduty/compacctgstandcustomduty.component';
+import { CompacctFinancialDetailsComponent } from '../../../shared/compacct.components/compacct.forms/compacct.financial-details/compacct.financial-details.component';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-harb-master-product-electrical',
@@ -31,18 +36,18 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   Spinner = false;
   MasterProductelFormSubmitted = false;
   ObjMasterProductel = new MasterProductel();
-
-  ProductTypeList = [];
-  ProductSubTypeList = [];
-  ProductCategoryList = [];
-  MocList = [];
-  CapacitySizeList = [];
-  AddFeature1List = [];
-  AddFeature2List = [];
-  AddFeature3List = [];
-  AddFeature4List = [];
-  GradeList = [];
-  MakeList = [];
+  ObjFinancialComponentData = new Financial();
+  ProductTypeList:any = [];
+  ProductSubTypeList:any = [];
+  ProductCategoryList:any = [];
+  MocList:any = [];
+  CapacitySizeList:any = [];
+  AddFeature1List:any = [];
+  AddFeature2List:any = [];
+  AddFeature3List:any = [];
+  AddFeature4List:any = [];
+  GradeList:any = [];
+  MakeList:any = [];
   uploadedFiles: any[] = [];
 
   ProTypeModal = false;
@@ -72,6 +77,9 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   GradeModal = false;
   GradeFormSubmitted = false;
   GradeName = undefined;
+  MakeModal = false;
+  MakeFormSubmitted = false;
+  MakeName = undefined;
 
   ViewProTypeModal = false;
   ViewProSubTModal = false;
@@ -82,6 +90,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   ViewAddFeature3Modal = false;
   ViewAddFeature4Modal = false;
   ViewGradeModal = false;
+  ViewMakeModal = false;
 
   protypeid = undefined;
   protypesubid = undefined;
@@ -92,16 +101,17 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   addfid3 = undefined;
   adfeaiid4 = undefined;
   gradeid = undefined;
+  makeid = undefined;
 
-  BrowseList = [];
-  editList = [];
+  BrowseList:any = [];
+  editList:any = [];
   productid: any;
 
   PDFViewFlag = false;
   PDFFlag = false;
   ProductPDFFile:any = {};
   ProductPDFLink = undefined;
-  tempDocumentArr = [];
+  tempDocumentArr:any = [];
   Product_Mfg_Comp_ID:any;
 
   // protyid = undefined;
@@ -116,13 +126,38 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   // hcode = undefined;
   // per = undefined;
   // uom = undefined;
-
+  ObjproductDetails : any;
+  ObjGstandCustonDuty : any;
+  ObjFinancial: any;
+  headerData = ""
   makedisabled = false;
 
+  UOMData:any =[]; 
+  UomDataList:any = [];
+  UOMTypeFormSubmitted = false;
+  UOMTypeName = undefined;
+  UOMTypeModal = false;
+  mettypeid = undefined;
+  Uomid = undefined;
+  AllUOMData:any = [];
+  AllUomDataList:any = [];
+
+  ViewUomModal = false;
   is_Active = false;
   Is_View = false;
   Browseproid = undefined;
   isvisible = undefined;
+  LAbelName = 'HSN Code';
+  objCheckFinamcial:any = {};
+  objGst:any = {};
+  objProductrequ:any = {};
+  objproduct : product = new product()
+  @ViewChild("Product", { static: false })
+  ProductDetailsInput: CompacctProductDetailsComponent;
+  @ViewChild("GstAndCustomDuty", { static: false })
+  GstAndCustDutyInput: CompacctgstandcustomdutyComponent;
+  @ViewChild("FinacialDetails", { static: false })
+  FinacialDetailsInput: CompacctFinancialDetailsComponent;
 
  // ObjSearch = new Search();
 
@@ -130,6 +165,20 @@ export class HarbMasterProductElectricalComponent implements OnInit {
 
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
 
+  MaterialData:any = [];
+  AllMaterialData:any = [];
+  MaterialTypeFormSubmitted = false;
+  MaterialTypeName: any;
+  MatTypeModal = false;
+  ViewMetTypeModal = false;
+  EXCELSpinner:boolean = false
+  DescriptionCheck: any;
+  databaseName: any;
+  uploaddoc: boolean = true;
+  file: boolean = false;
+
+  @ViewChild("UploadFile", { static: false }) UploadFile!: FileUpload;
+  PDFFile:any;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -138,17 +187,25 @@ export class HarbMasterProductElectricalComponent implements OnInit {
     private DateService: DateTimeConvertService,
     private GlobalAPI: CompacctGlobalApiService,
     private compacctToast: MessageService,
-    private GetDistinctItems :CompacctGetDistinctService
-  ) { }
+    private GetDistinctItems :CompacctGetDistinctService,
+    private ngxService: NgxUiLoaderService,
+  ) { 
+    this.route.queryParams.subscribe(params => {
+      console.log(params);
+     this.headerData = params['header'];
+      console.log ("headerData",this.headerData);
+     })
+  }
 
   ngOnInit() {
     this.Header.pushHeader({
-      Header: "Master Product Electrical",
-      Link: " Tender Management -> Master -> Master Product Electrical"
+      Header: this.headerData,
+      Link: " Tender Management -> Master -> "+this.headerData
     });
-    
-     this.GetProductType();
+    this.getDatabase();
+    //  this.GetProductType();
      //this.GetProductSubType();
+     this.getMaterialTyp();
      this.GetProductCategory();
      this.GetMOC();
      this.GetCapacity();
@@ -159,13 +216,119 @@ export class HarbMasterProductElectricalComponent implements OnInit {
      this.GetGrade();
      this.GetMake();
      this.GetBrowseList();
+     this.getUOM();
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
     this.items = ["BROWSE","CREATE"];
     this.buttonname = "Create";
+    this.destroyChild();
     this.clearData();
     this.productid = undefined;
+  }
+  getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log(data)
+        });
+  }
+  showDocument(doc) {
+    window.open(doc);
+  }
+  destroyChild() {
+    if (this.ProductDetailsInput) {
+      this.ProductDetailsInput.clear();
+    }
+    if (this.GstAndCustDutyInput) {
+      this.GstAndCustDutyInput.clear();
+    }
+    if (this.FinacialDetailsInput) {
+      this.FinacialDetailsInput.clear();
+    }
+  }
+  getProDetailsData(e) {
+    console.log("Product Detalis",e)
+   // this.ObjMasterProductel = e
+    if (e.Product_Type_ID) {
+      this.ObjproductDetails = e;
+      this.ObjMasterProductel.Product_Type_ID = e.Product_Type_ID;
+      this.ObjMasterProductel.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
+      this.ObjMasterProductel.Product_Code = e.Product_Code;
+      this.ObjMasterProductel.Product_Description = e.Product_Description;
+      this.ObjMasterProductel.Rack_NO = e.Rack_NO;
+      this.objProductrequ.Product_Type_ID = e.Product_Type_ID;
+      this.objProductrequ.Product_Sub_Type_ID = e.Product_Sub_Type_ID;
+      this.objProductrequ.Product_Description = e.Product_Description;
+      this.CheckDescription();
+    }
+  }
+  getGstAndCustDutyData(e) {
+    console.log(e)
+    this.ObjGstandCustonDuty = undefined;
+    this.ObjMasterProductel.Cat_ID = undefined;
+    this.ObjMasterProductel.HSN_NO = undefined;
+    this.ObjMasterProductel.Custom_Duty = undefined;
+    this.ObjMasterProductel.Remarks = undefined;
+    if (e.Cat_ID) {
+      this.ObjGstandCustonDuty = e;
+      this.ObjMasterProductel.Cat_ID = e.Cat_ID;
+      this.ObjMasterProductel.HSN_NO = e.HSN_NO;
+      this.ObjMasterProductel.Custom_Duty = e.Custom_Duty;
+      this.ObjMasterProductel.Remarks = e.Remarks;
+      this.ObjMasterProductel.RCM_Per = Number(e.RCM_Per)
+      this.objGst.Cat_ID = e.Cat_ID;
+      this.objGst.HSN_NO = e.HSN_NO;
+    }
+  }
+  // FinancialDetailsData(e) {
+  //   console.log(e)
+  //   console.log("FinancialDetailsData",e)
+  //   this.ObjMasterProductel = e
+    
+  // }
+  FinancialDetailsData(e) {
+    console.log(e)
+    this.ObjMasterProductel.Can_Purchase = undefined;
+    this.ObjMasterProductel.Billable = undefined;
+    this.ObjFinancial = undefined;
+    // this.PurchaseACFlag = undefined;
+    this.ObjMasterProductel.Purchase_Ac_Ledger = undefined;
+    // this.SalesACFlag = undefined;
+    this.ObjMasterProductel.Sales_Ac_Ledger = undefined;
+    this.ObjMasterProductel.Purchase_Return_Ledger_ID = undefined;
+    this.ObjMasterProductel.Sales_Return_Ledger_ID = undefined;
+    this.ObjMasterProductel.Discount_Receive_Ledger_ID = undefined;
+    this.ObjMasterProductel.Discount_Given_Ledger_ID = undefined;
+    if (e.Purchase_Ac_Ledger) {
+      this.ObjFinancial = e;
+      this.ObjMasterProductel.Can_Purchase = e.Can_Purchase;
+      this.ObjMasterProductel.Billable = e.Billable;
+      // this.PurchaseACFlag = e.PurchaseACFlag;
+      this.ObjMasterProductel.Purchase_Ac_Ledger = e.Purchase_Ac_Ledger;
+      // this.SalesACFlag = e.SalesACFlag;
+      this.ObjMasterProductel.Sales_Ac_Ledger = e.Sales_Ac_Ledger;
+      this.ObjMasterProductel.Purchase_Return_Ledger_ID = e.Purchase_Return_Ledger_ID;
+      this.ObjMasterProductel.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
+      this.ObjMasterProductel.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
+      this.ObjMasterProductel.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
+      this.ObjMasterProductel.Input_RCM_Ledger_ID = e.Input_RCM_Ledger_ID;
+      this.ObjMasterProductel.Output_RCM_Ledger_ID = e.Output_RCM_Ledger_ID;
+      this.ObjMasterProductel.Input_CGST_RCM_Ledger_ID = e.Input_CGST_RCM_Ledger_ID;	
+      this.ObjMasterProductel.Input_SGST_RCM_Ledger_ID = e.Input_SGST_RCM_Ledger_ID;
+      this.ObjMasterProductel.Input_IGST_RCM_Ledger_ID = e.Input_IGST_RCM_Ledger_ID;
+      this.ObjMasterProductel.Output_CGST_RCM_Ledger_ID = e.Output_CGST_RCM_Ledger_ID;
+      this.ObjMasterProductel.Output_SGST_RCM_Ledger_ID = e.Output_SGST_RCM_Ledger_ID;
+      this.ObjMasterProductel.Output_IGST_RCM_Ledger_ID = e.Output_IGST_RCM_Ledger_ID;
+      this.objCheckFinamcial.Purchase_Ac_Ledger = e.Purchase_Ac_Ledger;
+      this.objCheckFinamcial.Sales_Ac_Ledger = e.Sales_Ac_Ledger;
+      this.objCheckFinamcial.Purchase_Return_Ledger_ID = e.Purchase_Return_Ledger_ID;
+      this.objCheckFinamcial.Sales_Return_Ledger_ID = e.Sales_Return_Ledger_ID;
+      this.objCheckFinamcial.Discount_Receive_Ledger_ID = e.Discount_Receive_Ledger_ID;
+      this.objCheckFinamcial.Discount_Given_Ledger_ID = e.Discount_Given_Ledger_ID;
+    }
   }
   clearData() {
      this.Spinner = false;
@@ -175,13 +338,135 @@ export class HarbMasterProductElectricalComponent implements OnInit {
      this.Product_Mfg_Comp_ID = undefined;
      this.makedisabled = false;
      this.GetBrowseList();
+     if(this.databaseName != 'MICL') {
+      if(this.databaseName != 'MICL_Demo') {
      this.PDFViewFlag = false;
      if (this.PDFViewFlag === false) {
       this.fileInput.clear();
     }
+    }
+    }
+    if(this.databaseName === 'MICL' || this.databaseName === 'MICL_Demo') {
+      this.file = false;
+      this.uploaddoc = true;
+      if (this.UploadFile) {
+        this.UploadFile.clear();
+      }
+      this.PDFFile = undefined;
+      }
+  
+  }
+
+  //Material Type 
+getMaterialTyp(){
+  this.MaterialData=[]; 
+   this.AllMaterialData = [];
+      const obj = {
+       "SP_String": "SP_Master_Product_New",
+       "Report_Name_String":"Get_Product_Material_Type_Data",
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+       this.MaterialData = data;
+      console.log("MaterialData==",this.MaterialData);
+       this.MaterialData.forEach(el => {
+         this.AllMaterialData.push({
+           label: el.Material_Type,
+           value: el.Material_ID,
+         });
+       });
+     })
+}
+MaterialChange() {
+  this.ObjMasterProductel.Material_Type =undefined;
+if(this.ObjMasterProductel.Material_ID) {
+  const ctrl = this;
+  const MaterialObj = $.grep(ctrl.MaterialData,function(item) {return item.Material_ID == ctrl.ObjMasterProductel.Material_ID})[0];
+  // console.log(MaterialObj);
+  this.ObjMasterProductel.Material_Type = MaterialObj.Material_Type;
+
+}
+}
+MatTypePopup (){
+  this.MaterialTypeFormSubmitted = false;
+  this.MaterialTypeName = undefined;
+  this.MatTypeModal = true;
+  this.Spinner = false;
+}
+CreateMaterialType(valid){
+  this.MaterialTypeFormSubmitted = true;
+  //console.log(valid)
+   if(valid){
+      this.Spinner = true;
+      const saveData = {
+        Material_Type : this.MaterialTypeName,
+      }
+       const obj = {
+         "SP_String": "SP_Master_Product_New",
+         "Report_Name_String" : "Add_Product_Material_Type ",
+         "Json_Param_String": JSON.stringify([saveData])
+       }
+       this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+         console.log(data);
+         var tempID = data[0].Column1;
+         if(data[0].Column1){
+          this.compacctToast.clear();
+          //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+          this.compacctToast.add({
+           key: "compacct-toast",
+           severity: "success",
+           summary: "Material Type ID  " + tempID,
+           detail: "Succesfully Created" //+ mgs
+         });
+         this.MaterialTypeFormSubmitted = false;
+         this.MaterialTypeName = undefined;
+         this.MatTypeModal = false;
+         this.Spinner = false;
+         this.getMaterialTyp();
+     
+         } else{
+           this.Spinner = false;
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "error",
+             summary: "Warn Message",
+             detail: "Error Occured "
+           });
+         }
+       })
+     
+      }
+}
+ViewMaterialType (){
+  this.MaterialData = [];
+   this.getMaterialTyp();
+  setTimeout(() => {
+    this.ViewMetTypeModal = true;
+  }, 200);
+}
+deleteMaterialType(mettype){
+  //console.log("view delete")
+  this.mettypeid = undefined;
+  this.protypeid = undefined
+  this.protypesubid = undefined;
+  this.Uomid = undefined;
+  if(mettype.Material_ID){
+  this.is_Active = false;
+  this.Is_View = true;
+    this.mettypeid = mettype.Material_ID;
+   // this.cnfrm2_popup = true;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "c",
+      sticky: true,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+    });
+  }
+}
   
   //PRODUCT TYPE
-  }
   GetProductType(){
     const obj = {
       "SP_String": "SP_Harbauer_Master_Product_mechanical",
@@ -195,8 +480,11 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewProductType(){
     this.ProductTypeList = [];
-    this.ViewProTypeModal = true;
     this.GetProductType();
+    setTimeout(() => {
+      this.ViewProTypeModal = true;
+    }, 300);
+    
     // const obj = {
     //   "SP_String": "SP_BL_CRM_Txn_Enq_Tender_Harbauer",
     //   "Report_Name_String" : "Get_Tender_Organization",
@@ -282,6 +570,9 @@ export class HarbMasterProductElectricalComponent implements OnInit {
          })
        
         }
+        else {
+          this.Spinner = false;
+        }
   }
 
   //PRODUCT SUB TYPE
@@ -302,8 +593,10 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewProductSubType(){
     this.ProductSubTypeList = [];
-    this.ViewProSubTModal = true;
     this.GetProductSubType();
+    setTimeout(() => {
+      this.ViewProSubTModal = true;
+    }, 300);
   }
   deleteProSubT(protypesubid){
     this.is_Active = false;
@@ -381,6 +674,9 @@ export class HarbMasterProductElectricalComponent implements OnInit {
          })
        
         }
+        else {
+          this.Spinner = false;
+        }
   }
 
   //PRODUCT CATEGORY
@@ -410,8 +706,10 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewMoc(){
     this.MocList = [];
-    this.ViewMocModal = true;
     this.GetMOC();
+    setTimeout(() => {
+    this.ViewMocModal = true;
+    }, 300);
   }
   deleteMoc(mocid){
     this.is_Active = false;
@@ -488,6 +786,9 @@ export class HarbMasterProductElectricalComponent implements OnInit {
          })
        
         }
+        else {
+          this.Spinner = false;
+        }
   }
 
   //CAPACITY
@@ -504,8 +805,10 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewCapacity(){
     this.CapacitySizeList = [];
-    this.ViewCapacityModal = true;
     this.GetCapacity();
+    setTimeout(() => {
+    this.ViewCapacityModal = true;
+    }, 300);
   }
   deleteCapacity(capacityid){
     this.is_Active = false;
@@ -582,6 +885,9 @@ export class HarbMasterProductElectricalComponent implements OnInit {
          })
        
         }
+        else {
+          this.Spinner = false;
+        }
   }
 
   // ADDITIONAL FEATURE 1
@@ -598,8 +904,10 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewAddFeature1(){
     this.AddFeature1List = [];
-    this.ViewAddFeature1Modal = true;
     this.GetAddFeature1();
+    setTimeout(() => {
+    this.ViewAddFeature1Modal = true;
+    }, 300);
   }
   deleteAddFeature1(addfeatureid1){
     this.is_Active = false;
@@ -676,6 +984,9 @@ export class HarbMasterProductElectricalComponent implements OnInit {
          })
        
         }
+        else {
+          this.Spinner = false;
+        }
   }
 
   // ADDITIONAL FEATURE 2
@@ -692,8 +1003,10 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewAddFeature2(){
     this.AddFeature2List = [];
-    this.ViewAddFeature2Modal = true;
     this.GetAddFeature2();
+    setTimeout(() => {
+      this.ViewAddFeature2Modal = true;
+    }, 300);
   }
   deleteAddFeature2(addfeatureid2){
     this.is_Active = false;
@@ -770,6 +1083,9 @@ export class HarbMasterProductElectricalComponent implements OnInit {
          })
        
         }
+        else {
+          this.Spinner = false;
+        }
   }
 
   // ADDITIONAL FEATURE 3
@@ -786,8 +1102,10 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewAddFeature3(){
     this.AddFeature3List = [];
-    this.ViewAddFeature3Modal = true;
     this.GetAddFeature3();
+    setTimeout(() => {
+      this.ViewAddFeature3Modal = true;
+    }, 300);
   }
   deleteAddFeature3(addfeatureid3){
     this.is_Active = false;
@@ -864,6 +1182,9 @@ export class HarbMasterProductElectricalComponent implements OnInit {
          })
        
         }
+        else {
+          this.Spinner = false;
+        }
   }
 
   // ADDITIONAL FEATURE 4
@@ -880,8 +1201,10 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewAddFeature4(){
     this.AddFeature4List = [];
-    this.ViewAddFeature4Modal = true;
     this.GetAddFeature4();
+    setTimeout(() => {
+      this.ViewAddFeature4Modal = true;
+    }, 300);
   }
   deleteAddFeature4(addfeatureid4){
     this.is_Active = false;
@@ -958,6 +1281,9 @@ export class HarbMasterProductElectricalComponent implements OnInit {
          })
        
         }
+        else {
+          this.Spinner = false;
+        }
   }
 
   //GRADE
@@ -974,8 +1300,10 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   }
   ViewGrade(){
     this.GradeList = [];
-    this.ViewGradeModal = true;
     this.GetGrade();
+    setTimeout(() => {
+      this.ViewGradeModal = true;
+    }, 300);
   }
   deleteGrade(gradeid){
     this.is_Active = false;
@@ -1052,6 +1380,9 @@ export class HarbMasterProductElectricalComponent implements OnInit {
          })
        
         }
+        else {
+          this.Spinner = false;
+        }
   }
 
   //MAKE (MULTIPLE)
@@ -1076,33 +1407,130 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   
     });
   }
+  ViewMake(){
+    this.MakeList = [];
+    this.GetMake();
+    setTimeout(() => {
+      this.ViewMakeModal = true;
+    }, 300);
+  }
+  deleteMake(makeid){
+    this.is_Active = false;
+    this.Is_View = true;
+    this.protypeid = undefined;
+    this.protypesubid = undefined;
+    this.mocid = undefined;
+    this.capacityid = undefined;
+    this.addfeatureid1 = undefined;
+    this.addfeaid2 = undefined;
+    this.addfid3 = undefined;
+    this.adfeaiid4 = undefined;
+    this.gradeid = undefined;
+    this.makeid = undefined
+    if(makeid.Product_Mfg_Comp_ID){
+      this.makeid = makeid.Product_Mfg_Comp_ID;
+     // this.cnfrm2_popup = true;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "Are you sure?",
+        detail: "Confirm to proceed"
+      });
+    }
+  }
+  MakePopup(){
+    this.MakeFormSubmitted = false;
+    this.MakeName = undefined;
+    this.MakeModal = true;
+    this.Spinner = false;
+  }
+  CreateMake(valid){
+    this.MakeFormSubmitted = true;
+    this.Spinner = true;
+      const Obj = {
+        Mfg_Company : this.MakeName
+      }
+      if(valid){
+         const obj = {
+           "SP_String": "SP_Harbauer_Master_Product_mechanical",
+           "Report_Name_String" : "Master_Product_Manufacture_Create",
+           "Json_Param_String": JSON.stringify([Obj])
+       
+         }
+         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+           console.log(data);
+           var tempID = data[0].Column1;
+           if(data[0].Column1){
+            this.compacctToast.clear();
+            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+            this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: "Return_ID  " + tempID,
+             detail: "Succesfully Created" //+ mgs
+           });
+           this.MakeFormSubmitted = false;
+           this.MakeName = undefined;
+           this.MakeModal = false;
+           this.Spinner = false;
+           this.GetMake();
+       
+           } 
+           else {
+             this.Spinner = false;
+             this.compacctToast.clear();
+             this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "error",
+               summary: "Warn Message",
+               detail: "Error Occured "
+             });
+           }
+         })
+       
+        }
+        else {
+          this.Spinner = false;
+        }
+  }
 
  //Common Delete From View
   onConfirm() {
     this.is_Active = false;
     this.Is_View = true;
-    let SpName = '';
+    let SPString = '';
     let ReportName = '';
     let ObjTemp;
+    let secondfuntionrefresh;
     let FunctionRefresh;
-    if (this.protypeid) {
-      SpName = "SP_Harbauer_Master_Product_mechanical"
-      ReportName = "Delete_Master_Product_Type"
+    // if (this.protypeid) {
+    //   SPString = "SP_Harbauer_Master_Product_mechanical"
+    //   ReportName = "Delete_Master_Product_Type"
+    //   ObjTemp = {
+    //     Product_Type_ID: this.protypeid
+    //   }
+    //   FunctionRefresh = 'GetProductType'
+    // }
+    // if (this.protypesubid) {
+    //   SPString = "SP_Harbauer_Master_Product_mechanical"
+    //   ReportName = "Delete_Product_Sub_Type"
+    //   ObjTemp = {
+    //     Product_Sub_Type_ID: this.protypesubid
+    //   }
+    //   FunctionRefresh = 'GetProductSubType';
+    // }
+    if (this.mettypeid) {
+      SPString ="SP_Master_Product_New"
+      ReportName = "Delete_Product_Material_Type"
       ObjTemp = {
-        Product_Type_ID: this.protypeid
+        Material_ID: this.mettypeid
       }
-      FunctionRefresh = 'GetProductType'
-    }
-    if (this.protypesubid) {
-      SpName = "SP_Harbauer_Master_Product_mechanical"
-      ReportName = "Delete_Product_Sub_Type"
-      ObjTemp = {
-        Product_Sub_Type_ID: this.protypesubid
-      }
-      FunctionRefresh = 'GetProductSubType';
+      FunctionRefresh = 'getMaterialTyp';
     }
     if (this.mocid) {
-      SpName = "SP_Harbauer_Master_Product_mechanical"
+      SPString = "SP_Harbauer_Master_Product_mechanical"
       ReportName = "Delete_Master_Product_Mech_MOC_Data"
       ObjTemp = {
         MOC_ID: this.mocid
@@ -1110,7 +1538,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       FunctionRefresh = 'GetMOC';
     }
     if (this.capacityid) {
-      SpName = "SP_Harbauer_Master_Product_mechanical"
+      SPString = "SP_Harbauer_Master_Product_mechanical"
       ReportName = "Delete_Master_Product_Mech_Capacity_Size_Data"
       ObjTemp = {
         Capacity_Size_ID: this.capacityid
@@ -1118,7 +1546,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       FunctionRefresh = 'GetCapacity'
     }
     if (this.addfeatureid1) {
-      SpName = "SP_Harbauer_Master_Product_Electrical"
+      SPString = "SP_Harbauer_Master_Product_Electrical"
       ReportName = "Delete_Master_Product_Additional_Feature_1_Data"
       ObjTemp = {
         Additional_Feature_ID_1 : this.addfeatureid1
@@ -1126,7 +1554,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       FunctionRefresh = 'GetAddFeature1';
     }
     if (this.addfeaid2) {
-      SpName = "SP_Harbauer_Master_Product_Electrical"
+      SPString = "SP_Harbauer_Master_Product_Electrical"
       ReportName = "Delete_Master_Product_Additional_Feature_2_Data"
       ObjTemp = {
         Additional_Feature_ID_2 : this.addfeaid2
@@ -1134,7 +1562,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       FunctionRefresh = 'GetAddFeature2';
     }
     if (this.addfid3) {
-      SpName = "SP_Harbauer_Master_Product_Electrical"
+      SPString = "SP_Harbauer_Master_Product_Electrical"
       ReportName = "Delete_Master_Product_Additional_Feature_3_Data"
       ObjTemp = {
         Additional_Feature_ID_3 : this.addfid3
@@ -1142,7 +1570,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       FunctionRefresh = 'GetAddFeature3';
     }
     if (this.adfeaiid4) {
-      SpName = "SP_Harbauer_Master_Product_Electrical"
+      SPString = "SP_Harbauer_Master_Product_Electrical"
       ReportName = "Delete_Master_Product_Additional_Feature_4_Data"
       ObjTemp = {
         Additional_Feature_ID_4 : this.adfeaiid4
@@ -1150,15 +1578,32 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       FunctionRefresh = 'GetAddFeature4';
     }
     if (this.gradeid) {
-      SpName = "SP_Harbauer_Master_Product_mechanical"
+      SPString = "SP_Harbauer_Master_Product_mechanical"
       ReportName = "Delete_Master_Product_Mech_Grade_Data"
       ObjTemp = {
         Grade_ID: this.gradeid
       }
       FunctionRefresh = 'GetGrade';
     }
+    if (this.makeid) {
+      SPString = "SP_Harbauer_Master_Product_mechanical"
+      ReportName = "Delete_Master_Product_Manufacture_Data"
+      ObjTemp = {
+        Product_Mfg_Comp_ID: this.makeid
+      }
+      FunctionRefresh = 'GetMake';
+    }
+    if (this.Uomid) {
+      SPString = "SP_Master_Product_New"
+      ReportName = "Delete_Master_UOM"
+      ObjTemp = {
+        UOM: this.Uomid
+     }
+      FunctionRefresh = 'getUOM'
+      secondfuntionrefresh = 'getAllUOM'
+    }
       const obj = {
-        "SP_String": SpName,
+        "SP_String": SPString,
         "Report_Name_String" : ReportName,
         "Json_Param_String": JSON.stringify(ObjTemp),
       }
@@ -1168,6 +1613,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
         // this.onReject();
         //this.GetTenderOrgList();
         this[FunctionRefresh]();
+        secondfuntionrefresh = secondfuntionrefresh ? this[secondfuntionrefresh]() : null;
          this.compacctToast.clear();
          this.compacctToast.add({
             key: "compacct-toast",
@@ -1220,19 +1666,46 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   //     }
   //   }
   // }
+
+  CheckDescription(){
+    const tempobj = {
+      Product_Type_ID : this.ObjMasterProductel.Product_Type_ID,
+      Product_Sub_Type_ID : this.ObjMasterProductel.Product_Sub_Type_ID,
+      Description_Like : this.ObjMasterProductel.Product_Description
+    }
+    const objtemp = {
+      Product_ID : this.ObjMasterProductel.Product_ID,
+      Description_Like : this.ObjMasterProductel.Product_Description
+    }
+        const obj = {
+         "SP_String": "SP_Harbauer_Master_Product_Civil",
+         "Report_Name_String":this.buttonname === "Update" ? 'Check_Product_Description_On_Update' : 'Check_Product_Description',
+         "Json_Param_String": this.buttonname === "Update" ? JSON.stringify([objtemp]) : JSON.stringify([tempobj])
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         this.DescriptionCheck = data[0].Column1;
+        console.log("DescriptionCheck==",this.DescriptionCheck);
+       })
+  
+   }
   SaveMasterProductel(valid){
     //if(this.Product_Mfg_Comp_ID.length) {
-      let UpdateArr =[]
-      this.Product_Mfg_Comp_ID.forEach(item => {
+      if (this.productid) {
+        this.Spinner = true;
+        this.MasterProductelFormSubmitted = true;
+      if(valid && this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)) {
+        if(this.DescriptionCheck === "OK") {
+      let UpdateArr:any =[]
+      // this.Product_Mfg_Comp_ID.forEach(item => {
         const Obj = {
             Product_ID : this.productid,
-            Product_Mfg_Comp_ID : item
+            Product_Mfg_Comp_ID : this.Product_Mfg_Comp_ID
            // Mfg_Company : item.label
         }
         UpdateArr.push({...Obj,...this.ObjMasterProductel})
-    });
+    // });
     console.log("Update =" , UpdateArr)
-    if(valid && this.productid){
+    // if(valid && this.productid){
       // const Obj = {
       //   Product_ID  : this.productid,
       //   Product_Mfg_Comp_ID : this.Product_Mfg_Comp_ID
@@ -1246,8 +1719,8 @@ export class HarbMasterProductElectricalComponent implements OnInit {
          this.GlobalAPI.postData(obj).subscribe((data:any)=>{
            console.log(data);
            var tempID = data[0].Column1;
-           this.upload(data[0].Product_Manufacturing_Group);
            if(data[0].Column1){
+            this.upload(data[0].Product_Manufacturing_Group);
           //   this.compacctToast.clear();
           //   //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
           //   this.compacctToast.add({
@@ -1256,7 +1729,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
           //    summary: '', //"Return_ID  " + tempID,
           //    detail: "Succesfully Updated" //+ mgs
           //  });
-           this.clearData();
+          //  this.clearData();
            this.productid = undefined;
            this.tabIndexToView = 0;
            this.items = ["BROWSE", "CREATE"];
@@ -1275,7 +1748,33 @@ export class HarbMasterProductElectricalComponent implements OnInit {
            }
          })
        // }
-      } 
+      
+      
+    }
+    else {
+     this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Description already exists."
+        });
+   } 
+  }
+   else {
+      this.Spinner = false;
+     // this.destroyChild();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          // detail: "No Docs Selected"
+          detail: "Error Occured "
+        });
+      }
+     }
         else {
       this.Spinner = true;
       this.MasterProductelFormSubmitted = true;
@@ -1284,7 +1783,9 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       //   Product_Description : this.ObjMachineMaster.Product_Description,
       //   Product_Mfg_Comp_ID : this.ObjMachineMaster.Manufacturer
       // }
-      if(this.Product_Mfg_Comp_ID.length) {
+      if(valid && this.Product_Mfg_Comp_ID.length) {
+        if(this.DescriptionCheck === "OK") {
+      // if(this.Product_Mfg_Comp_ID.length) {
         let tempArr =[]
         this.Product_Mfg_Comp_ID.forEach(item => {
           const obj = {
@@ -1296,7 +1797,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       });
       console.log("create =" , tempArr)
      // return JSON.stringify(tempArr);
-      if(valid && this.ProductPDFFile['size']){
+      // if(valid && this.ProductPDFFile['size']){
          const obj = {
            "SP_String": "SP_Harbauer_Master_Product_Electrical",
            "Report_Name_String" : "Master_Product_Electrical_Create",
@@ -1322,6 +1823,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
            } else{
             // this.ngxService.stop();
              this.Spinner = false;
+             this.destroyChild();
              this.compacctToast.clear();
              this.compacctToast.add({
                key: "compacct-toast",
@@ -1331,9 +1833,32 @@ export class HarbMasterProductElectricalComponent implements OnInit {
              });
            }
          })
-        } 
-        // else {
-       if(!this.ProductPDFFile['size']) {
+      //   } 
+      //   else {
+      // //  if(!this.ProductPDFFile['size']) {
+      //     this.Spinner = false;
+      //     this.compacctToast.clear();
+      //     this.compacctToast.add({
+      //       key: "compacct-toast",
+      //       severity: "error",
+      //       summary: "Warn Message",
+      //       detail: "Error Occured "
+      //     });
+      // }
+    }
+      else {
+       this.Spinner = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Description already exists."
+          });
+     }
+    }
+    else {
+      //  if(!this.ProductPDFFile['size']) {
           this.Spinner = false;
           this.compacctToast.clear();
           this.compacctToast.add({
@@ -1343,8 +1868,46 @@ export class HarbMasterProductElectricalComponent implements OnInit {
             detail: "Error Occured "
           });
       }
-    }
   }
+  }
+  checkrequ(financial?,Gst?,product?){
+    let falg = false
+    if(financial){
+      let getArrValue = Object.values(financial);
+      if(getArrValue.length === 6){
+        falg = true
+      }
+      else {
+        falg = false
+        return falg
+      }
+  
+    }
+   if(Gst){
+    let getArrValue = Object.values(Gst);
+    let tempHSN = this.objGst.HSN_NO
+    console.log("tempHSN",tempHSN.toString());
+    let tempHSNString = tempHSN.toString()
+    if(getArrValue.length === 2 && tempHSNString.length === 6){
+      falg = true
+      
+    }
+    else {
+      falg = false
+      return falg
+    }
+   }
+   if(product){
+    let getArrValue = Object.values(product);
+    if(getArrValue.length === 3){
+      falg = true
+    }
+    else {
+      falg = false
+      return falg
+    }
+   }
+  return falg
   }
   async upload(id){
     const formData: FormData = new FormData();
@@ -1368,6 +1931,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       // this.ManualPaymentConfirmFormSubmit = false;
       // this.ManualPaymentConfirmModal = false;
       this.clearData();
+      this.destroyChild();
   };
   // upload(id) {
   //   const endpoint = "/Harbauer_Master_Product_mechanical/Upload_Doc";
@@ -1411,6 +1975,7 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       this.buttonname = "Update";
       this.clearData();
       this.GetEdit(this.productid);
+      
       this.makedisabled = true;
     }
   }
@@ -1441,25 +2006,35 @@ export class HarbMasterProductElectricalComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.editList = data;
+      this.ObjMasterProductel = data[0];
+      if (data[0].Product_Image) {
+        this.file = true;
+        this.uploaddoc = false;
+      }
+      this.ObjFinancialComponentData = data[0];
+      this.objproduct = data[0]
+      this.ProductDetailsInput.EditProductDetalis(data[0].Product_Type_ID,data[0].Product_Sub_Type_ID,data[0].Product_Description,data[0].Product_Code,data[0].Rack_NO)
+      // this.FinacialDetailsInput.EditFinalcial(JSON.stringify(data))
+      this.GstAndCustDutyInput.GetEdit(JSON.stringify(data))
        //this.myDate = data[0].Date;
        this.ObjMasterProductel.Product_Type_ID = data[0].Product_Type_ID;
        this.GetProductSubType();
        this.ObjMasterProductel.Product_Sub_Type_ID = data[0].Product_Sub_Type_ID;
        this.ObjMasterProductel.Cat_ID = data[0].Cat_ID;
        this.ObjMasterProductel.Product_Description = data[0].Product_Description;
-       this.ObjMasterProductel.MOC_ID = data[0].MOC_ID;
-       this.ObjMasterProductel.Capacity_Size_ID = data[0].Capacity_Size_ID;
+       this.ObjMasterProductel.MOC_ID = data[0].MOC_ID ? data[0].MOC_ID : undefined;
+       this.ObjMasterProductel.Capacity_Size_ID = data[0].Capacity_Size_ID ? data[0].Capacity_Size_ID : undefined;
        this.ObjMasterProductel.Additional_Feature_ID_1 = data[0].Additional_Feature_ID_1;
        this.ObjMasterProductel.Additional_Feature_ID_2 = data[0].Additional_Feature_ID_2;
        this.ObjMasterProductel.Additional_Feature_ID_3 = data[0].Additional_Feature_ID_3;
        this.ObjMasterProductel.Additional_Feature_ID_4 = data[0].Additional_Feature_ID_4;
-       this.ObjMasterProductel.Grade_ID = data[0].Grade_ID;
-       this.ObjMasterProductel.Remarks = data[0].Remarks;
+       this.ObjMasterProductel.Grade_ID = data[0].Grade_ID ? data[0].Grade_ID : undefined;
+       this.ObjMasterProductel.Remarks = data[0].Remarks ? data[0].Remarks : undefined;
        this.ObjMasterProductel.HSN_NO = data[0].HSN_NO;
        this.ObjMasterProductel.GST_Percentage = data[0].GST_Percentage;
        this.ObjMasterProductel.UOM = data[0].UOM;
-      // this.Product_Mfg_Comp_ID = data[0].Product_Mfg_Comp_ID;
-       this.GetMakedist();
+       this.Product_Mfg_Comp_ID = data[0].Product_Mfg_Comp_ID;
+      //  this.GetMakedist();
        this.makedisabled = true;
        this.PDFViewFlag = data[0].Product_Image ? true : false;
        this.ProductPDFLink = data[0].Product_Image
@@ -1587,7 +2162,128 @@ export class HarbMasterProductElectricalComponent implements OnInit {
       })
       }
   }
-
+getUOM(){
+    this.UOMData=[]; 
+      this.UomDataList = [];
+        const obj = {
+          "SP_String": "SP_Master_Product_New",
+          "Report_Name_String":"Get_Master_UOM_Data",
+        }
+        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+          this.UOMData = data;
+        console.log("UOMData==",this.UOMData);
+          this.UOMData.forEach((el : any) => {
+            this.UomDataList.push({
+              label: el.UOM,
+              value: el.UOM
+              
+            });
+          });
+        })
+    }
+getAllUOM(){
+      this.AllUOMData=[]; 
+       this.AllUomDataList = [];
+          const obj = {
+           "SP_String": "SP_Master_Product_New",
+           "Report_Name_String":"Get_Master_UOM_Data",
+          }
+          this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+           this.AllUOMData = data;
+          console.log("AllUOMData==",this.AllUOMData);
+           this.AllUOMData.forEach((el : any) => {
+             this.AllUomDataList.push({
+               label: el.UOM,
+               value: el.UOM
+               
+             });
+           });
+         })
+    }
+ViewUomType(){
+      this.UOMData = [];
+      this.getUOM();
+      setTimeout(() => {
+        this.ViewUomModal = true;
+        }, 200);
+    }
+ProUomPopup(){
+      this.UOMTypeFormSubmitted = false;
+      this.UOMTypeName = undefined;
+      this.UOMTypeModal = true;
+      this.Spinner = false;
+    }
+CreateUomType(valid){
+      this.UOMTypeFormSubmitted = true;
+        this.Spinner = true;
+       
+        if(valid){
+           const tempSave = {
+            UOM : this.UOMTypeName,
+          }
+         console.log(tempSave)
+           const obj = {
+             "SP_String": "SP_Master_Product_New",
+             "Report_Name_String" : "Add_Master_UOM",
+             "Json_Param_String": JSON.stringify([tempSave])
+         
+           }
+           this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+             console.log(data);
+             var tempID = data[0].Column1;
+             if(data[0].Column1){
+              this.compacctToast.clear();
+              //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+              this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "success",
+               summary: "UOM" + tempID,
+               detail: "Succesfully Created" //+ mgs
+             });
+             this.UOMTypeFormSubmitted = false;
+             this.UOMTypeName = undefined;
+             this.UOMTypeModal = false;
+             this.Spinner = false;
+             this.getUOM();
+             this.getAllUOM();
+         
+             } else{
+               this.Spinner = false;
+               this.compacctToast.clear();
+               this.compacctToast.add({
+                 key: "compacct-toast",
+                 severity: "error",
+                 summary: "Warn Message",
+                 detail: "Error Occured "
+               });
+             }
+           })
+         
+        }
+        else {
+          this.Spinner = false;
+        }
+    }
+deleteProUom(uom){
+      this.protypesubid = undefined;
+      this.mettypeid = undefined;
+      this.protypeid = undefined
+      this.Uomid = undefined;
+      if(uom.UOM){
+        this.is_Active = false;
+        this.Is_View = true;
+        this.Uomid = uom.UOM;
+       // this.cnfrm2_popup = true;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "c",
+          sticky: true,
+          severity: "warn",
+          summary: "Are you sure?",
+          detail: "Confirm to proceed"
+        });
+      }
+    }
   // onClear(e,file){
   //   for(let k=0;k < this.ProductPDFFile.length;k++){
   //     if(this.ProductPDFFile[k].name === file.name){
@@ -1597,9 +2293,274 @@ export class HarbMasterProductElectricalComponent implements OnInit {
   //     }
   //   }
   // }
+  exportexcel(Arr): void {
+    this.EXCELSpinner =true
+     let excelData:any = []
+    Arr.forEach(ele => {
+        excelData.push({
+            'Product Code': ele.Product_ID,
+            'Make (Multiple)': ele.Mfg_Company,
+            'Product Description': ele.Product_Description,
+            'Material Type': ele.Material_Type,
+            'Product Type': ele.Product_Type,
+            'Product Sub Type': ele.Product_Sub_Type,
+            'GST Category': ele.Cat_Name,
+            'Material of Cons.': ele.MOC_Description,
+            'Capacity': ele.Capacity_Size_Desc,
+            'Additional Feature 1': ele.Additional_Feature_1,
+            'Additional Feature 2': ele.Additional_Feature_2,
+            'Additional Feature 3': ele.Additional_Feature_3,
+            'Additional Feature 4': ele.Additional_Feature_4,
+            'Grade': ele.Grade_Description,
+            'Remarks': ele.Remarks,
+            'HSN Code': ele.HSN_Code,
+            'GST Percentage': ele.Cat_Name,
+            'UOM': ele.UOM
+            })
+     });
 
+   const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, 'master_product_electrical.xlsx');
+    this.EXCELSpinner = false
+  }
+  //MICL File Upload 
+  ClearUploadInpt(elem: any) {
+    if (this.ObjMasterProductel.Product_Image) {
+      this.uploaddoc = true;
+      this.ObjMasterProductel.Product_Image = undefined;
+    }
+    else {
+      this.UploadFile.clear();
+      this.file = false;
+      this.PDFFile = undefined;
+    }
+  }
+  fileSelect(event) {
+    this.file = false;
+    this.PDFFile = undefined;
+    if (event) {
+      this.PDFFile = event.files[0];
+      this.file = true;
+    }
+  }
+  showDoc() {
+    window.open(this.ObjMasterProductel.Product_Image);
+  }
+  
+  onBasicUpload(valid) {
+    this.MasterProductelFormSubmitted = true;
+    if(valid){
+    if (this.PDFFile) {
+       this.UploadDocApprove();
+    }
+    else {
+      this.SaveMasterProductelMicl();
+    }
+    }
+    else {
+      this.ngxService.stop();
+    }
+  }
+  UploadDocApprove() {
+    const upfile = this.PDFFile;
+    // console.log('file elem', upfile);
+    if (upfile['size']) {
+      this.ngxService.start();
+      this.GlobalAPI.CommonFileUpload(upfile)
+        .subscribe((data: any) => {
+          // console.log('upload response', data);
+          this.ObjMasterProductel.Product_Image = data.file_url;
+          this.ngxService.stop();
+          this.uploaddoc = false;
+          this.SaveMasterProductelMicl();
+        })
+    }
+  }
+  SaveMasterProductelMicl(){
+    //if(this.Product_Mfg_Comp_ID.length) {
+      if (this.productid) {
+        this.Spinner = true;
+        this.MasterProductelFormSubmitted = true;
+      if(this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)) {
+        if(this.DescriptionCheck === "OK") {
+      let UpdateArr:any =[]
+      // this.Product_Mfg_Comp_ID.forEach(item => {
+        const Obj = {
+            Product_ID : this.productid,
+            Product_Mfg_Comp_ID : this.Product_Mfg_Comp_ID
+           // Mfg_Company : item.label
+        }
+        UpdateArr.push({...Obj,...this.ObjMasterProductel})
+    // });
+    console.log("Update =" , UpdateArr)
+    // if(valid && this.productid){
+      // const Obj = {
+      //   Product_ID  : this.productid,
+      //   Product_Mfg_Comp_ID : this.Product_Mfg_Comp_ID
+      // }
+         const obj = {
+           "SP_String": "SP_Harbauer_Master_Product_Electrical",
+           "Report_Name_String" : "Master_Product_Electrical_Update",
+           "Json_Param_String": JSON.stringify(UpdateArr)
+       
+         }
+         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+           console.log(data);
+           var tempID = data[0].Column1;
+           if(data[0].Column1){
+            // const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+            this.compacctToast.clear();
+            this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: '', //"Return_ID  " + tempID,
+             detail: "Succesfully Updated" //+ mgs
+           });
+           this.clearData();
+           this.productid = undefined;
+           this.tabIndexToView = 0;
+           this.items = ["BROWSE", "CREATE"];
+          //  this.buttonname = "Save";
+            // this.testchips =[];
+       
+           } else{
+            this.ngxService.stop();
+             this.compacctToast.clear();
+             this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "error",
+               summary: "Warn Message",
+               detail: "Error Occured "
+             });
+           }
+         })
+       // }
+      
+      
+    }
+    else {
+     this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Description already exists."
+        });
+   } 
+  }
+   else {
+      this.Spinner = false;
+     // this.destroyChild();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          // detail: "No Docs Selected"
+          detail: "Error Occured "
+        });
+      }
+     }
+        else {
+      this.Spinner = true;
+      this.MasterProductelFormSubmitted = true;
+      // const Obj = {
+      //   Product_Code : this.ObjMachineMaster.Product_Model,
+      //   Product_Description : this.ObjMachineMaster.Product_Description,
+      //   Product_Mfg_Comp_ID : this.ObjMachineMaster.Manufacturer
+      // }
+      if(this.Product_Mfg_Comp_ID.length) {
+        if(this.DescriptionCheck === "OK") {
+      // if(this.Product_Mfg_Comp_ID.length) {
+        let tempArr =[]
+        this.Product_Mfg_Comp_ID.forEach(item => {
+          const obj = {
+              Product_ID : 0,
+              Product_Mfg_Comp_ID : item
+             // Mfg_Company : item.label
+          }
+        tempArr.push({...obj,...this.ObjMasterProductel})
+      });
+      console.log("create =" , tempArr)
+     // return JSON.stringify(tempArr);
+      // if(valid && this.ProductPDFFile['size']){
+         const obj = {
+           "SP_String": "SP_Harbauer_Master_Product_Electrical",
+           "Report_Name_String" : "Master_Product_Electrical_Create",
+           "Json_Param_String": JSON.stringify(tempArr)
+       
+         }
+         this.GlobalAPI.postData(obj).subscribe((data:any)=>{
+           console.log(data);
+           this.ObjMasterProductel.Product_ID = data[0].Product_Manufacturing_Group;
+           if(data[0].Product_Manufacturing_Group){
+            this.compacctToast.clear();
+            //const mgs = this.buttonname === 'Save & Print Bill' ? "Created" : "updated";
+            this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "success",
+             summary: '', //"Return_ID  " + tempID,
+             detail: "Succesfully Saved" //+ mgs
+           });
+           this.clearData();
+       
+           } else{
+            this.ngxService.stop();
+             this.Spinner = false;
+             this.destroyChild();
+             this.compacctToast.clear();
+             this.compacctToast.add({
+               key: "compacct-toast",
+               severity: "error",
+               summary: "Warn Message",
+               detail: "Error Occured "
+             });
+           }
+         })
+      //   } 
+      //   else {
+      // //  if(!this.ProductPDFFile['size']) {
+      //     this.Spinner = false;
+      //     this.compacctToast.clear();
+      //     this.compacctToast.add({
+      //       key: "compacct-toast",
+      //       severity: "error",
+      //       summary: "Warn Message",
+      //       detail: "Error Occured "
+      //     });
+      // }
+    }
+      else {
+       this.Spinner = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Description already exists."
+          });
+     }
+    }
+    else {
+      //  if(!this.ProductPDFFile['size']) {
+          this.Spinner = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+      }
+  }
+  }
+  //
 }
 class MasterProductel{
+   Material_ID:number;
+   Material_Type:any;
    Product_Type_ID:number;
    Product_Sub_Type_ID:number;
    Cat_ID : number;
@@ -1612,10 +2573,58 @@ class MasterProductel{
    Additional_Feature_ID_4 :number;
    Product_ID:number;
    Grade_ID	:number;
-   Remarks	:string;
-   HSN_NO:number;
+   Remarks	:any;
+   HSN_NO:any;
    GST_Percentage:number;
    UOM:string;
   // Product_Mfg_Comp_ID:any;
    Product_Image:any;
+
+
+   Product_Code:any;
+   Rack_NO :any;
+   HSN_Code:any;	
+   Custom_Duty:any;
+   Billable:boolean;			
+   Can_Purchase:boolean;
+   Purchase_Ac_Ledger:any;
+   Sales_Ac_Ledger:any;	
+   Purchase_Return_Ledger_ID:number;
+   Discount_Receive_Ledger_ID:number;	
+   Discount_Given_Ledger_ID:number;	
+   Sales_Return_Ledger_ID:number;	
+   RCM_Per:any;
+   Input_RCM_Ledger_ID:any;
+   Output_RCM_Ledger_ID:any;
+   Input_CGST_RCM_Ledger_ID:any;	
+   Input_SGST_RCM_Ledger_ID:any;
+   Input_IGST_RCM_Ledger_ID:any;
+   Output_CGST_RCM_Ledger_ID:any;
+   Output_SGST_RCM_Ledger_ID:any;
+   Output_IGST_RCM_Ledger_ID:any;
  }
+ class Financial{
+  Can_Purchase : boolean;
+  Billable : boolean;
+  Purchase_Ac_Ledger:any;
+  Sales_Ac_Ledger:any;
+  Purchase_Return_Ledger_ID:any;
+  Sales_Return_Ledger_ID:any;
+  Discount_Receive_Ledger_ID:any;
+  Discount_Given_Ledger_ID:any;
+  Input_RCM_Ledger_ID:any;
+  Output_RCM_Ledger_ID:any;
+  Input_CGST_RCM_Ledger_ID:any;	
+  Input_SGST_RCM_Ledger_ID:any;
+  Input_IGST_RCM_Ledger_ID:any;
+  Output_CGST_RCM_Ledger_ID:any;
+  Output_SGST_RCM_Ledger_ID:any;
+  Output_IGST_RCM_Ledger_ID:any;
+}
+class product{
+  Product_Type_ID	:number;	
+  Product_Sub_Type_ID	:number;
+  Product_Code : any;
+  Product_Description : string;
+  Rack_NO : any;
+  }

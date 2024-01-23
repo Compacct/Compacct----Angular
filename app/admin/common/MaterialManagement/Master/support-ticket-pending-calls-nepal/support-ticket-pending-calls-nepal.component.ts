@@ -12,6 +12,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { getLocaleTimeFormat } from '@angular/common';
 declare var NepaliFunctions: any;
 const NepaliDate = require('nepali-date');
+declare var nepaliDatePicker: any;
+declare var $: any;
 @Component({
   selector: 'app-support-ticket-pending-calls-nepal',
   templateUrl: './support-ticket-pending-calls-nepal.component.html',
@@ -24,8 +26,8 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
   buttonname = "Save";
   Spinner = false;
   seachSpinner = false;
-  items = [];
-  mainItems = [];
+  items:any = [];
+  mainItems:any = [];
   callsheettab = false;
   searchFormSubmit = false;
   EngineerName = undefined;
@@ -61,7 +63,17 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
   callStartTime = new Date();
   BScallEndTime = new Date();
   BScallStartTime = new Date();
+  requiredSpare = false;
   CurrentDateNepal:any;
+  BrowseStartDate : any = {};
+  BrowseEndDate : any = {};
+  closedStartDate : any = {};
+  closedEndDate : any = {};
+  closedUserId:any = undefined
+  closedSpinner:boolean = false
+  closedFormSubmit:boolean = false
+  cols:any =[];
+  GetClosedList:any = []
   constructor(private $http: HttpClient,
     private commonApi: CompacctCommonApi,
     private GlobalAPI: CompacctGlobalApiService,
@@ -95,8 +107,7 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
           this.getSpareParts(params['SUP']);
           this.BScallEndTime = new Date();
           this.BScallStartTime = new Date();
-          this.StartDatecall = this.CurrentDateNepal;
-          this.EndDatecall = this.CurrentDateNepal;
+         
           this.SpareDetailsSubmit = false;
           this.RequiredSpareDetailsSubmit = false;
           this.pendingCallFormSubmit = false;
@@ -110,8 +121,25 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
       Header: "Pending Call",
       Link: " Engineering CRM -> Master -> Pending Call"
     });
-    this.mainItems = ["BROWSE", "CALL SHEET"];
+    this.mainItems = ["BROWSE", "CALL SHEET","CLOSED SUPPORT"];
+    this.StartDatecall = this.CurrentDateNepal;
+    this.EndDatecall = this.CurrentDateNepal;
+    this.BrowseStartDate = this.CurrentDateNepal;
+    this.BrowseEndDate = this.CurrentDateNepal;
+    this.closedStartDate = this.CurrentDateNepal;
+    this.closedEndDate = this.CurrentDateNepal;
     this.GetEngineerName();
+
+    this.cols = [
+      { field: 'Sub_Ledger_Name', header: 'Customer Name' },
+      { field: 'Engineer', header: 'Engineer Name' },
+      { field: 'Location_Name', header: 'Location' },
+      { field: 'Support_Ticket_Date', header: 'Ticket Creation Date' },
+      { field: 'model', header: 'Model' },
+      { field: 'Serial_No', header: 'Serial No' },
+      { field: 'Support_Ticket_Status', header: 'Ticket Status' },
+      { field: 'Serial_Main_StatusNo', header: 'Present Status' }
+    ];
   }
   onConfirm(){}
   onReject() {
@@ -131,10 +159,15 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
   GetSearchedList(valid){
    this.searchFormSubmit = true;
    if(valid){
+    const tempobj = {
+      User_ID: this.EngineerName,
+      From_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseStartDate)),
+      To_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.BrowseEndDate)),
+    }
     const obj = {
       "SP_String": "SP_Support_Ticket_Nepal",
-      "Report_Name_String": "Get_Pending_Support_Ticket",
-      "Json_Param_String": JSON.stringify([{User_ID : this.EngineerName}])
+      "Report_Name_String": "Get_Pending_Support_Ticket_Date_Range",
+      "Json_Param_String": JSON.stringify([tempobj])
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         console.log("GetallData",data);
@@ -142,10 +175,32 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
      })
    }
   }
+  GetClosed(valid){
+    this.closedFormSubmit = true;
+    if(valid){
+      this.closedSpinner = true
+     const tempobj = {
+      User_ID: Number(this.closedUserId),
+      From_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.closedStartDate)),
+      To_Date : this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(this.closedEndDate)),
+     }
+     const obj = {
+       "SP_String": "SP_Support_Ticket_Nepal",
+       "Report_Name_String": "Get_Closed_Support_Ticket_Date_Range",
+       "Json_Param_String": JSON.stringify([tempobj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         console.log("GetClosedList",data);
+         this.GetClosedList = data;
+         this.closedSpinner = false
+      })
+    }
+   }
   TicketDetails(col){
    if(col.Support_Ticket_No){
      this.supportTicketNo = undefined;
-     this.supportTicketNo = col.Support_Ticket_No
+     this.supportTicketNo = col.Support_Ticket_No;
+     this.requiredSpare = false;
     const ctrl = this;
     setTimeout(() => {
       ctrl.showTicket = true;
@@ -177,13 +232,15 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
   TabClick(e) {
     this.tabIndexToViewticket = e.index;
     this.items = ["Ticket Details", "Engineer call Sheet","Used Spare","Required Spare","Followups"];
+    this.requiredSpare = false;
   }
    MainTabClick(e) {
     this.tabIndexToView = e.index;
-    this.mainItems = ["BROWSE", "CALL SHEET"];
-    if(this.tabIndexToView === 0){
+    this.mainItems = ["BROWSE", "CALL SHEET","CLOSED SUPPORT"];
+    if(this.tabIndexToView != 1){
       this.callsheettab=false;
     }
+    this.closedSpinner = false
   }
   GetTicketDetails(SupportTicketNo){
     const obj = {
@@ -326,6 +383,7 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
      this.supportTicketNo = undefined;
      this.supportTicketNo = col.Support_Ticket_No;
      this.callsheettab = true;
+     this.requiredSpare = false;
     const ctrl = this;
     setTimeout(() => {
       ctrl.tabIndexToView = 1;
@@ -413,13 +471,13 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
    let tempObj= [];
    let tempObj1= [];
    if(valid){
-      if(this.SpareDetailsList.length && this.RequiredSpareDetailsList.length){
+      if(this.SaveCheck()){
         let getStartDate = value ==="tab"? this.StartDatecall : this.StartDate;
         let geEndDate = value ==="tab"? this.EndDatecall : this.EndDatecall;
         let getStartTimeDate = value ==="tab"? this.BScallStartTime : this.callStartTime;
         let getEndTimeDate = value ==="tab"? this.BScallEndTime : this.callStartTime;
-       this.ObjEngineerCall.Call_Start_Time = this.DateService.dateConvert(this.convertNepaliDateToEngDate(getStartDate))+' ' +' '+new Date(getStartTimeDate).toLocaleTimeString();
-       this.ObjEngineerCall.Call_End_Time = this.DateService.dateConvert(this.convertNepaliDateToEngDate(geEndDate))+' ' +' '+new Date(getEndTimeDate).toLocaleTimeString();
+       this.ObjEngineerCall.Call_Start_Time = this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(getStartDate))+' ' +' '+new Date(getStartTimeDate).toLocaleTimeString();
+       this.ObjEngineerCall.Call_End_Time = this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(geEndDate))+' ' +' '+new Date(getEndTimeDate).toLocaleTimeString();
        this.ObjEngineerCall.Support_Ticket_No = this.supportTicketNo;
        this.ObjEngineerCall.Login_User_ID = this.$CompacctAPI.CompacctCookies.User_ID;
        this.SpareDetailsList.forEach(el=>{
@@ -449,6 +507,8 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
         this.GlobalAPI.getData(obj).subscribe((data:any)=>{
          if (data[0].Column1) {
            this.GetCallSheetGridData(this.supportTicketNo);
+           this.GetTicketDetails(this.supportTicketNo)
+           this.GetSearchedList(true)
            this.ObjEngineerCall = new EngineerCall();
            this.SpareDetailsList = [];
            this.RequiredSpareDetailsList = [];
@@ -461,6 +521,7 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
            this.BScallEndTime = new Date();
            this.BScallStartTime = new Date();
            this.pendingCallFormSubmit = false;
+           this.requiredSpare = false; 
            this.compacctToast.clear();
            this.compacctToast.add({
              key: "compacct-toast",
@@ -494,6 +555,33 @@ export class SupportTicketPendingCallsNepalComponent implements OnInit {
        });
      }
     }
+}
+
+SaveCheck(){
+  let flag = false;
+   if(this.ObjEngineerCall.Main_Status === "OPEN" && this.ObjEngineerCall.Call_Status === "Need Spare"){
+     if(this.requiredSpare){
+       if(this.RequiredSpareDetailsList.length){
+        flag = true
+       }
+       else { 
+        flag = false
+       }
+     }
+     else{
+       if(this.SpareDetailsList.length){
+        flag = true
+       }
+       else{
+        flag = false
+       }
+     }
+   }
+   else {
+     flag = true
+   }
+ 
+  return flag
 }
  tConvert(date) {
   const DateArr = date.split('T');

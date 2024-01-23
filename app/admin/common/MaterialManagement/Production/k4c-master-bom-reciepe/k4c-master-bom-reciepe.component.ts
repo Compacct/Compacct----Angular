@@ -31,7 +31,7 @@ import {
   encapsulation: ViewEncapsulation.None
 })
 export class K4cMasterBOMReciepeComponent implements OnInit {
-  items = [];
+  items:any = [];
   seachSpinner = false;
   Spinner = false;
   tabIndexToView = 0;
@@ -44,41 +44,43 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
   ObjBomReciepe: BomReciepe = new BomReciepe();
   ObjRawMaterial: RawMaterial = new RawMaterial();
   ObjSemiFinished: SemiFinished = new SemiFinished();
-  BrandList = [];
-  typeofmateriallist = [];
-  selectfinalmateriallist = [];
-  rawmaterialprotypellist = [];
-  semifishedprotypellist = [];
-  getrawmaterialtabledata = [];
-  getsemifinishedtabledata = [];
+  BrandList:any = [];
+  typeofmateriallist:any = [];
+  selectfinalmateriallist:any = [];
+  rawmaterialprotypellist:any = [];
+  semifishedprotypellist:any = [];
+  getrawmaterialtabledata:any = [];
+  getsemifinishedtabledata:any = [];
   tabIndexToView1 = 0;
-  items1 = [];
-  BrowseList = [];
-  DistRMProductType = [];
-  SelectedDistRMProductType = [];
-  RMSearchFields = [];
-  BackupRMSearchedlist = [];
-  BackupSearchedlist = [];
-  DistProductType = [];
-  SelectedDistProductType = [];
-  SearchFields = [];
-  editList = [];
+  items1:any = [];
+  BrowseList:any = [];
+  DistRMProductType:any = [];
+  SelectedDistRMProductType:any = [];
+  RMSearchFields:any = [];
+  BackupRMSearchedlist:any = [];
+  BackupSearchedlist:any = [];
+  DistProductType:any = [];
+  SelectedDistProductType:any = [];
+  SearchFields:any = [];
+  editList:any = [];
   editdisableflag = false;
 
   //TotalfQty : number;
   ViewPoppup = false;
   tabIndexToView2 = 0;
-  items2 = [];
+  items2:any = [];
   BrandID = undefined;
   ProductTypeID = undefined;
   ProductID = undefined;
   FinalMaterialQty = undefined;
   FinalMaterialUOM = undefined;
   TypeofMaterial = undefined;
-  RMviewlist = [];
-  Finviewlist = [];
+  RMviewlist:any = [];
+  Finviewlist:any = [];
 
   flag = false;
+  QtyRMSfilterFLag = false;
+  QtySFinishfilterFLag = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -115,6 +117,8 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
     this.getsemifinishedtabledata = [];
     this.DistProductType = [];
     this.SelectedDistProductType = [];
+    this.RawMaterialTableData();
+    this.BackupSearchedlist = [];
   }
   TabClick(e) {
     //console.log(e)
@@ -189,9 +193,8 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
   ProductChange() {
     if (this.ObjBomReciepe.Product_ID) {
       const ctrl = this;
-      const productObj = $.grep(ctrl.selectfinalmateriallist, function (item) {
-        return item.Product_ID == ctrl.ObjBomReciepe.Product_ID
-      })[0];
+      const productObj = $.grep(ctrl.selectfinalmateriallist, function (item:any) {
+        return item.Product_ID == ctrl.ObjBomReciepe.Product_ID})[0];
       //console.log(productObj);
       //this.ObjproductAdd.ID = productObj.ID;
       this.ObjBomReciepe.Select_Final_Material = productObj.Product_Description;
@@ -233,7 +236,7 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
     })
   }
   GetDistinct() {
-    let DRMProductType = [];
+    let DRMProductType:any = [];
     this.DistRMProductType = [];
     this.SelectedDistRMProductType = [];
     this.RMSearchFields = [];
@@ -249,7 +252,7 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
     this.BackupRMSearchedlist = [...this.getrawmaterialtabledata];
   }
   FilterDist() {
-    let DRMProductType = [];
+    let DRMProductType:any = [];
     this.RMSearchFields = [];
     if (this.SelectedDistRMProductType.length) {
       this.RMSearchFields.push('Product_Type_ID');
@@ -345,7 +348,7 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
     })
   }
   GetDistinctSF() {
-    let DProductType = [];
+    let DProductType:any = [];
     this.DistProductType = [];
     this.SelectedDistProductType = [];
     this.SearchFields = [];
@@ -361,9 +364,9 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
     this.BackupSearchedlist = [...this.getsemifinishedtabledata];
   }
   FilterDistSF() {
-    let DProcessName = [];
-    let DProductType = [];
-    let DShift = [];
+    let DProcessName:any = [];
+    let DProductType:any = [];
+    let DShift:any = [];
     this.SearchFields = [];
     if (this.SelectedDistProductType.length) {
       this.SearchFields.push('Product_Type_ID');
@@ -405,7 +408,7 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
   // FOR SAVE
   DataForSaveBomRecipe() {
     if (this.BackupRMSearchedlist.length && this.BackupSearchedlist.length) {
-      let tempArr = [];
+      let tempArr:any = [];
       const TempObj = {
         Brand_ID: this.ObjBomReciepe.Brand_ID,
         Final_Product_Type_ID: this.ObjBomReciepe.Product_Type_ID,
@@ -428,14 +431,11 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
             BOM_Product_Qty: Number(item.Qty),
           }
 
-          tempArr.push({
-            ...rawmaterialobj,
-            ...TempObj
-          })
+          tempArr.push({...rawmaterialobj,...TempObj})
         }
 
       });
-      let Arrtemp = []
+      let Arrtemp:any = []
       this.BackupSearchedlist.forEach(item => {
         if (Number(item.Qty) && Number(item.Qty) != 0) {
           const finishedobj = {
@@ -448,10 +448,7 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
             BOM_Product_UOM: item.UOM,
             BOM_Product_Qty: Number(item.Qty),
           }
-          Arrtemp.push({
-            ...finishedobj,
-            ...TempObj
-          })
+          Arrtemp.push({...finishedobj,...TempObj})
         }
       });
      // console.log("Save Data ===", ...tempArr, ...Arrtemp)
@@ -569,6 +566,34 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
         this.SearchFormSubmitted = false;
       })
     }
+  }
+  QtyRMSFilter(){
+    this.getrawmaterialtabledata = []
+     if(this.QtyRMSfilterFLag){
+      this.BackupRMSearchedlist.forEach(el=>{
+        if(Number(el.Qty) > 0){
+          this.getrawmaterialtabledata.push(el);
+        }
+      })
+    }
+    else{
+      this.getrawmaterialtabledata = this.BackupRMSearchedlist;
+    }
+    // console.log("Qty RM flag ==",this.getrawmaterialtabledata)
+  }
+  QtySFinishFilter(){
+    this.getsemifinishedtabledata = []
+     if(this.QtySFinishfilterFLag){
+      this.BackupSearchedlist.forEach(el=>{
+        if(Number(el.Qty) > 0){
+          this.getsemifinishedtabledata.push(el);
+        }
+      })
+    }
+    else{
+      this.getsemifinishedtabledata = this.BackupSearchedlist;
+    }
+    // console.log("Qty SF flag ==",this.getsemifinishedtabledata)
   }
   EditBomReciepe(Bom) {
     // console.log("editmaster ==",DocNo);
@@ -754,7 +779,7 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
       this.ObjBomReciepe.Final_Material_Qty &&
       this.ObjBomReciepe.Final_Material_UOM) {
       if (this.BackupRMSearchedlist.length && this.BackupSearchedlist.length) {
-        let tempArr = [];
+        let tempArr:any = [];
         const TempObj = {
           Brand_ID: this.ObjBomReciepe.Brand_ID,
           Final_Product_Type_ID: this.ObjBomReciepe.Product_Type_ID,
@@ -777,14 +802,11 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
               BOM_Product_Qty: Number(item.Qty),
             }
 
-            tempArr.push({
-              ...rawmaterialobj,
-              ...TempObj
-            })
+            tempArr.push({...rawmaterialobj,...TempObj})
           }
 
         });
-        let Arrtemp = []
+        let Arrtemp:any = []
         this.BackupSearchedlist.forEach(item => {
           if (Number(item.Qty) && Number(item.Qty) != 0) {
             const finishedobj = {
@@ -797,10 +819,7 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
               BOM_Product_UOM: item.UOM,
               BOM_Product_Qty: Number(item.Qty),
             }
-            Arrtemp.push({
-              ...finishedobj,
-              ...TempObj
-            })
+            Arrtemp.push({...finishedobj,...TempObj})
           }
         });
         //console.log("Updated Data ===", ...tempArr, ...Arrtemp)
@@ -937,6 +956,8 @@ export class K4cMasterBOMReciepeComponent implements OnInit {
     this.items1 = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.editdisableflag = false;
+    this.QtyRMSfilterFLag = false;
+    this.QtySFinishfilterFLag = false;
     // this.TabClick(true);
   }
 

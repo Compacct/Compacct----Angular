@@ -1,0 +1,835 @@
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid" *ngIf="!deleteError">
+          <div class="ui-g-6" *ngIf="Save && !Del">
+              <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6" *ngIf="Del && !Save">
+            <button type="button" pButton (click)="onConfirmDel()" label="Yes" class="ui-button-success"></button>
+        </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+      <div class="ui-g ui-fluid" *ngIf="deleteError">
+          <div class="ui-g-12">
+              <button type="button" pButton (click)="onReject()" label="ok" class="ui-button-danger" style="font-size: 20px;"></button>
+          </div>
+       
+         
+      </div>
+
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="GRNSearchForm" #GRNSearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                            <select class="form-control" 
+                                            name="browsecompany" 
+                                            #browsecompany="ngModel" 
+                                            [(ngModel)]="ObjBrowse.Company_ID"
+                                            [ngClass]="{'clearance': GRNSearchFormSubmitted && browsecompany?.errors?.required}"
+                                            required>
+                                            <option  [ngValue]="undefined">Select</option>
+                                               <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                                  {{option.Company_Name}}
+                                                </option>
+                                          </select>
+                                        </div>
+                                        <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="col-sm-3">
+                                            <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetSearchedlist(GRNSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                      <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                   </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="table-id">
+                                <p-table [value]="Searchedlist" #dt1 
+                                [paginator]="true" [rows]="100" 
+                                [loading]="seachSpinner" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                [responsive]="true"
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]"
+                                 [rowHover]="true" 
+                                 [globalFilterFields]='["GRN_No","GRN_Date","Sub_Ledger_Name","Cost_Cen_Name","godown_name","SE_No_Date","RDB_No","RDB_Date","PO_Doc_Date","Mode_Of_transport",
+                                  "LR_No_Date","Vehicle_No","Remarks","Quantity_Remarks","Quality_Rejection_Remarks","Deduction_For_Rejection"] '>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap="nowrap">GRN No</th>
+                                            <th nowrap="nowrap">GRN Date</th>
+                                            <th nowrap="nowrap">Supplier</th>
+                                            <th nowrap="nowrap">Department</th>
+                                            <th nowrap="nowrap">Cost Center</th>
+                                            <th nowrap="nowrap">Godown</th>
+                                            <!-- <th nowrap="nowrap">RDB No Date</th> -->
+                                            <th nowrap="nowrap">SE No Date</th>
+                                            <th nowrap="nowrap">RDB No</th>
+                                            <th nowrap="nowrap">RDB Date</th>
+                                            <!-- Inv_No_Date
+                                            AC_Head -->
+                                            <th nowrap="nowrap">Mode Of Transport</th>
+                                            <th nowrap="nowrap">LR No Date</th>
+                                            <th nowrap="nowrap">Vehicle No</th>
+                                            <!-- Supplier_Bill_No
+                                            Supplier_Bill_Date 
+                                            <th>Remarks</th> -->
+                                            <th nowrap="nowrap">Quantity Remarks</th>
+                                            <th nowrap="nowrap">Quality / Rejection Remarks</th>
+                                            <th nowrap="nowrap">Deduction For Rejection</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                    <ul class="dropdown-menu">
+                                                        <!-- <li>
+                                                            <a (click)="View(col)">
+                                                                <i class="fa fa-fw fa-eye" aria-hidden="true"></i> View
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="exportoexcel2(col,'Purchase_Planning')">
+                                                                <i class="glyphicon glyphicon-save" aria-hidden="true"></i> export to excel
+                                                            </a>
+                                                        </li> -->
+                                                        <li>
+                                                            <a (click)="Edit(col)">
+                                                              <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
+                                                              Edit
+                                                          </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="PrintPGRN(col.GRN_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Rejected_Qty > 0">
+                                                            <a (click)="RejectionPrintPGRN(col.GRN_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Rejection Print
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                                <a (click)="Delete(col)">
+                                                                    <i class="fa fa-fw fa fa-trash" aria-hidden="true"></i>
+                                                                    Delete
+                                                                </a>
+                                                            </li>
+                                                    </ul>
+                                                </div>      
+                                            </td>
+                                            <td nowrap="nowrap">{{col.GRN_No}}</td>
+                                            <td nowrap="nowrap">{{col.GRN_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td nowrap="nowrap">{{col.Sub_Ledger_Name}}</td>
+                                            <td nowrap="nowrap">{{col.Dept_Name}}</td>
+                                            <td nowrap="nowrap">{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
+                                            <td nowrap="nowrap">{{col.godown_name }}</td>
+                                            <!-- <td nowrap="nowrap">{{col.RDB_No_Date }}</td> -->
+                                            <td nowrap="nowrap">{{col.SE_No_Date }}</td>
+                                            <td nowrap="nowrap">{{col.RDB_No }}</td>
+                                            <td nowrap="nowrap">{{col.RDB_Date | date : 'dd/MMM/yyyy' }}</td>
+                                            <td nowrap="nowrap">{{col.Mode_Of_transport }}</td>
+                                            <td nowrap="nowrap">{{col.LR_No_Date }}</td>
+                                            <td nowrap="nowrap">{{col.Vehicle_No }}</td>
+                                            <!-- <td>{{col.Remarks }}</td> -->
+                                            <td nowrap="nowrap">{{col.Quantity_Remarks }}</td>
+                                            <td nowrap="nowrap">{{col.Quality_Rejection_Remarks }}</td>
+                                            <td nowrap="nowrap">{{col.Deduction_For_Rejection }}</td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+
+                            </div>
+
+                        </p-tabPanel>
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <div class="panel-group">
+                                <div class="panel panel-primary">
+                                    <div class="panel-body">
+                                        <form name="GRNForm" #GRNForm="ngForm" novalidate>
+                                            <div class="form-group">
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">GRN Date <sup class="text-danger">*</sup></label>
+                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='GRNDate' [min]='minFromDate' [max]='maxFromDate'></ejs-datepicker>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                                    <select class="form-control" 
+                                                    name="company" 
+                                                    #company="ngModel" 
+                                                    [(ngModel)]="ObjGRN1.Company_ID"
+                                                    [ngClass]="{'clearance': GRNFormSubmitted && company.errors?.required}"
+                                                    required>
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                       <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                                          {{option.Company_Name}}
+                                                        </option>
+                                                  </select>
+                                                </div>
+                                                <!-- <div class="col-sm-4">
+                                                    <label class="control-label">Supplier <sup class="text-danger">*</sup></label>
+                                                    <select class="form-control" name="supplier" #supplier="ngModel" [(ngModel)]="ObjGRN1.Sub_Ledger_ID" (change)="GetRDBNo()" [ngClass]="{'clearance': GRNFormSubmitted && supplier?.errors?.required}" required>
+                                                        <option  [ngValue]="undefined">Select</option>
+                                                          <option *ngFor = "let option of Supplierlist" value= "{{option.Sub_Ledger_ID}}">
+                                                            {{option.Sub_Ledger_Name}}
+                                                          </option>
+                                                    </select>
+                                                </div> -->
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Supplier<sup class="text-danger">*</sup></label>
+                                                    <p-dropdown [options]="Supplierlist" name="Supplier" [(ngModel)]="ObjGRN1.Sub_Ledger_ID"  [showClear]="true" [emptyFilterMessage]="' No Supplier Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Supplier Name'" [virtualScroll]="true"
+                                                        itemSize="30" #Supplier="ngModel" [styleClass]="
+                                                        GRNFormSubmitted && Supplier.errors?.required
+                                                              ? 'clearance'
+                                                              : ''
+                                                          " [required]="true" (onChange)="GetRDBNo()">
+                                                    </p-dropdown>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <!-- <div class="col-sm-2">
+                                                    <label class="control-label">R.D.B No. & Date <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="rdbnondate" #rdbnondate="ngModel" [(ngModel)]="ObjGRN1.RDB_No_Date" placeholder="R.D.B No. & Date" [ngClass]="{'clearance':GRNFormSubmitted && rdbnondate?.errors?.required}" required>
+                                                    
+                                                </div> -->
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Cost center<sup class="text-danger">*</sup></label>
+                                                    <select class="form-control" name="CostCenter" #CostCenter="ngModel" [(ngModel)]="ObjGRN1.Cost_Cen_ID" [ngClass]="{'clearance': GRNFormSubmitted && CostCenter?.errors?.required}" (change)="GetGodown()">
+                                                          <option  [ngValue]="undefined">Select</option>
+                                                          <option  *ngFor="let option of CostCenterlist" value="{{option.Cost_Cen_ID}}">
+                                                            {{option.Cost_Cen_Name}}
+                                                          </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
+                                                    <select class="form-control" name="godown" #godown="ngModel" [(ngModel)]="ObjGRN1.godown_id" [ngClass]="{'clearance': GRNFormSubmitted && godown?.errors?.required}">
+                                                         <option  [ngValue]="undefined">Select</option>
+                                                            <option  *ngFor="let option of Godownlist" value="{{option.godown_id}}">
+                                                            {{option.godown_name}}
+                                                            </option>
+                                                     </select>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">R.D.B No<sup class="text-danger">*</sup></label>
+                                                    <select *ngIf="buttonname != 'Update'" class="form-control" name="poorder" #poorder="ngModel" [(ngModel)]="ObjGRN1.RDB_No" (change)='GetProductDetails()' [ngClass]="{'clearance': GRNFormSubmitted && poorder?.errors?.required}" required>
+                                                     <option  [ngValue]="undefined">Select</option>
+                                                         <option *ngFor = "let option of RDBNolist" value= "{{option.RDB_No}}">
+                                                            {{option.RDB_No}}
+                                                        </option>
+                                                    </select>
+                                                    <div class="label-t" *ngIf="buttonname === 'Update'">{{ObjGRN1.RDB_No}} </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">R.D.B Date  <sup class="text-danger">*</sup></label>
+                                                    <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='PODate' [enabled]="podatedisabled"></ejs-datepicker>
+                                                </div>
+                                                <!-- <div class="col-sm-3">
+                                                    <label class="control-label">P.O Date <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="podate" #podate="ngModel" [(ngModel)]="ObjGRN.PO_Date" [ngClass]="{'clearance':GRNFormSubmitted && podate?.errors?.required}" required>
+                                                </div> -->
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">S.E No. & Date <sup class="text-danger">*</sup></label>
+                                                    <!-- <input class="form-control" name="senondate" #senondate="ngModel" [(ngModel)]="ObjGRN1.SE_No_Date" placeholder="S.E No. & Date" [ngClass]="{'clearance':GRNFormSubmitted && senondate?.errors?.required}" required> -->
+                                                    <!-- <div class="label-t">{{SENo+" &"}} {{ObjGRN1.SE_No_Date | date : 'dd/MMM/yyyy'}} </div> -->
+                                                    <div class="label-t">{{SENo}} {{getDateFormat(SE_No_Date)}} </div>
+                                                    <!-- <textarea class="form-control" name="senondate" #senondate="ngModel" [(ngModel)]="ObjGRN.SE_No_Date" [ngClass]="{'clearance':GRNFormSubmitted && senondate?.errors?.required}" required></textarea> -->
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">INV No. & Date <sup class="text-danger">*</sup></label>
+                                                    <!-- <input class="form-control" name="senondate" #senondate="ngModel" [(ngModel)]="ObjGRN1.SE_No_Date" placeholder="S.E No. & Date" [ngClass]="{'clearance':GRNFormSubmitted && senondate?.errors?.required}" required> -->
+                                                    <!-- <div class="label-t">{{SENo+" &"}} {{ObjGRN1.SE_No_Date | date : 'dd/MMM/yyyy'}} </div> -->
+                                                    <div class="label-t">{{INVNo}} {{getDateFormat(INV_No_Date)}} </div>
+                                                    <!-- <textarea class="form-control" name="senondate" #senondate="ngModel" [(ngModel)]="ObjGRN.SE_No_Date" [ngClass]="{'clearance':GRNFormSubmitted && senondate?.errors?.required}" required></textarea> -->
+                                                </div>
+                                                
+                                               
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Mode of Transport <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="mot" #mot="ngModel" [(ngModel)]="ObjGRN1.Mode_Of_transport" placeholder="Mode of Transport" [ngClass]="{'clearance':GRNFormSubmitted && mot?.errors?.required}" required>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">L.R No. & Date <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="lrnondate" #lrnondate="ngModel" [(ngModel)]="ObjGRN1.LR_No_Date" placeholder="L.R No. & Date" [ngClass]="{'clearance':GRNFormSubmitted && lrnondate?.errors?.required}" required>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Vehicle No. <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="vehicleno" #vehicleno="ngModel" [(ngModel)]="ObjGRN1.Vehicle_No" placeholder="Vehicle No." [ngClass]="{'clearance':GRNFormSubmitted && vehicleno?.errors?.required}" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-4">
+                                                    <label class="control-label">Product Details <sup class="text-danger">*</sup></label>
+                                                    <select class="form-control" name="productdetails" #productdetails="ngModel" [(ngModel)]="ObjGRN.Product_ID"  (change)="GetRate()" [ngClass]="{'clearance': GRNFormSubmitted && productdetails?.errors?.required}" required>
+                                                     <option  [ngValue]="undefined">Select</option>
+                                                         <option *ngFor = "let option of ProductDetailslist" value= "{{option.Product_ID}}">
+                                                            {{option.Product_Description}}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Rate <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="rate" #rate="ngModel" [(ngModel)]="ObjGRN.Rate" placeholder="Rate" CompacctDigitonly="true" [ngClass]="{'clearance':GRNFormSubmitted && rate?.errors?.required}" >
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Unit <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="unit" #unit="ngModel" [(ngModel)]="ObjGRN.Unit" placeholder="Unit" [disabled]="disabledflaguom" [ngClass]="{'clearance':GRNFormSubmitted && unit?.errors?.required}" required>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">HSN Code <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="hsncode" #hsncode="ngModel" [(ngModel)]="ObjGRN.HSN_Code" placeholder="HSN Code" [disabled]="true" [ngClass]="{'clearance':GRNFormSubmitted && hsncode?.errors?.required}" required>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Challan Qty <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="chanllan" #chanllan="ngModel" [(ngModel)]="ObjGRN.Challan_Qty" placeholder="Challan" CompacctDigitonly="true" [ngClass]="{'clearance':GRNFormSubmitted && chanllan?.errors?.required}" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Received Qty <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="rec" #rec="ngModel" [(ngModel)]="ObjGRN.Received_Qty" (ngModelChange)="RecQtyValidation()" placeholder="Received" CompacctDigitonly="true" [ngClass]="{'clearance':GRNFormSubmitted && rec?.errors?.required}" required>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Accepted Qty <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="accept" #accept="ngModel" [(ngModel)]="ObjGRN.Accepted_Qty" placeholder="Accepted" (ngModelChange)="Calculate()" CompacctDigitonly="true" [ngClass]="{'clearance':GRNFormSubmitted && accept?.errors?.required}" required>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <label class="control-label">Rejected Qty <sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="reject" #reject="ngModel" [(ngModel)]="ObjGRN.Rejected_Qty" placeholder="Rejected" [disabled]="true" CompacctDigitonly="true" [ngClass]="{'clearance':GRNFormSubmitted && reject?.errors?.required}" required>
+                                                </div>
+                                                <div class="col-sm-1">
+                                                    <button id="row-Add" class="btn btn-primary custombutton2" (click)="Add(GRNForm.form.valid)">
+                                                     <!-- <i class="fa fa-fw fa-add"></i>&nbsp; Add --> Add
+                                                    </button>
+                                                </div>
+                                                <!-- <div class="col-sm-1">
+                                                    <button id="row-Add" class="btn btn-primary custombutton2" (click)="Refresh()"> Clear
+                                                    </button>
+                                                </div> -->
+                                            </div>
+                                        
+                                            <!-- <div class="form-group">
+                                            </div> -->
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+                            <div class="table-responsive no-padding">
+                                <table class="table table-bordered">
+                                    <thead style="background-color:#4fa1d1;color:white;">
+                                        <tr>
+                                            <th rowspan="2">Sl.No.</th>
+                                            <th rowspan="2">Material Description</th>
+                                            <th rowspan="2">HSN Code</th>
+                                            <th rowspan="2">Unit</th>
+                                            <th colspan="4" style="text-align:center ;">Quantity</th>
+                                            <th rowspan="2">Rate</th>
+                                            <!-- <th rowspan="2">Freight-P/F %</th>
+                                            <th rowspan="2">Freight-P/F Charges</th> -->
+                                            <th rowspan="2">Discount Amt</th>
+                                            <th rowspan="2">Taxable Value (Rs.)</th>
+                                            <!-- <th colspan="2">Tax & Duties</th> -->
+                                            <th rowspan="2">Gst%</th>
+                                            <th rowspan="2">Tax</th>
+                                            <th rowspan="2">Total Amount (Rs.)</th>
+                                            <th rowspan="2">Remarks</th>
+                                            <th rowspan="2" *ngIf="buttonname === 'Update'">Edit</th>
+                                            <th rowspan="2" *ngIf="buttonname != 'Update'">Delete</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Challan</th>
+                                            <th>Received</th>
+                                            <th>Rejected</th>
+                                            <th>Accepted</th>
+                                            <!-- <th>Gst%</th>
+                                            <th>Tax</th> -->
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let obj of productaddSubmit ; let ind = index; let odd = odd;" [class.even]="odd">
+                                            <!--let ind = index; -->
+                                            <td>{{ ind + 1 }}</td>
+                                            <td>{{obj.Product_Details}}</td>
+                                            <td>{{obj.HSN_Code}}</td>
+                                            <td>{{obj.Unit}}</td>
+                                            <td>{{obj.Challan}}</td>
+                                            <td>{{obj.Received}}</td>
+                                            <td>{{obj.Rejected}}</td>
+                                            <td>{{obj.Accepted}}</td>
+                                            <td>{{obj.Rate}}</td>
+                                            <!-- <td>{{obj.Freight_PF_Perc}}</td>
+                                            <td>{{obj.Freight_PF_Charges}}</td> -->
+                                            <td>{{obj.Discount_Amount}}</td>
+                                            <td>{{obj.Taxable_Value}}</td>
+                                            <td>{{obj.GST_Tax_Per}}</td>
+                                            <td>{{obj.Tax}}</td>
+                                            <td>{{ obj.Total_Amount}}</td>
+                                            <td><input type="text" [name]="obj.Product_ID" [(ngModel)]='obj.Remarks' class="form-control" style="width: 200px;" /></td> 
+                                            <td *ngIf="buttonname === 'Update'"> <a class="btn btn-sm btn-warning" (click)="EditAdd(ind)"
+                                                ><div><i class="fa fa-fw fa-edit"> </i></div>
+                                              </a></td>
+                                              <td *ngIf="buttonname != 'Update'"> <a class="btn btn-sm btn-danger" (click)="delete(ind)"
+                                                ><div><i class="fa fa-fw fa-trash"> </i></div>
+                                              </a></td>
+                                            <!-- <td *ngIf="!obj?.deleteflag"><button (click)="delete(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td> -->
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <br>
+                                <hr class="box boxboxDivide-primary" />
+                                <form #TermForm="ngForm" novalidate>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                             <label class="control-label">Term Name<sup class="text-danger">*</sup></label>
+                                             <select class="form-control" name="termname" #termname="ngModel" [(ngModel)]="ObjTerm.Term_ID"
+                                                [ngClass]="{clearance: TermFormSubmitted && termname?.errors?.required}"
+                                                (change)="TermChange()" required >
+                                             <option [ngValue]="undefined">Select</option>
+                                             <option *ngFor="let option of TermList" [ngValue]="option.Term_ID">{{ option.Term_Name }}</option>
+                                            </select>
+                                         </div>
+                                        <div class="col-sm-2">
+                                          <label>HSN No<sup class="text-danger"></sup></label>
+                                            <input class="form-control" name="HSNNo" [(ngModel)]="ObjTerm.HSN_No" required="true" disabled="true" placeholder="HSN No" />
+                                        </div>
+                                        <div class="col-sm-2">
+                                          <label>Term Amount<sup class="text-danger">*</sup></label>
+                                            <input class="form-control" name="termamount" #termamount="ngModel" [(ngModel)]="ObjTerm.Term_Amount"
+                                              [ngClass]="{clearance: TermFormSubmitted && termamount?.errors?.required}"
+                                              required="true" CompacctDigitonly="true" placeholder="Term Amount" />
+                                        </div>
+                                       <button type="submit" class="btn btn-primary custombutton" (click)="AddTerm(TermForm.form.valid)">
+                                        <span class="glyphicon glyphicon-plus"></span>Add
+                                       </button>
+                                    </div>
+                                <br>
+                                <div class="table-responsive no-padding">
+                                    <table class="table table-bordered">
+                                     <thead style="background-color:#3c8dbc;color:white;">
+                                        <tr style="background-color:#3c8dbc;color:white;">
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Sl. No.</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Term Name</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">HSN No</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Term Amount</th>
+                                          <th colspan="2" scope="colgroup" class="text-center">GST</th>
+                                          <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Net Amount</th>
+                                          <th rowspan="2" class="text-center" style="vertical-align:middle">Delete</th>
+                                        </tr>
+                                        <tr style="background-color:#3c8dbc;color:white">
+                                           <th scope="col" class="text-center">Rate</th>
+                                           <th scope="col" class="text-center">Amt.</th>
+                                         </tr>
+                                     </thead>
+                                    <tbody>
+                                        <tr *ngFor=" let TermTableList of AddTermList; let ind = index; let odd = odd;" [class.even]="odd">
+                                          <td>{{ ind + 1  }}</td>
+                                          <td>{{ TermTableList.Term_Name }}</td>
+                                          <td>{{ TermTableList.HSN_No }}</td>
+                                          <td>{{ TermTableList.Term_Amount }}</td>
+                                          <td>{{ TermTableList.GST_Per }}</td>
+                                          <td>{{ TermTableList.GST_Amount }}</td>
+                                          <td>{{getTofix(TermTableList.Term_Amount + TermTableList.GST_Amount)}}</td>
+                                          <td><button (click)="DeteteTerm(ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                   </table>
+                                </div>
+                                </form>
+                                <br>
+                        <div class="form-group" *ngIf="productaddSubmit.length">
+                            <div class="col-sm-3">
+                             <label class="control-label">TCS Tax Required <sup class="text-danger">*</sup> </label>
+                             <select class="form-control" 
+                             name="tcstaxreq" 
+                             #tcstaxreq="ngModel" 
+                             [(ngModel)]="ObjGRN1.TCS_Y_N"
+                             (ngModelChange)="GetTCSdat()"
+                             [ngClass]="{'clearance': TCSTaxRequiredValidation && tcstaxreq?.errors?.required}" required>
+                                <option  [ngValue]="undefined">Select</option>
+                                <option value ="YES">YES</option>
+                                <option value ="NO">NO</option>
+                             </select>
+                            </div>
+                            <div class="col-sm-3" *ngIf="ObjGRN1.TCS_Y_N == 'YES'">
+                                <label class="control-label">TCS % <sup class="text-danger">*</sup> </label>
+                                <select class="form-control" 
+                                name="tcsper" 
+                                #tcsper="ngModel" 
+                                [(ngModel)]="ObjGRN1.TCS_Per"
+                                (ngModelChange)="TcsAmtCalculation()"
+                                [ngClass]="{'clearance': TCSTaxRequiredValidation && tcsper?.errors?.required}" required>
+                                   <option  [ngValue]="undefined">Select</option>
+                                   <option *ngFor = "let option of TCSdataList" [value] ="option.TCS_Persentage">
+                                    {{option.TCS_Persentage}}
+                                  </option>
+                                </select>
+                            </div>
+                        </div>
+                            <br>
+                            <div class="clearfix"></div>
+                            <br>
+                                  <div class="table-responsive">
+                                        <table class="table">
+                                          <tbody>
+                                            <tr>
+                                            <th>Total Amount:</th>
+                                            <td class="amt-td ng-binding">{{getTofix(grTotal) ? getTofix(grTotal) : 0}}</td>
+                                            <th>Term Amount :</th>
+                                            <td class="amt-td ng-binding">{{ GrTermAmount ? getTofix(GrTermAmount) : 0}}</td>
+                                            <th>TCS Amount :</th>
+                                            <td class="amt-td ng-binding">{{ObjGRN1.TCS_Amount}}</td>
+                                             </tr>
+                                            <tr>
+                                            <th>Discount Amount :</th>
+                                            <td class="amt-td ng-binding">{{disTotal ? getTofix(disTotal) : 0}}</td>
+                                            <th>Total GST :</th>
+                                            <td class="amt-td ng-binding">{{getTofix(GSTTotal + GrGstTermAmt)}}</td>
+                                            <th>Net Amount</th>
+                                            <td class="amt-td ng-binding">{{RoundOff(taxAblTotal + GrTermAmount + GSTTotal + GrGstTermAmt + ObjGRN1.TCS_Amount)}}</td>
+                                            </tr>
+                                            <tr>
+                                            <th>Taxable Amount :</th>
+                                            <td class="amt-td ng-binding">{{ taxAblTotal ? getTofix(taxAblTotal) : 0}}</td>
+                                            <th>Rounded Off :</th>
+                                            <td class="amt-td ng-binding">{{getRoundedOff()}}</td>
+                                            <th></th>
+                                            <td class="amt-td"></td>
+                                            </tr>
+                                            </tbody>
+                                    </table>
+                                      </div>
+                            <br>
+                            <br>
+
+                            <div class="panel-group">
+                                <div class="panel panel-primary">
+                                    <div class="panel-body">
+                                        <form name="GRN2Form" #GRN2Form="ngForm" novalidate>
+                                            <div class="form-group">
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Quantity Remarks <sup class="text-danger">*</sup></label>
+                                                    <textarea class="form-control" name="qtyremarks" #qtyremarks="ngModel" [(ngModel)]="ObjGRN2.Quantity_Remarks" placeholder="Quantity Remarks" [ngClass]="{'clearance':GRN2FormSubmitted && qtyremarks?.errors?.required}" required></textarea>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Quality / Rejection Remarks <sup class="text-danger">*</sup></label>
+                                                    <textarea class="form-control" name="qlrejremarks" #qlrejremarks="ngModel" [(ngModel)]="ObjGRN2.Quality_Rejection_Remarks" placeholder="Quality / Rejection Remarks" [ngClass]="{'clearance':GRN2FormSubmitted && qlrejremarks?.errors?.required}" required></textarea>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Deduction for Rejection <sup class="text-danger">*</sup></label>
+                                                    <!-- <input class="form-control" name="deduction" #deduction="ngModel" [(ngModel)]="ObjGRN2.Deduction_for_Rejection" placeholder="Deduction for Rejection" [ngClass]="{'clearance':GRN2FormSubmitted && deduction?.errors?.required}" required> -->
+                                                    <textarea class="form-control" name="deduction" #deduction="ngModel" [(ngModel)]="ObjGRN2.Deduction_For_Rejection" placeholder="Deduction for Rejection" [ngClass]="{'clearance':GRN2FormSubmitted && deduction?.errors?.required}" required></textarea>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <label class="control-label">Remarks </label>
+                                                    <textarea class="form-control" name="alloverremarks" #alloverremarks="ngModel" [(ngModel)]="ObjGRN2.All_Over_Remarks" placeholder="Remarks" [ngClass]="{'clearance':GRN2FormSubmitted && alloverremarks?.errors?.required}" ></textarea>
+                                                </div>
+                                            </div>
+                                        
+                                            <!-- <div class="form-group">
+                                            </div> -->
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- <hr class="box boxboxDivide-primary ng-scope"> -->
+
+                            <div class="box-footer">
+                                <button class="btn btn-primary pull-right" (click)="SaveGRN(GRN2Form.form.valid)" id="load" [disabled]="Spinner">
+                           <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                       <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                   </button>
+                            </div>
+                        </p-tabPanel>
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-hourglass">
+                            <form name="PendingRDBForm" #PendingRDBForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                    <select class="form-control" 
+                                    name="prdbcompany" 
+                                    #prdbcompany="ngModel" 
+                                    [(ngModel)]="ObjPendingRDB.Company_ID"
+                                    [ngClass]="{'clearance': PendingRDBFormSubmitted && prdbcompany?.errors?.required}"
+                                    required>
+                                    <option  [ngValue]="undefined">Select</option>
+                                       <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                          {{option.Company_Name}}
+                                        </option>
+                                  </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Date</label>
+
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRangeprdb($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPendingRDB(PendingRDBForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="seachSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <span
+                                        *ngIf="!seachSpinner"
+                                        class="glyphicon glyphicon-search"
+                                      ></span
+                                      >&nbsp;Search
+                                    </button>
+                                </div>
+                            </div>
+                            </form> 
+                            <div class="no-padding">
+                                <p-table [value]="PendingRDBList"
+                                [paginator]="PendingRDBList.length ? true : false"
+                                *ngIf='PendingRDBList.length'
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='DynamicHeaderforPRDB'
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforPRDB">{{option.replaceAll('_',' ')}}</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+    
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="CreateGRN(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Create GRN 
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="PrintPRDB(col.RDB_No)">
+                                                                <i class="fa fa-fw fa-print"></i> Print
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <ng-container *ngFor="let option of DynamicHeaderforPRDB">
+                                                <td nowrap="nowrap">{{col[option]}}</td>
+                                            </ng-container>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+
+                        </p-tabPanel>
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-hourglass">
+                            <form name="PendRDBProWiseForm" #PendRDBProWiseForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                        <select class="form-control" 
+                                        name="prdbprowisecompany" 
+                                        #prdbprowisecompany="ngModel" 
+                                        [(ngModel)]="ObjPendRDBProWise.Company_ID"
+                                        [ngClass]="{'clearance': PendRDBProWiseFormSubmitted && prdbprowisecompany?.errors?.required}"
+                                        required>
+                                        <option  [ngValue]="undefined">Select</option>
+                                           <option *ngFor = "let option of companyList" [value] ="option.Company_ID">
+                                              {{option.Company_Name}}
+                                            </option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+    
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRangeprdbprowise($event)" [HardCodeDateOpt]="initDate">
+                                        </app-compacct-daterangepicker>
+    
+                                    </div>
+    
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPendRDBProWise(PendRDBProWiseForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                          <p-progressSpinner
+                                            *ngIf="seachSpinner"
+                                            [style]="{ width: '15px', height: '15px' }"
+                                            strokeWidth="8"
+                                            animationDuration=".5s"
+                                          ></p-progressSpinner>
+                                          <span
+                                            *ngIf="!seachSpinner"
+                                            class="glyphicon glyphicon-search"
+                                          ></span
+                                          >&nbsp;Search
+                                        </button>
+                                    </div>
+                                </div>
+                                </form>
+                                <div class="table-responsive no-padding">
+                                    <p-table [value]="PendRDBProWiseList" 
+                                    *ngIf='PendRDBProWiseList.length' #dt5
+                                     [paginator]="PendRDBProWiseList.length ? true : false"
+                                     [rows]="100"
+                                     [rowHover]="true" 
+                                     [autoLayout]="true" 
+                                     sortMode="multiple" 
+                                     [rowsPerPageOptions]="[100,200,300]" 
+                                     [rowHover]="true"
+                                     [columns]="cols"
+                                     [globalFilterFields]='DynamicHeaderforPRDBProWise'>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt5.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+        
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th *ngFor="let option of DynamicHeaderforPRDBProWise">{{option.replaceAll('_',' ')}}</th>
+                                               </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button"
+                                                            data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <a (click)="PrintPRDB(col.RDB_No)">
+                                                                    <i class="fa fa-fw fa-print"></i> Print
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                <ng-container *ngFor="let option of DynamicHeaderforPRDBProWise">
+                                                    <td>{{col[option]}}</td>
+                                                </ng-container>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" *ngIf="PendRDBProWiseList.length" let-state>
+                                            Showing {{ state.first + 1 }} of
+                                            {{ state.first + 1 + state.rows }} of
+                                            {{ state.totalRecords }}
+                                        </ng-template>
+                                    </p-table>
+                                </div> 
+                        </p-tabPanel>
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[4]" leftIcon="glyphicon glyphicon-list-alt">
+                            <!-- <form name="PendingPOForm" #PendingPOForm="ngForm" novalidate> -->
+                            <div class="form-group">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Date</label>
+
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRangeForRegister($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="PrintGRNRegister()" id="load" [disabled]="RegisterSpinner">
+                                      <p-progressSpinner
+                                        *ngIf="RegisterSpinner"
+                                        [style]="{ width: '15px', height: '15px' }"
+                                        strokeWidth="8"
+                                        animationDuration=".5s"
+                                      ></p-progressSpinner>
+                                      <!-- <span
+                                        *ngIf="!seachSpinner"
+                                        class="glyphicon glyphicon-search"
+                                      ></span
+                                      >&nbsp; -->Show Register
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- </form> -->
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

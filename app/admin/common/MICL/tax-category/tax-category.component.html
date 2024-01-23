@@ -1,0 +1,293 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" baseZIndex="99999" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6"*ngIf="can_popup && !act_popup">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6"  *ngIf="act_popup && !can_popup">
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                        <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)"> 
+                                <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                                    <div class="table-responsive no-padding">
+                                        <div class="table-responsive no-padding">
+                                            <p-table [value]="AllData" 
+                                            [paginator] 
+                                            [rows]="10" [rowHover]="true"
+                                            [autoLayout]="true" 
+                                            sortMode="multiple" 
+                                            [rowsPerPageOptions]="[10,20,30]"
+                                            [globalFilterFields]="['Cat_Name','IGST_Input_ledger_Name','CGST_Input_Ledger_Name','SGST_Input_Ledger_Name','IGST_Output_Ledger_Name','CGST_Output_Ledger_Name','SGST_Output_Ledger_Name']"[rowHover]="true" #dt>
+
+                                                <ng-template pTemplate="caption">
+                                                    <div class="row">
+                                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                        </div>
+                                                    </div>
+
+                                                </ng-template>
+                                                <ng-template pTemplate="header">
+                                                    <tr>
+                                                        <th style="width:5em">Action</th>
+                                                        <th>Tax Category</th>
+                                                        <th>Tax %</th>
+                                                        <th>IGST Input</th>
+                                                        <th>CGST Input</th>
+                                                        <th>SGST Input</th>
+                                                        <th>IGST Output</th>
+                                                        <th>CGST Output</th>
+                                                        <th>SGST output</th>
+                                                    </tr>
+                                                </ng-template> 
+                                                <ng-template pTemplate="body" let-col>
+                                                    <tr [class]='col.Is_Visiable === "N" ? "text-red-active" : ""'>
+                                                        <td>
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle" 
+                                                                type="button" data-toggle="dropdown" style="height:27px">
+                                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                                    <span class="caret"></span>
+                                                                                </button>
+                                                                <ul class="dropdown-menu">
+                                                                     <li *ngIf="col.Is_Visiable == 'Y'"  >
+                                                                        <a (click)="EditTax(col)">
+                                                                            <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                        </a>
+                                                                    </li>
+
+                                                                    <li *ngIf="col.Is_Visiable == 'Y'" >
+                                                                        <a (click)="DeleteTax(col)">
+                                                                            <i class="fa fa-fw fa-trash"></i> Inactive
+                                                                        </a>
+                                                                    </li>
+
+                                                                    <li *ngIf="col.Is_Visiable == 'N'" >
+                                                                        <a (click)="Active(col)">
+                                                                            <i class="fa fa-power-off"></i> Active
+                                                                        </a>
+                                                                    </li> 
+                                                                </ul>
+                                                            </div>
+                                                        </td> 
+                                                    <td>{{col.Cat_Name ? col.Cat_Name:"-"}}</td>
+                                                    <td>{{col.GST_Tax_Per}}</td>
+                                                    <td>{{col.IGST_Input_ledger_Name ? col.IGST_Input_ledger_Name:"-"}}</td>
+                                                    <td>{{col.CGST_Input_Ledger_Name ? col.CGST_Input_Ledger_Name:"-"}}</td>
+                                                    <td>{{col.SGST_Input_Ledger_Name ? col.SGST_Input_Ledger_Name:"-"}}</td>
+                                                    <td>{{col.IGST_Output_Ledger_Name ? col.IGST_Output_Ledger_Name:"-"}}</td>
+                                                    <td>{{col.CGST_Output_Ledger_Name ? col.CGST_Output_Ledger_Name:"-"}}</td>
+                                                    <td>{{col.SGST_Output_Ledger_Name ? col.SGST_Output_Ledger_Name:"-"}}</td>
+                                                    </tr>
+                                                </ng-template>
+                                                <!-- <ng-template pTemplate="paginatorright" let-state> </ng-template> -->
+                                            </p-table>
+                                        </div>
+                                    </div>    
+                                </p-tabPanel>
+                                <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                                    <form name="taxForm" #taxForm="ngForm" novalidate >
+                            <div class="panel-group" style="margin-bottom: 20px"> 
+                                <div class="panel panel-primary" style="margin-bottom:0;border-radius: 4px;">                                   
+                                    <div class="panel-body" style="padding: 15px;">     
+                                        <div class="form-group">
+                                                            <div class="col-sm-6">
+                                                                <label class="control-label">GST Category Name
+                                                                    <sup class="text-danger">*</sup>
+                                                                </label>
+                                                                <input class="form-control" type="text" placeholder="GST Category Name"
+                                                                    name="Cat_Name"
+                                                                    #Cat_Name ="ngModel"
+                                                                    [(ngModel)]="ObjTax.Cat_Name"
+                                                                    [ngClass]="{'clearance': TaxFormSubmitted && Cat_Name?.errors?.required}"required>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                    <label class="control-label">IGST Input<sup class="text-danger">*</sup></label>
+                                                                    <div class="pull-right" style="display:inline-block;margin-bottom: -10px;">
+                                                                        <p-checkbox name="Igstckeck" 
+                                                                        #Igstckeck="ngModel" 
+                                                                        [(ngModel)]="IGST_Check" 
+                                                                        [style]="{'margin':'4px 3px'}" 
+                                                                        (onChange)="allLedger('IGST')" aria-invalid="false" binary="true"></p-checkbox>
+                                                                        <label for="IGST1"><small>All Ledgers</small></label>
+                                                                    </div>
+                                                                        <p-dropdown 
+                                                                        [options]="AllIGSTData" 
+                                                                        name="IGST_Input_Ledger_ID"
+                                                                        [(ngModel)]="ObjTax.IGST_Input_Ledger_ID"
+                                                                        #IGST_Input_Ledger_ID="ngModel" 
+                                                                        [showClear]="true" 
+                                                                        [emptyFilterMessage]="' No Item Found'" 
+                                                                        [filter]="true" filterBy="label,value.name" 
+                                                                        [resetFilterOnHide]="true" 
+                                                                        [placeholder]="'Select IGST Input'" 
+                                                                        [virtualScroll]="true" 
+                                                                        itemSize="30"
+                                                                        [ngClass]="{'clearance': TaxFormSubmitted && IGST_Input_Ledger_ID.errors?.required}"required>
+                                                                        </p-dropdown>
+                                                            </div> 
+                                                            <div class="col-sm-6">
+                                                                <label class="control-label">CGST Input<sup class="text-danger">*</sup></label>
+                                                                <div class="pull-right" style="display:inline-block;margin-bottom: -10px;">
+                                                                    <p-checkbox name="CGSTinputckeck" #CGSTinputckeck="ngModel" [(ngModel)]="CGST_inputckeck" [style]="{'margin':'4px 3px'}" (onChange)="allLedger('CGST')" aria-invalid="false" binary="true"></p-checkbox>
+                                                                    <label for="CGST1"><small>All Ledgers</small></label>
+                                                                </div>
+                                                                    <p-dropdown 
+                                                                    [options]="AllCGSTData" 
+                                                                    name="CGST_Input_Ledger_ID"
+                                                                    [(ngModel)]="ObjTax.CGST_Input_Ledger_ID"
+                                                                    #CGST_Input_Ledger_ID="ngModel" 
+                                                                    [showClear]="true" 
+                                                                    [emptyFilterMessage]="' No Item Found'" 
+                                                                    [filter]="true" filterBy="label,value.name" 
+                                                                    [resetFilterOnHide]="true" 
+                                                                    [placeholder]="'Select GST Input'" 
+                                                                    [virtualScroll]="true" 
+                                                                    itemSize="30"
+                                                                    [ngClass]="{'clearance': TaxFormSubmitted && CGST_Input_Ledger_ID.errors?.required}"required>
+                                                                    </p-dropdown>
+                                                           </div> 
+                                                             <div class="col-sm-6">
+                                                            <label class="control-label">SGST Input<sup class="text-danger">*</sup></label>
+                                                            <div class="pull-right" style="display:inline-block;margin-bottom: -10px;">
+                                                                <p-checkbox name="SGSTinputckeck" #SGSTinputckeck="ngModel" [(ngModel)]="SGST_inputckeck" [style]="{'margin':'4px 3px'}" (onChange)="allLedger('SGST')" aria-invalid="false" binary="true"></p-checkbox>
+                                                                <label for="sGST1"><small>All Ledgers</small></label>
+                                                            </div>
+                                                                <p-dropdown 
+                                                                [options]="AllSGSTData" 
+                                                                name="SGST_Input_Ledger_Id"
+                                                                [(ngModel)]="ObjTax.SGST_Input_Ledger_Id"
+                                                                #SGST_Input_Ledger_Id="ngModel" 
+                                                                [showClear]="true" 
+                                                                [emptyFilterMessage]="' No Item Found'" 
+                                                                [filter]="true" filterBy="label,value.name" 
+                                                                [resetFilterOnHide]="true" 
+                                                                [placeholder]="'Select SGST Input'" 
+                                                                [virtualScroll]="true" 
+                                                                itemSize="30"
+                                                                [ngClass]="{'clearance': TaxFormSubmitted && SGST_Input_Ledger_Id.errors?.required}"required>
+                                                                </p-dropdown>
+                                                            </div> 
+                                       </div>                           
+                                        <div class="form-group">
+                                                            <div class="col-sm-6">
+                                                                <label class="control-label">IGST Output<sup class="text-danger">*</sup></label>
+                                                                <div class="pull-right" style="display:inline-block;margin-bottom: -10px;">
+                                                                    <p-checkbox name="IGSToutputckeck" #IGSToutputckeck="ngModel" [(ngModel)]="IGST_outputckeck" [style]="{'margin':'4px 3px'}" (onChange)="allLedger('IGSToutput')" aria-invalid="false" binary="true"></p-checkbox>
+                                                                    <label for="CGST2"><small>All Ledgers</small></label>
+                                                                </div>
+                                                                    <p-dropdown 
+                                                                    [options]="AllIGSToutputData" 
+                                                                    name="IGST_Output_Ledger_ID"
+                                                                    [(ngModel)]="ObjTax.IGST_Output_Ledger_ID"
+                                                                    #IGST_Output_Ledger_ID="ngModel" 
+                                                                    [showClear]="true" 
+                                                                    [emptyFilterMessage]="' No Item Found'" 
+                                                                    [filter]="true" filterBy="label,value.name" 
+                                                                    [resetFilterOnHide]="true" 
+                                                                    [placeholder]="'Select IGST Output'" 
+                                                                    [virtualScroll]="true" 
+                                                                    itemSize="30"
+                                                                    [ngClass]="{'clearance': TaxFormSubmitted && IGST_Output_Ledger_ID.errors?.required}"required>
+                                                                    </p-dropdown>
+                                                            </div> 
+                                                            <div class="col-sm-6">
+                                                            <label class="control-label">CGST Output<sup class="text-danger">*</sup></label>
+                                                            <div class="pull-right" style="display:inline-block;margin-bottom: -10px;">
+                                                                <p-checkbox name="CGSToutputckeck" #CGSToutputckeck="ngModel" [(ngModel)]="CGST_outputckeck" [style]="{'margin':'4px 3px'}" (onChange)="allLedger('CGSToutput')" aria-invalid="false" binary="true"></p-checkbox>
+                                                                <label for="CGST2"><small>All Ledgers</small></label>
+                                                            </div>
+                                                                <p-dropdown 
+                                                                [options]="AllCGSToutputData" 
+                                                                name="CGST_Output_Ledger_ID"
+                                                                [(ngModel)]="ObjTax.CGST_Output_Ledger_ID"
+                                                                #CGST_Output_Ledger_ID="ngModel" 
+                                                                [showClear]="true" 
+                                                                [emptyFilterMessage]="' No Item Found'" 
+                                                                [filter]="true" filterBy="label,value.name" 
+                                                                [resetFilterOnHide]="true" 
+                                                                [placeholder]="'Select CGST output'" 
+                                                                [virtualScroll]="true" 
+                                                                itemSize="30"
+                                                                [ngClass]="{'clearance': TaxFormSubmitted && CGST_Output_Ledger_ID.errors?.required}"required>
+                                                                </p-dropdown>
+                                                            </div> 
+                                        </div>
+                                        <div class="form-group">
+                                                            <div class="col-sm-6">
+                                                        <label class="control-label">SGST Output<sup class="text-danger">*</sup></label>
+                                                        <div class="pull-right" style="display:inline-block;margin-bottom: -10px;">
+                                                            <p-checkbox name="SGSToutputckeck" #SGSToutputckeck="ngModel" [(ngModel)]="SGST_outputckeck" [style]="{'margin':'4px 3px'}" (onChange)="allLedger('SGSToutput')" aria-invalid="false" binary="true"></p-checkbox>
+                                                            <label for="SGST2"><small>All Ledgers</small></label>
+                                                        </div>
+                                                            <p-dropdown 
+                                                            [options]="AllSGSToutputData" 
+                                                            name="SGST_Output_Ledger_ID"
+                                                            [(ngModel)]="ObjTax.SGST_Output_Ledger_ID"
+                                                            #SGST_Output_Ledger_ID="ngModel" 
+                                                            [showClear]="true" 
+                                                            [emptyFilterMessage]="' No Item Found'" 
+                                                            [filter]="true" filterBy="label,value.name" 
+                                                            [resetFilterOnHide]="true" 
+                                                            [placeholder]="'Select SGST Output'" 
+                                                            [virtualScroll]="true" 
+                                                            itemSize="30"
+                                                            [ngClass]="{'clearance': TaxFormSubmitted && SGST_Output_Ledger_ID.errors?.required}"required>
+                                                            </p-dropdown>
+                                                            </div> 
+                                                            <div class="col-sm-2">
+                                                                <label class="control-label">Tax %
+                                                                    <sup class="text-danger">*</sup></label>
+                                                                    <div class="input-group">
+                                                                        <input  class="form-control" placeholder="Tax %" CompacctDigitonly="true"
+                                                                        name="GST_Tax_Per"
+                                                                        #GST_Tax_Per ="ngModel"
+                                                                        [(ngModel)]="ObjTax.GST_Tax_Per"
+                                                                        [ngClass]="{'clearance': TaxFormSubmitted && GST_Tax_Per?.errors?.required}"
+                                                                        required>
+                                                                        <span class="input-group-addon">%</span>
+                                                                    </div>
+                                                              
+
+                                                            </div>
+                                        </div>  
+                                    </div>
+                                </div>                  
+                            </div>                          
+
+                                                    <div class="box-footer">
+                                                        <button class="btn btn-primary pull-right"  id="load" (click)="saveData(taxForm.form.valid)"   [disabled]="Spinner">
+                                                                        <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                                                </button>
+                                                    </div>
+                                    </form>
+                                </p-tabPanel>
+                                <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-file">
+                                    
+                                </p-tabPanel>
+                       </p-tabView>
+                </div>      
+            </div>
+        </div>
+    </div>
+</div>
+

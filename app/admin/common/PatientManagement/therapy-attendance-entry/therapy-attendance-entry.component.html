@@ -1,0 +1,132 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box box-primary">
+       <div class="form-horizontal">
+          <div class="box-body">
+            <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                <form name="SearchForm" #SearchForm="ngForm" novalidate>
+              <div class="row">
+                <div class="col-sm-4">
+                  <label class="control-label">Patient<sup class="text-danger">*</sup></label>
+                  <p-dropdown 
+                  [options]="patientList" 
+                  name="PatientLists" 
+                  #patient="ngModel"
+                  [(ngModel)]="Patient_Fall_Id"
+                  [showClear]="true" 
+                  [emptyFilterMessage]="' No Item Found'" 
+                  [filter]="true" 
+                  filterBy="label,value" 
+                  [resetFilterOnHide]="true" 
+                  [placeholder]="'Select Patient '"
+                  [virtualScroll]="true" 
+                  itemSize="30" 
+                  [styleClass]="SerachFormSubmitted &&  patient.errors?.required ? 'clearance' :''"
+                  [required]="true"
+                  >
+                  </p-dropdown>          
+                </div>
+                <div class="col-sm-4">
+                 <label class="control-label">Date Range</label>            
+                 <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate"></app-compacct-daterangepicker>
+                </div>
+                <div class="col-sm-4">
+                  <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getAllData(SearchForm.form.valid)" id="load">
+                    <span class="glyphicon glyphicon-search"></span>&nbsp;Search
+                  </button> 
+                </div>
+               </div>
+              </form>
+
+              <br>
+              <hr class="box boxboxDivide-primary" />
+              
+         <p-table 
+            [value]="TableData" 
+            [paginator]="true" 
+            [rows]="20" 
+            [rowHover]="true" 
+            [autoLayout]="false" 
+            sortMode="multiple" 
+            [rowsPerPageOptions]="[10,20,50,100,200,300]" 
+            [globalFilterFields]="['Appo_ID','Attend_session','No_Of_Session', 'Package_Name', 'Package_Selection_ID','Sale_Bill_No' ]"
+            [rowHover]="true" 
+            #dt>
+            <ng-template pTemplate="caption">
+             <div class="row">
+                <div class="col-sm-3 pull-right" style="text-align: right">
+                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                </div>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width:5em">Sl No.</th>
+                    <th style="width:5em">Action</th>
+                    <th style="text-align: center ;" nowrap>Package</th>
+                    <th style="text-align: center ;" nowrap>Booking Date</th>
+                    <th style="text-align: center ;" nowrap>Tootal Session</th>
+                    <th style="text-align: center ;" nowrap>Attend Session</th>
+                    <th style="text-align: center ;" nowrap>Bill No.</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+               <tr>
+                <td>{{i+1}}</td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                    <i class="fa fa-fw fa-bars"></i>
+                                    <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a (click)="GetPrint(col)">
+                                    <i class="fa fa-fw fa-print"></i> Print
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+                <td style="text-align: center ;" nowrap>{{col.Package_Name ? col.Package_Name : '-'}}</td>
+                <td style="text-align: center ;" nowrap>{{col.Appo_Dt  | date: "dd/MMM/yyyy"}}</td>
+                <td style="text-align: center ;" nowrap>{{col.No_Of_Session ? col.No_Of_Session : '-'}}</td>
+                <td style="text-align: center ;" nowrap>{{col.Attend_session ? col.Attend_session : '-'}}</td>
+                <td style="text-align: center ;" nowrap>{{col.Sale_Bill_No ? col.Sale_Bill_No : '-'}}</td>
+               </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr><td style="text-align: center ;" colspan="6">No Data to Diaplay</td></tr>
+            </ng-template>
+            <ng-template pTemplate="paginatorright" let-state>
+                Showing {{state.first+1}} of {{(state.first) + state.rows}} of {{state.totalRecords}}
+            </ng-template>
+            </p-table>
+            </p-tabView>
+          </div>
+       </div>
+    </div>
+  </div>
+</div> 
+
+ 

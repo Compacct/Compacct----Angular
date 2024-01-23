@@ -1,0 +1,114 @@
+
+.box-body {
+    padding-top: 10px !important;
+    padding-left: 10px !important;
+}
+
+.ta-editor {
+    min-height: 160px;
+}
+
+body .ui-widget {
+    font-family: source sans pro, sans-serif !important;
+}
+
+textarea.form-control {
+    height: auto;
+}
+
+.btn {
+    border: red;
+}
+
+.box.boxboxDivide-primary {
+    border-top-color: #f3efec;
+    height: 10px;
+    border: 0;
+    box-shadow: 0 10px 10px -10px #8c8b8b inset;
+}
+
+.ui-table-auto-layout>.ui-table-wrapper {
+    width: auto !important;
+}
+
+.custombutton1 {
+    margin-top: 28px;
+    margin-left: 85%;
+}
+
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.Outlet {
+    display: inline-block !important;
+}
+
+.pull-right1 {
+    float: right !important;
+    margin-top: 28px;
+}
+
+.pull-right2 {
+    float: right !important;
+    margin-top: 28px;
+    margin-right: 10px;
+}
+
+.p-dialog {
+    display: flex;
+    flex-direction: column;
+    max-height: 90%;
+}
+
+.timelinescroll {
+    max-height: 350px;
+    overflow-y: scroll;
+}
+
+.btn-reddit {
+    color: #000000;
+    background-color: #efdbee;
+}
+
+.btn-danger {
+    background-color: #24a333;
+}
+.btn-dangerr {
+     background-color: #6450d1;
+     color: white;
+}
+.btn-social.btn-xs {
+    font-size: 15px;
+    height: 3rem;
+    vertical-align: unset;
+}
+#hover:hover{
+        color: #edecec;
+            text-decoration: none;
+            background-color: blue;
+}
+fieldset {
+    border: 2px solid #e9ebeb !important;
+    margin: 0;
+    min-width: 0;
+    padding: 10px;
+    position: relative;
+    border-radius: 4px;
+    background-color: #fff;
+    padding-left: 10px !important;
+}
+
+legend {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 0px;
+    width: fit-content;
+    border: 1px solid #55627ca1;
+    border-radius: 4px;
+    padding: 0px 10px 0px 10px;
+    background-color: #55627ca1;
+}

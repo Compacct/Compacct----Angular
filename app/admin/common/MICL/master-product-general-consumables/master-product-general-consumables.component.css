@@ -1,0 +1,32 @@
+.ui-table-auto-layout>.ui-table-wrapper {
+    width: auto !important;
+}
+
+.custombutton {
+    margin-top: 25px;
+}
+
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.Outlet {
+    display: inline-block !important;
+}
+.text-red-active>td {
+    color: red;
+}
+.createPatient {
+    padding: 0 5px!important;
+    border-radius: 3px!important;
+    margin-top: 5px!important;
+}
+div.label-t {
+    padding: 6px 12px;
+    background: #e4dddd;
+    margin-top: 7px;
+    margin-right: 20px;
+}

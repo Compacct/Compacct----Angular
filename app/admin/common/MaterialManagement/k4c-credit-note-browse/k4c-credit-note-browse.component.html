@@ -56,11 +56,16 @@
                                    </button>
                                     </div>
                                 </div>
+                                <div class="col-sm-1">
+                                    <button class="btn btn-success custombutton1" (click)="exportoexcel(Excellist,'Credit_Note')" [disabled]="!Searchedlist.length">
+                                       <span  class="glyphicon glyphicon-save"></span> Export to Excel
+                                    </button>
+                                </div>
                             </div>
 
                         </form>
                         <div class="table-responsive no-padding">
-                            <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Doc_No','Doc_Date','Sub_Ledger_Name','Bill_Gross_Amt','Bill_Net_Amt']"
+                            <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Doc_No','Doc_Date','Sub_Ledger_Name','Bill_Gross_Amt','Bill_Net_Amt']"
                                 [rowHover]="true" #dt2>
                                 <ng-template pTemplate="caption">
                                     <div class="row">
@@ -103,9 +108,14 @@
                                                             <i class="fa fa-fw fa-print"></i> Print
                                                         </a>
                                                     </li>
-                                                    <li>
+                                                    <li *ngIf="!col.E_Invoice_PDF_Link">
                                                         <a (click)="Delete(col)">
                                                             <i class="fa fa-fw fa-trash"></i> Delete
+                                                        </a>
+                                                    </li>
+                                                    <li *ngIf="col.E_Invoice_PDF_Link">
+                                                        <a (click)="DownloadEINV(col.E_Invoice_PDF_Link)">
+                                                            <i class="fa fa-fw fa-download"></i> Download E-Cr Note
                                                         </a>
                                                     </li>
                                                 </ul>

@@ -6,6 +6,7 @@ import { CompacctHeader } from "../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service"
 import { ActivatedRoute, Router } from "@angular/router";
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-k4c-credit-note-browse',
@@ -24,6 +25,7 @@ export class K4cCreditNoteBrowseComponent implements OnInit {
   franshisedisable = false;
   Cancle_Remarks : string;
   remarksFormSubmitted = false;
+  Excellist = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -82,6 +84,7 @@ export class K4cCreditNoteBrowseComponent implements OnInit {
   }
   GetSearchedList(){
     this.Searchedlist = [];
+    this.seachSpinner = true;
   const start = this.ObjBrowse.start_date
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
   : this.DateService.dateConvert(new Date());
@@ -103,7 +106,37 @@ const obj = {
    this.Searchedlist = data;
    console.log('Search list=====',this.Searchedlist)
    this.seachSpinner = false;
+   this.GetExcelList();
  })
+  }
+  GetExcelList(){
+    this.Excellist = [];
+  const start = this.ObjBrowse.start_date
+  ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
+  : this.DateService.dateConvert(new Date());
+const end = this.ObjBrowse.end_date
+  ? this.DateService.dateConvert(new Date(this.ObjBrowse.end_date))
+  : this.DateService.dateConvert(new Date());
+
+const tempobj = {
+  From_Date : start,
+  To_Date : end,
+  Sub_Ledger_ID : this.BrowseFranchise ? this.BrowseFranchise : 0
+}
+const obj = {
+  "SP_String": "SP_Franchise_Sale_Bill",
+  "Report_Name_String": "Export Credit Note",
+  "Json_Param_String": JSON.stringify([tempobj])
+}
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+   this.Excellist = data;
+   console.log('Excel list=====',this.Excellist)
+ })
+  }
+  exportoexcel(Arr,fileName): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
   }
   Delete(col){
     this.Cancle_Remarks = undefined;
@@ -170,6 +203,11 @@ const obj = {
       window.open("/Report/Crystal_Files/Finance/SaleBill/Credit_Note_K4C.aspx?Doc_No=" + obj.Doc_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
   
       );
+    }
+  }
+  DownloadEINV(obj) {
+    if (obj) {
+      window.open(obj, '_self');
     }
   }
   // clearData(){

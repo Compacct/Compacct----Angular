@@ -1,0 +1,548 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid" *ngIf="!deleteError">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <!-- <div class="ui-g-6"  *ngIf="act_popup && !can_popup">
+                <button type="button" pButton (click)="onConfirm2()" label="Yes" class="ui-button-success"></button>
+            </div> -->
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+        <div class="ui-g ui-fluid" *ngIf="deleteError">
+            <div class="ui-g-12">
+                <button type="button" pButton (click)="onReject()" label="ok" class="ui-button-danger" style="font-size: 20px;"></button>
+            </div>
+         
+           
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                        <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)"> 
+                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                                <form name="HrLeaveSummarySearchForm" #HrLeaveSummarySearchForm="ngForm" novalidate>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Year
+                                                <sup class="text-danger">*</sup></label>
+                                                <select class="form-control"name="Leave_Summary_HR_Year_ID"
+                                                #Leave_Summary_HR_Year_ID ="ngModel"
+                                                [(ngModel)]="ObjHrleaveSummary.HR_Year_ID"
+                                                [ngClass]="{'clearance': HrLeaveSummarySearchFormSubmitted && Leave_Summary_HR_Year_ID?.errors?.required}"
+                                                required>
+                                                    <option [ngValue]="undefined">Select</option>
+                                                    <option *ngFor="let y of hrYeatList" value="{{y.HR_Year_ID}}">{{y.HR_Year_Name}}</option>
+                                                </select>
+                                        </div>
+                                        <div class="col-sm-3">
+                                        <label class="control-label">Employee
+                                            <sup class="text-danger">*</sup></label>
+                                            <!-- <select class="form-control"name="Leave_Summary_Emp_Name"
+                                            #Leave_Summary_Emp_Name ="ngModel"
+                                            [(ngModel)]="ObjHrleaveSummary.Emp_ID"
+                                            [ngClass]="{'clearance': HrLeaveSummarySearchFormSubmitted && Leave_Summary_Emp_Name?.errors?.required}"
+                                            required>
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let emp of empDataList" value="{{emp.Emp_ID}}">{{emp.Emp_Name}}</option>
+                                        </select> -->
+
+                                        <p-dropdown [options]="empDataList" 
+                                        name="Leave_Summary_Emp_Name" 
+                                        [(ngModel)]="ObjHrleaveSummary.Emp_ID" 
+                                        [showClear]="true"
+                                         [emptyFilterMessage]="' No Employee Found'" 
+                                        [filter]="true" 
+                                         filterBy="label,value.name"
+                                         [resetFilterOnHide]="true"
+                                         [placeholder]="'Select Employee'" 
+                                         [virtualScroll]="true" 
+                                         itemSize="30" 
+                                         #Leave_Summary_Emp_Name="ngModel"
+                                         [ngClass]="{'clearance':HrLeaveSummarySearchFormSubmitted && Leave_Summary_Emp_Name?.errors?.required}"
+                                          required>
+                                            </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <!-- <div class="col-sm-3"> -->
+                                                <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetLeaveSummaryData(HrLeaveSummarySearchForm.form.valid)" id="load" [disabled]="seachSpinnerForLS">
+                                          <p-progressSpinner *ngIf="seachSpinnerForLS" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                          <span *ngIf="!seachSpinnerForLS" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                       </button>
+                                            <!-- </div> -->
+                                        </div>
+                                    </div>
+    
+                                </form>
+                                <div class="no-padding">
+                                    <p-table [value]="LeaveSummarydataList"
+                                    [paginator]="LeaveSummarydataList.length ? true : false"
+                                    *ngIf='LeaveSummarydataList.length'
+                                    [paginator]="true" 
+                                    [rows]="100" 
+                                    [rowHover]="true" 
+                                    [autoLayout]="true" 
+                                    sortMode="multiple" 
+                                    [rowsPerPageOptions]="[100,200,300]" 
+                                    [globalFilterFields]='DynamicHeaderforLS'
+                                        [rowHover]="true" #dt1>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <button style="margin-right: 30px;" *ngIf='LeaveSummarydataList.length'  (click)="exportexcel(LeaveSummarydataList,'LEAVE SUMMARY')"
+                                                        class="btn btn-primary">
+                                                        <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                                                    </button>
+                                                </div>
+                                                
+                                            </div>
+        
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <!-- <th style="width:5em">Action</th> -->
+                                                <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforLS">{{option.replaceAll('_',' ')}}</th> 
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+        
+                                                <!-- <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                        <i class="fa fa-fw fa-bars"></i>
+                                                                        <span class="caret"></span>
+                                                                    </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <a (click)="CreateGRN(col)">
+                                                                        <i class="fa fa-fw fa-pencil"></i> Create GRN 
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="PrintPRDB(col.RDB_No)">
+                                                                    <i class="fa fa-fw fa-print"></i> Print
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td> -->
+                                                <ng-container *ngFor="let option of DynamicHeaderforLS">
+                                                    <td nowrap="nowrap">{{col[option]}}</td>
+                                                </ng-container>
+                                                
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+    
+                            </p-tabPanel>
+                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt">
+                                <form name="HrLeaveLedgerSearchForm" #HrLeaveLedgerSearchForm="ngForm" novalidate>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Year
+                                                <sup class="text-danger">*</sup></label>
+                                                <select class="form-control"name="Leave_Ledger_HR_Year_ID"
+                                                #Leave_Ledger_HR_Year_ID ="ngModel"
+                                                [(ngModel)]="ObjHrleaveLedger.HR_Year_ID"
+                                                [ngClass]="{'clearance': HrLeaveLedgerSearchFormSubmitted && Leave_Ledger_HR_Year_ID?.errors?.required}"
+                                                required>
+                                                    <option [ngValue]="undefined">Select</option>
+                                                    <option *ngFor="let y of hrYeatList" value="{{y.HR_Year_ID}}">{{y.HR_Year_Name}}</option>
+                                                </select>
+                                        </div>
+                                        <div class="col-sm-3">
+                                        <label class="control-label">Employee
+                                            <sup class="text-danger">*</sup></label>
+                                         <p-dropdown [options]="empDataList" 
+                                        name="Leave_Ledger_Emp_Name" 
+                                        [(ngModel)]="ObjHrleaveLedger.Emp_ID" 
+                                        [showClear]="true"
+                                         [emptyFilterMessage]="' No Employee Found'" 
+                                        [filter]="true" 
+                                         filterBy="label,value.name"
+                                         [resetFilterOnHide]="true"
+                                         [placeholder]="'Select Employee'" 
+                                         [virtualScroll]="true" 
+                                         itemSize="30" 
+                                         #Leave_Ledger_Emp_Name="ngModel"
+                                         [ngClass]="{'clearance':HrLeaveLedgerSearchFormSubmitted && Leave_Ledger_Emp_Name?.errors?.required}"
+                                          required>
+                                            </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Leave Type
+                                                <sup class="text-danger">*</sup> </label>
+                                                <select class="form-control"name="Leave_Ledger_Leave_Type"
+                                                #Leave_Ledger_Leave_Type ="ngModel"
+                                                [(ngModel)]="ObjHrleaveLedger.Leave_Type"
+                                                [ngClass]="{'clearance': HrLeaveLedgerSearchFormSubmitted && Leave_Ledger_Leave_Type?.errors?.required}"
+                                                required>
+                                                <option [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let type of leaveList" value="{{type.Atten_Type_ID}}">{{type.Leave_Type}}</option>
+                                                
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <!-- <div class="col-sm-3"> -->
+                                                <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetLeaveLedgerData(HrLeaveLedgerSearchForm.form.valid)" id="load" [disabled]="seachSpinnerForLL">
+                                          <p-progressSpinner *ngIf="seachSpinnerForLL" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                          <span *ngIf="!seachSpinnerForLL" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                       </button>
+                                            <!-- </div> -->
+                                        </div>
+                                    </div>
+    
+                                </form>
+                                <div class="no-padding">
+                                    <p-table [value]="LeaveLedgerdataList"
+                                    [paginator]="LeaveLedgerdataList.length ? true : false"
+                                    *ngIf='LeaveLedgerdataList.length'
+                                    [paginator]="true" 
+                                    [rows]="100" 
+                                    [rowHover]="true" 
+                                    [autoLayout]="true" 
+                                    sortMode="multiple" 
+                                    [rowsPerPageOptions]="[100,200,300]" 
+                                    [globalFilterFields]='DynamicHeaderforLL'
+                                        [rowHover]="true" #dt2>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <button style="margin-right: 30px;" *ngIf='LeaveLedgerdataList.length'  (click)="exportexcel(LeaveLedgerdataList,'LEAVE LEDGER')"
+                                                        class="btn btn-primary">
+                                                        <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                                                    </button>
+                                                </div>
+                                            </div>
+        
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <!-- <th style="width:5em">Action</th> -->
+                                                <th nowrap="nowrap" *ngFor="let option of DynamicHeaderforLL">{{option.replaceAll('_',' ')}}</th> 
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+        
+                                                <!-- <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                        <i class="fa fa-fw fa-bars"></i>
+                                                                        <span class="caret"></span>
+                                                                    </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <a (click)="CreateGRN(col)">
+                                                                        <i class="fa fa-fw fa-pencil"></i> Create GRN 
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="PrintPRDB(col.RDB_No)">
+                                                                    <i class="fa fa-fw fa-print"></i> Print
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td> -->
+                                                <ng-container *ngFor="let option of DynamicHeaderforLL">
+                                                    <td nowrap="nowrap">{{col[option]}}</td>
+                                                </ng-container>
+                                                
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+    
+                            </p-tabPanel>
+                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-list-alt">
+                                <form name="HrLeaveApSearchForm" #HrLeaveApSearchForm="ngForm" novalidate>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Date</label>
+                                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                            </app-compacct-daterangepicker>
+                                        </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Leave Type</label>
+                                                <select class="form-control" 
+                                                name="browseleavetype" 
+                                                #browseleavetype="ngModel" 
+                                                [(ngModel)]="ObjBrowse.Leave_Type"
+                                                [ngClass]="{'clearance': HrLeaveApSearchFormSubmitted && browseleavetype?.errors?.required}"
+                                                >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let type of leaveList" value="{{type.Atten_Type_ID}}">{{type.Leave_Type}}</option>
+                                            </select>
+                                            </div>
+                                        <div class="col-sm-2">
+                                            <!-- <div class="col-sm-3"> -->
+                                                <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetBrowseData(HrLeaveApSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                        <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                    </button>
+                                            <!-- </div> -->
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Employee Name <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistEmpName" [(ngModel)]="SelectedDistEmpName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="empname"></p-multiSelect>
+                                        </div>
+                                    </div>
+
+                                </form>
+                                <div class="table-responsive no-padding">
+                                    <div class="table-responsive no-padding">
+                                        <p-table [value]="AllData" 
+                                        [paginator]="AllData.length ? true : false" 
+                                        [rows]="10" [rowHover]="true"
+                                            [autoLayout]="true" 
+                                            sortMode="multiple" 
+                                            [rowsPerPageOptions]="[10,20,30]"
+                                            [globalFilterFields]="['Emp_Name','HR_Year_Name','LEAVE_TYPE','Tran_Type','DR_Leave','CR_Leave','Remarks']"[rowHover]="true" #dt>
+
+                                            <ng-template pTemplate="caption">
+                                                <div class="row">
+                                                    <div class="col-sm-3 pull-right" style="text-align: right">
+                                                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                    </div>
+                                                    <div class="col-sm-3 pull-right" style="text-align: right">
+                                                        <button style="margin-right: 30px;" *ngIf='AllData.length'  (click)="exportexcel(AllData,'LEAVE APPLY')"
+                                                            class="btn btn-primary">
+                                                            <span class="fa fa-fw fa-file-excel-o"></span> Export to Excel
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                            </ng-template>
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th style="width:5em">Action</th>
+                                                    <th>Emp Name</th>
+                                                    <th>Application Date</th>
+                                                    <th>Leave Type</th>
+                                                    <th>Apply From Date</th>
+                                                    <th>Apply Till Date</th>
+                                                    <th>No Of Days Issued</th>
+                                                    <th>Remarks</th>
+                                                    <th>Approval 1 Status</th>
+                                                    <th>Approval 2 Status</th>
+                                                    <th>Accepted Date From</th>
+                                                    <th>Accepted Date To</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </ng-template> 
+                                            <ng-template pTemplate="body" let-col>
+                                                <tr>
+                                                    <td>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                            <ul class="dropdown-menu">
+                                                                <!-- <li>
+                                                                    <a (click)="View(col)">
+                                                                        <i class="fa fa-fw fa-eye" aria-hidden="true"></i> View
+                                                                    </a>
+                                                                </li>
+                                                                <li *ngIf= "col.Toyal_Qty != col.Accepted_Qty && $CompacctAPI.CompacctCookies.Cost_Cen_ID == col.F_Cost_Cen_ID">
+                                                                        <a (click)="edit(col)">
+                                                                            <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
+                                                                            Edit
+                                                                        </a>
+                                                                    </li>
+                                                                <li *ngIf="$CompacctAPI.CompacctCookies.User_Type == 'M'  && col.Autho_One_Staus == 'NO'">
+                                                                    <a (click)="Authorized(col)">
+                                                                        <i class="fa fa-check"></i> Authorized
+                                                                    </a>
+                                                                </li>
+                                                                <li *ngIf="$CompacctAPI.CompacctCookies.User_Type == 'A'">
+                                                                    <a (click)="Authorized(col)">
+                                                                        <i class="fa fa-check"></i> Authorized
+                                                                    </a>
+                                                                </li>
+        
+                                                                <li>
+                                                                    <a (click)="exportoexcel2(col,'Purchase_Planning')">
+                                                                        <i class="glyphicon glyphicon-save" aria-hidden="true"></i> export to excel
+                                                                    </a>
+                                                                </li> -->
+                                                                <li *ngIf="col.Approved_Status_Business_Manager != 'Y' || col.Approved_Status_Reporting_Manager != 'Y'"> 
+                                                                    <a (click)="CancleLeave(col)">
+                                                                        <i class="fa fa-fw fa-times"></i> Cancel
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>      
+                                                    </td> 
+                                                    
+                                                    <td>{{col.Emp_Name ? col.Emp_Name:"-"}}</td> 
+                                                    <td>{{col.Application_Date  | date : 'dd/MMM/yyyy'}}</td>
+                                                    <td>{{col.LEAVE_TYPE}}</td>
+                                                    <td>{{col.Apply_From_Date  | date : 'dd/MMM/yyyy'}}</td>
+                                                    <td>{{col.Apply_To_Date  | date : 'dd/MMM/yyyy'}}</td>
+                                                    <td>{{col.No_Of_Days_Apply ? col.No_Of_Days_Apply:"-"}}</td>
+                                                    <td>{{col.Remarks ? col.Remarks:"-"}}</td>
+                                                    <td>{{col.Approved_Status_Reporting_Manager ? col.Approved_Status_Reporting_Manager:"-"}}</td>
+                                                    <td>{{col.Approved_Status_Business_Manager ? col.Approved_Status_Business_Manager:"-"}}</td>
+                                                    <td>{{(col.Approved_Status_Business_Manager && col.Approved_Status_Reporting_Manager) ? (col.Issued_From_Date  | date : 'dd/MMM/yyyy') : "-"}}</td>
+                                                    <td>{{(col.Approved_Status_Business_Manager && col.Approved_Status_Reporting_Manager) ? (col.Issued_To_Date  | date : 'dd/MMM/yyyy') : "-"}}</td>
+                                                    <td *ngIf="col.Approved_Status_Business_Manager == 'Y' && col.Approved_Status_Reporting_Manager == 'Y'" style="color:green;">{{"APPROVED"}}</td>
+                                                    <td *ngIf="(col.Approved_Status_Business_Manager == 'N' || col.Approved_Status_Reporting_Manager == 'N')" style="color:red;">{{"NOT APPROVED"}}</td>
+                                                    <td *ngIf="(!col.Approved_Status_Business_Manager && !col.Approved_Status_Reporting_Manager) || (col.Approved_Status_Business_Manager == 'Y' && !col.Approved_Status_Reporting_Manager) || (!col.Approved_Status_Business_Manager && col.Approved_Status_Reporting_Manager == 'Y')">{{"APPROVAL PENDING"}}</td>
+                                                </tr>
+                                            </ng-template>
+                                                <!-- <ng-template pTemplate="paginatorright" let-state> </ng-template> -->
+                                    </p-table>
+                                </div>
+
+                                </div>
+
+                            </p-tabPanel>
+                            <p-tabPanel *ngIf="Param_Flag != 'N'" headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="leaveForm" #leaveForm="ngForm" novalidate >
+                            <div class="form-group">
+                            <div class="col-sm-4">
+                                <label class="control-label">Year
+                                    <sup class="text-danger">*</sup></label>
+                                    <select class="form-control"name="HR_Year_ID"
+                                    #HR_Year_ID ="ngModel"
+                                    [(ngModel)]="ObjHrleave.HR_Year_ID"
+                                    (change)="getMaxMindate()"
+                                    [ngClass]="{'clearance': leaveHrFormSubmitted && HR_Year_ID?.errors?.required}"
+                                    required>
+                                        <option [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let y of hrYeatList" value="{{y.HR_Year_ID}}">{{y.HR_Year_Name}}</option>
+                                    </select>
+                            </div>
+                            <div class="col-sm-4">
+                            <label class="control-label">Employee<sup class="text-danger">*</sup></label>
+                                <p-dropdown [options]="empDataList" name="Employee" #Employee="ngModel" [(ngModel)]="ObjHrleave.Emp_ID" [disabled]="Editdisable" [showClear]="true" [emptyFilterMessage]="' No Item Found'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Employee'"
+                                    [virtualScroll]="true" itemSize="30" (onChange)="getShowBaln()" [styleClass]="leaveHrFormSubmitted &&  Employee.errors?.required ? 'clearance' :''" [required] = "true">
+                                </p-dropdown>
+                                <!-- <select class="form-control"name="Emp_Name"
+                                #Emp_Name ="ngModel"
+                                [(ngModel)]="ObjHrleave.Emp_ID"
+                                [ngClass]="{'clearance': leaveHrFormSubmitted && Emp_Name?.errors?.required}"
+                                (change) = "getShowBaln()"
+                                required>
+                                <option [ngValue]="undefined">Select</option>
+                                <option *ngFor="let emp of empDataList" value="{{emp.Emp_ID}}">{{emp.Emp_Name}}</option>
+                                </select> -->
+                        
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Leave Type
+                                    <sup class="text-danger">*</sup> </label>
+                                    <div class="pull-right ShowTop" *ngIf="ObjHrleave.Leave_Type && ObjHrleave.Emp_ID && ObjHrleave.HR_Year_ID">
+                                        <span  class="createPatient" style="font-size: 16px;font-weight: 600;">Balance : {{showBaln}}</span>
+                                    </div>
+                                    <select class="form-control"name="Leave_Type"
+                                    #Leave_Type ="ngModel"
+                                    [(ngModel)]="ObjHrleave.Leave_Type"
+                                    [ngClass]="{'clearance': leaveHrFormSubmitted && Leave_Type?.errors?.required}"
+                                    (change) = "getminday()"
+                                    required>
+                                    <option [ngValue]="undefined">Select</option>
+                                    <option *ngFor="let type of leaveList" value="{{type.Atten_Type_ID}}">{{type.Leave_Type}}</option>
+                                    
+                                </select>
+                            </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Apply From Date
+                                        <sup class="text-danger">*</sup> <span *ngIf="applydays">(Apply Day - {{applydays}})</span></label>
+                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='FromDatevalue' [min]='minFromDate' [max]='maxFromDate' (change)="GetNoOfDays()"></ejs-datepicker>
+                                        <!-- <ejs-datepicker 
+                                        [(value)]="From_Time" 
+                                            [min]='minDateFrom_Time'
+                                            [max] ='maxDateFrom_Time'
+                                            [format]="'dd/MMM/yyyy'" 
+                                            (change)="GetNumberOfdays()"
+                                            name="Apply_From_Date"
+                                        required></ejs-datepicker> -->
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Apply Till Date<sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='ToDatevalue' [min]='minToDate' [max]='maxToDate' (change)="GetNoOfDays()"></ejs-datepicker>
+                                        <!-- <ejs-datepicker 
+                                        [(value)]="To_Time" 
+                                        [min]='minDateTo_Time'
+                                        [max] ='maxDateTo_Time' 
+                                        [format]="'dd/MMM/yyyy'"
+                                        (change)="GetNumberOfdays()"
+                                        required></ejs-datepicker> -->
+                                </div>
+                                <div class="col-sm-4"> 
+                                    <label class="control-label">Number Of Days <span *ngIf="ObjHrleave.Leave_Type">(Min Day - {{mndays}})</span></label>
+                                    <div *ngIf="databaseName === 'GN_JOH_HR' && checkboxdisabled" class="col-sm-2 pull-right" style="width:115px;">
+                                        <small><b>Is Half Day</b></small> &nbsp;
+                                        <p-checkbox (onChange)='HalfDayChange()' name='halfday'  [(ngModel)]="HalfDayFlag"  [binary]="true"></p-checkbox>
+                                    </div>
+                                    <input  class="form-control" placeholder="Number Of Days"
+                                    name="No_Of_Days_Apply"
+                                    #No_Of_Days_Apply="ngModel"
+                                        [(ngModel)]="ObjHrleave.No_Of_Days_Apply" 
+                                        disabled>
+                                </div>
+                            </div> 
+                            <div class="form-group">
+                            <div class="col-sm-4">
+                                <label class="control-label">Remarks</label>
+                                <textarea class="form-control"name="Remarks"
+                                #Remarks ="ngModel"[(ngModel)]="ObjHrleave.Remarks"></textarea>
+                            </div>
+                            <div class="col-sm-8" *ngIf="showErrorMsg || showBaln < ObjHrleave.No_Of_Days_Apply">
+                                <!-- <div class="custombutton" style="margin-top: 33px; font-size: 1.8rem;">
+                                    <p class="text-danger"><i class="fa fa-exclamation-triangle text-danger">&nbsp;</i><span style="font-size: 2.2rem;font-weight: 600;">Error !</span> You Can't Take More Leave Show Balance </p>
+                                </div> -->
+                            </div>
+                            </div>
+                                <div class="box-footer">
+                                <button class="btn btn-primary pull-right"  
+                                id="load" 
+                                (click)="saveData(leaveForm.form.valid)"
+                                [disabled]="Spinner">
+                                                <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                        </button>
+                            </div>
+                            </form>
+                        </p-tabPanel>
+                </p-tabView>  
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+

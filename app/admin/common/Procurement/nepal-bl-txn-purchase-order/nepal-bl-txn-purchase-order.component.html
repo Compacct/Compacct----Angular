@@ -1,0 +1,1039 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" baseZIndex="99999" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" baseZIndex="99999" key="A" (onClose)="onReject()" [modal]="true" [autoZIndex]="true" baseZIndex="999999">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm1()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]"
+                            leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="POFormsBrowse" #POFormsBrowse="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">From Date<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input CompacctNepaliDatepicker id="BSdate" name="BSdate" #BSdate="ngModel" Class="form-control"
+                                                (ngModelChange)="BrowseStartDate= $event" [(ngModel)]="BrowseStartDate"
+                                                [ngClass]="{'clearance': SearchFormSubmit && BSdate?.errors?.required}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">To Date<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input CompacctNepaliDatepicker id="Btdate" name="Btdate" #Btdate="ngModel" Class="form-control"
+                                                (ngModelChange)="BrowseEndDate= $event" [(ngModel)]="BrowseEndDate"
+                                                [ngClass]="{'clearance': SearchFormSubmit && Btdate?.errors?.required}" required>
+                                        </div>
+                                    </div>                              
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-primary custombutton" type="button" (click)="BrowseSearch(POFormsBrowse.form.valid)" id="load">
+                                            <span *ngIf="!Spinner" class="glyphicon glyphicon-search"></span> Search
+                                        </button>
+                                    </div>
+                                </div>
+                                <fieldset class="col-md-12" style="margin-top: 15px;">
+                                    <legend>Filter</legend>
+                                    <div class="form-group">
+                                        <div class="col-sm-5">
+                                            <label class="control-label">User Name<span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistUser1" [(ngModel)]="DistUserSelect1" [virtualScroll]="true"
+                                                itemSize="30" [styleClass]="'compacct-multiselect'" (onChange)='FilterDist1()' name="User"
+                                              [defaultLabel]="Searchedlist.length?'Choose User Name' :'No User Name Found' "></p-multiSelect>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>                       
+                            <div class="table-responsive no-padding" style="margin-top: 145px;">
+                                <p-table #dt [value]="Searchedlist"
+                                    [globalFilterFields]="['Doc_No','Doc_Date','Billing_To','Sub_Ledger_Name','Purchase_Request_No','Grant_Total','Current_Status']"
+                                    [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true"
+                                    sortMode="multiple" [rowsPerPageOptions]="[100,300,500]" [rowHover]="true">
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right;">
+                                                <input type="text" pInputText size="50" placeholder="Search"
+                                                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                    class="searchInput form-control">
+                                            </div>
+                                        </div>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th>Doc No</th>
+                                            <th>Doc Date</th>
+                                            <th>Billing To</th>
+                                            <th>Sub Ledger Name</th>
+                                            <th>Purchase Request No</th>
+                                            <th>Grant Total</th>
+                                            <th>User Name</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr [class]='col.Is_Visiable == "N" ? "text-red-active" : ""'>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                        type="button" data-toggle="dropdown" style="height:27px">
+                                                        <i class="fa fa-fw fa-bars"></i>
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <ng-container *ngIf="$CompacctAPI.CompacctCookies.User_ID == 4 || col.Posted_By == $CompacctAPI.CompacctCookies.User_ID">
+                                                            <li>
+                                                                <a (click)="EditBrowse(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="sendEmailFormBrowse(col)">
+                                                                    <i class="fa fa-envelope"></i> Send Email
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Approver_One_Status == 'Approved' || col.Approver_Two_Status == 'Approved'">
+                                                                <a (click)="ActivityPlan(col)">
+                                                                    <i class='fa fa-tasks'></i> PO Activity Plan
+                                                                </a>
+                                                            </li>                                                      
+                                                            <li *ngIf="col.Approver_One_Status == 'Approved' || col.Approver_Two_Status == 'Approved'">
+                                                                <a (click)="PoDCoVault(col.Doc_No)">
+                                                                    <i class='fa fa-file'></i> PO DOC Vault
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Approver_One_Status == 'Approved' || col.Approver_Two_Status == 'Approved'">
+                                                                <a (click)="ToDoUpdate(col.Doc_No)">
+                                                                <i class="fa fa-refresh"></i> To-Do Update
+                                                                </a>
+                                                            </li>
+                                                             <li >
+                                                                <a (click)="DeleteBrowse(col)">
+                                                                    <i class="fa fa-trash" aria-hidden="true"></i> Delete
+                                                                </a>
+                                                            </li>
+                                                        </ng-container>
+                                                       
+                                                        
+                                                        <li>
+                                                            <a (click)="Print(col)">
+                                                            <i class="fa fa-print" aria-hidden="true"></i> Print
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td>{{col.Doc_No ? col.Doc_No : '-'}}</td>
+                                            <td>{{col.Doc_Date ? col.Doc_Date : '-'}}</td>
+                                            <td>{{col.Billing_To ? col.Billing_To : '-'}}</td>
+                                            <td>{{col.Sub_Ledger_Name ? col.Sub_Ledger_Name : '-'}}</td>
+                                            <td>{{col.Purchase_Request_No ? col.Purchase_Request_No : '-'}}</td>
+                                            <td>{{col.Grant_Total ? col.Grant_Total : '-'}}</td> 
+                                            <td>{{col.User_Name ? col.User_Name : '-'}}</td>                     
+                                        </tr>
+                                    </ng-template>                                 
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]"
+                            leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="POForms" #POForms="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Doc Date<sup class="text-danger">*</sup></label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input CompacctNepaliDatepicker id="Docdate" name="Docdate" #Docdate="ngModel" Class="form-control"
+                                                (ngModelChange)="DocDate= $event" [(ngModel)]="DocDate"
+                                                [ngClass]="{'clearance': PurchaseOrderForm && Docdate?.errors?.required}" 
+                                            required>                                      
+                                        </div>          
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Vendor<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="VendorList" name="Vendor" #Vendor="ngModel" [(ngModel)]="ObjPurchase.Sub_Ledger_ID"
+                                            [showClear]="true" [emptyFilterMessage]="' No Vendor Found'" [filter]="true" filterBy="label,value.name"
+                                            [resetFilterOnHide]="true" [placeholder]="'Select Vendor'" [virtualScroll]="true" itemSize="30"
+                                            (onChange)="getPRno()" [disabled]="buttonname == 'Update'"
+                                            [ngClass]="{'clearance': PurchaseOrderForm && Vendor?.errors?.required}" required>
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Caption<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="CaptionList" name="Caption" #Caption="ngModel" [(ngModel)]="ObjPurchase.Address_Caption" [showClear]="true"
+                                            [emptyFilterMessage]="' No Caption Found'" [filter]="true" filterBy="label,value.name"
+                                            [resetFilterOnHide]="true" [placeholder]="'Select Caption'" [virtualScroll]="true" itemSize="30"
+                                            (onChange)="getVaddress()"
+                                            [ngClass]="{'clearance': PurchaseOrderForm && Caption?.errors?.required}" required>
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Vendor Address</label>
+                                        <textarea class="form-control" 
+                                        name="V_Address" #V_Address="ngModel" 
+                                        [(ngModel)]="ObjPurchase.Subledger_Address" disabled >
+                                        </textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="control-label">Billing To<sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="BillingTolist" name="Billing" #Billing="ngModel" [(ngModel)]="ObjPurchase.Godown1" [showClear]="true"
+                                        [emptyFilterMessage]="' No Billing To Found'" [filter]="true" filterBy="label,value.name"
+                                        [resetFilterOnHide]="true" [placeholder]="'Select Billing To'" [virtualScroll]="true" itemSize="30" (onChange)="Alladdress()"
+                                        [ngClass]="{'clearance': PurchaseOrderForm && Billing?.errors?.required}" required>
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="control-label">Shipping To<sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="ShippingTolist" name="Shipping" #Shipping="ngModel" [(ngModel)]="ObjPurchase.Godown2" [showClear]="true"
+                                        [emptyFilterMessage]="' No Shipping To Found'" [filter]="true" filterBy="label,value.name"
+                                        [resetFilterOnHide]="true" [placeholder]="'Select Shipping To'" [virtualScroll]="true" itemSize="30"(onChange)="Alladdress()"
+                                        [ngClass]="{'clearance': PurchaseOrderForm && Shipping?.errors?.required}" required>
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="control-label">Billing To Address</label>
+                                    <textarea class="form-control" 
+                                    name="B_Address" #B_Address="ngModel"
+                                     [(ngModel)]="ObjPurchase.Billing_Address"disabled>
+                                    </textarea>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="control-label">Shipping To Address</label>
+                                    <textarea class="form-control"
+                                     name="S_Address" #S_Address="ngModel"
+                                      [(ngModel)]="ObjPurchase.Shipping_Address"disabled >
+                                    </textarea>
+                                </div>                              
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Company<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="CompanyList" name="Company" #Company="ngModel" [(ngModel)]="ObjPurchase.Company_Name"
+                                            [showClear]="true" [emptyFilterMessage]="' No Company Found'" [filter]="true" filterBy="label,value.name"
+                                            [resetFilterOnHide]="true" [placeholder]="'Select Company'" [virtualScroll]="true" itemSize="30"
+                                            [ngClass]="{'clearance': PurchaseOrderForm && Company?.errors?.required}" required>
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Purchase Request No<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="POnoList" 
+                                            name="Purchase_Request_No"
+                                            #Purchase_Request_No="ngModel" 
+                                            [(ngModel)]="ObjPurchase.Purchase_Request_No"
+                                            [showClear]="true"
+                                                *ngIf="buttonname == 'Save'" 
+                                            [emptyFilterMessage]="'No Purchase Request No Found'"
+                                            [filter]="true"
+                                            filterBy="label,value.name" 
+                                            [resetFilterOnHide]="true" 
+                                            [placeholder]="'Select Purchase Request No'"
+                                            [virtualScroll]="true" itemSize="30"
+                                            (onChange)="getPRoduct()"
+                                            [ngClass]="{'clearance': PurchaseOrderForm && Purchase_Request_No?.errors?.required}" required>
+                                        </p-dropdown>
+                                        <div class="label-t" *ngIf="buttonname == 'Update'">{{UpdatePono.Purchase_Request_No ? UpdatePono.Purchase_Request_No : "-"  }}</div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr style="background-color:#3c8dbc;color:white">
+                                                <th>Sl. No.</th>
+                                                <th>Product Description</th>
+                                                <th style="width: 10em;">QTY</th>
+                                                <th>Unit</th>
+                                                <th style="width: 13em;">Rate</th>
+                                                <th>Total</th>
+                                                <th style="text-align: center;" *ngIf="ProductList.length >1">Delete</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody *ngIf="ProductList.length">
+                                            <tr   *ngFor="let Alldata of ProductList; let i = index">
+                                                <td>{{i + 1}}</td>
+                                                <td>{{Alldata.Product_Description}}</td>
+                                                <td>
+                                                    <input Class="form-control"
+                                                    [name]="'Qty'+i"
+                                                    [(ngModel)]="Alldata.Purchase_Request_Qty" 
+                                                    CompacctDigitonly="true" 
+                                                    placeholder="Type QTY"
+                                                    (ngModelChange)="getTotalClc(i)"
+                                                    >  
+                                                </td>
+                                                <td>{{Alldata.UOM}}</td>
+                                                <td>
+                                                    <input Class="form-control"
+                                                    [name]="'Rate'+i"
+                                                    [(ngModel)]="Alldata.Rate" 
+                                                    CompacctDigitonly="true"
+                                                    placeholder="Type Rate"
+                                                    (ngModelChange)="getTotalClc(i)">
+                                                </td>
+                                                <td>{{Alldata.Line_Total}}</td>
+                                                <td style="text-align: center ;" *ngIf="ProductList.length >1">
+                                                    <a (click)="DeleteRow(index)" class="text-dangerrr">
+                                                       <i class="fa fa-fw fa-trash"> </i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <tr >
+                                                <td colspan="1"></td>
+                                                <td nowrap colspan="1" style="text-align: right; font-weight: 700;"><span>Total:</span></td>
+                                                <td colspan="1" style="text-align: left; font-weight: 700;">{{GetTotalPro()}}</td>
+                                                <td colspan="1"></td>
+                                                <td colspan="1"></td>
+                                                <td colspan="1" style="text-align: left; font-weight: 700;">{{getTotal()}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <h5 style="padding: 0.5em 1em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;
+                                        margin-top: 15px;">
+                            <i class="fa fa-comment" aria-hidden="true"></i> &nbsp;<strong>Remarks :</strong>
+                                </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name="Remarks" 
+                                    #Remarks="ngModel" 
+                                    [(ngModel)]="ObjPurchase.Remarks" 
+                                    [style]="{'height':'200px'}"
+                                    [readonly]="editorDis">
+                                    </p-editor>
+                                </div>
+                                <h5 style="padding: 0.5em 1em;
+                                        background: #c1c1c185;
+                                        border-top: 5px solid #3c8dbc;
+                                        border-bottom: 1px solid #c6c6c6;
+                                        margin-top: 15px;">
+                            <i class="fa fa-commenting" aria-hidden="true"></i> &nbsp;<strong>Heading :</strong>
+                                </h5>
+                                <div class="form-group" style="margin-left:3px;margin-right: 0px;">
+                                    <p-editor name="Heading" 
+                                    #Heading="ngModel" 
+                                    [(ngModel)]="ObjPurchase.Heading" 
+                                    [style]="{'height':'200px'}"
+                                    [readonly]="editorDis">
+                                    </p-editor>
+                                </div>                              
+                            </form><br>
+                            <div class="container" style="padding-bottom: 8px;" >
+                                <div class="col-sm-2" *ngIf="ObjPurchase.Sub_Ledger_ID">
+                                    <label class="control-label">Send To Email ?</label>
+                                    <div class="checkBox">
+                                        <p-checkbox name="Email" [(ngModel)]="EmailCheck" (onChange)="ClickCheck()" binary="true"></p-checkbox>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3" *ngIf="ObjPurchase.Sub_Ledger_ID && EmailCheck === true">
+                                    <label class="control-label">To Email<sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="toEmailList" [showClear]="true" name="ToEmail" #ToEmail="ngModel"
+                                        [(ngModel)]="ToEmailSelect" [emptyFilterMessage]="' No Email Found'" [filter]="true"
+                                        filterBy="label,value.name" [resetFilterOnHide]="true" [placeholder]="'Select Email'" 
+                                        [virtualScroll]="true"
+                                        (onChange)="toEmailChange()"
+                                        itemSize="30" [styleClass]="'textAlign'">
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-sm-3" *ngIf="ObjPurchase.Sub_Ledger_ID  && EmailCheck === true && ToEmailSelect">
+                                    <label class="control-label">CC Email</label>
+                                    <p-multiSelect [options]="CCEmailList" name="CCEmail" #CCEmail="ngModel" [(ngModel)]="CCEmailSelect"
+                                        [virtualScroll]="true" itemSize="30" [defaultLabel]="'Choose CC Email'"
+                                        [emptyFilterMessage]="' No CC Email Found'" [styleClass]="'compacct-multiselect'">
+                                    </p-multiSelect>
+                                </div>
+                                <div class="col-sm-4" *ngIf="ObjPurchase.Sub_Ledger_ID  && EmailCheck === true && ToEmailSelect">
+                                    <label class="control-label">Company CC Email</label>
+                                    <div class="pull-right">
+                                        <button (click)="ViewCompEmail()" class="btn btn-primary  createPatient"><i class="fa fa-fw  fa-eye"></i>
+                                            View</button>
+                                        &nbsp;
+                                        <button (click)="CompCreatPopup()" class="btn btn-primary  createPatient"><i
+                                                class="fa fa-fw  fa-plus"></i>Create</button>
+                                    </div>
+                                    <p-multiSelect [options]="CompanyEmailList" name="SCCEmail" #SCCEmail="ngModel" [(ngModel)]="CompantEmailName"
+                                        [virtualScroll]="true" itemSize="30" [defaultLabel]="'Choose Company CC Email'"
+                                        [emptyFilterMessage]="' No Company CC Email Found'" [styleClass]="'compacct-multiselect'">
+                                    </p-multiSelect>
+                                </div>
+                            </div>
+                            <div class="container" style="margin-top: 10px;"  >
+                                <div class="col-sm-2" *ngIf="ObjPurchase.Sub_Ledger_ID">
+                                    <label class="control-label">Send SMS ?</label>
+                                    <div class="checkBox">
+                                        <p-checkbox name="Email" [(ngModel)]="SMSCheck" (onChange)="smsCheckbox()" binary="true" ></p-checkbox>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3" *ngIf="SMSCheck">
+                                    <label class="control-label">To Mobile No<sup class="text-danger">*</sup></label>
+                                    <p-multiSelect [options]="SMSList" name="SMS" #SMS="ngModel" [(ngModel)]="SMSSelect"
+                                        [virtualScroll]="true" itemSize="30" [defaultLabel]="'Choose Mobile No'" [emptyFilterMessage]="' Mobile No Found'"
+                                        [styleClass]="'compacct-multiselect'"
+                                         >
+                                    </p-multiSelect>
+                                </div>  
+                            </div>
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right" (click)="SavePo(POForms.form.valid)" id="loadSave" [disabled]="saveSpinner">
+                                        <p-progressSpinner *ngIf="saveSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!saveSpinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                </button>
+                                </div>
+                        </p-tabPanel>
+
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<p-dialog [header]="'PO Update Status( '+titleHeder+' )'" [appendTo]="'body'" [visible]="ViewPoTypeModal" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="POupdateList" [rowHover]="true">
+            <ng-template pTemplate="header">
+                <tr >
+                    <th style="width: 5em;">SL No.</th>
+                    <th>Status </th>
+                    <th>Date</th>
+                    <th>Updated By</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                    <td>{{i+1}}</td>
+                    <td>{{col.Status ? col.Status : '-'}}</td>
+                    <td>{{col.Status_Date ? col.Status_Date :'-'}}</td>
+                    <td>{{col.User_Name ? col.User_Name :'-'}}</td>
+                </tr>         
+            </ng-template>         
+        </p-table>
+    </div>
+    <form name="POPForms" #POPForms="ngForm" novalidate>
+        <div class="col-sm-8">
+            <label class="control-label">New Status<sup class="text-danger">*</sup></label>
+            <input Class="form-control" name="Status" #Status="ngModel" [(ngModel)]="StatusForPop" placeholder="Type New Status"
+                [ngClass]="{'clearance': POPform && Status?.errors?.required}" required>
+        </div>
+    </form>
+    <p-footer>
+        <button type="button" (click)="UpdatePOP()" class="btn btn-primary">
+            Update
+        </button>
+        <button type="button" (click)="ViewPoTypeModal= false" class="btn btn-info">
+            Cancel
+        </button>
+    </p-footer>
+</p-dialog>
+
+
+<!-- VIEWS -->
+<p-dialog [header]="'View Company CC Email'" [appendTo]="'body'" [visible]="ViewCompanyModal" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="CompanyEmailList" [rowHover]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 65px;">SL No.</th>
+                    <th>Email ID </th>
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                    <td>{{i+1}}</td>
+                    <td>{{col.Email_ID}}</td>
+                    <td><button class="btn btn-sm btn-danger" (click)="deleteEmailId(col)"><i
+                                class="fa fa-trash"></i></button></td>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewCompanyModal = false" class="btn btn-info">
+            Cancel
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!-- CREATE -->
+<p-dialog [header]="'Create Company CC Email'" [appendTo]="'body'" [visible]="CreateEmailModal" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '40%', minWidth: '200px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+    <div class="form-horizontal">
+        <form name="EmailTypeForm" #EmailTypeForm="ngForm" novalidate>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label">Company Email<sup class="text-danger">*</sup></label>
+                    <input type="text" class="form-control" name="MT" #MT="ngModel" [(ngModel)]="CreatEmailFild"
+                        placeholder="Type Company Email"
+                        [ngClass]="{clearance: NewEmailFormSubmitted && MT?.errors?.required}" required />
+                </div>
+            </div>
+        </form>
+    </div>
+    <p-footer>
+        <button type="button" (click)="CreateEmailModal = false" class="btn btn-info">Cancel</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton"
+            (click)="CreateEmailType(EmailTypeForm.form.valid)">
+            <span class="glyphicon glyphicon-save"></span>&nbsp;Create
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!-- pO Activity Plan -->
+<p-dialog [header]="'PO Activity Plan'" [appendTo]="'body'" [visible]="ActivityPlanModal" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '200px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="false">
+    <div class="form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-3" style="padding-left: 32px;">
+                    <label class="control-label">PO Activity Start<sup class="text-danger">*</sup></label>
+                    <div class="input-group date">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <input CompacctNepaliDatepicker id="ASdate" name="ASdate" #ASdate="ngModel" Class="form-control"
+                            [(ngModel)]="ASDate"  (ngModelChange)="changeDate($event)"  >
+                    </div>
+                </div>
+            </div> <br>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-horizontal">
+                            <div class="box-body ">
+                                <div class="table table-responsive" >
+                                    <div><strong style="color:#af31bf;margin-left: 2px;font-size: 18px;">To-Do</strong></div>
+                                     <table class="table table-bordered">
+                                        <thead>
+                                            <tr style="background-color:#3c8dbc;color:white;">
+                                                <th style="vertical-align:middle; width: 58px;">Sl. No.</th>
+                                                <th>To-Do</th>
+                                                <th style="width: 23%;">Expected Days</th>
+                                                <th>Date</th>
+                                            </tr>
+                                       </thead>
+                                        <tbody>
+                                            <tr id="H123" *ngFor="let item of ToDoList ;let i = index">
+                                                <td>{{i+1}}</td>
+                                                <td>{{item.Status_Name}}</td>
+                                                <td>
+                                                <input Class="form-control" [name]="'id'+item.Status_ID"  CompacctDigitonly="true"[(ngModel)]="item.Expected_Days"
+                                                    placeholder="Type Days"(ngModelChange)="dateChToDo(i)">
+                                                </td>
+                                                <td>
+                                                    {{item.Task_End_Date ? item.Task_End_Date : ''}}
+                                            </td>
+                                           </tr>
+                                           
+                                        </tbody>
+                                       </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-horizontal">
+                            <div class="box-body">
+                            <div class="table table-responsive">
+                                <div><strong style="color:#004eff;margin-left: 2px;font-size: 18px;">Document</strong></div>
+                                <table class="table table-bordered">
+                                   <thead>
+                                        <tr style="background-color:#3c8dbc;color:white;">
+                                            <th style="vertical-align:middle; width: 58px;">Sl. No.</th>
+                                            <th>Document</th>
+                                            <th style="width: 23%;">Expected Days</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr id="H123" *ngFor="let it of Doclist; let i = index">
+                                            <td>{{i+1}}</td>
+                                            <td>{{it.Document_Name}}</td>
+                                            <td>
+                                                <input Class="form-control" [name]="'DocumentID'+it.Document_ID"  CompacctDigitonly="true"[(ngModel)]="it.Expected_Days"
+                                                placeholder="Type Days"(ngModelChange)="dateChDocument(i)">
+                                            </td>
+                                            <td>
+                                                {{it.Task_End_Date ? it.Task_End_Date : ''}}
+                                             </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ActivityPlanModal = false" class="btn btn-info">Cancel</button>
+        <button type="submit" name="bill" class="btn btn-primary pull-right custombutton"
+            (click)="saveActivityPlan()">
+            <span class="glyphicon glyphicon-save"></span>&nbsp;Save
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!--PO Doc Vault-->
+<p-dialog [header]="'PO Document Vault'" [appendTo]="'body'" [visible]="ViewPoVaultModal"[closeOnEscape]="true" 
+     [closable]="false" [modal]="true" [responsive]="true"
+    [style]="{ width: '75%', minWidth: '200px' }"[minY]="70" [maximizable]="false"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="PODocVList" [rowHover]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 5em;">SL No.</th>
+                    <th>Document Name </th>
+                    <th style="width: 110px;" >Target Date </th>
+                    <th style="text-align: center;">Document</th>
+                    <th style="text-align: center;width: 62px;">Email</th>
+                    <th style="width: 206px;">Status</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                    <td>{{i+1}}</td>
+                    <td>{{col.Document_Name}}</td>
+                    <td>{{col.Task_End_Date}}</td>
+                    <td>
+                        <div class="col-sm-12">
+                            <div class="col-sm-6">
+                                <p-fileUpload #fileInput mode="basic" name="aFile566" accept=".pdf, .png, .jpg, .jpeg, .xls, .xlsx"
+                                    maxFileSize="1000000" (onSelect)="handleFileSelect($event,col.Document_ID,col.Task_End_Date)" [auto]="true"
+                                    chooseLabel="Upload"></p-fileUpload>
+                            </div>
+                         
+                        <div class="col-sm">
+                            <button pButton type="button"(click)="DownloadFile(col.File_Path)" class="ui-button-success" style="width: 42%;
+                                                        border-radius: 5px !important;
+                                                        height: 32px; padding: 5px;
+                                                        margin-left: 1em !important;
+                                                        border: 1px solid #2a8b21;" >
+                                <i class="fa fa-download"></i>Download</button>
+                        </div>
+                      
+                        </div>
+                    </td>
+                    <td>
+                        <button pButton type="button" title="Email Update" (click)="Emailpop(col.File_Path)" 
+                        *ngIf="col.Document_Status == 'COMPLETED WITHIN TARGET DATE' || col.Document_Status == 'COMPLETED BUT NOT IN TARGET DATE'"
+                        style="width: 85%; border-radius: 15px !important;
+                        height: 32px;
+                        padding: 5px;
+                        margin-left: 0.3em !important;
+                        background: #318891">
+                        <i class="fa fa-mail-forward"></i></button>
+                        <p style="text-align: center;" *ngIf="col.Document_Status == 'PENDING' || col.Document_Status == 'PENDING AND CROSSED TARGET DATE'">-</p>
+                    </td>
+                    <td >
+                        <span [style.background-color]="getColor(col.Document_Status)" style="color: white;border-radius: 4px;" >{{col.Document_Status}}</span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <p-footer>
+        <button type="button" (click)="ViewPoVaultModal= false" class="btn btn-info">
+            Cancel
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!--toDo Update-->
+<p-dialog [header]="'TO-DO DETAILS'" [appendTo]="'body'" [visible]="viewTodoModal" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '80%', minWidth: '200px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <div class="form-horizontal">
+                    <div class="box-body">
+                        <p-tabView [activeIndex]="tabIndex" (onChange)="TabClick1($event)">
+                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items1[0]"
+                                leftIcon="glyphicon glyphicon-th-list"> 
+                                <div>
+                                <button type="button" title="Colour Info" class="btn btn-info" (click)="ColourInfo()" style="margin-left: 91%;"><i class="fa fa-info-circle"></i></button>
+                                </div>                             
+                                <div class="table-responsive no-padding">
+                                    <p-table #d [value]="dataList"
+                                    [globalFilterFields]="['Status_Name','Last_Status','Task_End_Date','Last_Remarks','Completed_On','Over_Days']"
+                                    [paginator]="true" [rows]="10" [rowHover]="true" [autoLayout]="true"
+                                    sortMode="multiple" >
+                                        <ng-template pTemplate="caption">
+                                            <div class="row" style="width:100%;margin-left:1px;margin-top: -19px;">
+                                                <div class="form-group">
+                                                            <div class="col-sm-4" style="text-align: left;">
+                                                                <label class="control-label">Present Status</label>
+                                                                <p-multiSelect [options]="DistPresentStatus"  itemSize="30" [styleClass]="'compacct-multiselect'"
+                                                                     name="PresentStatus"[(ngModel)]="SelectedDistPresentStatus"
+                                                                    (onChange)='FilterDist()'></p-multiSelect>
+                                                            </div>
+                                                <div class="col-sm-3 pull-right" style="margin-top: 27px;;">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="d.filterGlobal($event.target.value, 'contains')"
+                                                        class="searchInput form-control">
+                                                </div>
+                                                </div>
+                                            </div>
+    
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th>SL No</th>
+                                                <th>TO-DO</th>
+                                                <th>Present Status</th>
+                                                <th>Target Date</th>
+                                                <th>Over Due Days</th>
+                                                <th>Last Remarks</th>
+                                                <th>Completed On</th>
+                                                
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col let-i="rowIndex">
+                                            <tr >
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle"
+                                                            type="button" data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <a (click)="DetailsPoUp(col)">
+                                                                    <i class="fa fa-info-circle"></i>Details
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                <td>{{i+1}}</td>
+                                                <td>{{col.Status_Name ? col.Status_Name :"-" }}</td>
+                                                <td style="color: white;text-align: center;" >
+                                                    <span [ngStyle]="{'background-color': col.Color}" style="padding: 5px;border-radius: 5px;">
+                                                        {{col.Last_Status ? col.Last_Status :"-" }}
+                                                    </span>
+                                                </td>
+                                                <td>{{col.Task_End_Date ? (col.Task_End_Date) :"-" }}</td>
+                                                <td>{{col.Over_Days ? col.Over_Days : "-" }}</td>
+                                                <td>{{col.Last_Remarks ? col.Last_Remarks :"-"}}</td>
+                                                <td>{{col.Completed_On ? col.Completed_On :"-"}}</td>
+                                                
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </p-tabPanel>
+                            <p-tabPanel headerStyleClass="compacct-tabs" [header]="items1[1]"
+                                leftIcon="glyphicon glyphicon-pencil">
+                                <form name="TODOForms" #TODOForms="ngForm" novalidate>
+                                    <div class="form-group">                                      
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Pending TO-DO<sup class="text-danger">*</sup></label>
+                                            <p-dropdown [options]="PendingList" name="Pending" 
+                                                [showClear]="true" #Pending="ngModel" 
+                                                [(ngModel)]="PendingTodo"
+                                                [emptyFilterMessage]="' No TO-DO Found'" [filter]="true"
+                                                filterBy="label,value.name" [resetFilterOnHide]="true"
+                                                [placeholder]="'Select TO-DO'" [virtualScroll]="true" itemSize="30"
+                                                [ngClass]="{'clearance':TodoForm && Pending?.errors?.required}"
+                                                required>
+                                            </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Status<sup class="text-danger">*</sup></label>
+                                            <select name="Status123"  class="form-control"  #Status123="ngModel" 
+                                                [(ngModel)]="StatusDetails"
+                                                [ngClass]="{'clearance':TodoForm && Status123?.errors?.required}"
+                                                required>
+                                                <option [ngValue]="undefined">Select</option>
+                                                <option value="Pending"> Pending</option>
+                                                <option value="Working"> Working</option>
+                                                <option value="Completed"> Completed</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Remarks<span class="text-danger">*</span></label>
+                                            <textarea class="form-control" name="Remarks123"
+                                            #Remarks123="ngModel" 
+                                            [(ngModel)]="RemarksDetails"
+                                            [ngClass]="{'clearance':TodoForm && Remarks123?.errors?.required}"
+                                            required>
+                                            </textarea>
+                                        </div>
+                                    </div>
+                                 </form><br>    
+                                <div class="box-footer">
+                                    <button class="btn btn-primary pull-right" type="button"
+                                        (click)="UpdateFormPop(TODOForms.form.valid)">
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-pencil">&nbsp;Update</span>
+                                    </button>
+                                </div>
+                            </p-tabPanel>
+                        </p-tabView>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p-footer>
+        <button type="button" (click)="viewTodoModal = false" class="btn btn-info">
+            Close
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!--todo Name pop-->
+<p-dialog [header]="'TO DO NAME'" [appendTo]="'body'" [visible]="ViewTOdoNameModal"
+    [closeOnEscape]="true" [closable]="false" [modal]="true" [responsive]="true"
+    [style]="{ width: '60%', minWidth: '200px' }" style="text-align: center;" [minY]="70" [maximizable]="false"
+    [baseZIndex]="10000">
+    <div class="table-responsive no-padding">
+        <p-table [value]="todoNameList" [rowHover]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 5em;">SL No.</th>
+                    <th>Date </th>
+                    <th>By</th>
+                    <th>Status</th>
+                    <th>Comment</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                    <td>{{i+1}}</td>
+                    <td>{{col.Posted_On ? (col.Posted_On): "-"}}</td>
+                    <td>{{col.Posted_By ? col.Posted_By :"-"}}</td>
+                    <td>{{col.Status ? col.Status :"-"}}</td>
+                    <td>{{col.Remarks ? col.Remarks : "-"}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="ViewTOdoNameModal= false" class="btn btn-info">
+            Close
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!--Colour Info-->
+<p-dialog [header]="'Color Info'" [appendTo]="'body'" [visible]="ColorModel" [closeOnEscape]="true"
+    [closable]="false" [modal]="true" [responsive]="true" [style]="{ width: '50%', minWidth: '200px' }"
+    style="text-align: center;" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+    <table class="table table-bordered">
+        <thead>
+            <tr style="background-color:#3c8dbc;color:white;">
+                <th style="width: 5em;">SL No.</th>
+                <th>Present Status </th>
+                <th>Traget Date</th>
+                <th>Color Code</th>
+           </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Pending</td>
+                <td>If Within Target Date</td>
+                <td style="text-align: center;">
+                    <span style="color: white;background-color: blue;padding: 9px;
+                       border-radius: 20px;">Blue</span>
+                </td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Pending</td>
+                <td>Out Of Target Date</td>
+                <td style="text-align: center;">
+                    <span style="color: white;background-color: red;padding: 9px;
+                       border-radius: 20px;">Red</span>
+                </td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Working</td>
+                <td>If Within Target Date</td>
+                <td style="text-align: center;">
+                    <span style="color: white;background-color: blue;padding: 9px;
+                      border-radius: 20px;">Blue</span>
+                </td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Working</td>
+                <td>Out of Target Date</td>
+                <td style="text-align: center;">
+                    <span style="color: white;background-color: red;padding: 9px;
+                     border-radius: 20px;">Red</span>
+                </td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Completed</td>
+                <td>If Within Target Date</td>
+                <td style="text-align: center;">
+                    <span style="color: white;background-color: green;padding: 9px;
+                     border-radius: 20px;">Green</span>
+                </td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Completed</td>
+                <td>Out of Target Date</td>
+                <td style="text-align: center;">
+                    <span style="color: black;background-color:#f57d02;padding: 9px;
+                     border-radius: 20px;">Orange</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p-footer>
+        <button type="button" (click)="ColorModel= false" class="btn btn-info">
+            Close
+        </button>
+    </p-footer>
+</p-dialog>
+<!--Create Email Id  -->
+<p-dialog [header]="'Email'" [appendTo]="'body'" [visible]="EmailSendModel" [closeOnEscape]="true" [closable]="false"
+    [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+    <form name="EmailEmail" #EmailEmail="ngForm" novalidate>
+        <div class="col-sm-12">
+            <label class="control-label">Email<sup class="text-danger">*</sup></label>
+            <input type="text" class="form-control" 
+                name="EmailPop" #EmailPop="ngModel" 
+                [(ngModel)]="EmailUpdate"
+                placeholder="Email"
+                pattern="[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
+                [ngClass]="{clearance:(EmailFormSubmitted && EmailPop.errors?.required) ||(EmailPop.errors?.pattern && EmailPop.invalid)}"
+                required>
+        </div>
+    </form>
+    <p-footer>
+        <button type="button" (click)="EmailSendModel= false" class="btn btn-info">
+        <i class="fa fa-close"></i>
+        </button>
+        <button type="button" (click)="SaveEmail(EmailEmail.form.valid)" class="btn btn-primary">
+            <i class="fa fa-paper-plane" ></i>
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!--Send Email Form Browse  -->
+<p-dialog [header]="'Send Email'" [appendTo]="'body'" [visible]="sendEmailBrowseModel" [closeOnEscape]="true" [closable]="false"
+    [modal]="true" [responsive]="true" [style]="{ width: '30%', minWidth: '200px' }" style="text-align: center;"
+    [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+    <div class="col-sm-12">
+            <label class="control-label">To Email<sup class="text-danger">*</sup></label>
+            <p-dropdown [options]="toEmailList" 
+            [showClear]="true" 
+            name="ToEmailBrowse" 
+            #ToEmailBrowse="ngModel"
+            [(ngModel)]="ToEmailSelect" 
+            [emptyFilterMessage]="' No Email Found'" 
+            [filter]="true"
+            filterBy="label,value.name" 
+            [resetFilterOnHide]="true" 
+            [placeholder]="'Select Email'" 
+            [virtualScroll]="true"
+            (onChange)="toEmailChange()"
+            itemSize="30" 
+            [styleClass]="'textAlign'">
+            </p-dropdown>
+        </div>
+        <div class="col-sm-12" *ngIf="ToEmailSelect">
+            <label class="control-label">CC Email</label>
+            <p-multiSelect 
+            [options]="CCEmailList" 
+            name="CCEmailBrowse" 
+            #CCEmailBrowse="ngModel" 
+            [(ngModel)]="CCEmailSelect"
+            [virtualScroll]="true" 
+            itemSize="30" 
+            [defaultLabel]="'Choose CC Email'"
+            [emptyFilterMessage]="' No CC Email Found'" 
+            [styleClass]="'compacct-multiselect'">
+            </p-multiSelect>
+        </div>
+        <div class="col-sm-12" *ngIf="ToEmailSelect">
+            <label class="control-label">Company CC Email</label>
+             <p-multiSelect 
+             [options]="CompanyEmailList" 
+             name="SCCEmailBrowse" 
+             #SCCEmailBrowse="ngModel" 
+             [(ngModel)]="CompantEmailName"
+            [virtualScroll]="true" 
+            itemSize="30" 
+            [defaultLabel]="'Choose Company CC Email'"
+            [emptyFilterMessage]="' No Company CC Email Found'" 
+            [styleClass]="'compacct-multiselect'">
+            </p-multiSelect>
+        </div>
+    
+    <p-footer>
+        <button type="button" (click)="sendEmailBrowseModel= false" class="btn btn-info">
+        <i class="fa fa-close"></i>
+        </button>
+        <!-- <button type="button" (click)="SendmailBrowse(EmailEmail.form.valid)" class="btn btn-primary">
+            <i class="fa fa-paper-plane" ></i>
+        </button> -->
+        <button class="btn btn-primary pull-right" (click)="SendmailBrowse()" id="loadSaveB" [disabled]="saveSpinnerBrowse">
+            <p-progressSpinner *ngIf="saveSpinnerBrowse" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!saveSpinnerBrowse" class="fa fa-paper-plane"></span>{{btnBrowseSendEmail}}
+    </button>
+    </p-footer>
+</p-dialog>

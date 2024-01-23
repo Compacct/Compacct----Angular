@@ -1,0 +1,792 @@
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="fa fa-fw fa-check-circle" style="font-size: 3em;color:green"></i>
+            <h3>{{ message.summary }}</h3>
+            <p>{{ message.detail }}</p>
+        </div>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="DelteBill()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template> 
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt" >
+
+                            <form name="HearingAdvanceForm" #HearingAdvanceForm="ngForm" novalidate>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Period</label>
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange1($event)">
+                                        </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Cost Center &nbsp;<span class="text-danger">*</span></label>
+                                        <p-dropdown
+                                        [options]="CostCenterList"
+                                        name="Center"
+                                        [(ngModel)]="ObjSearch.Cost_Cen_ID"
+                                        [showClear]="true"
+                                        [emptyFilterMessage]="' No Cost Center Found'"
+                                        [filter]="true"
+                                        filterBy="label,value.name"
+                                        [placeholder]="'Select Cost Center'"
+                                        [virtualScroll]="true"
+                                        itemSize="30"
+                                        #Center="ngModel"
+                                        [styleClass]="HearingAdvanceFormSubmitted && Center.errors?.required ? 'clearance' : '' "
+                                        [required]="$CompacctAPI.CompacctCookies.User_Type ==='U'"
+                                        >
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary custombutton" 
+                                            (click)="Search(HearingAdvanceForm.form.valid)" id="load"
+                                            [disabled]="HearingAdvanceFormseachSpinner">
+                                            <p-progressSpinner *ngIf="HearingAdvanceFormseachSpinner"
+                                                [style]="{ width: '15px', height: '15px' }" strokeWidth="8"
+                                                animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!HearingAdvanceFormseachSpinner"
+                                                class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            
+                            <p-table #dt
+                                [value]='HearingAdvanceBillList'
+                                [globalFilterFields]="SEarchFilter"
+                                [paginator]="true" [rows]="100" [rowHover]="true"
+                                [autoLayout]="true" sortMode="multiple"
+                                [rowsPerPageOptions]="[25,50,100]"
+                                [rowHover]="true">
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                                    </div>
+                                </ng-template>    
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th nowrap>Action</th>
+                                        <th nowrap>Doc No</th>
+                                        <th nowrap>Doc Date</th>
+                                        <th nowrap>Customer</th>
+                                        <th nowrap>Total Amount</th>
+                                        <th nowrap>Discount</th>
+                                        <th nowrap>Remarks</th>
+                                        <th nowrap>Receive Amount</th>
+                                        <th nowrap>Status</th>
+                                        <th nowrap>Bill No.</th>
+                                        <th nowrap>Return Amount</th>
+                                        <th nowrap>Cost Center</th>
+                                    </tr>
+                                </ng-template>            
+                                <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                    <tr>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                    <i class="fa fa-fw fa-bars"></i>
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                   
+                                                    <li *ngIf="$CompacctAPI.CompacctCookies.Del_Right == 'Y'">
+                                                        <a (click)="DeleteAdvanceBill(col.Doc_No)"><i class="fa fa-fw fa-trash"></i>Delete</a>
+                                                    </li>
+                                                    <li>
+                                                        <a (click)="PdfPrint(col)"> <i class="fa fa-fw fa-file-pdf-o"> </i>Print</a>
+                                                    </li>
+                                                    <li *ngIf="col.CAN_EDIT == 'YES'">
+                                                        <a (click)="EditAdvOrd(col)"><i class="fa fa-fw fa-pencil"></i>Edit</a>
+                                                    </li>
+                                                    <li *ngIf="col.Return_Status == 'YES'">
+                                                        <a (click)="ReturnAdvOrd(col)"><i class="fa fa-undo"></i>Return</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        
+                                        <td nowrap>{{col.Doc_No}}</td>
+                                        <td nowrap>{{col.Doc_Date | date:"dd/MM/yyyy"}}</td>
+                                        <td nowrap>{{col.Contact_Name}}</td>
+                                        <td nowrap>{{col.Amount}}</td>
+                                        <td nowrap>{{col.Discount ? col.Discount:'-'}}</td>
+                                        <td nowrap>{{col.Remarks ? col.Remarks:'-'}}</td>
+                                        <td>{{col.total_DR_Amt ? col.total_DR_Amt : '-'}}
+                                            <br><p (click)="ReceivedPrint(col.Received_Doc_NO,col.Rcv_vchr_link)" class="aTage" style="cursor: pointer;">{{col.Received_Doc_NO}}</p>
+                                        </td>
+                                        <td nowrap><span [ngClass]="'badge bg-'+ getStatusWiseColor(col)" >{{col.AO_Status}}</span></td>
+                                        <td nowrap><p (click)="BillPrint(col.Bill_No,col.Sale_link)" class="aTage" style="cursor: pointer;">{{col.Bill_No}}</p></td>
+                                        <td>{{col.Payment_Amount ? col.Payment_Amount : '-'}}
+                                            <br><p (click)="ReturnPrint(col.Return_Voucher_No,col.Pmt_vchr_link)" class="aTage" style="cursor: pointer;">{{col.Return_Voucher_No}}</p>
+                                        </td>
+                                        <td nowrap>{{getCostCenterName(col.Cost_Cen_ID)}}</td>
+                                    </tr>
+                                    <tr *ngIf='(rowIndex + 1)  === HearingAdvanceBillList.length'>
+                                        <td colspan="5" class="text-bold text-right">Total Amount : {{GetTotal(HearingAdvanceBillList,'Amount')}}</td>
+                                        <td  class="text-bold">Total Discount Amount : {{GetTotal(HearingAdvanceBillList,'Discount')}}</td>
+                                        <td>-</td>
+                                        <td  class="text-bold">Total Received Amount : {{GetTotal(HearingAdvanceBillList,'total_DR_Amt')}}</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td  class="text-bold">Total Return Amount : {{GetTotal(HearingAdvanceBillList,'Payment_Amount')}}</td>
+                                        <td>-</td>
+                                    </tr>
+                                </ng-template>    
+                                <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                </ng-template>           
+                            </p-table>
+
+                        </p-tabPanel>
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+
+                            <form name="HearingAdvanceCreateForm" #HearingAdvanceCreateForm="ngForm" novalidate>
+                            
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Doc. Date<sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker 
+                                            [(value)]="DocDate"
+                                            [format]="'dd/MMM/yyyy'" >
+                                        </ejs-datepicker>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Cost Center<sup class="text-danger">*</sup></label>
+                                        <p-dropdown 
+                                            [options]="CostCenterList"
+                                            name="Cost_Cen_ID" 
+                                            #Cost_Cen_ID="ngModel" 
+                                            [(ngModel)]="objCommon.Cost_Cen_ID"
+                                            [showClear]="true" 
+                                            [emptyFilterMessage]="' No Cost Center Found'" 
+                                            [filter]="true" filterBy="label,value.name" 
+                                            [resetFilterOnHide]="true" 
+                                            [placeholder]="'Select Cost Center'" 
+                                            [virtualScroll]="true"
+                                            [itemSize]="30"
+                                            [styleClass]="AdvanceOrderFormSubmitted && Cost_Cen_ID.errors?.required? 'clearance' : ''"
+                                            [required]="$CompacctAPI.CompacctCookies.User_Type ==='U'" >
+                                        </p-dropdown>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Customer<sup class="text-danger">*</sup></label>
+                                        <p-dropdown 
+                                            [options]="CustomerList"
+                                            name="FOOT_Fall_ID" 
+                                            #FOOT_Fall_ID="ngModel" 
+                                            [(ngModel)]="objCommon.FOOT_Fall_ID"
+                                            [showClear]="true" 
+                                            [emptyFilterMessage]="' No Customer Found'" 
+                                            [filter]="true" filterBy="label,value.name" 
+                                            [resetFilterOnHide]="true" 
+                                            [placeholder]="'Select Customer'" 
+                                            [virtualScroll]="true"
+                                            [itemSize]="30"
+                                            (onChange)="getCustomerDetails()"
+                                            [styleClass]="AdvanceOrderFormSubmitted && FOOT_Fall_ID.errors?.required? 'clearance' : ''"
+                                            [required]="true" >
+                                        </p-dropdown>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Address</label>
+                                        <textarea 
+                                            class="form-control"
+                                            name="Address" 
+                                            Address="ngModel"
+                                            [(ngModel)]="objCommon.Address" 
+                                            placeholder="Address">
+                                        </textarea>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <label class="control-label">Remarks</label>
+                                        <textarea 
+                                            class="form-control"
+                                            name="Remarks" 
+                                            Remarks="ngModel"
+                                            [(ngModel)]="objCommon.Remarks" 
+                                            placeholder="Remarks">
+                                        </textarea>
+                                    </div>
+                                </div> 
+                                
+                            </form>
+
+                            <hr class="box boxboxDivide-primary">
+
+                            <form name="HearingAdvanceProductForm" #HearingAdvanceProductForm="ngForm" novalidate>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Product Details<sup class="text-danger">*</sup></label>
+                                        <p-dropdown 
+                                            [options]="ProductList"
+                                            name="Product_ID" 
+                                            #Product_ID="ngModel" 
+                                            [(ngModel)]="objProduct.Product_ID"
+                                            [showClear]="true" 
+                                            [emptyFilterMessage]="' No Product Found'" 
+                                            [filter]="true" filterBy="label,value.name" 
+                                            [resetFilterOnHide]="true" 
+                                            [placeholder]="'Select Product'" 
+                                            [virtualScroll]="true"
+                                            [itemSize]="30"
+                                            (onChange)="getProductDetails()"
+                                            [styleClass]="ProductOrderFormSubmitted && Product_ID.errors?.required? 'clearance' : ''"
+                                            [required]="true" >
+                                        </p-dropdown>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Product Specification</label>
+                                        <input 
+                                            class="form-control" 
+                                            name="Product_Specification" 
+                                            #Product_Specification="ngModel"
+                                            [(ngModel)]="objProduct.Product_Specification" 
+                                            placeholder="Product Specification"
+                                            disabled>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Expected Dispatch Date<sup class="text-danger">*</sup></label>
+                                        <ejs-datepicker 
+                                            [(value)]="Expected_Delivery_Date"
+                                            [min]="mindate"
+                                            [format]="'dd/MMM/yyyy'" >
+                                        </ejs-datepicker>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                        <input 
+                                            class="form-control" 
+                                            name="Qty" 
+                                            #Qty="ngModel"
+                                            [(ngModel)]="objProduct.Qty" 
+                                            placeholder="Quantity"
+                                            CompacctDigitonly="true"
+                                            (ngModelChange)="ProductCalculation()"
+                                            [ngClass]="{'clearance': ProductOrderFormSubmitted && Qty.errors?.required }" 
+                                        required>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Unit</label>
+                                        <input 
+                                            class="form-control" 
+                                            name="UOM" 
+                                            #UOM="ngModel"
+                                            [ngModel]="objProduct.UOM" 
+                                            placeholder="Unit"
+                                            disabled>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Rate<sup class="text-danger">*</sup></label>
+                                        <input 
+                                            class="form-control" 
+                                            name="Rate" 
+                                            #Rate="ngModel"
+                                            [(ngModel)]="objProduct.Rate" 
+                                            placeholder="Rate"
+                                            CompacctDigitonly="true"
+                                            (ngModelChange)="ProductCalculation()"
+                                            [ngClass]="{'clearance': ProductOrderFormSubmitted && Rate.errors?.required  }" 
+                                        required>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Discount</label>
+                                        <input 
+                                            class="form-control" 
+                                            name="Discount" 
+                                            #Discount="ngModel"
+                                            [(ngModel)]="objProduct.Discount" 
+                                            (ngModelChange)="ProductCalculation()"
+                                            placeholder="Discount">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Amount</label>
+                                        <input 
+                                            class="form-control" 
+                                            name="Amount" 
+                                            #Amount="ngModel"
+                                            [ngModel]="objProduct.Amount" 
+                                            placeholder="Amount"
+                                        disabled>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-primary" style="margin-top: 29px;"
+                                            (click)="addProductDetalis(HearingAdvanceProductForm.form.valid)">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <br>
+
+                            <div class="table-responsive table-id">
+                                <p-table  [value]='addProductList' [autoLayout]="true">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th nowrap>Sl. No.</th>
+                                            <th nowrap>Product Details</th>
+                                            <th nowrap>Product Specification</th>
+                                            <th nowrap>Qty.</th>
+                                            <th nowrap>Unit</th>
+                                            <th nowrap>Rate</th>
+                                            <th nowrap>Discount</th>
+                                            <th nowrap>Amount</th>
+                                            <th nowrap>Expected Dispatch Date</th>
+                                            <th nowrap>Delete</th>
+                                        </tr>
+                                    </ng-template>         
+                                    <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                        <tr> 
+                                            <td>{{ (rowIndex + 1) }}</td>
+                                            <td>{{col.Product_Name ? col.Product_Name : '-'}}</td>
+                                            <td>{{col.Product_Specification ? col.Product_Specification : '-'}}</td>
+                                            <td>{{col.Qty ? col.Qty : '-'}}</td>
+                                            <td>{{col.UOM ? col.UOM : '-'}}</td>
+                                            <td>{{col.Rate ? col.Rate : '-'}}</td>
+                                            <td>{{col.Discount ? col.Discount : '-'}}</td>
+                                            <td>{{col.Amount ? col.Amount : '-'}}</td>
+                                            <td>{{col.Expected_Delivery_Date ? (col.Expected_Delivery_Date | date:"dd/MM/yyyy") : '-'}}</td>
+                                            <td><a (click)="DeleteProduct(rowIndex)">
+                                                <div><i class="fa fa-fw fa-trash"> </i></div>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <br>
+                                    <ng-template pTemplate="footer">
+                                        <tr *ngIf='addProductList.length > 0'>
+                                            <td colspan="7" style="text-align: center;" class="Foot">Total Amount : </td>
+                                            <td colspan="3" style="text-align: left;" class="Foot">{{calTotal()}}</td>
+                                        </tr>
+                                    </ng-template>        
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                                    </ng-template>          
+                                </p-table>
+                            </div>
+
+                            <div class="row">
+                                <button class="btn btn-primary pull-right" (click)="SaveData(HearingAdvanceCreateForm.form.valid)" [disabled]="Spinner" style="margin-top: 25px; margin-right: 10px;">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                </button>
+                            </div>
+
+                        </p-tabPanel>
+
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <p-dialog
+        [header]="'Receive Journal'"
+        [appendTo]="'body'"
+        [visible]="displayJournalPopup"
+        [closeOnEscape]="true"
+        [closable]="false"
+        [modal]="true"
+        [responsive]="false"
+        [style]="{ width: '80%', minWidth: '400px', height: '800px', minHeight: '600px' }"
+        style="text-align: center;"
+        [minY]="70"
+        [maximizable]="true"
+        [baseZIndex]="10000"
+        [autoZIndex]="true">
+
+        <form name="JournalForm" #JournalForm="ngForm" novalidate>
+
+            <div class="form-group">
+                <div class="col-sm-4">
+                    <label class="control-label">Advance/Deposit Amount<sup class="text-danger">*</sup></label>
+                    <input 
+                        class="form-control" 
+                        name="Amount" 
+                        #Amount="ngModel"
+                        [(ngModel)]="objJournal.Amount" 
+                        placeholder="Amount"
+                        CompacctDigitonly="true"
+                        [ngClass]="{'clearance': JournalFormSubmitted && Amount.errors?.required}" 
+                    required>
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">Ledger<sup class="text-danger">*</sup></label>
+                    <p-dropdown 
+                        [options]="LedgerList"
+                        name="Ledger" 
+                        #Ledger="ngModel" 
+                        [(ngModel)]="objJournal.Ledger"
+                        [showClear]="true" 
+                        [emptyFilterMessage]="' No Ledger Found'" 
+                        [filter]="true" filterBy="label,value.name" 
+                        [resetFilterOnHide]="true" 
+                        [placeholder]="'Select Ledger'" 
+                        [virtualScroll]="true"
+                        [itemSize]="30"
+                        (onChange)="SelectLedger(objJournal.Ledger)"
+                        [styleClass]="JournalFormSubmitted && Ledger.errors?.required? 'clearance' : ''"
+                        [required]="true" >
+                    </p-dropdown>
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label">Bank TRN Type<sup class="text-danger">*</sup></label>
+                    <select class="form-control"
+                        [ngClass]="{clearance: JournalFormSubmitted && TRN?.errors?.required }" 
+                        required
+                        name="TRN"
+                        #TRN="ngModel" 
+                        [(ngModel)]="objJournal.TRN"
+                        (change)="SelectBankTRNtype(objJournal.TRN)"
+                        >
+                        <option  [ngValue]="undefined">Select</option>
+                        <option  *ngFor="let option of BankTRNtypeList" value="{{option}}">
+                            {{option}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row"></div>
+            <br>
+
+            <div class="form-group">
+                <div class="col-sm-3">
+                    <label class="control-label">{{ JournalDateLabel }}<sup class="text-danger">*</sup></label>
+                    <ejs-datepicker 
+                        [(value)]="BankDate"
+                        [enabled]="!(objJournal.TRN=='CASH')"
+                        [format]="'dd/MMM/yyyy'" >
+                    </ejs-datepicker>
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">{{ JournalNOLabel }}<sup class="text-danger">*</sup></label>
+                    <input 
+                        class="form-control" 
+                        name="No" 
+                        #No="ngModel"
+                        [(ngModel)]="objJournal.No" 
+                        placeholder="{{ JournalNOLabel }}"
+                        [disabled]="objJournal.TRN=='CASH'"
+                        [ngClass]="{'clearance': JournalFormSubmitted && No.errors?.required}" 
+                    required>
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Bank Name<sup class="text-danger">*</sup></label>
+                    <input 
+                        class="form-control" 
+                        name="Bank_Name" 
+                        #Bank_Name="ngModel"
+                        [(ngModel)]="objJournal.Bank_Name" 
+                        placeholder="Bank Name"
+                        [disabled]="objJournal.TRN=='CASH' || objJournal.TRN=='NEFT/RTGS'"
+                        [ngClass]="{'clearance': JournalFormSubmitted && Bank_Name.errors?.required}" 
+                    required>
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Bank Branch Name<sup class="text-danger">*</sup></label>
+                    <input 
+                        class="form-control" 
+                        name="Bank_Branch_Name" 
+                        #Bank_Branch_Name="ngModel"
+                        [(ngModel)]="objJournal.Bank_Branch_Name" 
+                        placeholder="Bank Branch Name"
+                        [disabled]="objJournal.TRN=='CASH' || objJournal.TRN=='FINANCE' || objJournal.TRN=='WALLET' || objJournal.TRN=='CARD' || objJournal.TRN=='NEFT/RTGS'" 
+                        [ngClass]="{'clearance': JournalFormSubmitted && Bank_Branch_Name.errors?.required}" 
+                    required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4"> 
+                    <button class="btn btn-primary pull-right" style="margin-top: 29px;"
+                        [disabled]="EditDisabled"
+                        (click)="addJournalDetalis(JournalForm.form.valid)">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Add
+                    </button>
+                </div>
+            </div>
+
+        </form>
+
+        <div class="table-responsive no-padding" style="margin-top: 130px;">
+            <p-table  [value]='addJournalList' [autoLayout]="true">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 5em;">Sl. No.</th>
+                        <th nowrap>Ledger Name</th>
+                        <th nowrap>Customer Name</th>
+                        <th nowrap>Amt.</th>
+                        <th nowrap>Delete</th>
+                    </tr>
+                </ng-template>         
+                <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                    <tr> 
+                        <td>{{ (rowIndex + 1) }}</td>
+                        <td>{{getLedgerName(col.Ledger)}}</td>
+                        <td>{{ backupCustomer }}</td>
+                        <td>{{col.Amount ? col.Amount : '-'}}</td>
+                        <td><a (click)="DeleteJournal(rowIndex)" *ngIf="!EditDisabled">
+                            <div><i class="fa fa-fw fa-trash"> </i></div>
+                            </a>
+                        </td>
+                    </tr>
+                </ng-template>
+                <br>       
+                <ng-template pTemplate="paginatorright" let-state>
+                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+                </ng-template>          
+            </p-table> 
+        </div>  
+        <hr class="box boxboxDivide-primary"> 
+
+        <div class="table table-borderless">
+            <tr>
+                <td class="Foot">Received Amount : </td>
+                <td class="Foot" style="color: #4cc556;">{{Received}}</td>
+            </tr>
+            <tr>
+                <td class="Foot">Due Amount : </td>
+                <td class="Foot" style="color: brown;">{{Due}}</td>
+            </tr>
+            <tr>
+                <td class="Foot">Total Amount : </td>
+                <td class="Foot">{{Total}}</td>
+            </tr>
+        </div>
+
+        <p-footer>
+            <button class="btn btn-primary pull-left" (click)="PrintJournal()" >
+            <span class="glyphicon  glyphicon-print"></span>Print
+            </button>
+
+            <button class="btn btn-primary pull-right" (click)="SaveJournal()" [disabled]="EditDisabled">
+            <p-progressSpinner *ngIf="JournalSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+            <span *ngIf="!JournalSpinner" class="glyphicon glyphicon-save"></span>Save
+            </button>
+
+            <button class="btn btn-primary" (click)="closeJournalPopup()" >
+            <span class="glyphicon glyphicon-remove"></span>Close
+            </button>
+        </p-footer>  
+
+    </p-dialog>
+
+    <p-dialog
+    [header]="'Payment Journal'"
+    [appendTo]="'body'"
+    [visible]="displayPaymentPopup"
+    [closeOnEscape]="true"
+    [closable]="false"
+    [modal]="true"
+    [responsive]="false"
+    [style]="{ width: '80%', minWidth: '400px', height: '800px', minHeight: '600px' }"
+    style="text-align: center;"
+    [minY]="70"
+    [maximizable]="true"
+    [baseZIndex]="10000"
+    [autoZIndex]="true">
+
+    <form name="PaymentForm" #PaymentForm="ngForm" novalidate>
+
+        <div class="form-group">
+            <div class="col-sm-3">
+                <label class="control-label">Return Amount</label>
+                <input 
+                    class="form-control" 
+                    name="Amount" 
+                    #Amount="ngModel"
+                    [(ngModel)]="objPayment.Amount" 
+                    placeholder="Amount">
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Narration</label>
+                <input 
+                    class="form-control" 
+                    name="Narration" 
+                    #Narration="ngModel"
+                    [(ngModel)]="objPayment.Narration" 
+                    placeholder="Narration">
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Ledger<sup class="text-danger">*</sup></label>
+                <p-dropdown 
+                    [options]="LedgerList"
+                    name="Ledger" 
+                    #Ledger="ngModel" 
+                    [(ngModel)]="objPayment.Ledger"
+                    [showClear]="true" 
+                    [emptyFilterMessage]="' No Ledger Found'" 
+                    [filter]="true" filterBy="label,value.name" 
+                    [resetFilterOnHide]="true" 
+                    [placeholder]="'Select Ledger'" 
+                    [virtualScroll]="true"
+                    [itemSize]="30"
+                    (onChange)="SelectLedger(objPayment.Ledger)"
+                    [styleClass]="PaymentFormSubmitted && Ledger.errors?.required? 'clearance' : ''"
+                    [required]="true" >
+                </p-dropdown>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Bank TRN Type<sup class="text-danger">*</sup></label>
+                <select class="form-control"
+                    [ngClass]="{clearance: PaymentFormSubmitted && TRN?.errors?.required }" 
+                    required
+                    name="TRN"
+                    #TRN="ngModel" 
+                    [(ngModel)]="objPayment.TRN"
+                    (change)="SelectBankTRNtype(objPayment.TRN)"
+                    >
+                    <option  [ngValue]="undefined">Select</option>
+                    <option  *ngFor="let option of BankTRNtypeList" value="{{option}}">
+                        {{option}}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row"></div>
+        <br>
+
+        <div class="form-group">
+            <div class="col-sm-3">
+                <label class="control-label">{{ JournalDateLabel }}<sup class="text-danger">*</sup></label>
+                <ejs-datepicker 
+                    [(value)]="BankPaymentDate"
+                    [enabled]="!(objPayment.TRN=='CASH')"
+                    [format]="'dd/MMM/yyyy'" >
+                </ejs-datepicker>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">{{ JournalNOLabel }}<sup class="text-danger">*</sup></label>
+                <input 
+                    class="form-control" 
+                    name="No" 
+                    #No="ngModel"
+                    [(ngModel)]="objPayment.No" 
+                    placeholder="{{ JournalNOLabel }}"
+                    [disabled]="objPayment.TRN=='CASH'"
+                    [ngClass]="{'clearance': PaymentFormSubmitted && No.errors?.required}" 
+                required>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Bank Name<sup class="text-danger">*</sup></label>
+                <input 
+                    class="form-control" 
+                    name="Bank_Name" 
+                    #Bank_Name="ngModel"
+                    [(ngModel)]="objPayment.Bank_Name" 
+                    placeholder="Bank Name"
+                    [disabled]="objPayment.TRN=='CASH' || objPayment.TRN=='NEFT/RTGS'"
+                    [ngClass]="{'clearance': PaymentFormSubmitted && Bank_Name.errors?.required}" 
+                required>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Bank Branch Name<sup class="text-danger">*</sup></label>
+                <input 
+                    class="form-control" 
+                    name="Bank_Branch_Name" 
+                    #Bank_Branch_Name="ngModel"
+                    [(ngModel)]="objPayment.Bank_Branch_Name" 
+                    placeholder="Bank Branch Name"
+                    [disabled]="objPayment.TRN=='CASH' || objPayment.TRN=='FINANCE' || objPayment.TRN=='WALLET' || objPayment.TRN=='CARD' || objPayment.TRN=='NEFT/RTGS'" 
+                    [ngClass]="{'clearance': PaymentFormSubmitted && Bank_Branch_Name.errors?.required}" 
+                required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4"> 
+                <button class="btn btn-primary pull-right" style="margin-top: 29px;"
+                    [disabled]="addPaymentList.length"
+                    (click)="addPaymentDetalis(PaymentForm.form.valid)">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    Add
+                </button>
+            </div>
+        </div>
+
+    </form>
+
+     <div class="table-responsive no-padding" style="margin-top: 130px;">
+        <p-table  [value]='addPaymentList' [autoLayout]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 5em;">Sl. No.</th>
+                    <th nowrap>Ledger Name</th>
+                    <th nowrap>Customer Name</th>
+                    <th nowrap>Amt.</th>
+                    <th nowrap>Delete</th>
+                </tr>
+            </ng-template>         
+            <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                <tr> 
+                    <td>{{ (rowIndex + 1) }}</td>
+                    <td>{{getLedgerName(col.Ledger)}}</td>
+                    <td>{{ backupPatient }}</td>
+                    <td>{{col.Amount ? col.Amount : '-'}}</td>
+                    <td><a (click)="DeletePayment(rowIndex)">
+                        <div><i class="fa fa-fw fa-trash"> </i></div>
+                        </a>
+                    </td>
+                </tr>
+            </ng-template>
+            <br>       
+            <ng-template pTemplate="paginatorright" let-state>
+                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of  {{state.totalRecords}}
+            </ng-template>          
+        </p-table> 
+    </div> 
+
+    <p-footer>
+        <button class="btn btn-primary pull-right" (click)="SavePayment()">
+        <p-progressSpinner *ngIf="PaymentSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!PaymentSpinner" class="glyphicon glyphicon-save"></span>Save
+        </button>
+
+        <button class="btn btn-primary" (click)="closePaymentPopup()" >
+        <span class="glyphicon glyphicon-remove"></span>Close
+        </button>
+    </p-footer>  
+
+    </p-dialog>

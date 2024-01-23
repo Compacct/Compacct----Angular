@@ -9,6 +9,7 @@ import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime
 import { CompacctHeader } from "../../../shared/compacct.services/common.header.service";
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { data } from "jquery";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 
 @Component({
@@ -65,6 +66,8 @@ export class HearingSpeechAppointmentComponent implements OnInit {
   objAdultview:any = {};
   ObjFluency: Fluency = new Fluency();
   ObjAdult: Adult = new Adult();
+  TodayDATE:any = '';
+  ShowOtherTestPrintOpt = false;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -72,8 +75,12 @@ export class HearingSpeechAppointmentComponent implements OnInit {
     private Header: CompacctHeader,
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
-    private compacctToast: MessageService
-  ) { }
+    private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
+  ) {
+    this.TodayDATE = this.DateService.dateConvert(new Date());
+    this.ShowOtherTestPrintOpt = this.commonApi.CompacctCookies["Company_Name"] == 'C.C.SAHA LTD' ? true : false;
+    }
 
   ngOnInit() {
 
@@ -94,8 +101,40 @@ export class HearingSpeechAppointmentComponent implements OnInit {
   }
   clearData() { 
      this.End_Date = new Date();
-     this.MaterialDataList = [];
+     this.MaterialDataList =  [];
    }
+
+   checkDate  (appodate) {
+    return this.TodayDATE == this.DateService.dateConvert(new Date(appodate)) ? true : false;
+}
+OtherTestEntry (obj) {
+    this.ngxService.start();
+    if (obj.Appo_ID) {
+      const para = new HttpParams().set("Appo_ID",obj.Appo_ID);
+      this.$http.get('/Hearing_DoctorsAppointment/Get_Other_Entry_Aspx_Link',{ params: para }).subscribe( (response:any) => {
+          const data = JSON.parse(response);
+            if (data[0].Other_Entry_Aspx_Link) {
+                window.open(data[0].Other_Entry_Aspx_Link + "?apid=" + obj.Appo_ID, 'mywindow', ' scrollbars=auto, width=950,height=500');
+            }
+            this.ngxService.stop();
+        });
+    }
+}
+OtherTestEntryPrint (obj) {
+    this.ngxService.start();
+    if (obj.Appo_ID) {
+      const para = new HttpParams().set("Appo_ID",obj.Appo_ID);
+      this.$http.get('/Hearing_DoctorsAppointment/Get_Other_Print_Aspx_Link', { params: para }).subscribe((response:any) => {
+        const data = JSON.parse(response);
+        console.log("data",data)
+        if (data[0].Other_Print_Aspx_Link) {
+            window.open(data[0].Other_Print_Aspx_Link + "?apid=" + obj.Appo_ID, 'mywindow', ' scrollbars=auto, width=950,height=500');
+        }
+            this.ngxService.stop();
+        });
+    }
+}
+
   onConfirm() { }
   onReject() { }
   GetConsultancy() {

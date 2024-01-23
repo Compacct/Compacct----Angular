@@ -1,0 +1,119 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView">
+                        <form name="ProfoundForm" #ProfoundForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Appointment Date</label>
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-1">
+                                    <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetSearchedList()" id="load" [disabled]="seachSpinner">
+                                <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                    </button>
+                                </div>
+                                <div class="col-sm-2" *ngIf="Searchedlist.length">
+                                    <button class="btn btn-success custombutton pull-left" data-toggle="modal" (click)="exportoexcel('perceptive')" id="load2">
+                                   <span  class="glyphicon glyphicon-save-file"></span>&nbsp;Export To Excel
+                                    </button>
+                                </div>
+
+                                <div class="col-sm-5"></div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Cost Center Name
+                                        <sup class="text-danger"></sup></label>
+                                    <p-multiSelect [options]="cosCenterFilter" [(ngModel)]="SelectedcosCenter" [styleClass]="'compacct-multiselect'" name="filterCos" (onChange)="filterCoscenter()"></p-multiSelect>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Audiologist Name
+                                        <sup class="text-danger"></sup></label>
+                                    <p-multiSelect [options]="AudiologistFilter" [(ngModel)]="SelectedAudiologist" [styleClass]="'compacct-multiselect'" name="filterAudio" (onChange)="filterAudiologist()"></p-multiSelect>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Age Upto</label>
+                                    <input type="text" pInputText size="50" placeholder="Search"name="Age" #Age="ngModel"  [(ngModel)]="SelectedAge"
+                                        class="form-control" (keyup)="search()">
+                                       
+                                </div>
+                            </div>
+                        </form>
+                        <div class="table-responsive no-padding">
+                            <p-table [value]="Searchedlist" [paginator]="true" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="['Contact_Name','Mobile','Appo_Dt','Doctor_Name','PT_LEFT', 'PT_RIGHT']"
+                                [rowHover]="true" #dt>
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                                    </div>
+
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width:5em">Action</th>
+                                        <th nowrap>Patient Name</th>
+                                        <th nowrap>Mobile</th>
+                                        <th nowrap>Appointment Date</th>
+                                        <th nowrap>Cost Center Name</th>
+                                        <th nowrap>Audiologist Name</th>
+                                        <th nowrap>Pure Tone Left</th>
+                                        <th nowrap>Pure Tone Right</th>
+                                        <th nowrap>Age</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-col>
+                                    <tr>
+
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                            <i class="fa fa-fw fa-bars"></i>
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <a (click)="redirectPatientDetails(col)">
+                                                            <i class="fa fa-fw fa-eye"></i> View Patient
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a (click)="PrintBill(col)">
+                                                            <i class="fa fa-fw fa-print"></i> Print Page1
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a (click)="PrintBill2(col)">
+                                                            <i class="fa fa-fw fa-print"></i> Print Page2
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td nowrap>{{col.Contact_Name ? col.Contact_Name : '-' }}</td>
+                                        <td nowrap>{{col.Mobile ? col.Mobile : '-'}}</td>
+                                        <td nowrap>{{col.Appo_Dt | date: "dd/MMM/yyyy"}}</td>
+                                        <td nowrap>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
+                                        <td nowrap>{{col.Doctor_Name ? col.Doctor_Name : '-'}}</td>
+                                        <td nowrap>{{col.PT_LEFT ? col.PT_LEFT : '-'}}</td>
+                                        <td nowrap>{{col.PT_RIGHT ? col.PT_RIGHT : '-' }}</td>
+                                        <td nowrap>{{col.Age ? col.Age : '-' }}</td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorright" let-state>
+                                    Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
