@@ -424,6 +424,7 @@ import { PatientCreateWithInformationComponent } from './common/PatientManagemen
 import { DailyAttendanceJohForEmployeeComponent } from './common/Attendance/daily-attendance-joh-for-employee/daily-attendance-joh-for-employee.component';
 import { LeaveEncashmentComponent } from './common/HR/leave-encashment/leave-encashment.component';
 import { DoctorSchedulComponent } from './common/PatientManagement/doctor-schedul/doctor-schedul.component';
+import { PurchaseBillMrpUpdateComponent } from "./common/FinancialManagement/Transaction/Purchase/purchase-bill-mrp-update/purchase-bill-mrp-update.component";
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -3244,6 +3245,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: DoctorSchedulComponent,
       data: {
         title: 'Doctor Schedule Entry'
+      }
+    },
+    {
+      path: 'BL_Txn_Purchase_bill_MRP_update',
+      component: PurchaseBillMrpUpdateComponent,
+      data: {
+        title: 'Purchase Bill MRP Update'
       }
     },
     
