@@ -278,7 +278,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
         reportnamepeninv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=XLD01";
       }
       else if (this.databaseName === "BSHPL") {
-        reportnamepeninv = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Invoice_Queue?code=yf2xGtV6etP5Hj_u-RcbC1iEH6ryfONUXbsUrFGJhRESAzFulwDVDA==";
+        reportnamepeninv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=BSP";
       }
       else {
         reportnamepeninv = "";
@@ -572,7 +572,9 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       reportnamefailedinv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=XLD01";
     }
     else if (this.databaseName === "BSHPL") {
-      reportnamefailedinv = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Invoice_Queue?code=yf2xGtV6etP5Hj_u-RcbC1iEH6ryfONUXbsUrFGJhRESAzFulwDVDA==";
+      // reportnamefailedinv = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Invoice_Queue?code=yf2xGtV6etP5Hj_u-RcbC1iEH6ryfONUXbsUrFGJhRESAzFulwDVDA==";
+      reportnamefailedinv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=BSP";
+
     }
     else {
       reportnamefailedinv = "";
@@ -711,6 +713,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       }
       else if (this.databaseName === "BSHPL") {
         reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&invoice_no=";
+        
       }
       else {
         reportnamecancel = "";
@@ -929,7 +932,9 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
         reportnamepencrnote = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Credit_Note_Direct?code=xV1HqvDxeCr6h_wWVT-hBlI-6pKDgoLln0F2_heaOZsgAzFuc3M5Iw==&CON=XLD01";
       }
       else if (this.databaseName === "BSHPL") {
-        reportnamepencrnote = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=Mvkyst7OU0DTxMSZAgg7HNhW2FuwUgMypd1cu36SfC1JAzFucc6OIw==";
+       // reportnamepencrnote = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=Mvkyst7OU0DTxMSZAgg7HNhW2FuwUgMypd1cu36SfC1JAzFucc6OIw==";
+        reportnamepencrnote = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=BSP"
+     
       }
       else {
         reportnamepencrnote = "";
@@ -1122,7 +1127,8 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
         reportnamefailedcrnote = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Credit_Note_Direct?code=xV1HqvDxeCr6h_wWVT-hBlI-6pKDgoLln0F2_heaOZsgAzFuc3M5Iw==&CON=XLD01";
       }
       else if (this.databaseName === "BSHPL") {
-        reportnamefailedcrnote = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=Mvkyst7OU0DTxMSZAgg7HNhW2FuwUgMypd1cu36SfC1JAzFucc6OIw==";
+       // reportnamefailedcrnote = "https://bshplcallcenteraz.azurewebsites.net/api/Create_E_Credit_Note_Queue?code=Mvkyst7OU0DTxMSZAgg7HNhW2FuwUgMypd1cu36SfC1JAzFucc6OIw==";
+        reportnamefailedcrnote = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=BSP"
       }
       else {
         reportnamefailedcrnote = "";
