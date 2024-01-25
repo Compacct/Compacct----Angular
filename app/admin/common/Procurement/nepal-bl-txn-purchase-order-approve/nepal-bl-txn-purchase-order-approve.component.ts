@@ -36,6 +36,7 @@ export class NepalBLTxnPurchaseOrderApproveComponent implements OnInit {
   ApproverType: any = undefined;
   ApproverTypeTwo :any =undefined
   rowData:any = {}
+  tableLoader:boolean = false
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -288,6 +289,7 @@ sendSms(col) {
   async sendEmail(col:any){
   if(col.Doc_No){
     this.ngxService.start();
+    this.tableLoader = true
     if (!col.vendor_email) {
       this.ngxService.stop();
       this.compacctToast.clear();
@@ -318,6 +320,7 @@ sendSms(col) {
   this.$http.post(`https://sgnepalemailaz.azurewebsites.net/api/Send_PO_Email?code=7XLxczCq_9fq2mFIrCC0-Dp3hsK0SB1_tGcerYvvfbrzAzFui0Jccw==`,JSON.stringify(sendObj) )
   .subscribe(((data:any)=>{
     if(data.status){
+      this.tableLoader = false
       this.ngxService.stop();
       this.compacctToast.add({
         key: "compacct-toast",
@@ -330,6 +333,7 @@ sendSms(col) {
  
   }),
   (error:any)=>{
+    this.tableLoader = false
     this.ngxService.stop();
     this.compacctToast.clear();
     this.compacctToast.add({

@@ -59,7 +59,7 @@
                        
                             <div class="table-responsive no-padding">
                                 <p-table [value]="PendingSearchlist"
-                                 
+                                    [loading]="tableLoader"
                                     [paginator]="true " [rows]="100"
                                     [rowHover]="true"  [autoLayout]="true"
                                     sortMode="multiple" [rowsPerPageOptions]="[100,200,300]"
