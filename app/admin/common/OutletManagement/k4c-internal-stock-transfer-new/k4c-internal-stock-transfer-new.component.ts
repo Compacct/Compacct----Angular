@@ -18,7 +18,7 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
   encapsulation: ViewEncapsulation.None
 })
 export class K4cInternalStockTransferNewComponent implements OnInit {
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
@@ -36,40 +36,40 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
   ObjproductAdd : productAdd = new productAdd ();
   //ProtypeDisabled = false;
 
-  BrandList = [];
-  ProductTypeList = [];
-  Fcostcenlist = [];
-  FromGodownList = [];
-  Tocostcenlist = [];
-  ToGodownList = [];
-  Datelist = [];
-  ProductNamelList = [];
-  BatchNoList = [];
-  AddProDetails = [];
-  Searchedlist = [];
-  godownid = [];
-  editList = [];
+  BrandList:any = [];
+  ProductTypeList:any = [];
+  Fcostcenlist:any = [];
+  FromGodownList:any = [];
+  Tocostcenlist:any = [];
+  ToGodownList:any = [];
+  Datelist:any = [];
+  ProductNamelList:any = [];
+  BatchNoList:any = [];
+  AddProDetails:any = [];
+  Searchedlist:any = [];
+  godownid:any = [];
+  editList:any = [];
   FPDisabled = false;
   editFlag = false;
   IntStockFormFormSubmitted = false;
   ProtypeDisabled = false
-  initDate = [];
+  initDate:any = [];
   minDate: Date;
   maxDate: Date;
   displaysavepopup = false;
-  filteredData = [];
-  BrowseDate = [];
+  filteredData:any = [];
+  BrowseDate:any = [];
   BDate: Date;
-  DateProlist = [];
+  DateProlist:any = [];
   ProDate : any = Date;
-  ProductionList = [] ;
-  BackupProductionList = [];
-  ProductionFilter = [];
+  ProductionList:any = [] ;
+  BackupProductionList:any = [];
+  ProductionFilter:any = [];
   SelectedProduction : any;
-  TProductionList = [];
+  TProductionList:any = [];
   Cost_Cen_Id: any;
-  BackUpProductNamelList = [];
-  editProNoList = [];
+  BackUpProductNamelList:any = [];
+  editProNoList:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -105,6 +105,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
     this.Objproduction.Product_Type_ID = undefined;
     this.SelectedProduction = [];
     this.ProductionFilter = [];
+    this.seachSpinner = false;
   }
 
   //CREATE START
@@ -252,7 +253,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
   // FOR PRODUCT NAME DROPDOWN
   dataforproduct(){
     if(this.SelectedProduction.length) {
-      let Arr =[]
+      let Arr:any =[]
       this.SelectedProduction.forEach(el => {
         if(el){
           const Dobj = {
@@ -332,7 +333,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
    }
    }
    GetProduction(){
-     let DProduction = [];
+     let DProduction:any = [];
      this.ProductionFilter = [];
      this.SelectedProduction = [];
      this.BackupProductionList.forEach((item) => {
@@ -346,7 +347,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
    }
    filterProductionList() {
      //console.log("SelectedTimeRange", this.SelectedTimeRange);
-     let DProduction = [];
+     let DProduction:any = [];
      this.TProductionList = [];
      //const temparr = this.ProductionlList.filter((item)=> item.Qty);
      //if(!this.editList.length && !this.editProNoList.length){
@@ -575,7 +576,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
   }
   getProductionNo(){
     if(this.SelectedProduction.length) {
-      let Rarr =[]
+      let Rarr:any =[]
       this.SelectedProduction.forEach(el => {
         if(el){
           const Dobj = {
@@ -593,7 +594,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
      this.Objproduction.Doc_Date = this.DateService.dateConvert(new Date(this.Datevalue));
     if(this.BackUpProductNamelList.length) {
-      let tempArr =[]
+      let tempArr:any =[]
       this.BackUpProductNamelList.forEach(item => {
         if(item.Transfer_Qty && Number(item.Transfer_Qty) !== 0){
         const obj = {
@@ -653,6 +654,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
     }
   }
   SearchIntStocktr(){
+    this.seachSpinner = true;
     const start = this.ObjBrowse.start_date
       ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
       : this.DateService.dateConvert(new Date());
@@ -754,7 +756,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
     })
   }
   GetProductiondist(){
-    let DIndentBy = [];
+    let DIndentBy:any = [];
     this.ProductionFilter = [];
     this.SelectedProduction =[];
     //this.SelectedDistOrderBy1 = [];
@@ -888,8 +890,8 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
     }
 }
 class production {
-  Doc_No : string;
-  Brand_ID : string;;
+  Doc_No : any;
+  Brand_ID : any;;
   Product_Type_ID : number = undefined;
 
   From_godown_id : string;;

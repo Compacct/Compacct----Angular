@@ -180,7 +180,7 @@
                                             <td align="center">{{ i + 1 }}</td>
                                             <td>
                                                 <!-- style="text-align:center" <input type="checkbox" id="col.confirmationInv" name="col.confirmationInv" value="col.confirmation_Inv"> -->
-                                                <p-checkbox name="col.confirmationInv" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" (ngModelChange)='CheckPenInvQueuelength()' [binary]="true"></p-checkbox>
+                                                <p-checkbox [name]="col.Doc_No+i" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" (ngModelChange)='CheckPenInvQueuelength()' [binary]="true"></p-checkbox>
                                             </td>
                                             <!-- <td style="text-align:center">
                                                 <button class="btn btn-primary custombtn" (click)='ViewInvoice(col.Doc_No)' type="button" [id]="col.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
@@ -227,9 +227,9 @@
 
                             <div class="box-footer">
                                 <div class="text-right">
-                                    <button class="btn btn-primary pull-right" (click)="SavePenInvoice()" id="load" [disabled]="Spinner || !PenINVconfirmcheckbox">
-                           <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                       <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Save
+                                    <button class="btn btn-primary pull-right" (click)="SavePenInvoice()" id="load" [disabled]="peninvSpinner || !PenINVconfirmcheckbox">
+                           <p-progressSpinner *ngIf="peninvSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                       <span *ngIf="!peninvSpinner" class="glyphicon glyphicon-save"></span> Save
                    </button>
                                 </div>
                             </div>
@@ -323,7 +323,7 @@
                                             <td align="center">{{ i + 1 }}</td>
                                             <td>
                                                 <!-- <input type="checkbox" id="col.confirmationInv" name="col.confirmationInv" value="col.confirmation_Inv"> -->
-                                                <p-checkbox name="col.failedconfirmationInv" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" (ngModelChange)='CheckFailedInvQueuelength()' [binary]="true"></p-checkbox>
+                                                <p-checkbox [name]="col.Doc_No+i" value="col.confirmationInv" [(ngModel)]="col.confirmation_Inv" (ngModelChange)='CheckFailedInvQueuelength()' [binary]="true"></p-checkbox>
                                             </td>
                                             <td style="text-align:center">
                                                 <button class="btn btn-primary custombtn" (click)='ViewInvoice(col.Doc_No)' type="button" [id]="col.Doc_No"  data-loading-text="<i class='fa fa-spinner fa-spin '></i>  Updating">
@@ -364,8 +364,8 @@
                             </div>
                             <div class="box-footer">
                                 <div class="text-right">
-                                    <button class="btn btn-primary pull-right" (click)="SaveFailedInvoice()" id="load" [disabled]="Spinner || !failedINVconfirmcheckbox">
-                           <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <button class="btn btn-primary pull-right" (click)="SaveFailedInvoice()" id="load" [disabled]="failedinvSpinner || !failedINVconfirmcheckbox">
+                           <p-progressSpinner *ngIf="failedinvSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                        <!-- <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> --> Put In E-Invoice Genaration-Queue 
                    </button>
                                 </div>
@@ -802,9 +802,9 @@
                             </div>
                             <div class="box-footer">
                                 <div class="text-right">
-                                    <button class="btn btn-primary pull-right" (click)="SavePenCrNote()" id="load" [disabled]="Spinner || !PenCRNoteconfirmcheckbox">
-                           <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                       <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Save 
+                                    <button class="btn btn-primary pull-right" (click)="SavePenCrNote()" id="load" [disabled]="pencrSpinner || !PenCRNoteconfirmcheckbox">
+                           <p-progressSpinner *ngIf="pencrSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                       <span *ngIf="!pencrSpinner" class="glyphicon glyphicon-save"></span> Save 
                    </button>
                                 </div>
                             </div>
@@ -939,8 +939,8 @@
                             </div>
                             <div class="box-footer">
                                 <div class="text-right">
-                                    <button class="btn btn-primary pull-right" (click)="SaveFailedCrNote()" id="load" [disabled]="Spinner || !FailedCRNoteconfirmcheckbox">
-                           <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <button class="btn btn-primary pull-right" (click)="SaveFailedCrNote()" id="load" [disabled]="failedcrSpinner || !FailedCRNoteconfirmcheckbox">
+                           <p-progressSpinner *ngIf="failedcrSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                        <!-- <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> --> Put In E-Invoice Genaration-Queue  
                    </button>
                                 </div>

@@ -520,6 +520,8 @@ import { QuizModuleComponent } from './common/Attendance/quiz-module/quiz-module
 import { K4cAllDiagnosisComponent } from './common/OutletManagement/k4c-all-diagnosis/k4c-all-diagnosis.component';
 import { PatientCreateWithInformationComponent } from './common/PatientManagement/patient-create-with-information/patient-create-with-information.component';
 import { DailyAttendanceJohForEmployeeComponent } from './common/Attendance/daily-attendance-joh-for-employee/daily-attendance-joh-for-employee.component';
+import { LeaveEncashmentComponent } from './common/HR/leave-encashment/leave-encashment.component';
+import { DoctorSchedulComponent } from './common/PatientManagement/doctor-schedul/doctor-schedul.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -954,7 +956,9 @@ import { DailyAttendanceJohForEmployeeComponent } from './common/Attendance/dail
     QuizModuleComponent,
     K4cAllDiagnosisComponent,
     PatientCreateWithInformationComponent,
-    DailyAttendanceJohForEmployeeComponent
+    DailyAttendanceJohForEmployeeComponent,
+    LeaveEncashmentComponent,
+    DoctorSchedulComponent
   ],
   imports: [
     CommonModule,

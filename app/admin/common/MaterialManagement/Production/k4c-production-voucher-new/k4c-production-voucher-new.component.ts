@@ -20,7 +20,7 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
   encapsulation: ViewEncapsulation.None
 })
 export class K4cProductionVoucherNewComponent implements OnInit {
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
@@ -34,26 +34,26 @@ export class K4cProductionVoucherNewComponent implements OnInit {
   inputBoxDisabled = false;
   Objproduction : production = new production ();
   ObjBrowse : Browse = new Browse ();
-  BrandList = [];
-  SelProcessList = [];
-  ProcessProductList = [];
-  SiftList = [];
-  ToGodownList = [];
-  ProDatelist = [];
-  ProductionlList = [];
-  BackUpProductionlList = [];
-  FromProcessList = [];
-  FromGodownList = [];
+  BrandList:any = [];
+  SelProcessList:any = [];
+  ProcessProductList:any = [];
+  SiftList:any = [];
+  ToGodownList:any = [];
+  ProDatelist:any = [];
+  ProductionlList:any = [];
+  BackUpProductionlList:any = [];
+  FromProcessList:any = [];
+  FromGodownList:any = [];
   FPDisabled = true;
   BatchDisabled = true;
   AddProDetailsFormSubmitted = false;
   ObjproductAdd : productAdd = new productAdd ();
-  AddProDetails = [];
+  AddProDetails:any = [];
   Batch_No: any;
-  Searchedlist = [];
-  editList = [];
-  DeleteList = [];
-  BatchNoList = [];
+  Searchedlist:any = [];
+  editList:any = [];
+  DeleteList:any = [];
+  BatchNoList:any = [];
   ProtypeDisabled = false;
   allProductsCheck = false;
   checkBoxText = "Show All Products"
@@ -61,14 +61,14 @@ export class K4cProductionVoucherNewComponent implements OnInit {
   editDis = false;
   Param_Flag ='';
 
-  BackupSearchedlist = [];
-  DistProcessName = [];
-  SelectedDistProcessName = [];
-  DistProductType = [];
-  SelectedDistProductType = [];
-  DistShift = [];
-  SelectedDistShift = [];
-  SearchFields = [];
+  BackupSearchedlist:any = [];
+  DistProcessName:any = [];
+  SelectedDistProcessName:any = [];
+  DistProductType:any = [];
+  SelectedDistProductType:any = [];
+  DistShift:any = [];
+  SelectedDistShift:any = [];
+  SearchFields:any = [];
   Process_ID: any;
   ViewPoppup = false;
   Doc_no = undefined;
@@ -81,21 +81,21 @@ export class K4cProductionVoucherNewComponent implements OnInit {
   FprocessName = undefined;
   Vshift = undefined;
   TotalQty = undefined;
-  initDate = [];
+  initDate:any = [];
   doc_date: any;
   minDate: Date;
   maxDate: Date;
-  filteredData = [];
+  filteredData:any = [];
   displaysavepopup = false;
-  BrowseDate = [];
+  BrowseDate:any = [];
   BDate: Date;
-  IndentNoList = [] ;
-  BackupIndentList = [];
-  IndentFilter = [];
+  IndentNoList:any = [] ;
+  BackupIndentList:any = [];
+  IndentFilter:any = [];
   SelectedIndent : any;
-  TIndentList = [];
+  TIndentList:any = [];
   Cost_Cen_Id: any;
-  editIndentList = [];;
+  editIndentList:any = [];;
 
   constructor(
     private Header: CompacctHeader,
@@ -141,6 +141,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
     //this.FPDisabled = true;
     this.SelectedIndent = [];
     this.IndentFilter = [];
+    this.seachSpinner = false;
   }
 
   // CREATE START
@@ -349,7 +350,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
  // }
   }
   GetIndent(){
-    let DIndent = [];
+    let DIndent:any = [];
     this.IndentFilter = [];
     this.SelectedIndent = [];
     this.BackupIndentList.forEach((item) => {
@@ -363,7 +364,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
   }
   filterIndentList() {
     //console.log("SelectedTimeRange", this.SelectedTimeRange);
-    let DIndent = [];
+    let DIndent:any = [];
     this.TIndentList = [];
     //const temparr = this.ProductionlList.filter((item)=> item.Qty);
     if(!this.editList.length){
@@ -398,7 +399,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
   // FOR PRODUCT NAME DROPDOWN
   dataforproduct(){
     if(this.SelectedIndent.length) {
-      let Arr =[]
+      let Arr:any =[]
       this.SelectedIndent.forEach(el => {
         if(el){
           const Dobj = {
@@ -638,7 +639,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
   }
   }
   getReqNo(){
-    let Rarr =[]
+    let Rarr:any =[]
     if(this.SelectedIndent.length) {
       this.SelectedIndent.forEach(el => {
         if(el){
@@ -719,7 +720,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
   // console.log(this.DateService.dateConvert(new Date(this.myDate)))
    this.Objproduction.Doc_Date = this.DateService.dateConvert(new Date(this.Datevalue));
   if(this.BackUpProductionlList.length ) {
-    let tempArr = [];
+    let tempArr:any = [];
     this.BackUpProductionlList.forEach(item => {
       if(item.Qty && Number(item.Qty) !== 0){
         obj = {
@@ -799,6 +800,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
   }
   }
   SearchProduction(){
+    this.seachSpinner = true;
   const start = this.ObjBrowse.start_date
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
   : this.DateService.dateConvert(new Date());
@@ -824,9 +826,9 @@ const obj = {
   }
   // DISTINCT & FILTER
   GetDistinct() {
-    let DProcessName = [];
-    let DProductType = [];
-    let DShift = [];
+    let DProcessName:any = [];
+    let DProductType:any = [];
+    let DShift:any = [];
     this.DistProcessName =[];
     this.SelectedDistProcessName =[];
     this.DistProductType =[];
@@ -851,9 +853,9 @@ const obj = {
      this.BackupSearchedlist = [...this.Searchedlist];
   }
   FilterDist() {
-    let DProcessName = [];
-    let DProductType = [];
-    let DShift = [];
+    let DProcessName:any = [];
+    let DProductType:any = [];
+    let DShift:any = [];
     this.SearchFields =[];
   if (this.SelectedDistProcessName.length) {
     this.SearchFields.push('Process_ID');
@@ -1012,7 +1014,7 @@ const obj = {
     })
   }
   GetIndentdist(){
-    let DIndentBy = [];
+    let DIndentBy:any = [];
     this.IndentFilter = [];
     this.SelectedIndent =[];
     //this.SelectedDistOrderBy1 = [];
@@ -1027,7 +1029,7 @@ const obj = {
   }
   geteditReqNo(){
     if(this.SelectedIndent.length) {
-      let Rarr =[]
+      let Rarr:any =[]
       this.SelectedIndent.forEach(el => {
         if(el){
           const Dobj = {
@@ -1209,16 +1211,16 @@ const obj = {
   }
 }
 class production {
-  Doc_No : string;
-  Brand_ID : string;
-  Product_Type_ID : string;
-  Process_ID : string;
-  From_Process_ID : string;
+  Doc_No : any;
+  Brand_ID : any;
+  Product_Type_ID : any;
+  Process_ID : any;
+  From_Process_ID : any;
   From_Process_Name : string;
   Previous_Process_ID : string;
   Previous_Process_Name : string;
   Shift : string;
-  From_godown_id : string;
+  From_godown_id : any;
   To_godown_id : string;
   To_Cost_Cen_ID : string;
   From_Cost_Cen_ID : string;
