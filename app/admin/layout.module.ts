@@ -522,6 +522,7 @@ import { PatientCreateWithInformationComponent } from './common/PatientManagemen
 import { DailyAttendanceJohForEmployeeComponent } from './common/Attendance/daily-attendance-joh-for-employee/daily-attendance-joh-for-employee.component';
 import { LeaveEncashmentComponent } from './common/HR/leave-encashment/leave-encashment.component';
 import { DoctorSchedulComponent } from './common/PatientManagement/doctor-schedul/doctor-schedul.component';
+import { PurchaseBillMrpUpdateComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill-mrp-update/purchase-bill-mrp-update.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -958,7 +959,8 @@ import { DoctorSchedulComponent } from './common/PatientManagement/doctor-schedu
     PatientCreateWithInformationComponent,
     DailyAttendanceJohForEmployeeComponent,
     LeaveEncashmentComponent,
-    DoctorSchedulComponent
+    DoctorSchedulComponent,
+    PurchaseBillMrpUpdateComponent
   ],
   imports: [
     CommonModule,
