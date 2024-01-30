@@ -280,7 +280,16 @@ sendSms(col) {
           });
           this.onReject();
           this.PendingSearch(true)
-        }))
+        }),(error:any)=>{
+          this.ngxService.stop();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Something Wrong",
+            detail: error,
+          });
+        } )
      
   
   }
