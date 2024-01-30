@@ -15,13 +15,13 @@
                                 <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)">
                                 </app-compacct-daterangepicker>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <label class="control-label">Cost Center</label>
                                 <p-dropdown 
                                     [options]="CostCenterList" 
                                     name="Costcen" 
                                     #Costcen="ngModel"
-                                    [(ngModel)]="objMrpUpdateSearch.CostcenterID" 
+                                    [(ngModel)]="objMrpUpdateSearch.Cost_Cen_ID" 
                                     [showClear]="true"
                                     [emptyFilterMessage]="'No Cost Center Found'" 
                                     [filter]="true" 
@@ -64,10 +64,9 @@
 
                         <ng-template pTemplate="header">
                             <tr>
-                                <th nowrap>Doc No</th>
-                                <th nowrap>Doc Date</th>
+                                <th nowrap>Bill No</th>
+                                <th nowrap>Bill Date</th>
                                 <th nowrap>Vendor</th>
-                                <th nowrap>Cost Center</th>
                                 <th nowrap>Product</th>
                                 <th nowrap>HSN</th>
                                 <th nowrap>Serial No.</th>
@@ -80,12 +79,45 @@
                             </tr>
                         </ng-template>
 
+                        <ng-template pTemplate="body" let-col let-i="rowIndex">
+                            <tr>
+                                <td nowrap>{{ col.Bill_No ? col.Bill_No : "-" }}</td>
+                                <td nowrap>{{ col.Bill_Date ? ( col.Bill_Date |date:'dd/MMM/yyyy' ) : "-" }}</td>
+                                <td nowrap>{{ col.sub_ledger_name ? col.sub_ledger_name : "-" }}</td>
+                                <td nowrap>{{ col.Product_Name ? col.Product_Name : "-" }}</td>
+                                <td nowrap>{{ col.HSN_No ? col.HSN_No : "-" }}</td>
+                                <td nowrap>{{ col.Serial_No ? col.Serial_No : "-" }}</td>
+                                <td nowrap>{{ col.Batch_Number ? col.Batch_Number : "-" }}</td>
+                                <td nowrap>{{ col.UOM ? col.UOM : "-" }}</td>
+                                <td nowrap>{{ col.Qty ? col.Qty : "-" }}</td>
+                                <td nowrap>{{ col.Rate ? col.Rate : "-" }}</td>
+                                <td nowrap >
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        placeholder="" 
+                                        [name]="'ProductMRP'+i"
+                                        [(ngModel)]="col.MRP" 
+                                        style="width: 80px;"
+                                    CompacctDigitonly="true">
+                                </td>
+                                <td nowrap>{{ col.cost_cen_name ? col.cost_cen_name : "-" }}</td>
+                            </tr>
+                        </ng-template>
+
                         <ng-template pTemplate="paginatorright" let-state>
                             Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
                             {{state.totalRecords}}
                         </ng-template>
 
                     </p-table>
+
+                    <div class="col-sm-12">
+                        <button class="btn btn-primary pull-right" (click)="UpdateMRP()" [disabled]="Spinner">
+                            <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                            <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>&nbsp;Save
+                        </button>
+                    </div>
 
                 </p-tabView>
 
