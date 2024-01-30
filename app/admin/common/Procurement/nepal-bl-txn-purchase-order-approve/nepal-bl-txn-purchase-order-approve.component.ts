@@ -257,6 +257,7 @@ PrintNotAuthorized(typ :any) {
 }
 sendSms(col) {
   if (col.Doc_No) {
+    this.ngxService.start();
     if (!col.Mobile_No) {
       this.ngxService.stop();
       this.compacctToast.add({
