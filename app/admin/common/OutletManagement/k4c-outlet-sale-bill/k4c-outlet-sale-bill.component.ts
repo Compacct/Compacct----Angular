@@ -122,7 +122,7 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
   LedgerNameforupi: any;
   txnbuttondisabled:boolean = false;
   txndisabledupi:boolean = false;
-  confirmtxnflagupi:boolean = false;
+  confirmtxnflagupi:boolean = true;
   txnbuttondisabledupi:boolean = false;
   txnidAsRefNumberupi: any;
   RequestIdupi: any;

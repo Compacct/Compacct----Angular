@@ -654,10 +654,10 @@ export class K4cMasterProductComponent implements OnInit {
   {ReportName = "Get - Product Type List Semi Finished"}
   else if (this.Param_Flag === 'Finished')
   {ReportName = "Get - Product Type List Finished"}
-  else if(this.Param_Flag === 'Store Item - N/Saleable' || this.Param_Flag === 'Maintenance')
+  else if(this.Param_Flag === 'Store Item - N/Saleable' || this.Param_Flag === 'Store Item - Saleable')
   {ReportName = "Get - Product Type List Store Item"}
-  else if(this.Param_Flag === 'Store Item - Saleable')
-  {ReportName = "Get - Product Type List Store Item"}
+  else if(this.Param_Flag === 'Maintenance')
+  {ReportName = "Get - Product Type List Maintenance"}
   console.log(ReportName);
   const obj = {
       "SP_String": "SP_Controller_Master",

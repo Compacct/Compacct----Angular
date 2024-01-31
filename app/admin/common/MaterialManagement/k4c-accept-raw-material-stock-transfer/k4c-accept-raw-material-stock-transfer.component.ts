@@ -93,15 +93,24 @@ export class K4cAcceptRawMaterialStockTransferComponent implements OnInit {
     //   User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
     //   Material_Type : this.MaterialType_Flag
     // }
+    let spname = ''
+    let reportname = ''
+    if(this.MaterialType_Flag === "Maintenance"){
+      spname = "SP_Controller_Master"
+      reportname = "Get - Outlet Name"
+    } else {
+      spname = "SP_Raw_Material_Stock_Transfer"
+      reportname = "Get Cost Centre Non outlet"
+    }
     const obj = {
-      "SP_String": "SP_Raw_Material_Stock_Transfer",
-      "Report_Name_String": "Get Cost Centre Non outlet",
+      "SP_String": spname,
+      "Report_Name_String": reportname,
      // "Json_Param_String": JSON.stringify([tempObj])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.ToBcostcenlist = data;
      // if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
-      if (this.CostCentId_Flag) {
+      if (this.CostCentId_Flag && this.MaterialType_Flag != "Maintenance") {
       this.ObjBrowse.To_Cost_Cen_ID = String(this.CostCentId_Flag);
       this.TBCdisableflag = true;
       this.GetBToGodown();
