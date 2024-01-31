@@ -118,7 +118,7 @@ export class OutletSaleBillWithoutBatchSelectComponent implements OnInit {
   LedgerNameforupi: any;
   txnbuttondisabled:boolean = false;
   txndisabledupi:boolean = false;
-  confirmtxnflagupi:boolean = false;
+  confirmtxnflagupi:boolean = true;
   txnbuttondisabledupi:boolean = false;
   txnidAsRefNumberupi: any;
   RequestIdupi: any;
