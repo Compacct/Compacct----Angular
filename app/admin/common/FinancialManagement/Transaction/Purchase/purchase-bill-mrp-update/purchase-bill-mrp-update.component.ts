@@ -34,6 +34,7 @@ export class PurchaseBillMrpUpdateComponent implements OnInit {
       Link: "Financial Management --> Transaction --> Purchase --> Purchase Bill MRP Update"
     });
     this.GetCostcenter();
+    
   }
 
   GetCostcenter(){
