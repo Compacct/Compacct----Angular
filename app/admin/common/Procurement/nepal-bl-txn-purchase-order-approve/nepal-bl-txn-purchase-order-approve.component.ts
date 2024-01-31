@@ -302,6 +302,7 @@ sendSms(col) {
     this.tableLoader = true
     if (!col.vendor_email) {
       this.ngxService.stop();
+      this.tableLoader = false
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "compacct-toast",
