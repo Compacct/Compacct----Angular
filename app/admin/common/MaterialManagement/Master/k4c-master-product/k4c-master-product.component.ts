@@ -773,7 +773,7 @@ export class K4cMasterProductComponent implements OnInit {
         }
         this.GlobalAPI.getData(obj).subscribe((data:any)=>{
           // console.log("row  ===",data);
-          this.DynamicHeader = Object.keys(data[0]);
+          this.DynamicHeader = data.length ? Object.keys(data[0]) : [];
           this.rowDataList = data;
           this.BackupRowDataList = data;
           this.brandIdSave = this.Objbrand.Brand_ID;
