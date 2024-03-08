@@ -122,6 +122,10 @@ export class HREmployeeMasterComponent implements OnInit {
   Location:any;
   bankacnoflag:boolean = false;
   resetdisabled:boolean = false;
+  Month_Name : any;
+  holdsalaryflag:boolean = false;
+  Is_hold:any;
+  currentdate = new Date();
   constructor(
     private http : HttpClient,
     private commonApi : CompacctCommonApi,
@@ -168,7 +172,14 @@ export class HREmployeeMasterComponent implements OnInit {
     this.getReferenceBy();
     this.getConsultancy();
     this.getConsultancyEmp();
+    this.getcurrentMonth(this.currentdate);
     
+  }
+  getcurrentMonth(date){
+    const d = new Date(date);
+    let month = d.getMonth() + 1;
+    let year = d.getFullYear();
+    this.Month_Name = month < 10 ? year+'-'+0+month : year+'-'+month
   }
   getDatabase(){
     this.http
@@ -505,6 +516,7 @@ getempdetailsforU(){
 
 getEmployeeDetails(Emp_ID){
   if (this.objselect.Emp_ID) {
+    this.holdsalaryflag = false;
   const obj = {
     "SP_String": "Sp_HR_Employee_Master",
      "Report_Name_String":"Get_HR_Employee_Details",
@@ -558,6 +570,10 @@ getEmployeeDetails(Emp_ID){
           this.buttonname = "Update"
           this.flag = false;
           this.checkcode = undefined;
+          let getmonthdate = data[0].From_month ? data[0].From_month : new Date();
+          this.getcurrentMonth(getmonthdate);
+          this.Is_hold = data[0].Is_hold;
+          this.holdsalaryflag = data[0].Is_hold === "Y" ? true : false;
         }
         else {
           this.objemployee = new Employee();
@@ -1677,6 +1693,33 @@ onConfirmReset(){
         detail: "Something Wrong"
       });
   }
+}
+HoldSalary(){
+  var firstDate = this.Month_Name+'-'+'01'
+  if(this.objemployee.Emp_ID && firstDate) {
+  const tempobj ={
+    Emp_ID : this.objemployee.Emp_ID,
+    from_month : this.DateService.dateConvert(new Date(firstDate)),
+    Is_hold : 'Y'
+
+  }
+  const obj = {
+    "SP_String": "Sp_HR_Employee_Master",
+     "Report_Name_String":"salary_hold_for_month",
+     "Json_Param_String": JSON.stringify([tempobj]) 
+      }
+      
+        this.GlobalAPI.getData(obj).subscribe((data)=>{
+         console.log("data=",data[0].Column1);
+          if(data[0].Column1 === "done") {
+            this.holdsalaryflag = true;
+          }
+          else{
+            this.holdsalaryflag = false;
+          }
+        });
+  }
+
 }
 
 // onFileChanged(event) {
