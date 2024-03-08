@@ -23,7 +23,9 @@ export class AttendanceRegularizationComponent implements OnInit {
   user_type: string = "";
   AttendenceFormSubmitted: boolean = false;
   apply_Date: Date = new Date();
-  attendence_Date: Date = new Date();
+  attendence_Date: Date;
+  min_attendence_Date: Date;
+  max_attendence_Date: Date;
   employeeList: any = [];
   Changed_In_Time: any;
   Changed_Out_Time: any;
@@ -37,6 +39,7 @@ export class AttendanceRegularizationComponent implements OnInit {
   initDate: any = [];
   del_empID: number = 0;
   del_ApplyDate: Date = new Date();
+  del_AttenDate: Date = new Date();
   objAttendence = new Attendence();
 
   constructor(
@@ -55,6 +58,10 @@ export class AttendanceRegularizationComponent implements OnInit {
     this.User_ID = this.commonApi.CompacctCookies.User_ID;
     this.user_type = this.commonApi.CompacctCookies.User_Type;
     // console.log('user type', this.user_type);
+    var currentdate:Date = new Date();
+    const maxattndate =  currentdate.setDate(currentdate.getDate() - 1);
+    this.max_attendence_Date = new Date(maxattndate);
+    this.attendence_Date = new Date(maxattndate);
     this.getEmployeeList();
     this.getBrowseData();
   }
@@ -90,6 +97,7 @@ export class AttendanceRegularizationComponent implements OnInit {
     if (col) {
       this.del_empID = col.Emp_ID;
       this.del_ApplyDate = col.Apply_Date;
+      this.del_AttenDate = col.Atten_Date;
       this.CompacctToast.clear();
       this.CompacctToast.add({
         key: "c",
@@ -184,6 +192,7 @@ export class AttendanceRegularizationComponent implements OnInit {
           this.clearData();
         }
         else {
+          this.Spinner = false;
           this.CompacctToast.clear();
           this.CompacctToast.add({
             key: "compacct-toast",
@@ -195,6 +204,7 @@ export class AttendanceRegularizationComponent implements OnInit {
       })
     }
     else {
+      this.Spinner = false;
       this.CompacctToast.clear();
       this.CompacctToast.add({
         key: "compacct-toast",
@@ -215,7 +225,10 @@ export class AttendanceRegularizationComponent implements OnInit {
     this.Spinner = false;
     this.objAttendence = new Attendence();
     this.apply_Date = new Date();
-    this.attendence_Date = new Date();
+    var currentdate:Date = new Date();
+    const maxattndate =  currentdate.setDate(currentdate.getDate() - 1);
+    this.max_attendence_Date = new Date(maxattndate);
+    this.attendence_Date = new Date(maxattndate);
     this.del_empID = 0;
     this.del_ApplyDate = new Date();
     this.disabled_inTime = undefined;
@@ -230,7 +243,7 @@ export class AttendanceRegularizationComponent implements OnInit {
     const obj = {
       "SP_String": "SP_HR_Txn_Attendance_Regularization",
       "Report_Name_String": "Delete_HR_Txn_Attendance_Regularization",
-      "Json_Param_String": JSON.stringify([{ "Emp_ID": this.del_empID, "Apply_Date": this.DateService.dateConvert(this.del_ApplyDate) }])
+      "Json_Param_String": JSON.stringify([{ "Emp_ID": this.del_empID, "Atten_Date": this.DateService.dateConvert(this.del_AttenDate) }])
     }
     this.GlobalAPI.postData(obj).subscribe((data: any) => {
       // console.log('delete res', data);
@@ -252,6 +265,7 @@ export class AttendanceRegularizationComponent implements OnInit {
     this.CompacctToast.clear("c");
     this.del_empID = 0;
     this.del_ApplyDate = new Date();
+    this.del_AttenDate = new Date();
   }
 
 }

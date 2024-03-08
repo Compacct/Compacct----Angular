@@ -504,7 +504,8 @@ export class OutwardChallanComponent implements OnInit {
         fromPincode : this.ObjPurChaseBill.Sub_Ledger_Pin_2,
         toPincode : this.ObjPurChaseBill.Cost_Cen_PIN
       }
-      this.$http.get("https://azdistancecalc.azurewebsites.net/api/Distance?code=OTrdwwzB0Q8uzU1BIhgflRcUMM60Q1uRSS22Wx0-99QwAzFuk-uwmw==&fromPincode="+this.ObjPurChaseBill.Cost_Cen_PIN+"&toPincode="+this.ObjPurChaseBill.Sub_Ledger_Pin_2)
+      // this.$http.get("https://azdistancecalc.azurewebsites.net/api/Distance?code=OTrdwwzB0Q8uzU1BIhgflRcUMM60Q1uRSS22Wx0-99QwAzFuk-uwmw==&fromPincode="+this.ObjPurChaseBill.Cost_Cen_PIN+"&toPincode="+this.ObjPurChaseBill.Sub_Ledger_Pin_2)
+      this.$http.get("https://einvoicecompacct.azurewebsites.net/api/Get_Distance?code=uVJjIusLgOThNqFJk6dMRU0XRg1ft0BrxPOIlYoeSy5eAzFuZUnSGA==&fromPincode="+this.ObjPurChaseBill.Cost_Cen_PIN+"&toPincode="+this.ObjPurChaseBill.Sub_Ledger_Pin_2)
      .subscribe((data:any)=>{
       console.log("data",data)
       this.ObjPurChaseBill.Transportation_Distance = Math.ceil(Number(Number(data[0].distance).toFixed(2)));

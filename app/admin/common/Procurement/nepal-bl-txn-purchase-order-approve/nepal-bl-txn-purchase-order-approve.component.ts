@@ -6,6 +6,7 @@ import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import {DateNepalConvertService} from '../../../shared/compacct.global/dateNepal.service'
+import { NgxUiLoaderService } from "ngx-ui-loader";
 @Component({
   selector: 'app-nepal-bl-txn-purchase-order-approve',
   templateUrl: './nepal-bl-txn-purchase-order-approve.component.html',
@@ -34,7 +35,8 @@ export class NepalBLTxnPurchaseOrderApproveComponent implements OnInit {
   DocNo: any = undefined;
   ApproverType: any = undefined;
   ApproverTypeTwo :any =undefined
-
+  rowData:any = {}
+  tableLoader:boolean = false
   constructor(
     private $http: HttpClient,
     private GlobalAPI: CompacctGlobalApiService,
@@ -43,6 +45,7 @@ export class NepalBLTxnPurchaseOrderApproveComponent implements OnInit {
     private DateNepalConvertService : DateNepalConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -155,6 +158,7 @@ ApprovedOne(obj,typ) {
     if (obj.Doc_No) {
   this.DocNo = obj.Doc_No;
   this.ApproverType = typ
+  this.rowData = typ == 'Two' ?  obj : {}
   this.compacctToast.clear();
   this.compacctToast.add({
     key: "c",
@@ -167,6 +171,7 @@ ApprovedOne(obj,typ) {
  
  }
 ApprovedPo(data:any) {
+  this.ngxService.start();
     const tempobj = {
      Doc_No : this.DocNo,
      Approver  :this.ApproverType,
@@ -185,10 +190,21 @@ ApprovedPo(data:any) {
           severity: "success",
           summary: " PO No " + this.DocNo ,
           detail: "Succesfully Approved "
-        });
-        this.onReject();
-        this.PendingSearch(true);
-        this.DocNo = undefined ;
+         });
+         console.log("rowData",this.rowData)
+         if(Object.keys(this.rowData).length){
+          
+          this.sendSms({...this.rowData})
+          this.sendEmail({...this.rowData})
+         }
+         else {
+           this.onReject();
+          this.ngxService.stop();
+          this.PendingSearch(true);
+          this.DocNo = undefined ;
+          this.rowData = {}
+         }
+       
        }
     })
  }
@@ -238,5 +254,117 @@ PrintNotAuthorized(typ :any) {
           'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
           );
  }     
+}
+sendSms(col) {
+  if (col.Doc_No) {
+    this.ngxService.start();
+    if (!col.Mobile_No) {
+      this.ngxService.stop();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Failed to Send SMS",
+        detail: "there are no phone number"
+          });
+      return
+    }
+      this.$http.get('Nepal_BL_Txn_Purchase_Order/Send_PO_Message?Mobile_No='+col.Mobile_No+'&Doc_No='+col.Doc_No)
+        .subscribe(((data: any) => {
+          this.ngxService.stop();
+          console.log("sms data", data)
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "SMS SEND" ,
+            detail: "SMS send Succesfully "
+          });
+          this.onReject();
+          this.PendingSearch(true)
+        }),(error:any)=>{
+          this.ngxService.stop();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Something Wrong",
+            detail: error,
+          });
+        } )
+     
+  
+  }
+  
+}
+  async sendEmail(col:any){
+  if(col.Doc_No){
+    this.ngxService.start();
+    this.tableLoader = true
+    if (!col.vendor_email) {
+      this.ngxService.stop();
+      this.tableLoader = false
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Failed to Send Email",
+        detail: "there are no Email ID"
+          });
+      return
+    }
+     const fileData = await this.getFileDetalis(col.Doc_No).then(res=>{
+      return res
+     })
+     console.log(fileData)
+  
+ const sendObj = {
+    Vendor_Name: col.Sub_Ledger_Name,
+    Doc_No: col.Doc_No,
+    Doc_Date: this.DateService.dateConvert(this.DateNepalConvertService.convertNepaliDateToEngDate(col.Doc_Date)),
+    file_name: fileData.file_name,
+    blob_name: fileData.containername,
+    po_pdf_url: fileData.file_url,
+    to_email: col.vendor_email,
+    cc_details: [{cc_email:'chirag@sarawagigroup.com.np'}],
+    from_email:col.User_Email == '' ? 'procurement@sarawagigroup.com.np' : col.User_Email
+}
+  this.$http.post(`https://sgnepalemailaz.azurewebsites.net/api/Send_PO_Email?code=7XLxczCq_9fq2mFIrCC0-Dp3hsK0SB1_tGcerYvvfbrzAzFui0Jccw==`,JSON.stringify(sendObj) )
+  .subscribe(((data:any)=>{
+    if(data.status){
+      this.tableLoader = false
+      this.ngxService.stop();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "success",
+        summary: "Email",
+        detail: data.message,
+      });
+     this.PendingSearch(true)
+    }
+ 
+  }),
+  (error:any)=>{
+    this.tableLoader = false
+    this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Something Wrong",
+      detail: error,
+    });
+  }
+  );
+  }
+}
+// getFileDetalis(doc:any){
+//  return this.$http.get('http://iwpl.southeastasia.cloudapp.azure.com:1100/SG_Nepal_PO_PDF?DOC_No='+doc).toPromise()
+
+// }
+  async getFileDetalis(doc:any) {
+  const response = await fetch('http://iwpl.southeastasia.cloudapp.azure.com:1100/SG_Nepal_PO_PDF?DOC_No='+doc, {
+    method: "GET",
+   });
+  return response.json();
 }
 }

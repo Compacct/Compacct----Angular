@@ -723,7 +723,7 @@
                                             <div class="col-sm-3 pull-right">
                                                 <button type="submit"
                                                         name='stock'
-                                                        class="btn btn-primary custombutton pull-right"
+                                                        class="btn btn-primary custombutton pull-right" [disabled]="btnDisable"
                                                         (click)="AddProductInfo(ProductForm.form.valid)">
                                                     <span class="glyphicon glyphicon-plus"></span>&nbsp;Add
                                                 </button>

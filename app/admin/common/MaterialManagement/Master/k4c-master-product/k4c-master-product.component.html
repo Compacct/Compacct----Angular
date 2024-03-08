@@ -30,10 +30,10 @@
                     <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                             <div class="row">
-                                <div class="col-sm-1" *ngIf="Param_Flag != 'Raw Material'">
+                                <div class="col-sm-1" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Maintenance'">
                                     <label style="float: right;">Brand</label>
                                 </div>
-                                <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material'">
+                                <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Maintenance'">
                                     <select class="form-control" [(ngModel)]="Objbrand.Brand_ID" #Brand_ID="ngModel" name="Brand_ID" (change)="getBandlist()" required>
                                         <option  [ngValue]="undefined">Select</option>
                                         <option *ngFor="let option of brandList" value="{{option.Brand_ID}}">{{option.Column1}}</option>
@@ -118,7 +118,7 @@
                         <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                             <form name="masterProduct" #masterProduct="ngForm" novalidate>
                                 <div class="form-group">
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material'">
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Raw Material' && Param_Flag != 'Maintenance'">
                                         <label class="control-label">Brand<sup class="text-danger" *ngIf='Param_Flag !== "Store Item - Saleable"  && Param_Flag !== "Store Item - N/Saleable" && Param_Flag !== "Maintenance"'>*</sup>
                                             </label>
                                         <select class="form-control" name="BrandID" #BrandID="ngModel" [disabled]="brandInput" (change)="getProductTypeListRow(ObjmasterProduct.Brand_ID)" [(ngModel)]="ObjmasterProduct.Brand_ID" [ngClass]="{'clearance': masterProductFormSubmitted && BrandID?.errors?.required}"
