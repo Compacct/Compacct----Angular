@@ -1,16 +1,9 @@
 import { Component, OnInit, ViewEncapsulation, ViewChild, Input } from "@angular/core";
-import { HttpClient, HttpParams } from "@angular/common/http";
 import { MessageService } from "primeng/api";
-import { FileUpload } from "primeng/primeng";
-import { data, escapeSelector } from "jquery";
-import { Console, timeStamp } from "console";
-import { ActivatedRoute } from "@angular/router";
-import { takeUntil } from "rxjs/operators";
 import { CompacctCommonApi } from "../../../shared/compacct.services/common.api.service";
 import { CompacctHeader } from "../../../shared/compacct.services/common.header.service";
 import { CompacctGlobalApiService } from "../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../shared/compacct.global/dateTime.service";
-import { NgxUiLoaderService } from "ngx-ui-loader";
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -45,15 +38,11 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
   currentmonth: any;
 
   constructor(
-    private http: HttpClient,
-    private commonApi: CompacctCommonApi,
     private Header: CompacctHeader,
     private GlobalAPI: CompacctGlobalApiService,
-    private route: ActivatedRoute,
     private compacctToast: MessageService,
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
-    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -62,13 +51,8 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
       Header: " Full And Final Settlement ",
       Link: "HR-> Full And Final Settlement "
     });
-    // this.getEmployee();
+    this.getEmployee();
     // this.GetFullFinalSettlementBrowse();
-    this.ObjFullAndFinalSettlement.Total_Gross_Amount = 0;
-    this.ObjFullAndFinalSettlement.Last_Gross_Amount = 0;
-    this.ObjFullAndFinalSettlement.Total_Deduction = 0;
-    this.ObjFullAndFinalSettlement.Total_Statutory_Earnings = 0;
-    this.ObjFullAndFinalSettlement.Net_Payable = 0;
 
     const currentdate = new Date();
     const month = currentdate.getMonth();
@@ -78,7 +62,7 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
     this.currentmonth = monthNames[month].toUpperCase();
     console.log('monthNames====', monthNames[month]);
   }
-  TabClick(e) {
+  TabClick(e: any) {
     // console.log(e)
     this.tabIndexToView = e.index;
     this.items = ["BROWSE", "CREATE"];
@@ -89,11 +73,6 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
     this.Joining_Dt = undefined;
     this.Resign_On = undefined;
     this.Leave_Dt = undefined;
-    this.ObjFullAndFinalSettlement.Total_Gross_Amount = 0;
-    this.ObjFullAndFinalSettlement.Last_Gross_Amount = 0;
-    this.ObjFullAndFinalSettlement.Total_Deduction = 0;
-    this.ObjFullAndFinalSettlement.Total_Statutory_Earnings = 0;
-    this.ObjFullAndFinalSettlement.Net_Payable = 0;
   }
   getEmployee() {
     this.EmployeeList = [];
@@ -102,7 +81,7 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
       "Report_Name_String": "Get_Employee_List",
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      //  console.log("this.AllEmployeeList",this.AllEmployeeList);
+      console.log("this.AllEmployeeList", data);
       if (data.length) {
         data.forEach((el: any) => {
           el['label'] = el.Emp_Name,
@@ -110,42 +89,18 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
         });
         this.EmployeeList = data;
       }
-      else {
-        this.EmployeeList = [];
-      }
     })
   }
-  getEmployeeDetails() {
-    // this.ObjFullAndFinalSettlement.Emp_Name = undefined;
-    // this.ObjFullAndFinalSettlement.Emp_ID = undefined;
-    // this.ObjFullAndFinalSettlement.Emp_Code = undefined;
-    // this.ObjFullAndFinalSettlement.Designation = undefined;
-    // this.ObjFullAndFinalSettlement.Emp_Joining_Dt = undefined;
-    this.Joining_Dt = undefined;
-    // this.ObjFullAndFinalSettlement.Resign_On = undefined;
-    this.Resign_On = undefined;
-    // this.ObjFullAndFinalSettlement.Emp_Leave_Dt = undefined;
-    this.Leave_Dt = undefined;
-    // this.ObjFullAndFinalSettlement.No_of_Days_Worked = undefined;
 
-    // this.ObjFullAndFinalSettlement.Total_Days = undefined;
-    // this.ObjFullAndFinalSettlement.Total_Basic_Amount = 0;
-    // this.ObjFullAndFinalSettlement.Total_HRA_Amount = 0;
-    // this.ObjFullAndFinalSettlement.Total_Conv_Allowance = 0;
-    // this.ObjFullAndFinalSettlement.Total_Children_Allowance = 0;
-    // this.ObjFullAndFinalSettlement.Total_Medical_Allowance = 0;
-    // this.ObjFullAndFinalSettlement.Total_Washing_Allowance = 0;
-    // this.ObjFullAndFinalSettlement.Total_Gross_Amount = 0;
+  getEmployeeDetails() {
+    this.Joining_Dt = undefined;
+    this.Resign_On = undefined;
+    this.Leave_Dt = undefined;
 
     this.ObjFullAndFinalSettlement = new FullAndFinalSettlement();
-    this.ObjFullAndFinalSettlement.Total_Gross_Amount = 0;
-    this.ObjFullAndFinalSettlement.Last_Gross_Amount = 0;
-    this.ObjFullAndFinalSettlement.Total_Deduction = 0;
-    this.ObjFullAndFinalSettlement.Total_Statutory_Earnings = 0;
-    this.ObjFullAndFinalSettlement.Net_Payable = 0;
 
     if (this.Emp_ID) {
-      const empdetails = this.EmployeeList.filter(item => Number(item.Emp_ID) == Number(this.Emp_ID))
+      const empdetails = this.EmployeeList.filter((item: any) => Number(item.Emp_ID) == Number(this.Emp_ID))
       this.ObjFullAndFinalSettlement.Emp_Name = empdetails.length ? empdetails[0].Emp_Name : undefined;
       this.ObjFullAndFinalSettlement.Emp_ID = empdetails.length ? empdetails[0].Emp_ID : undefined;
       this.ObjFullAndFinalSettlement.Emp_Code = empdetails.length ? empdetails[0].Emp_Code : undefined;
@@ -158,6 +113,7 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
       this.getEmployeeTotalEarningDetails();
     }
   }
+
   getEmployeeTotalEarningDetails() {
     this.TotalEarningList = [];
     const obj = {
@@ -167,18 +123,22 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       this.TotalEarningList = data;
-      //  console.log("this.AllEmployeeList",this.AllEmployeeList)
+      console.log("total earning list", data)
+
       this.ObjFullAndFinalSettlement.Total_Basic_Amount = data[0].Earnings_Basic_Salary ? data[0].Earnings_Basic_Salary : 0;
       this.ObjFullAndFinalSettlement.Total_HRA_Amount = data[0].Earnings_HRA ? data[0].Earnings_HRA : 0;
-      this.ObjFullAndFinalSettlement.Total_Conv_Allowance = data[0].Earnings_Conveyance_Allowance ? data[0].Earnings_Conveyance_Allowance : 0;
-      this.ObjFullAndFinalSettlement.Total_Children_Allowance = data[0].Earnings_Children_Education_Allowance ? data[0].Earnings_Children_Education_Allowance : 0;
-      this.ObjFullAndFinalSettlement.Total_Medical_Allowance = data[0].Earnings_Medical_Allownce ? data[0].Earnings_Medical_Allownce : 0;
-      this.ObjFullAndFinalSettlement.Total_Washing_Allowance = data[0].Earnings_Washing_Allowance ? data[0].Earnings_Washing_Allowance : 0;
+      this.ObjFullAndFinalSettlement.Total_Medical_Allowance = data[0].Earnings_Medical_Allowance ? data[0].Earnings_Medical_Allowance : 0;
+      this.ObjFullAndFinalSettlement.Total_Special_Allowance = data[0].Earnings_Special_Allowance ? data[0].Earnings_Special_Allowance : 0;
+      this.ObjFullAndFinalSettlement.Total_Meal_Allowance = data[0].Earnings_Meal_Allownce ? data[0].Earnings_Meal_Allownce : 0;
+      this.ObjFullAndFinalSettlement.Total_Educational_Allowance = data[0].Earnings_Educational_Allowance ? data[0].Earnings_Educational_Allowance : 0;
+      this.ObjFullAndFinalSettlement.Total_City_Compensation_Allowance = data[0].Earnings_City_Compensation_Allowance ? data[0].Earnings_City_Compensation_Allowance : 0;
       // this.ObjFullAndFinalSettlement.Total_Days = data[0].Total_Payable_Days ? data[0].Total_Payable_Days : 0;
+
       var Total_Gross_Amount = Number(this.ObjFullAndFinalSettlement.Total_Basic_Amount) + Number(this.ObjFullAndFinalSettlement.Total_HRA_Amount) +
-        Number(this.ObjFullAndFinalSettlement.Total_Conv_Allowance) + Number(this.ObjFullAndFinalSettlement.Total_Children_Allowance) +
-        Number(this.ObjFullAndFinalSettlement.Total_Medical_Allowance) + Number(this.ObjFullAndFinalSettlement.Total_Washing_Allowance)
+        Number(this.ObjFullAndFinalSettlement.Total_Medical_Allowance) + Number(this.ObjFullAndFinalSettlement.Total_Special_Allowance) +
+        Number(this.ObjFullAndFinalSettlement.Total_Meal_Allowance) + Number(this.ObjFullAndFinalSettlement.Total_Educational_Allowance) + Number(this.ObjFullAndFinalSettlement.Total_City_Compensation_Allowance)
       this.ObjFullAndFinalSettlement.Total_Gross_Amount = Number(Total_Gross_Amount).toFixed(2);
+
       // this.getEmployeeLastMonthEarningDetails();
       this.GetBonusDetails();
       this.CalculateNoticePeriod();
@@ -190,6 +150,7 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
       this.GetTotalDeduction();
     })
   }
+
   getEmployeeLastMonthEarningDetails() {
     this.LastMonthEarningList = [];
     if (this.ObjFullAndFinalSettlement.Last_Month_Payable_Days) {
@@ -204,17 +165,19 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         this.LastMonthEarningList = data;
-        //  console.log("this.AllEmployeeList",this.AllEmployeeList)
+        console.log("Monthly Earning Details", data)
+
         this.ObjFullAndFinalSettlement.Last_Basic_Amount = data[0].Earnings_Basic_Salary ? data[0].Earnings_Basic_Salary : 0;
         this.ObjFullAndFinalSettlement.Last_HRA_Amount = data[0].Earnings_HRA ? data[0].Earnings_HRA : 0;
-        this.ObjFullAndFinalSettlement.Last_Conv_Allowance = data[0].Earnings_Conveyance_Allowance ? data[0].Earnings_Conveyance_Allowance : 0;
-        this.ObjFullAndFinalSettlement.Last_Children_Allowance = data[0].Earnings_Children_Education_Allowance ? data[0].Earnings_Children_Education_Allowance : 0;
-        this.ObjFullAndFinalSettlement.Last_Medical_Allowance = data[0].Earnings_Medical_Allownce ? data[0].Earnings_Medical_Allownce : 0;
-        this.ObjFullAndFinalSettlement.Last_Washing_Allowance = data[0].Earnings_Washing_Allowance ? data[0].Earnings_Washing_Allowance : 0;
-        // this.ObjFullAndFinalSettlement.Last_Month_Payable_Days = data[0].Total_Payable_Days ? data[0].Total_Payable_Days : 0;
+        this.ObjFullAndFinalSettlement.Last_Medical_Allowance = data[0].Earnings_Medical_Allowance ? data[0].Earnings_Medical_Allowance : 0;
+        this.ObjFullAndFinalSettlement.Last_Special_Allowance = data[0].Earnings_Special_Allowance ? data[0].Earnings_Special_Allowance : 0;
+        this.ObjFullAndFinalSettlement.Last_Meal_Allowance = data[0].Earnings_Meal_Allowance ? data[0].Earnings_Meal_Allowance : 0;
+        this.ObjFullAndFinalSettlement.Last_Educational_Allowance = data[0].Earnings_Educational_Allowance ? data[0].Earnings_Educational_Allowance : 0;
+        this.ObjFullAndFinalSettlement.Last_City_Compensation_Allowance = data[0].Earnings_City_Compensation_Allowance ? data[0].Earnings_City_Compensation_Allowance : 0;
+
         var Last_Gross_Amount = Number(this.ObjFullAndFinalSettlement.Last_Basic_Amount) + Number(this.ObjFullAndFinalSettlement.Last_HRA_Amount) +
-          Number(this.ObjFullAndFinalSettlement.Last_Conv_Allowance) + Number(this.ObjFullAndFinalSettlement.Last_Children_Allowance) +
-          Number(this.ObjFullAndFinalSettlement.Last_Medical_Allowance) + Number(this.ObjFullAndFinalSettlement.Last_Washing_Allowance)
+          Number(this.ObjFullAndFinalSettlement.Last_Medical_Allowance) + Number(this.ObjFullAndFinalSettlement.Last_Special_Allowance) +
+          Number(this.ObjFullAndFinalSettlement.Last_Meal_Allowance) + Number(this.ObjFullAndFinalSettlement.Last_Educational_Allowance) + Number(this.ObjFullAndFinalSettlement.Last_City_Compensation_Allowance)
         this.ObjFullAndFinalSettlement.Last_Gross_Amount = Number(Last_Gross_Amount).toFixed(2);
 
         this.GetBonusDetails();
@@ -228,6 +191,7 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
       })
     }
   }
+
   GetBonusDetails() {
     this.BonusList = [];
     this.EncashmentList = [];
@@ -283,25 +247,22 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
       })
     }
   }
+
   CalculateTotalStatutoryEarnings() {
     var Total_Statutory_Earnings = Number(this.ObjFullAndFinalSettlement.Bonus) + Number(this.ObjFullAndFinalSettlement.Leave_Encashment) +
       Number(this.ObjFullAndFinalSettlement.Gratuity) + Number(this.ObjFullAndFinalSettlement.Notice_Period_Earning_Amount)
     this.ObjFullAndFinalSettlement.Total_Statutory_Earnings = Number(Total_Statutory_Earnings).toFixed(2);
     this.GetNetPayble();
   }
+
   CalculateNoticePeriod() {
     if (this.ObjFullAndFinalSettlement.Notice_Period_Day) {
       const date = new Date(this.Leave_Dt);
       const totaldays = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
       console.log("totaldays====", totaldays);
-      // var result = Number(this.ObjFullAndFinalSettlement.Last_Gross_Amount / totaldays).toFixed(2);
       var result = Number(this.ObjFullAndFinalSettlement.Total_Basic_Amount / totaldays).toFixed(2);
       var noticeperioddeduction = Number(this.ObjFullAndFinalSettlement.Notice_Period_Day * Number(result)).toFixed(2);
       this.ObjFullAndFinalSettlement.Notice_Period_Amount = Number(noticeperioddeduction);
-      // Notice Period Deduction--->
-      // Notice Period Deduction=Gross Salary/Last Month Total Days=Result1
-      //                   =Input Deduction Days * Result1
-      //                   = Value
       this.GetTotalDeduction();
       this.GetNetPayble();
     }
@@ -311,24 +272,29 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
       this.GetNetPayble();
     }
   }
+
   GetTotalDeduction() {
     var Total_Deduction = Number(this.ObjFullAndFinalSettlement.EPF_Deduction) + Number(this.ObjFullAndFinalSettlement.ESI_Deduction) +
       Number(this.ObjFullAndFinalSettlement.P_Tax_Deduction) + Number(this.ObjFullAndFinalSettlement.TDS_Deduction) +
       Number(this.ObjFullAndFinalSettlement.Notice_Period_Amount);
     this.ObjFullAndFinalSettlement.Total_Deduction = Number(Total_Deduction).toFixed(2);
   }
+
   GetNetPayble() {
     var TotalAB = (Number(this.ObjFullAndFinalSettlement.Last_Gross_Amount) + Number(this.ObjFullAndFinalSettlement.Total_Statutory_Earnings)).toFixed(2);
     var Net_Payable = Number(TotalAB) - Number(this.ObjFullAndFinalSettlement.Total_Deduction)
     this.ObjFullAndFinalSettlement.Net_Payable = Number(this.RoundOff(Net_Payable)).toFixed(2);
   }
-  getTofix(key) {
+
+  getTofix(key:any) {
     return Number(Number(key).toFixed(2))
   }
+
   RoundOff(key: any) {
     return Math.round(Number(Number(key).toFixed(2)))
   }
-  SaveFullAndFinalSettlement(valid) {
+
+  SaveFullAndFinalSettlement(valid:any) {
     this.FullAndFinalSettlementFormSubmitted = true;
     this.Spinner = true;
     if (valid) {
@@ -384,7 +350,6 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
     }
   }
 
-  // BROWSE
   GetFullFinalSettlementBrowse() {
     const obj = {
       "SP_String": "SP_HR_Full_And_Final_Settlement",
@@ -392,8 +357,6 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       this.FullFinalSettlementBrowseList = data;
-      // this.BackupSearchedlist = data;
-      // this.GetDistinct();
       if (this.FullFinalSettlementBrowseList.length) {
         this.DynamicHeaderforFullFinalBrowseList = Object.keys(data[0]);
       }
@@ -404,6 +367,7 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
     })
 
   }
+
   Printfullandfinal(empid: any) {
     //console.log("DocNo",DocNo)
     if (empid) {
@@ -418,17 +382,13 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
       })
     }
   }
-  Edit(col) {
+
+  Edit(col:any) {
     this.Emp_ID = undefined;
     this.ObjFullAndFinalSettlement = new FullAndFinalSettlement();
     this.Joining_Dt = undefined;
     this.Resign_On = undefined;
     this.Leave_Dt = undefined;
-    this.ObjFullAndFinalSettlement.Total_Gross_Amount = 0;
-    this.ObjFullAndFinalSettlement.Last_Gross_Amount = 0;
-    this.ObjFullAndFinalSettlement.Total_Deduction = 0;
-    this.ObjFullAndFinalSettlement.Total_Statutory_Earnings = 0;
-    this.ObjFullAndFinalSettlement.Net_Payable = 0;
     if (col) {
       this.Emp_ID = col;
       this.tabIndexToView = 1;
@@ -437,7 +397,8 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
       this.getedit(col);
     }
   }
-  getedit(Dno) {
+
+  getedit(Dno:any) {
     this.Editlist = [];
     const obj = {
       "SP_String": "SP_HR_Full_And_Final_Settlement",
@@ -454,14 +415,13 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
       this.Leave_Dt = new Date(data[0].DOL);
     })
   }
-  onReject() { }
-  onConfirm() { }
 
 }
+
 class FullAndFinalSettlement {
-  Emp_Name: any;
   Emp_ID: any;
   Emp_Code: any;
+  Emp_Name: any;
   Design_ID: any;
   Designation: any;
   DOJ: any;
@@ -469,23 +429,25 @@ class FullAndFinalSettlement {
   DOL: any;
   No_Of_Days_Worked: any;
 
+  Total_Days: any;
   Total_Basic_Amount: any;
   Total_HRA_Amount: any;
-  Total_Conv_Allowance: any;
-  Total_Children_Allowance: any;
   Total_Medical_Allowance: any;
-  Total_Washing_Allowance: any;
-  Total_Days: any;
-  Total_Gross_Amount: any;
+  Total_Special_Allowance: any;
+  Total_Meal_Allowance: any;
+  Total_Educational_Allowance: any;
+  Total_City_Compensation_Allowance: any;
+  Total_Gross_Amount: any = 0;
 
+  Last_Month_Payable_Days: any;
   Last_Basic_Amount: any;
   Last_HRA_Amount: any;
-  Last_Conv_Allowance: any;
-  Last_Children_Allowance: any;
   Last_Medical_Allowance: any;
-  Last_Washing_Allowance: any;
-  Last_Month_Payable_Days: any;
-  Last_Gross_Amount: any;
+  Last_Special_Allowance: any;
+  Last_Meal_Allowance: any;
+  Last_Educational_Allowance: any;
+  Last_City_Compensation_Allowance: any;
+  Last_Gross_Amount: any = 0;
 
   Bonus_Day: any;
   Bonus: any;
@@ -494,15 +456,15 @@ class FullAndFinalSettlement {
   Gratuity: any;
   Notice_Period_Earning_Day: any;
   Notice_Period_Earning_Amount: any;
-  Total_Statutory_Earnings: any;
+  Total_Statutory_Earnings: any = 0;
 
   EPF_Deduction: any;
   ESI_Deduction: any;
   P_Tax_Deduction: any;
   TDS_Deduction: any;
-  Total_Deduction: any;
-  Net_Payable: any;
   Notice_Period_Day: any;
   Notice_Period_Amount: any;
+  Total_Deduction: any = 0;
+  Net_Payable: any = 0;
 
 }

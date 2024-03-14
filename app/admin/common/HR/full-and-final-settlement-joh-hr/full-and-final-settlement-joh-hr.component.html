@@ -1,35 +1,3 @@
-<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
-<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
-	<ng-template let-message pTemplate="message">
-		<div style="text-align: center">
-			<i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
-			<h3>{{ message.summary }}</h3>
-			<p>{{ message.detail }}</p>
-		</div>
-		<form name="PasswordForm" #PasswordForm="ngForm" novalidate>
-			<div style="text-align: center">
-				<!-- <label class="control-label">Password <sup class="text-danger">*</sup></label> -->
-				<input
-					class="form-control"
-					type="password"
-					name="password"
-					#password="ngModel"
-					[(ngModel)]="Password"
-					[ngClass]="{ clearance: PasswordFormSubmitted && password?.errors?.required }"
-					required />
-			</div>
-		</form>
-		<div class="ui-g ui-fluid">
-			<div class="ui-g-6">
-				<button type="button" pButton (click)="onConfirm()" label="Save" class="ui-button-success"></button>
-			</div>
-			<div class="ui-g-6">
-				<button type="button" pButton (click)="onReject()" label="Close" class="ui-button-secondary"></button>
-			</div>
-		</div>
-	</ng-template>
-</p-toast>
-
 <div class="row">
 	<div class="col-xs-12">
 		<div class="box box-primary">
@@ -154,7 +122,7 @@
 														[(ngModel)]="ObjFullAndFinalSettlement.Emp_Name"
 														class="form-control"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && empname.errors?.required }"
-														required />
+														disabled />
 												</td>
 											</tr>
 											<tr>
@@ -169,7 +137,7 @@
 														[(ngModel)]="ObjFullAndFinalSettlement.Emp_ID"
 														class="form-control"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && empid.errors?.required }"
-														required />
+														disabled />
 												</td>
 											</tr>
 											<tr>
@@ -184,7 +152,7 @@
 														[(ngModel)]="ObjFullAndFinalSettlement.Emp_Code"
 														class="form-control"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && empcode.errors?.required }"
-														required />
+														disabled />
 												</td>
 											</tr>
 											<tr>
@@ -199,7 +167,7 @@
 														[(ngModel)]="ObjFullAndFinalSettlement.Designation"
 														class="form-control"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && designation.errors?.required }"
-														required />
+														disabled />
 												</td>
 											</tr>
 											<tr>
@@ -207,14 +175,14 @@
 												<td>DOJ</td>
 												<td></td>
 												<!-- <td><input type="text" name="doj" #doj="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Emp_Joining_Dt' class="form-control" style="width: 71px;" /></td> -->
-												<td><ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="Joining_Dt" name="doj"></ejs-datepicker></td>
+												<td><ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="Joining_Dt" name="doj" [enabled]="false"></ejs-datepicker></td>
 											</tr>
 											<tr>
 												<td class="text-center" style="vertical-align: middle">6</td>
 												<td>DOR</td>
 												<td></td>
 												<!-- <td><input type="text" name="doj" #doj="ngModel" [(ngModel)]='ObjFullAndFinalSettlement.Emp_Joining_Dt' class="form-control" style="width: 71px;" /></td> -->
-												<td><ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="Resign_On" name="dor"></ejs-datepicker></td>
+												<td><ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="Resign_On" name="dor" [enabled]="false"></ejs-datepicker></td>
 											</tr>
 											<tr>
 												<td class="text-center" style="vertical-align: middle">7</td>
@@ -226,7 +194,12 @@
 														[format]="'dd/MMM/yyyy'"
 														[(value)]="Leave_Dt"
 														name="dol"
-														[enabled]="!this.ObjFullAndFinalSettlement.Notice_Period_Day"></ejs-datepicker>
+														[enabled]="false"></ejs-datepicker>
+													<!-- <ejs-datepicker
+														[format]="'dd/MMM/yyyy'"
+														[(value)]="Leave_Dt"
+														name="dol"
+														[enabled]="!this.ObjFullAndFinalSettlement.Notice_Period_Day"></ejs-datepicker> -->
 												</td>
 											</tr>
 											<tr>
@@ -242,7 +215,7 @@
 														CompacctDigitonly="true"
 														class="form-control"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && noofdayswork.errors?.required }"
-														required />
+														disabled />
 												</td>
 											</tr>
 
@@ -267,7 +240,7 @@
 														class="form-control"
 														CompacctDigitonly="true"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && basicamt.errors?.required }"
-														required />
+														disabled />
 												</td>
 											</tr>
 											<tr>
@@ -283,43 +256,11 @@
 														class="form-control"
 														CompacctDigitonly="true"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && basichra.errors?.required }"
-														required />
+														disabled />
 												</td>
 											</tr>
 											<tr>
 												<td class="text-center" style="vertical-align: middle">3</td>
-												<td>CON.ALLOWANCE</td>
-												<td></td>
-												<td>
-													<input
-														type="text"
-														name="basiccon"
-														#basiccon="ngModel"
-														[(ngModel)]="ObjFullAndFinalSettlement.Total_Conv_Allowance"
-														CompacctDigitonly="true"
-														class="form-control"
-														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && basiccon.errors?.required }"
-														required />
-												</td>
-											</tr>
-											<tr>
-												<td class="text-center" style="vertical-align: middle">4</td>
-												<td>CHILDREN ALLOWANCE</td>
-												<td></td>
-												<td>
-													<input
-														type="text"
-														name="basicchildren"
-														#basicchildren="ngModel"
-														[(ngModel)]="ObjFullAndFinalSettlement.Total_Children_Allowance"
-														CompacctDigitonly="true"
-														class="form-control"
-														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && basicchildren.errors?.required }"
-														required />
-												</td>
-											</tr>
-											<tr>
-												<td class="text-center" style="vertical-align: middle">5</td>
 												<td>MEDICAL ALLOWANCE</td>
 												<td></td>
 												<td>
@@ -331,23 +272,71 @@
 														CompacctDigitonly="true"
 														class="form-control"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && basicmedical.errors?.required }"
-														required />
+														disabled />
 												</td>
 											</tr>
 											<tr>
-												<td class="text-center" style="vertical-align: middle">6</td>
-												<td>WASHING ALLOWANCE</td>
+												<td class="text-center" style="vertical-align: middle">4</td>
+												<td>SPECIAL ALLOWANCE</td>
 												<td></td>
 												<td>
 													<input
 														type="text"
-														name="basicwashing"
-														#basicwashing="ngModel"
-														[(ngModel)]="ObjFullAndFinalSettlement.Total_Washing_Allowance"
+														name="basicspecial"
+														#basic_special="ngModel"
+														[(ngModel)]="ObjFullAndFinalSettlement.Total_Special_Allowance"
 														CompacctDigitonly="true"
 														class="form-control"
-														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && basicwashing.errors?.required }"
-														required />
+														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && basic_special.errors?.required }"
+														disabled />
+												</td>
+											</tr>
+											<tr>
+												<td class="text-center" style="vertical-align: middle">5</td>
+												<td>MEAL ALLOWANCE</td>
+												<td></td>
+												<td>
+													<input
+														type="text"
+														name="basicmeal"
+														#basic_meal="ngModel"
+														[(ngModel)]="ObjFullAndFinalSettlement.Total_Meal_Allowance"
+														CompacctDigitonly="true"
+														class="form-control"
+														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && basic_meal.errors?.required }"
+														disabled />
+												</td>
+											</tr>
+											<tr>
+												<td class="text-center" style="vertical-align: middle">5</td>
+												<td>EDUCATION ALLOWANCE</td>
+												<td></td>
+												<td>
+													<input
+														type="text"
+														name="basiceducation"
+														#basic_education="ngModel"
+														[(ngModel)]="ObjFullAndFinalSettlement.Total_Educational_Allowance"
+														CompacctDigitonly="true"
+														class="form-control"
+														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && basic_education.errors?.required }"
+														disabled />
+												</td>
+											</tr>
+											<tr>
+												<td class="text-center" style="vertical-align: middle">5</td>
+												<td>CITY COMPENSATION ALLOWANCE</td>
+												<td></td>
+												<td>
+													<input
+														type="text"
+														name="basiccitycompa"
+														#basic_citycomp="ngModel"
+														[(ngModel)]="ObjFullAndFinalSettlement.Total_City_Compensation_Allowance"
+														CompacctDigitonly="true"
+														class="form-control"
+														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && basic_citycomp.errors?.required }"
+														disabled />
 												</td>
 											</tr>
 											<tr>
@@ -389,7 +378,7 @@
 														class="form-control"
 														CompacctDigitonly="true"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && lastbasicamt.errors?.required }"
-														required />
+														disabled />
 												</td>
 											</tr>
 											<tr>
@@ -405,71 +394,87 @@
 														class="form-control"
 														CompacctDigitonly="true"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && lastbasichra.errors?.required }"
-														required />
+														disabled />
 												</td>
 											</tr>
 											<tr>
 												<td class="text-center" style="vertical-align: middle">3</td>
-												<td>CON.ALLOWANCE</td>
-												<td></td>
-												<td>
-													<input
-														type="text"
-														name="conallowbasiccon"
-														#conallowbasiccon="ngModel"
-														[(ngModel)]="ObjFullAndFinalSettlement.Last_Conv_Allowance"
-														CompacctDigitonly="true"
-														class="form-control"
-														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && conallowbasiccon.errors?.required }"
-														required />
-												</td>
-											</tr>
-											<tr>
-												<td class="text-center" style="vertical-align: middle">4</td>
-												<td>CHILDREN ALLOWANCE</td>
-												<td></td>
-												<td>
-													<input
-														type="text"
-														name="lastbasicchildren"
-														#lastbasicchildren="ngModel"
-														[(ngModel)]="ObjFullAndFinalSettlement.Last_Children_Allowance"
-														CompacctDigitonly="true"
-														class="form-control"
-														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && lastbasicchildren.errors?.required }"
-														required />
-												</td>
-											</tr>
-											<tr>
-												<td class="text-center" style="vertical-align: middle">5</td>
 												<td>MEDICAL ALLOWANCE</td>
 												<td></td>
 												<td>
 													<input
 														type="text"
-														name="lastbasicmedical"
-														#lastbasicmedical="ngModel"
+														name="last-medical-allowence"
+														#last_medical_allowence="ngModel"
 														[(ngModel)]="ObjFullAndFinalSettlement.Last_Medical_Allowance"
 														CompacctDigitonly="true"
 														class="form-control"
-														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && lastbasicmedical.errors?.required }"
-														required />
+														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && last_medical_allowence.errors?.required }"
+														disabled />
 												</td>
 											</tr>
 											<tr>
-												<td class="text-center" style="vertical-align: middle">6</td>
-												<td>WASHING ALLOWANCE</td>
+												<td class="text-center" style="vertical-align: middle">4</td>
+												<td>SPECIAL ALLOWANCE</td>
 												<td></td>
 												<td>
 													<input
 														type="text"
-														name="lastbasicwashing"
-														#lastbasicwashing="ngModel"
-														[(ngModel)]="ObjFullAndFinalSettlement.Last_Washing_Allowance"
+														name="last-special-allowence"
+														#last_special_allowence="ngModel"
+														[(ngModel)]="ObjFullAndFinalSettlement.Last_Special_Allowance"
 														CompacctDigitonly="true"
 														class="form-control"
-														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && lastbasicwashing.errors?.required }"
-														required />
+														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && last_special_allowence.errors?.required }"
+														disabled />
+												</td>
+											</tr>
+											<tr>
+												<td class="text-center" style="vertical-align: middle">5</td>
+												<td>MEAL ALLOWANCE</td>
+												<td></td>
+												<td>
+													<input
+														type="text"
+														name="last-meal-allowence"
+														#last_meal_allowence="ngModel"
+														[(ngModel)]="ObjFullAndFinalSettlement.Last_Meal_Allowance"
+														CompacctDigitonly="true"
+														class="form-control"
+														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && last_meal_allowence.errors?.required }"
+														disabled />
+												</td>
+											</tr>
+											<tr>
+												<td class="text-center" style="vertical-align: middle">6</td>
+												<td>EDUCATION ALLOWANCE</td>
+												<td></td>
+												<td>
+													<input
+														type="text"
+														name="last-education-allowence"
+														#last_education_allowence="ngModel"
+														[(ngModel)]="ObjFullAndFinalSettlement.Last_Educational_Allowance"
+														CompacctDigitonly="true"
+														class="form-control"
+														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && last_education_allowence.errors?.required }"
+														disabled />
+												</td>
+											</tr>
+											<tr>
+												<td class="text-center" style="vertical-align: middle">6</td>
+												<td>CITY COMPENSATION ALLOWANCE</td>
+												<td></td>
+												<td>
+													<input
+														type="text"
+														name="last-city-allowence"
+														#last_city_allowence="ngModel"
+														[(ngModel)]="ObjFullAndFinalSettlement.Last_City_Compensation_Allowance"
+														CompacctDigitonly="true"
+														class="form-control"
+														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && last_city_allowence.errors?.required }"
+														disabled />
 												</td>
 											</tr>
 											<tr>
