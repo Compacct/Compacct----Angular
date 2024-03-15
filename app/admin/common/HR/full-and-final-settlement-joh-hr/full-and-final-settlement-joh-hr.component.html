@@ -308,7 +308,7 @@
 												</td>
 											</tr>
 											<tr>
-												<td class="text-center" style="vertical-align: middle">5</td>
+												<td class="text-center" style="vertical-align: middle">6</td>
 												<td>EDUCATION ALLOWANCE</td>
 												<td></td>
 												<td>
@@ -324,7 +324,7 @@
 												</td>
 											</tr>
 											<tr>
-												<td class="text-center" style="vertical-align: middle">5</td>
+												<td class="text-center" style="vertical-align: middle">7</td>
 												<td>CITY COMPENSATION ALLOWANCE</td>
 												<td></td>
 												<td>
@@ -365,7 +365,7 @@
 														CompacctDigitonly="true"
 														class="form-control"
 														style="width: 71px"
-														(ngModelChange)="getEmployeeLastMonthEarningDetails()"
+														(keyup)="getEmployeeLastMonthEarningDetails()"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && lastmpd.errors?.required }" />
 												</td>
 												<!-- <td class="text-center" style="vertical-align:middle">{{ObjFullAndFinalSettlement.Last_Month_Payable_Days}}</td> -->
@@ -462,7 +462,7 @@
 												</td>
 											</tr>
 											<tr>
-												<td class="text-center" style="vertical-align: middle">6</td>
+												<td class="text-center" style="vertical-align: middle">7</td>
 												<td>CITY COMPENSATION ALLOWANCE</td>
 												<td></td>
 												<td>
@@ -493,7 +493,7 @@
 											</tr>
 											<tr>
 												<td class="text-center" style="vertical-align: middle">1</td>
-												<td>BONUS (8.33% of Basic)</td>
+												<td>Bonus</td>
 												<td class="text-center" style="vertical-align: middle">
 													<input
 														type="text"
@@ -515,7 +515,7 @@
 														CompacctDigitonly="true"
 														(ngModelChange)="CalculateTotalStatutoryEarnings()"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && bonus.errors?.required }"
-														required />
+														 />
 												</td>
 											</tr>
 											<tr>
@@ -531,7 +531,7 @@
 														class="form-control"
 														CompacctDigitonly="true"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && encashmentbasichra.errors?.required }"
-														required />
+														 />
 												</td>
 											</tr>
 											<tr>
@@ -547,7 +547,7 @@
 														CompacctDigitonly="true"
 														class="form-control"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && gratuitybasiccon.errors?.required }"
-														required />
+														 />
 												</td>
 											</tr>
 											<tr>
@@ -574,7 +574,7 @@
 														class="form-control"
 														CompacctDigitonly="true"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && noticeperiodearningamt.errors?.required }"
-														required />
+														 />
 												</td>
 											</tr>
 											<tr>
@@ -604,7 +604,7 @@
 														class="form-control"
 														CompacctDigitonly="true"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && epf.errors?.required }"
-														required />
+														disabled />
 												</td>
 											</tr>
 											<tr>
@@ -620,7 +620,7 @@
 														class="form-control"
 														CompacctDigitonly="true"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && esi.errors?.required }"
-														required />
+														disabled />
 												</td>
 											</tr>
 											<tr>
@@ -636,7 +636,7 @@
 														CompacctDigitonly="true"
 														class="form-control"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && ptax.errors?.required }"
-														required />
+														disabled />
 												</td>
 											</tr>
 											<tr>
@@ -652,7 +652,7 @@
 														CompacctDigitonly="true"
 														class="form-control"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && tds.errors?.required }"
-														required />
+														disabled />
 												</td>
 											</tr>
 											<tr>
@@ -680,7 +680,7 @@
 														class="form-control"
 														disabled="true"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && npd.errors?.required }"
-														required />
+														disabled />
 												</td>
 											</tr>
 											<tr>

@@ -14,7 +14,7 @@ import { forkJoin } from 'rxjs';
   encapsulation: ViewEncapsulation.None
 })
 export class FullAndFinalSettlementJohHrComponent implements OnInit {
-  items: any = [];
+  items: any = ["BROWSE", "CREATE"];
   Spinner = false;
   saveSpinner = false;
   seachSpinner = false;
@@ -46,13 +46,13 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.items = ["BROWSE", "CREATE"];
+    // this.items = 
     this.Header.pushHeader({
       Header: " Full And Final Settlement ",
       Link: "HR-> Full And Final Settlement "
     });
     this.getEmployee();
-    // this.GetFullFinalSettlementBrowse();
+    this.GetFullFinalSettlementBrowse();
 
     const currentdate = new Date();
     const month = currentdate.getMonth();
@@ -70,6 +70,7 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
     this.Spinner = false;
     this.Emp_ID = undefined;
     this.ObjFullAndFinalSettlement = new FullAndFinalSettlement();
+    this.FullAndFinalSettlementFormSubmitted = false;
     this.Joining_Dt = undefined;
     this.Resign_On = undefined;
     this.Leave_Dt = undefined;
@@ -123,7 +124,7 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       this.TotalEarningList = data;
-      console.log("total earning list", data)
+      console.log("total earning details", data)
 
       this.ObjFullAndFinalSettlement.Total_Basic_Amount = data[0].Earnings_Basic_Salary ? data[0].Earnings_Basic_Salary : 0;
       this.ObjFullAndFinalSettlement.Total_HRA_Amount = data[0].Earnings_HRA ? data[0].Earnings_HRA : 0;
@@ -139,57 +140,17 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
         Number(this.ObjFullAndFinalSettlement.Total_Meal_Allowance) + Number(this.ObjFullAndFinalSettlement.Total_Educational_Allowance) + Number(this.ObjFullAndFinalSettlement.Total_City_Compensation_Allowance)
       this.ObjFullAndFinalSettlement.Total_Gross_Amount = Number(Total_Gross_Amount).toFixed(2);
 
-      // this.getEmployeeLastMonthEarningDetails();
-      this.GetBonusDetails();
-      this.CalculateNoticePeriod();
-
+      
       this.ObjFullAndFinalSettlement.EPF_Deduction = data[0].EPF ? data[0].EPF : 0;
       this.ObjFullAndFinalSettlement.ESI_Deduction = data[0].ESIC ? data[0].ESIC : 0;
       this.ObjFullAndFinalSettlement.P_Tax_Deduction = data[0].P_TAX ? data[0].P_TAX : 0;
       this.ObjFullAndFinalSettlement.TDS_Deduction = data[0].TDS ? data[0].TDS : 0;
+
+      // this.getEmployeeLastMonthEarningDetails();
+      this.GetBonusDetails();
+      this.CalculateNoticePeriod();
       this.GetTotalDeduction();
     })
-  }
-
-  getEmployeeLastMonthEarningDetails() {
-    this.LastMonthEarningList = [];
-    if (this.ObjFullAndFinalSettlement.Last_Month_Payable_Days) {
-      const senddata = {
-        Emp_ID: this.Emp_ID,
-        Days: this.ObjFullAndFinalSettlement.Last_Month_Payable_Days
-      }
-      const obj = {
-        "SP_String": "SP_HR_Full_And_Final_Settlement",
-        "Report_Name_String": "Get_Last_Month_Earning_Details",
-        "Json_Param_String": JSON.stringify([senddata])
-      }
-      this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        this.LastMonthEarningList = data;
-        console.log("Monthly Earning Details", data)
-
-        this.ObjFullAndFinalSettlement.Last_Basic_Amount = data[0].Earnings_Basic_Salary ? data[0].Earnings_Basic_Salary : 0;
-        this.ObjFullAndFinalSettlement.Last_HRA_Amount = data[0].Earnings_HRA ? data[0].Earnings_HRA : 0;
-        this.ObjFullAndFinalSettlement.Last_Medical_Allowance = data[0].Earnings_Medical_Allowance ? data[0].Earnings_Medical_Allowance : 0;
-        this.ObjFullAndFinalSettlement.Last_Special_Allowance = data[0].Earnings_Special_Allowance ? data[0].Earnings_Special_Allowance : 0;
-        this.ObjFullAndFinalSettlement.Last_Meal_Allowance = data[0].Earnings_Meal_Allowance ? data[0].Earnings_Meal_Allowance : 0;
-        this.ObjFullAndFinalSettlement.Last_Educational_Allowance = data[0].Earnings_Educational_Allowance ? data[0].Earnings_Educational_Allowance : 0;
-        this.ObjFullAndFinalSettlement.Last_City_Compensation_Allowance = data[0].Earnings_City_Compensation_Allowance ? data[0].Earnings_City_Compensation_Allowance : 0;
-
-        var Last_Gross_Amount = Number(this.ObjFullAndFinalSettlement.Last_Basic_Amount) + Number(this.ObjFullAndFinalSettlement.Last_HRA_Amount) +
-          Number(this.ObjFullAndFinalSettlement.Last_Medical_Allowance) + Number(this.ObjFullAndFinalSettlement.Last_Special_Allowance) +
-          Number(this.ObjFullAndFinalSettlement.Last_Meal_Allowance) + Number(this.ObjFullAndFinalSettlement.Last_Educational_Allowance) + Number(this.ObjFullAndFinalSettlement.Last_City_Compensation_Allowance)
-        this.ObjFullAndFinalSettlement.Last_Gross_Amount = Number(Last_Gross_Amount).toFixed(2);
-
-        this.GetBonusDetails();
-        this.CalculateNoticePeriod();
-
-        this.ObjFullAndFinalSettlement.EPF_Deduction = data[0].EPF ? data[0].EPF : 0;
-        this.ObjFullAndFinalSettlement.ESI_Deduction = data[0].ESIC ? data[0].ESIC : 0;
-        this.ObjFullAndFinalSettlement.P_Tax_Deduction = data[0].P_TAX ? data[0].P_TAX : 0;
-        this.ObjFullAndFinalSettlement.TDS_Deduction = data[0].TDS ? data[0].TDS : 0;
-        this.GetTotalDeduction();
-      })
-    }
   }
 
   GetBonusDetails() {
@@ -231,29 +192,6 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
     })
 
   }
-  // STATUTORY EARNING
-  GetNoticePeriodEarningAmount() {
-    this.ObjFullAndFinalSettlement.Notice_Period_Earning_Amount = 0;
-    if (this.ObjFullAndFinalSettlement.Notice_Period_Earning_Day) {
-      const obj = {
-        "SP_String": "SP_HR_Full_And_Final_Settlement",
-        "Report_Name_String": "Get_Notice_Periods_Earning_Amount",
-        "Json_Param_String": JSON.stringify([{ Emp_ID: this.Emp_ID, Days: Number(this.ObjFullAndFinalSettlement.Notice_Period_Earning_Day) }])
-      }
-      this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        //  console.log("this.AllEmployeeList",this.AllEmployeeList)
-        this.ObjFullAndFinalSettlement.Notice_Period_Earning_Amount = data[0].Notice_Period_Earning_Amount ? Number(data[0].Notice_Period_Earning_Amount).toFixed(2) : 0;
-        this.CalculateTotalStatutoryEarnings();
-      })
-    }
-  }
-
-  CalculateTotalStatutoryEarnings() {
-    var Total_Statutory_Earnings = Number(this.ObjFullAndFinalSettlement.Bonus) + Number(this.ObjFullAndFinalSettlement.Leave_Encashment) +
-      Number(this.ObjFullAndFinalSettlement.Gratuity) + Number(this.ObjFullAndFinalSettlement.Notice_Period_Earning_Amount)
-    this.ObjFullAndFinalSettlement.Total_Statutory_Earnings = Number(Total_Statutory_Earnings).toFixed(2);
-    this.GetNetPayble();
-  }
 
   CalculateNoticePeriod() {
     if (this.ObjFullAndFinalSettlement.Notice_Period_Day) {
@@ -280,6 +218,91 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
     this.ObjFullAndFinalSettlement.Total_Deduction = Number(Total_Deduction).toFixed(2);
   }
 
+  getEmployeeLastMonthEarningDetails() {
+    this.LastMonthEarningList = [];
+    this.ObjFullAndFinalSettlement.Last_Basic_Amount = 0;
+        this.ObjFullAndFinalSettlement.Last_HRA_Amount = 0;
+        this.ObjFullAndFinalSettlement.Last_Medical_Allowance = 0;
+        this.ObjFullAndFinalSettlement.Last_Special_Allowance = 0;
+        this.ObjFullAndFinalSettlement.Last_Meal_Allowance = 0;
+        this.ObjFullAndFinalSettlement.Last_Educational_Allowance = 0;
+        this.ObjFullAndFinalSettlement.Last_City_Compensation_Allowance = 0;
+
+        var Last_Gross_Amount = Number(this.ObjFullAndFinalSettlement.Last_Basic_Amount) + Number(this.ObjFullAndFinalSettlement.Last_HRA_Amount) +
+          Number(this.ObjFullAndFinalSettlement.Last_Medical_Allowance) + Number(this.ObjFullAndFinalSettlement.Last_Special_Allowance) +
+          Number(this.ObjFullAndFinalSettlement.Last_Meal_Allowance) + Number(this.ObjFullAndFinalSettlement.Last_Educational_Allowance) + Number(this.ObjFullAndFinalSettlement.Last_City_Compensation_Allowance)
+        this.ObjFullAndFinalSettlement.Last_Gross_Amount = Number(Last_Gross_Amount).toFixed(2);
+
+        this.GetBonusDetails();
+        this.CalculateNoticePeriod();
+
+        this.ObjFullAndFinalSettlement.EPF_Deduction =  0;
+        this.ObjFullAndFinalSettlement.ESI_Deduction = 0;
+        this.ObjFullAndFinalSettlement.P_Tax_Deduction =  0;
+        this.ObjFullAndFinalSettlement.TDS_Deduction =  0;
+        this.GetTotalDeduction();
+    if (this.ObjFullAndFinalSettlement.Last_Month_Payable_Days) {
+      const senddata = {
+        Emp_ID: this.Emp_ID,
+        Days: this.ObjFullAndFinalSettlement.Last_Month_Payable_Days
+      }
+      const obj = {
+        "SP_String": "SP_HR_Full_And_Final_Settlement",
+        "Report_Name_String": "Get_Last_Month_Earning_Details",
+        "Json_Param_String": JSON.stringify([senddata])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        this.LastMonthEarningList = data;
+        console.log("Monthly Earning Details", data)
+
+        this.ObjFullAndFinalSettlement.Last_Basic_Amount = data[0].Earnings_Basic_Salary ? data[0].Earnings_Basic_Salary : 0;
+        this.ObjFullAndFinalSettlement.Last_HRA_Amount = data[0].Earnings_HRA ? data[0].Earnings_HRA : 0;
+        this.ObjFullAndFinalSettlement.Last_Medical_Allowance = data[0].Earnings_Medical_Allowance ? data[0].Earnings_Medical_Allowance : 0;
+        this.ObjFullAndFinalSettlement.Last_Special_Allowance = data[0].Earnings_Special_Allowance ? data[0].Earnings_Special_Allowance : 0;
+        this.ObjFullAndFinalSettlement.Last_Meal_Allowance = data[0].Earnings_Meal_Allowance ? data[0].Earnings_Meal_Allowance : 0;
+        this.ObjFullAndFinalSettlement.Last_Educational_Allowance = data[0].Earnings_Educational_Allowance ? data[0].Earnings_Educational_Allowance : 0;
+        this.ObjFullAndFinalSettlement.Last_City_Compensation_Allowance = data[0].Earnings_City_Compensation_Allowance ? data[0].Earnings_City_Compensation_Allowance : 0;
+
+        var Last_Gross_Amount = Number(this.ObjFullAndFinalSettlement.Last_Basic_Amount) + Number(this.ObjFullAndFinalSettlement.Last_HRA_Amount) +
+          Number(this.ObjFullAndFinalSettlement.Last_Medical_Allowance) + Number(this.ObjFullAndFinalSettlement.Last_Special_Allowance) +
+          Number(this.ObjFullAndFinalSettlement.Last_Meal_Allowance) + Number(this.ObjFullAndFinalSettlement.Last_Educational_Allowance) + Number(this.ObjFullAndFinalSettlement.Last_City_Compensation_Allowance)
+        this.ObjFullAndFinalSettlement.Last_Gross_Amount = Number(Last_Gross_Amount).toFixed(2);
+
+        this.GetBonusDetails();
+        this.CalculateNoticePeriod();
+
+        this.ObjFullAndFinalSettlement.EPF_Deduction = data[0].EPF ? data[0].EPF : 0;
+        this.ObjFullAndFinalSettlement.ESI_Deduction = data[0].ESIC ? data[0].ESIC : 0;
+        this.ObjFullAndFinalSettlement.P_Tax_Deduction = data[0].P_TAX ? data[0].P_TAX : 0;
+        this.ObjFullAndFinalSettlement.TDS_Deduction = data[0].TDS ? data[0].TDS : 0;
+        this.GetTotalDeduction();
+      })
+    }
+  }
+
+  GetNoticePeriodEarningAmount() {
+    this.ObjFullAndFinalSettlement.Notice_Period_Earning_Amount = 0;
+    // if (this.ObjFullAndFinalSettlement.Notice_Period_Earning_Day) {
+      const obj = {
+        "SP_String": "SP_HR_Full_And_Final_Settlement",
+        "Report_Name_String": "Get_Notice_Periods_Earning_Amount",
+        "Json_Param_String": JSON.stringify([{ Emp_ID: this.Emp_ID, Days: Number(this.ObjFullAndFinalSettlement.Notice_Period_Earning_Day) }])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        //  console.log("this.AllEmployeeList",this.AllEmployeeList)
+        this.ObjFullAndFinalSettlement.Notice_Period_Earning_Amount = data[0].Notice_Period_Earning_Amount ? Number(data[0].Notice_Period_Earning_Amount).toFixed(2) : 0;
+        this.CalculateTotalStatutoryEarnings();
+      })
+    // }
+  }
+
+  CalculateTotalStatutoryEarnings() {
+    var Total_Statutory_Earnings = Number(this.ObjFullAndFinalSettlement.Bonus) + Number(this.ObjFullAndFinalSettlement.Leave_Encashment) +
+      Number(this.ObjFullAndFinalSettlement.Gratuity) + Number(this.ObjFullAndFinalSettlement.Notice_Period_Earning_Amount)
+    this.ObjFullAndFinalSettlement.Total_Statutory_Earnings = Number(Total_Statutory_Earnings).toFixed(2);
+    this.GetNetPayble();
+  }
+
   GetNetPayble() {
     var TotalAB = (Number(this.ObjFullAndFinalSettlement.Last_Gross_Amount) + Number(this.ObjFullAndFinalSettlement.Total_Statutory_Earnings)).toFixed(2);
     var Net_Payable = Number(TotalAB) - Number(this.ObjFullAndFinalSettlement.Total_Deduction)
@@ -296,9 +319,8 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
 
   SaveFullAndFinalSettlement(valid:any) {
     this.FullAndFinalSettlementFormSubmitted = true;
-    this.Spinner = true;
     if (valid) {
-      // let msg = this.buttonname == "Create" ? "Create" : "Update";
+      this.Spinner = true;
       this.ObjFullAndFinalSettlement.DOJ = this.DateService.dateConvert(new Date(this.Joining_Dt));
       this.ObjFullAndFinalSettlement.DOR = this.DateService.dateConvert(new Date(this.Resign_On));
       this.ObjFullAndFinalSettlement.DOL = this.DateService.dateConvert(new Date(this.Leave_Dt));
@@ -321,14 +343,11 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
           });
           this.Emp_ID = undefined;
           this.ObjFullAndFinalSettlement = new FullAndFinalSettlement();
+          this.FullAndFinalSettlementFormSubmitted = false;
           this.Joining_Dt = undefined;
           this.Resign_On = undefined;
           this.Leave_Dt = undefined;
-          this.ObjFullAndFinalSettlement.Total_Gross_Amount = 0;
-          this.ObjFullAndFinalSettlement.Last_Gross_Amount = 0;
-          this.ObjFullAndFinalSettlement.Total_Deduction = 0;
-          this.ObjFullAndFinalSettlement.Total_Statutory_Earnings = 0;
-          this.ObjFullAndFinalSettlement.Net_Payable = 0;
+
           if (this.buttonname === "Update") {
             this.tabIndexToView = 0;
             this.items = ["BROWSE", "Create"];
