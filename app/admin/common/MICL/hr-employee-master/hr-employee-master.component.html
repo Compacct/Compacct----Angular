@@ -76,15 +76,24 @@
                                         [virtualScroll]="true" itemSize="30" (onChange)="getEmployeeDetails(objselect.Emp_ID)">
                                     </p-dropdown>
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <button [disabled]="userdisabled" class="btn btn-primary " style="margin-top: 28px;margin-left: 40%; " data-toggle="modal " (click)="GetNewEmployee() " id="load30" [disabled]="seachSpinner">
                                 <p-progressSpinner *ngIf="seachSpinner " [style]="{width: '15px', height: '15px'} " strokeWidth="8 "  animationDuration=".5s "></p-progressSpinner>
                                <span *ngIf="!seachSpinner " class="glyphicon glyphicon-plus "></span>&nbsp;New Employee
                                </button>
                                 </div>
                                 <div class="col-sm-2">
-                                    <button *ngIf="databaseName === 'GN_JOH_HR' && $CompacctAPI.CompacctCookies.User_Type === 'A'" [disabled]="!objselect.Emp_ID" class="btn btn-primary" style="margin-top: 28px;margin-left: 40%; " data-toggle="modal " (click)="ResetPhone()" id="load">
+                                    <button *ngIf="databaseName === 'GN_JOH_HR' && $CompacctAPI.CompacctCookies.User_Type === 'A'" [disabled]="!objselect.Emp_ID" class="btn btn-primary" style="margin-top: 28px;margin-left: 40%;" data-toggle="modal" (click)="ResetPhone()" id="load">
                                        <span class="glyphicon glyphicon-phone"></span>&nbsp;Reset
+                                    </button>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Select Month</label>
+                                    <input class="form-control" type="month" name="month" [(ngModel)]="Month_Name">
+                                </div>
+                                <div class="col-sm-2">
+                                    <button *ngIf="databaseName === 'GN_JOH_HR' && $CompacctAPI.CompacctCookies.User_Type === 'A'" [disabled]="!objselect.Emp_ID || holdsalaryflag" class="btn btn-primary" style="margin-top: 28px;margin-left: 40%;" data-toggle="modal" (click)="HoldSalary()" id="load">
+                                       <span class="glyphicon glyphicon-pause"></span>&nbsp;Hold Salary
                                     </button>
                                 </div>
                             </div>

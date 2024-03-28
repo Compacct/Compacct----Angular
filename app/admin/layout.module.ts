@@ -523,6 +523,7 @@ import { DailyAttendanceJohForEmployeeComponent } from './common/Attendance/dail
 import { LeaveEncashmentComponent } from './common/HR/leave-encashment/leave-encashment.component';
 import { DoctorSchedulComponent } from './common/PatientManagement/doctor-schedul/doctor-schedul.component';
 import { PurchaseBillMrpUpdateComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill-mrp-update/purchase-bill-mrp-update.component';
+import { FullAndFinalSettlementJohHrComponent } from './common/HR/full-and-final-settlement-joh-hr/full-and-final-settlement-joh-hr.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -960,7 +961,8 @@ import { PurchaseBillMrpUpdateComponent } from './common/FinancialManagement/Tra
     DailyAttendanceJohForEmployeeComponent,
     LeaveEncashmentComponent,
     DoctorSchedulComponent,
-    PurchaseBillMrpUpdateComponent
+    PurchaseBillMrpUpdateComponent,
+    FullAndFinalSettlementJohHrComponent
   ],
   imports: [
     CommonModule,

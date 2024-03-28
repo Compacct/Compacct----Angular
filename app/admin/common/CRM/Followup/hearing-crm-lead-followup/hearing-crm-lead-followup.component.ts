@@ -46,6 +46,13 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
   RemarksDis:boolean = false;
   ISused:any = undefined;
   Followup_Type:any = undefined;
+  DistFollowupForBranch:any = [];
+  SelectedDistFollowupForBranch:any = [];
+  DistEnquirySource:any = [];
+  SelectedDistEnquirySource:any = [];
+  DistFollowupType:any = [];
+  SelectedFollowupType:any = [];
+  SearchFields:any = [];
 
   constructor(
     private $http: HttpClient,  
@@ -112,7 +119,7 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
         this.userListTableBackup = data
         this.ngxService.stop();
         this.FormSubmittedBRwFl = false;
-        this.GetDistinct1();
+        this.GetDistinct();
       } else {
         this.ngxService.stop();
       }
@@ -146,6 +153,63 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
     } else {
       this.userListTable = [...this.userListTableBackup];
     }
+  }
+  // DISTINCT & FILTER
+  GetDistinct() {
+    let DFollowupForBranch:any = [];
+    let DEnquirySource:any = [];
+    let DFollowupType:any = [];
+    this.DistFollowupForBranch =[];
+    this.SelectedDistFollowupForBranch =[];
+    this.DistEnquirySource =[];
+    this.SelectedDistEnquirySource =[];
+    this.DistFollowupType =[];
+    this.SelectedFollowupType =[];
+    this.SearchFields =[];
+    this.userListTable.forEach((item) => {
+   if (DFollowupForBranch.indexOf(item.Cost_Cen_Name) === -1) {
+    DFollowupForBranch.push(item.Cost_Cen_Name);
+   this.DistFollowupForBranch.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
+   }
+  if (DEnquirySource.indexOf(item.Enq_Source_Name) === -1) {
+    DEnquirySource.push(item.Enq_Source_Name);
+    this.DistEnquirySource.push({ label: item.Enq_Source_Name, value: item.Enq_Source_Name });
+    }
+    if (DFollowupType.indexOf(item.Followup_Type) === -1) {
+      DFollowupType.push(item.Followup_Type);
+      this.DistFollowupType.push({ label: item.Followup_Type, value: item.Followup_Type });
+      }
+  });
+     this.userListTableBackup = [...this.userListTable];
+  }
+  FilterDist() {
+    let DFollowupForBranch:any = [];
+    let DEnquirySource:any = [];
+    let DFollowupType:any = [];
+    this.SearchFields =[];
+  if (this.SelectedDistFollowupForBranch.length) {
+    this.SearchFields.push('Cost_Cen_Name');
+    DFollowupForBranch = this.SelectedDistFollowupForBranch;
+  }
+  if (this.SelectedDistEnquirySource.length) {
+    this.SearchFields.push('Enq_Source_Name');
+    DEnquirySource = this.SelectedDistEnquirySource;
+  }
+  if (this.SelectedFollowupType.length) {
+    this.SearchFields.push('Followup_Type');
+    DFollowupType = this.SelectedFollowupType;
+  }
+  this.userListTable = [];
+  if (this.SearchFields.length) {
+    let LeadArr = this.userListTableBackup.filter(function (e) {
+      return (DFollowupForBranch.length ? DFollowupForBranch.includes(e['Cost_Cen_Name']) : true)
+      && (DEnquirySource.length ? DEnquirySource.includes(e['Enq_Source_Name']) : true)
+      && (DFollowupType.length ? DFollowupType.includes(e['Followup_Type']) : true)
+    });
+  this.userListTable = LeadArr.length ? LeadArr : [];
+  } else {
+  this.userListTable = [...this.userListTableBackup] ;
+  }
   }
   followup(col:any) {
     this.FootFallId = undefined;

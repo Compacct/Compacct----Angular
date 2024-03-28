@@ -44,7 +44,7 @@
                                     <span  class="glyphicon glyphicon-search"></span>&nbsp;Search
                                 </button>
                             </div>
-                            <div class="col-sm-5">
+                            <!-- <div class="col-sm-5">
                                 <fieldset style="margin-top: -6px;">
                                     <legend style="text-align: right;">Filter</legend>
                                     <div class="form-group">
@@ -56,7 +56,31 @@
                                         </div>
                                     </div>
                                 </fieldset>
-                            </div>
+                            </div> -->
+                        </div>
+                        <div class="form-group" *ngIf='userListTableBackup.length' style="padding:15px">
+
+                            <fieldset class="col-md-12">
+                                <legend>Filter</legend>
+
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Followup For Branch <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="DistFollowupForBranch" [(ngModel)]="SelectedDistFollowupForBranch" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Cost_Cen_Name"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Enquiry Source <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="DistEnquirySource"  [(ngModel)]="SelectedDistEnquirySource"
+                                          itemSize="30" (onChange)='FilterDist()'[styleClass]="'compacct-multiselect'"
+                                          name="Enq_Source_Name"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Followup Type <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="DistFollowupType" [(ngModel)]="SelectedFollowupType" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Followup_Type"></p-multiSelect>
+                                    </div>
+                                </div>
+
+                            </fieldset>
                         </div>
                        
                     </form>
@@ -82,7 +106,8 @@
                                     <th>Mobile</th>
                                     <th>Alternative No.</th>
                                     <th>WhatsApp No.</th>
-                                    <th>Followup For</th>
+                                    <th>Followup For Branch</th>
+                                    <th>Enquiry Source</th>
                                     <th>Followup Type</th> 
                                     <th>Last Followup Remarks</th>
                                 </tr>
@@ -116,6 +141,7 @@
                                             :'-'}}</a></td>
                                     <td style="text-align: center;">{{col.Mobile_3_WP ? col.Mobile_3_WP : '-' }}</td>
                                     <td>{{col.Cost_Cen_Name ? col.Cost_Cen_Name :'-'}}</td>
+                                    <td>{{col.Enq_Source_Name ? col.Enq_Source_Name :'-'}}</td>
                                     <td>{{col.Followup_Type ? col.Followup_Type :'-'}}</td>
                                     <td>{{col.Followup_Details ? col.Followup_Details :'-'}}</td>
                                 </tr>

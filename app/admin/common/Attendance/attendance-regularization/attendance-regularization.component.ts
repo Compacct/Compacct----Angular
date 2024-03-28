@@ -23,7 +23,9 @@ export class AttendanceRegularizationComponent implements OnInit {
   user_type: string = "";
   AttendenceFormSubmitted: boolean = false;
   apply_Date: Date = new Date();
-  attendence_Date: Date = new Date();
+  attendence_Date: Date;
+  min_attendence_Date: Date;
+  max_attendence_Date: Date;
   employeeList: any = [];
   Changed_In_Time: any;
   Changed_Out_Time: any;
@@ -56,6 +58,10 @@ export class AttendanceRegularizationComponent implements OnInit {
     this.User_ID = this.commonApi.CompacctCookies.User_ID;
     this.user_type = this.commonApi.CompacctCookies.User_Type;
     // console.log('user type', this.user_type);
+    var currentdate:Date = new Date();
+    const maxattndate =  currentdate.setDate(currentdate.getDate() - 1);
+    this.max_attendence_Date = new Date(maxattndate);
+    this.attendence_Date = new Date(maxattndate);
     this.getEmployeeList();
     this.getBrowseData();
   }
@@ -186,6 +192,7 @@ export class AttendanceRegularizationComponent implements OnInit {
           this.clearData();
         }
         else {
+          this.Spinner = false;
           this.CompacctToast.clear();
           this.CompacctToast.add({
             key: "compacct-toast",
@@ -197,6 +204,7 @@ export class AttendanceRegularizationComponent implements OnInit {
       })
     }
     else {
+      this.Spinner = false;
       this.CompacctToast.clear();
       this.CompacctToast.add({
         key: "compacct-toast",
@@ -217,7 +225,10 @@ export class AttendanceRegularizationComponent implements OnInit {
     this.Spinner = false;
     this.objAttendence = new Attendence();
     this.apply_Date = new Date();
-    this.attendence_Date = new Date();
+    var currentdate:Date = new Date();
+    const maxattndate =  currentdate.setDate(currentdate.getDate() - 1);
+    this.max_attendence_Date = new Date(maxattndate);
+    this.attendence_Date = new Date(maxattndate);
     this.del_empID = 0;
     this.del_ApplyDate = new Date();
     this.disabled_inTime = undefined;
