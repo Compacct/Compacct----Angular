@@ -426,6 +426,7 @@ import { LeaveEncashmentComponent } from './common/HR/leave-encashment/leave-enc
 import { DoctorSchedulComponent } from './common/PatientManagement/doctor-schedul/doctor-schedul.component';
 import { PurchaseBillMrpUpdateComponent } from "./common/FinancialManagement/Transaction/Purchase/purchase-bill-mrp-update/purchase-bill-mrp-update.component";
 import { FullAndFinalSettlementJohHrComponent } from './common/HR/full-and-final-settlement-joh-hr/full-and-final-settlement-joh-hr.component';
+import { FollowupWithSalesDetailsComponent } from './common/CRM/Followup/followup-with-sales-details/followup-with-sales-details.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3261,6 +3262,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: FullAndFinalSettlementJohHrComponent,
       data: {
         title: 'Full And Final Settlement'
+      }
+    },
+    {
+      path: 'Followup_With_Sales_Details',
+      component: FollowupWithSalesDetailsComponent,
+      data: {
+        title: 'Followup With Sales Details'
       }
     },
     
