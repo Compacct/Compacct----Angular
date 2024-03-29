@@ -1,0 +1,167 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <!-- <div class="ui-g-6" >
+                <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div> -->
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+              <p-tabView [activeIndex]="tabIndexToView"> 
+                <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                <div class="form-group" id="inner-Box" >
+                    <div class="col-sm-6" style="padding-bottom: 8px;;margin-left: 18px;">
+                        <label class="control-label">Patient Name<sup class="text-danger">*</sup></label>
+                        <p-dropdown [options]="Patientlist"
+                            name="Patient" 
+                            #Patient="ngModel" 
+                            [(ngModel)]="ObjFirst.Foot_Fall_ID"
+                            [showClear]="true" 
+                            [emptyFilterMessage]="' No Patient Found'" 
+                            [filter]="true" filterBy="label,value.name" 
+                            [resetFilterOnHide]="true" 
+                            [placeholder]="'Select Patient'" 
+                            [virtualScroll]="true"
+                            itemSize="30"
+                            (onChange)="GetPatientLIST()"
+                            [styleClass]="PatientFormSubmitted && Patient.errors?.required? 'clearance' : ''" [required]="true"> 
+                        </p-dropdown>
+                    </div>
+                    <div class="col-sm-4" style="padding-bottom: 8px;;margin-left: 18px;">
+                        <button class="btn btn-primary custombutton" (click)="GetPatientSearch(SearchForm.form.valid)" id="buttonserch"data-loading-text="<i class='fa fa-spinner fa-spin '></i> Searching">
+                            <span class="glyphicon glyphicon-search"></span> Search
+                        </button>
+                    </div>
+                </div>
+                </form>
+                <div class="panel-group" style="margin-bottom: 20px"> 
+                    <div class="panel panel-primary" style="margin-bottom:0;border-radius: 4px;">                                   
+                        <div class="panel-body" style="padding: 15px;"> 
+                            <div class="form-group">
+                                <h5 style=" margin-top: -10px;padding-left: 16px;">
+                                    <i class="fa fa-user">
+                                    </i> &nbsp;<strong>Patient Details:</strong></h5>    
+                                <div class="col-sm-6">
+                                    <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{ObjMiddle.Contact_Name ? ObjMiddle.Contact_Name : '-'}}</div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Customer ID</label>
+                                    <div class="label-t">{{ObjMiddle.Foot_Fall_ID ? ObjMiddle.Foot_Fall_ID : '-'}}</div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Gender<sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{ObjMiddle.Gender ? ObjMiddle.Gender : '-'}}</div>
+                                </div>
+                            </div>
+                            <div class="form-group"> 
+                            <div class="col-sm-4">
+                                <label class="control-label">Date of Birth<sup class="text-danger">*</sup></label>
+                                <div class="label-t">{{ObjMiddle.Date_Of_Birth ? (ObjMiddle.Date_Of_Birth | date :"dd/MMM/yyyy") : '-'}}</div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="control-label">Address<sup class="text-danger">*</sup></label>
+                                <div class="label-t">{{ObjMiddle.Address ? ObjMiddle.Address : '-'}}</div>
+                            </div>
+                            <div class="col-sm-2">
+                                <label class="control-label">Pin Code<sup class="text-danger">*</sup></label>
+                                <div class="label-t">{{ObjMiddle.Pin ? ObjMiddle.Pin : '-'}}</div>
+                            </div>
+                           </div>
+                            <div class="form-group"> 
+                            <div class="col-sm-4">
+                                    <label class="control-label">State<sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{ObjMiddle.STATE ? ObjMiddle.STATE : '-'}}</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">District<sup class="text-danger">*</sup></label>
+                                <div class="label-t">{{ObjMiddle.DISTRICT ? ObjMiddle.DISTRICT : '-'}}</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Mobile No<sup class="text-danger">*</sup></label>
+                                <div class="label-t">{{ObjMiddle.Mobile ? ObjMiddle.Mobile : '-'}}</div>
+                            </div>
+                           </div> 
+                           <div class="form-group"> 
+                            <div class="col-sm-4">
+                                <label class="control-label">Other Mobile No</label>
+                                <div class="label-t">{{ObjMiddle.Mobile_2 ? ObjMiddle.Mobile_2 : '-'}}</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Email ID</label>
+                                <div class="label-t">{{ObjMiddle.Email ? ObjMiddle.Email : '-'}}</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Centre<sup class="text-danger">*</sup></label>
+                                <div class="label-t">{{ObjMiddle.Cost_Cen_ID ? ObjMiddle.Cost_Cen_ID : '-'}}</div> 
+                            </div>
+                           </div> 
+                       </div>
+                    </div>
+                </div>
+                
+                <form name="EngCaseHistoryForm" #EngCaseHistoryForm="ngForm" novalidate>
+                    <div class="form-group" style="padding: 1em;">
+                        <h5 style="
+                        padding: 0.5em 1em;
+                        background: #c1c1c185;
+                        border-top: 5px solid #3c8dbc;
+                        border-bottom: 1px solid #c6c6c6;
+                        margin-top: -20px;
+                        ">
+                        <i class="fa fa-user">
+                        </i> &nbsp;<strong>Case History:</strong>
+                    </h5>
+                    </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">Reason for Visit<sup class="text-danger">*</sup></label>
+                        <select class="form-control"
+                        name="reasonforvisit"
+                        #reasonforvisit="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Reason_for_Visit"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && reasonforvisit.errors?.required}" required >
+                            <option  [ngValue]="undefined">Select</option>
+                            <option *ngFor = "let option of ReasonforVisitList" value= "{{option}}">
+                                {{option}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                  <div class="form-group" style="padding: 1em;">
+                    <div class="col-sm-4"></div>
+                  <div class="col-sm-6">
+                    <button class="btn btn-primary pull-right"  id="load" (click)="saveDataLast(EngCaseHistoryForm.form.valid)"   [disabled]="Active">
+                         <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save">Save</span>
+                 </button>
+                 </div> 
+                 <div class="col-sm-2">
+                    <button class="btn btn-success " (click)="GetPrint()" [disabled]="SaveAfter">
+                        <span class="glyphicon glyphicon-print"></span> Print
+                    </button>
+                </div>
+                 </div>             
+               </form>
+             </p-tabView>   
+               </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -427,6 +427,7 @@ import { DoctorSchedulComponent } from './common/PatientManagement/doctor-schedu
 import { PurchaseBillMrpUpdateComponent } from "./common/FinancialManagement/Transaction/Purchase/purchase-bill-mrp-update/purchase-bill-mrp-update.component";
 import { FullAndFinalSettlementJohHrComponent } from './common/HR/full-and-final-settlement-joh-hr/full-and-final-settlement-joh-hr.component';
 import { FollowupWithSalesDetailsComponent } from './common/CRM/Followup/followup-with-sales-details/followup-with-sales-details.component';
+import { BlCrmEnqCaseHistoryComponent } from './common/PatientManagement/bl-crm-enq-case-history/bl-crm-enq-case-history.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3269,6 +3270,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: FollowupWithSalesDetailsComponent,
       data: {
         title: 'Followup With Sales Details'
+      }
+    },
+    {
+      path: 'BL_CRM_Enq_Case_History',
+      component: BlCrmEnqCaseHistoryComponent,
+      data: {
+        title: 'BL CRM Enquiry Case History'
       }
     },
     

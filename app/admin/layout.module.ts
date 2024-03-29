@@ -525,6 +525,7 @@ import { DoctorSchedulComponent } from './common/PatientManagement/doctor-schedu
 import { PurchaseBillMrpUpdateComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill-mrp-update/purchase-bill-mrp-update.component';
 import { FullAndFinalSettlementJohHrComponent } from './common/HR/full-and-final-settlement-joh-hr/full-and-final-settlement-joh-hr.component';
 import { FollowupWithSalesDetailsComponent } from './common/CRM/Followup/followup-with-sales-details/followup-with-sales-details.component';
+import { BlCrmEnqCaseHistoryComponent } from './common/PatientManagement/bl-crm-enq-case-history/bl-crm-enq-case-history.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -964,7 +965,8 @@ import { FollowupWithSalesDetailsComponent } from './common/CRM/Followup/followu
     DoctorSchedulComponent,
     PurchaseBillMrpUpdateComponent,
     FullAndFinalSettlementJohHrComponent,
-    FollowupWithSalesDetailsComponent
+    FollowupWithSalesDetailsComponent,
+    BlCrmEnqCaseHistoryComponent
   ],
   imports: [
     CommonModule,
