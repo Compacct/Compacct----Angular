@@ -377,6 +377,11 @@ OtherTestEntryPrint (obj) {
       console.log(this.tabIndexToView);
     }
   }
+  AdultSoftHear(obj:any){
+    if (obj) {
+      window.open('/New_Adult_Speech_Evaluation');
+    }
+  }
   Therapy(obj) {
     if (obj) {
       this.TabView = "";
