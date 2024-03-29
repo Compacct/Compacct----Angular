@@ -1,0 +1,150 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView">
+                     <form name="doctorSchedulForm" #doctorSchedulForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Centre<sup class="text-danger">*</sup></label>
+                                        <select class="form-control"
+                                        name="Cost_Cen_ID"
+                                        #Cost_Cen_ID="ngModel"
+                                        [(ngModel)]="objDoctorSchedul.Cost_Cen_ID"
+                                        [ngClass]="{'clearance': doctorSchedulFormSubmit && Cost_Cen_ID?.errors?.required}"
+                                        required >
+                                        <option  [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of CentreList" value={{option.Cost_Cen_ID}}>
+                                         {{option.Cost_Cen_Name}}
+                                        </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label">Doctor<sup class="text-danger">*</sup></label>
+                                        <p-dropdown [options]="doctorList" 
+                                        name="Doctor_ID" 
+                                        [(ngModel)]="objDoctorSchedul.Doctor_ID"
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Doctor Found'"
+                                        [filter]="true" 
+                                        filterBy="label,value.name"
+                                        [placeholder]="'Select Doctor'"
+                                        [virtualScroll]="true" itemSize="30"
+                                        #Doctor_ID="ngModel"
+                                        [styleClass]="doctorSchedulFormSubmit && Doctor_ID.errors?.required ? 'clearance': ''" 
+                                        [required]="true"></p-dropdown>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">No of Patient<sup class="text-danger">*</sup></label>
+                                        <input class="form-control"
+                                        name="NoOfPatient"
+                                        #NoOfPatient="ngModel"
+                                        [(ngModel)]="objDoctorSchedul.No_Of_Patient"
+                                        placeholder="No Of Patient"
+                                        CompacctDigitonly="true"
+                                        [ngClass]="{'clearance': doctorSchedulFormSubmit && NoOfPatient?.errors?.required}"
+                                        required
+                                   >
+                                    </div>
+                                    <div class="col-sm-2" >
+                                        <label class="control-label">Year<sup class="text-danger">*</sup></label>
+                                        <select class="form-control"
+                                        name="year"
+                                        #year="ngModel"
+                                        [(ngModel)]="objDoctorSchedul.year"
+                                        [ngClass]="{'clearance': doctorSchedulFormSubmit && year?.errors?.required}"
+                                        required >
+                                        <option  [ngValue]="undefined">Select</option>
+                                        <option *ngFor="let option of yearList" value={{option.year}}>
+                                            {{option.year}}
+                                        </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2" >
+                                        <label class="control-label">Month<sup class="text-danger"></sup></label>
+                                        <select class="form-control"
+                                        name="month"
+                                        #month="ngModel"
+                                        [(ngModel)]="objDoctorSchedul.month">
+                                        <option  [ngValue]="0">Select</option>
+                                        <option [ngValue]="1">January</option>
+                                        <option [ngValue]="2">February</option>
+                                        <option [ngValue]="3">March</option>
+                                        <option [ngValue]="4">April</option>
+                                        <option [ngValue]="5">May</option>
+                                        <option [ngValue]="6">June</option>
+                                        <option [ngValue]="7">July</option>
+                                        <option [ngValue]="8">August</option>
+                                        <option [ngValue]="9">September</option>
+                                        <option [ngValue]="10">October</option>
+                                        <option [ngValue]="11">November</option>
+                                        <option [ngValue]="12">December</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4" >
+                                        <label class="control-label">Available Days<sup class="text-danger">*</sup></label>
+                                        <p-multiSelect [options]="AvailableDaysList" 
+                                        [(ngModel)]="SelectedAvailableDays" 
+                                        name="AvlDay"
+                                        #AvlDay="ngModel"
+                                        [styleClass]="doctorSchedulFormSubmit && AvlDay.errors?.required ? 'compacct-multiselect clearance': 'compacct-multiselect'" 
+                                        [required]="true"  ></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-2" >
+                                        <label class="control-label">From Time<sup class="text-danger">*</sup></label>
+                                        <ejs-timepicker name="Ftime"  
+                                        [(ngModel)]="FromTime" #Ftime="ngModel" 
+                                        [step]='1' [format]="'hh:mm a'"
+                                        [placeholder]="'From Time'"
+                                         [cssClass]=" doctorSchedulFormSubmit && Ftime.errors?.required ?  'clearance' : ''" required></ejs-timepicker>
+                                    </div>
+                                    <div class="col-sm-2" >
+                                        <label class="control-label">To Time<sup class="text-danger">*</sup></label>
+                                        <ejs-timepicker name="Ttime"  [(ngModel)]="ToTime" #Ttime="ngModel"
+                                        [cssClass]=" doctorSchedulFormSubmit && Ttime.errors?.required ?  'clearance' : ''"
+                                        [step]='1' [format]="'hh:mm a'" required ></ejs-timepicker>
+                                    </div>
+                                    <div class="col-sm-2" >
+                                         <button class="btn btn-primary custombutton" 
+                                        (click)="saveDoctorSchedule(doctorSchedulForm.form.valid)"
+                                        id="load"
+                                        [disabled]="Spinner">
+                                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                </button>
+                                    </div>
+                                </div>
+                            </form>
+                        
+                    </p-tabView>
+
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>

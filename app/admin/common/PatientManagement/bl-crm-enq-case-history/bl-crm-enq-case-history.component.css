@@ -1,0 +1,51 @@
+
+#ui-tabpanel-0>div>p-table>div>div.ui-table-wrapper.ng-star-inserted {
+    width: auto !important;
+}
+
+div.table-responsive.table-id>p-table>div>div {
+    width: auto !important;
+}
+.ui-table-auto-layout > .ui-table-wrapper{
+    width: auto !important;
+}
+.custombutton {
+    margin-top: 25px;
+}
+.box.boxboxDivide-primary{
+    border-top-color: #f3efec;
+    height: 10px;
+    border: 0;
+    box-shadow: 0 10px 10px -10px #8c8b8b inset
+}
+.amt-td{
+    background: #f1f1f1;
+    text-align: center;
+}
+#inner-Box {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+#Designe{
+    border: none; 
+    border-bottom: dashed;
+}
+#Select{
+    border: 0px;
+}
+.createPatient {
+    padding: 0 5px!important;
+    border-radius: 3px!important;
+    margin-top: 5px!important;
+}
+div.label-t {
+    padding: 6px 12px;
+    background: rgb(206 216 216 / 51%);
+}
+
+
+/* .QtyColor {
+    color: #007ad9;
+  }
+.Othercolor {
+    color: black;
+} */

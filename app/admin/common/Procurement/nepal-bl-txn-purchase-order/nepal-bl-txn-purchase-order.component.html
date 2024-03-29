@@ -121,36 +121,39 @@
                                                         <span class="caret"></span>
                                                     </button>
                                                     <ul class="dropdown-menu">
-                                                        <li>
-                                                            <a (click)="EditBrowse(col)">
-                                                                <i class="fa fa-fw fa-pencil"></i> Edit
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a (click)="sendEmailFormBrowse(col)">
-                                                                <i class="fa fa-envelope"></i> Send Email
-                                                            </a>
-                                                        </li>
-                                                        <li *ngIf="col.Approver_One_Status == 'Approved' || col.Approver_Two_Status == 'Approved'">
-                                                            <a (click)="ActivityPlan(col)">
-                                                                <i class='fa fa-tasks'></i> PO Activity Plan
-                                                            </a>
-                                                        </li>                                                      
-                                                        <li *ngIf="col.Approver_One_Status == 'Approved' || col.Approver_Two_Status == 'Approved'">
-                                                            <a (click)="PoDCoVault(col.Doc_No)">
-                                                                <i class='fa fa-file'></i> PO DOC Vault
-                                                            </a>
-                                                        </li>
-                                                        <li *ngIf="col.Approver_One_Status == 'Approved' || col.Approver_Two_Status == 'Approved'">
-                                                            <a (click)="ToDoUpdate(col.Doc_No)">
-                                                            <i class="fa fa-refresh"></i> To-Do Update
-                                                            </a>
-                                                        </li>
-                                                         <li >
-                                                            <a (click)="DeleteBrowse(col)">
-                                                                <i class="fa fa-trash" aria-hidden="true"></i> Delete
-                                                            </a>
-                                                        </li>
+                                                        <ng-container *ngIf="$CompacctAPI.CompacctCookies.User_ID == 4 || col.Posted_By == $CompacctAPI.CompacctCookies.User_ID">
+                                                            <li>
+                                                                <a (click)="EditBrowse(col)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="sendEmailFormBrowse(col)">
+                                                                    <i class="fa fa-envelope"></i> Send Email
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Approver_One_Status == 'Approved' || col.Approver_Two_Status == 'Approved'">
+                                                                <a (click)="ActivityPlan(col)">
+                                                                    <i class='fa fa-tasks'></i> PO Activity Plan
+                                                                </a>
+                                                            </li>                                                      
+                                                            <li *ngIf="col.Approver_One_Status == 'Approved' || col.Approver_Two_Status == 'Approved'">
+                                                                <a (click)="PoDCoVault(col.Doc_No)">
+                                                                    <i class='fa fa-file'></i> PO DOC Vault
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Approver_One_Status == 'Approved' || col.Approver_Two_Status == 'Approved'">
+                                                                <a (click)="ToDoUpdate(col.Doc_No)">
+                                                                <i class="fa fa-refresh"></i> To-Do Update
+                                                                </a>
+                                                            </li>
+                                                             <li >
+                                                                <a (click)="DeleteBrowse(col)">
+                                                                    <i class="fa fa-trash" aria-hidden="true"></i> Delete
+                                                                </a>
+                                                            </li>
+                                                        </ng-container>
+                                                       
                                                         
                                                         <li>
                                                             <a (click)="Print(col)">

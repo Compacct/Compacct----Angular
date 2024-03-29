@@ -520,6 +520,12 @@ import { QuizModuleComponent } from './common/Attendance/quiz-module/quiz-module
 import { K4cAllDiagnosisComponent } from './common/OutletManagement/k4c-all-diagnosis/k4c-all-diagnosis.component';
 import { PatientCreateWithInformationComponent } from './common/PatientManagement/patient-create-with-information/patient-create-with-information.component';
 import { DailyAttendanceJohForEmployeeComponent } from './common/Attendance/daily-attendance-joh-for-employee/daily-attendance-joh-for-employee.component';
+import { LeaveEncashmentComponent } from './common/HR/leave-encashment/leave-encashment.component';
+import { DoctorSchedulComponent } from './common/PatientManagement/doctor-schedul/doctor-schedul.component';
+import { PurchaseBillMrpUpdateComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill-mrp-update/purchase-bill-mrp-update.component';
+import { FullAndFinalSettlementJohHrComponent } from './common/HR/full-and-final-settlement-joh-hr/full-and-final-settlement-joh-hr.component';
+import { FollowupWithSalesDetailsComponent } from './common/CRM/Followup/followup-with-sales-details/followup-with-sales-details.component';
+import { BlCrmEnqCaseHistoryComponent } from './common/PatientManagement/bl-crm-enq-case-history/bl-crm-enq-case-history.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -954,7 +960,13 @@ import { DailyAttendanceJohForEmployeeComponent } from './common/Attendance/dail
     QuizModuleComponent,
     K4cAllDiagnosisComponent,
     PatientCreateWithInformationComponent,
-    DailyAttendanceJohForEmployeeComponent
+    DailyAttendanceJohForEmployeeComponent,
+    LeaveEncashmentComponent,
+    DoctorSchedulComponent,
+    PurchaseBillMrpUpdateComponent,
+    FullAndFinalSettlementJohHrComponent,
+    FollowupWithSalesDetailsComponent,
+    BlCrmEnqCaseHistoryComponent
   ],
   imports: [
     CommonModule,

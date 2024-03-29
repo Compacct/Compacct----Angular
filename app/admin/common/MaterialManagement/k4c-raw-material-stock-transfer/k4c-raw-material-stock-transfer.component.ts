@@ -175,15 +175,24 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     //   User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
     //   Material_Type : this.MaterialType_Flag
     // }
+    let spname = ''
+    let reportname = ''
+    if(this.MaterialType_Flag === "Maintenance"){
+      spname = "SP_Controller_Master"
+      reportname = "Get - Outlet Name"
+    } else {
+      spname = "SP_Raw_Material_Stock_Transfer"
+      reportname = "Get Cost Centre Non outlet"
+    }
     const obj = {
-      "SP_String": "SP_Raw_Material_Stock_Transfer",
-      "Report_Name_String": "Get Cost Centre Non outlet",
+      "SP_String": spname,
+      "Report_Name_String": reportname,
       //"Json_Param_String": JSON.stringify([tempObj])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.Tocostcenlist = data;
      // if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
-      if (this.CostCentId_Flag) {
+      if (this.CostCentId_Flag && this.MaterialType_Flag != "Maintenance") {
       this.ObjRawMateriali.To_Cost_Cen_ID = String(this.CostCentId_Flag);
       this.TCdisableflag = true;
       this.GetToGodown();
@@ -226,19 +235,24 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
 
   }
   GetBToCostCen(){
-    // const tempObj = {
-    //   User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
-    //   Material_Type : this.MaterialType_Flag
-    // }
+    let spname = ''
+    let reportname = ''
+    if(this.MaterialType_Flag === "Maintenance"){
+      spname = "SP_Controller_Master"
+      reportname = "Get - Outlet Name"
+    } else {
+      spname = "SP_Raw_Material_Stock_Transfer"
+      reportname = "Get Cost Centre Non outlet"
+    }
     const obj = {
-      "SP_String": "SP_Raw_Material_Stock_Transfer",
-      "Report_Name_String": "Get Cost Centre Non outlet",
+      "SP_String": spname,
+      "Report_Name_String": reportname,
      // "Json_Param_String": JSON.stringify([tempObj])
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.ToBcostcenlist = data;
      // if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
-      if (this.CostCentId_Flag) {
+      if (this.CostCentId_Flag && this.MaterialType_Flag != "Maintenance") {
       this.ObjBrowse.To_Cost_Cen_ID = String(this.CostCentId_Flag);
       this.TBCdisableflag = true;
       this.GetBToGodown();
@@ -343,7 +357,8 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     if(valid){
     if((Number(this.ObjRawMateriali.To_godown_id) === 42) || (Number(this.ObjRawMateriali.To_godown_id) === 43) ||
       (Number(this.ObjRawMateriali.To_godown_id) === 46) || (Number(this.ObjRawMateriali.To_godown_id) === 72) ||
-      (Number(this.ObjRawMateriali.To_godown_id) === 73) || (Number(this.ObjRawMateriali.To_godown_id) === 89)) {
+      (Number(this.ObjRawMateriali.To_godown_id) === 73) || (Number(this.ObjRawMateriali.To_godown_id) === 89) || 
+      (Number(this.ObjRawMateriali.From_godown_id) === 132)) {
     this.GetProductList();
     }
   else {
@@ -822,7 +837,7 @@ exportoexcel(Arr,fileName): void {
   clearData(){
     this.ObjRawMateriali.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     // FOR CREATE TAB
-    if (this.CostCentId_Flag) {
+    if (this.CostCentId_Flag && this.MaterialType_Flag != "Maintenance") {
       this.ObjRawMateriali.To_Cost_Cen_ID = String(this.CostCentId_Flag);
       this.TCdisableflag = true;
       this.GetToGodown();

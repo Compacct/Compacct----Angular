@@ -422,7 +422,12 @@ import { QuizModuleComponent } from "./common/Attendance/quiz-module/quiz-module
 import { K4cAllDiagnosisComponent } from './common/OutletManagement/k4c-all-diagnosis/k4c-all-diagnosis.component';
 import { PatientCreateWithInformationComponent } from './common/PatientManagement/patient-create-with-information/patient-create-with-information.component';
 import { DailyAttendanceJohForEmployeeComponent } from './common/Attendance/daily-attendance-joh-for-employee/daily-attendance-joh-for-employee.component';
-
+import { LeaveEncashmentComponent } from './common/HR/leave-encashment/leave-encashment.component';
+import { DoctorSchedulComponent } from './common/PatientManagement/doctor-schedul/doctor-schedul.component';
+import { PurchaseBillMrpUpdateComponent } from "./common/FinancialManagement/Transaction/Purchase/purchase-bill-mrp-update/purchase-bill-mrp-update.component";
+import { FullAndFinalSettlementJohHrComponent } from './common/HR/full-and-final-settlement-joh-hr/full-and-final-settlement-joh-hr.component';
+import { FollowupWithSalesDetailsComponent } from './common/CRM/Followup/followup-with-sales-details/followup-with-sales-details.component';
+import { BlCrmEnqCaseHistoryComponent } from './common/PatientManagement/bl-crm-enq-case-history/bl-crm-enq-case-history.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3232,6 +3237,49 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         title: 'Daily Attendance JOH for Employee'
       }
     },
+    {
+      path: 'Leave_Encashment',
+      component: LeaveEncashmentComponent,
+      data: {
+        title: 'Leave Encashment'
+      }
+    },
+    {
+      path: 'BL_CRM_Doctor_Schedule_V2',
+      component: DoctorSchedulComponent,
+      data: {
+        title: 'Doctor Schedule Entry'
+      }
+    },
+    {
+      path: 'BL_Txn_Purchase_bill_MRP_update',
+      component: PurchaseBillMrpUpdateComponent,
+      data: {
+        title: 'Purchase Bill MRP Update'
+      }
+    },
+    {
+      path: 'Full_And_Final_Settlement_for_JOH',
+      component: FullAndFinalSettlementJohHrComponent,
+      data: {
+        title: 'Full And Final Settlement'
+      }
+    },
+    {
+      path: 'Followup_With_Sales_Details',
+      component: FollowupWithSalesDetailsComponent,
+      data: {
+        title: 'Followup With Sales Details'
+      }
+    },
+    {
+      path: 'BL_CRM_Enq_Case_History',
+      component: BlCrmEnqCaseHistoryComponent,
+      data: {
+        title: 'BL CRM Enquiry Case History'
+      }
+    },
+    
     /*{
 
 
