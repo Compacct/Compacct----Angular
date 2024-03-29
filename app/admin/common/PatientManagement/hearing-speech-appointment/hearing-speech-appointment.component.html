@@ -144,6 +144,12 @@
                                                                     Adult Assessment
                                                                 </a>
                                                             </li>
+                                                            <li>
+                                                                <a (click)="AdultSoftHear(col)">
+                                                                    <i class="fa fa-wheelchair"></i>
+                                                                    Adult Assessment Soft
+                                                                </a>
+                                                            </li>
                                                             <li *ngIf="col.Status=='Consultancy Done' && ShowOtherTestPrintOpt">
                                                                 <a (click)="OtherTestEntryPrint(col)">
                                                                     <i class="fa fa-fw fa-print"></i>

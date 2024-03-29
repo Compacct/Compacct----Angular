@@ -526,6 +526,7 @@ import { PurchaseBillMrpUpdateComponent } from './common/FinancialManagement/Tra
 import { FullAndFinalSettlementJohHrComponent } from './common/HR/full-and-final-settlement-joh-hr/full-and-final-settlement-joh-hr.component';
 import { FollowupWithSalesDetailsComponent } from './common/CRM/Followup/followup-with-sales-details/followup-with-sales-details.component';
 import { BlCrmEnqCaseHistoryComponent } from './common/PatientManagement/bl-crm-enq-case-history/bl-crm-enq-case-history.component';
+import { NewAdultSpeechEvaluationComponent } from './common/PatientManagement/new-adult-speech-evaluation/new-adult-speech-evaluation.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -966,7 +967,8 @@ import { BlCrmEnqCaseHistoryComponent } from './common/PatientManagement/bl-crm-
     PurchaseBillMrpUpdateComponent,
     FullAndFinalSettlementJohHrComponent,
     FollowupWithSalesDetailsComponent,
-    BlCrmEnqCaseHistoryComponent
+    BlCrmEnqCaseHistoryComponent,
+    NewAdultSpeechEvaluationComponent
   ],
   imports: [
     CommonModule,

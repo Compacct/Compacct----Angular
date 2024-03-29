@@ -1,0 +1,216 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast bposition="center" key="c"(onClose)="onReject()"[modal]="true"[autoZIndex]="true">
+  <ng-template let-message pTemplate="message">
+    <div style="text-align: center">
+      <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+      <h3>{{ message.summary }}</h3>
+      <p>{{ message.detail }}</p>
+    </div>
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-6">
+        <button type="button" pButton (click)="onConfirm()"label="Yes"class="ui-button-success"></button>
+      </div>
+      <div class="ui-g-6">
+        <button type="button" pButton (click)="onReject()" label="No"class="ui-button-secondary"></button>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="form-horizontal">
+          <div class="box-body">
+            <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)"> 
+                <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                    <div class="table-responsive no-padding">
+                        <div class="table-responsive no-padding">
+                            <!-- <p-table [value]="AllData" 
+                            [paginator] 
+                            [rows]="10" [rowHover]="true"
+                            [autoLayout]="true" 
+                            sortMode="multiple" 
+                            [rowsPerPageOptions]="[10,20,30]"
+                            [globalFilterFields]="['Cat_Name','IGST_Input_ledger_Name','CGST_Input_Ledger_Name','SGST_Input_Ledger_Name','IGST_Output_Ledger_Name','CGST_Output_Ledger_Name','SGST_Output_Ledger_Name']"[rowHover]="true" #dt>
+
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-sm-3 pull-right" style="text-align: right">
+                                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                        </div>
+                                    </div>
+
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width:5em">Action</th>
+                                        <th>Tax Category</th>
+                                        <th>Tax %</th>
+                                        <th>IGST Input</th>
+                                        <th>CGST Input</th>
+                                        <th>SGST Input</th>
+                                        <th>IGST Output</th>
+                                        <th>CGST Output</th>
+                                        <th>SGST output</th>
+                                    </tr>
+                                </ng-template> 
+                                <ng-template pTemplate="body" let-col>
+                                    <tr [class]='col.Is_Visiable === "N" ? "text-red-active" : ""'>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-default btn-sm tableButton dropdown-toggle" 
+                                                type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                <ul class="dropdown-menu">
+                                                     <li *ngIf="col.Is_Visiable == 'Y'"  >
+                                                        <a (click)="EditTax(col)">
+                                                            <i class="fa fa-fw fa-pencil"></i> Edit
+                                                        </a>
+                                                    </li>
+
+                                                    <li *ngIf="col.Is_Visiable == 'Y'" >
+                                                        <a (click)="DeleteTax(col)">
+                                                            <i class="fa fa-fw fa-trash"></i> Inactive
+                                                        </a>
+                                                    </li>
+
+                                                    <li *ngIf="col.Is_Visiable == 'N'" >
+                                                        <a (click)="Active(col)">
+                                                            <i class="fa fa-power-off"></i> Active
+                                                        </a>
+                                                    </li> 
+                                                </ul>
+                                            </div>
+                                        </td> 
+                                    <td>{{col.Cat_Name ? col.Cat_Name:"-"}}</td>
+                                    <td>{{col.GST_Tax_Per}}</td>
+                                    <td>{{col.IGST_Input_ledger_Name ? col.IGST_Input_ledger_Name:"-"}}</td>
+                                    <td>{{col.CGST_Input_Ledger_Name ? col.CGST_Input_Ledger_Name:"-"}}</td>
+                                    <td>{{col.SGST_Input_Ledger_Name ? col.SGST_Input_Ledger_Name:"-"}}</td>
+                                    <td>{{col.IGST_Output_Ledger_Name ? col.IGST_Output_Ledger_Name:"-"}}</td>
+                                    <td>{{col.CGST_Output_Ledger_Name ? col.CGST_Output_Ledger_Name:"-"}}</td>
+                                    <td>{{col.SGST_Output_Ledger_Name ? col.SGST_Output_Ledger_Name:"-"}}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table> -->
+                        </div>
+                    </div>    
+                </p-tabPanel>
+                <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                    <form name="newAdltForm" #newAdltForm="ngForm" novalidate >
+                        <div class="row">
+                            <div class="col-sm-4">
+                              <label class="control-label">Referred By.<sup class="text-danger">*</sup></label>
+                              <input class="form-control" name="Referred"#Referred="ngModel"
+                              [(ngModel)]="Objevaluation.Referred_By"
+                              placeholder="Referred By...."/>
+                            </div>
+                            <div class="col-sm-5"></div>
+                            <div class="col-sm-3">
+                              <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                              <ejs-datepicker [(value)]="Date_Top"
+                              [format]="'dd/MMM/yyyy'"></ejs-datepicker>
+                            </div>
+                        </div>
+                        <div style="margin-top:0.7em;font-size: medium;"><strong>PATIENT INFORMATION</strong></div>
+                       <div class="panel-group" style="margin-bottom: 20px"> 
+                             <div class="panel panel-primary" style="margin-bottom:0;border-radius: 4px;">                                   
+                                <div class="panel-body" style="padding: 15px;">                               
+                                      <div class="row">
+                                        <div class="col-sm-3">
+                                          <label class="control-label">Name<sup class="text-danger"></sup></label>
+                                          <div class="label-t">-</div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                          <label class="control-label">Sur Name</label>
+                                          <div class="label-t">-</div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                          <label class="control-label">Date Of Birth<sup class="text-danger"></sup></label>
+                                          <div class="label-t">-</div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                          <label class="control-label">Gender<sup class="text-danger"></sup></label>
+                                          <div class="label-t">-</div>
+                                        </div>
+                                      </div>
+                                      <div class="row">
+                                        <div class="col-sm-3">
+                                          <label class="control-label">Age<sup class="text-danger"></sup></label>
+                                          <div class="label-t">-</div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                          <label class="control-label">Mobile No<sup class="text-danger"></sup></label>
+                                          <div class="label-t">-</div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                          <label class="control-lable">Email<sup class="text-danger"></sup></label>
+                                          <div class="label-t">-</div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Profession<sup class="text-danger"></sup></label>                                        
+                                            <div class="label-t">-</div>
+                                          </div>
+                                      </div>
+                                      <div class="row">
+                                        <div class="col-sm-6">
+                                            <label for="" class="control-label">Home Address<sup class="text-danger"></sup></label>
+                                            <textarea class="form-control"rows="2"name="Home_Address"#Home_Address="ngModel"
+                                            [(ngModel)]="Objevaluation.home_address" disabled></textarea>
+                                          </div>
+                                      </div>
+                                </div>
+                            </div>                  
+                        </div> 
+                        <hr class="box boxboxDivide-primary" />
+                            <div class="row">
+                                <div class="col-sm-1"></div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Briefly Describe the Communication Problem</label>
+                                </div>
+                                <div class="col-sm-7">
+                                    <input
+                                    type="text"
+                                    class="form-control"
+                                    style="width: 100%; height: 35px"
+                                    name="General_Complaint"
+                                    [(ngModel)]="Objevaluation.Briefly_description"
+                                    placeholder="Briefly Describe Here..."/>
+                                </div>
+                            </div>
+                        <hr class="box boxboxDivide-primary" /> 
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label class="control-label">Check Any Condition(s) that Apply or Describe Why You Were Referred</label>
+                                        <p-multiSelect [options]="BrieflyDescribeList"name="Briefly" 
+                                            [(ngModel)]="SelectedBrieflyDescribe" [virtualScroll]="true"
+                                            itemSize="30" [styleClass]="'compacct-multiselect'">
+                                       </p-multiSelect>
+                                </div>
+                                <div class="col-sm-6" *ngIf="!SelectedBrieflyDescribe.length">
+                                    <label class="control-label">Other</label>
+                                    <input
+                                    type="text"
+                                    class="form-control"
+                                    style="width: 100%; height: 35px"
+                                    name="Other"
+                                    [(ngModel)]="Objevaluation.Referred_condition_other"
+                                    placeholder="Other Describe Here..."/> 
+                                </div>                               
+                            </div>
+                        <div class="box-footer">
+                            <button class="btn btn-primary pull-right"  id="load" (click)="saveData(newAdltForm.form.valid)"   [disabled]="Spinner">
+                                            <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                            </button>
+                        </div>
+                    </form>
+                </p-tabPanel>
+            </p-tabView>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
