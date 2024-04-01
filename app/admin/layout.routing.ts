@@ -429,6 +429,7 @@ import { FullAndFinalSettlementJohHrComponent } from './common/HR/full-and-final
 import { FollowupWithSalesDetailsComponent } from './common/CRM/Followup/followup-with-sales-details/followup-with-sales-details.component';
 import { BlCrmEnqCaseHistoryComponent } from './common/PatientManagement/bl-crm-enq-case-history/bl-crm-enq-case-history.component';
 import { NewAdultSpeechEvaluationComponent } from "./common/PatientManagement/new-adult-speech-evaluation/new-adult-speech-evaluation.component";
+import { NewChildSpeechEvaluationComponent } from './common/PatientManagement/new-child-speech-evaluation/new-child-speech-evaluation.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3284,7 +3285,14 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       path: 'New_Adult_Speech_Evaluation',
       component: NewAdultSpeechEvaluationComponent,
       data: {
-        title: 'New Adult Speech Evaluation'
+        title: 'Adult Speech Evaluation'
+      }
+    },
+    {
+      path: 'New_Child_Speech_Evaluation',
+      component: NewChildSpeechEvaluationComponent,
+      data: {
+        title: 'Child Speech Evaluation'
       }
     },
     
