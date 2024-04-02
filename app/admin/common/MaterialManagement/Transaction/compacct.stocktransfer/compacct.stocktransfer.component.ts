@@ -100,6 +100,10 @@ export class StocktransferComponent implements OnInit {
   AcceptStockDocNo = undefined;
   AcceptProductList = [];
   tempQty = undefined;
+
+  serialNumberRange:boolean = false 
+  Selectedsl:any = undefined
+  Serial_No_Range:number = 0
   constructor(
     private $http: HttpClient,
     private urlService: CompacctGlobalUrlService,
@@ -180,6 +184,9 @@ export class StocktransferComponent implements OnInit {
     this.displayEwayModal = false;
     this.btnDisable = false;
     this.ObjSearchStock.F_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.SelectedSerialNo = [];
+    this.serialNumberRange = false
+    this.Serial_No_Range = 0
     this.StockCostCenterFromChange(
       this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
     );
@@ -803,6 +810,14 @@ export class StocktransferComponent implements OnInit {
       this.ProductInfoRequired = true;
   if (valid && (Number(this.ObjProductInfo.Qty) <= this.tempQty)) {
     this.btnDisable = true
+      if(this.serialNumberRange){
+        this.SelectedSerialNo = []
+        this.SelectedSerialNo.push(this.Selectedsl)
+        for (var i = 1; i < Number(this.Serial_No_Range); i++) {
+          this.SelectedSerialNo.push(this.genSerialNo(this.SelectedSerialNo[i - 1]))
+         }
+      }
+        
         if (this.ObjCostCenterTO.T_godown_id) {
           const ProdList = this.NativeProductList.map(x => Object.assign({}, x));
           const prodCodeID = this.ObjProductInfo.Product_ID;
@@ -1022,6 +1037,7 @@ export class StocktransferComponent implements OnInit {
              
               const k = this.ObjProductInfo;
               console.log("ObjProductInfo K",k)
+              let toastarr:any = []
               for (let i = 0; i < this.SelectedSerialNo.length; i++) {
                 const ser = this.SelectedSerialNo[i];
                 let falg = await this.CheckSerialNoValid(ser);
@@ -1188,16 +1204,17 @@ export class StocktransferComponent implements OnInit {
                   this.ObjProductInfo.Qty_AO = d.Qty_AO;
                   this.ObjProductInfo.Previous_Doc_No = d.Previous_Doc_No;
                 } else {
-                  this.compacctToast.clear();
-                  this.compacctToast.add({
+                    toastarr.push({
                     key: "compacct-toast",
                     severity: "error",
                     summary: "Serial No Check",
                     detail: ser + " : Is not exits for this product. ",
                     life : 5000
-                  });
+                  })
                 }
               }
+              this.compacctToast.clear();
+              this.compacctToast.addAll(toastarr);
               this.ProductInfoListView = this.ProductInfoListProto;
               this.CalculateTotalAmount();
               this.CalculateDiscount();
@@ -1248,6 +1265,9 @@ export class StocktransferComponent implements OnInit {
               this.ObjProductInfo.Previous_Doc_No = k.Previous_Doc_No;
 
               this.SelectedSerialNo = [];
+              this.serialNumberRange = false
+              this.Serial_No_Range = 0
+              this.Selectedsl = undefined
             }
           }
         } else {
@@ -1927,6 +1947,39 @@ export class StocktransferComponent implements OnInit {
         });
     }
   }
+  genSerialNo(input) {
+    if (this.serialNumberRange) {
+        // Extracting letters from the beginning of the string
+        let letters = input.match(/[a-zA-Z]+/g);
+
+        // Extracting numbers from the end of the string
+        let numbers = input.match(/\d+/g);
+        const num = parseInt(numbers[numbers.length - 1])
+        const addNum = (num + 1).toString()
+
+        //str.slice(0, -2)
+        if (addNum.length > numbers[numbers.length - 1].length) {
+            const newString = input.slice(0, -numbers[numbers.length - 1].length)
+            const addnewString = addNum.slice(-numbers[numbers.length - 1].length)
+            return undefined
+
+        }
+        else {
+            const newString = input.slice(0, -addNum.length)
+            return newString + addNum
+        }
+    }
+    else {
+        return true
+    }
+   
+
+}
+serialNumberRangeChange(){
+  this.SelectedSerialNo = [];
+  this.Serial_No_Range = 0
+  this.Selectedsl = undefined
+}
 }
 
 class SearchStock {
