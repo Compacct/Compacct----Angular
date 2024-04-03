@@ -1,5 +1,6 @@
 <p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
-<p-toast bposition="center" key="c"(onClose)="onReject()"[modal]="true"[autoZIndex]="true">
+
+<p-toast position="center" key="c"(onClose)="onReject()"[modal]="true"[autoZIndex]="true">
   <ng-template let-message pTemplate="message">
     <div style="text-align: center">
       <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
@@ -16,6 +17,7 @@
     </div>
   </ng-template>
 </p-toast>
+
 <div class="row">
     <div class="col-xs-12">
       <div class="box box-primary">
@@ -25,13 +27,13 @@
                 <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
                     <div class="table-responsive no-padding">
                         <div class="table-responsive no-padding">
-                            <!-- <p-table [value]="AllData" 
-                            [paginator] 
-                            [rows]="10" [rowHover]="true"
+                            <p-table [value]="browseList" 
+                            [paginator]="browseList.length ? true : false"
+                            [rows]="100" [rowHover]="true"
                             [autoLayout]="true" 
                             sortMode="multiple" 
-                            [rowsPerPageOptions]="[10,20,30]"
-                            [globalFilterFields]="['Cat_Name','IGST_Input_ledger_Name','CGST_Input_Ledger_Name','SGST_Input_Ledger_Name','IGST_Output_Ledger_Name','CGST_Output_Ledger_Name','SGST_Output_Ledger_Name']"[rowHover]="true" #dt>
+                            [rowsPerPageOptions]="[100,200,300]"
+                            [globalFilterFields]="browseListFliter"[rowHover]="true" #dt>
 
                                 <ng-template pTemplate="caption">
                                     <div class="row">
@@ -44,18 +46,16 @@
                                 <ng-template pTemplate="header">
                                     <tr>
                                         <th style="width:5em">Action</th>
-                                        <th>Tax Category</th>
-                                        <th>Tax %</th>
-                                        <th>IGST Input</th>
-                                        <th>CGST Input</th>
-                                        <th>SGST Input</th>
-                                        <th>IGST Output</th>
-                                        <th>CGST Output</th>
-                                        <th>SGST output</th>
+                                        <th>Appo ID</th>
+                                        <th>Patient Name</th>
+                                        <th>Patient Mobile No.</th>
+                                        <th>Referred By</th>
+                                        <th>Completed Person</th>
+                                        <th>Date</th>
                                     </tr>
                                 </ng-template> 
                                 <ng-template pTemplate="body" let-col>
-                                    <tr [class]='col.Is_Visiable === "N" ? "text-red-active" : ""'>
+                                    <tr>
                                         <td>
                                             <div class="dropdown">
                                                 <button class="btn btn-default btn-sm tableButton dropdown-toggle" 
@@ -64,107 +64,106 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                 <ul class="dropdown-menu">
-                                                     <li *ngIf="col.Is_Visiable == 'Y'"  >
-                                                        <a (click)="EditTax(col)">
+                                                     <li>
+                                                        <a (click)="EditSpeech(col)">
                                                             <i class="fa fa-fw fa-pencil"></i> Edit
                                                         </a>
                                                     </li>
 
-                                                    <li *ngIf="col.Is_Visiable == 'Y'" >
-                                                        <a (click)="DeleteTax(col)">
-                                                            <i class="fa fa-fw fa-trash"></i> Inactive
+                                                    <li>
+                                                        <a (click)="DeleteSpeech(col)">
+                                                            <i class="fa fa-fw fa-trash"></i> Delete
                                                         </a>
                                                     </li>
 
-                                                    <li *ngIf="col.Is_Visiable == 'N'" >
-                                                        <a (click)="Active(col)">
-                                                            <i class="fa fa-power-off"></i> Active
+                                                    <li>
+                                                        <a (click)="PrintSpeech(col)">
+                                                            <i class="fa fa-print"></i> Print
                                                         </a>
                                                     </li> 
                                                 </ul>
                                             </div>
                                         </td> 
-                                    <td>{{col.Cat_Name ? col.Cat_Name:"-"}}</td>
-                                    <td>{{col.GST_Tax_Per}}</td>
-                                    <td>{{col.IGST_Input_ledger_Name ? col.IGST_Input_ledger_Name:"-"}}</td>
-                                    <td>{{col.CGST_Input_Ledger_Name ? col.CGST_Input_Ledger_Name:"-"}}</td>
-                                    <td>{{col.SGST_Input_Ledger_Name ? col.SGST_Input_Ledger_Name:"-"}}</td>
-                                    <td>{{col.IGST_Output_Ledger_Name ? col.IGST_Output_Ledger_Name:"-"}}</td>
-                                    <td>{{col.CGST_Output_Ledger_Name ? col.CGST_Output_Ledger_Name:"-"}}</td>
-                                    <td>{{col.SGST_Output_Ledger_Name ? col.SGST_Output_Ledger_Name:"-"}}</td>
+                                    <td>{{col.Appo_ID ? col.Appo_ID:"-"}}</td>
+                                    <td>{{col.Contact_Name ? col.Contact_Name:"-"}}</td>
+                                    <td>{{col.Mobile ? col.Mobile:"-"}}</td>
+                                    <td>{{col.Ref_name ? col.Ref_name:"-"}}</td>
+                                    <td>{{col.complete_form_person ? col.complete_form_person :'-'}}</td>
+                                    <td>{{col.Date ? (col.Date|date:'dd/MMM/yyyy'):"-"}}</td>
                                     </tr>
                                 </ng-template>
-                            </p-table> -->
+                            </p-table>
                         </div>
                     </div>    
                 </p-tabPanel>
+
                 <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
                     <form name="newAdltForm" #newAdltForm="ngForm" novalidate >
-                        <div class="row">
-                            <div class="col-sm-4">
-                              <label class="control-label">Referred By.<sup class="text-danger">*</sup></label>
-                              <input class="form-control" name="Referred"#Referred="ngModel"
-                              [(ngModel)]="Objevaluation.Referred_By"
-                              placeholder="Referred By...."/>
-                            </div>
-                            <div class="col-sm-5"></div>
-                            <div class="col-sm-3">
-                              <label class="control-label">Date<sup class="text-danger">*</sup></label>
-                              <ejs-datepicker [(value)]="Date_Top"
-                              [format]="'dd/MMM/yyyy'"></ejs-datepicker>
-                            </div>
-                        </div>
-                        <div style="margin-top:0.7em;font-size: medium;"><strong>PATIENT INFORMATION</strong></div>
-                       <div class="panel-group" style="margin-bottom: 20px"> 
-                             <div class="panel panel-primary" style="margin-bottom:0;border-radius: 4px;">                                   
-                                <div class="panel-body" style="padding: 15px;">                               
-                                      <div class="row">
-                                        <div class="col-sm-3">
-                                          <label class="control-label">Name<sup class="text-danger"></sup></label>
-                                          <div class="label-t">-</div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                          <label class="control-label">Sur Name</label>
-                                          <div class="label-t">-</div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                          <label class="control-label">Date Of Birth<sup class="text-danger"></sup></label>
-                                          <div class="label-t">-</div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                          <label class="control-label">Gender<sup class="text-danger"></sup></label>
-                                          <div class="label-t">-</div>
-                                        </div>
-                                      </div>
-                                      <div class="row">
-                                        <div class="col-sm-3">
-                                          <label class="control-label">Age<sup class="text-danger"></sup></label>
-                                          <div class="label-t">-</div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                          <label class="control-label">Mobile No<sup class="text-danger"></sup></label>
-                                          <div class="label-t">-</div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                          <label class="control-lable">Email<sup class="text-danger"></sup></label>
-                                          <div class="label-t">-</div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <label class="control-label">Profession<sup class="text-danger"></sup></label>                                        
-                                            <div class="label-t">-</div>
-                                          </div>
-                                      </div>
-                                      <div class="row">
-                                        <div class="col-sm-6">
-                                            <label for="" class="control-label">Home Address<sup class="text-danger"></sup></label>
-                                            <textarea class="form-control"rows="2"name="Home_Address"#Home_Address="ngModel"
-                                            [(ngModel)]="Objevaluation.home_address" disabled></textarea>
-                                          </div>
-                                      </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                  <label class="control-label">Referred By.<sup class="text-danger">*</sup></label>
+                                  <input class="form-control" name="Referred"#Referred="ngModel"
+                                  [(ngModel)]="Objevaluation.Ref_name"
+                                  placeholder="Referred By...."
+                                  [ngClass]="{clearance: aDULTCASEHISTORY && Referred?.errors?.required}" required>
                                 </div>
-                            </div>                  
-                        </div> 
-                        <hr class="box boxboxDivide-primary" />
+                                <div class="col-sm-5"></div>
+                                <div class="col-sm-3">
+                                  <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                                  <ejs-datepicker [(value)]="Date_Top"
+                                  [format]="'dd/MMM/yyyy'"></ejs-datepicker>
+                                </div>
+                            </div>
+                            <div style="margin-top:0.7em;font-size: medium;"><strong>PATIENT INFORMATION</strong></div>
+
+                            <div class="panel-group" style="margin-bottom: 20px"> 
+                                  <div class="panel panel-primary" style="margin-bottom:0;border-radius: 4px;">                                   
+                                      <div class="panel-body" style="padding: 15px;">                               
+                                            <div class="row">
+                                              <div class="col-sm-3">
+                                                <label class="control-label">Name<sup class="text-danger"></sup></label>
+                                                <div class="label-t">{{patentdetails.Contact_Name ? patentdetails.Contact_Name :'-'}}</div>
+                                              </div>
+                                              <div class="col-sm-3">
+                                                <label class="control-label">Date Of Birth<sup class="text-danger"></sup></label>
+                                                <div class="label-t">{{patentdetails.Date_Of_Birth ? patentdetails.Date_Of_Birth :'-'}}</div>
+                                              </div>
+                                              <div class="col-sm-3">
+                                                <label class="control-label">Gender<sup class="text-danger"></sup></label>
+                                                <div class="label-t">{{patentdetails.Gender ? patentdetails.Gender :'-'}}</div>
+                                              </div>
+                                              <div class="col-sm-3">
+                                                <label class="control-label">Age<sup class="text-danger"></sup></label>
+                                                <div class="label-t">{{patentdetails.Age ? patentdetails.Age :'-'}}</div>
+                                              </div>
+                                            </div>
+                                            <div class="row">
+                                              <div class="col-sm-4">
+                                                <label class="control-label">Mobile No<sup class="text-danger"></sup></label>
+                                                <div class="label-t">{{patentdetails.Mobile ? patentdetails.Mobile :'-'}}</div>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                <label class="control-lable">Email<sup class="text-danger"></sup></label>
+                                                <div class="label-t">{{patentdetails.Email ? patentdetails.Email :'-'}}</div>
+                                              </div>
+                                              <div class="col-sm-4">
+                                                  <label class="control-label">Profession<sup class="text-danger"></sup></label>                                        
+                                                  <div class="label-t">{{patentdetails.Occupation ? patentdetails.Occupation :'-'}}</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                              <div class="col-sm-6">
+                                                  <label for="" class="control-label">Home Address<sup class="text-danger"></sup></label>
+                                                  <textarea class="form-control"rows="2"name="Home_Address"#Home_Address="ngModel"
+                                                  [(ngModel)]="AdressDetailsPent" disabled></textarea>
+                                                </div>
+                                            </div>
+                                      </div>
+                                  </div>                  
+                            </div> 
+
+                            <hr class="box boxboxDivide-primary" />
                             <div class="row">
                                 <div class="col-sm-1"></div>
                                 <div class="col-sm-4">
@@ -180,14 +179,15 @@
                                     placeholder="Briefly Describe Here..."/>
                                 </div>
                             </div>
-                        <hr class="box boxboxDivide-primary" /> 
+
+                            <hr class="box boxboxDivide-primary" /> 
                             <div class="row">
                                 <div class="col-sm-6">
                                     <label class="control-label">Check Any Condition(s) that Apply or Describe Why You Were Referred</label>
                                         <p-multiSelect [options]="BrieflyDescribeList"name="Briefly" 
                                             [(ngModel)]="SelectedBrieflyDescribe" [virtualScroll]="true"
                                             itemSize="30" [styleClass]="'compacct-multiselect'">
-                                       </p-multiSelect>
+                                      </p-multiSelect>
                                 </div>
                                 <div class="col-sm-6" *ngIf="!SelectedBrieflyDescribe.length">
                                     <label class="control-label">Other</label>
@@ -200,17 +200,260 @@
                                     placeholder="Other Describe Here..."/> 
                                 </div>                               
                             </div>
-                        <div class="box-footer">
-                            <button class="btn btn-primary pull-right"  id="load" (click)="saveData(newAdltForm.form.valid)"   [disabled]="Spinner">
-                                            <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
-                            </button>
-                        </div>
+
+                            <div class="row">
+                                  <div class="col-sm-6">
+                                    <label class="control-label">What do you feel is the cause of your speech/language or hearing problem?</label>
+                                    <input
+                                    type="text"
+                                    class="form-control"
+                                    style="width: 100%; height: 35px"
+                                    name="What_do_you_feel"
+                                    [(ngModel)]="Objevaluation.Feeling_for_speech_hearing_problem"
+                                    placeholder="What do you feel  Describe Here..."/> 
+                                  </div>
+                                  <div class="col-sm-6">
+                                    <label class="control-label">Did you have any speech/language or hearing problems in childhood? If</label>
+                                        <select class="form-control" 
+                                        name="Childhood_speech_hearing_prob" 
+                                        [(ngModel)]="Objevaluation.Childhood_speech_hearing_problem">
+                                            <option value="No">No</option>
+                                            <option value="Yes">Yes</option>
+                                      </select>
+                                  </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                  <label class="control-label">Please Describe <sup *ngIf="Objevaluation.Childhood_speech_hearing_problem !=='No'" class="text-danger">*</sup></label>
+                                  <input
+                                  type="text"
+                                  class="form-control"
+                                  style="width: 100%; height: 35px"
+                                  name="Please_Describe"
+                                  #Please_Describe ="ngModel"
+                                  [(ngModel)]="Objevaluation.Describe_childhood_speech_hearing"
+                                  placeholder="Please Describe Here..."
+                                  [disabled]="Objevaluation.Childhood_speech_hearing_problem =='No'"
+                                  [ngClass]="{clearance: aDULTCASEHISTORY && Please_Describe?.errors?.required}" required> 
+                                </div>
+                                <div class="col-sm-6">
+                                  <label class="control-label">Does anyone in your family have the same or other communication problem? If</label>
+                                      <select class="form-control" 
+                                      name="Family_member_problem" 
+                                      [(ngModel)]="Objevaluation.Family_member_problem">
+                                          <option value="No">No</option>
+                                          <option value="Yes">Yes</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                  <div class="col-sm-6">
+                                    <label class="control-label">Please Describe <sup *ngIf="Objevaluation.Family_member_problem !=='No'" class="text-danger">*</sup></label>
+                                    <input
+                                    type="text"
+                                    class="form-control"
+                                    style="width: 100%; height: 35px"
+                                    name="Please_Describe1"
+                                    #Please_Describe1 ="ngModel"
+                                    [(ngModel)]="Objevaluation.Describe_family_member_problem"
+                                    placeholder="Please Describe Here..."
+                                    [disabled]="Objevaluation.Family_member_problem =='No'"
+                                    [ngClass]="{clearance: aDULTCASEHISTORY && Please_Describe1?.errors?.required}" required> 
+                                  </div>
+                                  <div class="col-sm-6">
+                                    <label class="control-label">What previous testing and/or treatment have you had for this problem?</label>
+                                        <input
+                                        type="text"
+                                        class="form-control"
+                                        style="width: 100%; height: 35px"
+                                        name="previous_testing"
+                                        [(ngModel)]="Objevaluation.Previous_testing_for_the_problem"
+                                        placeholder="What previous testing Describe Here..."> 
+                                  </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-5">
+                                  <label class="control-label">How often/under what circumstances are you required to talk?</label>
+                                    <input
+                                    type="text"
+                                    class="form-control"
+                                    style="width: 100%; height: 35px"
+                                    name="What_circumstances_require"
+                                    [(ngModel)]="Objevaluation.What_circumstances_require_to_talk"
+                                    placeholder="How often/under Describe Here..."> 
+                                </div>
+                                <div class="col-sm-3">
+                                  <label class="control-label">Do you wear hearing aids</label>
+                                      <select class="form-control" 
+                                      name="hearing_aids" 
+                                      [(ngModel)]="Objevaluation.Do_you_wearing_hearing_aids">
+                                          <option value="No">No</option>
+                                          <option value="Yes">Yes</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                  <label class="control-label">Dentures</label>
+                                      <select class="form-control" 
+                                      name="Dentures" 
+                                      [(ngModel)]="Objevaluation.Do_you_wearing_dentures">
+                                          <option value="No">No</option>
+                                          <option value="Yes">Yes</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                  <label class="control-label">Eyeglasses</label>
+                                      <select class="form-control" 
+                                      name="Eyeglasses" 
+                                      [(ngModel)]="Objevaluation.Do_you_wearing_eyeglasses">
+                                          <option value="No">No</option>
+                                          <option value="Yes">Yes</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <hr class="box boxboxDivide-primary" />
+                            <div class="row">
+                              <div class="col-sm-6">
+                                <label class="control-label">Employment experience (begin with present employment) Employer</label>
+                                  <input
+                                  type="text"
+                                  class="form-control"
+                                  style="width: 100%; height: 35px"
+                                  name="Employer_Title"
+                                  [(ngModel)]="Objevaluation.Employer"
+                                  placeholder="Describe Employment experience Here..."> 
+                              </div>
+                              <div class="col-sm-6">
+                                <label class="control-label">Title/Job Description</label>
+                                  <input
+                                  type="text"
+                                  class="form-control"
+                                  style="width: 100%; height: 35px"
+                                  name="Employer_job_description"
+                                  [(ngModel)]="Objevaluation.Employer_job_description"
+                                  placeholder="Describe Job Description Here..."> 
+                              </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                  <label class="control-label">Check any illness or conditions that apply to you</label>
+                                      <p-multiSelect [options]="illnessList"name="illness" 
+                                          [(ngModel)]="SelectedBrillness" [virtualScroll]="true"
+                                          itemSize="30" [styleClass]="'compacct-multiselect'">
+                                    </p-multiSelect>
+                                </div>
+                                <div class="col-sm-6">
+                                  <label class="control-label">List any surgeries/accidents/injuries Problem</label>
+                                    <input
+                                    type="text"
+                                    class="form-control"
+                                    style="width: 100%; height: 35px"
+                                    name="Any_surgeries_or_Accidents"
+                                    [(ngModel)]="Objevaluation.Any_surgeries_or_Accidents"
+                                    placeholder="List any surgeries Describe Here..."> 
+                                </div>
+                                <div class="col-sm-2">
+                                  <label class="control-label">Date<sup class="text-danger"></sup></label>
+                                  <input type="date" class="form-control"name="VoucherDate" #VoucherDate="ngModel" 
+                                  [(ngModel)]="Objevaluation.Date_of_surgeries_or_Accidents">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                  <label class="control-label">List all medications taken regularly</label>
+                                  <input
+                                  type="text"
+                                  class="form-control"
+                                  style="width: 100%; height: 35px"
+                                  name="medications"
+                                  [(ngModel)]="Objevaluation.List_of_all_medication_taken_regular"
+                                  placeholder="Please Describe Here..."> 
+                                </div>
+                                <div class="col-sm-6">
+                                  <label class="control-label">Do you have any physical limitations, such as paralysis</label>
+                                      <input
+                                      type="text"
+                                      class="form-control"
+                                      style="width: 100%; height: 35px"
+                                      name="limitations"
+                                      [(ngModel)]="Objevaluation.Do_you_have_paralysis"
+                                      placeholder="Please Describe Here..."> 
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                  <div class="col-sm-8">
+                                    <label class="control-label">Additional Comments</label>
+                                    <input
+                                    type="text"
+                                    class="form-control"
+                                    style="width: 100%; height: 35px"
+                                    name="Additional_Comments"
+                                    [(ngModel)]="Objevaluation.Additional_comments"
+                                    placeholder="Please Describe Here..."> 
+                                  </div>
+                            </div>
+
+                            <hr class="box boxboxDivide-primary" />
+                            <div class="row">
+                                <div class="col-sm-8"></div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Signature of person completing form<sup class="text-danger">*</sup></label>
+                                    <input
+                                    type="text"
+                                    class="form-control"
+                                    style="width: 100%; height: 35px"
+                                    name="Signature"
+                                    #Signature ="ngModel"
+                                    [(ngModel)]="Objevaluation.complete_form_person"
+                                    placeholder="Signature Here..."
+                                    [ngClass]="{clearance: aDULTCASEHISTORY && Signature?.errors?.required}" required> 
+                                </div>
+                            </div>
+
+                            <div class="row">
+                              <div class="col-sm-12" style="text-align: center;  margin-top: 1em;font-size: large;">
+                                <strong>I understand that full payment of any costs associated with the appointment is required at the time of attendance.</strong>
+                              </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-3">
+                                  <label class="control-label">Date</label>
+                                    <ejs-datepicker [(value)]="Date_Lower"
+                                    [format]="'dd/MMM/yyyy'"></ejs-datepicker>
+                                </div>
+                                <div class="col-sm-5"></div>
+                                <div class="col-sm-4">
+                                  <label class="control-label">Patient signature</label>
+                                  <input
+                                  type="text"
+                                  class="form-control"
+                                  style="width: 100%; height: 35px"
+                                  name="Patient_signature"
+                                  [(ngModel)]="Objevaluation.patient_sign"
+                                  placeholder="Patient signature Here..."> 
+                                </div>
+                            </div>
+
+                            <div class="box-footer">
+                                <button class="btn btn-primary pull-right"  id="load" (click)="saveData(newAdltForm.form.valid)"   [disabled]="Spinner">
+                                                <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname}}</span>
+                                </button>
+                            </div>
+                          
                     </form>
                 </p-tabPanel>
+
             </p-tabView>
           </div>
         </div>
       </div>
     </div>
-  </div>
+</div>
