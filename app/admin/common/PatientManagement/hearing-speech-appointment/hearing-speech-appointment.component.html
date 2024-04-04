@@ -120,37 +120,43 @@
                                                                     Patient Details
                                                                 </a>
                                                             </li>
-                                                            <li>
+                                                            <li *ngIf="databaseName !== 'GN_Soft_Hear_UP'">
                                                                 <a (click)="Assessment(col)">
                                                                     <i class="fa fa-stethoscope"></i>
                                                                     Pedeatric Assessment
                                                                 </a>
                                                             </li>
-                                                            <li>
+                                                            <li *ngIf="databaseName !== 'GN_Soft_Hear_UP'">
                                                                 <a (click)="FluencyModal(col)">
                                                                     <i class="fa fa-stethoscope" ></i>
                                                                     Fluency Assessment
                                                                 </a>
                                                             </li>
-                                                            <li>
+                                                            <li *ngIf="databaseName !== 'GN_Soft_Hear_UP'">
                                                                 <a (click)="Therapy(col)">
                                                                     <i class="fa fa-wheelchair"></i>
                                                                     Therapy Plan
                                                                 </a>
                                                             </li>
-                                                            <li>
+                                                            <li *ngIf="databaseName !== 'GN_Soft_Hear_UP'">
                                                                 <a (click)="Adult(col)">
                                                                     <i class="fa fa-wheelchair"></i>
                                                                     Adult Assessment
                                                                 </a>
                                                             </li>
-                                                            <li>
+                                                            <li *ngIf="databaseName === 'GN_Soft_Hear_UP'">
                                                                 <a (click)="AdultSoftHear(col)">
                                                                     <i class="fa fa-wheelchair"></i>
-                                                                    Adult Assessment Soft
+                                                                    Adult Assessment
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="col.Status=='Consultancy Done' && ShowOtherTestPrintOpt">
+                                                            <li *ngIf="databaseName === 'GN_Soft_Hear_UP'">
+                                                                <a (click)="ChildSoftHear(col)">
+                                                                    <i class="fa fa-child"></i>
+                                                                    Child Assessment
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="col.Status == 'Consultancy Done' && ShowOtherTestPrintOpt">
                                                                 <a (click)="OtherTestEntryPrint(col)">
                                                                     <i class="fa fa-fw fa-print"></i>
                                                                     Other Test Print

@@ -20,7 +20,7 @@ export class BlCrmEnqCaseHistoryComponent implements OnInit {
   buttonname = "Update";
   tabIndexToView= 0;
   AllData =[];
-  ObjMiddle = {};
+  ObjMiddle:any = {};
   ObjCaseHistory : CaseHistory = new CaseHistory();
   EngCaseHistoryFormSubmitted:boolean = false;
   ReasonforVisitList:any = [];

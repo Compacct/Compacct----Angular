@@ -50,8 +50,8 @@ export class FollowupWithSalesDetailsComponent implements OnInit {
   ngOnInit() {
     this.userid = this.$CompacctAPI.CompacctCookies.User_ID
     this.Header.pushHeader({
-      Header: "Patient Followup",
-      Link: "Patient Followup"
+      Header: "Sales Details Followup",
+      Link: "Sales Details Followup"
     });
     this.getUsertype();
   }
