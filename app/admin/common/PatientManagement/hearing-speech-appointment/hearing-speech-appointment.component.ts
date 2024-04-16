@@ -68,6 +68,7 @@ export class HearingSpeechAppointmentComponent implements OnInit {
   ObjAdult: Adult = new Adult();
   TodayDATE:any = '';
   ShowOtherTestPrintOpt = false;
+  databaseName:any;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -89,6 +90,7 @@ export class HearingSpeechAppointmentComponent implements OnInit {
       Link: " Patient Management -> Transaction -> Speech -> Speech Appointment"
     });
     this.GetConsultancy();
+    this.getDatabase();
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -98,6 +100,15 @@ export class HearingSpeechAppointmentComponent implements OnInit {
     this.TabView = "";
     this.Tabitems = {}
     this.clearData();
+  }
+  getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log(data)
+        });
   }
   clearData() { 
      this.End_Date = new Date();
@@ -375,6 +386,16 @@ OtherTestEntryPrint (obj) {
         ctrl.GetnameDetails();
       }, 100);
       console.log(this.tabIndexToView);
+    }
+  }
+  AdultSoftHear(obj:any){
+    if (obj) {
+      window.open('/New_Adult_Speech_Evaluation?Appo_ID=' + window.btoa(obj.Appo_ID));
+    }
+  }
+  ChildSoftHear(obj:any){
+    if (obj) {
+      window.open('/New_Child_Speech_Evaluation?Appo_ID=' + window.btoa(obj.Appo_ID));
     }
   }
   Therapy(obj) {

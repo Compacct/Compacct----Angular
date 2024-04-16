@@ -1,0 +1,122 @@
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    
+                    <form name="FollowupWithSalesDetails" #FollowupWithSalesDetails="ngForm" novalidate>
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                <label class="control-label">User<sup class="text-danger">*</sup></label>
+                                <p-dropdown [options]="userList" name="user" #user="ngModel" [(ngModel)]="User_Id"
+                                    [showClear]="true" [emptyFilterMessage]="' No User Found'" [filter]="true" filterBy="label,value.name"
+                                    [resetFilterOnHide]="true" [placeholder]="'Select User'" [virtualScroll]="true" itemSize="30"
+                                    [ngClass]="{'clearance': FollowupWithSalesDetailsSubmitted && user?.errors?.required }" required>
+                                </p-dropdown>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label">Followup Till<sup class="text-danger">*</sup></label>
+                                <ejs-datepicker [(value)]="FollowupDate" format="dd/MM/yyyy" ></ejs-datepicker>
+                            </div>
+                            <div class="col-sm-1">
+                                <button class="btn btn-primary" style="margin-top: 28px" data-toggle="modal"
+                                    (click)="GetFollowupSalesDetails(FollowupWithSalesDetails.form.valid)">
+                                    <span  class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                </button>
+                            </div>
+                            <div class="col-sm-1">
+                                <button
+                                   class="btn btn-success" style="margin-top: 28px"
+                                   (click)="exportoexcel(FollowupSalesDetailsList,'Followup_with_sales_details')"
+                                   [disabled] = "!FollowupSalesDetailsList.length">
+                                   <span  class="glyphicon glyphicon-save"></span> Export to excel
+                                </button>
+                              </div>
+                        </div>
+                        <div class="form-group" *ngIf='FollowupSalesDetailsListBackup.length' style="padding:15px">
+
+                            <fieldset class="col-md-12">
+                                <legend>Filter</legend>
+
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Enquiry Source <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="DistEnquirySource"  [(ngModel)]="SelectedDistEnquirySource" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Enq_Source_Name"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Cost Center<span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="DistCostCenter" [(ngModel)]="SelectedDistCostCenter" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Cost_Cen_Name"></p-multiSelect>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Followup Type <span class="text-danger"></span></label>
+                                        <p-multiSelect [options]="DistFollowupType" [(ngModel)]="SelectedFollowupType" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Followup_Type"></p-multiSelect>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                        </div>
+                       
+                    </form>
+                    <div class="no-padding">
+                        <p-table [value]="FollowupSalesDetailsList"
+                                [paginator]="FollowupSalesDetailsList.length ? true : false"
+                                *ngIf='FollowupSalesDetailsList.length'
+                                [paginator]="true" 
+                                [rows]="100" 
+                                [rowHover]="true" 
+                                [autoLayout]="true" 
+                                sortMode="multiple" 
+                                [rowsPerPageOptions]="[100,200,300]" 
+                                [globalFilterFields]='FollowupSalesDetailsListDynmic'
+                                    [rowHover]="true" #dt2>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th nowrap="nowrap" *ngFor="let option of FollowupSalesDetailsListDynmic">{{option.replaceAll('_',' ')}}</th> 
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+    
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="redirectPatientDetails(col)"><i class="fa fa-fw fa fa-clone"></i>View Details</a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="Appointment()"><i class="fa fa-fw fa-calendar-times-o"></i>Appointment</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <ng-container *ngFor="let option of FollowupSalesDetailsListDynmic">
+                                                <td nowrap="nowrap">{{col[option]}}</td>
+                                            </ng-container>
+                                            
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
