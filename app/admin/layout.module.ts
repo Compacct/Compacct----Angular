@@ -524,6 +524,10 @@ import { LeaveEncashmentComponent } from './common/HR/leave-encashment/leave-enc
 import { DoctorSchedulComponent } from './common/PatientManagement/doctor-schedul/doctor-schedul.component';
 import { PurchaseBillMrpUpdateComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill-mrp-update/purchase-bill-mrp-update.component';
 import { FullAndFinalSettlementJohHrComponent } from './common/HR/full-and-final-settlement-joh-hr/full-and-final-settlement-joh-hr.component';
+import { FollowupWithSalesDetailsComponent } from './common/CRM/Followup/followup-with-sales-details/followup-with-sales-details.component';
+import { BlCrmEnqCaseHistoryComponent } from './common/PatientManagement/bl-crm-enq-case-history/bl-crm-enq-case-history.component';
+import { NewAdultSpeechEvaluationComponent } from './common/PatientManagement/new-adult-speech-evaluation/new-adult-speech-evaluation.component';
+import { NewChildSpeechEvaluationComponent } from './common/PatientManagement/new-child-speech-evaluation/new-child-speech-evaluation.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -962,7 +966,11 @@ import { FullAndFinalSettlementJohHrComponent } from './common/HR/full-and-final
     LeaveEncashmentComponent,
     DoctorSchedulComponent,
     PurchaseBillMrpUpdateComponent,
-    FullAndFinalSettlementJohHrComponent
+    FullAndFinalSettlementJohHrComponent,
+    FollowupWithSalesDetailsComponent,
+    BlCrmEnqCaseHistoryComponent,
+    NewAdultSpeechEvaluationComponent,
+    NewChildSpeechEvaluationComponent
   ],
   imports: [
     CommonModule,
