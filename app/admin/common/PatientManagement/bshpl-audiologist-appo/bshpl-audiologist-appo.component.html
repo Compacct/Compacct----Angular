@@ -819,7 +819,7 @@
 
             <div class="row" style="margin-top: 2px;">
                 <div class="col-sm-2">
-                    <label class="control-label">Restult</label>
+                    <label class="control-label">Restult <sup *ngIf="databaseName === 'GN_Crystal_Mumbai'" class="text-danger">*</sup></label>
                     <select class="form-control"
                         name="Trial_Restult"
                         #Trial_Restult="ngModel"
@@ -855,14 +855,14 @@
 
                 </div>
                 <div class="col-sm-2" *ngIf="(objAppointment.Trial_Restult === 'ON TRIAL') && (databaseName === 'GN_Crystal_Mumbai')">
-                    <label class="control-label">For Days <sup class="text-danger">*</sup></label>
+                    <label class="control-label">For Days <sup class="text-danger"></sup></label>
                     <div class="input-group">  
                         <input class="form-control" name="fordays" #fordays="ngModel"
                         [(ngModel)]="objAppointment.Trial_days"
                         placeholder="For Days"
                         CompacctDigitonly="true"
                         [ngClass]="{'clearance':AppointmentFormSubmitted && fordays?.errors?.required}"
-                        required>
+                        >
                             <span class="input-group-addon">
                                 Days
                             </span>

@@ -108,13 +108,13 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.HAYesNoListL = ['YES', 'NO'];
     this.HAYesNoListR = ['YES', 'NO'];
     this.Trial_ForList = ['Binaural', 'Monorual'];
-    this.TrialRestultList = ['ADVANCE PAID', 'FITTED', 'MISSED', 'ON TRIAL'];
     this.getDatabase();
     this.getAlldata();
     this.GetDegreeLossList();
     this.GetProductList();
     this.GetMissedReasonList();
     this.GetTestDoneList();
+    this.getResult();
   }
 
   TabClick(e: any) {
@@ -129,7 +129,17 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         .subscribe((data: any) => {
           this.databaseName = data;
           console.log(data)
+          this.getResult();
         });
+  }
+  getResult(){
+    let resultoption:any = [];
+    if(this.databaseName === "GN_Crystal_Mumbai") {
+      resultoption = ['ADVANCE PAID', 'FITTED', 'MISSED', 'ON TRIAL'];
+    } else {
+      resultoption = ['ADVANCE PAID', 'FITTED', 'MISSED'];
+    }
+    this.TrialRestultList = resultoption;
   }
 
   getDateRange(dateRangeObj: any) {
