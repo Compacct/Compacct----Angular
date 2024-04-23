@@ -430,6 +430,7 @@ import { FollowupWithSalesDetailsComponent } from './common/CRM/Followup/followu
 import { BlCrmEnqCaseHistoryComponent } from './common/PatientManagement/bl-crm-enq-case-history/bl-crm-enq-case-history.component';
 import { NewAdultSpeechEvaluationComponent } from "./common/PatientManagement/new-adult-speech-evaluation/new-adult-speech-evaluation.component";
 import { NewChildSpeechEvaluationComponent } from './common/PatientManagement/new-child-speech-evaluation/new-child-speech-evaluation.component';
+import { BlCrmLsqBillManagementComponent } from './common/FinancialManagement/Retail/bl-crm-lsq-bill-management/bl-crm-lsq-bill-management.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3293,6 +3294,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: NewChildSpeechEvaluationComponent,
       data: {
         title: 'Child Speech Evaluation'
+      }
+    },
+    {
+      path: 'BL_CRM_LSQ_Bill_Management',
+      component: BlCrmLsqBillManagementComponent,
+      data: {
+        title: 'LSQ Bill Management'
       }
     },
     
