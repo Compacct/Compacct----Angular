@@ -103,6 +103,18 @@
                                                                     Reprogramming & Other HL not known Tests 
                                                                 </a>
                                                             </li>
+                                                            <li *ngIf="(databaseName === 'GN_Soft_Hear_UP')&&(col.Age>10)">
+                                                                <a (click)="AdultSoftHear(col)">
+                                                                    <i class="fa fa-wheelchair"></i>
+                                                                    Adult Assessment
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="(databaseName === 'GN_Soft_Hear_UP')&&(10>col.Age)">
+                                                                <a (click)="ChildSoftHear(col)">
+                                                                    <i class="fa fa-child"></i>
+                                                                    Child Assessment
+                                                                </a>
+                                                            </li>
                                                          </ul>
                                                     </div>
                                                 </td>
@@ -192,6 +204,18 @@
                                                                 <a (click)="actionClick_ViewProgramming(col)">
                                                                     <i class="fa fa-eye"></i>
                                                                     View Reprogramming & Other HL not known Tests 
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="(databaseName === 'GN_Soft_Hear_UP')&&(col.Age>10)">
+                                                                <a (click)="AdultSoftHear(col)">
+                                                                    <i class="fa fa-wheelchair"></i>
+                                                                    Adult Assessment
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="(databaseName === 'GN_Soft_Hear_UP')&&(10>col.Age)">
+                                                                <a (click)="ChildSoftHear(col)">
+                                                                    <i class="fa fa-child"></i>
+                                                                    Child Assessment
                                                                 </a>
                                                             </li>
                                                          </ul>
