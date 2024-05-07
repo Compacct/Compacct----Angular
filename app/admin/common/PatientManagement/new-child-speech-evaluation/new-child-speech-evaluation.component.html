@@ -962,7 +962,7 @@
                                 <div class="col-sm-5"></div>
                                 <div class="col-sm-4">
                                   <label class="control-label">Patient signature</label>
-                                  <input type="text" class="form-control" name="Patientsignature"
+                                  <input type="text" class="form-control" name="Patientsignature" #Patientsignature="ngModel"
                                     [(ngModel)]="ObjChildCaseHistory.Patient_Signature" placeholder="Patient signature Here..."
                                     [ngClass]="{clearance: ChildCaseHistoryFormSubmitted && Patientsignature?.errors?.required}" required> 
                                 </div>

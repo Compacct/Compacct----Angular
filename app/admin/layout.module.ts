@@ -528,6 +528,7 @@ import { FollowupWithSalesDetailsComponent } from './common/CRM/Followup/followu
 import { BlCrmEnqCaseHistoryComponent } from './common/PatientManagement/bl-crm-enq-case-history/bl-crm-enq-case-history.component';
 import { NewAdultSpeechEvaluationComponent } from './common/PatientManagement/new-adult-speech-evaluation/new-adult-speech-evaluation.component';
 import { NewChildSpeechEvaluationComponent } from './common/PatientManagement/new-child-speech-evaluation/new-child-speech-evaluation.component';
+import { BlCrmLsqBillManagementComponent } from './common/FinancialManagement/Retail/bl-crm-lsq-bill-management/bl-crm-lsq-bill-management.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -970,7 +971,8 @@ import { NewChildSpeechEvaluationComponent } from './common/PatientManagement/ne
     FollowupWithSalesDetailsComponent,
     BlCrmEnqCaseHistoryComponent,
     NewAdultSpeechEvaluationComponent,
-    NewChildSpeechEvaluationComponent
+    NewChildSpeechEvaluationComponent,
+    BlCrmLsqBillManagementComponent
   ],
   imports: [
     CommonModule,

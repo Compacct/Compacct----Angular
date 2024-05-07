@@ -390,6 +390,7 @@ class ChildCaseHistory{
   Playing_with_other_children: any;
   Describe_playing: any;
   Enjoy_playing_with_others: any;
+  Showing_interest_in_others:any;
   Fav_activities_or_toys: any;
   Behaviour_of_child: any;
   Type_of_communication: any;
@@ -410,6 +411,7 @@ class ChildCaseHistory{
   Goals_for_your_child: any;
   Form_completed_by: any;
   Date:any = new Date();
+  Patient_Signature:any;
 }
 
 
