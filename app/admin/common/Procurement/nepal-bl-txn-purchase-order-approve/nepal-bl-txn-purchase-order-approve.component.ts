@@ -283,7 +283,14 @@ sendSms(col) {
           this.PendingSearch(true)
         }),(error:any)=>{
           this.ngxService.stop();
-        })
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Something Wrong",
+            detail: error,
+          });
+        } )
      
   
   }
@@ -295,6 +302,7 @@ sendSms(col) {
     this.tableLoader = true
     if (!col.vendor_email) {
       this.ngxService.stop();
+      this.tableLoader = false
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "compacct-toast",
@@ -317,7 +325,7 @@ sendSms(col) {
     blob_name: fileData.containername,
     po_pdf_url: fileData.file_url,
     to_email: col.vendor_email,
-    cc_details: [{cc_email:'sarvagya@abc.com'}],
+    cc_details: [{cc_email:'chirag@sarawagigroup.com.np'}],
     from_email:col.User_Email == '' ? 'procurement@sarawagigroup.com.np' : col.User_Email
 }
   this.$http.post(`https://sgnepalemailaz.azurewebsites.net/api/Send_PO_Email?code=7XLxczCq_9fq2mFIrCC0-Dp3hsK0SB1_tGcerYvvfbrzAzFui0Jccw==`,JSON.stringify(sendObj) )

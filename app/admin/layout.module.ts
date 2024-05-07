@@ -523,6 +523,12 @@ import { DailyAttendanceJohForEmployeeComponent } from './common/Attendance/dail
 import { LeaveEncashmentComponent } from './common/HR/leave-encashment/leave-encashment.component';
 import { DoctorSchedulComponent } from './common/PatientManagement/doctor-schedul/doctor-schedul.component';
 import { PurchaseBillMrpUpdateComponent } from './common/FinancialManagement/Transaction/Purchase/purchase-bill-mrp-update/purchase-bill-mrp-update.component';
+import { FullAndFinalSettlementJohHrComponent } from './common/HR/full-and-final-settlement-joh-hr/full-and-final-settlement-joh-hr.component';
+import { FollowupWithSalesDetailsComponent } from './common/CRM/Followup/followup-with-sales-details/followup-with-sales-details.component';
+import { BlCrmEnqCaseHistoryComponent } from './common/PatientManagement/bl-crm-enq-case-history/bl-crm-enq-case-history.component';
+import { NewAdultSpeechEvaluationComponent } from './common/PatientManagement/new-adult-speech-evaluation/new-adult-speech-evaluation.component';
+import { NewChildSpeechEvaluationComponent } from './common/PatientManagement/new-child-speech-evaluation/new-child-speech-evaluation.component';
+import { BlCrmLsqBillManagementComponent } from './common/FinancialManagement/Retail/bl-crm-lsq-bill-management/bl-crm-lsq-bill-management.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -960,7 +966,13 @@ import { PurchaseBillMrpUpdateComponent } from './common/FinancialManagement/Tra
     DailyAttendanceJohForEmployeeComponent,
     LeaveEncashmentComponent,
     DoctorSchedulComponent,
-    PurchaseBillMrpUpdateComponent
+    PurchaseBillMrpUpdateComponent,
+    FullAndFinalSettlementJohHrComponent,
+    FollowupWithSalesDetailsComponent,
+    BlCrmEnqCaseHistoryComponent,
+    NewAdultSpeechEvaluationComponent,
+    NewChildSpeechEvaluationComponent,
+    BlCrmLsqBillManagementComponent
   ],
   imports: [
     CommonModule,

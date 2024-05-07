@@ -425,6 +425,13 @@ import { DailyAttendanceJohForEmployeeComponent } from './common/Attendance/dail
 import { LeaveEncashmentComponent } from './common/HR/leave-encashment/leave-encashment.component';
 import { DoctorSchedulComponent } from './common/PatientManagement/doctor-schedul/doctor-schedul.component';
 import { PurchaseBillMrpUpdateComponent } from "./common/FinancialManagement/Transaction/Purchase/purchase-bill-mrp-update/purchase-bill-mrp-update.component";
+import { FullAndFinalSettlementJohHrComponent } from './common/HR/full-and-final-settlement-joh-hr/full-and-final-settlement-joh-hr.component';
+import { FollowupWithSalesDetailsComponent } from './common/CRM/Followup/followup-with-sales-details/followup-with-sales-details.component';
+import { BlCrmEnqCaseHistoryComponent } from './common/PatientManagement/bl-crm-enq-case-history/bl-crm-enq-case-history.component';
+import { NewAdultSpeechEvaluationComponent } from "./common/PatientManagement/new-adult-speech-evaluation/new-adult-speech-evaluation.component";
+import { NewChildSpeechEvaluationComponent } from './common/PatientManagement/new-child-speech-evaluation/new-child-speech-evaluation.component';
+import { BlCrmLsqBillManagementComponent } from './common/FinancialManagement/Retail/bl-crm-lsq-bill-management/bl-crm-lsq-bill-management.component';
+
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -3252,6 +3259,48 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: PurchaseBillMrpUpdateComponent,
       data: {
         title: 'Purchase Bill MRP Update'
+      }
+    },
+    {
+      path: 'Full_And_Final_Settlement_for_JOH',
+      component: FullAndFinalSettlementJohHrComponent,
+      data: {
+        title: 'Full And Final Settlement'
+      }
+    },
+    {
+      path: 'Followup_With_Sales_Details',
+      component: FollowupWithSalesDetailsComponent,
+      data: {
+        title: 'Followup With Sales Details'
+      }
+    },
+    {
+      path: 'BL_CRM_Enq_Case_History',
+      component: BlCrmEnqCaseHistoryComponent,
+      data: {
+        title: 'BL CRM Enquiry Case History'
+      }
+    },
+    {
+      path: 'New_Adult_Speech_Evaluation',
+      component: NewAdultSpeechEvaluationComponent,
+      data: {
+        title: 'Adult Speech Evaluation'
+      }
+    },
+    {
+      path: 'New_Child_Speech_Evaluation',
+      component: NewChildSpeechEvaluationComponent,
+      data: {
+        title: 'Child Speech Evaluation'
+      }
+    },
+    {
+      path: 'BL_CRM_LSQ_Bill_Management',
+      component: BlCrmLsqBillManagementComponent,
+      data: {
+        title: 'LSQ Bill Management'
       }
     },
     

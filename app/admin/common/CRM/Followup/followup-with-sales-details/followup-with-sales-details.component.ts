@@ -7,52 +7,48 @@ import { ActivatedRoute } from '@angular/router';
 import { CompacctGlobalApiService } from '../../../../shared/compacct.services/compacct.global.api.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { DateTimeConvertService } from '../../../../shared/compacct.global/dateTime.service';
-import { data } from 'jquery';
+import * as XLSX from 'xlsx';
 
 @Component({
-  selector: 'app-hearing-crm-lead-followup',
-  templateUrl: './hearing-crm-lead-followup.component.html',
-  styleUrls: ['./hearing-crm-lead-followup.component.css'],
+  selector: 'app-followup-with-sales-details',
+  templateUrl: './followup-with-sales-details.component.html',
+  styleUrls: ['./followup-with-sales-details.component.css'],
   providers: [MessageService],
   encapsulation: ViewEncapsulation.None
 })
-export class HearingCRMLeadFollowupComponent implements OnInit {
-  tabIndexToView: Number = 0;
-  FollowupDateReg: Date = new Date();
-  FollowupDateReg2: Date = new Date();
-  minumeDate: Date = new Date();
-  UsertypeREGULAR: any = undefined;
-  userList: any = [];
-  FormSubmittedBRwFl: boolean = false;
-  userListTable: any = [];
-  userListTableDynmic: any = [];
+export class FollowupWithSalesDetailsComponent implements OnInit {
   userid: any = undefined;
-  DistFollowup1: any = [];
-  DistFollowupSelect1: any = undefined;
-  userListTableBackup: any = [];
-  FollowupModal: boolean = false;
-  ActionList: any = [];
-  folloupFormSubmit: boolean = false;
-  distinctDateArray: any = [];
-  FootFallId: any = undefined;
-  FollowUpList: any = [];
-  Fname: any = undefined;
-  ActionList2: any = [];
-  ForwardList: any = [];
-  ObjFlow: Flow = new Flow();
-  FlowDate: any = undefined;
-  Disposal2nd: any = [];
-  disposalList: any = [];
-  RemarksDis:boolean = false;
-  ISused:any = undefined;
-  Followup_Type:any = undefined;
-  DistFollowupForBranch:any = [];
-  SelectedDistFollowupForBranch:any = [];
+  FollowupWithSalesDetailsSubmitted:boolean = false;
+  User_Id:any;
+  userList: any = [];
+  FollowupDate: Date = new Date();
+  FollowupSalesDetailsList:any = [];
+  FollowupSalesDetailsListDynmic:any = [];
+  FollowupSalesDetailsListBackup:any = [];
+  DistPatientID:any = [];
+  SelectedDistPatientID:any = [];
   DistEnquirySource:any = [];
   SelectedDistEnquirySource:any = [];
+  DistCostCenter:any = [];
+  SelectedDistCostCenter:any = [];
   DistFollowupType:any = [];
   SelectedFollowupType:any = [];
   SearchFields:any = [];
+  FootFallId: any;
+  FlowDate: any;
+  RemarksDis:boolean = false;
+  Followup_Type: any;
+  Disposal2nd: any = [];
+  FollowupDateReg2: Date = new Date();
+  Fname: any = undefined;
+  FollowupModal: boolean = false;
+  ObjFlow: Flow = new Flow();
+  folloupFormSubmit: boolean = false;
+  FollowUpList: any = [];
+  ISused: any;
+  disposalList:any = [];
+  minumeDate: Date = new Date();
+
 
   constructor(
     private $http: HttpClient,  
@@ -63,24 +59,23 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
     private GlobalAPI: CompacctGlobalApiService,
     private DateService: DateTimeConvertService,
     private ngxService: NgxUiLoaderService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.userid = this.$CompacctAPI.CompacctCookies.User_ID
     this.Header.pushHeader({
-      Header: "Patient Followup",
-      Link: "Patient Followup"
+      Header: "Sales Details Followup",
+      Link: "Sales Details Followup"
     });
     this.getUsertype();
     this.getDisposial();
   }
-  onReject(){}
   getUsertype() {
     this.userList = []
     const obj = {
-      "SP_String": "sp_Followup_Details",
-      "Report_Name_String": "Get_User",
-      "Json_Param_String": JSON.stringify([{User_ID: Number(this.userid)}]) ,
+      "SP_String": "sp_Followup_With_Sales_Details",
+      "Report_Name_String": "Get_User_for_Sales_Details",
+      "Json_Param_String": JSON.stringify([{User_ID : Number(this.userid)}]) ,
      }
     this.GlobalAPI.getData(obj).subscribe((data: any) => { 
       if (data.length) {
@@ -90,35 +85,35 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
         });
         this.userList = data;
         if (this.$CompacctAPI.CompacctCookies.User_Type === "U") {
-          this.UsertypeREGULAR = this.userList[0].User_ID;
+          this.User_Id = this.userList[0].User_ID;
         }   
       }
       })
   }
-  GetSearchedReg(valid:any){
-    this.FormSubmittedBRwFl = true;
-    this.userListTable = [];  
-    this.userListTableBackup = [];
-    this.userListTableDynmic = [];
+  GetFollowupSalesDetails(valid:any){
+    this.FollowupWithSalesDetailsSubmitted = true;
+    this.FollowupSalesDetailsList = [];  
+    this.FollowupSalesDetailsListDynmic = [];
+    this.FollowupSalesDetailsListBackup = [];
     if (valid) {
       this.ngxService.start();
-     const RegObj ={
-      Next_Followup:this.DateService.dateConvert(this.FollowupDateReg),
-      User_ID: this.UsertypeREGULAR,
+     const RegObj = {
+      User_ID: this.User_Id,
+      Next_Followup:this.DateService.dateConvert(this.FollowupDate),
       }
       const obj = {
-      "SP_String": "sp_Followup_Details",
-      "Report_Name_String": "Get_followup_details",
+      "SP_String": "sp_Followup_With_Sales_Details",
+      "Report_Name_String": "Get_Followup_With_Sales_Details",
       "Json_Param_String": JSON.stringify([RegObj]) ,
      }
     this.GlobalAPI.getData(obj).subscribe((data: any) => { 
       if (data.length) {
         //console.log("RegObj ==", data)
-        this.userListTable = data
-        this.userListTableDynmic = Object.keys(data[0]);
-        this.userListTableBackup = data
+        this.FollowupSalesDetailsList = data
+        this.FollowupSalesDetailsListDynmic = Object.keys(data[0]);
+        this.FollowupSalesDetailsListBackup = data
         this.ngxService.stop();
-        this.FormSubmittedBRwFl = false;
+        this.FollowupWithSalesDetailsSubmitted = false;
         this.GetDistinct();
       } else {
         this.ngxService.stop();
@@ -126,89 +121,66 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
       }) 
     }
   }
-  GetDistinct1() {
-    let Status: any = [];
-    this.DistFollowup1 = [];
-    this.userListTable.forEach((item) => {
-      if (Status.indexOf(item.Followup_Type) === -1) {
-        Status.push(item.Followup_Type);
-        this.DistFollowup1.push({ label: item.Followup_Type, value: item.Followup_Type });
-      }    
-    });
-      this.userListTableBackup = [...this.userListTable];
-  }
-  FilterDist1() {
-    let First: any = [];
-    let SearchFields: any = [];
-     if (this.DistFollowupSelect1.length) {
-      SearchFields.push('Followup_Type');
-      First = this.DistFollowupSelect1;
-    }
-    this.userListTable = [];
-    if (SearchFields.length) {
-      let LeadArr = this.userListTableBackup.filter(function (e) {
-        return (First.length ? First.includes(e['Followup_Type']) : true)
-      });
-      this.userListTable = LeadArr.length ? LeadArr : [];
-    } else {
-      this.userListTable = [...this.userListTableBackup];
-    }
+  exportoexcel(Arr,fileName): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
   }
   // DISTINCT & FILTER
   GetDistinct() {
-    let DFollowupForBranch:any = [];
     let DEnquirySource:any = [];
-    let DFollowupType:any = [];
-    this.DistFollowupForBranch =[];
-    this.SelectedDistFollowupForBranch =[];
+    let DCostCenter:any = [];
+    let DFollowType:any = [];
     this.DistEnquirySource =[];
     this.SelectedDistEnquirySource =[];
-    this.DistFollowupType =[];
-    this.SelectedFollowupType =[];
+    this.DistCostCenter =[];
+    this.SelectedDistCostCenter =[];
+    this.DistFollowupType = [];
+    this.SelectedFollowupType = [];
     this.SearchFields =[];
-    this.userListTable.forEach((item) => {
-   if (DFollowupForBranch.indexOf(item.Cost_Cen_Name) === -1) {
-    DFollowupForBranch.push(item.Cost_Cen_Name);
-   this.DistFollowupForBranch.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
-   }
-  if (DEnquirySource.indexOf(item.Enq_Source_Name) === -1) {
-    DEnquirySource.push(item.Enq_Source_Name);
-    this.DistEnquirySource.push({ label: item.Enq_Source_Name, value: item.Enq_Source_Name });
+    this.FollowupSalesDetailsList.forEach((item) => {
+    if (DEnquirySource.indexOf(item.Enq_Source_Name) === -1) {
+      DEnquirySource.push(item.Enq_Source_Name);
+      this.DistEnquirySource.push({ label: item.Enq_Source_Name, value: item.Enq_Source_Name });
     }
-    if (DFollowupType.indexOf(item.Followup_Type) === -1) {
-      DFollowupType.push(item.Followup_Type);
+    if (DCostCenter.indexOf(item.Cost_Cen_Name) === -1) {
+      DCostCenter.push(item.Cost_Cen_Name);
+      this.DistCostCenter.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
+    }
+    if (DFollowType.indexOf(item.Followup_Type) === -1) {
+      DFollowType.push(item.Followup_Type);
       this.DistFollowupType.push({ label: item.Followup_Type, value: item.Followup_Type });
-      }
+    }
   });
-     this.userListTableBackup = [...this.userListTable];
+     this.FollowupSalesDetailsListBackup = [...this.FollowupSalesDetailsList];
   }
   FilterDist() {
-    let DFollowupForBranch:any = [];
     let DEnquirySource:any = [];
-    let DFollowupType:any = [];
+    let DCostCenter:any = [];
+    let DFollowType:any = [];
     this.SearchFields =[];
-  if (this.SelectedDistFollowupForBranch.length) {
-    this.SearchFields.push('Cost_Cen_Name');
-    DFollowupForBranch = this.SelectedDistFollowupForBranch;
-  }
   if (this.SelectedDistEnquirySource.length) {
     this.SearchFields.push('Enq_Source_Name');
     DEnquirySource = this.SelectedDistEnquirySource;
   }
+  if (this.SelectedDistCostCenter.length) {
+    this.SearchFields.push('Cost_Cen_Name');
+    DCostCenter = this.SelectedDistCostCenter;
+  }
   if (this.SelectedFollowupType.length) {
     this.SearchFields.push('Followup_Type');
-    DFollowupType = this.SelectedFollowupType;
+    DFollowType = this.SelectedFollowupType;
   }
-  this.userListTable = [];
+  this.FollowupSalesDetailsList = [];
   if (this.SearchFields.length) {
-    let LeadArr = this.userListTableBackup.filter(function (e) {
-      return (DFollowupForBranch.length ? DFollowupForBranch.includes(e['Cost_Cen_Name']) : true)
-      && (DEnquirySource.length ? DEnquirySource.includes(e['Enq_Source_Name']) : true)
-      && (DFollowupType.length ? DFollowupType.includes(e['Followup_Type']) : true)
+    let LeadArr = this.FollowupSalesDetailsListBackup.filter(function (e) {
+      return (DEnquirySource.length ? DEnquirySource.includes(e['Enq_Source_Name']) : true)
+      && (DCostCenter.length ? DCostCenter.includes(e['Cost_Cen_Name']) : true)
+      && (DFollowType.length ? DFollowType.includes(e['Followup_Type']) : true)
     });
-  this.userListTable = LeadArr.length ? LeadArr : [];
+  this.FollowupSalesDetailsList = LeadArr.length ? LeadArr : [];
   } else {
-  this.userListTable = [...this.userListTableBackup] ;
+  this.FollowupSalesDetailsList = [...this.FollowupSalesDetailsListBackup] ;
   }
   }
   followup(col:any) {
@@ -218,14 +190,14 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
     this.Followup_Type = undefined;
     this.Disposal2nd = [];
     this.FollowupDateReg2 = new Date();
-    if (col.Foot_Fall_ID) {
+    if (col.Patient_ID) {
       this.Fname = col.Contact_Name+' / ('+col.Mobile+')';
-       this.FootFallId = col.Foot_Fall_ID;
+       this.FootFallId = col.Patient_ID;
       this.FollowupModal = true;
       this.Followup_Type = col.Followup_Type;
       this.ObjFlow = new Flow();
       this.folloupFormSubmit = false;
-    this.getPatatentFlow(col.Foot_Fall_ID) 
+    this.getPatatentFlow(col.Patient_ID) 
     } 
   }
   getPatatentFlow(FootId: any) {
@@ -278,8 +250,8 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
     
   }
   redirectPatientDetails(cool:any) {
-       if(cool.Foot_Fall_ID){
-      window.open('/Hearing_CRM_Lead_Search?recordid=' + window.btoa(cool.Foot_Fall_ID));
+       if(cool.Patient_ID){
+      window.open('/Hearing_CRM_Lead_Search?recordid=' + window.btoa(cool.Patient_ID));
     }
   }
   Appointment() {
@@ -325,22 +297,24 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
     if (this.ObjFlow.Secondary_Desposition_ID) {
       let arrayfilt = this.Disposal2nd.filter((Ele: any) => { return Ele.Secondary_Desposition_ID === this.ObjFlow.Secondary_Desposition_ID });
       this.ObjFlow.Followup_Details = arrayfilt[0].Secondary_Desposition_Name
-      this.RemarksDis = arrayfilt[0].Show_Remarks === 'Y' ? false : true;
+      // this.RemarksDis = arrayfilt[0].Show_Remarks === 'Y' ? false : true;
       this.ISused = arrayfilt[0].Is_Used;
     }
   }   
 }
 class Flow{
-    Foot_Fall_ID: any;
-    Followup_Details:any;                                  
-    Followup_Action:any;                                   
-    Current_Action:any;                                   
-    User_ID:any;                                        
-    Sent_To:any;                                          
-    Used:any;                                            
-    Followup_Type :any;                                    
-    Next_Followup:any;                                     
-    Is_Lost: any; 
-    Disposition_ID: any;
-    Secondary_Desposition_ID:any
+  Foot_Fall_ID: any;
+  Followup_Details:any;                                  
+  Followup_Action:any;                                   
+  Current_Action:any;                                   
+  User_ID:any;                                        
+  Sent_To:any;                                          
+  Used:any;                                            
+  Followup_Type :any;                                    
+  Next_Followup:any;                                     
+  Is_Lost: any; 
+  Disposition_ID: any;
+  Secondary_Desposition_ID:any
 }
+
+

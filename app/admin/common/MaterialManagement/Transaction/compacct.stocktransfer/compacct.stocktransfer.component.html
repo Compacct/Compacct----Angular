@@ -625,6 +625,7 @@
                                         <div class="form-group">
                                             <div class="col-sm-4" *ngIf="BatchShow">
                                                 <label class="control-label">Batch No<sup class="text-danger">*</sup></label>
+                                                
                                                 <!-- <select class="form-control" name="batchno"
                                                         #batchno="ngModel"
                                                         [(ngModel)]="ObjProductInfo.Batch_Number"
@@ -638,7 +639,47 @@
                                             </div>
                                             <div class="col-sm-4" *ngIf="SerialShow">
                                                 <label class="control-label">Serial No<sup class="text-danger">*</sup></label>
-                                                <p-multiSelect [options]="SerialList" [(ngModel)]="SelectedSerialNo" [styleClass]="'compacct-multiselect'" name="serialno"></p-multiSelect>
+                                                <div class="pull-right" style="display:inline-block;margin-bottom: -10px;">
+                                                    <p-checkbox name="Rckeck" 
+                                                    #Rckeck="ngModel" 
+                                                    [(ngModel)]="serialNumberRange" 
+                                                    (onChange)="serialNumberRangeChange()"
+                                                    [style]="{'margin':'4px 3px'}" 
+                                                    aria-invalid="false" binary="true"></p-checkbox>
+                                                    <label for="Range"><small>Range</small></label>
+                                                </div>
+                                                <p-multiSelect *ngIf="!serialNumberRange"  [options]="SerialList" [(ngModel)]="SelectedSerialNo" [styleClass]="'compacct-multiselect'" name="serialno"></p-multiSelect>
+                                              <div *ngIf="serialNumberRange" >
+                                                <div class="col-sm-8" style="padding: 0px;" >
+                                                    <p-dropdown [options]="SerialList"
+                                                    name="slno"
+                                                    [(ngModel)]="Selectedsl"
+                                                    [showClear]="true"
+                                                    [emptyFilterMessage]="' No Serial No Found'"
+                                                    [filter]="true"
+                                                    filterBy="label,value.name"
+                                                    [placeholder]="'Select Serial No'"
+                                                    [virtualScroll]="true"
+                                                    itemSize="30"
+                                                    #slno="ngModel"
+                                                    [styleClass]="ProductInfoSubmitted &&  slno.errors?.required ? 'clearance' :''"
+                                                    [required]="true">
+                                                </p-dropdown>
+                                                </div>
+                                                <div class="col-sm-4" style="padding: 0px;" >
+                                                    <input class="form-control" name="range"
+                                                        type="text"
+                                                        name="slnorange"
+                                                        #slnorange="ngModel"
+                                                        [(ngModel)]="Serial_No_Range"
+                                                        [required]="true"
+                                                        CompacctDigitonly="true"
+                                                        placeholder="Range"
+                                                        [ngClass]="{'clearance': ProductInfoSubmitted && slnorange?.errors?.required }"
+                                                        [required]="true" />
+                                                </div>
+                                              </div>
+                                               
                                             </div>
                                             <!-- || (ObjProductInfo.Qty > tempQty) -->
                                             <div class="col-sm-2">
@@ -723,7 +764,7 @@
                                             <div class="col-sm-3 pull-right">
                                                 <button type="submit"
                                                         name='stock'
-                                                        class="btn btn-primary custombutton pull-right"
+                                                        class="btn btn-primary custombutton pull-right" [disabled]="btnDisable"
                                                         (click)="AddProductInfo(ProductForm.form.valid)">
                                                     <span class="glyphicon glyphicon-plus"></span>&nbsp;Add
                                                 </button>

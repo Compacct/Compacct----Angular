@@ -93,7 +93,7 @@ export class OutletClosingStockWithBatchComponent implements OnInit {
   }
   getbilldate(){
     const obj = {
-     "SP_String": "SP_Controller_Master",
+     "SP_String": "SP_Outlet_Closing_Stock_With_Batch",
      "Report_Name_String": "Get - Outlet Bill Date",
      //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
 

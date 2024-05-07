@@ -1,0 +1,493 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <!-- <div class="ui-g-6" >
+                <button type="button" pButton (click)="onConfirmSave()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div> -->
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+              <p-tabView [activeIndex]="tabIndexToView"> 
+                <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                <div class="form-group" id="inner-Box" >
+                    <div class="col-sm-6" style="padding-bottom: 8px;;margin-left: 18px;">
+                        <label class="control-label">Patient Name<sup class="text-danger">*</sup></label>
+                        <p-dropdown [options]="Patientlist"
+                            name="Patient" 
+                            #Patient="ngModel" 
+                            [(ngModel)]="Foot_Fall_ID"
+                            [showClear]="true" 
+                            [emptyFilterMessage]="' No Patient Found'" 
+                            [filter]="true" filterBy="label,value.name" 
+                            [resetFilterOnHide]="true" 
+                            [placeholder]="'Select Patient'" 
+                            [virtualScroll]="true"
+                            itemSize="30"
+                            (onChange)="GetPatientDetails()"
+                            [styleClass]="PatientFormSubmitted && Patient.errors?.required? 'clearance' : ''" [required]="true"> 
+                        </p-dropdown>
+                    </div>
+                </div>
+                </form>
+                <form style="margin-top: 24px;">
+                <div class="panel-group" style="margin-bottom: 20px"> 
+                    <div class="panel panel-primary" style="margin-bottom:0;border-radius: 4px;">                                   
+                        <div class="panel-body" style="padding: 15px;"> 
+                            <div class="form-group">
+                                <h5 style=" margin-top: -10px;padding-left: 16px;">
+                                    <i class="fa fa-user">
+                                    </i> &nbsp;<strong>Patient Details:</strong></h5>    
+                                <div class="col-sm-6">
+                                    <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{ObjMiddle.Contact_Name ? ObjMiddle.Contact_Name : '-'}}</div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Customer ID</label>
+                                    <div class="label-t">{{ObjMiddle.Foot_Fall_ID ? ObjMiddle.Foot_Fall_ID : '-'}}</div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Gender<sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{ObjMiddle.Gender ? ObjMiddle.Gender : '-'}}</div>
+                                </div>
+                            </div>
+                            <div class="form-group"> 
+                            <div class="col-sm-4">
+                                <label class="control-label">Date of Birth<sup class="text-danger">*</sup></label>
+                                <div class="label-t">{{ObjMiddle.Date_Of_Birth ? (ObjMiddle.Date_Of_Birth | date :"dd/MMM/yyyy") : '-'}}</div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="control-label">Address<sup class="text-danger">*</sup></label>
+                                <div class="label-t">{{ObjMiddle.Address ? ObjMiddle.Address : '-'}}</div>
+                            </div>
+                            <div class="col-sm-2">
+                                <label class="control-label">Pin Code<sup class="text-danger">*</sup></label>
+                                <div class="label-t">{{ObjMiddle.pin ? ObjMiddle.pin : '-'}}</div>
+                            </div>
+                            </div>
+                            <div class="form-group"> 
+                            <div class="col-sm-4">
+                                    <label class="control-label">State<sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{ObjMiddle.State ? ObjMiddle.State : '-'}}</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">District<sup class="text-danger">*</sup></label>
+                                <div class="label-t">{{ObjMiddle.District ? ObjMiddle.District : '-'}}</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Mobile No<sup class="text-danger">*</sup></label>
+                                <div class="label-t">{{ObjMiddle.Mobile ? ObjMiddle.Mobile : '-'}}</div>
+                            </div>
+                            </div> 
+                            <div class="form-group"> 
+                            <div class="col-sm-4">
+                                <label class="control-label">Other Mobile No</label>
+                                <div class="label-t">{{ObjMiddle.other_mobile ? ObjMiddle.other_mobile : '-'}}</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Email ID</label>
+                                <div class="label-t">{{ObjMiddle.Email ? ObjMiddle.Email : '-'}}</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Centre<sup class="text-danger">*</sup></label>
+                                <div class="label-t">{{ObjMiddle.Cost_Cen_Name ? ObjMiddle.Cost_Cen_Name : '-'}}</div> 
+                            </div>
+                            </div> 
+                       </div>
+                    </div>
+                </div>
+                </form>
+                <form name="EngCaseHistoryForm" #EngCaseHistoryForm="ngForm" novalidate>
+                <div class="form-group" style="padding: 1em;">
+                    <h5 style="
+                    padding: 0.5em 1em;
+                    background: #c1c1c185;
+                    border-top: 5px solid #3c8dbc;
+                    border-bottom: 1px solid #c6c6c6;
+                    margin-top: -20px;
+                    ">
+                    <i class="fa fa-user">
+                    </i> &nbsp;<strong>Case History:</strong>
+                    </h5>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">Reason for Visit<sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="reasonforvisit"
+                        #reasonforvisit="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Reason_for_Visit"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && reasonforvisit.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option *ngFor = "let option of ReasonforVisitList" value= "{{option}}">
+                                {{option}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Present complain<sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="presentcomplain"
+                        #presentcomplain="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Present_complain"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && presentcomplain.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option *ngFor = "let option of PresentComplainList" value= "{{option}}">
+                                {{option}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Right Ear Tinnitus<sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="righttinnitus"
+                        #righttinnitus="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Right_ear_tinnitus "
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && righttinnitus.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Left Ear Tinnitus<sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="lefttinnitus"
+                        #lefttinnitus="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Left_ear_tinnitus"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && lefttinnitus.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">Right Ear Pain<sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="rightpain"
+                        #rightpain="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Right_ear_pain"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && rightpain.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Left Ear Pain<sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="leftpain"
+                        #leftpain="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Left_ear_pain"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && leftpain.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Right Ear Discharge<sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="rightdiscarge"
+                        #rightdiscarge="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Right_ear_discharge"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && rightdiscarge.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Left Ear Discharge<sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="leftdiscarge"
+                        #leftdiscarge="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Left_ear_discharge"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && leftdiscarge.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">Right Ear Vertigo/Dizziness <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="rightvertigod"
+                        #rightvertigod="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Right_ear_Vertigo"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && rightvertigod.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Left Ear Vertigo/Dizziness <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="leftvertigod"
+                        #leftvertigod="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Left_ear_Vertigo"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && leftvertigod.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Right Ear Blocking sensation <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="rightblockingsensation"
+                        #rightblockingsensation="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Right_ear_blocking_sensation"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && rightblockingsensation.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Left Ear Blocking sensation <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="lefttblockingsensation"
+                        #lefttblockingsensation="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Left_ear_blocking_sensation"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && lefttblockingsensation.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">Exposure to noise <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="exposuretonoise"
+                        #exposuretonoise="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Exposure_to_noise "
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && exposuretonoise.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="control-label">Duration of noise exposure in a day (hours) <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="durationofnoiseex"
+                        #durationofnoiseex="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Duration_of_noise_exposure"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && durationofnoiseex.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="1-4">1-4</option>
+                            <option  value="4-8">4-8</option>
+                            <option  value="8-12">8-12</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="padding: 1em;">
+                    <h5 style="
+                    padding: 0.5em 1em;
+                    background: #c1c1c185;
+                    border-top: 5px solid #3c8dbc;
+                    border-bottom: 1px solid #c6c6c6;
+                    ">
+                    <i class="fa fa-user">
+                    </i> &nbsp;<strong>Medical :</strong>
+                </h5>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">Referring doctor/ENT <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="refdoc"
+                        #refdoc="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Ref_doctor "
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && refdoc.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Doctor Name">Doctor’s Name</option>
+                            <option  value="Self">Self</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Ear surgical history <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="surgicalhis"
+                        #surgicalhis="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Surgical_history"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && surgicalhis.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="padding: 1em;">
+                    <h5 style="
+                    padding: 0.5em 1em;
+                    background: #c1c1c185;
+                    border-top: 5px solid #3c8dbc;
+                    border-bottom: 1px solid #c6c6c6;
+                    ">
+                    <i class="fa fa-user">
+                    </i> &nbsp;<strong>Hearing :</strong>
+                </h5>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">Better ear <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="betterear"
+                        #betterear="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Better_ear"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && betterear.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Right">Right</option>
+                            <option  value="Left">Left</option>
+                            <option  value="Symmetrical">Symmetrical</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Family history of hearing loss <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="famhisloss"
+                        #famhisloss="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Family_history_of_hearing_loss"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && famhisloss.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Current/previous hearing aid technology <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="preaistech"
+                        #preaistech="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Pre_hearing_aid_technology"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && preaistech.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Analog">Analog</option>
+                            <option  value="Digital">Digital</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Current/previous hearing aid type <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="preaistype"
+                        #preaistype="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Pre_hearing_aid_type"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && preaistype.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="BTE">BTE</option>
+                            <option  value="RIC">RIC</option>
+                            <option  value="ITC">ITC</option>
+                            <option  value="CIC">CIC</option>
+                            <option  value="IIC">IIC</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">Hearing aid difficulties <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="hearanddifficult"
+                        #hearanddifficult="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Hearing_aid_difficulties"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && hearanddifficult.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Uncomfortable">Uncomfortable</option>
+                            <option  value="Not helpful">Not helpful</option>
+                            <option  value="Not working">Not working</option>
+                        </select>
+                    </div>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                    <label class="control-label">Date</label>
+                    <ejs-datepicker 
+                    [(value)]="Case_Date"
+                    [format]="'dd/MMM/yyyy'"
+                    ></ejs-datepicker> 
+                    </div>
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4"style="margin-top: 2em;">
+                        <p-dropdown [options]="Audilogistlist"
+                        name="Audilogist1" 
+                        #Audilogist1="ngModel" 
+                        [(ngModel)]="ObjCaseHistory.Audiologist_ID"
+                        [showClear]="true" 
+                        [emptyFilterMessage]="' No Audilogist Found'" 
+                        [filter]="true" filterBy="label,value.name" 
+                        [resetFilterOnHide]="true" 
+                        [placeholder]="'Select Audilogist'" 
+                        [virtualScroll]="true"
+                        itemSize="30" 
+                        [styleClass]="EngCaseHistoryFormSubmitted && Audilogist1.errors?.required? 'clearance' : ''"> 
+                    </p-dropdown>
+                    <div style="text-align:center;">
+                        <Strong >Audilogist</Strong>
+                    </div>                           
+                    </div>
+              </div>
+                  <div class="form-group" style="padding: 1em;">
+                    <div class="col-sm-4"></div>
+                  <div class="col-sm-6">
+                    <button class="btn btn-primary pull-right"  id="load" (click)="saveCaseHistoryData()" [disabled]="!Foot_Fall_ID">
+                         <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save">Save</span>
+                 </button>
+                 </div> 
+                 <div class="col-sm-2">
+                    <button class="btn btn-success " (click)="GetPrint()" [disabled]="!Foot_Fall_ID">
+                        <span class="glyphicon glyphicon-print"></span> Print
+                    </button>
+                </div>
+                 </div>             
+               </form>
+             </p-tabView>   
+               </div>
+            </div>
+        </div>
+    </div>
+</div>
+

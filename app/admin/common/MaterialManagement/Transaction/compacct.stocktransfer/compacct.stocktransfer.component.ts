@@ -92,7 +92,7 @@ export class StocktransferComponent implements OnInit {
   BackUpBatchNoList: any =[];
   BatchQtyArray: any=[];
   newQty:any = [];
-
+  btnDisable:boolean = false
   @ViewChild('docdate',{static:false}) docdateElem:ElementRef;
 
   AcceptStockModalTitle = undefined;
@@ -100,6 +100,10 @@ export class StocktransferComponent implements OnInit {
   AcceptStockDocNo = undefined;
   AcceptProductList = [];
   tempQty = undefined;
+
+  serialNumberRange:boolean = false 
+  Selectedsl:any = undefined
+  Serial_No_Range:number = 0
   constructor(
     private $http: HttpClient,
     private urlService: CompacctGlobalUrlService,
@@ -178,7 +182,11 @@ export class StocktransferComponent implements OnInit {
     this.saveSpinner = false;
     this.seachSpinner = false;
     this.displayEwayModal = false;
+    this.btnDisable = false;
     this.ObjSearchStock.F_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.SelectedSerialNo = [];
+    this.serialNumberRange = false
+    this.Serial_No_Range = 0
     this.StockCostCenterFromChange(
       this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
     );
@@ -800,112 +808,70 @@ export class StocktransferComponent implements OnInit {
   async AddProductInfo(valid) {
       this.ProductInfoSubmitted = true;
       this.ProductInfoRequired = true;
-      if (valid && (this.ObjProductInfo.Qty <= this.tempQty)) {
+  if (valid && (Number(this.ObjProductInfo.Qty) <= this.tempQty)) {
+    this.btnDisable = true
+      if(this.serialNumberRange){
+        this.SelectedSerialNo = []
+        this.SelectedSerialNo.push(this.Selectedsl)
+        for (var i = 1; i < Number(this.Serial_No_Range); i++) {
+          this.SelectedSerialNo.push(this.genSerialNo(this.SelectedSerialNo[i - 1]))
+         }
+      }
+        
         if (this.ObjCostCenterTO.T_godown_id) {
           const ProdList = this.NativeProductList.map(x => Object.assign({}, x));
           const prodCodeID = this.ObjProductInfo.Product_ID;
           const TempServiceFlag = $.grep(ProdList, function(value) {
             return value.Product_ID === prodCodeID;
           })[0];
+          if(TempServiceFlag.Product_Serial){
+            const checkSerial = (SerialNo)=>{
+              const Serialfind = this.SelectedSerialNo.find((el:any)=> el == SerialNo)
+              return Serialfind ? true : false
+            }
+            const checkProductSerial = $.grep(this.ProductInfoListView, function(value) {
+              return checkSerial(value.Serial_No) ;
+            })[0];
+            if(checkProductSerial){
+              this.btnDisable = false
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "error",
+                summary: "Warn Message",
+                detail: "Duplicate Serial No"
+              });
+              return 
+            }
+          }
+          if(!TempServiceFlag.Product_Serial){
+            const BatchNumber = Array.isArray(this.ObjProductInfo.Batch_Number) ? this.ObjProductInfo.Batch_Number : []
+            const checkBatch = (batchNo)=>{
+              const Serialfind = BatchNumber.find((el:any)=> el == batchNo)
+              return Serialfind ? true : false
+            }
+            const checkProductBatch = $.grep(this.ProductInfoListView, function(value) {
+              return value.Product_ID === prodCodeID && checkBatch(value.Batch_Number) ;
+            })[0];
+            if(checkProductBatch){
+              this.btnDisable = false
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "error",
+                summary: "Warn Message",
+                detail: "Duplicate Product and Batch No"
+              });
+              return 
+            }
+          }
           if ((this.ObjProductInfo.Batch_Number !== "" && this.ObjProductInfo.Batch_Number !== undefined) || (TempServiceFlag.Is_Service && this.databaseName === 'GN_SHCPL_Patna'))
           {
             if (
               this.ObjCostCenterFROM.F_Cost_Cen_State &&
               this.ObjCostCenterTO.T_Cost_Cen_State
             ) {
-              if (
-                this.ObjCostCenterFROM.F_Cost_Cen_GST_No.toUpperCase() ===
-                this.ObjCostCenterTO.T_Cost_Cen_GST_No.toUpperCase()
-              ) {
-                this.ObjProductInfo.IGST_Rate = 0;
-                this.ObjProductInfo.CGST_Rate = 0;
-                this.ObjProductInfo.SGST_Rate = 0;
-
-                this.ObjProductInfo.IGST_Input_Rate = 0;
-                this.ObjProductInfo.IGST_Input_Amt = 0;
-
-                this.ObjProductInfo.IGST_Output_Rate = 0;
-                this.ObjProductInfo.IGST_Output_Amt = 0;
-
-                this.ObjProductInfo.CGST_Input_Rate = 0;
-                this.ObjProductInfo.CGST_Input_Amt = 0;
-
-                this.ObjProductInfo.CGST_Output_Rate = 0;
-                this.ObjProductInfo.CGST_Output_Amt = 0;
-
-                this.ObjProductInfo.SGST_Input_Rate = 0;
-                this.ObjProductInfo.SGST_Input_Amt = 0;
-
-                this.ObjProductInfo.SGST_Output_Rate = 0;
-                this.ObjProductInfo.SGST_Output_Amt = 0;
-              } else if (
-                this.ObjCostCenterFROM.F_Cost_Cen_State.toUpperCase() ===
-                this.ObjCostCenterTO.T_Cost_Cen_State.toUpperCase()
-              ) {
-                this.ObjProductInfo.CGST_Input_Amt = parseFloat(
-                  (
-                    (this.ObjProductInfo.Taxable_Amount *
-                      this.ObjProductInfo.CGST_Input_Rate) /
-                    100
-                  ).toFixed(2)
-                );
-                this.ObjProductInfo.CGST_Output_Amt = parseFloat(
-                  (
-                    (this.ObjProductInfo.Taxable_Amount *
-                      this.ObjProductInfo.CGST_Output_Rate) /
-                    100
-                  ).toFixed(2)
-                );
-                this.ObjProductInfo.SGST_Input_Amt = parseFloat(
-                  (
-                    (this.ObjProductInfo.Taxable_Amount *
-                      this.ObjProductInfo.SGST_Input_Rate) /
-                    100
-                  ).toFixed(2)
-                );
-                this.ObjProductInfo.SGST_Output_Amt = parseFloat(
-                  (
-                    (this.ObjProductInfo.Taxable_Amount *
-                      this.ObjProductInfo.SGST_Output_Rate) /
-                    100
-                  ).toFixed(2)
-                );
-                this.ObjProductInfo.IGST_Input_Rate = 0;
-                this.ObjProductInfo.IGST_Input_Amt = 0;
-
-                this.ObjProductInfo.IGST_Output_Rate = 0;
-                this.ObjProductInfo.IGST_Output_Amt = 0;
-                this.ObjProductInfo.IGST_Rate = 0;
-              } else {
-                this.ObjProductInfo.IGST_Input_Amt = parseFloat(
-                  (
-                    (this.ObjProductInfo.Taxable_Amount *
-                      this.ObjProductInfo.IGST_Input_Rate) /
-                    100
-                  ).toFixed(2)
-                );
-                this.ObjProductInfo.IGST_Output_Amt = parseFloat(
-                  (
-                    (this.ObjProductInfo.Taxable_Amount *
-                      this.ObjProductInfo.IGST_Output_Rate) /
-                    100
-                  ).toFixed(2)
-                );
-
-                this.ObjProductInfo.CGST_Input_Rate = 0;
-                this.ObjProductInfo.CGST_Input_Amt = 0;
-
-                this.ObjProductInfo.CGST_Output_Rate = 0;
-                this.ObjProductInfo.CGST_Output_Amt = 0;
-
-                this.ObjProductInfo.SGST_Input_Rate = 0;
-                this.ObjProductInfo.SGST_Input_Amt = 0;
-
-                this.ObjProductInfo.SGST_Output_Rate = 0;
-                this.ObjProductInfo.SGST_Output_Amt = 0;
-                this.ObjProductInfo.CGST_Rate = 0;
-                this.ObjProductInfo.SGST_Rate = 0;
-              }
+             
               //
               let Batch: any = [];
               let BatchQty: any = [];
@@ -928,12 +894,13 @@ export class StocktransferComponent implements OnInit {
                   this.ObjProductInfo.Qty = BatchQty[i];
                   this.ObjProductInfo.Amount = BatchQty[i] * this.ObjProductInfo.Rate;
                   this.DiscountTypeChangeForEachBatch();
+                  this.GSTCalculat()
                   this.ProductInfoListProto.push(this.ObjProductInfo);
                   // console.log(ctrl.ObjOthersInfo.Batch_No)
                   //  ctrl.ObjOthersInfo.Batch_No = undefined;
-                  const d = this.ObjProductInfo;
+                  const d = {...this.ObjProductInfo};
                   this.ObjProductInfo = new ProductInfo();
-
+                  console.log('ObjProductInfo2',d)
                   this.ObjProductInfo.Product_ID = d.Product_ID;
                   this.ObjProductInfo.Product_Name = d.Product_Name;
                   this.ObjProductInfo.Product_Specification =
@@ -995,6 +962,7 @@ export class StocktransferComponent implements OnInit {
                   this.ObjProductInfo.Product_ID_AO = d.Product_ID_AO;
                   this.ObjProductInfo.Qty_AO = d.Qty_AO;
                   this.ObjProductInfo.Previous_Doc_No = d.Previous_Doc_No;
+                  console.log("ProductInfoListView",this.ProductInfoListView)
                 // }
                 // else {
                 //   this.compacctToast.clear();
@@ -1066,105 +1034,108 @@ export class StocktransferComponent implements OnInit {
               this.ObjCostCenterTO.T_Cost_Cen_State
             ) {
               // && ctrl.compositeGST == "No"
-              if (
-                this.ObjCostCenterFROM.F_Cost_Cen_GST_No.toUpperCase() ===
-                this.ObjCostCenterTO.T_Cost_Cen_GST_No.toUpperCase()
-              ) {
-                this.ObjProductInfo.IGST_Rate = 0;
-                this.ObjProductInfo.CGST_Rate = 0;
-                this.ObjProductInfo.SGST_Rate = 0;
-                this.ObjProductInfo.IGST_Input_Rate = 0;
-                this.ObjProductInfo.IGST_Input_Amt = 0;
-
-                this.ObjProductInfo.IGST_Output_Rate = 0;
-                this.ObjProductInfo.IGST_Output_Amt = 0;
-
-                this.ObjProductInfo.CGST_Input_Rate = 0;
-                this.ObjProductInfo.CGST_Input_Amt = 0;
-
-                this.ObjProductInfo.CGST_Output_Rate = 0;
-                this.ObjProductInfo.CGST_Output_Amt = 0;
-
-                this.ObjProductInfo.SGST_Input_Rate = 0;
-                this.ObjProductInfo.SGST_Input_Amt = 0;
-
-                this.ObjProductInfo.SGST_Output_Rate = 0;
-                this.ObjProductInfo.SGST_Output_Amt = 0;
-              } else if (
-                this.ObjCostCenterFROM.F_Cost_Cen_State.toUpperCase() ===
-                this.ObjCostCenterTO.T_Cost_Cen_State.toUpperCase()
-              ) {
-                this.ObjProductInfo.CGST_Input_Amt = parseFloat(
-                  (
-                    (this.ObjProductInfo.Taxable_Amount *
-                      this.ObjProductInfo.CGST_Input_Rate) /
-                    100
-                  ).toFixed(2)
-                );
-                this.ObjProductInfo.CGST_Output_Amt = parseFloat(
-                  (
-                    (this.ObjProductInfo.Taxable_Amount *
-                      this.ObjProductInfo.CGST_Output_Rate) /
-                    100
-                  ).toFixed(2)
-                );
-                this.ObjProductInfo.SGST_Input_Amt = parseFloat(
-                  (
-                    (this.ObjProductInfo.Taxable_Amount *
-                      this.ObjProductInfo.SGST_Input_Rate) /
-                    100
-                  ).toFixed(2)
-                );
-                this.ObjProductInfo.SGST_Output_Amt = parseFloat(
-                  (
-                    (this.ObjProductInfo.Taxable_Amount *
-                      this.ObjProductInfo.SGST_Output_Rate) /
-                    100
-                  ).toFixed(2)
-                );
-                this.ObjProductInfo.IGST_Input_Rate = 0;
-                this.ObjProductInfo.IGST_Input_Amt = 0;
-
-                this.ObjProductInfo.IGST_Output_Rate = 0;
-                this.ObjProductInfo.IGST_Output_Amt = 0;
-                this.ObjProductInfo.IGST_Rate = 0;
-              } else {
-                this.ObjProductInfo.IGST_Input_Amt = parseFloat(
-                  (
-                    (this.ObjProductInfo.Taxable_Amount *
-                      this.ObjProductInfo.IGST_Input_Rate) /
-                    100
-                  ).toFixed(2)
-                );
-                this.ObjProductInfo.IGST_Output_Amt = parseFloat(
-                  (
-                    (this.ObjProductInfo.Taxable_Amount *
-                      this.ObjProductInfo.IGST_Output_Rate) /
-                    100
-                  ).toFixed(2)
-                );
-
-                this.ObjProductInfo.CGST_Input_Rate = 0;
-                this.ObjProductInfo.CGST_Input_Amt = 0;
-
-                this.ObjProductInfo.CGST_Output_Rate = 0;
-                this.ObjProductInfo.CGST_Output_Amt = 0;
-
-                this.ObjProductInfo.SGST_Input_Rate = 0;
-                this.ObjProductInfo.SGST_Input_Amt = 0;
-
-                this.ObjProductInfo.SGST_Output_Rate = 0;
-                this.ObjProductInfo.SGST_Output_Amt = 0;
-                this.ObjProductInfo.CGST_Rate = 0;
-                this.ObjProductInfo.SGST_Rate = 0;
-              }
+             
               const k = this.ObjProductInfo;
+              console.log("ObjProductInfo K",k)
+              let toastarr:any = []
               for (let i = 0; i < this.SelectedSerialNo.length; i++) {
                 const ser = this.SelectedSerialNo[i];
                 let falg = await this.CheckSerialNoValid(ser);
                 console.log('Serial no Check : ', falg ,ser );
                 if(falg === 'YES') {
                   this.ObjProductInfo.Serial_No = ser;
+                  if (
+                    this.ObjCostCenterFROM.F_Cost_Cen_GST_No.toUpperCase() ===
+                    this.ObjCostCenterTO.T_Cost_Cen_GST_No.toUpperCase()
+                  ) {
+                    this.ObjProductInfo.IGST_Rate = 0;
+                    this.ObjProductInfo.CGST_Rate = 0;
+                    this.ObjProductInfo.SGST_Rate = 0;
+                    this.ObjProductInfo.IGST_Input_Rate = 0;
+                    this.ObjProductInfo.IGST_Input_Amt = 0;
+    
+                    this.ObjProductInfo.IGST_Output_Rate = 0;
+                    this.ObjProductInfo.IGST_Output_Amt = 0;
+    
+                    this.ObjProductInfo.CGST_Input_Rate = 0;
+                    this.ObjProductInfo.CGST_Input_Amt = 0;
+    
+                    this.ObjProductInfo.CGST_Output_Rate = 0;
+                    this.ObjProductInfo.CGST_Output_Amt = 0;
+    
+                    this.ObjProductInfo.SGST_Input_Rate = 0;
+                    this.ObjProductInfo.SGST_Input_Amt = 0;
+    
+                    this.ObjProductInfo.SGST_Output_Rate = 0;
+                    this.ObjProductInfo.SGST_Output_Amt = 0;
+                  } else if (
+                    this.ObjCostCenterFROM.F_Cost_Cen_State.toUpperCase() ===
+                    this.ObjCostCenterTO.T_Cost_Cen_State.toUpperCase()
+                  ) {
+                    this.ObjProductInfo.CGST_Input_Amt = parseFloat(
+                      (
+                        (this.ObjProductInfo.Taxable_Amount *
+                          this.ObjProductInfo.CGST_Input_Rate) /
+                        100
+                      ).toFixed(2)
+                    );
+                    this.ObjProductInfo.CGST_Output_Amt = parseFloat(
+                      (
+                        (this.ObjProductInfo.Taxable_Amount *
+                          this.ObjProductInfo.CGST_Output_Rate) /
+                        100
+                      ).toFixed(2)
+                    );
+                    this.ObjProductInfo.SGST_Input_Amt = parseFloat(
+                      (
+                        (this.ObjProductInfo.Taxable_Amount *
+                          this.ObjProductInfo.SGST_Input_Rate) /
+                        100
+                      ).toFixed(2)
+                    );
+                    this.ObjProductInfo.SGST_Output_Amt = parseFloat(
+                      (
+                        (this.ObjProductInfo.Taxable_Amount *
+                          this.ObjProductInfo.SGST_Output_Rate) /
+                        100
+                      ).toFixed(2)
+                    );
+                    this.ObjProductInfo.IGST_Input_Rate = 0;
+                    this.ObjProductInfo.IGST_Input_Amt = 0;
+    
+                    this.ObjProductInfo.IGST_Output_Rate = 0;
+                    this.ObjProductInfo.IGST_Output_Amt = 0;
+                    this.ObjProductInfo.IGST_Rate = 0;
+                  } else {
+                    this.ObjProductInfo.IGST_Input_Amt = parseFloat(
+                      (
+                        (this.ObjProductInfo.Taxable_Amount *
+                          this.ObjProductInfo.IGST_Input_Rate) /
+                        100
+                      ).toFixed(2)
+                    );
+                    this.ObjProductInfo.IGST_Output_Amt = parseFloat(
+                      (
+                        (this.ObjProductInfo.Taxable_Amount *
+                          this.ObjProductInfo.IGST_Output_Rate) /
+                        100
+                      ).toFixed(2)
+                    );
+    
+                    this.ObjProductInfo.CGST_Input_Rate = 0;
+                    this.ObjProductInfo.CGST_Input_Amt = 0;
+    
+                    this.ObjProductInfo.CGST_Output_Rate = 0;
+                    this.ObjProductInfo.CGST_Output_Amt = 0;
+    
+                    this.ObjProductInfo.SGST_Input_Rate = 0;
+                    this.ObjProductInfo.SGST_Input_Amt = 0;
+    
+                    this.ObjProductInfo.SGST_Output_Rate = 0;
+                    this.ObjProductInfo.SGST_Output_Amt = 0;
+                    this.ObjProductInfo.CGST_Rate = 0;
+                    this.ObjProductInfo.SGST_Rate = 0;
+                  }
                   this.ProductInfoListProto.push(this.ObjProductInfo);
                   // console.log(ctrl.ObjOthersInfo.Serial_No)
                   //  ctrl.ObjOthersInfo.Serial_No = undefined;
@@ -1233,16 +1204,17 @@ export class StocktransferComponent implements OnInit {
                   this.ObjProductInfo.Qty_AO = d.Qty_AO;
                   this.ObjProductInfo.Previous_Doc_No = d.Previous_Doc_No;
                 } else {
-                  this.compacctToast.clear();
-                  this.compacctToast.add({
+                    toastarr.push({
                     key: "compacct-toast",
                     severity: "error",
                     summary: "Serial No Check",
                     detail: ser + " : Is not exits for this product. ",
                     life : 5000
-                  });
+                  })
                 }
               }
+              this.compacctToast.clear();
+              this.compacctToast.addAll(toastarr);
               this.ProductInfoListView = this.ProductInfoListProto;
               this.CalculateTotalAmount();
               this.CalculateDiscount();
@@ -1293,6 +1265,9 @@ export class StocktransferComponent implements OnInit {
               this.ObjProductInfo.Previous_Doc_No = k.Previous_Doc_No;
 
               this.SelectedSerialNo = [];
+              this.serialNumberRange = false
+              this.Serial_No_Range = 0
+              this.Selectedsl = undefined
             }
           }
         } else {
@@ -1304,7 +1279,9 @@ export class StocktransferComponent implements OnInit {
             detail: "Please choose To Stock Point."
           });
         }
+        this.btnDisable = false
       } else {
+        this.btnDisable = false
         if (
           !this.ObjCostCenterTO.T_Cost_Cen_ID ||
           !this.ObjCostCenterFROM.F_Cost_Cen_ID
@@ -1327,7 +1304,101 @@ export class StocktransferComponent implements OnInit {
     let responseText = await res.text();
     return responseText;
   }
+  GSTCalculat(){
+    if (
+      this.ObjCostCenterFROM.F_Cost_Cen_GST_No.toUpperCase() ===
+      this.ObjCostCenterTO.T_Cost_Cen_GST_No.toUpperCase()
+    ) {
+      this.ObjProductInfo.IGST_Rate = 0;
+      this.ObjProductInfo.CGST_Rate = 0;
+      this.ObjProductInfo.SGST_Rate = 0;
 
+      this.ObjProductInfo.IGST_Input_Rate = 0;
+      this.ObjProductInfo.IGST_Input_Amt = 0;
+
+      this.ObjProductInfo.IGST_Output_Rate = 0;
+      this.ObjProductInfo.IGST_Output_Amt = 0;
+
+      this.ObjProductInfo.CGST_Input_Rate = 0;
+      this.ObjProductInfo.CGST_Input_Amt = 0;
+
+      this.ObjProductInfo.CGST_Output_Rate = 0;
+      this.ObjProductInfo.CGST_Output_Amt = 0;
+
+      this.ObjProductInfo.SGST_Input_Rate = 0;
+      this.ObjProductInfo.SGST_Input_Amt = 0;
+
+      this.ObjProductInfo.SGST_Output_Rate = 0;
+      this.ObjProductInfo.SGST_Output_Amt = 0;
+    } else if (
+      this.ObjCostCenterFROM.F_Cost_Cen_State.toUpperCase() ===
+      this.ObjCostCenterTO.T_Cost_Cen_State.toUpperCase()
+    ) {
+      this.ObjProductInfo.CGST_Input_Amt = parseFloat(
+        (
+          (this.ObjProductInfo.Taxable_Amount *
+            this.ObjProductInfo.CGST_Input_Rate) /
+          100
+        ).toFixed(2)
+      );
+      this.ObjProductInfo.CGST_Output_Amt = parseFloat(
+        (
+          (this.ObjProductInfo.Taxable_Amount *
+            this.ObjProductInfo.CGST_Output_Rate) /
+          100
+        ).toFixed(2)
+      );
+      this.ObjProductInfo.SGST_Input_Amt = parseFloat(
+        (
+          (this.ObjProductInfo.Taxable_Amount *
+            this.ObjProductInfo.SGST_Input_Rate) /
+          100
+        ).toFixed(2)
+      );
+      this.ObjProductInfo.SGST_Output_Amt = parseFloat(
+        (
+          (this.ObjProductInfo.Taxable_Amount *
+            this.ObjProductInfo.SGST_Output_Rate) /
+          100
+        ).toFixed(2)
+      );
+      this.ObjProductInfo.IGST_Input_Rate = 0;
+      this.ObjProductInfo.IGST_Input_Amt = 0;
+
+      this.ObjProductInfo.IGST_Output_Rate = 0;
+      this.ObjProductInfo.IGST_Output_Amt = 0;
+      this.ObjProductInfo.IGST_Rate = 0;
+    } else {
+      this.ObjProductInfo.IGST_Input_Amt = parseFloat(
+        (
+          (this.ObjProductInfo.Taxable_Amount *
+            this.ObjProductInfo.IGST_Input_Rate) /
+          100
+        ).toFixed(2)
+      );
+      this.ObjProductInfo.IGST_Output_Amt = parseFloat(
+        (
+          (this.ObjProductInfo.Taxable_Amount *
+            this.ObjProductInfo.IGST_Output_Rate) /
+          100
+        ).toFixed(2)
+      );
+
+      this.ObjProductInfo.CGST_Input_Rate = 0;
+      this.ObjProductInfo.CGST_Input_Amt = 0;
+
+      this.ObjProductInfo.CGST_Output_Rate = 0;
+      this.ObjProductInfo.CGST_Output_Amt = 0;
+
+      this.ObjProductInfo.SGST_Input_Rate = 0;
+      this.ObjProductInfo.SGST_Input_Amt = 0;
+
+      this.ObjProductInfo.SGST_Output_Rate = 0;
+      this.ObjProductInfo.SGST_Output_Amt = 0;
+      this.ObjProductInfo.CGST_Rate = 0;
+      this.ObjProductInfo.SGST_Rate = 0;
+    }
+  }
   SaveStockBill(valid) {
     this.StockFormSubmitted = true;
     console.log(this.ObjCostCenterFROM);
@@ -1876,6 +1947,39 @@ export class StocktransferComponent implements OnInit {
         });
     }
   }
+  genSerialNo(input) {
+    if (this.serialNumberRange) {
+        // Extracting letters from the beginning of the string
+        let letters = input.match(/[a-zA-Z]+/g);
+
+        // Extracting numbers from the end of the string
+        let numbers = input.match(/\d+/g);
+        const num = parseInt(numbers[numbers.length - 1])
+        const addNum = (num + 1).toString()
+
+        //str.slice(0, -2)
+        if (addNum.length > numbers[numbers.length - 1].length) {
+            const newString = input.slice(0, -numbers[numbers.length - 1].length)
+            const addnewString = addNum.slice(-numbers[numbers.length - 1].length)
+            return undefined
+
+        }
+        else {
+            const newString = input.slice(0, -addNum.length)
+            return newString + addNum
+        }
+    }
+    else {
+        return true
+    }
+   
+
+}
+serialNumberRangeChange(){
+  this.SelectedSerialNo = [];
+  this.Serial_No_Range = 0
+  this.Selectedsl = undefined
+}
 }
 
 class SearchStock {
