@@ -347,7 +347,7 @@
                         [(ngModel)]="objAppointment.Audiogram_Remarks" ></textarea>
             </div>
             <div class="col-sm-4">
-                <label class="control-label">Audiogram</label>
+                <label class="control-label">Audiogram <sup *ngIf="databaseName === 'GN_Crystal_Mumbai'" class="text-danger">*</sup></label>
             <p-fileUpload #FileUploadAsset name="File" [multiple]="false" accept="image/*,.pdf" [customUpload]="true"
                 [chooseLabel]="'Browse'" [showUploadButton]="true" (uploadHandler)="onBasicUpload(FileUploadAsset)">
                 <ng-template let-File pTemplate="File">
@@ -818,8 +818,8 @@
             </div>
 
             <div class="row" style="margin-top: 2px;">
-                <div class="col-sm-4">
-                    <label class="control-label">Restult</label>
+                <div class="col-sm-2">
+                    <label class="control-label">Restult <sup *ngIf="databaseName === 'GN_Crystal_Mumbai'" class="text-danger">*</sup></label>
                     <select class="form-control"
                         name="Trial_Restult"
                         #Trial_Restult="ngModel"
@@ -835,8 +835,8 @@
                     </select>
                 </div>
 
-                <div class="col-sm-4" *ngIf="MISSEDOpen">
-                    <label class="control-label">Reason</label>
+                <div class="col-sm-3" *ngIf="MISSEDOpen">
+                    <label class="control-label">Reason <sup *ngIf="databaseName === 'GN_Crystal_Mumbai'" class="text-danger">*</sup></label>
                     <p-multiSelect 
                         [options]="MissedReasonList"
                         defaultLabel="Select Reason"
@@ -848,6 +848,25 @@
                         required
                         [styleClass]="'compacct-multiselect'" >
                     </p-multiSelect>    
+                </div>
+                <div class="col-sm-3" *ngIf="(MISSEDOpen) && (databaseName === 'GN_Crystal_Mumbai')">
+                    <label class="control-label">Final Price Offered After Discount <sup class="text-danger">*</sup></label>
+                    <input class="form-control" name="Price" #Price="ngModel" [(ngModel)]="objAppointment.Final_Price_After_Disc" CompacctDigitonly="true" [ngClass]="{'clearance':AppointmentFormSubmitted && Price?.errors?.required}" required>
+
+                </div>
+                <div class="col-sm-2" *ngIf="(objAppointment.Trial_Restult === 'ON TRIAL') && (databaseName === 'GN_Crystal_Mumbai')">
+                    <label class="control-label">For Days <sup class="text-danger"></sup></label>
+                    <div class="input-group">  
+                        <input class="form-control" name="fordays" #fordays="ngModel"
+                        [(ngModel)]="objAppointment.Trial_days"
+                        placeholder="For Days"
+                        CompacctDigitonly="true"
+                        [ngClass]="{'clearance':AppointmentFormSubmitted && fordays?.errors?.required}"
+                        >
+                            <span class="input-group-addon">
+                                Days
+                            </span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -865,7 +884,7 @@
 
         <div class="row">
             <div class="col-sm-4">
-                <label class="control-label">Remarks</label>
+                <label class="control-label">Remarks <sup *ngIf="databaseName === 'GN_Crystal_Mumbai'" class="text-danger">*</sup></label>
                 <input class="form-control"
                     name="Remarks"
                     #Remarks="ngModel"
@@ -1163,14 +1182,29 @@
             </div>
 
             <div class="row" style="margin-top: 2px;">
-                <div class="col-sm-4">
+                <div class="col-sm-2">
                     <label class="control-label">Restult</label>
                     <div class="label-t">{{objAppointment.Trial_Restult ? objAppointment.Trial_Restult : '-'}}</div>
                 </div>
 
-                <div class="col-sm-4" *ngIf="MISSEDOpen">
+                <div class="col-sm-3" *ngIf="MISSEDOpen">
                     <label class="control-label">Reason</label>
                     <div class="label-t">{{objAppointment.Trail_Missed_Reason ? objAppointment.Trail_Missed_Reason : '-'}}</div>
+                </div>
+
+                <div class="col-sm-3" *ngIf="(MISSEDOpen) && (databaseName === 'GN_Crystal_Mumbai')">
+                    <label class="control-label">Final Price Offered After Discount <sup *ngIf="databaseName === 'GN_Crystal_Mumbai'" class="text-danger">*</sup></label>
+                    <div class="label-t">{{objAppointment.Final_Price_After_Disc ? objAppointment.Final_Price_After_Disc : '-'}}</div>
+                </div>
+
+                <div class="col-sm-2" *ngIf="(objAppointment.Trial_Restult === 'ON TRIAL') && (databaseName === 'GN_Crystal_Mumbai')">
+                    <label class="control-label">For Days <sup class="text-danger">*</sup></label>
+                    <div class="input-group">  
+                        <div class="label-t">{{objAppointment.Trial_days ? objAppointment.Trial_days : '-'}}</div>
+                            <span class="input-group-addon">
+                                Days
+                            </span>
+                    </div>
                 </div>
             </div>
         </div>

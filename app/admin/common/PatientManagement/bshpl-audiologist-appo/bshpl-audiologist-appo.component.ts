@@ -81,6 +81,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   objAudiologist: Audiologist = new Audiologist();
   objSearch: Search = new Search();
   objCompletedSearch: CompletedSearch = new CompletedSearch();
+  databaseName:any;
 
   @ViewChild("FileUploadAsset", { static: false }) FileUploadAsset!: FileUpload;
   Loader: any;
@@ -107,18 +108,38 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.HAYesNoListL = ['YES', 'NO'];
     this.HAYesNoListR = ['YES', 'NO'];
     this.Trial_ForList = ['Binaural', 'Monorual'];
-    this.TrialRestultList = ['ADVANCE PAID', 'FITTED', 'MISSED'];
+    this.getDatabase();
     this.getAlldata();
     this.GetDegreeLossList();
     this.GetProductList();
     this.GetMissedReasonList();
     this.GetTestDoneList();
+    this.getResult();
   }
 
   TabClick(e: any) {
     this.tabIndexToView = e.index;
     this.items = ["PENDING", "COMPLETED"];
     this.clearData();
+  }
+  getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log(data)
+          this.getResult();
+        });
+  }
+  getResult(){
+    let resultoption:any = [];
+    if(this.databaseName === "GN_Crystal_Mumbai") {
+      resultoption = ['ADVANCE PAID', 'FITTED', 'MISSED', 'ON TRIAL'];
+    } else {
+      resultoption = ['ADVANCE PAID', 'FITTED', 'MISSED'];
+    }
+    this.TrialRestultList = resultoption;
   }
 
   getDateRange(dateRangeObj: any) {
@@ -278,15 +299,36 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.Cons_Name = undefined;
   }
 
+  checkdatabase(){
+    if(this.databaseName === "GN_Crystal_Mumbai"){
+      if(this.objAppointment.Audiogram) {
+        return true;
+      }
+      else {
+        this.AppoSpinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message ",
+          detail: "No Document Found"
+        });
+        return false;
+      }
+    }
+    else {
+      return true;
+    }
+  }
   SaveAppointment(valid: any) {
     // console.log("this.objAppointment.Trail_Missed_Reason",this.objAppointment.Trail_Missed_Reason);
     this.AppointmentFormSubmitted = true;
-    if (valid) {
+    if (valid && this.checkdatabase()) {
       this.AppoSpinner = true;
 
       this.objAppointment.Trial_ID = 0;
       this.objAppointment.Created_On = this.DateService.dateTimeConvert(new Date());
-
+      
       this.objAppointment.Trial_Done = this.objAppointment.Trial_Done ? this.objAppointment.Trial_Done : 'NA';
       this.objAppointment.EXPERIENCE_USER = this.objAppointment.EXPERIENCE_USER ? this.objAppointment.EXPERIENCE_USER : 'NA';
       this.objAppointment.Trial_For = this.objAppointment.Trial_For ? this.objAppointment.Trial_For : 'NA';
@@ -371,6 +413,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
           });
         }
       });
+      
     }
   }
 
@@ -464,7 +507,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   }
 
   MISSEDOnOFF() {
-    if (this.objAppointment.Trial_Restult == 'MISSED') {
+    if (this.objAppointment.Trial_Restult == 'MISSED' || this.objAppointment.Trial_Restult == 'ON TRIAL') {
       this.MISSEDOpen = true;
     }
     else {
@@ -911,7 +954,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         }
 
         if (this.objAppointment.Trial_Restult) {
-          if (this.objAppointment.Trial_Restult == 'MISSED') {
+          if (this.objAppointment.Trial_Restult == 'MISSED' || this.objAppointment.Trial_Restult == 'ON TRIAL') {
             this.MISSEDOpen = true;
           }
           else {
@@ -1120,4 +1163,6 @@ class Appointment{
 
   Audiogram: any;
   Audiogram_Remarks: any;
+  Final_Price_After_Disc:any;
+  Trial_days:any;
 }
