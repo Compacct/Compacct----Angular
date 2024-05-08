@@ -116,7 +116,6 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.GetProductList();
     this.GetMissedReasonList();
     this.GetTestDoneList();
-    this.getDatabase();
     this.getResult();
   }
 
