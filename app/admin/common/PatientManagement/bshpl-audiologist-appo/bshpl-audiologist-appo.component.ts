@@ -84,7 +84,6 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   objCompletedSearch: CompletedSearch = new CompletedSearch();
   databaseName:any;
 
-  databaseName:any;
 
   @ViewChild("FileUploadAsset", { static: false }) FileUploadAsset!: FileUpload;
   Loader: any;
@@ -153,15 +152,6 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     }
   }
 
-  getDatabase(){
-    this.$http
-        .get("/Common/Get_Database_Name",
-        {responseType: 'text'})
-        .subscribe((data: any) => {
-          this.databaseName = data;
-          console.log(data)
-        });
-  }
 
   AdultSoftHear(obj:any){
     if (obj) {
