@@ -7,6 +7,7 @@ import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { FileUpload } from 'primeng/primeng';
+import { log } from 'console';
 @Component({
   selector: 'app-bshpl-audiologist-appo',
   templateUrl: './bshpl-audiologist-appo.component.html',
@@ -83,6 +84,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   objCompletedSearch: CompletedSearch = new CompletedSearch();
   databaseName:any;
 
+
   @ViewChild("FileUploadAsset", { static: false }) FileUploadAsset!: FileUpload;
   Loader: any;
   constructor(
@@ -114,6 +116,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.GetProductList();
     this.GetMissedReasonList();
     this.GetTestDoneList();
+    this.getDatabase();
     this.getResult();
   }
 
@@ -149,6 +152,20 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     }
   }
 
+
+  AdultSoftHear(obj:any){
+    if (obj) {
+      console.log('obj',obj);
+      window.open('/New_Adult_Speech_Evaluation?Appo_ID=' + window.btoa(obj.Appo_ID));
+    }
+  }
+  ChildSoftHear(obj:any){
+    if (obj) {
+      console.log('obj',obj);
+      window.open('/New_Child_Speech_Evaluation?Appo_ID=' + window.btoa(obj.Appo_ID));
+    }
+  }
+
   getAlldata() {
     this.seachSpinner = true
     this.ngxService.start();
@@ -157,7 +174,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       ? this.DateService.dateConvert(new Date(this.objSearch.From_Date))
       : this.DateService.dateConvert(new Date());
     const end = this.objSearch.To_Date
-      ? this.DateService.dateConvert(new Date(this.objSearch.To_Date))
+      ? this.DateService.dateConvert(new Date(this.objSearch.To_Date)) 
       : this.DateService.dateConvert(new Date());
     this.objSearch.User_Id = Number(this.UserID);
 
@@ -180,7 +197,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.seachSpinner = false;
 
       this.allDetalis = data;
-      // console.log('allDetalis=====',this.allDetalis);
+      console.log('allDetalis=====',this.allDetalis);
       if (this.allDetalis.length) {
         this.allDetalisHeader = Object.keys(data[0]);
         // console.log('allDetalisHeader=====',this.allDetalisHeader);
