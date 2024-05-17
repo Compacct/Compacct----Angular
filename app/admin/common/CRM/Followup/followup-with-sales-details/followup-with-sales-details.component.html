@@ -1,4 +1,5 @@
 
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -63,11 +64,11 @@
                                 [paginator]="FollowupSalesDetailsList.length ? true : false"
                                 *ngIf='FollowupSalesDetailsList.length'
                                 [paginator]="true" 
-                                [rows]="100" 
+                                [rows]="50" 
                                 [rowHover]="true" 
                                 [autoLayout]="true" 
                                 sortMode="multiple" 
-                                [rowsPerPageOptions]="[100,200,300]" 
+                                [rowsPerPageOptions]="[50,100,200,300]" 
                                 [globalFilterFields]='FollowupSalesDetailsListDynmic'
                                     [rowHover]="true" #dt2>
                                     <ng-template pTemplate="caption">
@@ -94,10 +95,10 @@
                                                                     <span class="caret"></span>
                                                                 </button>
                                                     <ul class="dropdown-menu">
-                                                        <!-- <li>
+                                                        <li>
                                                             <a (click)="followup(col)">
                                                             <i class="fa fa-commenting-o"> </i>Followup</a>
-                                                        </li> -->
+                                                        </li>
                                                         <li>
                                                             <a (click)="redirectPatientDetails(col)">
                                                             <i class="fa fa-fw fa fa-clone"></i>View Details</a>

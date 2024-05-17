@@ -144,13 +144,13 @@
                                                                     Adult Assessment
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="databaseName === 'GN_Soft_Hear_UP'">
+                                                            <li *ngIf="(databaseName === 'GN_Soft_Hear_UP')&&(col.Age>10)">
                                                                 <a (click)="AdultSoftHear(col)">
                                                                     <i class="fa fa-wheelchair"></i>
                                                                     Adult Assessment
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="databaseName === 'GN_Soft_Hear_UP'">
+                                                            <li *ngIf="(databaseName === 'GN_Soft_Hear_UP')&&(10>col.Age)">
                                                                 <a (click)="ChildSoftHear(col)">
                                                                     <i class="fa fa-child"></i>
                                                                     Child Assessment

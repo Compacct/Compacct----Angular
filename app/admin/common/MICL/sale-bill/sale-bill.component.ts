@@ -16,6 +16,7 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
   encapsulation: ViewEncapsulation.None
 })
 export class SaleBillComponent implements OnInit {
+  browseSpinner:boolean = false;
   tabIndexToView = 0;
   buttonname = "Create";
   items: any = [];
@@ -106,6 +107,7 @@ export class SaleBillComponent implements OnInit {
     this.router.navigate(['./MICL_Sale_Bill']);
   }
   clearData() {
+    this.browseSpinner = false;
     this.SaleBillFormSubmitted = false;
     this.TCSTaxRequiredValidation = false;
     this.ObjTopSale.Sub_Ledger_ID = undefined;
@@ -149,6 +151,7 @@ export class SaleBillComponent implements OnInit {
   }
   GetSerarchBrowse(Valid: any) {
     this.SerarchSaleBill = [];
+    this.browseSpinner = true;
     const start = this.ObjBrowseSaleBill.From_Date
       ? this.DateService.dateConvert(new Date(this.ObjBrowseSaleBill.From_Date))
       : this.DateService.dateConvert(new Date());
@@ -170,6 +173,7 @@ export class SaleBillComponent implements OnInit {
         if (data.length) {
           this.SerarchSaleBill = data;
           this.SerarchSaleBillHeader = data.length ? Object.keys(data[0]): []  
+          this.browseSpinner = false;
           }       
       });
     }
@@ -638,14 +642,19 @@ export class SaleBillComponent implements OnInit {
   }
   Print(DocNo) {
     if (DocNo) {
-      const objtemp = {
-        "SP_String": "SP_MICL_Sale_Bill",
-        "Report_Name_String": "Sale_Bill_Print"
+      if(DocNo){
+       const url = `/Report/Print/MICL/sale_bill_print.html?Doc_No=${DocNo}`;
+        window.open(url,"Print",  'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      
       }
-      this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
-        var printlink = data[0].Column1;
-        window.open(printlink + "?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
-      })
+      // const objtemp = {
+      //   "SP_String": "SP_MICL_Sale_Bill",
+      //   "Report_Name_String": "Sale_Bill_Print"
+      // }
+      // this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
+      //   var printlink = data[0].Column1;
+      //   window.open(printlink + `?Doc_No=${DocNo}`, "Print", 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      // })
     }
   }
   PrintChallan(DocNo){
