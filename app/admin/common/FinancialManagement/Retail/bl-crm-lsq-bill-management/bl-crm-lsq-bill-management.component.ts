@@ -84,6 +84,7 @@ export class BlCrmLsqBillManagementComponent implements OnInit {
   Search(valid) {
     this.LSQbillList = [];
     this.check_all = false;
+    this.Spinner = false;
     this.LSQFormseachSpinner = true;
     this.SearchFormSubmitted = true;
     this.ObjSearch.From_Date = this.ObjSearch.From_Date
@@ -103,7 +104,7 @@ export class BlCrmLsqBillManagementComponent implements OnInit {
     console.log(typeof data)
      this.LSQbillList = data;
      this.LSQFormseachSpinner = false;
-     console.log('LSQbillList =====',data)
+    //  console.log('LSQbillList =====',data)
      for(let i = 0; i < this.LSQbillList.length ; i++ ) {
       if(this.LSQbillList[i].LSQ_Inv_Sent === "Y") {
         this.LSQbillList[i].confirmLSQdisabled = true;
@@ -128,62 +129,21 @@ export class BlCrmLsqBillManagementComponent implements OnInit {
       }
     }
   }
-  Save(){
+  async Save(){
     this.confirmlsqlist = [];
     this.afterSave = [];
+    let reportnamepeninv = "";
     if(Object.keys(this.LSQbillList).length){
       this.confirmlsqlist = this.LSQbillList.filter(el=>el.confirm_LSQ === true)
       console.log(this.confirmlsqlist)
       if(this.confirmlsqlist.length){
           for(let i = 0; i < this.confirmlsqlist.length ; i++ ) {
-            const leadObj = {
-              LSQ_Lead_Id : this.confirmlsqlist[i].LSQ_Lead_Id
-            }
-            const billObj = {
-              Doc_No : this.confirmlsqlist[i].Doc_No
-            }
-            console.log('leadObj===',leadObj)
-            // leaddata.push(leadbillObj)
-            console.log('billObj===',billObj)
-            if(this.confirmlsqlist[i].LSQ_Lead_Id){
-              this.SaveLSQLead(leadObj)
-            }
-            else {
-              this.SaveLSQBill(billObj)
-            }
-          }
-      }
-    }
-  }
-  SaveLSQLead(leadid) {
-    console.log(leadid)
-    let reportnamepeninv = "";
-      // reportnamepeninv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=KLD20";
-    if (leadid) {
-      // this.$http.post(reportnamepeninv,[leadid]).subscribe((data: any) => {
-        let data = [{Doc_No:'1234'}]
-        console.log(data)
-        if(data.length){
-          const billObj = {
-            Doc_No : data[0].Doc_No
-          }
-          this.SaveLSQBill(billObj);
-        }
-      // })  
-    } 
-  }
-  SaveLSQBill(billno) {
-    console.log(billno)
-    let reportnamepeninv = "";
-      // reportnamepeninv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=KLD20";
-    if (billno) {
-      // this.$http.post(reportnamepeninv,[billno]).subscribe((data: any) => {
-        let data = [{column1:'done'}]
-        console.log(data)
-        this.afterSave.push(data)
-      // })  
-      if(this.afterSave.length == this.confirmlsqlist.length){
-        console.log('afterSave>>>',this.afterSave.length, '==' ,this.confirmlsqlist.length)
+            console.log(this.confirmlsqlist[i].Doc_No)
+    this.Spinner = true;
+    reportnamepeninv = "https://bshplcallcenteraz.azurewebsites.net/api/LSQ_Manual_Update?code=uBUjXb45p9I0QG5_2i2NxKR6irii2KwoShigslc4PWiNAzFuoBjuYA==&billno=";
+    if (this.confirmlsqlist[i].Doc_No) {
+      await this.$http.post(reportnamepeninv+this.confirmlsqlist[i].Doc_No, {}).toPromise().then((data: any) => {
+        // console.log(data)
         this.Search(true);
         this.Spinner = false;
         this.ngxService.stop();
@@ -192,8 +152,32 @@ export class BlCrmLsqBillManagementComponent implements OnInit {
           key: "compacct-toast",
           severity: "success",
           summary: "Invoice ",
-          detail: 'Save successfully'
+          detail: data[0].msg
         });
+      }).catch(e=>{
+        this.Spinner = false;
+        this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Error ",
+          detail: e.error[0].msg
+        });
+       })
+    } 
+    else {
+           this.Spinner = false;
+           this.ngxService.stop();
+           this.compacctToast.clear();
+           this.compacctToast.add({
+             key: "compacct-toast",
+             severity: "error",
+             summary: "Error ",
+             detail: 'No Document found.'
+           });
+          }
+          }
       }
       else {
         this.Spinner = false;
@@ -203,10 +187,21 @@ export class BlCrmLsqBillManagementComponent implements OnInit {
           key: "compacct-toast",
           severity: "error",
           summary: "Error ",
-          detail: 'Something wrong'
+          detail: 'No Data Select'
         });
       }
-    } 
+    }
+    else {
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Error ",
+        detail: 'No Data Select'
+      });
+    }
   }
 
   onReject() {
