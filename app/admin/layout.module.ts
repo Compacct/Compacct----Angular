@@ -529,6 +529,7 @@ import { BlCrmEnqCaseHistoryComponent } from './common/PatientManagement/bl-crm-
 import { NewAdultSpeechEvaluationComponent } from './common/PatientManagement/new-adult-speech-evaluation/new-adult-speech-evaluation.component';
 import { NewChildSpeechEvaluationComponent } from './common/PatientManagement/new-child-speech-evaluation/new-child-speech-evaluation.component';
 import { BlCrmLsqBillManagementComponent } from './common/FinancialManagement/Retail/bl-crm-lsq-bill-management/bl-crm-lsq-bill-management.component';
+import { CouponCheckingComponent } from './common/PatientManagement/coupon-checking/coupon-checking.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -972,7 +973,8 @@ import { BlCrmLsqBillManagementComponent } from './common/FinancialManagement/Re
     BlCrmEnqCaseHistoryComponent,
     NewAdultSpeechEvaluationComponent,
     NewChildSpeechEvaluationComponent,
-    BlCrmLsqBillManagementComponent
+    BlCrmLsqBillManagementComponent,
+    CouponCheckingComponent
   ],
   imports: [
     CommonModule,
