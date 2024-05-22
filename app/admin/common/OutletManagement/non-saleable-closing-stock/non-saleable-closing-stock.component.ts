@@ -52,6 +52,7 @@ export class NonSaleableClosingStockComponent implements OnInit {
   maxDate:Date;
   EODstatus: any;
   docdate: any;
+  lockdate: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -73,6 +74,7 @@ export class NonSaleableClosingStockComponent implements OnInit {
     });
     this.getbilldate();
     this.getCostCenter();
+    this.getLockDate();
   }
   TabClick(e){
     //console.log(e)
@@ -80,6 +82,47 @@ export class NonSaleableClosingStockComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.clearData();
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate",
+     //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    // console.log('LockDate===',data);
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
   }
   getbilldate(){
     const obj = {
@@ -240,6 +283,7 @@ export class NonSaleableClosingStockComponent implements OnInit {
     }
   }
   SaveOTcloingWithBatch(){
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.BillDate)))) {
     this.ngxService.start();
     //if(valid){
       const obj = {
@@ -280,6 +324,7 @@ export class NonSaleableClosingStockComponent implements OnInit {
         }
       })
     //}
+    }
   }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
@@ -325,7 +370,8 @@ const obj = {
   Edit(DocNo){
     // console.log("editmaster ==",DocNo);
      this.clearData();
-     if(DocNo.Doc_No){
+    if(DocNo.Doc_No){
+      if(this.checkLockDate(DocNo.Doc_Date)){
      this.Doc_No = DocNo.Doc_No;
      this.tabIndexToView = 1;
      this.productlist = [];
@@ -336,6 +382,7 @@ const obj = {
      // console.log("this.EditDoc_No ==", this.Objproduction.Doc_No);
      this.GetdataforEdit(this.Doc_No);
      }
+    }
    }
    GetdataforEdit(Doc_No){
      this.NsOTclosingstockFormSubmitted = false;
@@ -411,7 +458,8 @@ const obj = {
   Delete(row){
     // console.log("delete",row)
      this.del_doc_no = undefined;
-     if (row.Doc_No) {
+    if (row.Doc_No) {
+      if(this.checkLockDate(row.Doc_Date)){
       this.del_doc_no = row.Doc_No;
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -421,6 +469,7 @@ const obj = {
         summary: "Are you sure?",
         detail: "Confirm to proceed"
       });
+      }
     }
    }
   onConfirm(){
