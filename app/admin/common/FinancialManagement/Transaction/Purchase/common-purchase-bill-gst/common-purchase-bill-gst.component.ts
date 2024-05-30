@@ -149,6 +149,7 @@ export class CommonPurchaseBillGstComponent implements OnInit {
   TCS_Per: any;
   TCSdataList:any = [];
   editDocNo: any;
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -172,6 +173,7 @@ export class CommonPurchaseBillGstComponent implements OnInit {
       Header: "Purchase Bill GST",
       Link: " Financial Management -> Purchase -> Purchase Bill GST"
     });
+    this.getLockDate();
     this.Finyear();
     this.GetVendor();
     this.GetStateList();
@@ -238,6 +240,47 @@ export class CommonPurchaseBillGstComponent implements OnInit {
     this.editDocNo = undefined;
   
    }
+   getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
+  }
    Finyear() {
     this.$http
       .get("Common/Get_Fin_Year_Date?Fin_Year_ID=" + this.$CompacctAPI.CompacctCookies.Fin_Year_ID)
@@ -1164,6 +1207,7 @@ export class CommonPurchaseBillGstComponent implements OnInit {
     this.TCSTaxRequiredValidation = true;
     this.validatation.required = true
     if(valid && this.TCSTaxRequired){
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.DocDate)))) {
       this.Spinner = true;
       this.ngxService.start();
      this.compacctToast.clear();
@@ -1175,6 +1219,7 @@ export class CommonPurchaseBillGstComponent implements OnInit {
        summary: "Are you sure?",
        detail: "Confirm to proceed"
      });
+    }
     }
    }
   async onConfirmSave(){
@@ -1304,6 +1349,7 @@ export class CommonPurchaseBillGstComponent implements OnInit {
    // console.log("Delete Col",col);
     this.DocNo = undefined;
     if(col.Doc_No){
+    if(this.checkLockDate(col.Doc_Date)){
      this.DocNo = col.Doc_No
      this.compacctToast.clear();
      this.compacctToast.add({
@@ -1313,6 +1359,7 @@ export class CommonPurchaseBillGstComponent implements OnInit {
        summary: "Are you sure?",
        detail: "Confirm to proceed"
      });
+    }
     }
    }
    onConfirmDel(){
@@ -1361,11 +1408,13 @@ export class CommonPurchaseBillGstComponent implements OnInit {
   EditPurchaseBill(col){
     this.editDocNo = undefined;
     if(col.Doc_No){
+    if(this.checkLockDate(col.Doc_Date)){
      this.editDocNo = col.Doc_No
      this.tabIndexToView = 1;
     this.items = [ 'BROWSE', 'UPDATE'];
     this.buttonname = "Update";
     this.geteditData(col.Doc_No);
+    }
     }
   }
   geteditData(Dno){

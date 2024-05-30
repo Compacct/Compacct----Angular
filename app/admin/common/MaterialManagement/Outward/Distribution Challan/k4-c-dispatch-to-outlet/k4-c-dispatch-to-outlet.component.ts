@@ -150,6 +150,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
   expotSpinner = false;
   generatedisabledbutton: boolean = true;
   generatedisabled: boolean = false;
+  lockdate:any;
+  proSpinner:boolean = false;
 
   constructor(
     private $http: HttpClient,
@@ -172,7 +174,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
       Header: "Dispatch Challan",
       Link: "Material Management -> Outward -> Dispatch Challan"
     });
-
+    this.getLockDate();
     this.GetDate();
     this.GetFromGodown();
     this.GetVehicle();
@@ -269,6 +271,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
   // this.BackupIndentList = [];
   //this.IndentFilter = []
   this.ngxService.stop();
+  this.proSpinner = false;
   }
   getCostcenter(){
     console.log(this.Objdispatch.Brand_ID)
@@ -420,6 +423,49 @@ export class K4CDispatchToOutletComponent implements OnInit {
     })
 
   }
+
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate",
+     //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    // console.log('LockDate===',data);
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
+  }
+
   // SAVE DISPATCH
   getTotalIndValue(){
     let Indval = 0;
@@ -451,6 +497,7 @@ export class K4CDispatchToOutletComponent implements OnInit {
     return issueval ? issueval.toFixed(2) : '-';
   }
   showDialog() {
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.ChallanDate)))) {
     this.displaysavepopup = true;
     this.filteredData = [];
   //   this.BackUpproductDetails.forEach(obj => {
@@ -466,7 +513,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
     this.filteredData.push(obj);
      // console.log("this.filteredData===",this.filteredData);
   }
- })
+  })
+  }
   }
   // FOR SAVE DISPATCH
   getReqNo(){
@@ -760,8 +808,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
     const ctrl = this;
     const subledgeridObj = $.grep(ctrl.FranchiseList,function(item: any) {return item.Cost_Cen_ID == ctrl.Objdispatch.Cost_Cen_ID})[0];
     console.log(subledgeridObj);
-    this.subledgerid = subledgeridObj.Sub_Ledger_ID;
-    this.franchisecostcenid = subledgeridObj.Cost_Cen_ID;
+    this.subledgerid = subledgeridObj.Sub_Ledger_ID ? subledgeridObj.Sub_Ledger_ID : undefined;
+    this.franchisecostcenid = subledgeridObj.Cost_Cen_ID ? subledgeridObj.Cost_Cen_ID : undefined;
     console.log("this.subledgerid ==", this.subledgerid)
     
    }
@@ -1178,6 +1226,7 @@ editmaster(masterProduct){
   this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
   this.outLetDis = true;
   if(masterProduct.Doc_No){
+  if(this.checkLockDate(masterProduct.Doc_Date)){
   this.tabIndexToView = 1;
   this.items = ["BROWSE", "UPDATE"];
   this.buttonname = "Update";
@@ -1190,6 +1239,7 @@ editmaster(masterProduct){
   this.AccQtydis = true;
   this.geteditmaster(masterProduct);
   this.getIndentForEdit(masterProduct);
+  }
   }
 }
 GeneratingBillNo(masterProduct){
@@ -1646,6 +1696,7 @@ GetSelectedBatchqty() {
 GetshowProduct(outletValid,DispatchValid){
   this.OutletFormSubmit = true;
   this.DispatchFormSubmit = true;
+  this.proSpinner = true;
   if(this.dataforShowproduct()){
   if(outletValid && DispatchValid){
     //this.SpinnerShow = true;
@@ -1670,6 +1721,7 @@ GetshowProduct(outletValid,DispatchValid){
       // this.indentdateDisabled = false;
       // this.From_Godown_ID_Dis = true;
       // this.To_Godown_ID_Dis = true;
+      this.proSpinner = false;
 
       //this.clearData();
     })
@@ -1771,6 +1823,7 @@ deleteDispatch(masterProduct){
  console.log("deleteCol",masterProduct)
  this.doc_no = undefined;
  if (masterProduct.Doc_No) {
+  if(this.checkLockDate(masterProduct.Doc_Date)){
   this.doc_no = masterProduct.Doc_No;
   this.doc_date = masterProduct.Doc_Date;
   this.compacctToast.clear();
@@ -1781,7 +1834,8 @@ deleteDispatch(masterProduct){
     summary: "Are you sure?",
     detail: "Confirm to proceed"
   });
-}
+  }
+ }
 }
 Print(Doc_No){
   console.log("print",Doc_No);

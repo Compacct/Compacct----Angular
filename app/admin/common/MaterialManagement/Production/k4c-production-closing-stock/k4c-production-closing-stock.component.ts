@@ -69,6 +69,7 @@ export class K4cProductionClosingStockComponent implements OnInit {
   productlistforexcel:any = [];
   datepickerdisable = true;
   Checklist:any = [];
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -98,6 +99,7 @@ export class K4cProductionClosingStockComponent implements OnInit {
       Header: "Production Closing Stock  - " + this.MaterialType_Flag, //this.MaterialType_Flag + 
       Link: " Material Management -> Production Closing Stock - " + this.MaterialType_Flag
     });
+    this.getLockDate();
     this.GetBrand();
     this.GetCostCen();
     this.GetBCostCen();
@@ -116,11 +118,50 @@ export class K4cProductionClosingStockComponent implements OnInit {
      this.SelectedIndent = [];
      this.datepickerdisable = true;
      this.EditList = [];
-   }
-   onReject() {
+  }
+  onReject() {
     this.compacctToast.clear("c");
     this.compacctToast.clear("s");
     this.Spinner = false;
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
   }
   GetBrand(){
     const obj = {
@@ -132,7 +173,7 @@ export class K4cProductionClosingStockComponent implements OnInit {
        console.log("Brand List ===",this.BrandList);
     })
   }
-   GetCostCen(){
+  GetCostCen(){
     const tempObj = {
       Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
       Material_Type : this.MaterialType_Flag ? this.MaterialType_Flag : 'NA'
@@ -473,8 +514,8 @@ ConsumptionCal(indx,obj){
 
              }
     }
-   }
-   saveqty(){
+  }
+  saveqty(){
     let flag = true;
    for(let i = 0; i < this.ProductList.length ; i++){
     if(Number(this.ProductList[i].Batch_Qty) <  Number(this.ProductList[i].Issue_Qty)){
@@ -487,6 +528,7 @@ ConsumptionCal(indx,obj){
   // SAVE AND UPDATE
   SaveBeforeCheck(){
     this.Spinner = true;
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.todayDate)))) {
      if (this.ProductList.length) {
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -499,6 +541,7 @@ ConsumptionCal(indx,obj){
     }
     else {
     this.Spinner = false;
+    }
     }
   }
   dataforSaveRawMaterialIssue(){
@@ -783,6 +826,7 @@ EditIntStock(col){
   this.ObjProClosingStock.Doc_No = undefined;
   this.Doc_Date = undefined;
   if(col.Doc_No){
+   if(this.checkLockDate(col.Doc_Date)){
    this.ObjProClosingStock.Doc_No = col.Doc_No;
    this.Doc_Date = new Date(col.Doc_Date);
    this.tabIndexToView = 1;
@@ -797,6 +841,7 @@ EditIntStock(col){
   //  setTimeout(function () {
     this.GetdataforEdit()
   //  }, 600)
+  }
   }
 
 }
@@ -933,6 +978,7 @@ geteditmaster(Doc_No){
 DeleteIntStocktr(col){
   this.ObjProClosingStock.Doc_No = undefined;
   if(col.Doc_No){
+    if(this.checkLockDate(col.Doc_Date)){
     this.ObjProClosingStock.Doc_No = col.Doc_No;
     this.compacctToast.clear();
     this.compacctToast.add({
@@ -942,6 +988,7 @@ DeleteIntStocktr(col){
       summary: "Are you sure?",
       detail: "Confirm to proceed"
     });
+    }
   }
 }
 onConfirm(){

@@ -95,7 +95,8 @@ export class K4cProductionVoucherNewComponent implements OnInit {
   SelectedIndent : any;
   TIndentList:any = [];
   Cost_Cen_Id: any;
-  editIndentList:any = [];;
+  editIndentList:any = [];
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -120,6 +121,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
         Header: this.Param_Flag,
         Link: " Material Management -> Production -> " + this.Param_Flag
       });
+      this.getLockDate();
       this.GetBrand();
       this.GetSelectProcess();
       this.GetSift();
@@ -143,7 +145,47 @@ export class K4cProductionVoucherNewComponent implements OnInit {
     this.IndentFilter = [];
     this.seachSpinner = false;
   }
-
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate",
+     //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    // console.log('LockDate===',data);
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
+  }
   // CREATE START
   GetBrand(){
     const obj = {
@@ -626,6 +668,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
   showDialog(valid) {
     this.ProductionFormSubmitted2 = true;
     if(valid){
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.Datevalue)))) {
       this.ProductionFormSubmitted2 = false;
     this.displaysavepopup = true;
     this.filteredData = [];
@@ -636,7 +679,12 @@ export class K4cProductionVoucherNewComponent implements OnInit {
        // console.log("this.filteredData===",this.filteredData);
     }
    })
-  }
+    } else {
+      this.Spinner = false;
+    }
+    } else {
+      this.Spinner = false;
+    }
   }
   getReqNo(){
     let Rarr:any =[]
@@ -910,6 +958,7 @@ const obj = {
   this.AddProDetails = [];
   this.clearData();
   if(DocNo.Doc_No){
+  if(this.checkLockDate(DocNo.Doc_Date)){
   this.checkBoxdis = false;
   this.editDis = true;
   this.Objproduction.Doc_No = DocNo.Doc_No;
@@ -920,6 +969,7 @@ const obj = {
   this.GetEditProduction(this.Objproduction.Doc_No);
   this.getIndentForEdit(this.Objproduction.Doc_No);
   //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
+  }
   }
   }
   GetEditProduction(Doc_No){
@@ -1075,6 +1125,7 @@ const obj = {
   DeleteProduction(docNo){
     this.Objproduction.Doc_No = undefined ;
     if(docNo.Doc_No){
+    if(this.checkLockDate(docNo.Doc_Date)){
     this.Objproduction.Doc_No = docNo.Doc_No;
     this.doc_date = docNo.Doc_Date;
     this.compacctToast.clear();
@@ -1085,6 +1136,7 @@ const obj = {
     summary: "Are you sure?",
     detail: "Confirm to proceed"
     });
+    }
     }
   }
   onConfirm() {

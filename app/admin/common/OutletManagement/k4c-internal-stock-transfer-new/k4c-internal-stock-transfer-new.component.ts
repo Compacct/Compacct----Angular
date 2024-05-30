@@ -70,6 +70,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
   Cost_Cen_Id: any;
   BackUpProductNamelList:any = [];
   editProNoList:any = [];
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -88,6 +89,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
       Header: "Internal Stock Transfer",
       Link: " Material Management -> Internal Stock Transfer"
     });
+    this.getLockDate();
     this.GetBrand();
     this.GetFromCostCen();
     //this.GetFromGodown();
@@ -107,7 +109,47 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
     this.ProductionFilter = [];
     this.seachSpinner = false;
   }
-
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate",
+     //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    // console.log('LockDate===',data);
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
+  }
   //CREATE START
   GetBrand(){
     const obj = {
@@ -492,6 +534,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
     return Transval ? Transval : '-';
   }
   showDialog() {
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.Datevalue)))) {
     this.displaysavepopup = true;
     this.filteredData = [];
     this.ProductNamelList.forEach(obj => {
@@ -501,6 +544,9 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
        // console.log("this.filteredData===",this.filteredData);
     }
    })
+   } else {
+    this.Spinner = false;
+   }
   }
   SaveIntStocktr(){
     console.log("saveqty",this.saveqty());
@@ -683,6 +729,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
    // console.log("editmaster ==",DocNo);
     this.clearData();
     if(DocNo.Doc_No){
+    if(this.checkLockDate(DocNo.Doc_Date)){
     this.Objproduction.Doc_No = DocNo.Doc_No;
     this.tabIndexToView = 1;
     this.ProductNamelList = [];
@@ -691,6 +738,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
     // console.log("this.EditDoc_No ==", this.Objproduction.Doc_No);
     this.GetEditIntStock(this.Objproduction.Doc_No);
     this.getProNoForEdit(this.Objproduction.Doc_No);
+    }
     }
   }
   GetEditIntStock(Doc_No){
@@ -779,6 +827,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
   DeleteIntStocktr(docNo){
      this.Objproduction.Doc_No = undefined ;
      if(docNo.Doc_No){
+     if(this.checkLockDate(docNo.Doc_Date)){
      this.Objproduction.Doc_No = docNo.Doc_No;
      this.compacctToast.clear();
      this.compacctToast.add({
@@ -788,6 +837,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
      summary: "Are you sure?",
      detail: "Confirm to proceed"
     });
+    }
     }
   }
   onConfirm() {

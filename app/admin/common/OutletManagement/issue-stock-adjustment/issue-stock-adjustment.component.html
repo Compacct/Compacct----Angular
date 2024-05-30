@@ -129,19 +129,6 @@
                                                               Edit
                                                           </a>
                                                       </li>
-                                                      <!-- <li *ngIf= "col.Toyal_Qty != col.Accepted_Qty && $CompacctAPI.CompacctCookies.Cost_Cen_ID == col.To_Cost_Cen_ID">
-                                                        <a (click)="AcceptChallan(col)">
-                                                            <i class="fa fa-check"></i>
-                                                           Accepted Challan
-                                                        </a>
-                                                    </li>
-
-                                                       <li>
-                                                         <a (click)="editmaster(col)">
-                                                            <i class="fa fa-print" aria-hidden="true"></i>
-                                                            Print
-                                                        </a>
-                                                    </li> -->
                                                       <li>
                                                           <a (click)="DeleteAdjustment(col)">
                                                               <i class="fa fa-trash" aria-hidden="true"></i>
@@ -208,9 +195,6 @@
                                         [ngClass]="{'clearance':IssueStockFormSubmitted && issuecostcenter?.errors?.required}"
                                         required>
                                         <option  [ngValue]="undefined">Select</option>
-                                    <!-- <option *ngFor="let option of CostCenter" value="{{option.Cost_Cen_ID}}">
-                                        {{option.Location}}
-                                    </option> -->
                                     <option *ngFor = "let option of CostCenter" [value] ="option.Cost_Cen_ID">
                                       {{option.Cost_Cen_Name}}
                                     </option>
@@ -233,39 +217,6 @@
                                 </select>
 
                                 </div>
-                                <!-- <div class="col-sm-4">
-                                  <label class="control-label"
-                                          >Select Final Material <sup class="text-danger">*</sup> &nbsp;
-                                        </label>
-                                        <p-dropdown
-                                          [options]= "selectfinalmateriallist"
-                                          name="final_material"
-                                          [(ngModel)] ="ObjBomReciepe.Product_ID"
-                                          [showClear]="true"
-                                          [emptyFilterMessage]="' No Product Found'"
-                                          (onChange)="ProductChange()"
-                                          [filter]="true"
-                                          filterBy="label,value.name"
-                                          [resetFilterOnHide] = "true"
-                                          [placeholder]="'Select Product'"
-                                          [virtualScroll]="true"
-                                          itemSize="30"
-                                          #final_material="ngModel"
-                                          [required]="true"
-                                          [ngClass]="{'clearance': BomRecipeFormSubmitted && final_material?.errors?.required}"
-                                          required>
-                                        </p-dropdown> -->
-                                     <!-- <label class="control-label">Select Final Material <span class="text-danger">*</span></label>
-                                      <select class="form-control"
-                                         name="final_material"
-                                         #final_material="ngModel"
-                                         [(ngModel)]="ObjBomReciepe.Select_Final_Material"
-                                         [ngClass]="{'clearance': BomRecipeFormSubmitted && final_material?.errors?.required}">
-                                            <option  [ngValue]="undefined">Select</option>
-                                            <option *ngFor="let option of selectfinalmateriallist" [value]="option.Product_ID">
-                                                   {{option.Product_Description}}</option>
-                                      </select> -->
-                                  <!-- </div> -->
                                   <div class="col-sm-2">
                                     <label class="control-label">Remarks</label>
                                           <textarea class="form-control"
@@ -296,7 +247,7 @@
                           <p-table [value]="productlist" #dt1
                           [paginator] ="true"
                           [rows] ="100"
-                          [loading] = "seachSpinner"
+                          [loading] = "ProseachSpinner"
                           [rowHover] ="true"
                           [autoLayout] ="true"
                           sortMode ="multiple"

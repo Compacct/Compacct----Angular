@@ -17,30 +17,30 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
 export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
   Remark :any;
   ExDateTime:any;
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
   buttonname = "Save"
   ObjStockAdStoreItems : StockAdStoreItems = new StockAdStoreItems ();
-  BrandList = [];
-  CostCenter = [];
+  BrandList:any = [];
+  CostCenter:any = [];
   costcentdisableflag = false;
-  GodownId = [];
+  GodownId:any = [];
   godowndisableflag = false;
-  ProductList = [];
+  ProductList:any = [];
   StockAdjStoreItemsFormSubmitted = false;
-  productaddSubmit = [];
+  productaddSubmit:any = [];
   myDate : Date;
   Expiry_Time : any;
   ObjBrowse : Browse  = new Browse();
   SearchFormSubmitted = false;
-  Searchedlist = [];
+  Searchedlist:any = [];
   ExpdatimelistWrtBatch: any;
   BrandDisable = false;
   Batchflag = false;
   Doc_No = undefined;
-  ViewList = [];
+  ViewList:any = [];
   ViewPoppup = false;
   Doc_date = undefined;
   Cost_Cent_ID = undefined;
@@ -51,6 +51,7 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
   del_doc_no = undefined;
   updexp_pop = false;
   del_pop = false;
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -68,6 +69,7 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
       Header: "Receive Stock Adjustment (Store Items)",
       Link: "Material Management -> Stock Adjustment (Store Items)"
     });
+    this.getLockDate();
     this.getbilldate();
     this.GetBrand();
     this.getCostCenter();
@@ -81,14 +83,47 @@ export class K4cStockAdjustmentStoreItemsComponent implements OnInit {
     this.clearData();
    // this.GetProduct();
   }
-//   GetBrand(){
-//     console.log("Brand ===", this.BrandList)
-//       this.BrandList =[
-//         {value : "1" , Name : "C4C"},
-//         {value : "2" , Name : "K4C"},
-//         {value : "Without Brand" , Name : "Without Brand"}
-//       ];
-// }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate",
+     //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    // console.log('LockDate===',data);
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
+  }
 getbilldate(){
   const obj = {
    "SP_String": "SP_Controller_Master",
@@ -246,7 +281,7 @@ getbilldate(){
   ProductChange() {
    if(this.ObjStockAdStoreItems.Product_ID) {
      const ctrl = this;
-     const productObj = $.grep(ctrl.ProductList,function(item) {return item.Product_ID == ctrl.ObjStockAdStoreItems.Product_ID})[0];
+     const productObj = $.grep(ctrl.ProductList,function(item:any) {return item.Product_ID == ctrl.ObjStockAdStoreItems.Product_ID})[0];
      //console.log(productObj);
      this.ObjStockAdStoreItems.Product_Type_ID = productObj.Product_Type_ID,
      this.ObjStockAdStoreItems.Product_Description = productObj.Product_Description;
@@ -377,7 +412,7 @@ getbilldate(){
     }
   GetDataForSave(){
     if(this.productaddSubmit.length) {
-      let tempArr =[];
+      let tempArr:any = [];
       const TempObj = {
         Doc_No : "A",
         Doc_Date : this.DateService.dateConvert(new Date(this.myDate)),
@@ -413,6 +448,7 @@ getbilldate(){
     }
   }
   SaveReceiveStock(){
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.myDate)))) {
     //if(valid){
       this.ngxService.start();
       const obj = {
@@ -453,6 +489,7 @@ getbilldate(){
         }
       })
     //}
+    }
   }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
@@ -463,6 +500,7 @@ getbilldate(){
   GetSearchedList(valid){
     this.SearchFormSubmitted = true;
     this.Searchedlist = [];
+    this.seachSpinner = true;
   const start = this.ObjBrowse.start_date
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
   : this.DateService.dateConvert(new Date());
@@ -487,6 +525,8 @@ const obj = {
    this.seachSpinner = false;
    this.SearchFormSubmitted = false;
   })
+  } else {
+    this.seachSpinner = false;
   }
   }
   View(DocNo){
@@ -528,6 +568,7 @@ const obj = {
     // console.log("delete",row)
      this.del_doc_no = undefined;
      if (row.Doc_No) {
+      if(this.checkLockDate(row.Doc_Date)){
       this.del_pop = true;
       this.updexp_pop = false;
       this.del_doc_no = row.Doc_No;
@@ -539,6 +580,7 @@ const obj = {
         summary: "Are you sure?",
         detail: "Confirm to proceed"
       });
+      }
     }
    }
     onConfirm2(){
@@ -594,6 +636,7 @@ const obj = {
     this.getbilldate();
     this.ngxService.stop();
     this.GetProduct();
+    this.seachSpinner = false;
   }
 
 }

@@ -352,7 +352,7 @@
                             <div class="clearfix"></div>
 
                             <div class="no-padding">
-                                <p-table [value]="productDetails" [globalFilterFields]="['Product_Description','Rate','Req_Qty','Batch_No','Issue_Qty','Accept_Reason']" [rowHover]="true" [autoLayout]="true" #dt2>
+                                <p-table [value]="productDetails" [loading]="proSpinner" [globalFilterFields]="['Product_Description','Rate','Req_Qty','Batch_No','Issue_Qty','Accept_Reason']" [rowHover]="true" [autoLayout]="true" #dt2>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">

@@ -58,6 +58,7 @@ export class K4cAcceptRawMaterialStockTransferComponent implements OnInit {
   view:boolean = false;
   accept:boolean = false;
   editIndentList:any = [];
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -83,10 +84,50 @@ export class K4cAcceptRawMaterialStockTransferComponent implements OnInit {
       Link: " Material Management -> " + this.MaterialType_Flag + " Stock Transfer - " + this.Param_Flag
     });
     this.GetBToCostCen();
+    this.getLockDate();
   })
   }
-   onReject() {
+  onReject() {
     this.compacctToast.clear("c");
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
   }
   GetBToCostCen(){
     // const tempObj = {
@@ -223,12 +264,14 @@ AcceptST(DocNo){
   this.From_outlet = undefined;
   this.To_Godown_ID = undefined;
   if(DocNo.Doc_No){
+    if(this.checkLockDate(DocNo.Doc_Date)){
     this.Doc_date = new Date(DocNo.Doc_Date);
     this.Doc_No = DocNo.Doc_No;
     this.From_outlet = DocNo.From_Godown_Name;
     this.To_Godown_ID = DocNo.To_Godown_Name;
     this.geteditmaster(DocNo.Doc_No);
     this.getIndentForEdit(DocNo.Doc_No);
+    }
   }
 
 }
