@@ -432,6 +432,8 @@ import { NewAdultSpeechEvaluationComponent } from "./common/PatientManagement/ne
 import { NewChildSpeechEvaluationComponent } from './common/PatientManagement/new-child-speech-evaluation/new-child-speech-evaluation.component';
 import { BlCrmLsqBillManagementComponent } from './common/FinancialManagement/Retail/bl-crm-lsq-bill-management/bl-crm-lsq-bill-management.component';
 import { CouponCheckingComponent } from './common/PatientManagement/coupon-checking/coupon-checking.component';
+import { ExpenseTrackingComponent } from './common/HR/expense-tracking/expense-tracking.component';
+
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -3308,6 +3310,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: CouponCheckingComponent,
       data: {
         title: 'Coupon Check'
+      }
+    },
+    {
+      path: 'BL_Txn_Expense_Tracking_V2',
+      component: ExpenseTrackingComponent,
+      data: {
+        title: 'Expense Tracking'
       }
     },
     

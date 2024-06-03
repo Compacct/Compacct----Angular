@@ -1,0 +1,135 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+	<ng-template let-message pTemplate="message">
+		<div style="text-align: center">
+			<i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+			<h3>{{ message.summary }}</h3>
+			<p>{{ message.detail }}</p>
+		</div>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-6">
+				<button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+			</div>
+			<div class="ui-g-6">
+				<button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+			</div>
+		</div>
+	</ng-template>
+</p-toast>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box box-primary">
+			<div class="form-horizontal">
+				<div class="box-body">
+					<form name="EmployeeForm" #EmployeeForm="ngForm">
+						<div class="form-group">
+							<div class="col-sm-4" style="margin-left: 20px !important">
+								<label class="control-label">Employee<sup class="text-danger">*</sup></label>
+								<select
+									name="employee"
+									class="form-control"
+									#employee="ngModel"
+									[(ngModel)]="empId"
+									[ngClass]="{ clearance: employeeFormSubmit && employee?.errors?.required }"
+									required>
+									<option *ngIf="EmplyList.length!=1" [ngValue]="undefined">Select</option>
+									<option *ngFor="let option of EmplyList" [ngValue]="option.Emp_ID">{{option.Emp_Name}}</option>
+								</select>
+							</div>
+						</div>
+					</form>
+					<br />
+					<p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+						<p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[0]" leftIcon="glyphicon glyphicon-floppy-save">
+							<form name="ExpenseForm" #ExpenseForm="ngForm">
+								<div class="form-group">
+									<div class="col-sm-4">
+										<label class="control-label">Expense Type<sup class="text-danger">*</sup></label>
+										<select
+											name="expense_type"
+											class="form-control"
+											#expense_type="ngModel"
+											[(ngModel)]="objExpenseTracking.Expence_Type_ID"
+											[ngClass]="{ clearance: expenseTrackingFormSubmit && expense_type?.errors?.required }"
+											required>
+											<option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of ExpTypeList" [ngValue]="option.Expence_Type_ID">{{option.Expence_Type}}</option>
+										</select>
+									</div>
+									<div class="col-sm-4">
+										<label class="control-label">Amount<sup class="text-danger">*</sup></label>
+										<input
+											type="text"
+											class="form-control"
+											placeholder="Amount"
+											name="amount"
+											#amount="ngModel"
+											[(ngModel)]="objExpenseTracking.Exp_Amount"
+											CompacctDigitonly="true"
+											[ngClass]="{ clearance: expenseTrackingFormSubmit && amount?.errors?.required }"
+											required />
+									</div>
+									<div class="col-sm-4">
+										<label class="control-label">Note<sup class="text-danger">*</sup></label>
+										<textarea
+											class="form-control"
+											placeholder="Note"
+											name="note"
+											#note="ngModel"
+											[(ngModel)]="objExpenseTracking.Exp_Note"
+											[ngClass]="{ clearance: expenseTrackingFormSubmit && note?.errors?.required }"
+											required>
+										</textarea>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-4">
+										<label class="control-label">Date<sup class="text-danger">*</sup></label>
+										<ejs-datepicker
+											[format]="'dd/MMM/yyyy'"
+											[(value)]="txn_Date"
+											[(ngModel)]="txn_Date"
+											name="txnDate"
+											#txnDate="ngModel"
+											required
+											[cssClass]="expenseTrackingFormSubmit && txnDate.errors?.required ? 'clearance' : ''">
+										</ejs-datepicker>
+									</div>
+                                    <div class="col-sm-4">
+										<label class="control-label">Upload File</label>
+										<span class="btn btn-xs btn-danger pull-right" (click)="ClearUploadInpt(UploadFile)" *ngIf="file"
+											><i class="fa fa-close"></i
+										></span>
+										<div>
+											<p-fileUpload
+												mode="basic"
+												name="filedoc"
+												#UploadFile
+												chooseLabel="BROWSE"
+												uploadLabel="UPLOAD"
+												accept="image/*"
+												[customUpload]="true"
+												(onSelect)="fileSelect()"
+												*ngIf="upload"
+												(uploadHandler)="onBasicUpload(UploadFile)">
+											</p-fileUpload>
+											<button name="pan" *ngIf="!upload" pButton pRipple type="button" label="Show Document" (click)="showDoc()"></button>
+										</div>
+									</div>
+									<div class="col-sm-4"></div>
+								</div>
+                                <div class="form-group">
+                                    <button  class="btn btn-primary pull-right" (click)="saveData(EmployeeForm.form.valid ,ExpenseForm.form.valid )" id="load" [disabled]="Spinner">
+                                        <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                      </button>
+                                </div>
+							</form>
+						</p-tabPanel>
+						<p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[1]" leftIcon="glyphicon glyphicon-hourglass"> </p-tabPanel>
+					</p-tabView>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

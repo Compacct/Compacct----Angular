@@ -530,6 +530,7 @@ import { NewAdultSpeechEvaluationComponent } from './common/PatientManagement/ne
 import { NewChildSpeechEvaluationComponent } from './common/PatientManagement/new-child-speech-evaluation/new-child-speech-evaluation.component';
 import { BlCrmLsqBillManagementComponent } from './common/FinancialManagement/Retail/bl-crm-lsq-bill-management/bl-crm-lsq-bill-management.component';
 import { CouponCheckingComponent } from './common/PatientManagement/coupon-checking/coupon-checking.component';
+import { ExpenseTrackingComponent } from './common/HR/expense-tracking/expense-tracking.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -974,7 +975,8 @@ import { CouponCheckingComponent } from './common/PatientManagement/coupon-check
     NewAdultSpeechEvaluationComponent,
     NewChildSpeechEvaluationComponent,
     BlCrmLsqBillManagementComponent,
-    CouponCheckingComponent
+    CouponCheckingComponent,
+    ExpenseTrackingComponent
   ],
   imports: [
     CommonModule,
