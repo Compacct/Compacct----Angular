@@ -109,6 +109,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   remarksFormSubmitted = false;
   advordernumber: any;
   viewgenerateList: any=[];
+  lockdate:any;
 
   constructor(
     private $http: HttpClient,
@@ -131,6 +132,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
       Header: "Custom Order Distribution",
       Link: "Material Management -> Outward -> Custom Order Distribution"
     });
+    this.getLockDate();
     this.GetDate();
     this.getBrand();
     this.GetVehicle();
@@ -177,6 +179,45 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
       //this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));??
       console.log("dateList  ===",this.myDate);
     })
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    // console.log('LockDate===',data);
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
   }
   getBrand(){
     const obj = {
@@ -364,6 +405,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   saveAdv(){
     console.log(this.saveqty());
     console.log(this.productDetails.length && this.saveqty());
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.ChallanDate)))) {
     if(this.productDetails.length && this.saveqty()){
       this.ngxService.start();
           this.saveData = [];
@@ -480,18 +522,22 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
                   });
             }
 
-            }
-            else{
-              this.ngxService.stop();
-              this.compacctToast.clear();
-                  this.compacctToast.add({
-                    key: "compacct-toast",
-                    severity: "error",
-                    summary: "Warn Message",
-                    detail: "Something Wrong"
-                  });
-            }
-  }
+    }
+    else{
+      this.ngxService.stop();
+      this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Something Wrong"
+          });
+    }
+    }
+    else {
+      this.ngxService.stop();
+    }
+    }
 // saveboxcharge(){
   // this.flagbox = false;
   // for(let i = 0; i < this.productDetails.length ; i++){
@@ -994,6 +1040,7 @@ PrintOrder(obj) {
     this.salebillno = undefined;
     this.advordernumber = undefined;
     if (masterProduct.Doc_No) {
+    if(this.checkLockDate(masterProduct.Doc_Date)){
      this.doc_no = masterProduct.Doc_No;
      this.doc_date = masterProduct.Doc_Date;
      this.salebillno = masterProduct.Bill_NO;
@@ -1006,7 +1053,8 @@ PrintOrder(obj) {
        summary: "Are you sure?",
        detail: "Confirm to proceed"
      });
-   }
+    }
+    }
    }
    onConfirm(valid){
      //this.Can_Remarks = true;

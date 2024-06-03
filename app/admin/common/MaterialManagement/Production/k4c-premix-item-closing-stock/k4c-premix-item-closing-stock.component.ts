@@ -69,6 +69,7 @@ export class K4cPremixItemClosingStockComponent implements OnInit {
   productlistforexcel:any = [];
   QtyfilterFLag = false;
   backupeditprolist:any = [];
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -100,6 +101,7 @@ export class K4cPremixItemClosingStockComponent implements OnInit {
       Header: "Premix Closing Stock - " + this.MaterialType_Flag ,
       Link: " Material Management -> Premix Closing Stock - " + this.MaterialType_Flag
     });
+    this.getLockDate();
     this.GetBrand();
     this.GetCostCen();
     this.GetBCostCen();
@@ -116,11 +118,50 @@ export class K4cPremixItemClosingStockComponent implements OnInit {
      this.BackupIndentList = [];
      this.TIndentList = [];
      this.SelectedIndent = [];
-   }
-   onReject() {
+  }
+  onReject() {
     this.compacctToast.clear("c");
     this.compacctToast.clear("s");
     this.Spinner = false;
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
   }
   GetBrand(){
     const obj = {
@@ -513,8 +554,8 @@ checkdecimal(obj){
 
              }
     }
-   }
-   saveqty(){
+  }
+  saveqty(){
     let flag = true;
    for(let i = 0; i < this.ProductList.length ; i++){
     if(Number(this.ProductList[i].Batch_Qty) <  Number(this.ProductList[i].Issue_Qty)){
@@ -527,6 +568,7 @@ checkdecimal(obj){
   // SAVE AND UPDATE
   SaveBeforeCheck(){
     this.Spinner = true;
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.todayDate)))) {
      if (this.BackupProList.length) {
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -536,6 +578,7 @@ checkdecimal(obj){
         summary: "Are you sure?",
         detail: "Confirm to proceed"
       });
+     }
     }
   }
   dataforSave(){
@@ -682,7 +725,7 @@ const obj = {
    this.PremixInvSearchFormSubmitted = false;
  })
 }
-}
+  }
 
   clearData(){
     this.QtyfilterFLag = false;
@@ -775,6 +818,7 @@ EditInvClosingStock(col){
   this.ObjProClosingStock.Doc_No = undefined;
   this.Doc_Date = undefined;
   if(col.Doc_No){
+  if(this.checkLockDate(col.Doc_Date)){
    this.ObjProClosingStock.Doc_No = col.Doc_No;
    this.Doc_Date = new Date(col.Doc_Date);
    this.tabIndexToView = 1;
@@ -788,6 +832,7 @@ EditInvClosingStock(col){
   //  setTimeout(function () {
     this.GetdataforEdit()
   //  }, 600)
+  }
   }
 
 }
@@ -953,6 +998,7 @@ getviewdata(Doc_No){
 DeleteInvClosingStock(col){
   this.ObjProClosingStock.Doc_No = undefined;
   if(col.Doc_No){
+    if(this.checkLockDate(col.Doc_Date)){
     this.ObjProClosingStock.Doc_No = col.Doc_No;
     this.compacctToast.clear();
     this.compacctToast.add({
@@ -962,6 +1008,7 @@ DeleteInvClosingStock(col){
       summary: "Are you sure?",
       detail: "Confirm to proceed"
     });
+    }
   }
 }
 onConfirm(){

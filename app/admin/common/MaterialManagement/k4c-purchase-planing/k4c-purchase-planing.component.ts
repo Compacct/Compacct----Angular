@@ -75,6 +75,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
   Credit_Days : number;
   PPdoc_no : any;
   EditList:any = [];
+  lockdate:any;
   
 
   constructor(
@@ -97,6 +98,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     this.getvendor();
     this.getmaterialtype();
     this.GetCostCen();
+    this.getLockDate();
    // this.getproducttype();
   }
   TabClick(e){
@@ -125,8 +127,47 @@ export class K4cPurchasePlaningComponent implements OnInit {
      // this.data = "(Show Requisition Products)"
      //this.Productlist = [];
       this.PPdoc_no = undefined;
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+  
    }
-   getmaterialtype(){
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
+  }
+  getmaterialtype(){
       this.producttypelist = [];
       // this.SelectedProductType = [];
       // let producttypelist = [];
@@ -139,8 +180,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
          this.materialtypelist = data;
        console.log("material type list======",this.materialtypelist);
      });
-   }
-   getproducttype(id?){
+  }
+  getproducttype(id?){
     // this.Productlist = [];
     // this.SelectedProductType = [];
     // let producttypelist = [];
@@ -177,7 +218,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     const d = id ? '' : this.getproduct();
    });
   }
-   getproduct(id?){
+  getproduct(id?){
     this.Productlist = [];
     this.ObjPurchasePlan.Product_ID = undefined;
     //if(this.ObjaddbillForm.Cost_Cen_ID){
@@ -481,10 +522,10 @@ export class K4cPurchasePlaningComponent implements OnInit {
         }
       console.log("vendor list======",this.vendorlist);
     });
- }
- CreditDaysChange() {
+  }
+  CreditDaysChange() {
   //this.ExpiredProductFLag = false;
- if(this.Vendor_ID) {
+  if(this.Vendor_ID) {
    const ctrl = this;
    const vendorCrDaysObj = $.grep(ctrl.vendorlist,function(item: any) {return item.Sub_Ledger_ID == ctrl.Vendor_ID})[0];
    console.log(vendorCrDaysObj);
@@ -584,14 +625,14 @@ export class K4cPurchasePlaningComponent implements OnInit {
     //this.ObjPurchasePlan = new PurchasePlan();
     //this.localpurchaseFLag = false;
     }
-   }
-   getClass(obj){
+  }
+  getClass(obj){
      return  Number(obj.Last_Purchase_Rate) > Number(obj.Sale_rate) ? "text-green-active" : Number(obj.Last_Purchase_Rate) < Number(obj.Sale_rate) ? "text-red-active" : "";
-   }
-   textcolor(col){
+  }
+  textcolor(col){
     return  Number(col.Last_Purchase_Rate) > Number(col.Rate) ? "text-green-active" : Number(col.Last_Purchase_Rate) < Number(col.Rate) ? "text-red-active" : "";
   }
-   delete(index) {
+  delete(index) {
     this.productaddSubmit.splice(index,1)
 
   }
@@ -667,8 +708,9 @@ export class K4cPurchasePlaningComponent implements OnInit {
       return JSON.stringify(tempArr);
 
     }
-   }
+  }
   SaveProduct(){
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.todayDate)))) {
     this.Spinner = true;
     const obj = {
       "SP_String": "SP_Purchase_Planning",
@@ -715,9 +757,9 @@ export class K4cPurchasePlaningComponent implements OnInit {
         });
       }
     })
-
-   }
-   GetDataforUpdate(){
+    }
+  }
+  GetDataforUpdate(){
      this.EditList = [];
     //console.log(this.ObjBrowse.Doc_No);
     const obj = {
@@ -775,17 +817,17 @@ export class K4cPurchasePlaningComponent implements OnInit {
         this.productaddSubmit.push(productObj);
    });
     })
-   }
+  }
 
    // CREATE TAB END
 
-   getDateRange(dateRangeObj) {
+  getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
       this.ObjBrowse.start_date = dateRangeObj[0];
       this.ObjBrowse.end_date = dateRangeObj[1];
     }
   }
-   GetSearchedlist(){
+  GetSearchedlist(){
     //this.SearchFactoryFormSubmit = true;
     this.seachSpinner = true;
     this.Searchedlist = [];
@@ -816,8 +858,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
      }
    })
   // }
-   }
-   ApprovedCheckBox(){
+  }
+  ApprovedCheckBox(){
     //  if(this.ApprovedFLag){
     //   var App = this.Searchedlist.filter((elem) => elem.Autho_One_Staus == "APPROVED")[0];
     //   return App ;
@@ -835,8 +877,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
       this.Searchedlist = this.BackupSearchedlist;
     }
     console.log("approved==",this.Searchedlist)
-   }
-   getTotalValue(key){
+  }
+  getTotalValue(key){
     let Amtval = 0;
     this.AuthorizedList.forEach((item)=>{
       Amtval += Number(item[key]);
@@ -860,8 +902,8 @@ export class K4cPurchasePlaningComponent implements OnInit {
     //this.ViewPoppup = true;
     this.getViewdetails(this.ObjBrowse.Doc_No);;
     }
-   }
-   getViewdetails(Doc_No){
+  }
+  getViewdetails(Doc_No){
     //console.log(this.ObjBrowse.Doc_No);
     const obj = {
       "SP_String": "SP_Purchase_Planning",
@@ -888,7 +930,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
       }
        this.ViewPoppup = true;
     })
-   }
+  }
   //   excel(DocNo){
   //   this.Doc_no = undefined;
   //   this.Doc_date = undefined;
@@ -925,7 +967,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     })
   }
 
-   exportoexcel(Arr,fileName): void {
+  exportoexcel(Arr,fileName): void {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
     const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
     XLSX.writeFile(workbook, fileName+'.xlsx');
@@ -953,7 +995,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
     XLSX.writeFile(workbook, fileName+'.xlsx');
   }
-   Authorized(DocNo){
+  Authorized(DocNo){
     //this.clearData();
     //this.filteredData = [];
     this.Doc_no = undefined;
@@ -964,6 +1006,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
     // this.To_outlet = undefined;
     // this.Return_reason = undefined;
     if(DocNo.Doc_No){
+    if(this.checkLockDate(DocNo.Doc_Date)){
     this.ObjBrowse.Doc_No = DocNo.Doc_No;
     // this.AuthPoppup = true;
     //this.ViewPoppup = true;
@@ -976,8 +1019,9 @@ export class K4cPurchasePlaningComponent implements OnInit {
      //console.log("this.EditDoc_No ", this.Adv_Order_No );
     this.getAuthdetails(this.ObjBrowse.Doc_No);;
     }
-   }
-   getAuthdetails(Doc_No){
+    }
+  }
+  getAuthdetails(Doc_No){
     //console.log(this.ObjBrowse.Doc_No);
     const obj = {
       "SP_String": "SP_Purchase_Planning",
@@ -1005,18 +1049,18 @@ export class K4cPurchasePlaningComponent implements OnInit {
       }
        this.AuthPoppup = true;
     })
-   }
-   confirmamountcalculate(indx){
+  }
+  confirmamountcalculate(indx){
     this.AuthorizedList[indx]['Confirm_Amount'] =  undefined;
     if(this.AuthorizedList[indx]['Order_Qty'] && this.AuthorizedList[indx]['Rate']){
       this.AuthorizedList[indx]['Confirm_Amount'] = Number(this.AuthorizedList[indx]['Confirm_Qty'] * this.AuthorizedList[indx]['Confirm_Rate']).toFixed(2);
       this.AuthorizedList[indx]['Confirm_Amount_With_GST'] = Number(((this.AuthorizedList[indx]['Confirm_Qty'] * this.AuthorizedList[indx]['Confirm_Rate']) * this.AuthorizedList[indx]['GST_PER']) / 100).toFixed(2);
     }
-   }
-   getTofix(key){
+  }
+  getTofix(key){
     return Number(Number(key).toFixed(2))
-   }
-   dataforApproved(){
+  }
+  dataforApproved(){
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
     // this.ObjSaveForm.Doc_Date = this.DateService.dateConvert(new Date(this.myDate));
     if(this.AuthorizedList.length) {
@@ -1058,7 +1102,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
       return JSON.stringify(Arr);
 
     }
-   }
+  }
   Approved(){
     const obj = {
       "SP_String": "SP_Purchase_Planning",
@@ -1093,11 +1137,11 @@ export class K4cPurchasePlaningComponent implements OnInit {
       }
     })
 
-   }
+  }
 
    // BROWSE TAB END
 
-   GetCostCen(){
+  GetCostCen(){
     const obj = {
       "SP_String": "SP_Production_Voucher",
       "Report_Name_String": "Get - Non Outlet Cost Centre"
@@ -1212,7 +1256,7 @@ export class K4cPurchasePlaningComponent implements OnInit {
   this.StockReportSearchlist = [...this.BackupStockReportSearchlist] ;
   }
   }
-   Order(pro_id){
+  Order(pro_id){
      //this.clearData();
     if(pro_id.Product_ID){
     this.ObjStockLevel.Product_ID = pro_id.Product_ID;

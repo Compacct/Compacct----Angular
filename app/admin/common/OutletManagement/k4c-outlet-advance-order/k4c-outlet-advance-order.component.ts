@@ -146,6 +146,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
   RequestIdupi: any;
   transactionStatusupi: any;
   tidupi: any;
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -196,6 +197,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
       Link: " Outlet -> Customized Order"
     });
      this.getorderdate();
+     this.getLockDate();
      this.getcostcenid();
      this.getgodownid();
      this.getdellocation();
@@ -372,6 +374,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
     this.cancleFormSubmitted = false;
     this.Objcustomerdetail.Adv_Order_No = undefined ;
     if(row.Adv_Order_No){
+      if(this.checkLockDate(row.Order_Date)){
       this.checkSave = true;
       this.Can_Remarks = true;
     this.Objcustomerdetail.Adv_Order_No = row.Adv_Order_No;
@@ -383,6 +386,7 @@ export class K4cOutletAdvanceOrderComponent implements OnInit {
       summary: "Are you sure?",
       detail: "Confirm to proceed"
       });
+      }
     }
    }
    onConfirm(valid) {
@@ -1605,6 +1609,7 @@ Updaterequestdetailsaftersave(billno){
 
 // DAY END CHECK
 saveCheck(){
+  if(this.checkLockDate(this.DateService.dateConvert(new Date(this.myDate)))) {
   if(this.FromCostCentId && this.Fromgodown_id){
     this.Spinner = true;
     this.ngxService.start();
@@ -1639,7 +1644,10 @@ saveCheck(){
        this.clearData();
      }
    })
- }
+  } else {
+    this.Spinner = false;
+  }
+  }
 
 }
 // CREATE AND UPDATE
@@ -2300,6 +2308,47 @@ HoldBill(){
   }
 
 }
+getLockDate(){
+  const obj = {
+   "SP_String": "sp_Comm_Controller",
+   "Report_Name_String": "Get_LockDate",
+   //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+
+ }
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+//   console.log('LockDate===',data);
+  this.lockdate = data[0].dated;
+
+})
+}
+checkLockDate(docdate){
+  if(this.lockdate && docdate){
+    if(new Date(docdate) > new Date(this.lockdate)){
+      return true;
+    } else {
+      var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Can't "+ msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+    });
+      return false;
+    }
+  } else {
+    this.Spinner = false;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+     key: "compacct-toast",
+     severity: "error",
+     summary: "Warn Message",
+     detail: "Date not found."
+    });
+    return false;
+  }
+}
 RedirectTo (obj){
   const navigationExtras: NavigationExtras = {
     queryParams: obj,
@@ -2317,12 +2366,14 @@ CreateBill(col,val){
     this.RedirectTo(TempObj);
   }
   if (val === 'editorder') {
+    if(this.checkLockDate(col.Order_Date)){
     const TempObj = {
       Redirect_To : './K4C_Outlet_Advance_Order',
       Adv_Order_No : col.Adv_Order_No,
       Edit_Adv_Order : true
     }
     this.RedirectTo(TempObj);
+    }
   }
 }
 PrintBill(obj) {

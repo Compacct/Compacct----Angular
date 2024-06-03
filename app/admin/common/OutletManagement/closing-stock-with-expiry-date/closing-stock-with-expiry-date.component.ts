@@ -15,36 +15,37 @@ import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.
 })
 export class ClosingStockWithExpiryDateComponent implements OnInit {
   ExDateTime:any;
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
   buttonname = "Save"
   ObjClosingStockExpAd : ClosingStockExpAd = new ClosingStockExpAd ();
   closingstockExpFormSubmitted = false;
-  BrandList = [];
+  BrandList:any = [];
   BrandDisable = false;
-  ProductList = [];
+  ProductList:any = [];
   Batchflag = false;
-  ExpdatimelistWrtBatch = [];
+  ExpdatimelistWrtBatch:any = [];
   Expiry_Time: any;
-  productaddSubmit = [];
+  productaddSubmit:any = [];
   ObjBrowse : Browse  = new Browse();
   SearchFormSubmitted = false;
   ClosingDate = new Date();
   AddDisable = false;
   expirydateDisable = true;
-  Searchedlist = [];
+  Searchedlist:any = [];
   Doc_No = undefined;
-  ViewList = [];
+  ViewList:any = [];
   ViewPoppup = false;
   Doc_date = undefined;
   Cost_Cent_ID = undefined;
   BrandId = undefined;
   remarks = undefined;
-  CostCenter = [];
-  GodownId = [];
+  CostCenter:any = [];
+  GodownId:any = [];
   godown_name = undefined;
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -61,6 +62,7 @@ export class ClosingStockWithExpiryDateComponent implements OnInit {
       Header: "Closing Stock With Expiry",
       Link: "Material Management -> Closing Stock With Expiry"
     });
+    this.getLockDate();
     this.GetBrand();
     this.getCostCenter();
   }
@@ -70,6 +72,47 @@ export class ClosingStockWithExpiryDateComponent implements OnInit {
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Save";
     this.clearData();
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate",
+     //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    // console.log('LockDate===',data);
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
   }
   GetBrand(){
     this.BrandList = [];
@@ -155,7 +198,7 @@ export class ClosingStockWithExpiryDateComponent implements OnInit {
   ProductChange() {
     if(this.ObjClosingStockExpAd.Product_ID) {
       const ctrl = this;
-      const productObj = $.grep(ctrl.ProductList,function(item) {return item.Product_ID == ctrl.ObjClosingStockExpAd.Product_ID})[0];
+      const productObj = $.grep(ctrl.ProductList,function(item:any) {return item.Product_ID == ctrl.ObjClosingStockExpAd.Product_ID})[0];
       //console.log(productObj);
       this.ObjClosingStockExpAd.Product_Type_ID = productObj.Product_Type_ID,
       this.ObjClosingStockExpAd.Product_Description = productObj.Product_Description;
@@ -285,7 +328,7 @@ export class ClosingStockWithExpiryDateComponent implements OnInit {
     }
   GetDataForSave(){
       if(this.productaddSubmit.length) {
-        let tempArr =[];
+        let tempArr:any =[];
         const TempObj = {
           Doc_No : "A",
           Doc_Date : this.DateService.dateConvert(new Date(this.ClosingDate)),
@@ -320,6 +363,7 @@ export class ClosingStockWithExpiryDateComponent implements OnInit {
       }
   }
   SaveReceiveStock(){
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.ClosingDate)))) {
     //if(valid){
       const obj = {
         "SP_String": "SP_Closing_Stock_With_Expiry_Date",
@@ -357,6 +401,7 @@ export class ClosingStockWithExpiryDateComponent implements OnInit {
         }
       })
     //}
+    }
   }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
@@ -367,6 +412,7 @@ export class ClosingStockWithExpiryDateComponent implements OnInit {
   GetSearchedList(valid){
     this.SearchFormSubmitted = true;
     this.Searchedlist = [];
+    this.seachSpinner = true;
   const start = this.ObjBrowse.start_date
   ? this.DateService.dateConvert(new Date(this.ObjBrowse.start_date))
   : this.DateService.dateConvert(new Date());
@@ -391,6 +437,8 @@ const obj = {
    this.seachSpinner = false;
    this.SearchFormSubmitted = false;
   })
+  } else {
+    this.seachSpinner = false;
   }
   }
   View(DocNo){
@@ -444,6 +492,7 @@ const obj = {
     this.productaddSubmit = [];
     this.AddDisable = false;
     this.expirydateDisable = true;
+    this.seachSpinner = false;
   }
 
 }

@@ -21,17 +21,17 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
 export class K4cAdvanceProductionComponent implements OnInit {
   tabIndexToView = 0;
   buttonname = "Create";
-  menuList = [];
-  items = [];
-  brandList = [];
-  shiftList = [];
-  ProductDetailsList = [];
-  ToCostCenterList=[];
-  ToGoDownList=[];
-  saveData = [];
-  savenprintData = [];
-  FromGodownList = [];
-  GetAllDataList = [];
+  menuList:any = [];
+  items:any = [];
+  brandList:any = [];
+  shiftList:any = [];
+  ProductDetailsList:any = [];
+  ToCostCenterList:any = [];
+  ToGoDownList:any = [];
+  saveData:any = [];
+  savenprintData:any = [];
+  FromGodownList:any = [];
+  GetAllDataList:any = [];
   inputBoxDisabled = false;
   AdvProductionFormSubmitted = false;
   AdvProductionFormSubmitted2 = false;
@@ -97,6 +97,7 @@ export class K4cAdvanceProductionComponent implements OnInit {
   ordeladd = undefined;
   ordelpin = undefined;
   ordelnearby = undefined;
+  lockdate: any;
 
   constructor(
     private $http: HttpClient,
@@ -119,6 +120,7 @@ export class K4cAdvanceProductionComponent implements OnInit {
       Header: "Advance Production Voucher",
       Link: " Material Management -> Production -> Advance Production Voucher"
     });
+    this.getLockDate();
     this.getCostCenter();
     this.getBrand();
     this.Getshift();
@@ -156,6 +158,47 @@ export class K4cAdvanceProductionComponent implements OnInit {
     this.Reject_Date = new Date();
     this.ngxService.stop();
     this.viewbrowseList = [];
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate",
+     //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    // console.log('LockDate===',data);
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
   }
   onConfirm(){
     this.ngxService.start();
@@ -314,6 +357,7 @@ export class K4cAdvanceProductionComponent implements OnInit {
     this.Objproduction.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.AdvProductionFormSubmitted2 = true;
     if(valid){
+      if(this.checkLockDate(this.DateService.dateConvert(new Date(this.myDate)))) {
       console.log("valid",valid);
       this.ProductDetailsList.forEach(el =>{
         if(el.Avd_qty && el.Avd_qty !== 0 ){
@@ -354,8 +398,9 @@ export class K4cAdvanceProductionComponent implements OnInit {
           detail: "Someting Wrong "
         });
       }
-    }
+      }
 
+    }
   }
   SearchProduction(){
     this.seachSpinner = true;
@@ -417,6 +462,7 @@ view(col){
 Delete(col){
   this.save_popup = false;
   if(col.Doc_No){
+    if(this.checkLockDate(col.Doc_Date)){
     this.del_popup = true;
     this.docno = col.Doc_No;
     //this.docdate = col.Doc_Date;
@@ -429,6 +475,7 @@ Delete(col){
     summary: "Are you sure?",
     detail: "Confirm to proceed"
     });
+    }
   }
 }
 onConfirm2() {

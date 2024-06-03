@@ -72,6 +72,7 @@ export class OutletStockTransferAutoBatchComponent implements OnInit {
   RequistionSearchFormSubmit = false;
   DisabledBatch = false;
   MTdisabled = false;
+  lockdate:any;
 
   constructor(
     private $http: HttpClient,
@@ -96,6 +97,7 @@ export class OutletStockTransferAutoBatchComponent implements OnInit {
       Header: "Outlet Stock Transfer",
       Link: "Outlet -> Outlet Stock Transfer"
     });
+    this.getLockDate();
     this.GettoOutlet();
     this.GetfromOutlet();
     this.GetfromStokePoint();
@@ -708,6 +710,7 @@ filterOutlet(){
 //Accepted challan
 acceptChallan(col){
   if(col.Doc_No){
+    if(this.checkLockDate(col.Doc_Date)){
     const TempID = {
       Doc_No : col.Doc_No
     }
@@ -729,9 +732,10 @@ acceptChallan(col){
       })
       console.log("AccetProductDetails",this.AccetProductDetails)
     })
-  }
 
   this.accept_challan = true;
+    }
+  }
 }
 getTotalVal(key){
   let TotalAmtVal = 0;
@@ -862,10 +866,51 @@ saveAccet(){
  }
 
 }
+getLockDate(){
+  const obj = {
+   "SP_String": "sp_Comm_Controller",
+   "Report_Name_String": "Get_LockDate",
+   //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
 
+ }
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  // console.log('LockDate===',data);
+  this.lockdate = data[0].dated;
+
+})
+}
+checkLockDate(docdate){
+  if(this.lockdate && docdate){
+    if(new Date(docdate) > new Date(this.lockdate)){
+      return true;
+    } else {
+      var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+    });
+      return false;
+    }
+  } else {
+    this.Spinner = false;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+     key: "compacct-toast",
+     severity: "error",
+     summary: "Warn Message",
+     detail: "Date not found."
+    });
+    return false;
+  }
+}
 //edit
 edit(col){
  if(col.Doc_No){
+  if(this.checkLockDate(col.Doc_Date)){
   const obj = {
     "SP_String": "SP_Outlet_Stock_Transfer",
     "Report_Name_String": "Get Data For Edit Outlet Stock Transfer",
@@ -881,7 +926,7 @@ edit(col){
       this.GetProductBatch();
       console.log("editdataList",this.editdataList);
   })
-
+  }
  }
 }
 getTotal(key){
@@ -1067,6 +1112,7 @@ saveEdit(){
  deleteStock(col){
   this.DeleteDocId = undefined;
  if(col.Doc_No){
+  if(this.checkLockDate(col.Doc_Date)){
   this.checkSave = true;
    this.DeleteDocId = col.Doc_No ;
    this.compacctToast.clear();
@@ -1077,6 +1123,7 @@ saveEdit(){
         summary: "Are you sure?",
         detail: "Confirm to proceed"
       });
+  }
  }
  }
  onConfirm(){
@@ -1122,7 +1169,9 @@ this.initDate = [this.myDate , this.myDate];
 })
 }
 saveCheck(valid){
+  if(this.checkLockDate(this.DateService.dateConvert(new Date(this.myDate)))) {
   this.stockTransferFormSubmit = true;
+  this.Spinner = true;
   if(valid){
     if(this.ObjstockTransfer.From_Outlet && this.ObjstockTransfer.From_Stock_Point){
       this.ngxService.start();
@@ -1152,6 +1201,7 @@ saveCheck(valid){
         });
         this.productDetails = [];
         this.clearData();
+        this.Spinner = false;
       } else {
         this.ngxService.stop();
         this.compacctToast.clear();
@@ -1164,7 +1214,10 @@ saveCheck(valid){
       }
     })
   }
+  } else {
+    this.Spinner = false;
   }
+}
 
 }
 ValidateEntryCheck(){

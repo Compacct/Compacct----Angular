@@ -135,6 +135,7 @@ export class SaleBillNewComponent implements OnInit {
   withoutbatchpro:any = [];
   popouSpinner:boolean = false;
   subledstatedisabled:boolean = false;
+  lockdate:any;
 
 
   constructor(
@@ -161,6 +162,7 @@ export class SaleBillNewComponent implements OnInit {
       Header: "Sale Bill GST",
       Link: " Financial Management -> Transaction -> Sales ->  Sale Bill GST"
     });
+    this.getLockDate();
     this.getDatabase();
     this.GetCustomer();
     this.GetStateList();
@@ -247,6 +249,47 @@ export class SaleBillNewComponent implements OnInit {
     this.BatchNoList = [];
     this.subledstatedisabled = false;
    }
+   getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
+  }
    GetCustomer(){
     const obj = {
       "SP_String": "SP_Sale_Bill_New",
@@ -477,7 +520,7 @@ export class SaleBillNewComponent implements OnInit {
       this.Productbutton = "(Show AO Product)"
      })
  
-    }
+   }
    GetProductdetails(){
    this.Productlist = [];
    this.ngxService.start();
@@ -500,7 +543,7 @@ export class SaleBillNewComponent implements OnInit {
      this.Productbutton = "(Show All Product)"
     })
   }
-  }
+   }
   GetProductdetailswithBatch(){
     this.AddProductDetails = [];
     this.ngxService.start();
@@ -599,7 +642,7 @@ export class SaleBillNewComponent implements OnInit {
        this.TcsAmtCalculation();
      })
    }
-   }
+  }
   // FOR TABLE CALCULATION
   calculateamount(col){
     if(col.Qty){
@@ -1062,7 +1105,7 @@ export class SaleBillNewComponent implements OnInit {
   }
   getTofix(key){
     return Number(Number(key).toFixed(2))
-   }
+  }
   AddProductInfo(valid) {
     //console.log(this.ObjaddbillForm.Product_ID)
     this.ProductInfoSubmitted = true;
@@ -1489,7 +1532,7 @@ export class SaleBillNewComponent implements OnInit {
     //   this.ProjectInput.clearData()
     // }
   }
-   whateverCopy(obj) {
+  whateverCopy(obj) {
     return JSON.parse(JSON.stringify(obj))
   }
   DataForSavePurchaseBill(){
@@ -1574,6 +1617,7 @@ export class SaleBillNewComponent implements OnInit {
     this.TCSTaxRequiredValidation = true;
     // this.validatation.required = true
     if(valid && this.ObjSaleBillNew.TCSTaxRequired){
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.DocDate)))) {
       this.Spinner = true;
       this.ngxService.start();
      this.compacctToast.clear();
@@ -1586,7 +1630,8 @@ export class SaleBillNewComponent implements OnInit {
        detail: "Confirm to proceed"
      });
     }
-   }
+    }
+  }
   async onConfirmSave(){
     // this.SaleBillNewFormSubmitted = true;
     // this.TCSTaxRequiredValidation = true;
@@ -1699,7 +1744,7 @@ export class SaleBillNewComponent implements OnInit {
       this.ObjBrowseSaleBillNew.start_date = dateRangeObj[0];
       this.ObjBrowseSaleBillNew.end_date = dateRangeObj[1];
     }
-    }
+  }
     // FilterPeriod(){
     //   if(this.ObjCosdHead.Fin_Year_Name){
     //    const FinancialYearFilter:any = this.FinancialDataList.find((el:any)=> el.Fin_Year_Name === this.ObjCosdHead.Fin_Year_Name)
@@ -1749,12 +1794,14 @@ export class SaleBillNewComponent implements OnInit {
   EditSaleBill(col){
     this.editDocNo = undefined;
     if(col.Doc_No){
+    if(this.checkLockDate(col.Doc_Date)){
      this.editDocNo = col.Doc_No
      this.tabIndexToView = 1;
     this.items = [ 'BROWSE', 'UPDATE'];
     this.buttonname = "Update";
     this.AcceptanceOrderNoList = [];
     this.geteditData(col.Doc_No);
+    }
     }
   }
   geteditData(Dno){
@@ -1818,6 +1865,7 @@ export class SaleBillNewComponent implements OnInit {
     this.DocNo = undefined;
     this.ngxService.start();
     if(col.Doc_No){
+    if(this.checkLockDate(col.Doc_Date)){
      this.DocNo = col.Doc_No
      this.compacctToast.clear();
      this.compacctToast.add({
@@ -1827,6 +1875,7 @@ export class SaleBillNewComponent implements OnInit {
        summary: "Are you sure?",
        detail: "Confirm to proceed"
      });
+    }
     }
   }
    onConfirmDel(){

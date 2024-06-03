@@ -70,6 +70,7 @@ export class K4cVoucherComponent implements OnInit {
   Cost_Cen_ID:any;
   GridList:any = [];
   GridListHeader:any = [];
+  lockdate:any;
 
   constructor(
     private $http: HttpClient,
@@ -106,12 +107,52 @@ export class K4cVoucherComponent implements OnInit {
     this.getProject();
     this.GetdiagnosisCostCenter();
     this.gettoCostCentercontra();
+    this.getLockDate();
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
     this.items = ["BROWSE", "CREATE", "DIAGNOSIS"];
     this.buttonname = "Create";
     this.clearData();
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
   }
   clearData(){
     this.journallowerFormSubmitted = false;
@@ -537,6 +578,7 @@ saveJournal(valid){
  console.log("save Valid",valid);
  this.journalFormSubmitted = true;
  if(valid){
+  if(this.checkLockDate(this.DateService.dateConvert(new Date(this.voucherdata)))) {
     const bankListFilter = this.BankTransactionTypeList.filter((el:any)=> Number(el.Bank_Txn_Type_ID) === Number(this.objjournal.Bank_Txn_Type))[0]
     if(bankListFilter){
      this.objjournal.Bank_Txn_Type = bankListFilter.Txn_Type_Name
@@ -618,6 +660,7 @@ saveJournal(valid){
       });
      }
     })
+  }
  }
 }
 GetCostHead(){
@@ -717,6 +760,7 @@ ViewJournal(col){
 }
 EditJournal(col){
   if(col.Voucher_No){
+    if(this.checkLockDate(col.Dated)){
     this.VoucherNo = undefined;
     this.VoucherNo = col.Voucher_No;
     this.objjournal = new journalTopper();
@@ -731,9 +775,11 @@ EditJournal(col){
     this.items = ["BROWSE", "UPDATE", "DIAGNOSIS"];
     this.buttonname = "Update";
     this.GetEditMasterUom(col.Voucher_No)
+    }
   }
 }
 CopyJournal(col){
+  if(this.checkLockDate(col.Dated)){
     this.VoucherNo = undefined;
     this.objjournal = new journalTopper();
     this.buttondisabled = true;
@@ -747,6 +793,7 @@ CopyJournal(col){
     this.tabIndexToView = 1;
     this.items = ["BROWSE", "COPY VOUCHER", "DIAGNOSIS"];
     this.GetEditMasterUom(col.Voucher_No)  
+  }
 }
 GetEditMasterUom(V_NO){
   const obj = {
@@ -790,6 +837,7 @@ GetEditMasterUom(V_NO){
 DeleteJournal(col){
   console.log("Col",col);
  if(col.Voucher_No){
+  if(this.checkLockDate(col.Dated)){
    this.VoucherNo = undefined;
    this.VoucherNo = col.Voucher_No;
    this.compacctToast.clear();
@@ -800,6 +848,7 @@ DeleteJournal(col){
      summary: "Are you sure?",
      detail: "Confirm to proceed"
    });
+  }
  }
 }
 onReject() {

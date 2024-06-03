@@ -105,6 +105,7 @@ export class SemiFinishedProductionVoucherComponent implements OnInit {
   finalprodescription : any;
   finalprouom : any;
   totalQty: any;
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -124,6 +125,7 @@ export class SemiFinishedProductionVoucherComponent implements OnInit {
         Header: "Production Voucher (Semi-Finished)",
         Link: " Material Management -> Production -> Production Voucher (Semi-Finished)"
       });
+      this.getLockDate();
       this.GetBrand();
       this.GetTypeofMaterial();
       this.GetSelectProcess();
@@ -144,6 +146,45 @@ export class SemiFinishedProductionVoucherComponent implements OnInit {
     //this.FPDisabled = true;
     this.SelectedIndent = [];
     this.IndentFilter = [];
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    // console.log('LockDate===',data);
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
   }
 
   // CREATE START
@@ -494,6 +535,7 @@ export class SemiFinishedProductionVoucherComponent implements OnInit {
   SaveProduction(){
     //this.ProductionFormSubmitted2 = true;
     //if(valid){
+      if(this.checkLockDate(this.DateService.dateConvert(new Date(this.Datevalue)))) {
       this.ngxService.start();
       //this.displaysavepopup = false;
       const obj = {
@@ -540,6 +582,10 @@ export class SemiFinishedProductionVoucherComponent implements OnInit {
           });
         }
       })
+      }
+      else {
+        this.ngxService.stop();
+      }
    // }
    }
   saveNprintProVoucher(){
@@ -770,6 +816,7 @@ const obj = {
   DeleteProduction(docNo){
     this.ObjSFproduction.Doc_No = undefined ;
     if(docNo.Doc_No){
+    if(this.checkLockDate(docNo.Doc_Date)){
     this.ObjSFproduction.Doc_No = docNo.Doc_No;
     this.doc_date = docNo.Doc_Date;
     this.compacctToast.clear();
@@ -780,6 +827,7 @@ const obj = {
     summary: "Are you sure?",
     detail: "Confirm to proceed"
     });
+    }
     }
   }
   onConfirm() {

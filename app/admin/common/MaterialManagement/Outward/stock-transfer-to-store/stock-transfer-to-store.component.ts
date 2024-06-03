@@ -18,7 +18,7 @@ import { ActivatedRoute, Router } from "@angular/router";
   encapsulation: ViewEncapsulation.None
 })
 export class StockTransferToStoreComponent implements OnInit {
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   ShowSpinner = false;
@@ -28,40 +28,41 @@ export class StockTransferToStoreComponent implements OnInit {
   ObjRawMateriali : RawMateriali = new RawMateriali ();
   StockTransfertoStoreFormSubmitted = false;
   ObjBrowse : Browse = new Browse ();
-  Fcostcenlist = [];
-  FromGodownList = [];
-  Tocostcenlist = [];
-  ToGodownList = [];
+  Fcostcenlist:any = [];
+  FromGodownList:any = [];
+  Tocostcenlist:any = [];
+  ToGodownList:any = [];
   FCostdisableflag = false;
   FGdisableflag = false;
   TGdisableflag = false;
   IndentListFormSubmitted = false;
-  IndentList = [];
-  ProductList = [];
+  IndentList:any = [];
+  ProductList:any = [];
   SelectedIndent: any;
-  BackupIndentList = [];
-  IndentFilter = [];
-  TIndentList = [];
-  Searchedlist = [];
+  BackupIndentList:any = [];
+  IndentFilter:any = [];
+  TIndentList:any = [];
+  Searchedlist:any = [];
   flag = false;
-  productListFilter = [];
+  productListFilter:any = [];
   SelectedProductType :any = [];
   Param_Flag ='';
   CostCentId_Flag : any;
   MaterialType_Flag = '';
   TCdisableflag = false;
   todayDate = new Date();
-  initDate = [];
+  initDate:any = [];
   SearchFormSubmitted = false;
-  ToBcostcenlist = [];
-  ToBGodownList = [];
+  ToBcostcenlist :any= [];
+  ToBGodownList:any = [];
   TBCdisableflag = false;
   TBGdisableflag = false;
   ViewPoppup = false;
-  Viewlist = [];
+  Viewlist:any = [];
   Doc_date: any;
   Formstockpoint: any;
   Tostockpoint: any;
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -93,6 +94,7 @@ export class StockTransferToStoreComponent implements OnInit {
       // Header: "Stock Transfer To Store ",
       // Link: " Material Management ->  Stock Transfer To Store "
     });
+    this.getLockDate();
     this.GetFromCostCen();
     this.GetToCostCen();
     this.GetBToCostCen();
@@ -112,7 +114,46 @@ export class StockTransferToStoreComponent implements OnInit {
    onReject() {
     this.compacctToast.clear("c");
   }
-   GetFromCostCen(){
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
+  }
+  GetFromCostCen(){
     // const tempObj = {
     //   Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
     //   Material_Type : this.MaterialType_Flag
@@ -296,7 +337,7 @@ export class StockTransferToStoreComponent implements OnInit {
 
   filterProduct(){
     if(this.SelectedProductType.length){
-      let tempProduct = [];
+      let tempProduct:any = [];
       this.SelectedProductType.forEach(item => {
         this.BackupIndentList.forEach((el,i)=>{
 
@@ -315,7 +356,7 @@ export class StockTransferToStoreComponent implements OnInit {
     }
   }
 GetProductType(){
-  let DOrderBy = [];
+  let DOrderBy:any = [];
     this.productListFilter = [];
     //this.SelectedDistOrderBy1 = [];
     this.BackupIndentList.forEach((item) => {
@@ -331,7 +372,7 @@ GetProductType(){
   // GET PRODUCT LIST
   dataforproduct(){
     if(this.SelectedIndent.length) {
-      let Arr =[]
+      let Arr:any =[]
       this.SelectedIndent.forEach(el => {
         if(el){
           const Dobj = {
@@ -416,7 +457,7 @@ GetProductType(){
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
      this.ObjRawMateriali.Doc_Date = this.DateService.dateConvert(new Date(this.todayDate));
     if(this.ProductList.length) {
-      let tempArr =[]
+      let tempArr:any =[]
       this.ProductList.forEach(item => {
         if(item.Issue_Qty && Number(item.Issue_Qty) != 0) {
      const TempObj = {
@@ -455,6 +496,7 @@ GetProductType(){
         });
         return false;
     }
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.todayDate)))) {
     if(this.saveqty()){
       const obj = {
         "SP_String": "SP_Raw_Material_Stock_Transfer",
@@ -502,6 +544,7 @@ GetProductType(){
           summary: "Warn Message",
           detail: "Quantity can't be more than in batch available quantity "
         });
+    }
     }
 
   }
@@ -644,6 +687,7 @@ const obj = {
 EditIntStock(col){
   this.ObjRawMateriali.Doc_No = undefined;
   if(col.Doc_No){
+  if(this.checkLockDate(col.Doc_Date)){
    this.ObjRawMateriali = col.Doc_No;
    this.tabIndexToView = 1;
    this.ProductList = [];
@@ -651,6 +695,7 @@ EditIntStock(col){
    this.items = ["BROWSE", "UPDATE"];
    this.buttonname = "Update";
    this.geteditmaster(col.Doc_No)
+  }
   }
 
 }
@@ -688,6 +733,7 @@ geteditmaster(Doc_No){
 DeleteIntStocktr(col){
   this.ObjRawMateriali.Doc_No = undefined;
   if(col.Doc_No){
+    if(this.checkLockDate(col.Doc_Date)){
     this.ObjRawMateriali.Doc_No = col.Doc_No;
     this.compacctToast.clear();
     this.compacctToast.add({
@@ -697,6 +743,7 @@ DeleteIntStocktr(col){
       summary: "Are you sure?",
       detail: "Confirm to proceed"
     });
+    }
   }
 }
 onConfirm(){
@@ -728,7 +775,7 @@ onConfirm(){
 }
 }
 class RawMateriali {
-  Doc_No : string = undefined;
+  Doc_No : string = "";
   Doc_Date : string;
   From_godown_id : any;
   To_godown_id : any;
