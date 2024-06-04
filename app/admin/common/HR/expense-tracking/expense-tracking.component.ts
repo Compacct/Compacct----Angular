@@ -256,7 +256,7 @@ export class ExpenseTrackingComponent implements OnInit {
         "Auth_Note": this.authNote, 
         "Auth_Status": "Authorize" 
       };
-      console.log("auth data",tempData);
+      console.log("auth data",tempData); 
       
       const obj = {
         "SP_String": "SP_Expense_Tracking",
