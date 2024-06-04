@@ -30,6 +30,16 @@ export class ExpenseTrackingComponent implements OnInit {
   txn_Date: Date = new Date()
   file: boolean = false;
   upload: boolean = true;
+  pendingExpList: any = [];
+  pendingExpListHeader: any = [];
+  deleteData: any;
+
+  DisplayAuthorizePopup: boolean = false
+  authData: any;
+  authAmount: any;
+  authNote: any;
+  authFormSubmit: boolean = false;
+  authSpinner: boolean = false;
   @ViewChild("UploadFile", { static: false }) UploadFile!: FileUpload;
 
   constructor(
@@ -64,6 +74,7 @@ export class ExpenseTrackingComponent implements OnInit {
       if (data.length) {
         this.EmplyList = data;
         this.empId = this.EmplyList.length == 1 ? this.EmplyList[0].Emp_ID : undefined;
+        this.getPendingExp()
       }
     })
   }
@@ -117,15 +128,15 @@ export class ExpenseTrackingComponent implements OnInit {
     }
   }
 
-  showDoc() {
-    window.open(this.objExpenseTracking.Pic_File_Name);
+  showDoc(link: any) {
+    window.open(link);
   }
 
   saveData(valid1: any, valid2: any) {
     this.employeeFormSubmit = true;
     this.expenseTrackingFormSubmit = true;
-    console.log("valid",valid1 , valid2);
-    
+    console.log("valid", valid1, valid2);
+
     if (valid1 && valid2) {
       let repName: string = ""
       let msg: string = ""
@@ -153,7 +164,7 @@ export class ExpenseTrackingComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         console.log('save res', data);
         this.Spinner = false;
-        if (data[0].Column1 == "Done") {
+        if (data[0].Expence_ID) {
           this.CompacctToast.clear();
           this.CompacctToast.add({
             key: "compacct-toast",
@@ -161,8 +172,7 @@ export class ExpenseTrackingComponent implements OnInit {
             summary: "Expense Tracking ",
             detail: "Succesfully" + msg
           });
-          
-          // this.GetAllDataBrowswe();
+          this.getPendingExp();
           this.tabIndexToView = 0;
           this.clearData();
         }
@@ -179,20 +189,173 @@ export class ExpenseTrackingComponent implements OnInit {
     }
   }
 
+  getPendingExp() {
+    // if (this.empId) {
+    this.pendingExpList = []
+    this.pendingExpListHeader = []
+    const obj = {
+      "SP_String": "SP_Expense_Tracking",
+      "Report_Name_String": "Get_Expense_Tracking",
+      "Json_Param_String": JSON.stringify({ "Status": "Pending", "Emp_ID": this.empId })
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      console.log("Pending Exp List  ===", data);
+      if (data.length) {
+        this.pendingExpList = data;
+        this.pendingExpListHeader = Object.keys(data[0]);
+      }
+    })
+    // }
+  }
+
+  edit(col: any) {
+    if (col) {
+      this.empId = col.Emp_ID
+      this.objExpenseTracking.Emp_ID = col.Emp_ID;
+      this.objExpenseTracking.Exp_Amount = col.Exp_Amount;
+      this.objExpenseTracking.Exp_Note = col.Exp_Note;
+      this.objExpenseTracking.Expence_ID = col.Expence_ID;
+      this.objExpenseTracking.Expence_Type_ID = col.Expence_Type_ID;
+      this.objExpenseTracking.Pic_File_Name = col.Pic_File_Name;
+      this.txn_Date = new Date(col.Txn_Date);
+      this.file = true;
+      this.upload = false;
+      this.tabIndexToView = 0;
+      this.buttonname = "Update"
+    }
+
+  }
+
+  delte(col: any) {
+    this.CompacctToast.clear();
+    this.CompacctToast.add({
+      key: "c",
+      sticky: true,
+      severity: "warn",
+      summary: "Are you sure?",
+      detail: "Confirm to proceed"
+    });
+    this.deleteData = { ...col }
+  }
+
+  Authorize(col: any) {
+    if (col) {
+      this.DisplayAuthorizePopup = true;
+      this.authData = { ...col }
+    }
+  }
+
+  confirmAuthorize(valid: any) {
+    this.authFormSubmit = true;
+    if (valid) {
+      this.authFormSubmit = false;
+      this.authSpinner = true;
+      const tempData = { 
+        "Expence_ID": this.authData.Expence_ID, 
+        "Auth_Amount": Number(this.authAmount), 
+        "Auth_Note": this.authNote, 
+        "Auth_Status": "Authorize" 
+      };
+      console.log("auth data",tempData);
+      
+      const obj = {
+        "SP_String": "SP_Expense_Tracking",
+        "Report_Name_String": "Update_Authorize",
+        "Json_Param_String": JSON.stringify(tempData)
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("auth res  ===", data);
+        this.authSpinner = false;
+        if (data[0].Column1 == "success") {
+          this.CompacctToast.clear();
+          this.CompacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Success",
+            detail: "Succesfully Authorized"
+          });
+          this.getPendingExp();
+          this.DisplayAuthorizePopup = false;
+        }
+        else {
+          this.CompacctToast.clear();
+          this.CompacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error",
+            detail: "Something Went Wrong"
+          });
+
+        }
+
+
+      })
+    }
+
+  }
+
+  UnAuthorize(col: any) {
+
+  }
+
   TabClick(e: any) {
     this.tabIndexToView = e.index;
     this.clearData();
   }
 
   onConfirm() {
+    if (this.deleteData.Expence_ID) {
+      this.pendingExpList = []
+      this.pendingExpListHeader = []
+      const obj = {
+        "SP_String": "SP_Expense_Tracking",
+        "Report_Name_String": "Delete_Expense_Tracking",
+        "Json_Param_String": JSON.stringify({ "Expence_ID": this.deleteData.Expence_ID })
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("delete res  ===", data);
+        if (data[0].Column1 == "success") {
+          this.CompacctToast.clear();
+          this.CompacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Success",
+            detail: "Succesfully Deleted"
+          });
+          this.getPendingExp();
+          this.onReject();
+        }
+        else {
+          this.CompacctToast.clear();
+          this.CompacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error",
+            detail: "Something Went Wrong"
+          });
+
+        }
+
+
+      })
+    }
   }
 
   onReject() {
     this.CompacctToast.clear("c");
+    this.deleteData = {};
   }
 
   clearData() {
-
+    this.Spinner = false;
+    this.buttonname = 'Create';
+    this.employeeFormSubmit = false;
+    this.expenseTrackingFormSubmit = false;
+    this.objExpenseTracking = new ExpenseTracking();
+    this.txn_Date = new Date()
+    this.file = false;
+    this.upload = true;
+    this.deleteData = {};
   }
 
 }
