@@ -77,6 +77,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
   Franchise = [];
   FranchiseBill:any;
   ToCostCentId = undefined;
+  lockdate:any;
 
   constructor(
     private $http: HttpClient,
@@ -107,6 +108,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
 
     this.GetFranchiseBill();
     this.GetFranchiseList();
+    this.getLockDate();
   }
   onConfirm(){}
   onReject(){
@@ -142,6 +144,44 @@ export class ReceiveDistributionChallanComponent implements OnInit {
       //this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));??
 
     })
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate",
+     //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //   console.log('LockDate===',data);
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't edit or delete this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
   }
   getMaterialType() {
     const obj = {
@@ -225,6 +265,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
    this.clearData();
    this.ToCostCentId = undefined;
    if(masterProduct.Doc_No){
+    // if(this.checkLockDate(masterProduct.Doc_Date)){
     this.fromCostId = undefined;
     this.fromGodownId = undefined;
     this.ToCostCentId = masterProduct.To_Cost_Cen_ID;
@@ -235,7 +276,8 @@ export class ReceiveDistributionChallanComponent implements OnInit {
     this.geteditmaster(masterProduct);
     this.getReqNo(masterProduct);
     this.getsubledgerid();
-    }
+    // }
+   }
   }
   geteditmaster(masterProduct){
     // if(this.ObjBrowseData.Material_Type === "Store Item"){

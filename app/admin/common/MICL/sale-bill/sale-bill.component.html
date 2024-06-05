@@ -79,9 +79,10 @@
                                         </select>
                                     </div>
                                     <div class="col-sm-3">
-                                        <button class="btn btn-primary custombutton" data-toggle="modal"
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" id="load" [disabled]="browseSpinner"
                                             (click)="GetSerarchBrowse(SearchSaleBillForm.form.valid)">
-                                            <span class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                            <p-progressSpinner *ngIf="browseSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!browseSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                         </button>
                                     </div>
                                 </div>

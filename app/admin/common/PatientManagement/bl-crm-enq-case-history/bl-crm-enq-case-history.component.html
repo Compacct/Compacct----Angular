@@ -22,142 +22,641 @@
         <div class="box box-primary">
             <div class="form-horizontal">
                 <div class="box-body">
-              <p-tabView [activeIndex]="tabIndexToView"> 
-                <form name="SearchForm" #SearchForm="ngForm" novalidate>
-                <div class="form-group" id="inner-Box" >
-                    <div class="col-sm-6" style="padding-bottom: 8px;;margin-left: 18px;">
-                        <label class="control-label">Patient Name<sup class="text-danger">*</sup></label>
-                        <p-dropdown [options]="Patientlist"
-                            name="Patient" 
-                            #Patient="ngModel" 
-                            [(ngModel)]="ObjFirst.Foot_Fall_ID"
-                            [showClear]="true" 
-                            [emptyFilterMessage]="' No Patient Found'" 
-                            [filter]="true" filterBy="label,value.name" 
-                            [resetFilterOnHide]="true" 
-                            [placeholder]="'Select Patient'" 
-                            [virtualScroll]="true"
-                            itemSize="30"
-                            (onChange)="GetPatientLIST()"
-                            [styleClass]="PatientFormSubmitted && Patient.errors?.required? 'clearance' : ''" [required]="true"> 
-                        </p-dropdown>
-                    </div>
-                    <div class="col-sm-4" style="padding-bottom: 8px;;margin-left: 18px;">
-                        <button class="btn btn-primary custombutton" (click)="GetPatientSearch(SearchForm.form.valid)" id="buttonserch"data-loading-text="<i class='fa fa-spinner fa-spin '></i> Searching">
-                            <span class="glyphicon glyphicon-search"></span> Search
-                        </button>
-                    </div>
-                </div>
-                </form>
-                <div class="panel-group" style="margin-bottom: 20px"> 
-                    <div class="panel panel-primary" style="margin-bottom:0;border-radius: 4px;">                                   
-                        <div class="panel-body" style="padding: 15px;"> 
-                            <div class="form-group">
-                                <h5 style=" margin-top: -10px;padding-left: 16px;">
-                                    <i class="fa fa-user">
-                                    </i> &nbsp;<strong>Patient Details:</strong></h5>    
-                                <div class="col-sm-6">
-                                    <label class="control-label">Name<sup class="text-danger">*</sup></label>
-                                    <div class="label-t">{{ObjMiddle.Contact_Name ? ObjMiddle.Contact_Name : '-'}}</div>
+              <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                    <div class="table-responsive no-padding">
+                        <p-table [value]="allDataList" [paginator]="true" [rows]="50" [rowHover]="true" [autoLayout]="true"
+                          sortMode="multiple" [rowsPerPageOptions]="[10,20,50,100,200,300]"
+                          [globalFilterFields]="['Contact_Name','Cost_Cen_Name','Mobile','Name', 'Age' ]" [rowHover]="true" #dt>
+                          <ng-template pTemplate="caption">
+                            <div class="row">
+                              <div class="col-sm-3 pull-right" style="text-align: right">
+                                <input type="text" pInputText size="50" placeholder="Search"
+                                  (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                              </div>
+                            </div>
+                          </ng-template>
+                          <ng-template pTemplate="header">
+                            <tr style="width: 100%;">
+                              <th style="width:5em">Action</th>
+                              <th style="text-align: center ;" nowrap>Patient ID</th>
+                              <th style="text-align: center ;" nowrap>Patient Name</th>
+                              <th style="text-align: center ;" nowrap>Mobile No.</th>
+                              <th style="text-align: center ;" nowrap>Age</th>
+                              <th style="text-align: center ;" nowrap>Cost Center Name</th>
+                              <th style="text-align: center ;" nowrap>User Name</th>
+                            </tr>
+                          </ng-template>
+                          <ng-template pTemplate="body" let-col>
+                            <tr>
+                              <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                <i class="fa fa-fw fa-bars"></i>
+                                                <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                      <li>
+                                        <a (click)="Edit(col)">
+                                            <i class="fa fa-fw fa-pencil"></i> Edit
+                                        </a>
+                                      </li>
+                                        <!-- <li>
+                                            <a (click)="PrintClick(col)">
+                                                <i class="fa fa-fw fa-print"></i> Print
+                                            </a>
+                                        </li> -->
+                                    </ul>
                                 </div>
-                                <div class="col-sm-3">
-                                    <label class="control-label">Customer ID</label>
-                                    <div class="label-t">{{ObjMiddle.Foot_Fall_ID ? ObjMiddle.Foot_Fall_ID : '-'}}</div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <label class="control-label">Gender<sup class="text-danger">*</sup></label>
-                                    <div class="label-t">{{ObjMiddle.Gender ? ObjMiddle.Gender : '-'}}</div>
-                                </div>
-                            </div>
-                            <div class="form-group"> 
-                            <div class="col-sm-4">
-                                <label class="control-label">Date of Birth<sup class="text-danger">*</sup></label>
-                                <div class="label-t">{{ObjMiddle.Date_Of_Birth ? (ObjMiddle.Date_Of_Birth | date :"dd/MMM/yyyy") : '-'}}</div>
-                            </div>
-                            <div class="col-sm-6">
-                                <label class="control-label">Address<sup class="text-danger">*</sup></label>
-                                <div class="label-t">{{ObjMiddle.Address ? ObjMiddle.Address : '-'}}</div>
-                            </div>
-                            <div class="col-sm-2">
-                                <label class="control-label">Pin Code<sup class="text-danger">*</sup></label>
-                                <div class="label-t">{{ObjMiddle.Pin ? ObjMiddle.Pin : '-'}}</div>
-                            </div>
-                           </div>
-                            <div class="form-group"> 
-                            <div class="col-sm-4">
-                                    <label class="control-label">State<sup class="text-danger">*</sup></label>
-                                    <div class="label-t">{{ObjMiddle.STATE ? ObjMiddle.STATE : '-'}}</div>
-                            </div>
-                            <div class="col-sm-4">
-                                <label class="control-label">District<sup class="text-danger">*</sup></label>
-                                <div class="label-t">{{ObjMiddle.DISTRICT ? ObjMiddle.DISTRICT : '-'}}</div>
-                            </div>
-                            <div class="col-sm-4">
-                                <label class="control-label">Mobile No<sup class="text-danger">*</sup></label>
-                                <div class="label-t">{{ObjMiddle.Mobile ? ObjMiddle.Mobile : '-'}}</div>
-                            </div>
-                           </div> 
-                           <div class="form-group"> 
-                            <div class="col-sm-4">
-                                <label class="control-label">Other Mobile No</label>
-                                <div class="label-t">{{ObjMiddle.Mobile_2 ? ObjMiddle.Mobile_2 : '-'}}</div>
-                            </div>
-                            <div class="col-sm-4">
-                                <label class="control-label">Email ID</label>
-                                <div class="label-t">{{ObjMiddle.Email ? ObjMiddle.Email : '-'}}</div>
-                            </div>
-                            <div class="col-sm-4">
-                                <label class="control-label">Centre<sup class="text-danger">*</sup></label>
-                                <div class="label-t">{{ObjMiddle.Cost_Cen_ID ? ObjMiddle.Cost_Cen_ID : '-'}}</div> 
-                            </div>
-                           </div> 
-                       </div>
-                    </div>
-                </div>
+                             </td>
+                              <td style="text-align: center ;" nowrap>{{col.Foot_Fall_ID ? col.Foot_Fall_ID : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Contact_Name ? col.Contact_Name : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Mobile ? col.Mobile : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Age ? col.Age : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.Cost_Cen_Name ? col.Cost_Cen_Name : '-'}}</td>
+                              <td style="text-align: center ;" nowrap>{{col.User_Name ? col.User_Name : '-'}}</td>
+                            </tr>
+                          </ng-template>
+                          <ng-template pTemplate="paginatorright" let-state>
+                            Showing {{state.first+1}} of {{(state.first) + state.rows}} of {{state.totalRecords}}
+                          </ng-template>
+                        </p-table>
+                      </div>
+                </p-tabPanel>
+                <p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[1]" leftIcon="glyphicon glyphicon-floppy-save"> 
                 
                 <form name="EngCaseHistoryForm" #EngCaseHistoryForm="ngForm" novalidate>
-                    <div class="form-group" style="padding: 1em;">
-                        <h5 style="
-                        padding: 0.5em 1em;
-                        background: #c1c1c185;
-                        border-top: 5px solid #3c8dbc;
-                        border-bottom: 1px solid #c6c6c6;
-                        margin-top: -20px;
-                        ">
-                        <i class="fa fa-user">
-                        </i> &nbsp;<strong>Case History:</strong>
-                    </h5>
-                    </div>
                 <div class="form-group">
                     <div class="col-sm-3">
-                        <label class="control-label">Reason for Visit<sup class="text-danger">*</sup></label>
+                        <label class="control-label">Date<sup class="text-danger">*</sup></label>
+                        <ejs-datepicker 
+                            [(value)]="Date" 
+                            [format]="'dd/MMM/yyyy'">
+                        </ejs-datepicker>
+                    </div>
+                </div>
+                <br>
+                <div class="form-group">
+                <div class="col-lg-12">
+                    <div class="panel-group">
+                        <div class="panel panel-primary">
+                                <div class="panel-body">
+                                    <div class="form-group" style="padding: 1em;">
+                                    <h4 style="padding: 0.5em 0em; margin-top:-26px; color: #007ca3;">
+                                        <strong>PATIENT INFORMATION</strong>
+                                    </h4>
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Mobile No<sup class="text-danger">*</sup></label>
+                                                <input type="text" class="form-control" placeholder="Enter mobile number" name="Mobile"
+                                                #Mobile="ngModel" [(ngModel)]="ObjCaseHistory.Mobile" (ngModelChange)="checkMobile(ObjCaseHistory.Mobile,'Mobile')"
+                                                CompacctDigitonly="true" maxlength="10" minlength="10"
+                                                [ngClass]="{clearance: EngCaseHistoryFormSubmitted && Mobile?.errors?.required}" required>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Alternate Mobile No</label>
+                                                <input type="text" class="form-control" placeholder="Enter Another number" name="AnotherMobile"
+                                                #AnotherMobile="ngModel" [(ngModel)]="ObjCaseHistory.Mobile_2" (ngModelChange)="checkMobile(ObjCaseHistory.Mobile_2,'Mobile_2')" CompacctDigitonly="true" maxlength="10"
+                                                minlength="10">
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">WhatsApp No</label>
+                                                <input type="text" class="form-control" placeholder="WhatsApp number" name="WhatsAppMobile"
+                                                #WhatsAppMobile="ngModel" [(ngModel)]="ObjCaseHistory.Mobile_3_WP" CompacctDigitonly="true"
+                                                maxlength="10" minlength="10">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <label class="control-label">Name<sup class="text-danger">*</sup> <a *ngIf="ContactNameList.length && databaseName != 'BSHPL'" (click)=" ContactNameList = []" style="color: #3c8dbc;" > Add New Patient </a></label>
+                                                <div class="input-group" *ngIf="!ContactNameList.length || databaseName == 'BSHPL'" >
+                                                <span class="input-group-btn">
+                                                    <select name="NameStatus" style="width: 100px;" class="form-control" [(ngModel)]="ObjCaseHistory.Prefix"
+                                                    #NameStatus="ngModel"
+                                                    [ngClass]="{clearance: EngCaseHistoryFormSubmitted && NameStatus?.errors?.required}" required>
+                                                    <option [ngValue]="undefined">Select</option>
+                                                    <option *ngFor="let option of listNamePrefix" value="{{option}}">{{option}}</option>
+                                                    </select>
+                                                </span>
+                                                <input type="text" class="form-control" placeholder="Name" name="Name" #Name="ngModel"
+                                                    [(ngModel)]="ObjCaseHistory.Contact_Name"
+                                                    [ngClass]="{clearance: EngCaseHistoryFormSubmitted && Name?.errors?.required}" required>
+                                                </div>
+                                                <div>
+                                                <select *ngIf="ContactNameList.length && databaseName != 'BSHPL'" name="Name" class="form-control" [(ngModel)]="footFallId"
+                                                #Name="ngModel" (change)="NameChange()"
+                                                [ngClass]="{clearance: EngCaseHistoryFormSubmitted && Name?.errors?.required}"required>
+                                                <option [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of ContactNameList" value="{{option.Contact_Name}}">{{option.Prefix}} {{option.Contact_Name}}</option>
+                                            </select>
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label class="control-label">Age</label>
+                                                <div class="input-group">
+                                                <input type="text" class="form-control" placeholder="Age" CompacctDigitonly="true"
+                                                    name="AgeNumber" #AgeNumber="ngModel" [(ngModel)]="ObjCaseHistory.Age">
+                                                <span class="input-group-btn">
+                                                    <select name="AgeUnit" style="width: 100px;" id="Name-Status" class="form-control" [(ngModel)]="ObjCaseHistory.Age_Unit"
+                                                    #AgeUnit="ngModel">
+                                                    <option [ngValue]="undefined">Select</option>
+                                                    <option value="Year">Year</option>
+                                                    <option value="Month">Month</option>
+                                                    <option value="Days">Days</option>
+                                                    </select>
+                                                </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <label class="control-label">Gender<sup class="text-danger">*</sup></label>
+                                                <select name="Gender" id="Name-Status" class="form-control" [(ngModel)]="ObjCaseHistory.Gender"
+                                                #Gender="ngModel" [ngClass]="{clearance: EngCaseHistoryFormSubmitted && Gender?.errors?.required}"
+                                                required>
+                                                <option [ngValue]="undefined">Select</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                                <option value="Other">Other</option>
+                                                </select>
+                                            </div>
+                                            </div>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Date of Birth </label>
+                                            <ejs-datepicker 
+                                                [(value)]="Date_Of_Birth" 
+                                                [format]="'dd/MMM/yyyy'"
+                                                name="Birth_date">
+                                            </ejs-datepicker>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Email ID</label>
+                                            <input type="text" class="form-control" name="Email_ID" #Email_ID="ngModel"
+                                                [(ngModel)]="ObjCaseHistory.Email" placeholder="Enter Email ID"
+                                                pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$"
+                                                [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && Email_ID?.errors?.pattern}" >
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Profession<sup class="text-danger"></sup></label>
+                                            <select name="Occupation" class="form-control" [(ngModel)]="ObjCaseHistory.Occupation" #Occupation="ngModel">
+                                                <option [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let opt of occptionList" value="{{opt.Occupation_ID}}">{{opt.Occupation_Name}}</option>
+                                                
+                                            </select>
+                                            </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Pincode</label>
+                                            <input type="text" class="form-control" placeholder="Pincode" name="Pincode" #Pincode="ngModel" 
+                                                [(ngModel)]="ObjCaseHistory.Pin" CompacctDigitonly="true" maxlength="6" minlength="6">
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Location</label>
+                                            <input type="text" class="form-control" Compacct-Place (setAddress)="getAddressOnChange($event)"
+                                            placeholder="Location" name="Location" #Location="ngModel" [(ngModel)]="ObjCaseHistory.Location">
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Country</label>
+                                            <select name="Country" class="form-control" [(ngModel)]="ObjCaseHistory.Country" #Country="ngModel">
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of countryList" value="{{option.country}}">{{option.country}}</option>
+                                            </select>
+                                        </div>
+                                        </div>
+                                        <div class="row">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">State</label>
+                                            <select name="State" class="form-control" [(ngModel)]="ObjCaseHistory.State" #State="ngModel"
+                                            (change)="getDistrictList(ObjCaseHistory.State)">
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of stateList" value="{{option.State}}">{{option.State}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">District</label>
+                                            <select name="District" class="form-control" [(ngModel)]="ObjCaseHistory.District" #District="ngModel">
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of districtList" value="{{option.District}}">{{option.District}}
+                                            </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Home Address</label>
+                                            <textarea type="text" class="form-control" placeholder="Address" name="Address" #Address="ngModel"
+                                            [(ngModel)]="ObjCaseHistory.Address" rows="2">
+                                            </textarea>
+                                        </div>
+                                        </div>
+                                        <div class="row">
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Enquiry Source<sup class="text-danger">*</sup></label>
+                                            <select name="Source" class="form-control" [(ngModel)]="ObjCaseHistory.Enq_Source_ID" #Source="ngModel"
+                                            [ngClass]="{clearance: EngCaseHistoryFormSubmitted && Source?.errors?.required}" required>
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of enqSourceList" value="{{option.Enq_Source_ID}}">
+                                                {{option.Enq_Source_Name}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Consultancy Type<sup class="text-danger">*</sup></label>
+                                            <select name="ConsultancyType" class="form-control" [(ngModel)]="ObjCaseHistory.Consultancy_Type"
+                                            #ConsultancyType="ngModel"
+                                            [ngClass]="{clearance: EngCaseHistoryFormSubmitted && ConsultancyType?.errors?.required}" required>
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option value="Hearing">Hearing</option>
+                                            <option value="Speech">Speech</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="control-label">Who has accompanied you<sup class="text-danger"></sup></label>
+                                            <select name="accompanied" class="form-control" [(ngModel)]="ObjCaseHistory.Who_has_accompanied_you"
+                                            #accompanied="ngModel">
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option value="Parent">Parent</option>
+                                            <option value="Guardian">Guardian</option>
+                                            <option value="Friend">Friend</option>
+                                            <option value="Spouse">Spouse</option>
+                                            <option value="Children">Children</option>
+                                            <option value="Self">Self</option>
+                                            </select>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <br>
+                <div class="form-group" style="padding: 1em;">
+                    <h5 style="
+                    padding: 0.5em 1em;
+                    background: #c1c1c185;
+                    border-top: 5px solid #3c8dbc;
+                    border-bottom: 1px solid #c6c6c6;
+                    margin-top: -20px;
+                    ">
+                    <i class="fa fa-user">
+                    </i> &nbsp;<strong>Case History:</strong>
+                    </h5>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">Reason for Visit<sup class="text-danger"></sup></label>
                         <select class="form-control"
                         name="reasonforvisit"
                         #reasonforvisit="ngModel"
                         [(ngModel)]="ObjCaseHistory.Reason_for_Visit"
-                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && reasonforvisit.errors?.required}" required >
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && reasonforvisit.errors?.required}">
                             <option  [ngValue]="undefined">Select</option>
                             <option *ngFor = "let option of ReasonforVisitList" value= "{{option}}">
                                 {{option}}
                             </option>
                         </select>
                     </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Present complain<sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="presentcomplain"
+                        #presentcomplain="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Present_complain"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && presentcomplain.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option *ngFor = "let option of PresentComplainList" value= "{{option}}">
+                                {{option}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Right Ear Tinnitus<sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="righttinnitus"
+                        #righttinnitus="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Right_ear_tinnitus "
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && righttinnitus.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Left Ear Tinnitus<sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="lefttinnitus"
+                        #lefttinnitus="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Left_ear_tinnitus"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && lefttinnitus.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
                 </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">Right Ear Pain<sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="rightpain"
+                        #rightpain="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Right_ear_pain"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && rightpain.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Left Ear Pain<sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="leftpain"
+                        #leftpain="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Left_ear_pain"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && leftpain.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Right Ear Discharge<sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="rightdiscarge"
+                        #rightdiscarge="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Right_ear_discharge"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && rightdiscarge.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Left Ear Discharge<sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="leftdiscarge"
+                        #leftdiscarge="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Left_ear_discharge"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && leftdiscarge.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">Right Ear Vertigo/Dizziness <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="rightvertigod"
+                        #rightvertigod="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Right_ear_Vertigo"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && rightvertigod.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Left Ear Vertigo/Dizziness <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="leftvertigod"
+                        #leftvertigod="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Left_ear_Vertigo"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && leftvertigod.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Right Ear Blocking sensation <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="rightblockingsensation"
+                        #rightblockingsensation="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Right_ear_blocking_sensation"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && rightblockingsensation.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Left Ear Blocking sensation <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="lefttblockingsensation"
+                        #lefttblockingsensation="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Left_ear_blocking_sensation"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && lefttblockingsensation.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                            <option  value="Sometimes">Sometimes</option>
+                            <option  value="Never">Never</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">Exposure to noise <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="exposuretonoise"
+                        #exposuretonoise="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Exposure_to_noise "
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && exposuretonoise.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="control-label">Duration of noise exposure in a day (hours) <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="durationofnoiseex"
+                        #durationofnoiseex="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Duration_of_noise_exposure"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && durationofnoiseex.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="1-4">1-4</option>
+                            <option  value="4-8">4-8</option>
+                            <option  value="8-12">8-12</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="padding: 1em;">
+                    <h5 style="
+                    padding: 0.5em 1em;
+                    background: #c1c1c185;
+                    border-top: 5px solid #3c8dbc;
+                    border-bottom: 1px solid #c6c6c6;
+                    ">
+                    <i class="fa fa-user">
+                    </i> &nbsp;<strong>Medical :</strong>
+                </h5>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">Referring doctor/ENT <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="refdoc"
+                        #refdoc="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Ref_doctor "
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && refdoc.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Doctor Name">Doctor’s Name</option>
+                            <option  value="Self">Self</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Ear surgical history <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="surgicalhis"
+                        #surgicalhis="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Surgical_history"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && surgicalhis.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="padding: 1em;">
+                    <h5 style="
+                    padding: 0.5em 1em;
+                    background: #c1c1c185;
+                    border-top: 5px solid #3c8dbc;
+                    border-bottom: 1px solid #c6c6c6;
+                    ">
+                    <i class="fa fa-user">
+                    </i> &nbsp;<strong>Hearing :</strong>
+                </h5>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">Better ear <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="betterear"
+                        #betterear="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Better_ear"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && betterear.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Right">Right</option>
+                            <option  value="Left">Left</option>
+                            <option  value="Symmetrical">Symmetrical</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Family history of hearing loss <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="famhisloss"
+                        #famhisloss="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Family_history_of_hearing_loss"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && famhisloss.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Yes">Yes</option>
+                            <option  value="No">No</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Current/previous hearing aid technology <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="preaistech"
+                        #preaistech="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Pre_hearing_aid_technology"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && preaistech.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Analog">Analog</option>
+                            <option  value="Digital">Digital</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">Current/previous hearing aid type <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="preaistype"
+                        #preaistype="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Pre_hearing_aid_type"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && preaistype.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="BTE">BTE</option>
+                            <option  value="RIC">RIC</option>
+                            <option  value="ITC">ITC</option>
+                            <option  value="CIC">CIC</option>
+                            <option  value="IIC">IIC</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label">Hearing aid difficulties <sup class="text-danger"></sup></label>
+                        <select class="form-control"
+                        name="hearanddifficult"
+                        #hearanddifficult="ngModel"
+                        [(ngModel)]="ObjCaseHistory.Hearing_aid_difficulties"
+                        [ngClass]="{'clearance': EngCaseHistoryFormSubmitted && hearanddifficult.errors?.required}">
+                            <option  [ngValue]="undefined">Select</option>
+                            <option  value="Uncomfortable">Uncomfortable</option>
+                            <option  value="Not helpful">Not helpful</option>
+                            <option  value="Not working">Not working</option>
+                        </select>
+                    </div>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                    <label class="control-label">Date</label>
+                    <ejs-datepicker 
+                    [(value)]="Case_Date"
+                    [format]="'dd/MMM/yyyy'"
+                    ></ejs-datepicker> 
+                    </div>
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4"style="margin-top: 2em;">
+                        <p-dropdown [options]="Audilogistlist"
+                        name="Audilogist1" 
+                        #Audilogist1="ngModel" 
+                        [(ngModel)]="ObjCaseHistory.Audiologist_ID"
+                        [showClear]="true" 
+                        [emptyFilterMessage]="' No Audilogist Found'" 
+                        [filter]="true" filterBy="label,value.name" 
+                        [resetFilterOnHide]="true" 
+                        [placeholder]="'Select Audilogist'" 
+                        [virtualScroll]="true"
+                        itemSize="30" 
+                        [styleClass]="EngCaseHistoryFormSubmitted && Audilogist1.errors?.required? 'clearance' : ''"> 
+                    </p-dropdown>
+                    <div style="text-align:center;">
+                        <Strong >Audilogist</Strong>
+                    </div>                           
+                    </div>
+              </div>
                   <div class="form-group" style="padding: 1em;">
                     <div class="col-sm-4"></div>
-                  <div class="col-sm-6">
-                    <button class="btn btn-primary pull-right"  id="load" (click)="saveDataLast(EngCaseHistoryForm.form.valid)"   [disabled]="Active">
+                  <div class="col-sm-8">
+                    <button class="btn btn-primary pull-right"  id="load" (click)="saveCaseHistoryData(EngCaseHistoryForm.form.valid)">
                          <p-progressSpinner *ngIf="Spinner"[style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save">Save</span>
+                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save">{{buttonname }}</span>
                  </button>
                  </div> 
-                 <div class="col-sm-2">
-                    <button class="btn btn-success " (click)="GetPrint()" [disabled]="SaveAfter">
-                        <span class="glyphicon glyphicon-print"></span> Print
-                    </button>
-                </div>
                  </div>             
                </form>
+            </p-tabPanel>
              </p-tabView>   
                </div>
             </div>

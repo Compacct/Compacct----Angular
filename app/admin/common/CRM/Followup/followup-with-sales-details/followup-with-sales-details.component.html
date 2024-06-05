@@ -1,4 +1,5 @@
 
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -63,11 +64,11 @@
                                 [paginator]="FollowupSalesDetailsList.length ? true : false"
                                 *ngIf='FollowupSalesDetailsList.length'
                                 [paginator]="true" 
-                                [rows]="100" 
+                                [rows]="50" 
                                 [rowHover]="true" 
                                 [autoLayout]="true" 
                                 sortMode="multiple" 
-                                [rowsPerPageOptions]="[100,200,300]" 
+                                [rowsPerPageOptions]="[50,100,200,300]" 
                                 [globalFilterFields]='FollowupSalesDetailsListDynmic'
                                     [rowHover]="true" #dt2>
                                     <ng-template pTemplate="caption">
@@ -95,10 +96,16 @@
                                                                 </button>
                                                     <ul class="dropdown-menu">
                                                         <li>
-                                                            <a (click)="redirectPatientDetails(col)"><i class="fa fa-fw fa fa-clone"></i>View Details</a>
+                                                            <a (click)="followup(col)">
+                                                            <i class="fa fa-commenting-o"> </i>Followup</a>
                                                         </li>
                                                         <li>
-                                                            <a (click)="Appointment()"><i class="fa fa-fw fa-calendar-times-o"></i>Appointment</a>
+                                                            <a (click)="redirectPatientDetails(col)">
+                                                            <i class="fa fa-fw fa fa-clone"></i>View Details</a>
+                                                        </li>
+                                                        <li>
+                                                            <a (click)="Appointment()">
+                                                            <i class="fa fa-fw fa-calendar-times-o"></i>Appointment</a>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -120,3 +127,101 @@
         </div>
     </div>
 </div>
+
+<p-dialog  [(visible)]="FollowupModal" [modal]="true" [responsive]="true" [style]="{width: '75vw'}"  [maximizable]="true" [baseZIndex]="10000">
+    <p-header><h3 style="margin-top: 0px; margin-bottom: -10px;">Followup Details</h3> <br> {{Fname}}</p-header>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <div class="form-horizontal">
+                    <div class="box-body ">
+                        <div class="timelinescroll style-3">
+                            <ul class="timeline ">
+                                <li class="time-label" style="margin-bottom: -20px"
+                                    *ngFor="let objMain of FollowUpList">
+                                    <span class="" style="background-color:rgb(236, 205, 51)">{{objMain.Posted_On_C}}</span>
+                                    <ul class="timeline" style="margin: 7px 0 30px 0">
+                                        <li>
+                                            <i class="fa fa-user bg-blue"></i>
+                                            <div class="timeline-item">
+                                                <h3 class="timeline-header"><a href="#">{{objMain.SentTo}}</a>
+                                                </h3>
+                                                <div class="timeline-body" *ngIf="objMain.Disposition_Name">
+                                                    {{objMain.Disposition_Name}} , {{objMain.Secondary_Desposition_Name}}
+                                                </div>
+                                                <div class="timeline-body" *ngIf="objMain.Followup_Details">
+                                                    Remarks :{{objMain.Followup_Details}}
+                                                </div>
+                                                <div class="timeline-footer" style="padding-bottom: 10px">
+                                                    <a class="btn btn-primary btn-social  btn-xs"
+                                                        *ngIf="objMain.PostedBy != objMain.SentTo">
+                                                        <i class="fa fa-user"></i>&nbsp;{{objMain.SentTo}}
+                                                    </a>
+                                                    <a class="btn btn-danger btn-social  btn-xs" *ngIf="objMain.Current_Action">
+                                                        Action Taken :<i class="fa fa-angle-double-right"></i>&nbsp;{{objMain.Current_Action}} On {{objMain.Posted_On|date:"dd/MMM/yyyy , h:mm a"}}
+                                                    </a>
+                                                    <a class="btn btn-dangerr btn-social  btn-xs"  *ngIf="objMain.Next_Followup" id="hover">
+                                                        Next Followup :<i class="fa fa-angle-double-right"></i>&nbsp;{{objMain.Next_Followup|date:"dd/MMM/yyyy , h:mm a"}}
+                                                    </a>
+                                                    <br>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-horizontal">
+                    <div class="box-body">
+                        <form name="followupForm" #followupForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label class="control-label">Primary Disposition<sup class="text-danger">*</sup></label>
+                                    <select class="form-control"
+                                       name="actiontakenFollowUpCreation"
+                                       #actiontakenFollowUpCreation="ngModel"
+                                       [(ngModel)]="ObjFlow.Disposition_ID" 
+                                       (change)="GetSEndDispo(ObjFlow.Disposition_ID)"
+                                        [ngClass]="{'clearance':folloupFormSubmit && actiontakenFollowUpCreation?.errors?.required}"
+                                        required>
+                                        <option [ngValue]="undefined">Select</option>
+                                        <option *ngFor=" let data of disposalList" value="{{data.Disposition_ID}}">
+                                            {{data.Disposition_Name}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-12">
+                                    <label class="control-label">Secondary Disposition<sup class="text-danger">*</sup></label>
+                                    <p-dropdown [options]="Disposal2nd" name="Secondary" #Secondary="ngModel" [(ngModel)]="ObjFlow.Secondary_Desposition_ID" [showClear]="true"
+                                        [emptyFilterMessage]="' No Secondary DispositionFound'" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                        [placeholder]="'Select Secondary Disposition'" [virtualScroll]="true" itemSize="30" (onChange)="getDisable()"
+                                        [ngClass]="{'clearance': folloupFormSubmit && Secondary?.errors?.required }" required>
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-sm-12">
+                                    <label class="control-label">Remarks<sup class="text-danger">*</sup></label>
+                                    <textarea class="form-control" name="Remarks"#Remarks="ngModel" [disabled]="RemarksDis"
+                                    [(ngModel)]="ObjFlow.Followup_Details" placeholder="Remarks"
+                                    [ngClass]="{'clearance': folloupFormSubmit && Remarks?.errors?.required }" required>
+                                </textarea>                     
+                                </div>
+                                <div class="col-sm-12">
+                                    <label class="control-label">Next Followup<sup class="text-danger">*</sup></label>
+                                    <ejs-datepicker [(value)]="FollowupDateReg2" format="dd/MM/yyyy" [min]="minumeDate" [enabled]="!RemarksDis"></ejs-datepicker>
+                                </div>
+                            </div>
+                            <div class="box-footer">
+                                <button class="btn btn-primary pull-right" (click)="saveFollowUp(followupForm.form.valid)" >                                  
+                                    <span class="fa fa-save"></span> Save
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-dialog> 

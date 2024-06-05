@@ -70,6 +70,7 @@ export class K4cOutletRequistionComponent implements OnInit {
   ShowRemarks: any;
   CheckCreate: any;
   indentsaveSpinner = false;
+  lockdate:any;
 
   constructor(
     private $http: HttpClient,
@@ -97,6 +98,7 @@ export class K4cOutletRequistionComponent implements OnInit {
     });
  this.onload();
  this.GetOutletName();
+ this.getLockDate();
  this.CheckRequisitionForCreate();
   }
 
@@ -306,6 +308,7 @@ trackByFunction = (index, item) => {
 editmaster(masterProduct){
   this.edit = true;
   if(masterProduct.Req_No){
+    if(this.checkLockDate(masterProduct.Req_Date)){
   this.tabIndexToView = 1;
   this.items = ["BROWSE", "UPDATE"];
   this.buttonname = "Update";
@@ -314,6 +317,7 @@ editmaster(masterProduct){
   //this.RequisitionList = [];
   this.clearData();
   this.geteditmaster(masterProduct);
+    }
   }
 }
 geteditmaster(masterProduct){
@@ -445,6 +449,7 @@ getTotalValue(){
   return val ? val : '-';
 }
 showDialog() {
+  if(this.checkLockDate(this.DateService.dateConvert(new Date(this.myDate)))) {
   this.display = true;
   this.filteredData = [];
   this.indentsaveSpinner = false;
@@ -456,10 +461,10 @@ showDialog() {
     }
 
  })
+ }
 }
 saveREquistion(){
   this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));
-
   this.OutletNameList.forEach(el =>{
     if(this.ObjRequistion.Cost_Cen_ID == el.Cost_Cen_ID){
       this.ObjRequistion.Cost_Cen_Name = el.Cost_Cen_Name;
@@ -607,14 +612,56 @@ saveREquistion(){
     this.clearData();
     })
    }
+  
 }
+getLockDate(){
+  const obj = {
+   "SP_String": "sp_Comm_Controller",
+   "Report_Name_String": "Get_LockDate",
+   //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
 
+ }
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+//   console.log('LockDate===',data);
+  this.lockdate = data[0].dated;
+
+})
+}
+checkLockDate(docdate){
+  if(this.lockdate && docdate){
+    if(new Date(docdate) > new Date(this.lockdate)){
+      return true;
+    } else {
+      var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+    });
+      return false;
+    }
+  } else {
+    this.Spinner = false;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+     key: "compacct-toast",
+     severity: "error",
+     summary: "Warn Message",
+     detail: "Date not found."
+    });
+    return false;
+  }
+}
 Cancle(row){
   // console.log("requistion_no_gen ===", this.requistion_no_gen)
   this.requistionId = undefined ;
   this.requistion_no_gen = undefined ;
   this.act_popup = false;
   if(row.Req_No){
+    if(this.checkLockDate(row.Req_Date)){
     this.can_popup = true;
   this.requistionId = row.Req_No ;
   // console.log("delete Rowr ===", this.requistionId);
@@ -627,6 +674,7 @@ Cancle(row){
     summary: "Are you sure?",
     detail: "Confirm to proceed"
     });
+    }
   }
  }
  onReject(){
@@ -708,6 +756,7 @@ Active(row){
   this.requistionId = undefined ;
   this.requistion_no_gen = undefined ;
   if(row.Req_No){
+    if(this.checkLockDate(row.Req_Date)){
     this.act_popup = true;
   this.requistionId = row.Req_No ;
   console.log("delete Rowr ===", this.requistionId);
@@ -721,6 +770,7 @@ Active(row){
     detail: "Confirm to proceed"
     });
   }
+   }
 
 }
 onConfirm2(){
@@ -799,7 +849,25 @@ CheckRequisitionForCreate() {
 
        console.log("ShowRemarks",this.ShowRemarks)
       })
-  }
+}
+exportoexcelbrowse(Arr,fileName): void {
+  let temp:any = [];
+     Arr.forEach(element => {
+       const obj = {
+        Req_No : element.Req_No,
+        Req_Date : this.DateService.dateConvert(new Date(element.Req_Date)),
+        Cost_Cen_Name : element.Cost_Cen_Name,
+        Transaction_Date_Time : element.Transaction_Date_Time,
+        amount : element.amount,
+        Challan_No : element.Challan_No,
+        Franchise_Sale_Bill_No : element.Franchise_Sale_Bill_No
+       }
+       temp.push(obj)
+     });
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(temp);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, fileName+'.xlsx');
+}
 }
 class Requistion {
   Cost_Cen_ID : any;

@@ -65,6 +65,7 @@ export class K4cRawMaterialIndentComponent implements OnInit {
   Requisition_Qty: any;
   uom:any;
   StockQty: any;
+  lockdate:any;
   constructor(
     private Header: CompacctHeader,
     private compacctToast: MessageService,
@@ -86,6 +87,7 @@ export class K4cRawMaterialIndentComponent implements OnInit {
       this.GetBrowseToCostCen();
       // this.getDept();
       this.getdate();
+      this.getLockDate();
       this.getMaterialType();
       this.maxdate = new Date();
   }
@@ -101,6 +103,45 @@ export class K4cRawMaterialIndentComponent implements OnInit {
    }
   onReject() {
     this.compacctToast.clear("c");
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
   }
   clearData(){
     this.items = ["BROWSE", "CREATE"];
@@ -361,6 +402,7 @@ export class K4cRawMaterialIndentComponent implements OnInit {
     return Reqval ? Reqval : '-';
   }
   showDialog() {
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.rawDate)))) {
     this.display = true;
     this.filteredData = [];
     let Savedata = [];
@@ -371,6 +413,7 @@ export class K4cRawMaterialIndentComponent implements OnInit {
             this.filteredData.push(el);
         }
       });
+    }
     }
   }
   SaveRawindent(){
@@ -593,6 +636,7 @@ export class K4cRawMaterialIndentComponent implements OnInit {
   deleteraw(col){
     this.DocNo = undefined;
     if(col.Doc_No){
+      if(this.checkLockDate(col.Doc_Date)){
       this.DocNo = col.Doc_No;
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -602,6 +646,7 @@ export class K4cRawMaterialIndentComponent implements OnInit {
         summary: "Are you sure?",
         detail: "Confirm to proceed"
       });
+      }
     }
   }
   onConfirm(){
