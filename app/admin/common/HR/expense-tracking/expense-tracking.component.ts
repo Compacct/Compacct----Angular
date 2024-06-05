@@ -4,7 +4,6 @@ import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
-import * as XLSX from 'xlsx';
 import { FileUpload } from 'primeng/primeng';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { log } from 'console';
@@ -17,29 +16,53 @@ import { log } from 'console';
   encapsulation: ViewEncapsulation.None
 })
 export class ExpenseTrackingComponent implements OnInit {
+  // Tab Panel Properties
   tabIndexToView: number = 0;
-  Items: any = ['Create Expense', 'Pending Authorization'];
+  Items: any = ['CREATE EXPENSE', 'PENDING AUTHORIZATION', ' AUTHORIZED EXPENSE', ' UNAUTHORISED EXPENSE'];
+  // Save Form Properties
   Spinner: boolean = false;
   buttonname: string = 'Create';
-  employeeFormSubmit: boolean = false;
+  employeeExpenseFormSubmit: boolean = false;
   expenseTrackingFormSubmit: boolean = false;
-  objExpenseTracking = new ExpenseTracking();
-  EmplyList: any = [];
+  // Array List
+  EmployeeList: any = [];
   ExpTypeList: any = [];
+  // Object Decalarations
+  objExpenseTracking = new ExpenseTracking();
+  // Other Proprties
   empId: any;
   txn_Date: Date = new Date()
+  // File Upload Properties
   file: boolean = false;
   upload: boolean = true;
+  // Pending Table List
   pendingExpList: any = [];
   pendingExpListHeader: any = [];
+  // Auth Table List
+  authExpList: any = [];
+  authExpListHeader: any = [];
+  // unauth Table List
+  unAuthExpList: any = [];
+  unAuthExpListHeader: any = [];
+  // Delete Purpose Properties
   deleteData: any;
-
+  // Authorize Releated Properties
   DisplayAuthorizePopup: boolean = false
   authData: any;
   authAmount: any;
   authNote: any;
   authFormSubmit: boolean = false;
   authSpinner: boolean = false;
+  // Unauthorized Releated Properties
+  DisplayUnAuthorizePopup: boolean = false
+  unauthData: any;
+  unauthNote: any;
+  umauthFormSubmit: boolean = false;
+  unauthSpinner: boolean = false;
+  // Select Array for Approve
+  selectedAuthorized:any = [];
+  approveSpiner:boolean = false;
+  // File upload property
   @ViewChild("UploadFile", { static: false }) UploadFile!: FileUpload;
 
   constructor(
@@ -62,34 +85,50 @@ export class ExpenseTrackingComponent implements OnInit {
     this.getExpType();
   }
 
+  print(){
+    console.log(this.selectedAuthorized);
+    
+  }
+
   getEMP() {
-    this.EmplyList = []
+    this.EmployeeList = [];
     const obj = {
       "SP_String": "SP_Expense_Tracking",
       "Report_Name_String": "Get_Employee",
       "Json_Param_String": JSON.stringify({ "User_ID": this.compact.CompacctCookies.User_ID })
     }
+
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       console.log("Emp List  ===", data);
       if (data.length) {
-        this.EmplyList = data;
-        this.empId = this.EmplyList.length == 1 ? this.EmplyList[0].Emp_ID : undefined;
-        this.getPendingExp()
+        this.EmployeeList = data;
+        this.empId = this.EmployeeList.length == 1 ? this.EmployeeList[0].Emp_ID : undefined;
+        this.getPendingExp();
+        this.getAuthExp();
+        this.getUnAuthExp();
       }
     })
   }
+
   getExpType() {
-    this.EmplyList = []
+    this.EmployeeList = []
     const obj = {
       "SP_String": "SP_Expense_Tracking",
       "Report_Name_String": "Get_Expence_Type"
     }
+
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       console.log("exp type List  ===", data);
       if (data.length) {
         this.ExpTypeList = data;
       }
     })
+  }
+
+  chnageEmp() {
+    this.getPendingExp();
+    this.getAuthExp();
+    this.getUnAuthExp();
   }
 
   fileSelect() {
@@ -120,7 +159,7 @@ export class ExpenseTrackingComponent implements OnInit {
       this.ngxService.start();
       this.GlobalAPI.CommonFileUpload(upfile)
         .subscribe((data: any) => {
-          // console.log('upload response', data);
+          console.log('upload response', data);
           this.objExpenseTracking.Pic_File_Name = data.file_url;
           this.ngxService.stop();
           this.upload = false;
@@ -133,10 +172,9 @@ export class ExpenseTrackingComponent implements OnInit {
   }
 
   saveData(valid1: any, valid2: any) {
-    this.employeeFormSubmit = true;
+    this.employeeExpenseFormSubmit = true;
     this.expenseTrackingFormSubmit = true;
     console.log("valid", valid1, valid2);
-
     if (valid1 && valid2) {
       let repName: string = ""
       let msg: string = ""
@@ -148,7 +186,7 @@ export class ExpenseTrackingComponent implements OnInit {
         repName = "Create_Expense_Tracking"
         msg = "Save"
       }
-      this.employeeFormSubmit = false;
+      this.employeeExpenseFormSubmit = false;
       this.expenseTrackingFormSubmit = false;
       this.Spinner = true;
 
@@ -164,7 +202,7 @@ export class ExpenseTrackingComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         console.log('save res', data);
         this.Spinner = false;
-        if (data[0].Expence_ID) {
+        if (data[0].Column1) {
           this.CompacctToast.clear();
           this.CompacctToast.add({
             key: "compacct-toast",
@@ -173,7 +211,6 @@ export class ExpenseTrackingComponent implements OnInit {
             detail: "Succesfully" + msg
           });
           this.getPendingExp();
-          this.tabIndexToView = 0;
           this.clearData();
         }
         else {
@@ -190,7 +227,6 @@ export class ExpenseTrackingComponent implements OnInit {
   }
 
   getPendingExp() {
-    // if (this.empId) {
     this.pendingExpList = []
     this.pendingExpListHeader = []
     const obj = {
@@ -205,7 +241,6 @@ export class ExpenseTrackingComponent implements OnInit {
         this.pendingExpListHeader = Object.keys(data[0]);
       }
     })
-    // }
   }
 
   edit(col: any) {
@@ -218,12 +253,14 @@ export class ExpenseTrackingComponent implements OnInit {
       this.objExpenseTracking.Expence_Type_ID = col.Expence_Type_ID;
       this.objExpenseTracking.Pic_File_Name = col.Pic_File_Name;
       this.txn_Date = new Date(col.Txn_Date);
-      this.file = true;
-      this.upload = false;
       this.tabIndexToView = 0;
       this.buttonname = "Update"
+      if (col.Pic_File_Name) {
+        this.file = true;
+        this.upload = false;
+      }
+      this.chnageEmp();
     }
-
   }
 
   delte(col: any) {
@@ -236,71 +273,6 @@ export class ExpenseTrackingComponent implements OnInit {
       detail: "Confirm to proceed"
     });
     this.deleteData = { ...col }
-  }
-
-  Authorize(col: any) {
-    if (col) {
-      this.DisplayAuthorizePopup = true;
-      this.authData = { ...col }
-    }
-  }
-
-  confirmAuthorize(valid: any) {
-    this.authFormSubmit = true;
-    if (valid) {
-      this.authFormSubmit = false;
-      this.authSpinner = true;
-      const tempData = { 
-        "Expence_ID": this.authData.Expence_ID, 
-        "Auth_Amount": Number(this.authAmount), 
-        "Auth_Note": this.authNote, 
-        "Auth_Status": "Authorize" 
-      };
-      console.log("auth data",tempData); 
-      
-      const obj = {
-        "SP_String": "SP_Expense_Tracking",
-        "Report_Name_String": "Update_Authorize",
-        "Json_Param_String": JSON.stringify(tempData)
-      }
-      this.GlobalAPI.getData(obj).subscribe((data: any) => {
-        console.log("auth res  ===", data);
-        this.authSpinner = false;
-        if (data[0].Column1 == "success") {
-          this.CompacctToast.clear();
-          this.CompacctToast.add({
-            key: "compacct-toast",
-            severity: "success",
-            summary: "Success",
-            detail: "Succesfully Authorized"
-          });
-          this.getPendingExp();
-          this.DisplayAuthorizePopup = false;
-        }
-        else {
-          this.CompacctToast.clear();
-          this.CompacctToast.add({
-            key: "compacct-toast",
-            severity: "error",
-            summary: "Error",
-            detail: "Something Went Wrong"
-          });
-
-        }
-
-
-      })
-    }
-
-  }
-
-  UnAuthorize(col: any) {
-
-  }
-
-  TabClick(e: any) {
-    this.tabIndexToView = e.index;
-    this.clearData();
   }
 
   onConfirm() {
@@ -333,12 +305,134 @@ export class ExpenseTrackingComponent implements OnInit {
             summary: "Error",
             detail: "Something Went Wrong"
           });
-
         }
-
-
       })
     }
+  }
+
+  Authorize(col: any) {
+    if (col) {
+      this.DisplayAuthorizePopup = true;
+      this.authData = { ...col }
+    }
+  }
+
+  cancelAuthorize() {
+    this.DisplayAuthorizePopup = false;
+    this.authData = {};
+    this.authAmount = null;
+    this.authNote = null;
+    this.authFormSubmit = false;
+    this.authSpinner = false;
+  }
+
+  confirmAuthorize(valid: any) {
+    this.authFormSubmit = true;
+    if (valid) {
+      this.authFormSubmit = false;
+      this.authSpinner = true;
+      const tempData = {
+        "Expence_ID": this.authData.Expence_ID,
+        "Auth_Amount": Number(this.authAmount),
+        "Auth_Note": this.authNote,
+        "Auth_Status": "Authorize"
+      };
+      console.log("auth data", tempData);
+      const obj = {
+        "SP_String": "SP_Expense_Tracking",
+        "Report_Name_String": "Update_Authorize",
+        "Json_Param_String": JSON.stringify(tempData)
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("auth res  ===", data);
+        this.authSpinner = false;
+        if (data[0].Column1 == "success") {
+          this.CompacctToast.clear();
+          this.CompacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Success",
+            detail: "Succesfully Authorized"
+          });
+          this.getPendingExp();
+          this.cancelAuthorize();
+          this.getAuthExp();
+        }
+        else {
+          this.CompacctToast.clear();
+          this.CompacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error",
+            detail: "Something Went Wrong"
+          });
+        }
+      })
+    }
+  }
+
+  UnAuthorize(col: any) {
+    if (col) {
+      this.DisplayUnAuthorizePopup = true;
+      this.unauthData = { ...col }
+    }
+  }
+
+  cancelUnAuthorize() {
+    this.DisplayUnAuthorizePopup = false;
+    this.unauthData = {};
+    this.unauthNote = null;
+    this.umauthFormSubmit = false;
+    this.unauthSpinner = false;
+  }
+
+  confirmUnAuthorize(valid: any) {
+    this.umauthFormSubmit = true;
+    if (valid) {
+      this.umauthFormSubmit = false;
+      this.unauthSpinner = true;
+      const tempData = {
+        "Expence_ID": this.unauthData.Expence_ID,
+        "Auth_Note": this.unauthNote,
+        "Auth_Status": "Unauthorize"
+      };
+      console.log("auth data", tempData);
+      const obj = {
+        "SP_String": "SP_Expense_Tracking",
+        "Report_Name_String": "Update_Authorize",
+        "Json_Param_String": JSON.stringify(tempData)
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("auth res  ===", data);
+        this.unauthSpinner = false;
+        if (data[0].Column1 == "success") {
+          this.CompacctToast.clear();
+          this.CompacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Success",
+            detail: "Succesfully UnAuthorized"
+          });
+          this.getPendingExp();
+          this.cancelUnAuthorize();
+          this.getUnAuthExp();
+        }
+        else {
+          this.CompacctToast.clear();
+          this.CompacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error",
+            detail: "Something Went Wrong"
+          });
+        }
+      })
+    }
+  }
+
+  TabClick(e: any) {
+    this.tabIndexToView = e.index;
+    this.clearData();
   }
 
   onReject() {
@@ -349,13 +443,89 @@ export class ExpenseTrackingComponent implements OnInit {
   clearData() {
     this.Spinner = false;
     this.buttonname = 'Create';
-    this.employeeFormSubmit = false;
+    this.employeeExpenseFormSubmit = false;
     this.expenseTrackingFormSubmit = false;
     this.objExpenseTracking = new ExpenseTracking();
     this.txn_Date = new Date()
     this.file = false;
     this.upload = true;
     this.deleteData = {};
+    this.selectedAuthorized = [];
+  }
+
+  getAuthExp() {
+    this.authExpList = []
+    this.authExpListHeader = []
+    const obj = {
+      "SP_String": "SP_Expense_Tracking",
+      "Report_Name_String": "Get_Expense_Tracking",
+      "Json_Param_String": JSON.stringify({ "Status": "Authorized", "Emp_ID": this.empId })
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      console.log("auth Exp List  ===", data);
+      if (data.length) {
+        this.authExpList = data;
+        this.authExpListHeader = Object.keys(data[0]);
+      }
+    })
+  }
+  getUnAuthExp() {
+    this.unAuthExpList = []
+    this.unAuthExpListHeader = []
+    const obj = {
+      "SP_String": "SP_Expense_Tracking",
+      "Report_Name_String": "Get_Expense_Tracking",
+      "Json_Param_String": JSON.stringify({ "Status": "UnAuthorized", "Emp_ID": this.empId })
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      console.log("unauth Exp List  ===", data);
+      if (data.length) {
+        this.unAuthExpList = data;
+        this.unAuthExpListHeader = Object.keys(data[0]);
+      }
+    })
+  }
+
+  approveAuthorized(){
+    if (this.selectedAuthorized.length) {
+      this.approveSpiner = true;
+      const tempData:any = []
+      this.selectedAuthorized.forEach((ele:any) => {
+        tempData.push({
+          "Expence_ID":ele
+        })
+      });
+      console.log("pay data", tempData);
+      const obj = {
+        "SP_String": "SP_Expense_Tracking",
+        "Report_Name_String": "Update_payment",
+        "Json_Param_String": JSON.stringify(tempData)
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        console.log("appr res  ===", data);
+        this.approveSpiner = false;
+        this.selectedAuthorized = [];
+        this.getAuthExp();
+        if (data[0].pay_id) {
+          this.CompacctToast.clear();
+          this.CompacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Success",
+            detail: "Payment Succesfully"
+          });
+        }
+        else {
+          this.CompacctToast.clear();
+          this.CompacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Error",
+            detail: "Something Went Wrong"
+          });
+        }
+      })
+    }
   }
 
 }
