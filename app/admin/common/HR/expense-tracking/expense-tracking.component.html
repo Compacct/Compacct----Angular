@@ -21,20 +21,20 @@
 		<div class="box box-primary">
 			<div class="form-horizontal">
 				<div class="box-body">
-					<form name="EmployeeForm" #EmployeeForm="ngForm">
+					<form name="EmployeeExpenseForm" #EmployeeExpenseForm="ngForm">
 						<div class="form-group">
 							<div class="col-sm-4" style="margin-left: 20px !important">
 								<label class="control-label">Employee<sup class="text-danger">*</sup></label>
 								<select
-									name="employee"
+									name="employeeee"
 									class="form-control"
-									#employee="ngModel"
+									#employeeee="ngModel"
 									[(ngModel)]="empId"
-									(change)="getPendingExp()"
-									[ngClass]="{ clearance: employeeFormSubmit && employee?.errors?.required }"
+									(change)="chnageEmp()"
+									[ngClass]="{ clearance: employeeExpenseFormSubmit && employeeee?.errors?.required }"
 									required>
-									<option *ngIf="EmplyList.length != 1" [ngValue]="undefined">Select</option>
-									<option *ngFor="let option of EmplyList" [ngValue]="option.Emp_ID">{{ option.Emp_Name }}</option>
+									<option *ngIf="EmployeeList.length != 1" [ngValue]="undefined">Select</option>
+									<option *ngFor="let option of EmployeeList" [ngValue]="option.Emp_ID">{{ option.Emp_Name }}</option>
 								</select>
 							</div>
 						</div>
@@ -97,7 +97,7 @@
 										</ejs-datepicker>
 									</div>
 									<div class="col-sm-4">
-										<label class="control-label">Upload File</label>
+										<label class="control-label">Upload Document</label>
 										<span class="btn btn-xs btn-danger pull-right" (click)="ClearUploadInpt(UploadFile)" *ngIf="file"
 											><i class="fa fa-close"></i
 										></span>
@@ -129,7 +129,7 @@
 								<div class="form-group">
 									<button
 										class="btn btn-primary pull-right"
-										(click)="saveData(EmployeeForm.form.valid, ExpenseForm.form.valid)"
+										(click)="saveData(EmployeeExpenseForm.form.valid, ExpenseForm.form.valid)"
 										id="load"
 										[disabled]="Spinner">
 										<p-progressSpinner
@@ -175,7 +175,7 @@
 											<th style="text-align: center" nowrap>Date</th>
 											<th style="text-align: center" nowrap>Amount</th>
 											<th style="text-align: center" nowrap>Note</th>
-											<th style="text-align: center" nowrap>Pic</th>
+											<th style="text-align: center" nowrap>Document</th>
 										</tr>
 									</ng-template>
 									<ng-template pTemplate="body" let-col>
@@ -194,8 +194,10 @@
 														<li>
 															<a (click)="edit(col)"> <i class="glyphicon glyphicon-edit"></i> Edit </a>
 															<a (click)="delte(col)"> <i class="glyphicon glyphicon-trash"></i> Delete </a>
-															<a (click)="Authorize(col)"> <i class="glyphicon glyphicon-ok"></i> Authorize </a>
-															<a (click)="UnAuthorize(col)"> <i class="glyphicon glyphicon-remove"></i> UnAuthorize </a>
+															<ng-container *ngIf="EmployeeList[0]?.can_approve == 'Y'">
+																<a (click)="Authorize(col)"> <i class="glyphicon glyphicon-ok"></i> Authorize </a>
+																<a (click)="UnAuthorize(col)"> <i class="glyphicon glyphicon-remove"></i> Unauthorize </a>
+															</ng-container>
 														</li>
 													</ul>
 												</div>
@@ -205,7 +207,150 @@
 											<td style="text-align: center" nowrap>{{ col.Exp_Amount ? col.Exp_Amount : "-" }}</td>
 											<td style="text-align: center" nowrap>{{ col.Exp_Note ? col.Exp_Note : "-" }}</td>
 											<td style="text-align: center" nowrap>
-												<button class="btn btn-outline-primary" (click)="showDoc(col.Pic_File_Name)">Show Pic</button>
+												<button class="btn btn-primary" (click)="showDoc(col.Pic_File_Name)" [disabled]="!col?.Pic_File_Name">View</button>
+											</td>
+										</tr>
+									</ng-template>
+									<ng-template pTemplate="paginatorright" let-state>
+										Showing {{ state.first + 1 }} of {{ state.first + state.rows }} of {{ state.totalRecords }}
+									</ng-template>
+								</p-table>
+							</div>
+						</p-tabPanel>
+						<p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[2]" leftIcon="glyphicon glyphicon-floppy-saved">
+							<div class="table-responsive">
+								<p-table
+									[value]="authExpList"
+									[paginator]="true"
+									[rows]="10"
+									[rowHover]="true"
+									[autoLayout]="true"
+									sortMode="multiple"
+									[rowsPerPageOptions]="[10, 20, 50, 100, 200, 300]"
+									[globalFilterFields]="authExpListHeader"
+									[rowHover]="true"
+									#dt>
+									<ng-template pTemplate="caption">
+										<div class="row">
+											<div class="col-sm-3 pull-right" style="text-align: right">
+												<input
+													type="text"
+													pInputText
+													size="50"
+													placeholder="Search"
+													(input)="dt.filterGlobal($event.target.value, 'contains')"
+													class="searchInput form-control" />
+											</div>
+										</div>
+									</ng-template>
+									<ng-template pTemplate="header">
+										<tr>
+											<th></th>
+											<th style="text-align: center" nowrap>Employee</th>
+											<th style="text-align: center" nowrap>Date</th>
+											<th style="text-align: center" nowrap>Amount</th>
+											<th style="text-align: center" nowrap>Note</th>
+											<th style="text-align: center" nowrap>Authrized Amt</th>
+											<th style="text-align: center" nowrap>Authrized Note</th>
+											<th style="text-align: center" nowrap>Authrized Date</th>
+											<th>Payment</th>
+											<th style="text-align: center" nowrap>Document</th>
+										</tr>
+									</ng-template>
+									<ng-template pTemplate="body" let-col>
+										<tr>
+											<td>
+												<p-checkbox
+													name="Authgroup"
+													[value]="col.Expence_ID"
+													(onChange)="print()"
+													[(ngModel)]="selectedAuthorized"
+													[disabled]="col.Pay_ID ? true : false"></p-checkbox>
+											</td>
+											<td style="text-align: center" nowrap>{{ col.Emp_Name ? col.Emp_Name : "-" }}</td>
+											<td style="text-align: center" nowrap>{{ col.Txn_Date | date : "dd/MMM/yyyy" }}</td>
+											<td style="text-align: center" nowrap>{{ col.Exp_Amount ? col.Exp_Amount : "-" }}</td>
+											<td style="text-align: center" nowrap>{{ col.Exp_Note ? col.Exp_Note : "-" }}</td>
+											<td style="text-align: center" nowrap>{{ col.Auth_Amount ? col.Auth_Amount : "-" }}</td>
+											<td style="text-align: center" nowrap>{{ col.Auth_Note ? col.Auth_Note : "-" }}</td>
+											<td style="text-align: center" nowrap>{{ col.Auth_Date | date : "dd/MMM/yyyy" }}</td>
+											<td style="text-align: center" nowrap>{{ col.Pay_ID ? col.Pay_ID : "" }}</td>
+											<td style="text-align: center" nowrap>
+												<button class="btn btn-primary" (click)="showDoc(col.Pic_File_Name)" [disabled]="!col?.Pic_File_Name">View</button>
+											</td>
+										</tr>
+									</ng-template>
+									<ng-template pTemplate="paginatorright" let-state>
+										Showing {{ state.first + 1 }} of {{ state.first + state.rows }} of {{ state.totalRecords }}
+									</ng-template>
+								</p-table>
+							</div>
+
+							<div class="form-group">
+								<div class="col-sm-12">
+									<button
+										style="margin: 20px 30px 0 0"
+										class="btn btn-primary pull-right"
+										(click)="approveAuthorized()"
+										id="load"
+										[disabled]="approveSpiner || !selectedAuthorized.length">
+										<p-progressSpinner
+											*ngIf="approveSpiner"
+											[style]="{ width: '15px', height: '15px' }"
+											strokeWidth="8"
+											animationDuration=".5s"></p-progressSpinner>
+										<span *ngIf="!approveSpiner" style="margin-right: 5px !important" class="glyphicon glyphicon-saved"></span>Pay
+									</button>
+								</div>
+							</div>
+						</p-tabPanel>
+						<p-tabPanel headerStyleClass="compacct-tabs" [header]="Items[3]" leftIcon="glyphicon glyphicon-floppy-remove">
+							<div class="table-responsive">
+								<p-table
+									[value]="unAuthExpList"
+									[paginator]="true"
+									[rows]="10"
+									[rowHover]="true"
+									[autoLayout]="true"
+									sortMode="multiple"
+									[rowsPerPageOptions]="[10, 20, 50, 100, 200, 300]"
+									[globalFilterFields]="unAuthExpListHeader"
+									[rowHover]="true"
+									#dt>
+									<ng-template pTemplate="caption">
+										<div class="row">
+											<div class="col-sm-3 pull-right" style="text-align: right">
+												<input
+													type="text"
+													pInputText
+													size="50"
+													placeholder="Search"
+													(input)="dt.filterGlobal($event.target.value, 'contains')"
+													class="searchInput form-control" />
+											</div>
+										</div>
+									</ng-template>
+									<ng-template pTemplate="header">
+										<tr>
+											<th style="text-align: center" nowrap>Employee</th>
+											<th style="text-align: center" nowrap>Date</th>
+											<th style="text-align: center" nowrap>Amount</th>
+											<th style="text-align: center" nowrap>Note</th>
+											<th style="text-align: center" nowrap>Unauthorized Note</th>
+											<th style="text-align: center" nowrap>Unauthorized Date</th>
+											<th style="text-align: center" nowrap>Document</th>
+										</tr>
+									</ng-template>
+									<ng-template pTemplate="body" let-col>
+										<tr>
+											<td style="text-align: center" nowrap>{{ col.Emp_Name ? col.Emp_Name : "-" }}</td>
+											<td style="text-align: center" nowrap>{{ col.Txn_Date | date : "dd/MMM/yyyy" }}</td>
+											<td style="text-align: center" nowrap>{{ col.Exp_Amount ? col.Exp_Amount : "-" }}</td>
+											<td style="text-align: center" nowrap>{{ col.Exp_Note ? col.Exp_Note : "-" }}</td>
+											<td style="text-align: center" nowrap>{{ col.Auth_Note ? col.Auth_Note : "-" }}</td>
+											<td style="text-align: center" nowrap>{{ col.Auth_Date | date : "dd/MMM/yyyy" }}</td>
+											<td style="text-align: center" nowrap>
+												<button class="btn btn-primary" (click)="showDoc(col.Pic_File_Name)" [disabled]="!col?.Pic_File_Name">View</button>
 											</td>
 										</tr>
 									</ng-template>
@@ -229,42 +374,90 @@
 	[(visible)]="DisplayAuthorizePopup"
 	[modal]="true"
 	[responsive]="true"
-	[style]="{ width: '45%', minWidth: '375px' }"
+	[style]="{ width: '40%', minWidth: '375px' }"
 	style="text-align: center"
 	[minY]="70"
 	[maximizable]="false"
+	[closable]="false"
 	[baseZIndex]="10000">
 	<form name="AuthFrom" #AuthFrom="ngForm">
-	<div class="form-group">
-		<div class="col-sm-12">
-			<label class="control-label">Amount<sup class="text-danger">*</sup></label>
-			<input
-				type="text"
-				class="form-control"
-				placeholder="Amount"
-				name="AuthAmount"
-				#AuthAmount="ngModel"
-				[(ngModel)]="authAmount"
-				CompacctDigitonly="true"
-				[ngClass]="{ clearance: authFormSubmit && AuthAmount?.errors?.required }"
-				required />
+		<div class="form-group">
+			<div class="col-sm-12">
+				<label class="control-label">Amount<sup class="text-danger">*</sup></label>
+				<input
+					type="text"
+					class="form-control"
+					placeholder="Amount"
+					name="AuthAmount"
+					#AuthAmount="ngModel"
+					[(ngModel)]="authAmount"
+					CompacctDigitonly="true"
+					[ngClass]="{ clearance: authFormSubmit && AuthAmount?.errors?.required }"
+					required />
+			</div>
+			<div class="col-sm-12">
+				<label class="control-label">Note<sup class="text-danger">*</sup></label>
+				<textarea
+					class="form-control"
+					placeholder="Note"
+					name="AuthNote"
+					#AuthNote="ngModel"
+					[(ngModel)]="authNote"
+					[ngClass]="{ clearance: authFormSubmit && AuthNote?.errors?.required }"
+					required>
+				</textarea>
+			</div>
 		</div>
-		<div class="col-sm-12">
-			<label class="control-label">Note<sup class="text-danger">*</sup></label>
-			<textarea
-				class="form-control"
-				placeholder="Note"
-				name="AuthNote"
-				#AuthNote="ngModel"
-				[(ngModel)]="authNote"
-				[ngClass]="{ clearance: authFormSubmit && AuthNote?.errors?.required }"
-				required>
-			</textarea>
-		</div>
-	</div>
-</form>
+	</form>
 	<p-footer>
-		<button type="button" (click)="DisplayAuthorizePopup = false" class="btn btn-danger"><i class="pi pi-times"></i>Cancel</button>
-		<button type="button" (click)="confirmAuthorize(AuthFrom.form.valid)" class="btn btn-success"><i class="pi pi-check"></i>Authorize</button>
+		<button type="button" (click)="cancelAuthorize()" class="btn btn-danger"><i class="pi pi-times"></i>Cancel</button>
+		<button type="button" (click)="confirmAuthorize(AuthFrom.form.valid)" class="btn btn-success" [disabled]="authSpinner">
+			<i *ngIf="!authSpinner" class="pi pi-check"></i>
+			<p-progressSpinner *ngIf="authSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+			Authorize
+		</button>
+	</p-footer>
+</p-dialog>
+
+<!-- UnAuthorize Expenses -->
+<p-dialog
+	header="Unauthorize"
+	appendTo="body"
+	[(visible)]="DisplayUnAuthorizePopup"
+	[modal]="true"
+	[responsive]="true"
+	[style]="{ width: '40%', minWidth: '375px' }"
+	style="text-align: center"
+	[minY]="70"
+	[maximizable]="false"
+	[closable]="false"
+	[baseZIndex]="10000">
+	<form name="UnAuthFrom" #UnAuthFrom="ngForm">
+		<div class="form-group">
+			<div class="col-sm-12">
+				<label class="control-label">Note<sup class="text-danger">*</sup></label>
+				<textarea
+					class="form-control"
+					placeholder="Note"
+					name="unAuthNote"
+					#unAuthNote="ngModel"
+					[(ngModel)]="unauthNote"
+					[ngClass]="{ clearance: umauthFormSubmit && unAuthNote?.errors?.required }"
+					required>
+				</textarea>
+			</div>
+		</div>
+	</form>
+	<p-footer>
+		<button type="button" (click)="cancelUnAuthorize()" class="btn btn-danger"><i class="pi pi-times"></i>Cancel</button>
+		<button type="button" (click)="confirmUnAuthorize(UnAuthFrom.form.valid)" class="btn btn-success" [disabled]="unauthSpinner">
+			<i *ngIf="!unauthSpinner" class="pi pi-check"></i>
+			<p-progressSpinner
+				*ngIf="unauthSpinner"
+				[style]="{ width: '15px', height: '15px' }"
+				strokeWidth="8"
+				animationDuration=".5s"></p-progressSpinner>
+			Unauthorize
+		</button>
 	</p-footer>
 </p-dialog>
