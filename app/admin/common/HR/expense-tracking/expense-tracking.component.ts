@@ -60,10 +60,17 @@ export class ExpenseTrackingComponent implements OnInit {
   umauthFormSubmit: boolean = false;
   unauthSpinner: boolean = false;
   // Select Array for Approve
-  selectedAuthorized:any = [];
-  approveSpiner:boolean = false;
+  selectedAuthorized: any = [];
+  approveSpiner: boolean = false;
   // File upload property
   @ViewChild("UploadFile", { static: false }) UploadFile!: FileUpload;
+  total_amt: number = 0;
+  paymentDetailsPopup: boolean = false;
+  payment_type: string = "";
+  bank_name: string = "";
+  bank_branch: string = "";
+  chq_neft_no: string = "";
+  chq_neft_date: Date = new Date();
 
   constructor(
     private Header: CompacctHeader,
@@ -85,9 +92,15 @@ export class ExpenseTrackingComponent implements OnInit {
     this.getExpType();
   }
 
-  print(){
+  calTotal() {
     console.log(this.selectedAuthorized);
-    
+    this.total_amt = 0;
+    if (this.selectedAuthorized.length) {
+      this.selectedAuthorized.forEach(ele => {
+        this.total_amt += Number(ele.Auth_Amount)
+      });
+    }
+    return this.total_amt;
   }
 
   getEMP() {
@@ -129,6 +142,7 @@ export class ExpenseTrackingComponent implements OnInit {
     this.getPendingExp();
     this.getAuthExp();
     this.getUnAuthExp();
+    this.clearData()
   }
 
   fileSelect() {
@@ -259,7 +273,7 @@ export class ExpenseTrackingComponent implements OnInit {
         this.file = true;
         this.upload = false;
       }
-      this.chnageEmp();
+      // this.chnageEmp();
     }
   }
 
@@ -451,6 +465,7 @@ export class ExpenseTrackingComponent implements OnInit {
     this.upload = true;
     this.deleteData = {};
     this.selectedAuthorized = [];
+    this.total_amt = 0;
   }
 
   getAuthExp() {
@@ -486,13 +501,27 @@ export class ExpenseTrackingComponent implements OnInit {
     })
   }
 
-  approveAuthorized(){
+  pay() {
+    this.paymentDetailsPopup = true;
+    this.payment_type = "";
+    this.bank_name = "";
+    this.bank_branch = "";
+    this.chq_neft_no = "";
+    this.chq_neft_date = new Date();
+  }
+
+  approveAuthorized() {
     if (this.selectedAuthorized.length) {
       this.approveSpiner = true;
-      const tempData:any = []
-      this.selectedAuthorized.forEach((ele:any) => {
+      const tempData: any = []
+      this.selectedAuthorized.forEach((ele: any) => {
         tempData.push({
-          "Expence_ID":ele
+          "Expence_ID": ele.Expence_ID,
+          "Bank_Txn_Type": this.payment_type,
+          "Bank_Name": this.bank_name,
+          "Bank_Branch_Name": this.bank_branch,
+          "Cheque_No": this.chq_neft_no,
+          "Cheque_Date": this.DateService.dateConvert(new Date(this.chq_neft_date))
         })
       });
       console.log("pay data", tempData);
@@ -504,8 +533,10 @@ export class ExpenseTrackingComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         console.log("appr res  ===", data);
         this.approveSpiner = false;
+        this.total_amt = 0;
         this.selectedAuthorized = [];
         this.getAuthExp();
+        this.cancelPay()
         if (data[0].pay_id) {
           this.CompacctToast.clear();
           this.CompacctToast.add({
@@ -526,6 +557,15 @@ export class ExpenseTrackingComponent implements OnInit {
         }
       })
     }
+  }
+
+  cancelPay() {
+    this.paymentDetailsPopup = false;
+    this.payment_type = "";
+    this.bank_name = "";
+    this.bank_branch = "";
+    this.chq_neft_no = "";
+    this.chq_neft_date = new Date();
   }
 
 }
