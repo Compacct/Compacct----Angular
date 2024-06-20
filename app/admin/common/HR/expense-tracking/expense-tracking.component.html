@@ -154,7 +154,7 @@
 									[rowsPerPageOptions]="[10, 20, 50, 100, 200, 300]"
 									[globalFilterFields]="pendingExpListHeader"
 									[rowHover]="true"
-									#dt>
+									#dt1>
 									<ng-template pTemplate="caption">
 										<div class="row">
 											<div class="col-sm-3 pull-right" style="text-align: right">
@@ -163,8 +163,13 @@
 													pInputText
 													size="50"
 													placeholder="Search"
-													(input)="dt.filterGlobal($event.target.value, 'contains')"
+													(input)="dt1.filterGlobal($event.target.value, 'contains')"
 													class="searchInput form-control" />
+											</div>
+											<div class="col-sm-3 pull-right">
+												<button class="btn btn-success pull-right" (click)="excelPendingAuth()" [disabled]="!pendingExpList.length">
+													<span  class="glyphicon glyphicon-save"></span> Export to Excel
+													  </button>
 											</div>
 										</div>
 									</ng-template>
@@ -229,7 +234,7 @@
 									[rowsPerPageOptions]="[10, 20, 50, 100, 200, 300]"
 									[globalFilterFields]="authExpListHeader"
 									[rowHover]="true"
-									#dt>
+									#dt2>
 									<ng-template pTemplate="caption">
 										<div class="row">
 											<div class="col-sm-3 pull-right" style="text-align: right">
@@ -238,8 +243,13 @@
 													pInputText
 													size="50"
 													placeholder="Search"
-													(input)="dt.filterGlobal($event.target.value, 'contains')"
+													(input)="dt2.filterGlobal($event.target.value, 'contains')"
 													class="searchInput form-control" />
+											</div>
+											<div class="col-sm-3 pull-right">
+												<button class="btn btn-success pull-right" (click)="excelApproveAuth()" [disabled]="!authExpList.length">
+													<span  class="glyphicon glyphicon-save"></span> Export to Excel
+													  </button>
 											</div>
 										</div>
 									</ng-template>
@@ -254,6 +264,11 @@
 											<th style="text-align: center" nowrap>Authrized Note</th>
 											<th style="text-align: center" nowrap>Authrized Date</th>
 											<th>Payment</th>
+											<th>Payment Type</th>
+											<th>Bank Name</th>
+											<th>Branch Name</th>
+											<th>Cheque/NEFT No.</th>
+											<th>Cheque/NEFT Date</th>
 											<th style="text-align: center" nowrap>Document</th>
 										</tr>
 									</ng-template>
@@ -262,8 +277,8 @@
 											<td>
 												<p-checkbox
 													name="Authgroup"
-													[value]="col.Expence_ID"
-													(onChange)="print()"
+													[value]="col"
+													(onChange)="calTotal()"
 													[(ngModel)]="selectedAuthorized"
 													[disabled]="col.Pay_ID ? true : false"></p-checkbox>
 											</td>
@@ -274,7 +289,12 @@
 											<td style="text-align: center" nowrap>{{ col.Auth_Amount ? col.Auth_Amount : "-" }}</td>
 											<td style="text-align: center" nowrap>{{ col.Auth_Note ? col.Auth_Note : "-" }}</td>
 											<td style="text-align: center" nowrap>{{ col.Auth_Date | date : "dd/MMM/yyyy" }}</td>
-											<td style="text-align: center" nowrap>{{ col.Pay_ID ? col.Pay_ID : "" }}</td>
+											<td style="text-align: center" nowrap>{{ col.Pay_ID ? col.Pay_ID : "-" }}</td>
+											<td style="text-align: center" nowrap>{{ col.Bank_Txn_Type ? col.Bank_Txn_Type : "-" }}</td>
+											<td style="text-align: center" nowrap>{{ col.Bank_Name ? col.Bank_Name : "-" }}</td>
+											<td style="text-align: center" nowrap>{{ col.Bank_Branch_Name ? col.Bank_Branch_Name : "-" }}</td>
+											<td style="text-align: center" nowrap>{{ col.Cheque_No ? col.Cheque_No : "-" }}</td>
+											<td style="text-align: center" nowrap>{{col.Cheque_Date ? (col.Cheque_Date | date : "dd/MMM/yyyy" ) : "-"}}</td>
 											<td style="text-align: center" nowrap>
 												<button class="btn btn-primary" (click)="showDoc(col.Pic_File_Name)" [disabled]="!col?.Pic_File_Name">View</button>
 											</td>
@@ -287,11 +307,11 @@
 							</div>
 
 							<div class="form-group">
-								<div class="col-sm-12">
+								<div class="col-sm-2 pull-right">
 									<button
-										style="margin: 20px 30px 0 0"
-										class="btn btn-primary pull-right"
-										(click)="approveAuthorized()"
+										style="margin: 20px 20px 0 0"
+										class="btn btn-primary"
+										(click)="pay()"
 										id="load"
 										[disabled]="approveSpiner || !selectedAuthorized.length">
 										<p-progressSpinner
@@ -301,6 +321,13 @@
 											animationDuration=".5s"></p-progressSpinner>
 										<span *ngIf="!approveSpiner" style="margin-right: 5px !important" class="glyphicon glyphicon-saved"></span>Pay
 									</button>
+								</div>
+								<div class="col-sm-3 pull-right">
+									<div>
+										<h4 style="margin: 30px 0 0 0">
+											Total Payable Amount : <b>{{ total_amt }}</b>
+										</h4>
+									</div>
 								</div>
 							</div>
 						</p-tabPanel>
@@ -316,7 +343,7 @@
 									[rowsPerPageOptions]="[10, 20, 50, 100, 200, 300]"
 									[globalFilterFields]="unAuthExpListHeader"
 									[rowHover]="true"
-									#dt>
+									#dt3>
 									<ng-template pTemplate="caption">
 										<div class="row">
 											<div class="col-sm-3 pull-right" style="text-align: right">
@@ -325,8 +352,13 @@
 													pInputText
 													size="50"
 													placeholder="Search"
-													(input)="dt.filterGlobal($event.target.value, 'contains')"
+													(input)="dt3.filterGlobal($event.target.value, 'contains')"
 													class="searchInput form-control" />
+											</div>
+											<div class="col-sm-3 pull-right">
+												<button class="btn btn-success pull-right" (click)="excelUnApproveAuth()" [disabled]="!unAuthExpList.length">
+													<span  class="glyphicon glyphicon-save"></span> Export to Excel
+													  </button>
 											</div>
 										</div>
 									</ng-template>
@@ -458,6 +490,91 @@
 				strokeWidth="8"
 				animationDuration=".5s"></p-progressSpinner>
 			Unauthorize
+		</button>
+	</p-footer>
+</p-dialog>
+
+<!-- Payment Details -->
+<p-dialog
+	header="Payment Details"
+	appendTo="body"
+	[(visible)]="paymentDetailsPopup"
+	[modal]="true"
+	[responsive]="true"
+	[style]="{ width: '40%', minWidth: '375px' }"
+	style="text-align: center"
+	[minY]="70"
+	[maximizable]="false"
+	[closable]="false"
+	[baseZIndex]="10000">
+	<div class="form-group">
+		<div class="col-sm-12">
+			<label class="control-label">Payment Type</label>
+			<input
+				type="text"
+				class="form-control"
+				placeholder="Payment Type"
+				name="paymentType"
+				[(ngModel)]="payment_type"
+				 />
+		</div>
+		
+		<div class="col-sm-12">
+			<label class="control-label">Bank Name</label>
+			<input
+				type="text"
+				class="form-control"
+				placeholder="Bank Name"
+				name="bank_name"
+				[(ngModel)]="bank_name"
+				 />
+		</div>
+		<div class="col-sm-12">
+			<label class="control-label">Bank Branch</label>
+			<input
+				type="text"
+				class="form-control"
+				placeholder="Bank Branch"
+				name="bankBranch"
+				[(ngModel)]="bank_branch"
+				 />
+		</div>
+		<div class="col-sm-12">
+			<label class="control-label">Cheque / NEFT No.</label>
+			<input
+				type="text"
+				class="form-control"
+				placeholder="Cheque / NEFT No"
+				name="chq_neft"
+				[(ngModel)]="chq_neft_no"
+				 />
+		</div>
+		<div class="col-sm-12">
+			<label class="control-label">Cheque / NEFT Date</label>
+			<ejs-datepicker
+			[format]="'dd/MMM/yyyy'"
+			[(value)]="chq_neft_date"
+			[(ngModel)]="chq_neft_date"
+			name="chqDate"
+>
+		</ejs-datepicker>
+		</div>
+		<div class="col-sm-12">
+			<label class="control-label">Amount</label>
+			<div class="label-t">{{total_amt}}</div>
+		</div>
+	</div>
+
+	<p-footer>
+		<button type="button" (click)="cancelPay()" class="btn btn-danger"><i class="pi pi-times"></i>Cancel</button>
+		<button type="button" (click)="approveAuthorized(UnAuthFrom.form.valid)" class="btn btn-success" [disabled]="approveSpiner">
+			<i *ngIf="!approveSpiner" class="pi pi-check"></i>
+			<p-progressSpinner
+				*ngIf="approveSpiner"
+				[style]="{ width: '15px', height: '15px' }"
+				strokeWidth="8"
+				animationDuration=".5s"></p-progressSpinner>
+			Confirm
 		</button>
 	</p-footer>
 </p-dialog>

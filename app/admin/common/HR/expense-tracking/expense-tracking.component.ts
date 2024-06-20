@@ -7,6 +7,7 @@ import { CompacctGlobalApiService } from '../../../shared/compacct.services/comp
 import { FileUpload } from 'primeng/primeng';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { log } from 'console';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-expense-tracking',
@@ -60,10 +61,17 @@ export class ExpenseTrackingComponent implements OnInit {
   umauthFormSubmit: boolean = false;
   unauthSpinner: boolean = false;
   // Select Array for Approve
-  selectedAuthorized:any = [];
-  approveSpiner:boolean = false;
+  selectedAuthorized: any = [];
+  approveSpiner: boolean = false;
   // File upload property
   @ViewChild("UploadFile", { static: false }) UploadFile!: FileUpload;
+  total_amt: number = 0;
+  paymentDetailsPopup: boolean = false;
+  payment_type: string = "";
+  bank_name: string = "";
+  bank_branch: string = "";
+  chq_neft_no: string = "";
+  chq_neft_date: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -85,9 +93,15 @@ export class ExpenseTrackingComponent implements OnInit {
     this.getExpType();
   }
 
-  print(){
+  calTotal() {
     console.log(this.selectedAuthorized);
-    
+    this.total_amt = 0;
+    if (this.selectedAuthorized.length) {
+      this.selectedAuthorized.forEach(ele => {
+        this.total_amt += Number(ele.Auth_Amount)
+      });
+    }
+    return this.total_amt;
   }
 
   getEMP() {
@@ -129,6 +143,7 @@ export class ExpenseTrackingComponent implements OnInit {
     this.getPendingExp();
     this.getAuthExp();
     this.getUnAuthExp();
+    this.clearData()
   }
 
   fileSelect() {
@@ -259,7 +274,9 @@ export class ExpenseTrackingComponent implements OnInit {
         this.file = true;
         this.upload = false;
       }
-      this.chnageEmp();
+      this.getPendingExp();
+      this.getAuthExp();
+      this.getUnAuthExp();
     }
   }
 
@@ -451,6 +468,7 @@ export class ExpenseTrackingComponent implements OnInit {
     this.upload = true;
     this.deleteData = {};
     this.selectedAuthorized = [];
+    this.total_amt = 0;
   }
 
   getAuthExp() {
@@ -486,13 +504,27 @@ export class ExpenseTrackingComponent implements OnInit {
     })
   }
 
-  approveAuthorized(){
+  pay() {
+    this.paymentDetailsPopup = true;
+    this.payment_type = "";
+    this.bank_name = "";
+    this.bank_branch = "";
+    this.chq_neft_no = "";
+    this.chq_neft_date = null;
+  }
+
+  approveAuthorized() {
     if (this.selectedAuthorized.length) {
       this.approveSpiner = true;
-      const tempData:any = []
-      this.selectedAuthorized.forEach((ele:any) => {
+      const tempData: any = []
+      this.selectedAuthorized.forEach((ele: any) => {
         tempData.push({
-          "Expence_ID":ele
+          "Expence_ID": ele.Expence_ID,
+          "Bank_Txn_Type": this.payment_type,
+          "Bank_Name": this.bank_name,
+          "Bank_Branch_Name": this.bank_branch,
+          "Cheque_No": this.chq_neft_no,
+          "Cheque_Date":this.chq_neft_date ?  this.DateService.dateConvert(new Date(this.chq_neft_date)): undefined
         })
       });
       console.log("pay data", tempData);
@@ -504,8 +536,10 @@ export class ExpenseTrackingComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
         console.log("appr res  ===", data);
         this.approveSpiner = false;
+        this.total_amt = 0;
         this.selectedAuthorized = [];
         this.getAuthExp();
+        this.cancelPay()
         if (data[0].pay_id) {
           this.CompacctToast.clear();
           this.CompacctToast.add({
@@ -528,6 +562,86 @@ export class ExpenseTrackingComponent implements OnInit {
     }
   }
 
+  cancelPay() {
+    this.paymentDetailsPopup = false;
+    this.payment_type = "";
+    this.bank_name = "";
+    this.bank_branch = "";
+    this.chq_neft_no = "";
+    this.chq_neft_date = null;
+  }
+
+  exportoexcel(Arr,fileName): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+  }
+
+  excelPendingAuth(){
+    let temp:any = [];
+    this.pendingExpList.forEach(element => {
+       const obj = {
+        Emp_Name : element.Emp_Name,
+        Txn_Date : element.Txn_Date ? this.DateService.dateConvert(new Date(element.Txn_Date)) : undefined,
+        Exp_Amount : element.Exp_Amount,
+        Exp_Note : element.Exp_Note,
+       }
+       temp.push(obj)
+     });
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(temp);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, 'pending_authorization_Report'+'.xlsx');
+  }
+
+  excelApproveAuth(){
+    let temp:any = [];
+    this.authExpList.forEach(element => {
+       const obj = {
+        Emp_Name : element.Emp_Name,
+        Txn_Date : element.Txn_Date ? this.DateService.dateConvert(new Date(element.Txn_Date)) : undefined,
+        Exp_Amount : element.Exp_Amount,
+        Exp_Note : element.Exp_Note,
+        Auth_Amount : element.Auth_Amount,
+        Auth_Note : element.Auth_Note,
+        Auth_Date : element.Auth_Date ? this.DateService.dateConvert(new Date(element.Auth_Date)) : undefined,
+        Pay_ID : element.Pay_ID,
+        Bank_Txn_Type : element.Bank_Txn_Type,
+        Bank_Name : element.Bank_Name,
+        Bank_Branch_Name : element.Bank_Branch_Name,
+        Cheque_No : element.Cheque_No,
+        Cheque_Date : element.Cheque_Date ? this.DateService.dateConvert(new Date( element.Cheque_Date)): undefined,
+       }
+       temp.push(obj)
+     });
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(temp);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, 'authorization_Report'+'.xlsx');
+  }
+
+  excelUnApproveAuth(){
+    let temp:any = [];
+    this.unAuthExpList.forEach(element => {
+       const obj = {
+        Emp_Name : element.Emp_Name,
+        Txn_Date : element.Txn_Date ? this.DateService.dateConvert(new Date(element.Txn_Date)) : undefined,
+        Exp_Amount : element.Exp_Amount,
+        Exp_Note : element.Exp_Note,
+        Auth_Amount : element.Auth_Amount,
+        Auth_Note : element.Auth_Note,
+        Auth_Date : element.Auth_Date ? this.DateService.dateConvert(new Date(element.Auth_Date)) : undefined,
+        Pay_ID : element.Pay_ID,
+        Bank_Txn_Type : element.Bank_Txn_Type,
+        Bank_Name : element.Bank_Name,
+        Bank_Branch_Name : element.Bank_Branch_Name,
+        Cheque_No : element.Cheque_No,
+        Cheque_Date :element.Cheque_Date? this.DateService.dateConvert(new Date( element.Cheque_Date)) : undefined,
+       }
+       temp.push(obj)
+     });
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(temp);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, 'un_authorization_Report'+'.xlsx');
+  }
 }
 
 class ExpenseTracking {
