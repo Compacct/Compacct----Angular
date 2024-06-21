@@ -567,7 +567,7 @@
 
 	<p-footer>
 		<button type="button" (click)="cancelPay()" class="btn btn-danger"><i class="pi pi-times"></i>Cancel</button>
-		<button type="button" (click)="approveAuthorized(UnAuthFrom.form.valid)" class="btn btn-success" [disabled]="approveSpiner">
+		<button type="button" (click)="approveAuthorized()" class="btn btn-success" [disabled]="approveSpiner">
 			<i *ngIf="!approveSpiner" class="pi pi-check"></i>
 			<p-progressSpinner
 				*ngIf="approveSpiner"
