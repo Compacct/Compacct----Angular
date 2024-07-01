@@ -90,6 +90,7 @@
 											[format]="'dd/MMM/yyyy'"
 											[(value)]="txn_Date"
 											[(ngModel)]="txn_Date"
+											[max]="maxDate"
 											name="txnDate"
 											#txnDate="ngModel"
 											required
@@ -108,7 +109,7 @@
 												#UploadFile
 												chooseLabel="BROWSE"
 												uploadLabel="UPLOAD"
-												accept="image/*"
+												accept="image/*,application/pdf"
 												[customUpload]="true"
 												(onSelect)="fileSelect()"
 												*ngIf="upload"
@@ -168,8 +169,8 @@
 											</div>
 											<div class="col-sm-3 pull-right">
 												<button class="btn btn-success pull-right" (click)="excelPendingAuth()" [disabled]="!pendingExpList.length">
-													<span  class="glyphicon glyphicon-save"></span> Export to Excel
-													  </button>
+													<span class="glyphicon glyphicon-save"></span> Export to Excel
+												</button>
 											</div>
 										</div>
 									</ng-template>
@@ -248,8 +249,8 @@
 											</div>
 											<div class="col-sm-3 pull-right">
 												<button class="btn btn-success pull-right" (click)="excelApproveAuth()" [disabled]="!authExpList.length">
-													<span  class="glyphicon glyphicon-save"></span> Export to Excel
-													  </button>
+													<span class="glyphicon glyphicon-save"></span> Export to Excel
+												</button>
 											</div>
 										</div>
 									</ng-template>
@@ -294,7 +295,7 @@
 											<td style="text-align: center" nowrap>{{ col.Bank_Name ? col.Bank_Name : "-" }}</td>
 											<td style="text-align: center" nowrap>{{ col.Bank_Branch_Name ? col.Bank_Branch_Name : "-" }}</td>
 											<td style="text-align: center" nowrap>{{ col.Cheque_No ? col.Cheque_No : "-" }}</td>
-											<td style="text-align: center" nowrap>{{col.Cheque_Date ? (col.Cheque_Date | date : "dd/MMM/yyyy" ) : "-"}}</td>
+											<td style="text-align: center" nowrap>{{ col.Cheque_Date ? (col.Cheque_Date | date : "dd/MMM/yyyy") : "-" }}</td>
 											<td style="text-align: center" nowrap>
 												<button class="btn btn-primary" (click)="showDoc(col.Pic_File_Name)" [disabled]="!col?.Pic_File_Name">View</button>
 											</td>
@@ -309,6 +310,7 @@
 							<div class="form-group">
 								<div class="col-sm-2 pull-right">
 									<button
+										*ngIf="EmployeeList[0]?.can_approve == 'Y'"
 										style="margin: 20px 20px 0 0"
 										class="btn btn-primary"
 										(click)="pay()"
@@ -357,8 +359,8 @@
 											</div>
 											<div class="col-sm-3 pull-right">
 												<button class="btn btn-success pull-right" (click)="excelUnApproveAuth()" [disabled]="!unAuthExpList.length">
-													<span  class="glyphicon glyphicon-save"></span> Export to Excel
-													  </button>
+													<span class="glyphicon glyphicon-save"></span> Export to Excel
+												</button>
 											</div>
 										</div>
 									</ng-template>
@@ -510,58 +512,28 @@
 	<div class="form-group">
 		<div class="col-sm-12">
 			<label class="control-label">Payment Type</label>
-			<input
-				type="text"
-				class="form-control"
-				placeholder="Payment Type"
-				name="paymentType"
-				[(ngModel)]="payment_type"
-				 />
+			<input type="text" class="form-control" placeholder="Payment Type" name="paymentType" [(ngModel)]="payment_type" />
 		</div>
-		
+
 		<div class="col-sm-12">
 			<label class="control-label">Bank Name</label>
-			<input
-				type="text"
-				class="form-control"
-				placeholder="Bank Name"
-				name="bank_name"
-				[(ngModel)]="bank_name"
-				 />
+			<input type="text" class="form-control" placeholder="Bank Name" name="bank_name" [(ngModel)]="bank_name" />
 		</div>
 		<div class="col-sm-12">
 			<label class="control-label">Bank Branch</label>
-			<input
-				type="text"
-				class="form-control"
-				placeholder="Bank Branch"
-				name="bankBranch"
-				[(ngModel)]="bank_branch"
-				 />
+			<input type="text" class="form-control" placeholder="Bank Branch" name="bankBranch" [(ngModel)]="bank_branch" />
 		</div>
 		<div class="col-sm-12">
 			<label class="control-label">Cheque / NEFT No.</label>
-			<input
-				type="text"
-				class="form-control"
-				placeholder="Cheque / NEFT No"
-				name="chq_neft"
-				[(ngModel)]="chq_neft_no"
-				 />
+			<input type="text" class="form-control" placeholder="Cheque / NEFT No" name="chq_neft" [(ngModel)]="chq_neft_no" />
 		</div>
 		<div class="col-sm-12">
 			<label class="control-label">Cheque / NEFT Date</label>
-			<ejs-datepicker
-			[format]="'dd/MMM/yyyy'"
-			[(value)]="chq_neft_date"
-			[(ngModel)]="chq_neft_date"
-			name="chqDate"
->
-		</ejs-datepicker>
+			<ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]="chq_neft_date" [(ngModel)]="chq_neft_date" name="chqDate"> </ejs-datepicker>
 		</div>
 		<div class="col-sm-12">
 			<label class="control-label">Amount</label>
-			<div class="label-t">{{total_amt}}</div>
+			<div class="label-t">{{ total_amt }}</div>
 		</div>
 	</div>
 
