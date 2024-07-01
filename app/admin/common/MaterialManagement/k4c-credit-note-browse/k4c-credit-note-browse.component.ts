@@ -16,16 +16,17 @@ import * as XLSX from 'xlsx';
   encapsulation: ViewEncapsulation.None
 })
 export class K4cCreditNoteBrowseComponent implements OnInit {
-  FranchiseList = [];
+  FranchiseList:any = [];
   ObjBrowse : Browse = new Browse ();
-  Searchedlist = [];
+  Searchedlist:any = [];
   BrowseFranchise : any;
   seachSpinner = false;
-  Doc_No = undefined;
+  Doc_No:any = undefined;
   franshisedisable = false;
-  Cancle_Remarks : string;
+  Cancle_Remarks : any;
   remarksFormSubmitted = false;
-  Excellist = [];
+  Excellist:any = [];
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -44,10 +45,47 @@ export class K4cCreditNoteBrowseComponent implements OnInit {
       Link: " Credit Note "
     });
      this.GetFranchiseList();
+     this.getLockDate();
     // this.GetProductType();
     // this.minDate = new Date(this.todayDate.getDate());
     // this.maxDate = new Date(this.todayDate.getDate());
   //})
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't edit or delete this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
   }
   GetFranchiseList(){
     // const tempObj = {
@@ -62,7 +100,7 @@ export class K4cCreditNoteBrowseComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.FranchiseList = data;
       const ctrl = this;
-     const Obj = $.grep(ctrl.FranchiseList,function(item) {return item.Cost_Cen_ID == ctrl.$CompacctAPI.CompacctCookies.Cost_Cen_ID})[0];
+     const Obj = $.grep(ctrl.FranchiseList,function(item:any) {return item.Cost_Cen_ID == ctrl.$CompacctAPI.CompacctCookies.Cost_Cen_ID})[0];
         if(this.$CompacctAPI.CompacctCookies.User_Type != 'A' && Obj.Cost_Cen_ID == this.$CompacctAPI.CompacctCookies.Cost_Cen_ID){
           this.BrowseFranchise = Obj.Sub_Ledger_ID;
         this.franshisedisable = true;
@@ -143,6 +181,7 @@ const obj = {
     this.remarksFormSubmitted = false;
     this.Doc_No = undefined;
   if(col.Doc_No){
+    if(this.checkLockDate(col.Doc_Date)){
     this.Doc_No = col.Doc_No;
     this.compacctToast.clear();
     this.compacctToast.add({
@@ -152,6 +191,7 @@ const obj = {
       summary: "Are you sure?",
       detail: "Confirm to proceed"
     });
+    }
   }
   }
   onConfirm(valid){

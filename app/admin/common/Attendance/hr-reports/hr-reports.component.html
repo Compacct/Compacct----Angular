@@ -43,6 +43,18 @@
 											<option *ngFor="let y of HrYearList" value="{{y.HR_Year_ID}}">{{y.HR_Year_Name}}</option>
 										</select>
 								</div>
+								<div class="col-sm-4" *ngIf="AccHRyearflag">
+									<label class="control-label">Year
+										<sup class="text-danger">*</sup></label>
+										<select class="form-control"name="acchryearid"
+										#acchryearid ="ngModel"
+										[(ngModel)]="Acc_HR_Year_ID"
+										[ngClass]="{'clearance': reportFormSubmit && acchryearid?.errors?.required}"
+										required>
+											<option [ngValue]="undefined">Select</option>
+											<option *ngFor="let y of AccHrYearList" value="{{y.accyear}}">{{y.accyear}}</option>
+										</select>
+								</div>
 								<div class="col-sm-4" *ngIf="Quaterflag">
 									<label class="control-label">Quarter
 										<sup class="text-danger">*</sup></label>

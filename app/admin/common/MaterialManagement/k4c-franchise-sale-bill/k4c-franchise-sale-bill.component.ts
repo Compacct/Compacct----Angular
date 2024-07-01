@@ -16,7 +16,7 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
   encapsulation: ViewEncapsulation.None
 })
 export class K4cFranchiseSaleBillComponent implements OnInit {
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   ShowSpinner = false;
@@ -26,22 +26,22 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
   franchiseSalebillFormSubmitted = false;
   ObjBrowse : Browse = new Browse ();
   RSNSSearchFormSubmitted = false;
-  FranchiseList = [];
-  GodownList = [];
+  FranchiseList:any = [];
+  GodownList:any = [];
   Costdisableflag = false;
   Gdisableflag = false;
   Costbrowsedisableflag = false;
   Gbrowsedisableflag = false;
   IndentListFormSubmitted = false;
-  ChallanList = [];
-  ProductList = [];
+  ChallanList:any = [];
+  ProductList:any = [];
   SelectedChallan: any;
-  BackupChallanList = [];
-  ChallanFilter = [];
-  TChallanList = [];
-  Searchedlist = [];
+  BackupChallanList:any = [];
+  ChallanFilter:any = [];
+  TChallanList:any = [];
+  Searchedlist:any = [];
   flag = false;
-  productListFilter = [];
+  productListFilter:any = [];
   SelectedProductType :any = [];
   Param_Flag ='';
   CostCentId_Flag : any;
@@ -51,8 +51,8 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
   minDate = new Date();
   maxDate = new Date();
   Doc_No : any;
-  Editlist = [];
-  ViewList = [];
+  Editlist:any = [];
+  ViewList:any = [];
   ViewPoppup = false;
   Doc_date = undefined;
   Cost_Cent_ID = undefined;
@@ -71,9 +71,10 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
   franshisedisable = false;
 
   BrowseFranchise : any;
-  Cancle_Remarks : string;
+  Cancle_Remarks : any;
   remarksFormSubmitted = false;
   //Can_Remarks = false;
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -94,6 +95,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
       Link: " Franchise Sale Bill "
     });
      this.GetFranchiseList();
+     this.getLockDate();
     // this.GetProductType();
     // this.minDate = new Date(this.todayDate.getDate());
     // this.maxDate = new Date(this.todayDate.getDate());
@@ -109,6 +111,47 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
     //  this.TIndentList = [];
     //  this.SelectedIndent = [];
    }
+   getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
+  }
   GetFranchiseList(){
     // const tempObj = {
     //   Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
@@ -122,7 +165,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.FranchiseList = data;
       const ctrl = this;
-     const Obj = $.grep(ctrl.FranchiseList,function(item) {return item.Cost_Cen_ID == ctrl.$CompacctAPI.CompacctCookies.Cost_Cen_ID})[0];
+     const Obj = $.grep(ctrl.FranchiseList,function(item:any) {return item.Cost_Cen_ID == ctrl.$CompacctAPI.CompacctCookies.Cost_Cen_ID})[0];
         if(this.$CompacctAPI.CompacctCookies.User_Type != 'A' && Obj.Cost_Cen_ID == this.$CompacctAPI.CompacctCookies.Cost_Cen_ID){
           this.ObjfranchiseSalebill.Franchise = Obj.Sub_Ledger_ID;
           this.BrowseFranchise = Obj.Sub_Ledger_ID;
@@ -153,7 +196,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
   FranchiseChange() {
    if(this.ObjfranchiseSalebill.Franchise) {
      const ctrl = this;
-     const franchisecostcentObj = $.grep(ctrl.FranchiseList,function(item) {return item.Sub_Ledger_ID == ctrl.ObjfranchiseSalebill.Franchise})[0];
+     const franchisecostcentObj = $.grep(ctrl.FranchiseList,function(item:any) {return item.Sub_Ledger_ID == ctrl.ObjfranchiseSalebill.Franchise})[0];
      console.log(franchisecostcentObj);
      this.ObjfranchiseSalebill.Cost_Cen_ID = franchisecostcentObj.Cost_Cen_ID;
     }
@@ -196,7 +239,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
   }
   }
   GetChallan(){
-    let DIndent = [];
+    let DIndent:any = [];
     this.ChallanFilter = [];
     this.SelectedChallan = [];
     this.BackupChallanList.forEach((item) => {
@@ -216,7 +259,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
   }
   filterChallanList() {
     //console.log("SelectedTimeRange", this.SelectedTimeRange);
-    let DChallan = [];
+    let DChallan:any = [];
     this.TChallanList = [];
     //const temparr = this.ProductList.filter((item)=> item.Issue_Qty);
     this.ProductList = [];
@@ -246,7 +289,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
     ? this.DateService.dateConvert(new Date(this.ObjfranchiseSalebill.end_date))
     : this.DateService.dateConvert(new Date());
     if(this.SelectedChallan.length) {
-      let Arr =[]
+      let Arr:any =[]
       this.SelectedChallan.forEach(el => {
         if(el){
           const Dobj = {
@@ -333,7 +376,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
   }
   getChallanNoforSave(){
     if(this.SelectedChallan.length) {
-      let Rarr =[]
+      let Rarr:any =[]
       this.SelectedChallan.forEach(el => {
         if(el){
           const Dobj = {
@@ -350,7 +393,7 @@ export class K4cFranchiseSaleBillComponent implements OnInit {
   dataforSaveFran(){
     this.currentDate = this.DateService.dateConvert(new Date(this.currentDate));
     if(this.ProductList.length) {
-      let tempArr =[]
+      let tempArr:any =[]
       this.ProductList.forEach(item => {
        // if(item.Issue_Qty && Number(item.Issue_Qty) != 0) {
      const TempObj = {
@@ -471,6 +514,7 @@ const obj = {
     this.remarksFormSubmitted = false;
     this.Doc_No = undefined;
   if(col.Doc_No){
+    if(this.checkLockDate(col.Doc_Date)){
     //this.Can_Remarks = true;
     this.Doc_No = col.Doc_No;
     this.compacctToast.clear();
@@ -481,6 +525,7 @@ const obj = {
       summary: "Are you sure?",
       detail: "Confirm to proceed"
     });
+    }
   }
   }
   onConfirm(valid){
@@ -549,7 +594,7 @@ const obj = {
     this.franchiseSalebillFormSubmitted = false;
    // this.ObjfranchiseSalebill.Franchise = undefined;
    const ctrl = this;
-     const Obj = $.grep(ctrl.FranchiseList,function(item) {return item.Cost_Cen_ID == ctrl.$CompacctAPI.CompacctCookies.Cost_Cen_ID})[0];
+     const Obj = $.grep(ctrl.FranchiseList,function(item:any) {return item.Cost_Cen_ID == ctrl.$CompacctAPI.CompacctCookies.Cost_Cen_ID})[0];
         if(this.$CompacctAPI.CompacctCookies.User_Type != 'A' && Obj.Cost_Cen_ID == this.$CompacctAPI.CompacctCookies.Cost_Cen_ID){
           this.ObjfranchiseSalebill.Franchise = Obj.Sub_Ledger_ID;
           this.BrowseFranchise = Obj.Sub_Ledger_ID;
@@ -593,9 +638,9 @@ class Browse {
   end_date : Date;
 }
 class franchiseSalebill {
-  Franchise : string;
+  Franchise : any;
   start_date : Date ;
   end_date : Date;
   Cost_Cen_ID : number;
-  Remarks : string;
+  Remarks : any;
 }

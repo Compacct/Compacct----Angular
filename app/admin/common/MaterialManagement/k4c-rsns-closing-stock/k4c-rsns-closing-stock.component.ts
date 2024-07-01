@@ -66,6 +66,7 @@ export class K4cRsnsClosingStockComponent implements OnInit {
   Date: Date;
   ViewDoc_No: any;
   Viewlist:any = [];
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -104,6 +105,7 @@ export class K4cRsnsClosingStockComponent implements OnInit {
      this.GetCostCen();
     //  this.GetGodown();
      this.GetDate();
+     this.getLockDate();
     // this.GetProductType();
     // this.todayDate = new Date(this.myDate);
     // let Datetemp:Date =  new Date(this.todayDate)
@@ -137,6 +139,47 @@ export class K4cRsnsClosingStockComponent implements OnInit {
 
     })
   }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
+  }
 
   TabClick(e){
     // console.log(e)
@@ -158,8 +201,8 @@ export class K4cRsnsClosingStockComponent implements OnInit {
       this.Doc_No = undefined;
       this.Doc_date = undefined;
      }
-   }
-   GetBrowseCostCen(){
+  }
+  GetBrowseCostCen(){
     const obj = {
       "SP_String": "SP_Controller_Master",
       "Report_Name_String": "Get - Cost Center Name All",
@@ -200,15 +243,6 @@ export class K4cRsnsClosingStockComponent implements OnInit {
 
   }
   GetCostCen(){
-    // const tempObj = {
-    //   Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
-    //   //Material_Type : this.MaterialType_Flag
-    // }
-    // const obj = {
-    //   "SP_String": "SP_Raw_Material_Stock_Transfer",
-    //   "Report_Name_String": "Get Cost Centre",
-    //   "Json_Param_String": JSON.stringify([tempObj])
-    // }
     const obj = {
       "SP_String": "SP_Controller_Master",
       "Report_Name_String": "Get - Cost Center Name All",
@@ -244,12 +278,6 @@ export class K4cRsnsClosingStockComponent implements OnInit {
        }else{
          this.Gdisableflag = false;
        }
-      //  this.ObjBrowse.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
-      //  if(this.GodownList.length === 1){
-      //    this.Gbrowsedisableflag = true;
-      //  }else{
-      //    this.Gbrowsedisableflag = false;
-      //  }
          //console.log("From Godown List ===",this.FromGodownList);
       })
     //}
@@ -404,6 +432,7 @@ GetDataForSave(){
   }
 }
 SaveBeforeCheck(){
+  if(this.checkLockDate(this.DateService.dateConvert(new Date(this.todayDate)))) {
     this.Spinner = true;
   if (this.ProductList.length) {
 const tempo = {
@@ -452,7 +481,8 @@ const obj = {
     });
    }
  })
-}
+  }
+  }
 }
 // SaveBeforeCheck(){
 //    this.Spinner = true;
@@ -594,6 +624,7 @@ this.Cost_Cent_ID = undefined;
 this.Godown_ID = undefined;
 this.remarks = undefined;
 if(DocNo.Doc_No){
+if(this.checkLockDate(DocNo.Doc_Date)){
   this.ngxService.start();
   this.ProductList = [];
   this.BackupProList = [];
@@ -615,6 +646,7 @@ this.Date = new Date(DocNo.Doc_Date);
 // }, 600)
 // }
 //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
+}
 }
 }
 GetdataforEdit(Doc_No){
@@ -728,6 +760,7 @@ Delete(row){
   // console.log("delete",row)
    this.Doc_No = undefined;
    if (row.Doc_No) {
+    if(this.checkLockDate(row.Doc_Date)){
     this.Doc_No = row.Doc_No;
     this.compacctToast.clear();
     this.compacctToast.add({
@@ -737,6 +770,7 @@ Delete(row){
       summary: "Are you sure?",
       detail: "Confirm to proceed"
     });
+    }
   }
  }
 onConfirm(){
@@ -819,7 +853,7 @@ onConfirm(){
 
 }
 class rsnsClosingStock {
-  Doc_No : string = undefined;
+  Doc_No : string = "";
   Doc_Date : string;
   Cost_Cen_ID : any;
   godown_id : any;

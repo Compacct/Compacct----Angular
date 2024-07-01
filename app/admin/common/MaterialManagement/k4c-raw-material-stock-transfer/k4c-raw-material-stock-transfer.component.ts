@@ -69,6 +69,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
   ShowPopupSpinner = false;
   editList:any = [];
   editIndentList:any = [];
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -108,6 +109,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
       Header: this.MaterialType_Flag + " Stock Transfer - " + this.Param_Flag,
       Link: " Material Management -> " + this.MaterialType_Flag + " Stock Transfer - " + this.Param_Flag
     });
+    this.getLockDate();
     this.GetFromCostCen();
     this.GetToCostCen();
     this.GetBToCostCen();
@@ -127,6 +129,45 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
    }
    onReject() {
     this.compacctToast.clear("c");
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
   }
    GetFromCostCen(){
     const tempObj = {
@@ -566,6 +607,7 @@ GetProductType(){
   return ValidFlag;
 }
   showDialog() {
+  if(this.checkLockDate(this.DateService.dateConvert(new Date(this.todayDate)))) {
     if(this.saveqty()){
     this.filteredData = [];
   //   this.BackUpproductDetails.forEach(obj => {
@@ -600,7 +642,7 @@ GetProductType(){
   }
   }
  })
-  }
+    }
     else {
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -609,6 +651,7 @@ GetProductType(){
           summary: "Warn Message",
           detail: "Quantity can't be more than in batch available quantity "
         });
+    }
   }
   }
   getTotalValue(key){
@@ -934,6 +977,7 @@ EditIntStock(col){
   this.editList = [];
   this.ObjRawMateriali.Doc_No = undefined;
   if(col.Doc_No){
+  if(this.checkLockDate(col.Doc_Date)){
    this.ObjRawMateriali = col.Doc_No;
    this.tabIndexToView = 1;
    this.ProductList = [];
@@ -942,6 +986,7 @@ EditIntStock(col){
    this.buttonname = "Update";
    this.geteditmaster(col.Doc_No)
    this.getIndentForEdit(col.Doc_No);
+  }
   }
 
 }
@@ -1011,6 +1056,7 @@ GeteditIndentdist(){
 DeleteIntStocktr(col){
   this.ObjRawMateriali.Doc_No = undefined;
   if(col.Doc_No){
+    if(this.checkLockDate(col.Doc_Date)){
     this.ObjRawMateriali.Doc_No = col.Doc_No;
     this.compacctToast.clear();
     this.compacctToast.add({
@@ -1020,6 +1066,7 @@ DeleteIntStocktr(col){
       summary: "Are you sure?",
       detail: "Confirm to proceed"
     });
+    }
   }
 }
 onConfirm(){
