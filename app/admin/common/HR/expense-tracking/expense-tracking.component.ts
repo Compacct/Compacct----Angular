@@ -72,6 +72,7 @@ export class ExpenseTrackingComponent implements OnInit {
   bank_branch: string = "";
   chq_neft_no: string = "";
   chq_neft_date: any;
+  maxDate = new Date();
 
   constructor(
     private Header: CompacctHeader,
@@ -190,7 +191,7 @@ export class ExpenseTrackingComponent implements OnInit {
     this.employeeExpenseFormSubmit = true;
     this.expenseTrackingFormSubmit = true;
     console.log("valid", valid1, valid2);
-    if (valid1 && valid2) {
+    if (valid1 && valid2 &&(this.txn_Date<=this.maxDate)) {
       let repName: string = ""
       let msg: string = ""
       if (this.objExpenseTracking.Expence_ID) {
@@ -464,6 +465,7 @@ export class ExpenseTrackingComponent implements OnInit {
     this.expenseTrackingFormSubmit = false;
     this.objExpenseTracking = new ExpenseTracking();
     this.txn_Date = new Date()
+    this.maxDate = new Date()
     this.file = false;
     this.upload = true;
     this.deleteData = {};
