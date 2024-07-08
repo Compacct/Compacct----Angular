@@ -197,11 +197,11 @@ export class K4cCrateInOuComponent implements OnInit {
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.ToOutletList = data;
-     if (this.$CompacctAPI.CompacctCookies.Cost_Cen_ID != 2) {
-      this.Objcrate.To_Cost_Cen_ID = 2;
-      this.tooutletdisableflag = true;
-      this.getToGodown();
-     }
+    //  if (this.$CompacctAPI.CompacctCookies.Cost_Cen_ID != 2) {
+      // this.Objcrate.To_Cost_Cen_ID = 2;
+    //   this.tooutletdisableflag = true;
+    //   this.getToGodown();
+    //  }
     //  console.log("this.ToOutletList ======",this.ToOutletList);
 
     });
@@ -275,8 +275,8 @@ export class K4cCrateInOuComponent implements OnInit {
          }
          else {
          this.clearData();
+         this.GetSearchedList(true);
          }
-        //  this.GetSearchedList(true);
     
         } else{
           this.ngxService.stop();
@@ -634,11 +634,12 @@ export class K4cCrateInOuComponent implements OnInit {
   clearData(){
     this.todayDate = new Date();
     this.Objcrate.Crate = undefined;
-    if (this.$CompacctAPI.CompacctCookies.Cost_Cen_ID != 2) {
-      this.Objcrate.To_Cost_Cen_ID = 2;
-      this.tooutletdisableflag = true;
-      this.getToGodown();
-     }
+    // if (this.$CompacctAPI.CompacctCookies.Cost_Cen_ID != 2) {
+    //   this.Objcrate.To_Cost_Cen_ID = 2;
+    //   this.tooutletdisableflag = true;
+    //   this.getToGodown();
+    //  }
+    this.Objcrate.To_Cost_Cen_ID = undefined;
     this.getToGodown();
         this.Objcrate.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
         this.fromoutletdisableflag = true;

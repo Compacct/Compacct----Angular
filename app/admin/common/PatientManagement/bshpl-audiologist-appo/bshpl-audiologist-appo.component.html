@@ -9,10 +9,10 @@
 
         <div class="ui-g ui-fluid">
             <div class="ui-g-6">
-                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+                <button type="button" pButton (click)="actionClick_UpdateAppo(colobj)" label="Yes" class="ui-button-success"></button>
             </div>
             <div class="ui-g-6">
-                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+                <button type="button" pButton (click)="actionClick_UpdateAppoNo(colobj)" label="No" class="ui-button-secondary"></button>
             </div>
         </div>
     </ng-template>
@@ -85,8 +85,14 @@
                                                                    Patient Details
                                                                 </a>
                                                             </li>
-                                                            <li>
+                                                            <li *ngIf="databaseName != 'GN_Crystal_Mumbai'">
                                                                 <a (click)="actionClick_UpdateAppo(col)">
+                                                                    <i class="fa fa-repeat"></i>
+                                                                    Update Appointment
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="databaseName === 'GN_Crystal_Mumbai'">
+                                                                <a (click)="UpdateAppo(col)">
                                                                     <i class="fa fa-repeat"></i>
                                                                     Update Appointment
                                                                 </a>
@@ -204,6 +210,12 @@
                                                                 <a (click)="actionClick_ViewProgramming(col)">
                                                                     <i class="fa fa-eye"></i>
                                                                     View Reprogramming & Other HL not known Tests 
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="databaseName === 'GN_Crystal_Mumbai'">
+                                                                <a (click)="ViewTestDetails(col)">
+                                                                    <i class="fa fa-eye"></i>
+                                                                    View Test Details 
                                                                 </a>
                                                             </li>
                                                             <li *ngIf="(databaseName === 'GN_Soft_Hear_UP')&&(col.Age>10)">
@@ -859,7 +871,7 @@
                     </select>
                 </div>
 
-                <div class="col-sm-3" *ngIf="MISSEDOpen">
+                <div class="col-sm-3" *ngIf="objAppointment.Trial_Restult == 'MISSED'">
                     <label class="control-label">Reason <sup *ngIf="databaseName === 'GN_Crystal_Mumbai'" class="text-danger">*</sup></label>
                     <p-multiSelect 
                         [options]="MissedReasonList"
@@ -1323,6 +1335,170 @@
     </div>
     <p-footer>
       <button class="btn btn-primary" (click)="closePopupProView()" >
+        <span class="glyphicon glyphicon-remove"></span>Close
+      </button>
+    </p-footer>
+</p-dialog>
+
+<!-- For Crystall -->
+<p-dialog
+   [header]="'Update Appointment'"
+   [appendTo]="'body'"
+   [visible]="displayPopupUpdateAppoNo"
+   [closeOnEscape]="true"
+   [closable]="false"
+   [modal]="true"
+   [responsive]="true"
+   [style]="{ width: '100%', minWidth: '200px', minHeight: '700px' }"
+   style="text-align: center;"
+   [minY]="70"
+   [maximizable]="true"
+   [baseZIndex]="10000"
+   [autoZIndex]="true"
+ >   
+   <form name="AppointmentNo" #AppointmentNo="ngForm" novalidate>
+
+        <div class="row">
+            <h5 style="background: #c1c1c185;
+            border-top: 5px solid #3c8dbc;
+            border-bottom: 1px solid #c6c6c6;
+            height: 33px">
+            <strong style="font-size: 20px; margin-left: 7px;">Details</strong>
+            </h5>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-3">
+                <label class="control-label">Patient Name</label>
+                <div class="label-t">{{P_NameNo ? P_NameNo : '-'}}</div>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Mobile</label>
+                <div class="label-t">{{PhoneNo ? PhoneNo : '-'}}</div>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Age</label>
+                <div class="label-t">{{AgeNo ? AgeNo : '-'}}</div>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Sex</label>
+                <div class="label-t">{{SexNo ? SexNo : '-'}}</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-3">
+                <label class="control-label">Date</label>
+                <div class="label-t">{{App_DateNo | date: "dd/MMM/yyyy"}}</div>
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label">Cost Centre Name</label>
+                <div class="label-t">{{CostCen_NameNo ? CostCen_NameNo : '-'}}</div>
+            </div>
+            <div class="col-sm-5">
+                <label class="control-label">Consultancy Name</label>
+                <div class="label-t">{{Cons_NameNo ? Cons_NameNo : '-'}}</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <label class="control-label">Test Done <sup class="text-danger">*</sup></label>
+                <select class="form-control"
+                        name="testdoneappono"
+                        #testdoneappono="ngModel"
+                        [(ngModel)]="objAppointmentNo.Other_Test_done"
+                        (change)="clearOther_Test_done()"
+                        [ngClass]="{clearance: AppointmentNoFormSubmitted && testdoneappono?.errors?.required }" 
+                        required>
+                     <option  [ngValue]="undefined">Select</option>
+                     <option  *ngFor="let option of TestDoneListAppoNo" value="{{option}}">
+                         {{option}}
+                     </option>
+                </select>
+            </div>
+            <div class="col-sm-4" *ngIf="objAppointmentNo.Other_Test_done === 'Others'">
+                <label class="control-label">Others Details <sup class="text-danger">*</sup></label>
+                <textarea class="form-control" name="otherstestdone"  #otherstestdone="ngModel" 
+                        [(ngModel)]="objAppointmentNo.Other_Test_Details" 
+                        [ngClass]="{clearance: AppointmentNoFormSubmitted && otherstestdone?.errors?.required }" required>
+                </textarea>
+            </div>
+
+        </div>
+        
+
+   </form>
+   <p-footer>
+      <button class="btn btn-primary pull-right" (click)="SaveAppointmentNo(AppointmentNo.form.valid)" [disabled]="AppoNoSpinner">
+        <p-progressSpinner *ngIf="AppoNoSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+        <span *ngIf="!AppoNoSpinner" class="glyphicon glyphicon-refresh"></span>Update
+      </button>
+      <button class="btn btn-primary" (click)="closePopupAppoNo()" >
+        <span class="glyphicon glyphicon-remove"></span>Close
+      </button>
+   </p-footer>
+</p-dialog>
+
+<p-dialog
+   [header]="'Other test'"
+   [appendTo]="'body'"
+   [visible]="displayViewTestPOP"
+   [closeOnEscape]="true"
+   [closable]="false"
+   [modal]="true"
+   [responsive]="false"
+   [style]="{ width: '60%', minWidth: '200px', height: '600px', minHeight: '400px' }"
+   style="text-align: center;"
+   [minY]="70"
+   [maximizable]="true"
+   [baseZIndex]="10000"
+   [autoZIndex]="true"
+>   
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Patient Name</label>
+            <div class="label-t">{{ObjTestDetails.Patient ? ObjTestDetails.Patient : '-'}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Mobile</label>
+            <div class="label-t">{{ObjTestDetails.Mobile ? ObjTestDetails.Mobile : '-'}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Age</label>
+            <div class="label-t">{{ObjTestDetails.Age ? ObjTestDetails.Age : '-'}}</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Sex</label>
+            <div class="label-t">{{ObjTestDetails.Sex ? ObjTestDetails.Sex : '-'}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Date</label>
+            <div class="label-t">{{ObjTestDetails.Appo_Dt ? (ObjTestDetails.Appo_Dt | date: "dd/MMM/yyyy") : '-'}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Cost Center Name</label>
+            <div class="label-t">{{ObjTestDetails.Cost_Cen_Name ? ObjTestDetails.Cost_Cen_Name : '-'}}</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4">
+            <label class="control-label">Consultancy Name</label>
+            <div class="label-t">{{ObjTestDetails.Consultancy ? ObjTestDetails.Consultancy : '-'}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Test</label>
+            <div class="label-t">{{ObjTestDetails.Other_Test_done ? ObjTestDetails.Other_Test_done : '-'}}</div>
+        </div>
+        <div class="col-sm-4" *ngIf="ObjTestDetails.Other_Test_Details">
+            <label class="control-label">Others Details</label>
+            <div class="label-t">{{ObjTestDetails.Other_Test_Details ? ObjTestDetails.Other_Test_Details : '-'}}</div>
+        </div>
+    </div>
+    <p-footer>
+      <button class="btn btn-primary" (click)="closedisplayViewTestPOP()" >
         <span class="glyphicon glyphicon-remove"></span>Close
       </button>
     </p-footer>
