@@ -306,7 +306,7 @@ checkrequ(financial?, Gst?) {
     }
    if(Gst){
     let getArrValue = Object.values(Gst);
-    if(getArrValue.length === 2 && this.objGst.HSN_NO.length === 6){
+    if((getArrValue.length === 2) && (this.objGst.HSN_NO.length === 6 || this.objGst.HSN_NO.length === 8)){
       falg = true
     }
     else {

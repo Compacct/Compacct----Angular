@@ -99,3 +99,8 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav {
     color: #ffff;
     text-align: center;
   }
+  .MS {
+    background-color: rgb(221, 205, 30) !important;
+    color: #ffff;
+    text-align: center;
+  }

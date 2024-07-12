@@ -1175,20 +1175,20 @@ saveData(){
         }
     
       }
-     if(Gst){
+    if(Gst){
       let getArrValue = Object.values(Gst);
       let tempHSN = this.objGst.HSN_NO
       console.log("tempHSN",tempHSN.toString());
       let tempHSNString = tempHSN.toString()
-      if(getArrValue.length === 2 && tempHSNString.length === 6){
+      if((getArrValue.length === 2) && (tempHSNString.length === 6 || tempHSNString.length === 8)){
         falg = true
-        
+          
       }
       else {
         falg = false
         return falg
       }
-     }
+    }
      if(product){
       let getArrValue = Object.values(product);
       if(getArrValue.length === 3){

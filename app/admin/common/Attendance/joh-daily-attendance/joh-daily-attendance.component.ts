@@ -53,6 +53,7 @@ export class JohDailyAttendanceComponent implements OnInit {
   Total_Late:any;
   Half_Day: any;
   Annual_Leave: any;
+  Missed:any;
   DistWorkLocation:any = [];
   SelectedDistWorkLocation:any = [];
   SearchFields:any = [];
@@ -315,6 +316,9 @@ export class JohDailyAttendanceComponent implements OnInit {
     var annualleave = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "AL")
     this.Annual_Leave = annualleave.length ? annualleave.length : undefined;
     // console.log("this.Half_Day===",this.Half_Day);
+
+    var missed = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "MS")
+    this.Missed = missed.length ? missed.length : undefined;
   }
   getAttenTypedropdown(atnid){
     const obj = {

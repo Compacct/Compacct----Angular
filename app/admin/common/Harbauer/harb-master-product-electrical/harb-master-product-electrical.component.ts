@@ -1888,7 +1888,7 @@ deleteMaterialType(mettype){
     let tempHSN = this.objGst.HSN_NO
     console.log("tempHSN",tempHSN.toString());
     let tempHSNString = tempHSN.toString()
-    if(getArrValue.length === 2 && tempHSNString.length === 6){
+    if((getArrValue.length === 2) && (tempHSNString.length === 6 || tempHSNString.length === 8)){
       falg = true
       
     }
@@ -2471,6 +2471,7 @@ deleteProUom(uom){
       //   Product_Description : this.ObjMachineMaster.Product_Description,
       //   Product_Mfg_Comp_ID : this.ObjMachineMaster.Manufacturer
       // }
+      if(this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)) {
       if(this.Product_Mfg_Comp_ID.length) {
         if(this.DescriptionCheck === "OK") {
       // if(this.Product_Mfg_Comp_ID.length) {
@@ -2542,6 +2543,18 @@ deleteProUom(uom){
             detail: "Description already exists."
           });
      }
+    }
+    else {
+      //  if(!this.ProductPDFFile['size']) {
+          this.Spinner = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "Error Occured "
+          });
+      }
     }
     else {
       //  if(!this.ProductPDFFile['size']) {

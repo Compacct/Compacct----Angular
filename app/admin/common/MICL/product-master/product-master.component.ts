@@ -359,7 +359,7 @@ checkrequ(financial?,Gst?,product?){
   let tempHSN = this.objGst.HSN_NO
   console.log("tempHSN",tempHSN.toString());
   let tempHSNString = tempHSN.toString()
-  if(getArrValue.length === 2 && tempHSNString.length === 6){
+  if((getArrValue.length === 2) && (tempHSNString.length === 6 || tempHSNString.length === 8)){
     falg = true
   }
   else {

@@ -187,7 +187,7 @@
                                                 <div class="form-group">
                                                     <div class="col-sm-4">
                                                         <label class="control-label">To Outlet <sup class="text-danger">*</sup></label>
-                                                        <select class="form-control" name="tooutlet" #tooutlet="ngModel" [(ngModel)]="Objcrate.To_Cost_Cen_ID" [disabled]="tooutletdisableflag" (change)="getToGodown()" [ngClass]="{'clearance':crateFormSubmitted && tooutlet?.errors?.required}" required>
+                                                        <select class="form-control" name="tooutlet" #tooutlet="ngModel" [(ngModel)]="Objcrate.To_Cost_Cen_ID" (change)="getToGodown()" [ngClass]="{'clearance':crateFormSubmitted && tooutlet?.errors?.required}" required>
                                                                   <option  [ngValue]="undefined">Select</option>
                                                            <option *ngFor = "let option of ToOutletList" [value] ="option.Cost_Cen_ID">
                                                               {{option.Cost_Cen_Name}}
