@@ -2163,7 +2163,7 @@ class VoucherCommon {
   Reconsil_Tag = "N";
   Fin_Year_ID: string;
   Naration = "";
-  Cost_Cen_ID_Trn = 0; // Revenue Cost Center
+  Cost_Cen_ID_Trn :any; // Revenue Cost Center
   Project_ID: string;
   Auto_Posted = "N";
   Posted_On: string;
