@@ -177,13 +177,21 @@ export class K4cCrateInOuComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.FromGodownList = data;
      //this.Objcrate.From_Godown_Id = this.FromGodownList.length === 1 ? this.FromGodownList[0].godown_id : undefined;
-     if(this.FromGodownList.length === 1){
-      this.Objcrate.From_Godown_Id = this.FromGodownList[0].godown_id;
-      this.fromstockdisableflag = true;
-     }else{
-       this.Objcrate.From_Godown_Id = undefined;
-       this.fromstockdisableflag = false;
-     }
+     if(this.FromGodownList.length){
+      if(this.Objcrate.From_Cost_Cen_ID == 2){
+        this.Objcrate.From_Godown_Id = 56;
+        this.fromstockdisableflag = false;
+        } else if(this.FromGodownList.length === 1){
+          this.Objcrate.From_Godown_Id = this.FromGodownList[0].godown_id;
+          this.fromstockdisableflag = true;
+        } else{
+          this.Objcrate.From_Godown_Id = undefined;
+          this.fromstockdisableflag = false;
+        }
+      } else{
+        this.Objcrate.From_Godown_Id = undefined;
+        this.fromstockdisableflag = false;
+      }
      // console.log("this.FromGodownList ======",this.FromGodownList);
 
     });
@@ -341,13 +349,21 @@ export class K4cCrateInOuComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.BFromGodownList = data;
      //this.Objcrate.From_Godown_Id = this.FromGodownList.length === 1 ? this.FromGodownList[0].godown_id : undefined;
-     if(this.BFromGodownList.length === 1){
-      this.ObjBrowse.From_Godown_Id = this.BFromGodownList[0].godown_id;
-      this.Bfromstockdisableflag = true;
-     }else{
-       this.ObjBrowse.From_Godown_Id = undefined;
-       this.Bfromstockdisableflag = false;
-     }
+     if(this.BFromGodownList.length){
+      if(this.Objcrate.From_Cost_Cen_ID == 2){
+        this.ObjBrowse.From_Godown_Id = 56;
+        this.Bfromstockdisableflag = false;
+        } else if(this.BFromGodownList.length === 1){
+          this.ObjBrowse.From_Godown_Id = this.BFromGodownList[0].godown_id;
+          this.Bfromstockdisableflag = true;
+        } else{
+          this.ObjBrowse.From_Godown_Id = undefined;
+          this.Bfromstockdisableflag = false;
+        }
+      } else{
+        this.ObjBrowse.From_Godown_Id = undefined;
+        this.Bfromstockdisableflag = false;
+      }
      // console.log("this.BFromGodownList ======",this.BFromGodownList);
 
     });

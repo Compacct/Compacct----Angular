@@ -20,26 +20,30 @@ export class K4cFactoryRequisitionComponent implements OnInit {
   //seachSpinner = false;
   statusvalue : any;
   ObjBrowseRequi : BrowseRequi = new BrowseRequi ();
-  LocationList = [];
-  Showlist = [];
-  DynamicHeader = [];
-  DistReqNo = [];
-  SelectedDistReqNo = [];
-  DistLocation = [];
-  SelectedDistLocation = [];
-  SearchFields = [];
-  BackupSearchedlist = [];
-  dataforexcellist = [];
+  LocationList:any = [];
+  Showlist:any = [];
+  DynamicHeader:any = [];
+  DistReqNo:any = [];
+  SelectedDistReqNo:any = [];
+  DistLocation:any = [];
+  SelectedDistLocation:any = [];
+  SearchFields:any = [];
+  BackupSearchedlist:any = [];
+  dataforexcellist:any = [];
   RequisitionSearchFormSubmitted = false;
-  shopwiselist = [];
-  DynamicHeader1 = [];
-  BrandList = [];
-  Indentdate = [];
+  shopwiselist:any = [];
+  DynamicHeader1:any = [];
+  BrandList:any = [];
+  Indentdate:any = [];
   myDate: Date;
-  initDate = [];
-  DistStatus = [];
-  SelectedDistStatus = [];
+  initDate:any = [];
+  DistStatus:any = [];
+  SelectedDistStatus:any = [];
   Param_Flag ='';
+
+  showSpinner:boolean = false;
+  shopwiseSpinner:boolean = false;
+  prowiseSpinner:boolean = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -142,6 +146,7 @@ export class K4cFactoryRequisitionComponent implements OnInit {
     this.DynamicHeader = [];
     this.Showlist = [];
     this.dataforexcellist = [];
+    this.showSpinner = true;
     const start = this.ObjBrowseRequi.start_date
       ? this.DateService.dateConvert(new Date(this.ObjBrowseRequi.start_date))
       : this.DateService.dateConvert(new Date());
@@ -179,9 +184,10 @@ export class K4cFactoryRequisitionComponent implements OnInit {
        this.GetDistinct();
        console.log('Show list=====',this.Showlist)
        this.getdataforexcel();
+       this.showSpinner = false;
        }
        this.RequisitionSearchFormSubmitted = false;
-       //this.seachSpinner = false;
+       this.showSpinner = false;
      })
     //}
   }
@@ -262,6 +268,7 @@ export class K4cFactoryRequisitionComponent implements OnInit {
     this.Showlist = [];
     this.DynamicHeader1 = [];
     this.shopwiselist = [];
+    this.shopwiseSpinner = true;
     const start = this.ObjBrowseRequi.start_date
       ? this.DateService.dateConvert(new Date(this.ObjBrowseRequi.start_date))
       : this.DateService.dateConvert(new Date());
@@ -296,10 +303,63 @@ export class K4cFactoryRequisitionComponent implements OnInit {
        //this.BackupSearchedlist = data;
        //this.GetDistinct();
        this.getdataforexcel();
+       this.shopwiseSpinner = false;
+      }
+      // console.log('ShopWise list=====',this.shopwiselist)
+       this.RequisitionSearchFormSubmitted = false;
+       this.shopwiseSpinner = false;
+     })
+    //}
+    //}
+  }
+
+  getProWiseReq(){
+    this.RequisitionSearchFormSubmitted = true;
+    this.DynamicHeader = [];
+    this.Showlist = [];
+    this.DynamicHeader1 = [];
+    this.shopwiselist = [];
+    this.prowiseSpinner = true;
+    const start = this.ObjBrowseRequi.start_date
+      ? this.DateService.dateConvert(new Date(this.ObjBrowseRequi.start_date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjBrowseRequi.end_date
+      ? this.DateService.dateConvert(new Date(this.ObjBrowseRequi.end_date))
+      : this.DateService.dateConvert(new Date());
+      //if(this.ObjBrowseRequi.Status != undefined){
+        //if(valid){
+        let bandid = 0;
+       if(this.Param_Flag ==='Finished') {
+        bandid = this.ObjBrowseRequi.Brand_ID ? this.ObjBrowseRequi.Brand_ID : 0;
+       } 
+       if (this.Param_Flag === 'Store Item') {
+        bandid = this.ObjBrowseRequi.Location ? 0 : this.ObjBrowseRequi.Brand_ID;
+       }
+    const tempobj = {
+      Material_Type : this.Param_Flag,
+      From_Date : start,
+      To_Date : end,
+      Cost_Cen_ID : this.ObjBrowseRequi.Location ? this.ObjBrowseRequi.Location : 0,
+      Brand_ID : bandid //this.ObjBrowseRequi.Brand_ID ? this.ObjBrowseRequi.Brand_ID : 0
+    }
+    const obj = {
+      "SP_String": "SP_Production_Voucher",
+      "Report_Name_String": "ProductWise Requisition",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data.length) {
+        this.DynamicHeader1 = Object.keys(data[0]);
+       this.shopwiselist = data;
+       //this.BackupSearchedlist = data;
+       //this.GetDistinct();
+       this.getdataforexcel();
+       this.prowiseSpinner = false;
       }
       // console.log('ShopWise list=====',this.shopwiselist)
       // this.seachSpinner = false;
        this.RequisitionSearchFormSubmitted = false;
+       this.prowiseSpinner = false;
      })
     //}
     //}
@@ -309,8 +369,8 @@ export class K4cFactoryRequisitionComponent implements OnInit {
 class BrowseRequi {
   start_date : Date ;
   end_date : Date;
-  Location : number = undefined;
-  Status : string = undefined;
-  Brand_ID : number = undefined;
+  Location : any;
+  Status : any;
+  Brand_ID : any;
 
 }
