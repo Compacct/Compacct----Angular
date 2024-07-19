@@ -22,7 +22,7 @@ export class K4cCrateInOuComponent implements OnInit {
   seachSpinner = false;
   tabIndexToView = 0;
   buttonname = "Save"
-  Objcrate : crate = new crate ();
+  Objcrate : crate = new crate();
   todayDate : Date;
   currentdate = new Date();
   crateFormSubmitted = false;
@@ -350,7 +350,7 @@ export class K4cCrateInOuComponent implements OnInit {
      this.BFromGodownList = data;
      //this.Objcrate.From_Godown_Id = this.FromGodownList.length === 1 ? this.FromGodownList[0].godown_id : undefined;
      if(this.BFromGodownList.length){
-      if(this.Objcrate.From_Cost_Cen_ID == 2){
+      if(this.ObjBrowse.From_Cost_Cen_ID == 2){
         this.ObjBrowse.From_Godown_Id = 56;
         this.Bfromstockdisableflag = false;
         } else if(this.BFromGodownList.length === 1){
