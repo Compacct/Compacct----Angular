@@ -273,6 +273,9 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
         // reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XL01";
         reportnamepeninv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=XL01";
       }
+      else if (this.databaseName === "MICL_BHP") {
+        reportnamepeninv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=XL02";
+      }
       else if (this.databaseName === "Diagraph") {
         // reportnamepeninv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XLD01";
         reportnamepeninv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=XLD01";
@@ -335,7 +338,7 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       if (this.databaseName === "K4C") {
         printlink = "/Report/Crystal_Files/Finance/SaleBill/Sale_Bill_GST_K4C.aspx?Doc_No=" ;
       }
-      else if (this.databaseName === "MICL" || this.databaseName === "MICL_Demo") {
+      else if (this.databaseName === "MICL" || this.databaseName === "MICL_Demo" || this.databaseName === "MICL_BHP") {
         printlink = `/Report/Print/MICL/sale_bill_print.html?Doc_No=` ;
       }
       else if (this.databaseName === "BSHPL" || this.databaseName === "Diagraph") {
@@ -570,6 +573,9 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       // reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XL01";
       reportnamefailedinv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=XL01";
     }
+    else if (this.databaseName === "MICL_BHP") {
+      reportnamefailedinv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=XL02";
+    }
     else if (this.databaseName === "Diagraph") {
       // reportnamefailedinv = "https://einvoicek4c.azurewebsites.net/api/Create_E_Invoice_Queue?code=vVB-eE8wZmI8idKsxBOPzJbZw3Lbp6h83qdMjyY7bVJfAzFusGDSRg==&CON=XLD01";
       reportnamefailedinv = "https://einvoicecompacct.azurewebsites.net/api/Create_E_Invoice_Direct?code=T6mHYP2wncfBP2Aaaa566LYHgUsgqEYsPkv3ZVaHgX7qAzFuoqa5wQ==&CON=XLD01";
@@ -712,6 +718,9 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       else if (this.databaseName === "MICL") {
         // reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&CON=XL01&invoice_no=";
         reportnamecancel = "https://einvoicecompacct.azurewebsites.net/api/Cancel_E_Invoice?code=RO6d24bzuLcsnBQGxQWeim3xjl_Bal8vv93JRZbaieu3AzFuJSt7mg==&CON=XL01&invoice_no=";
+      }
+      else if (this.databaseName === "MICL_BHP") {
+        reportnamecancel = "https://einvoicecompacct.azurewebsites.net/api/Cancel_E_Invoice?code=RO6d24bzuLcsnBQGxQWeim3xjl_Bal8vv93JRZbaieu3AzFuJSt7mg==&CON=XL02&invoice_no=";
       }
       else if (this.databaseName === "Diagraph") {
         // reportnamecancel = "https://einvoicek4c.azurewebsites.net/api/Cancel_E_Invoice?code=AhcFHzcgtELdbNxxpT8o3zZKMpzDbiOXUJ6KdFHo-O-iAzFugpemuA==&CON=XLD01&invoice_no=";

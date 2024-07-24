@@ -354,6 +354,7 @@ export class K4cFactoryRequisitionComponent implements OnInit {
        //this.BackupSearchedlist = data;
        //this.GetDistinct();
        this.getdataforexcel();
+       this.exportexcel(this.shopwiselist,'Product_Wise_Indent');
        this.prowiseSpinner = false;
       }
       // console.log('ShopWise list=====',this.shopwiselist)
