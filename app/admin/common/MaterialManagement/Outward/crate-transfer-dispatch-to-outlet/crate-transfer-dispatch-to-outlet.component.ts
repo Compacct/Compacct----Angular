@@ -8,6 +8,7 @@ import { CompacctGlobalApiService } from "../../../../shared/compacct.services/c
 import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service";
 import { CompacctHeader } from "../../../../shared/compacct.services/common.header.service";
 import { NgxUiLoaderService } from "ngx-ui-loader";
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-crate-transfer-dispatch-to-outlet',
@@ -167,6 +168,7 @@ export class CrateTransferDispatchToOutletComponent implements OnInit {
     this.ngxService.stop();
     // this.EditList = [];
     this.getToOutlet();
+    this.ngxService.stop();
   }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
@@ -639,12 +641,29 @@ export class CrateTransferDispatchToOutletComponent implements OnInit {
    
     }
   }
+  exportexcel(Arr,fileName): void {
+    let newarr:any = [];
+    Arr.forEach(element => {
+      const obj = {
+        Doc_No : element.Doc_No,
+        Doc_Date : this.DateService.dateConvert(element.Doc_Date),
+        From_Outlet : element.F_Cost_Cen_Name,
+        To_Outlte : element.To_Cost_Cen_Name,
+        Crate : element.Crate_Out
+      }
+      newarr.push(obj)
+    });
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(newarr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+  }
   Edit(edit){
     this.EditList = [];
     //this.clearData();
     this.getToOutlet();
     this.EditDocNo = undefined;
     this.todayDate = new Date();
+    this.ngxService.start();
     if(edit.Doc_No){
     if(this.checkLockDate(edit.Transaction_Date)){
       this.EditDocNo = edit.Doc_No;
@@ -663,6 +682,7 @@ export class CrateTransferDispatchToOutletComponent implements OnInit {
        "Json_Param_String": JSON.stringify([ObjT])
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data.length){
        this.EditList = data;
         setTimeout(() => {
           this.BackupGetToOutletList.forEach(ele => {
@@ -676,8 +696,19 @@ export class CrateTransferDispatchToOutletComponent implements OnInit {
           this.GetToOutletList = [...this.BackupGetToOutletList];
         });
       }, 600)
+      this.ngxService.stop();
+    }
+    else {
+      this.ngxService.stop();
+    }
      })
     }
+    else{
+      this.ngxService.stop();
+    }
+    }
+    else {
+      this.ngxService.stop();
     }
   }
 

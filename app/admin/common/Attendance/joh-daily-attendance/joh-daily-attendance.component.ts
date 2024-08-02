@@ -54,6 +54,7 @@ export class JohDailyAttendanceComponent implements OnInit {
   Half_Day: any;
   Annual_Leave: any;
   Missed:any;
+  Maternity_Leave:any;
   DistWorkLocation:any = [];
   SelectedDistWorkLocation:any = [];
   SearchFields:any = [];
@@ -319,6 +320,9 @@ export class JohDailyAttendanceComponent implements OnInit {
 
     var missed = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "MS")
     this.Missed = missed.length ? missed.length : undefined;
+
+    var maternityleave = this.EmpDailyAttenList.filter(item=>item.Atten_Type_ID === "ML")
+    this.Maternity_Leave = maternityleave.length ? maternityleave.length : undefined;
   }
   getAttenTypedropdown(atnid){
     const obj = {

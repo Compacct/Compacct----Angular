@@ -175,7 +175,7 @@
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
-                                                    <select class="form-control" name="godown_id" #godown_id="ngModel" [(ngModel)]="ObjrsnsClosingStock.godown_id" [ngClass]="{'clearance': rsnsClosingStockFormSubmitted && godown_id?.errors?.required}" [attr.disabled]="Gdisableflag" required>
+                                                    <select class="form-control" name="godown_id" #godown_id="ngModel" [(ngModel)]="ObjrsnsClosingStock.godown_id" [ngClass]="{'clearance': rsnsClosingStockFormSubmitted && godown_id?.errors?.required}" [disabled]="Gdisableflag" required>
                                           <option  [ngValue]="undefined">Select</option>
                                           <option  *ngFor="let option of GodownList" value="{{option.godown_id}}">
                                             {{option.godown_name}}

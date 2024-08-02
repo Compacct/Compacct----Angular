@@ -808,8 +808,8 @@ export class K4CDispatchToOutletComponent implements OnInit {
     const ctrl = this;
     const subledgeridObj = $.grep(ctrl.FranchiseList,function(item: any) {return item.Cost_Cen_ID == ctrl.Objdispatch.Cost_Cen_ID})[0];
     console.log(subledgeridObj);
-    this.subledgerid = subledgeridObj.Sub_Ledger_ID ? subledgeridObj.Sub_Ledger_ID : undefined;
-    this.franchisecostcenid = subledgeridObj.Cost_Cen_ID ? subledgeridObj.Cost_Cen_ID : undefined;
+    this.subledgerid = subledgeridObj ? subledgeridObj.Sub_Ledger_ID : undefined;
+    this.franchisecostcenid = subledgeridObj ? subledgeridObj.Cost_Cen_ID : undefined;
     console.log("this.subledgerid ==", this.subledgerid)
     
    }
@@ -1268,6 +1268,7 @@ GeneratingBillNo(masterProduct){
 }
 geteditmaster(masterProduct){
   this.EditList = [];
+  this.ngxService.start();
   const obj = {
     "SP_String": "SP_Production_Voucher",
     "Report_Name_String": "Get Dispatch Details For Edit",
@@ -1275,6 +1276,7 @@ geteditmaster(masterProduct){
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     console.log("From Api",data);
+    if(data.length){
     this.EditList = data;
     console.log("this.EditList",this.EditList);
    this.doc_no = data[0].Doc_No;
@@ -1313,7 +1315,11 @@ geteditmaster(masterProduct){
     this.BackupIndentList = this.IndentNoList;
     this.GetIndentdist();
     console.log("this.Objdispatch",this.productDetails);
-
+    this.ngxService.stop();
+  }
+  else {
+    this.ngxService.stop();
+  }
   })
 }
 getIndentForEdit(masterProduct){

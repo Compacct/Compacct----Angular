@@ -743,6 +743,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
   }
   GetEditIntStock(Doc_No){
     this.ProductionFormSubmitted = false;
+    this.ngxService.start();
       const obj = {
         "SP_String": "SP_Production_Voucher",
         "Report_Name_String": "Get Internal Stock transfer Details For Edit",
@@ -751,6 +752,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         console.log("Edit Data From API",data);
+        if(data.length){
       this.editList = data;
          this.Objproduction.Brand_ID = data[0].Brand_ID;
            this.Objproduction.Product_Type_ID = data[0].Product_Type_ID;
@@ -790,6 +792,11 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
         //this.backUpproductList = this.productList;
         this.BackupProductionList = this.ProductionList;
         this.GetProductiondist();
+        this.ngxService.stop();
+      } 
+      else {
+        this.ngxService.stop();
+      }
       })
   }
   getProNoForEdit(Doc_No){
