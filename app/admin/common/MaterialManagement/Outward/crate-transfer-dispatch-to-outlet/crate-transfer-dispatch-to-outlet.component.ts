@@ -165,8 +165,7 @@ export class CrateTransferDispatchToOutletComponent implements OnInit {
 
     this.ObjCrateTransferFormSubmitted = false;
     this.Spinner = false;
-    this.ngxService.stop();
-    // this.EditList = [];
+    this.EditList = [];
     this.getToOutlet();
     this.ngxService.stop();
   }
@@ -383,7 +382,7 @@ export class CrateTransferDispatchToOutletComponent implements OnInit {
           if(Number(element.Crate)){
           const tempObj = {
             Doc_No : this.buttonname != "Save" ? this.EditDocNo : 'A',
-            Doc_Date : this.DateService.dateConvert(new Date(this.currentdate)),
+            Doc_Date : this.DateService.dateConvert(new Date(this.todayDate)),
             F_Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
             F_Godown_ID : this.ObjCrateTransfer.From_Godown_Id,
             To_Cost_Cen_ID : element.Cost_Cen_ID,
