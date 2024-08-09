@@ -139,21 +139,6 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <!-- <div class ="col-sm-6">
-                                 <label class="control-label">From Cost Cent<sup class="text-danger">*</sup></label>
-                                         <select class="form-control"
-                                         name="From_Cost_Cen_ID"
-                                         #From_Cost_Cen_ID="ngModel"
-                                         [(ngModel)]="Objproduction.From_Cost_Cen_ID"
-                                         [ngClass]="{'clearance': IntStockFormFormSubmitted && From_Cost_Cen_ID?.errors?.required}"
-                                         (change)="GetFromGodown()"
-                                          >
-                                             <option  [ngValue]="undefined">Select</option>
-                                             <option  *ngFor="let option of Fcostcenlist" value="{{option.Cost_Cen_ID}}">
-                                               {{option.Cost_Cen_Name}}
-                                             </option>
-                                       </select>
-                             </div> -->
                                                         <div class="col-sm-4">
                                                             <label class="control-label">From Stock Point<sup class="text-danger">*</sup></label>
                                                             <select class="form-control" name="From_godown_id" #From_godown_id="ngModel" [(ngModel)]="Objproduction.From_godown_id" [ngClass]="{'clearance': IntStockFormFormSubmitted && From_godown_id?.errors?.required}">

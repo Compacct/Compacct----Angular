@@ -1418,12 +1418,14 @@ export class CommonPurchaseBillGstComponent implements OnInit {
     }
   }
   geteditData(Dno){
+    this.ngxService.start();
     const obj = {
       "SP_String": "SP_Common_Purchase_Bill",
       "Report_Name_String": "Purchase_Bill_Edit_Data",
       "Json_Param_String": JSON.stringify([{Doc_No : Dno}])
    }
     this.GlobalAPI.getData(obj).subscribe((res:any)=>{
+      if(res.length || res[0].Column1 != null){
       let data = JSON.parse(res[0].Column1)
       console.log("Edit data",data);
       this.ObjPurChaseBill = data[0],
@@ -1444,6 +1446,11 @@ export class CommonPurchaseBillGstComponent implements OnInit {
         this.ListofTotalAmount()
         this.TcsAmtCalculation()
       }
+      this.ngxService.stop();
+    }
+    else {
+      this.ngxService.stop();
+    }
     })
   }
 

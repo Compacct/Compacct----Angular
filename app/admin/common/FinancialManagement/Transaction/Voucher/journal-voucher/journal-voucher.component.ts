@@ -11,6 +11,7 @@ import { DateTimeConvertService } from '../../../../../shared/compacct.global/da
 import { ActivatedRoute } from '@angular/router';
 import { identity } from 'rxjs';
 import { NUMBER_TYPE } from '@angular/compiler/src/output/output_ast';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-journal-voucher',
@@ -65,6 +66,7 @@ export class JournalVoucherComponent implements OnInit {
     private $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
     private route: ActivatedRoute,
+    private ngxService: NgxUiLoaderService
   ) {
     this.route.queryParams.subscribe(params => {
       console.log("params",params.Voucher_Type_ID);
@@ -97,6 +99,7 @@ export class JournalVoucherComponent implements OnInit {
     this.clearData();
   }
   clearData(){
+    this.ngxService.stop();
     this.journallowerFormSubmitted = false;
     this.journalFormSubmitted = false;
     this.objjournal = new journalTopper()
@@ -510,12 +513,14 @@ EditJournal(col){
   }
 }
 GetEditMasterUom(V_NO){
+  this.ngxService.start();
   const obj = {
     "SP_String": "Sp_Acc_Journal",
     "Report_Name_String":"BL_Txn_Acc_Journal_Get",
     "Json_Param_String": JSON.stringify([{Voucher_No : V_NO}]) 
    }
    this.GlobalAPI.getData(obj).subscribe((res:any)=>{
+    if(res.length || res[0].T_element != null){
      let data = JSON.parse(res[0].T_element);
      console.log("Edit Data",data);
      this.objjournal = data[0];
@@ -526,15 +531,23 @@ GetEditMasterUom(V_NO){
       this.objjournal.Amount = Number((data[0].DR_Amt).toFixed(2))
       this.objjournal.DrCrdata = "DR";
       this.getTotalDRCR()
+      this.ngxService.stop();
     }
     else if (data[0].CR_Amt){
       this.objjournal.Amount = Number((data[0].CR_Amt).toFixed(2))
       this.objjournal.DrCrdata = "CR";
       this.getTotalDRCR()
+      this.ngxService.stop();
     }
     else {
       console.error("Amount Not Found");
+      this.ngxService.stop();
     }
+    this.ngxService.stop();
+  }
+  else {
+    this.ngxService.stop();
+  }
    })
 }
 DeleteJournal(col){

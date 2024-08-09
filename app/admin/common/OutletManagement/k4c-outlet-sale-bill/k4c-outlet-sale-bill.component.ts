@@ -2739,6 +2739,7 @@ getorderno(orderno){
   }
 getadvorderdetails(Adv_Order_No){
     //console.log('Bill No ===', this.Adv_Order_No)
+    this.ngxService.start();
     const TempObj = {
       Cost_Cen_ID : this.QueryStringObj.Del_Cost_Cent_ID ? this.QueryStringObj.Del_Cost_Cent_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
       Doc_No : this.Adv_Order_No
@@ -2749,6 +2750,7 @@ getadvorderdetails(Adv_Order_No){
       "Json_Param_String" :  JSON.stringify([TempObj])
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data.length){
        this.AdvOderDetailList = data;
        console.log('Advance Order Detail ===', data)
        this.Objcustomerdetail.Costomer_Mobile = data[0].Costomer_Mobile;
@@ -2821,6 +2823,11 @@ getadvorderdetails(Adv_Order_No){
 
         this.listofamount();
         this.CalculateTotalAmt();
+        this.ngxService.stop();
+      }
+      else {
+        this.ngxService.stop();
+      }
      })
   }
 

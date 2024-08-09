@@ -110,6 +110,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   advordernumber: any;
   viewgenerateList: any=[];
   lockdate:any;
+  loading:boolean = false;
 
   constructor(
     private $http: HttpClient,
@@ -163,6 +164,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
     this.flag = false;
     this.ngxService.stop();
     this.viewgenerateList = [];
+    this.loading = false;
    }
   GetDate(){
     const obj = {
@@ -331,6 +333,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
   }
   addadvDispatch(valid){
      this.OutletFormSubmit = true;
+     this.loading = true;
      if(valid){
        const tempObj = {
         Cost_Cen_ID : this.ObjadvDispat.Cost_Cen_ID,
@@ -372,6 +375,7 @@ export class K4CDispatchOutletAdvOrderComponent implements OnInit {
         })
 
         this.clearData();
+        this.loading = false;
       })
      }
   }

@@ -49,6 +49,7 @@ export class K4cDayEndProcessComponent implements OnInit {
   RTFstatus:any;
   OSTstatus:any;
   DispChallanStatus:any;
+  CrateTransferStatus:any;
   Password = undefined;
   Passdisabled = true;
   PasswordFormSubmitted = false;
@@ -405,6 +406,7 @@ export class K4cDayEndProcessComponent implements OnInit {
         this.OSTstatus = data[0].Outlet_Stock_Transfer_Status;
         // this.OSTstatus = "YES";
         console.log("OSTstatus",this.OSTstatus);
+        this.CheckDispChallanStatus();
       })
     }
   }
@@ -428,6 +430,26 @@ export class K4cDayEndProcessComponent implements OnInit {
       })
     }
   }
+  CheckCrateTransferStatus(){
+    this.CrateTransferStatus = undefined;
+    if(this.Datevalue){
+      const tempObj = {
+        //Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+        Cost_Cen_ID : this.Cost_Cen_ID,
+        Date : this.DateService.dateConvert(new Date(this.Datevalue))
+      }
+      const obj = {
+        "SP_String": "SP_K4C_Day_End_Process",
+        "Report_Name_String": "Check_accept_crate_Status",
+        "Json_Param_String" :  JSON.stringify([tempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.CrateTransferStatus = data[0].Crate_Accept_Status;
+        // this.CrateTransferStatus = "YES";
+        console.log("CrateTransferStatus",this.CrateTransferStatus);
+      })
+    }
+  }
   CheckAdvOrDel(){
     const tempObj = {
       Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
@@ -444,10 +466,11 @@ export class K4cDayEndProcessComponent implements OnInit {
       if(data[0].Status === "YES"){
         this.CheckRTFstatus();
         // this.CheckOSTstatus();
-        this.CheckDispChallanStatus();
+        // this.CheckDispChallanStatus();
+        this.CheckCrateTransferStatus();
         setTimeout(() => {
           this.saveCheck();
-        }, 200);
+        }, 500);
       }
       else{
         this.compacctToast.clear();
@@ -489,7 +512,7 @@ export class K4cDayEndProcessComponent implements OnInit {
   }
   CheckForPasswordDisable(){
       this.Passdisabled = false;
-      if((this.RTFstatus === "YES") && (this.OSTstatus === "YES") && (this.DispChallanStatus === "YES")){
+      if((this.RTFstatus === "YES") && (this.OSTstatus === "YES") && (this.DispChallanStatus === "YES") && (this.CrateTransferStatus === "YES")){
         // this.paymentList['Passdisabled'] = true;
         // this.Passdisabled = true;
         this.save();
@@ -504,7 +527,7 @@ export class K4cDayEndProcessComponent implements OnInit {
           sticky: true,
           closable: false,
           severity: "warn",
-          summary: "Acceptance Pending of RTF / Outlet Stock Transfer / Dispatch Challan. Please complete before EOD.",
+          summary: "Acceptance Pending of RTF / Outlet Stock Transfer / Dispatch Challan / Crate Transfer. Please complete before EOD.",
           // detail: "Confirm to proceed"
         });
       }

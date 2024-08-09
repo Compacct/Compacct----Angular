@@ -9,6 +9,7 @@ import { CompacctHeader } from "../../../../shared/compacct.services/common.head
 import { CompacctGlobalApiService } from "../../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service"
 import { ActivatedRoute, Router } from "@angular/router";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 import * as XLSX from 'xlsx';
 
 @Component({
@@ -80,6 +81,7 @@ export class K4cProductionClosingStockComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -735,72 +737,12 @@ const obj = {
   }
 
   clearData(){
+    this.ngxService.stop();
     this.ObjProClosingStock.Cost_Cen_ID = 2;
     this.ObjProClosingStock.godown_id = 4;
     // this.GetGodown();
     this.ObjBrowse.Cost_Cen_ID = 2;
     this.ObjBrowse.godown_id = 4;
-    // this.GetBGodown();
-    // this.ObjProClosingStock.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    // FOR CREATE TAB
-    // if (this.CostCentId_Flag) {
-      // this.ObjProClosingStock.Cost_Cen_ID = String(this.CostCentId_Flag);
-      // this.Cdisableflag = true;
-      // this.GetGodown();
-      // this.ObjBrowse.To_Cost_Cen_ID = String(this.CostCentId_Flag);
-      // this.TBCdisableflag = true;
-      // this.GetBToGodown();
-      // } 
-      // else {
-      //   this.ObjProClosingStock.Cost_Cen_ID = undefined;
-      //   //this.ObjRawMateriali.To_godown_id = undefined;
-      //   this.TCdisableflag = false;
-      //   this.GetGodown();
-      //   this.ObjBrowse.To_Cost_Cen_ID = undefined;
-      //   this.TBCdisableflag = false;
-      //   this.GetBToGodown();
-      // }
-      // FOR CREATE TAB
-      
-      // FOR BROWSE
-      // if (this.CostCentId_Flag) {
-      //   this.ObjBrowse.To_Cost_Cen_ID = String(this.CostCentId_Flag);
-      //   this.TBCdisableflag = true;
-      //   this.GetBToGodown();
-      //   } else {
-      //     this.ObjBrowse.To_Cost_Cen_ID = undefined;
-      //     //this.ObjRawMateriali.To_godown_id = undefined;
-      //     this.TBCdisableflag = false;
-      //     this.GetBToGodown();
-      //   }
-        // FOR BROWSE
-
-    // this.ObjProClosingStock.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
-    //  if(this.GodownList.length === 1){
-    //    this.Gdisableflag = true;
-    //  }else{
-    //    this.Gdisableflag = false;
-    //  }
-    // this.GetToGodown();
-    // FOR CREATE TAB
-    //  this.ObjRawMateriali.To_godown_id = this.ToGodownList.length === 1 ? this.ToGodownList[0].godown_id : undefined;
-    //  if(this.ToGodownList.length === 1){
-    //    this.TGdisableflag = true;
-    //  }else{
-    //    this.TGdisableflag = false;
-    //  }
-     // FOR CREATE TAB
-
-     // FOR BROWSE TAB
-    //  this.ObjBrowse.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    //  this.ObjBrowse.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
-    //  if(this.GodownList.length === 1){
-    //    this.BGdisableflag = true;
-    //  }else{
-    //    this.BGdisableflag = false;
-    //  }
-     // FOR BROWSE TAB
-
     this.ObjProClosingStock.Remarks = [];
     this.ObjProClosingStock.Indent_List = undefined;
     this.ProductList = [];
@@ -847,6 +789,7 @@ EditIntStock(col){
 }
 GetdataforEdit(){
   //this.OTclosingstockwithbatchFormSubmitted = false;
+  this.ngxService.start();
     const obj = {
       "SP_String": "SP_Production_Closing_Stock",
       "Report_Name_String": "Get_Edit_Data",
@@ -855,6 +798,7 @@ GetdataforEdit(){
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("Edit Data From API",data);
+      if(data.length){
       this.EditList = data;
       //  this.todayDate = new Date(data[0].Doc_Date);
       //  this.minDate = new Date(data[0].Doc_Date.getDate());
@@ -908,6 +852,11 @@ GetdataforEdit(){
     //   });
     // }, 600)
     //   this.ProductList = [...this.ProductList];
+    this.ngxService.stop();
+      }
+      else {
+       this.ngxService.stop();
+      }
     })
 }
 GetEditProductType(){

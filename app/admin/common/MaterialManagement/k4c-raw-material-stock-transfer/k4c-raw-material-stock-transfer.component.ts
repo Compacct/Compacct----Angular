@@ -878,6 +878,7 @@ exportoexcel(Arr,fileName): void {
   XLSX.writeFile(workbook, fileName+'.xlsx');
 }
   clearData(){
+    this.ngxService.stop();
     this.ObjRawMateriali.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     // FOR CREATE TAB
     if (this.CostCentId_Flag && this.MaterialType_Flag != "Maintenance") {
@@ -991,6 +992,7 @@ EditIntStock(col){
 
 }
 geteditmaster(Doc_No){
+  this.ngxService.start();
   const obj = {
     "SP_String": "SP_Raw_Material_Stock_Transfer",
   "Report_Name_String": "Get Raw Material Stock Transfer For Edit",
@@ -998,6 +1000,7 @@ geteditmaster(Doc_No){
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     console.log("Edit",data);
+    if(data.length){
     this.editList = data;
     this.Viewlist = data;
     const TempData = data;
@@ -1024,6 +1027,11 @@ geteditmaster(Doc_No){
      });
      this.BackupIndentList = this.ProductList;
      this.GetProductType();
+     this.ngxService.stop();
+    }
+    else {
+      this.ngxService.stop();
+    }
   })
 }
 getIndentForEdit(masterProduct){

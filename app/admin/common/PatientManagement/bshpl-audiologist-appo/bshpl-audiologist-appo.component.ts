@@ -1172,6 +1172,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.objAppointmentNo.Appo_Dt = this.DateService.dateTimeConvert(new Date(col.Appo_Start));
       this.displayPopupUpdateAppoNo = true;
       // this.FileUploadAsset.clear();
+      this.objAppointmentNo.Appo_ID = col.Appo_ID;
       this.P_NameNo = col.Patient;
       this.PhoneNo = Number(col.Mobile);
       this.AgeNo = Number(col.Age);
@@ -1336,6 +1337,7 @@ class Appointment{
   Trial_days:any;
 }
 class AppointmentNo {
+  Appo_ID:any;
   Appo_Dt:any;
   Foot_Fall_ID:any;
   Other_Test_done:any;
