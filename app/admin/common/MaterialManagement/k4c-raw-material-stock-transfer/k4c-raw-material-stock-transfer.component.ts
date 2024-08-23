@@ -220,7 +220,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     let reportname = ''
     if(this.MaterialType_Flag === "Maintenance"){
       spname = "SP_Controller_Master"
-      reportname = "Get - Outlet Name"
+      reportname = "Get - Cost Center Name All"
     } else {
       spname = "SP_Raw_Material_Stock_Transfer"
       reportname = "Get Cost Centre Non outlet"
@@ -280,7 +280,7 @@ export class K4cRawMaterialStockTransferComponent implements OnInit {
     let reportname = ''
     if(this.MaterialType_Flag === "Maintenance"){
       spname = "SP_Controller_Master"
-      reportname = "Get - Outlet Name"
+      reportname = "Get - Cost Center Name All"
     } else {
       spname = "SP_Raw_Material_Stock_Transfer"
       reportname = "Get Cost Centre Non outlet"
