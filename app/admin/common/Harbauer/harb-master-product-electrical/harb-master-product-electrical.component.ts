@@ -340,13 +340,15 @@ export class HarbMasterProductElectricalComponent implements OnInit {
      this.GetBrowseList();
      if(this.databaseName != 'MICL') {
       if(this.databaseName != 'MICL_Demo') {
+        if(this.databaseName != 'MICL_BHP') {
      this.PDFViewFlag = false;
      if (this.PDFViewFlag === false) {
       this.fileInput.clear();
     }
     }
     }
-    if(this.databaseName === 'MICL' || this.databaseName === 'MICL_Demo') {
+    }
+    if(this.databaseName === 'MICL' || this.databaseName === 'MICL_Demo' || this.databaseName === 'MICL_BHP') {
       this.file = false;
       this.uploaddoc = true;
       if (this.UploadFile) {

@@ -166,7 +166,7 @@
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col>
-                                        <tr [class]='col.Cancel_PO != "N" &&  (databaseName === "MICL_Demo" || databaseName ==="MICL") ? "text-red-active" : ""'>
+                                        <tr [class]='col.Cancel_PO != "N" &&  (databaseName === "MICL_Demo" || databaseName ==="MICL" || databaseName ==="MICL_BHP") ? "text-red-active" : ""'>
     
                                             <td>
                                                 <div class="dropdown">
@@ -210,7 +210,7 @@
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="!col.RDB_No && (databaseName === 'MICL_Demo' || databaseName === 'MICL') && col.Cancel_PO == 'N'">
+                                                        <li *ngIf="!col.RDB_No && (databaseName === 'MICL_Demo' || databaseName === 'MICL' || databaseName === 'MICL_BHP') && col.Cancel_PO == 'N'">
                                                             <a (click)="CancelPO(col)">
                                                                 <i class="fa fa-fw fa-times"></i> Cancel
                                                             </a>
