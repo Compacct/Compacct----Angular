@@ -72,7 +72,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
   Process_ID: any;
   ViewPoppup = false;
   Doc_no = undefined;
-  Doc_date = undefined;
+  Doc_date : any;
   BrandName = undefined;
   ProcessName = undefined;
   Producttype = undefined;
@@ -97,6 +97,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
   Cost_Cen_Id: any;
   editIndentList:any = [];
   lockdate:any;
+  loading:boolean = false;
 
   constructor(
     private Header: CompacctHeader,
@@ -425,14 +426,16 @@ export class K4cProductionVoucherNewComponent implements OnInit {
     }
     if(this.editList.length) {
       this.ProductionlList = [];
+      this.loading = true;
       if (this.TIndentList.length) {
         let LeadArr = this.BackUpProductionlList.filter(function (e) {
           return (DIndent.length ? DIndent.includes(e['Req_No']) : true)
         });
         this.ProductionlList = LeadArr.length ? LeadArr : [];
+        this.loading = false;
       } else {
         this.ProductionlList = [...this.BackUpProductionlList];
-        console.log("else Get indent list", this.IndentNoList)
+        this.loading = false;
       }
     }
 
@@ -462,19 +465,9 @@ export class K4cProductionVoucherNewComponent implements OnInit {
     }
   }
   GetProductionpro(){
-    //if(this.Objproduction.Product_Type_ID){
-      //this.checkBoxdis = false;
-      this.allProductsCheck = false;
-      // const tempObj = {
-      //   Brand_ID : this.Objproduction.Brand_ID,
-      //   Product_Type_ID : this.Objproduction.Product_Type_ID ? this.Objproduction.Product_Type_ID : 0,
-      //   From_Cost_Cen_ID : 0,
-      //   From_godown_id : 0,
-      //   Doc_Type : "Requi",
-      //   Date : this.DateService.dateConvert(new Date(this.todayDate)),
-      //   Req_No : this.Objproduction.indentNo.toString()
-      // }
-      //if(this.dataforproduct()){
+      if(this.SelectedIndent.length) {
+        this.allProductsCheck = false;
+      this.loading = true;
       const obj = {
         "SP_String": "SP_Production_Voucher_New",
         "Report_Name_String": "GET_Production_Products",
@@ -483,12 +476,13 @@ export class K4cProductionVoucherNewComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.ProductionlList = data;
         this.ProductionlList.forEach(el=>{
-          el['Qty'] = el.req_qty ? el.req_qty : undefined;
+          el['stock_qty'] = el.stock_qty > 0 ? el.stock_qty : 0;
+          // el['Qty'] = el.req_qty ? Number(Number(el.req_qty) - Number(el.stock_qty)) : undefined;
         })
         this.BackUpProductionlList = [...this.ProductionlList];
-         console.log("Production List ===",this.ProductionlList);
+        this.loading = false;
       })
-   // }
+   }
 
   }
   onFilterChange(eve: any) {
@@ -496,6 +490,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
      this.checkBoxText = "show only indent product"
      this.ProductionlList = [];
      this.BackUpProductionlList = [];
+     this.loading = true;
     const tempObj = {
       Brand_ID : this.Objproduction.Brand_ID,
       Product_Type_ID : this.Objproduction.Product_Type_ID ? this.Objproduction.Product_Type_ID : 0,
@@ -513,13 +508,16 @@ export class K4cProductionVoucherNewComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.ProductionlList = data;
       this.ProductionlList.forEach(el=>{
-        el['Qty'] = el.req_qty ? el.req_qty : undefined;
+        el['stock_qty'] = el.stock_qty > 0 ? el.stock_qty : 0;
+        // el['Qty'] = el.req_qty ? Number(Number(el.req_qty) - Number(el.stock_qty)) : undefined;
       });
       this.BackUpProductionlList = [...this.ProductionlList];
+      this.loading = false;
     })
    }
    else{
     this.ProductionlList = [];
+    this.loading = false;
     this.checkBoxText = "Show All Products";
     this.GetProductionpro();
    }
@@ -946,10 +944,11 @@ const obj = {
   this.TostockPoint = undefined;
   if(DocNo.Doc_No){
   this.Objproduction.Doc_No = DocNo.Doc_No;
-  this.ViewPoppup = true;
-  // console.log("VIew ==", this.Objproduction.Doc_No);
   this.GetEditProduction(this.Objproduction.Doc_No);
-  //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
+  setTimeout(() => {
+    this.ViewPoppup = true;
+  }, 500);
+  
   }
   }
   // EDIT
@@ -975,6 +974,7 @@ const obj = {
   GetEditProduction(Doc_No){
     this.editList = [];
     this.ProductionFormSubmitted = false;
+    this.ngxService.start();
     const obj = {
       "SP_String": "SP_Production_Voucher_New",
       "Report_Name_String": "Get Production Voucher Details For Edit",
@@ -1046,8 +1046,7 @@ const obj = {
     this.FstockPoint = data[0].From_godown_name ? data[0].From_godown_name : '-';
     this.TostockPoint = data[0].To_godown_name ? data[0].To_godown_name : '-';
 
-    // console.log("this.editList  ===",data);
-    // console.log("edit From_Process_IDe ===" , this.Objproduction.From_Process_ID)
+    this.ngxService.stop();
 
   })
   }
@@ -1099,6 +1098,7 @@ const obj = {
   GetProductionproforEdit(){
       //this.checkBoxdis = false;
       this.allProductsCheck = false;
+      this.loading = true;
       const obj = {
         "SP_String": "SP_Production_Voucher_New",
         "Report_Name_String": "GET_Production_Products_For_PV_Edit",
@@ -1107,10 +1107,11 @@ const obj = {
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.ProductionlList = data;
         this.ProductionlList.forEach(el=>{
-          el['Qty'] = el.req_qty ? el.req_qty : undefined;
+          el['stock_qty'] = el.stock_qty > 0 ? el.stock_qty : 0;
+          el['Qty'] = el.req_qty ? Number(Number(el.req_qty) - Number(el.stock_qty)) : undefined;
         })
         this.BackUpProductionlList = [...this.ProductionlList];
-         console.log("Production List ===",this.ProductionlList);
+        this.loading = false;
       })
    // }
 
@@ -1219,6 +1220,7 @@ const obj = {
   this.Datevalue = this.DateService.dateConvert(new Date(this.Datevalue));
   this.todayDate = new Date();
   this.ngxService.stop();
+  this.loading = false;
   }
   Refresh(){
     //this.clearData();
@@ -1260,6 +1262,7 @@ const obj = {
     this.SelectedIndent = [];
     this.IndentFilter = []
     this.ngxService.stop();
+    this.loading = false;
   }
 }
 class production {

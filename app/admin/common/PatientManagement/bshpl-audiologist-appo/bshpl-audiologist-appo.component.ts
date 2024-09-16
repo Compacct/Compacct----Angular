@@ -87,6 +87,23 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
 
   @ViewChild("FileUploadAsset", { static: false }) FileUploadAsset!: FileUpload;
   Loader: any;
+
+  colobj:any = {};
+  displayPopupUpdateAppoNo:boolean = false;
+  P_NameNo:any = undefined;
+  PhoneNo:any = undefined;
+  AgeNo:any = undefined;
+  SexNo:any = undefined;
+  App_DateNo:any = undefined;
+  CostCen_NameNo:any = undefined;
+  Cons_NameNo:any = undefined;
+  AppoNoSpinner:boolean = false;
+  objAppointmentNo:AppointmentNo = new AppointmentNo();
+  AppointmentNoFormSubmitted:boolean = false;
+  TestDoneListAppoNo:any;
+  ObjTestDetails:TestDetails = new TestDetails();
+  displayViewTestPOP:boolean = false;
+
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -110,6 +127,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.HAYesNoListL = ['YES', 'NO'];
     this.HAYesNoListR = ['YES', 'NO'];
     this.Trial_ForList = ['Binaural', 'Monorual'];
+    this.TestDoneListAppoNo = ["Ear wax","Active ear discharge","Patient not ready to do test","Enquiry only","Others"];
     this.getDatabase();
     this.getAlldata();
     this.GetDegreeLossList();
@@ -280,6 +298,9 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.App_Date = this.DateService.dateTimeConvert(new Date(col.Appo_Start));
       this.CostCen_Name = col.Cost_Cen_Name;
       this.Cons_Name = col.Consultancy;
+      if(this.databaseName === 'GN_Crystal_Mumbai'){
+        this.onReject();
+      }
     }
   }
  
@@ -525,6 +546,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   MISSEDOnOFF() {
     if (this.objAppointment.Trial_Restult == 'MISSED' || this.objAppointment.Trial_Restult == 'ON TRIAL') {
       this.MISSEDOpen = true;
+      this.objAppointment.Trail_Missed_Reason = undefined;
     }
     else {
       this.MISSEDOpen = false;
@@ -1126,6 +1148,138 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   getImage(Image:any) {
     window.open(Image)
   }
+
+  // for crystall
+  UpdateAppo(col){
+    this.colobj = {};
+    this.clearDataAppoNo();
+    if(col){
+      this.colobj = col;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "c",
+        sticky: true,
+        severity: "warn",
+        summary: "TEST DONE",
+        detail: ""
+      });
+    }
+  }
+  actionClick_UpdateAppoNo(col: any) {
+    // console.log("actionClick_UpdateAppo");
+    if (col) {
+      this.objAppointmentNo.Foot_Fall_ID = Number(col.foot_fall_id);
+      this.objAppointmentNo.Appo_Dt = this.DateService.dateTimeConvert(new Date(col.Appo_Start));
+      this.displayPopupUpdateAppoNo = true;
+      // this.FileUploadAsset.clear();
+      this.objAppointmentNo.Appo_ID = col.Appo_ID;
+      this.P_NameNo = col.Patient;
+      this.PhoneNo = Number(col.Mobile);
+      this.AgeNo = Number(col.Age);
+      this.SexNo = col.Sex;
+      this.App_DateNo = this.DateService.dateTimeConvert(new Date(col.Appo_Start));
+      this.CostCen_NameNo = col.Cost_Cen_Name;
+      this.Cons_NameNo = col.Consultancy;
+      this.onReject();
+    }
+  }
+  SaveAppointmentNo(valid: any) {
+    this.AppointmentNoFormSubmitted = true;
+    if (valid) {
+      this.AppoNoSpinner = true;
+      this.objAppointmentNo.Other_Test_done = this.objAppointmentNo.Other_Test_done ? this.objAppointmentNo.Other_Test_done.toString() : '-';
+
+      const SaveAppObj = {
+        "SP_String": "sp_BSHPL_Audiologist_Appo",
+        "Report_Name_String": "Update_other_test",
+        "Json_Param_String": JSON.stringify([this.objAppointmentNo])
+      }
+      this.ngxService.start();
+      this.GlobalAPI.postData(SaveAppObj).subscribe((data: any) => {
+        this.ngxService.stop();
+        // console.log("save data",data);
+
+        if (data[0].Column1) {
+          this.getAlldata();
+          this.clearDataAppoNo();
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "success",
+            summary: "Test Done ",
+            detail: "Updated "
+          });
+        }
+        else {
+          this.AppoNoSpinner = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message ",
+            detail: "Error occured "
+          });
+        }
+      });
+      
+    }
+  }
+  clearDataAppoNo() {
+    this.displayPopupUpdateAppoNo = false;
+    this.AppoNoSpinner = false;
+    this.AppointmentNoFormSubmitted = false;
+
+    this.objAppointmentNo = new AppointmentNo();
+
+    this.App_DateNo = undefined;
+    this.P_NameNo = undefined;
+    this.PhoneNo = undefined;
+    this.AgeNo = undefined;
+    this.SexNo = undefined;
+    this.CostCen_NameNo = undefined;
+    this.Cons_NameNo = undefined;
+  }
+  closePopupAppoNo() {
+    // console.log('close up works Appo');
+    this.displayPopupUpdateAppoNo = false;
+    this.objAppointmentNo = new AppointmentNo();
+
+    this.App_DateNo = undefined;
+    this.P_NameNo = undefined;
+    this.PhoneNo = undefined;
+    this.AgeNo = undefined;
+    this.SexNo = undefined;
+    this.CostCen_NameNo = undefined;
+    this.Cons_NameNo = undefined;
+  }
+  clearOther_Test_done(){
+    this.objAppointmentNo.Other_Test_Details = undefined;
+    this.AppointmentNoFormSubmitted = false;
+  }
+  ViewTestDetails(col: any) {
+    if (col.foot_fall_id) {
+      this.displayViewTestPOP = true;
+      const getProTempObj = {
+        Appo_Dt: this.DateService.dateTimeConvert(new Date(col.Appo_Start)),
+        Foot_Fall_ID: Number(col.foot_fall_id)
+      }
+
+      const getComObj = {
+        "SP_String": "sp_BSHPL_Audiologist_Appo",
+        "Report_Name_String": "Retrieve_other_test",
+        "Json_Param_String": JSON.stringify([getProTempObj])
+      }
+      this.GlobalAPI.getData(getComObj).subscribe((data: any) => {
+        let ViewTestList = data[0];
+
+        this.ObjTestDetails = ViewTestList;
+      })
+    }
+  }
+  closedisplayViewTestPOP() {
+    this.displayViewTestPOP = false;
+    this.ObjTestDetails = new TestDetails();
+  }
 }
 
 class Programming{
@@ -1181,4 +1335,22 @@ class Appointment{
   Audiogram_Remarks: any;
   Final_Price_After_Disc:any;
   Trial_days:any;
+}
+class AppointmentNo {
+  Appo_ID:any;
+  Appo_Dt:any;
+  Foot_Fall_ID:any;
+  Other_Test_done:any;
+  Other_Test_Details:any;
+}
+class TestDetails {
+  Patient:any;
+  Mobile:any;
+  Age:any;
+  Sex:any;
+  Appo_Dt:any;
+  Cost_Cen_Name:any;
+  Consultancy:any;
+  Other_Test_done:any;
+  Other_Test_Details:any;
 }

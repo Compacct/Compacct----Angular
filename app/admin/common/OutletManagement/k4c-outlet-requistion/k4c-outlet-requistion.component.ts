@@ -849,7 +849,41 @@ CheckRequisitionForCreate() {
 
        console.log("ShowRemarks",this.ShowRemarks)
       })
-  }
+}
+exportoexcelbrowse(Arr,fileName): void {
+  let temp:any = [];
+     Arr.forEach(element => {
+       const obj = {
+        Req_No : element.Req_No,
+        Req_Date : this.DateService.dateConvert(new Date(element.Req_Date)),
+        Cost_Cen_Name : element.Cost_Cen_Name,
+        Transaction_Date_Time : element.Transaction_Date_Time,
+        amount : element.amount,
+        Challan_No : element.Challan_No,
+        Franchise_Sale_Bill_No : element.Franchise_Sale_Bill_No
+       }
+       temp.push(obj)
+     });
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(temp);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, fileName+'.xlsx');
+}
+exportoexcelProductWise(Arr,fileName): void {
+  let temp:any = [];
+     Arr.forEach(element => {
+       const obj = {
+        Product_Description : element.Product_Description,
+        Rate : element.Rate,
+        Req_Qty : element.Req_Qty,
+        UOM : element.UOM,
+        Amount : element.Amount
+       }
+       temp.push(obj)
+     });
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(temp);
+  const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+  XLSX.writeFile(workbook, fileName+'.xlsx');
+}
 }
 class Requistion {
   Cost_Cen_ID : any;

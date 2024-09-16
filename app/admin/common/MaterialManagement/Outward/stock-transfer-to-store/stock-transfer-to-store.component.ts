@@ -9,6 +9,7 @@ import { CompacctHeader } from "../../../../shared/compacct.services/common.head
 import { CompacctGlobalApiService } from "../../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service"
 import { ActivatedRoute, Router } from "@angular/router";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-stock-transfer-to-store',
@@ -73,6 +74,7 @@ export class StockTransferToStoreComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -590,6 +592,7 @@ const obj = {
 }
 
   clearData(){
+    this.ngxService.stop();
     this.ObjRawMateriali.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     // FOR CREATE TAB
     // if (this.CostCentId_Flag) {
@@ -700,6 +703,7 @@ EditIntStock(col){
 
 }
 geteditmaster(Doc_No){
+  this.ngxService.start();
   const obj = {
     "SP_String": "SP_Raw_Material_Stock_Transfer",
   "Report_Name_String": "Get Raw Material Stock Transfer For Edit",
@@ -707,6 +711,7 @@ geteditmaster(Doc_No){
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
     console.log("Edit",data);
+    if(data.length){
     this.Viewlist = data;
     const TempData = data;
     this.todayDate = new Date(data[0].Doc_Date);
@@ -727,6 +732,11 @@ geteditmaster(Doc_No){
      });
      this.BackupIndentList = this.ProductList;
      this.GetProductType();
+     this.ngxService.stop();
+    }
+    else{
+      this.ngxService.stop();
+    }
   })
 }
 // Delete

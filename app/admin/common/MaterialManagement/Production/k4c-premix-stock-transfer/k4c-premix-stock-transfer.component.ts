@@ -564,12 +564,14 @@ EditIntStock(col){
   }
 }
 geteditmaster(Doc_No){
+  this.ngxService.start();
   const obj = {
     "SP_String": "SP_K4C_Premix_Stock_Transfer",
   "Report_Name_String": "Get Premix Stock Transfer For Edit",
     "Json_Param_String": JSON.stringify([{Doc_No:Doc_No}])
   }
   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    if(data.length){
     console.log("Edit",data);
     this.Viewlist = data;
     const TempData = data;
@@ -592,6 +594,11 @@ geteditmaster(Doc_No){
      });
      this.BackupIndentList = this.ProductList;
      this.GetProductType();
+     this.ngxService.stop();
+    }
+    else {
+      this.ngxService.stop();
+    }
   })
 }
 DeleteIntStocktr(col){
@@ -697,6 +704,7 @@ clearData(){
     this.ObjpremixST.Doc_No = '';
     this.todayDate = new Date();
     this.PremixIssueFormSubmitted = false;
+    this.ngxService.stop();
 
 }
 }

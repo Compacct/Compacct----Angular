@@ -290,6 +290,13 @@ export class FollowupWithSalesDetailsComponent implements OnInit {
         });
         this.Disposal2nd = this.disposalList[1].SEC_DETAIL;
     }
+    if (DispoId == 3) {
+      this.disposalList[2].SEC_DETAIL.forEach((el:any) => {
+         el['label'] = el.Secondary_Desposition_Name;
+         el['value'] = el.Secondary_Desposition_ID;
+       });
+       this.Disposal2nd = this.disposalList[2].SEC_DETAIL;
+   }
   }
   getDisable() {
     this.RemarksDis = false;

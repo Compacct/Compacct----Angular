@@ -1483,7 +1483,8 @@ export class StocktransferComponent implements OnInit {
             Sub_Ledger_ID: 0,
             DR_Amt: 0,
             Is_Topper: "Y",
-            Cost_Cen_ID: this.ObjCostCenterTO.T_Cost_Cen_ID
+            Cost_Cen_ID: this.ObjCostCenterTO.T_Cost_Cen_ID,
+            Cost_Cen_ID_Trn: this.ObjCostCenterTO.T_Cost_Cen_ID
           },
           this.ObjVoucherCommon
         );
@@ -1495,7 +1496,8 @@ export class StocktransferComponent implements OnInit {
             Sub_Ledger_ID: 0,
             DR_Amt: prop.IGST_Input_Amt,
             Is_Topper: "N",
-            Cost_Cen_ID: this.ObjCostCenterFROM.F_Cost_Cen_ID
+            Cost_Cen_ID: this.ObjCostCenterFROM.F_Cost_Cen_ID,
+            Cost_Cen_ID_Trn: this.ObjCostCenterFROM.F_Cost_Cen_ID
           },
           this.ObjVoucherCommon
         );
@@ -1518,7 +1520,8 @@ export class StocktransferComponent implements OnInit {
             Sub_Ledger_ID: 0,
             DR_Amt: 0,
             Is_Topper: "Y",
-            Cost_Cen_ID: this.ObjCostCenterTO.T_Cost_Cen_ID
+            Cost_Cen_ID: this.ObjCostCenterTO.T_Cost_Cen_ID,
+            Cost_Cen_ID_Trn: this.ObjCostCenterTO.T_Cost_Cen_ID
           },
           this.ObjVoucherCommon
         );
@@ -1531,7 +1534,8 @@ export class StocktransferComponent implements OnInit {
             Sub_Ledger_ID: 0,
             DR_Amt: prop.CGST_Input_Amt,
             Is_Topper: "N",
-            Cost_Cen_ID: this.ObjCostCenterFROM.F_Cost_Cen_ID
+            Cost_Cen_ID: this.ObjCostCenterFROM.F_Cost_Cen_ID,
+            Cost_Cen_ID_Trn: this.ObjCostCenterFROM.F_Cost_Cen_ID
           },
           this.ObjVoucherCommon
         );
@@ -1544,7 +1548,8 @@ export class StocktransferComponent implements OnInit {
             Sub_Ledger_ID: 0,
             DR_Amt: 0,
             Is_Topper: "Y",
-            Cost_Cen_ID: this.ObjCostCenterTO.T_Cost_Cen_ID
+            Cost_Cen_ID: this.ObjCostCenterTO.T_Cost_Cen_ID,
+            Cost_Cen_ID_Trn: this.ObjCostCenterTO.T_Cost_Cen_ID
           },
           this.ObjVoucherCommon
         );
@@ -1557,7 +1562,8 @@ export class StocktransferComponent implements OnInit {
             Sub_Ledger_ID: 0,
             DR_Amt: prop.SGST_Input_Amt,
             Is_Topper: "N",
-            Cost_Cen_ID: this.ObjCostCenterFROM.F_Cost_Cen_ID
+            Cost_Cen_ID: this.ObjCostCenterFROM.F_Cost_Cen_ID,
+            Cost_Cen_ID_Trn: this.ObjCostCenterFROM.F_Cost_Cen_ID
           },
           this.ObjVoucherCommon
         );
@@ -2157,7 +2163,7 @@ class VoucherCommon {
   Reconsil_Tag = "N";
   Fin_Year_ID: string;
   Naration = "";
-  Cost_Cen_ID_Trn = 0; // Revenue Cost Center
+  Cost_Cen_ID_Trn :any; // Revenue Cost Center
   Project_ID: string;
   Auto_Posted = "N";
   Posted_On: string;

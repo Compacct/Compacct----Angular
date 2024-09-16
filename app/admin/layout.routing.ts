@@ -433,6 +433,9 @@ import { NewChildSpeechEvaluationComponent } from './common/PatientManagement/ne
 import { BlCrmLsqBillManagementComponent } from './common/FinancialManagement/Retail/bl-crm-lsq-bill-management/bl-crm-lsq-bill-management.component';
 import { CouponCheckingComponent } from './common/PatientManagement/coupon-checking/coupon-checking.component';
 import { ExpenseTrackingComponent } from './common/HR/expense-tracking/expense-tracking.component';
+import { CrateTransferDispatchToOutletComponent } from './common/MaterialManagement/Outward/crate-transfer-dispatch-to-outlet/crate-transfer-dispatch-to-outlet.component';
+import { ChangeBatchNumberComponent } from './common/MaterialManagement/Outward/change-batch-number/change-batch-number.component';
+import { WeeklyReportingComponent } from './common/PatientManagement/weekly-reporting/weekly-reporting.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3317,6 +3320,27 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: ExpenseTrackingComponent,
       data: {
         title: 'Expense Tracking'
+      }
+    },
+    {
+      path: 'Crate_Transfer_Dispatch_To_Outlet',
+      component: CrateTransferDispatchToOutletComponent,
+      data: {
+        title: 'Crate Transfer Dispatch To Outlet'
+      }
+    },
+    {
+      path: 'Change_Batch_Number',
+      component: ChangeBatchNumberComponent,
+      data: {
+        title: 'Change Batch Number'
+      }
+    },
+    {
+      path: 'Weekly_Reporting',
+      component: WeeklyReportingComponent,
+      data: {
+        title: 'Weekly Reporting'
       }
     },
     

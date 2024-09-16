@@ -242,7 +242,7 @@
                                             </select>
                                         </div>
                                         <div class="col-sm-4">
-                                            <label class="control-label">Home Address</label>
+                                            <label class="control-label">Address</label>
                                             <textarea type="text" class="form-control" placeholder="Address" name="Address" #Address="ngModel"
                                             [(ngModel)]="ObjCaseHistory.Address" rows="2">
                                             </textarea>
@@ -259,6 +259,15 @@
                                             </select>
                                         </div>
                                         <div class="col-sm-4">
+                                            <label class="control-label">Reference Doctor</label>
+                                            <p-dropdown [options]="refDoctorList" name="RefDoctor" #RefDoctor="ngModel"
+                                              [(ngModel)]="ObjCaseHistory.Enq_Source_Sub_ID" [showClear]="true"
+                                              [emptyFilterMessage]="' No Data Found'" [filter]="true" filterBy="label,value.name"
+                                              [resetFilterOnHide]="true" [placeholder]="'Select Reference Doctor'" [virtualScroll]="true"
+                                              [itemSize]="30">
+                                            </p-dropdown>
+                                          </div>
+                                        <div class="col-sm-4">
                                             <label class="control-label">Consultancy Type<sup class="text-danger">*</sup></label>
                                             <select name="ConsultancyType" class="form-control" [(ngModel)]="ObjCaseHistory.Consultancy_Type"
                                             #ConsultancyType="ngModel"
@@ -268,6 +277,8 @@
                                             <option value="Speech">Speech</option>
                                             </select>
                                         </div>
+                                        </div>
+                                        <div class="row">
                                         <div class="col-sm-4">
                                             <label class="control-label">Who has accompanied you<sup class="text-danger"></sup></label>
                                             <select name="accompanied" class="form-control" [(ngModel)]="ObjCaseHistory.Who_has_accompanied_you"

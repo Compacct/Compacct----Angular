@@ -94,7 +94,7 @@
                                                                 <i class="fa fa-times"></i> Inactive
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.Product_Image && databaseName === 'MICL'">
+                                                        <li *ngIf="col.Product_Image && databaseName != 'Harbauer'">
                                                             <a (click)="showDocument(col.Product_Image)">
                                                                 <i class="fa fa-fw fa-file-text-o"></i> Show Document
                                                             </a>
@@ -389,7 +389,7 @@
                                         <a [href]="ProductPDFLink" *ngIf="PDFViewFlag" style="display: block;"><img src="/PDF_Logo/PDF-logo.png" class='img-rounded pdf' style="width:40px; height:50px " alt="PDF"></a>
                                         <!-- <p-fileUpload name="myfile[]" customUpload="true" multiple="multiple" (uploadHandler)="onUpload($event)" accept=""image/*,.csv,.xml,.doc,.docx,.pdf""></p-fileUpload> -->
                                     </div>
-                                    <div *ngIf="databaseName === 'MICL_Demo' || databaseName === 'MICL'" class="col-sm-6" style="margin-left:15px;">
+                                    <div *ngIf="databaseName != 'Harbauer'" class="col-sm-6" style="margin-left:15px;">
                                         <label class="control-label">File Upload</label>
                                         <span class="btn btn-xs btn-danger pull-right" (click)="ClearUploadInpt(UploadFile)"
                                             *ngIf="file"><i class="fa fa-close"></i></span>
@@ -411,7 +411,7 @@
                                                             <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                                         <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                     </button>
-                                    <button *ngIf="databaseName === 'MICL_Demo' || databaseName === 'MICL'" class="btn btn-primary pull-right" type="button" (click)="onBasicUpload(MasterProductelForm.form.valid)" id="load" [disabled]="Spinner">
+                                    <button *ngIf="databaseName != 'Harbauer'" class="btn btn-primary pull-right" type="button" (click)="onBasicUpload(MasterProductelForm.form.valid)" id="load" [disabled]="Spinner">
                                         <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                     <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
                                     </button>

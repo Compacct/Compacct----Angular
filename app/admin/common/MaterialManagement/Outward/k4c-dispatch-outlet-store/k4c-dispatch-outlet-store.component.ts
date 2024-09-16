@@ -356,7 +356,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.toGodownList = data;
       console.log("this.toGodownList",this.toGodownList);
-      this.Objdispatch.To_Godown_ID= this.toGodownList[0].godown_id ;
+      this.Objdispatch.To_Godown_ID= this.toGodownList.length ? this.toGodownList[0].godown_id : undefined;
       if(this.Objdispatch.To_Godown_ID){
         this.To_Godown_ID_Dis = true;
       }

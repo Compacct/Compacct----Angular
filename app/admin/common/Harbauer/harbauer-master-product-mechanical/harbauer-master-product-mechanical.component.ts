@@ -223,13 +223,15 @@ export class HarbauerMasterProductMechanicalComponent implements OnInit {
      this.GetBrowseList();
      if(this.databaseName != 'MICL') {
       if(this.databaseName != 'MICL_Demo') {
+        if(this.databaseName != 'MICL_BHP') {
      this.PDFViewFlag = false;
      if (this.PDFViewFlag === false) {
       this.fileInput.clear();
     }
     }
     }
-    if(this.databaseName === 'MICL' || this.databaseName === 'MICL_Demo') {
+    }
+    if(this.databaseName === 'MICL' || this.databaseName === 'MICL_Demo' || this.databaseName === 'MICL_BHP') {
     this.file = false;
     this.uploaddoc = true;
     if (this.UploadFile) {
@@ -1452,7 +1454,7 @@ deleteMaterialType(mettype){
     let tempHSN = this.objGst.HSN_NO
     console.log("tempHSN",tempHSN.toString());
     let tempHSNString = tempHSN.toString()
-    if(getArrValue.length === 2 && tempHSNString.length === 6){
+    if((getArrValue.length === 2) && (tempHSNString.length === 6 || tempHSNString.length === 8)){
       falg = true
       
     }
@@ -1888,7 +1890,7 @@ deleteMaterialType(mettype){
   
   onBasicUpload(valid) {
     this.MasterProductmFormSubmitted = true;
-    if(valid){
+    if(valid && this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
     if (this.PDFFile) {
        this.UploadDocApprove();
     }
@@ -1920,9 +1922,9 @@ deleteMaterialType(mettype){
          this.Spinner = true;
         //  this.MasterProductmFormSubmitted = true;
          console.log("this.checkrequ()",this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ))
-       if(this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
+      //  if(this.checkrequ(this.objCheckFinamcial,this.objGst,this.objProductrequ)){
          if(this.DescriptionCheck === "OK") {
-       let UpdateArr =[]
+       let UpdateArr:any =[]
       
          const Obj = {
              Product_ID : this.productid,
@@ -1980,19 +1982,19 @@ deleteMaterialType(mettype){
            detail: "Description already exists."
          });
        }
-       } 
-       else {
-       this.Spinner = false;
-       this.ngxService.stop();
-       this.compacctToast.clear();
-         this.compacctToast.add({
-           key: "compacct-toast",
-           severity: "error",
-           summary: "Warn Message",
-           // detail: "No Docs Selected"
-           detail: "Error Occured "
-         });
-       }
+      //  } 
+      //  else {
+      //  this.Spinner = false;
+      //  this.ngxService.stop();
+      //  this.compacctToast.clear();
+      //    this.compacctToast.add({
+      //      key: "compacct-toast",
+      //      severity: "error",
+      //      summary: "Warn Message",
+      //      // detail: "No Docs Selected"
+      //      detail: "Error Occured "
+      //    });
+      //  }
        }
        else {
        this.Spinner = true;
