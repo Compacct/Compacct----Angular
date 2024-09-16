@@ -345,6 +345,9 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
    }
    GetProductionNoList(valid){
     // this.RawMaterialIssueFormSubmitted = true;
+       this.ProductionList = [];
+       this.BackupProductionList = [];
+       this.ProductNamelList = [];
      if(valid){
      const TempObj = {
       Doc_Date : this.DateService.dateConvert(new Date(this.ProDate))
@@ -352,6 +355,40 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
     const obj = {
      "SP_String": "SP_Production_Voucher_New",
      "Report_Name_String" : "Get Production no For Internal Stock Trans",
+    "Json_Param_String": JSON.stringify([TempObj])
+ 
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+     // if(data.length) {
+     //   data.forEach(element => {
+     //     element['label'] = element.Req_No,
+     //     element['value'] = element.Req_No
+     //   });
+       this.ProductionList = data;
+       this.BackupProductionList = data;
+      // this.Cost_Cen_Id = data[0].Cost_Cen_ID;
+     // } else {
+     //   this.IndentNoList = [];
+ 
+     //  }
+    // this.RawMaterialIssueFormSubmitted = false;
+    console.log("this.ProductionList======",this.ProductionList);
+    this.GetProduction();
+   })
+   }
+   }
+   GetChangeBatchProductionList(valid){
+    // this.RawMaterialIssueFormSubmitted = true;
+       this.ProductionList = [];
+       this.BackupProductionList = [];
+       this.ProductNamelList = [];
+     if(valid){
+     const TempObj = {
+      Doc_Date : this.DateService.dateConvert(new Date(this.ProDate))
+      }
+    const obj = {
+     "SP_String": "SP_Production_Voucher_New",
+     "Report_Name_String" : "Get Conversion no For Internal Stock Trans",
     "Json_Param_String": JSON.stringify([TempObj])
  
    }

@@ -477,7 +477,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
         this.ProductionlList = data;
         this.ProductionlList.forEach(el=>{
           el['stock_qty'] = el.stock_qty > 0 ? el.stock_qty : 0;
-          el['Qty'] = el.req_qty ? Number(Number(el.req_qty) - Number(el.stock_qty)) : undefined;
+          // el['Qty'] = el.req_qty ? Number(Number(el.req_qty) - Number(el.stock_qty)) : undefined;
         })
         this.BackUpProductionlList = [...this.ProductionlList];
         this.loading = false;
@@ -509,7 +509,7 @@ export class K4cProductionVoucherNewComponent implements OnInit {
       this.ProductionlList = data;
       this.ProductionlList.forEach(el=>{
         el['stock_qty'] = el.stock_qty > 0 ? el.stock_qty : 0;
-        el['Qty'] = el.req_qty ? Number(Number(el.req_qty) - Number(el.stock_qty)) : undefined;
+        // el['Qty'] = el.req_qty ? Number(Number(el.req_qty) - Number(el.stock_qty)) : undefined;
       });
       this.BackUpProductionlList = [...this.ProductionlList];
       this.loading = false;

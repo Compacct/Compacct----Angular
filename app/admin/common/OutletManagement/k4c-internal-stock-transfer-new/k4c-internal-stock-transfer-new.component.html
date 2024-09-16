@@ -191,7 +191,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <div class="col-sm-6">
+                                                        <div class="col-sm-5">
                                                             <label class="control-label">Date</label>
                                                             <ejs-datepicker strictMode='true' [format]="'dd/MMM/yyyy'" [(value)]='Datevalue' [min]='minDate' [max]='maxDate'></ejs-datepicker>
                                                             <!-- <input class="form-control"
@@ -199,11 +199,17 @@
                                    [ngModel] ='myDate  | date :"dd-MMM-yyyy"'
                                    (ngModelChange) ='myDate = $event' > -->
                                                         </div>
-                                                        <div class="col-sm-6">
+                                                        <div class="col-sm-3">
                                                             <button class="btn btn-primary" style="margin-top: 25px;" data-toggle="modal" (click)="GetProductionNoList(IntStockForm.form.valid)" id="load">
-                            <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                            <span class="glyphicon glyphicon-search"></span>&nbsp;Show Product
-                         </button>
+                                                               <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                               Show Product
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-sm-4">
+                                                            <button class="btn btn-primary" style="margin-top: 25px;" data-toggle="modal" (click)="GetChangeBatchProductionList(IntStockForm.form.valid)" id="load">
+                                                               <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                               Change Batch Product
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -215,10 +221,8 @@
                             <br>
                             <div class="form-group">
                                 <div class="col-sm-4">
-                                    <label class="control-label">Production List<sup class="text-danger">*</sup> &nbsp;
-                    </label>
-                                    <p-multiSelect itemSize="30" [options]="ProductionFilter" [styleClass]="'compacct-multiselect'" name="indentn" [(ngModel)]="SelectedProduction" [filter]="true" filterBy="label,value.name" (onChange)="filterProductionList()" [resetFilterOnHide]="true">
-                                    </p-multiSelect>
+                                    <label class="control-label">Production List<sup class="text-danger">*</sup> &nbsp;</label>
+                                    <p-multiSelect itemSize="30" [options]="ProductionFilter" [styleClass]="'compacct-multiselect'" name="indentn" [(ngModel)]="SelectedProduction" [filter]="true" filterBy="label,value.name" (onChange)="filterProductionList()" [resetFilterOnHide]="true"></p-multiSelect>
                                 </div>
                             </div>
                             <div class="clearfix"></div>
