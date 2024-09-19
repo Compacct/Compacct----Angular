@@ -180,12 +180,12 @@
                                                             <i class="fa fa-save"></i> Final Save
                                                             </a>
                                                         </li>
-                                                        <li *ngIf="col.Approve_Status =='Pending' && cookiesuserid != 95 && col.Cancel_PO != 'Y'">
+                                                        <!-- <li *ngIf="col.Approve_Status =='Pending' && cookiesuserid != 95 && col.Cancel_PO != 'Y'">
                                                                 <a (click)="Edit(col)">
                                                                     <i class="fa fa-fw fa-pencil"></i> Edit
                                                                 </a>
-                                                        </li>
-                                                        <li *ngIf="cookiesuserid === 95 && col.Cancel_PO != 'Y'">
+                                                        </li> -->
+                                                        <li *ngIf="col.Cancel_PO != 'Y' && (cookiesuserid === 121 || cookiesuserid === 95 || cookiesuserid === 4)">
                                                             <a (click)="Edit(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>

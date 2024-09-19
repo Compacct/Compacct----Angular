@@ -3287,4 +3287,156 @@ export class ExportExcelService {
       fs.saveAs(blob, excelName.report_name.replaceAll(" ","_") + '.xlsx');
     })
  }
+
+ exporttoExcelWeeklyFootfallDetails(excelData:any, daterange:any) {
+  const workbook = new Workbook();
+  let worksheet = workbook.addWorksheet("Weekly Footfall");
+
+  const header =  Object.keys(excelData[0]) 
+  const data:any = [];
+  excelData.forEach((ele:any) => {
+    data.push(Object.values(ele))
+  });
+
+  let headerRow1 = worksheet.addRow(["Weekly Footfall"]);
+  headerRow1.eachCell((cell, number) => {
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '8f5bb1' },
+      bgColor: { argb: '' }
+    }
+    cell.font = {
+      bold: true,
+      color: { argb: 'FFFFFF' },
+      size: 12
+    }
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+  });
+  worksheet.mergeCells('A1', this.colName(excelData.length - 2)+'1')
+
+  let headerRow2 = worksheet.addRow(["Sources"]);
+  headerRow2.eachCell((cell, number) => {
+    worksheet.getColumn(number).width = 30;
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'd34381' },
+      bgColor: { argb: '' }
+    }
+    cell.font = {
+      bold: true,
+      color: { argb: 'FFFFFF' },
+      size: 12
+    }
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+  });
+  worksheet.mergeCells('A2', this.colName(excelData.length - 2)+'2')
+  let headerRow3 = worksheet.addRow(header);
+  
+  headerRow3.eachCell((cell, number) => {
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: header[0] ? 'd34381' : 'd9d8db'},
+        bgColor: { argb: '' }
+      }
+      cell.font = {
+        bold: true,
+        color: { argb: 'FFFFFF' },
+        size: 12
+      }
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+    });
+
+//  const getWagesQTY = (tableheaderData:any,tableBody:any)=>{
+//     const getQTY = excelData.SecondbodyData.filter(el=> el.product_hash == tableheaderData.product_hash &&  el.machine_id == tableBody.machine_id)
+//     return getQTY.length ? getQTY[0].qty : 0
+//   }
+
+//   // Adding FirstbodyData
+//   excelData.FirstbodyData.forEach((subProc: any) => {
+//     const machineDetailsLength = subProc.machine_details.length;
+//     subProc.machine_details.forEach((machine: any, index: number) => {
+//                 const row = worksheet.addRow([
+//                     index === 0 ? subProc.sub_proc_display_srl : '',
+//                     index === 0 ? subProc.sub_proc_name + '(' + subProc.rate_per_kg + ')' : '',
+//                     machine.machine_name,
+//                ]);
+//                 let totalIterations = 0;
+//                 excelData.SecondRow.forEach((el:any,inx)=>{
+//                  worksheet.getRow(row.number).getCell((totalIterations+ 4)).value = getWagesQTY(el,machine) 
+//                    totalIterations++;
+//               })
+//                 row.eachCell((cell, colNumber) => {
+//                 cell.border = {
+//                         top: { style: 'thin' },
+//                         left: { style: 'thin' },
+//                         bottom: { style: (machineDetailsLength - 1) == index || colNumber == 1 || colNumber == 2  ? 'thick' : 'thin' },
+//                         right: { style: 'thin' },
+//                     };
+                    
+//                    cell.alignment = {
+//                         vertical: 'middle',
+//                         horizontal: 'center'
+//                    };
+//                  });
+     
+//   });
+
+//     // Merging cells dynamically based on the number of machine details
+//         const lastRowNum = worksheet.lastRow?.number ?? 0;
+//     if (machineDetailsLength > 1) {
+//         worksheet.mergeCells(`A${lastRowNum - machineDetailsLength + 1}:A${lastRowNum}`);
+//         worksheet.mergeCells(`B${lastRowNum - machineDetailsLength + 1}:B${lastRowNum}`);
+        
+//     }
+    
+// });
+
+//   worksheet.getColumn(1).width = 10;
+//   worksheet.getColumn(2).width = 40;
+//   // worksheet.mergeCells(`A6:A${excelData.FirstbodyData.machine_details.length}`);
+
+  // Add Data and Conditional Formatting
+    data.forEach((d,i) => {
+      const row = worksheet.addRow(d);
+    // for( let i= 0; i< d.length;i++ ){
+    //   row.getCell(i + 1).border = {
+    //         top: { style: 'thin' },
+    //         left: { style: 'thin' },
+    //         bottom: { style: 'thin' },
+    //         right: { style: 'thin' },
+    //   }
+    //   row.getCell(i + 1).alignment = {
+    //     horizontal:'center'
+    //   }
+    // }
+    });
+  // Generate & Save Excel File
+  workbook.xlsx.writeBuffer().then((data: any) => {
+  const blob = new Blob([data], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+  fs.saveAs(blob, 'Weekly_Foootfall.xlsx');
+  });
+}
 }
