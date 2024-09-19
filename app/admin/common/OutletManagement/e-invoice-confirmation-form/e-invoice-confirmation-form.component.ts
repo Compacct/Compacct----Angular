@@ -352,6 +352,11 @@ export class EInvoiceConfirmationFormComponent implements OnInit {
       );
     }
   }
+  PrintSaleBillNewK4c(DocNo) {
+    if(DocNo) {
+      window.open("/Report/Print/K4C/k4c_sale_bill.html"+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    }
+   }
   cancleinv(doc){
     this.cancelinvoiceno = undefined;
     if (doc) {

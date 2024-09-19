@@ -159,7 +159,17 @@
                                                             <span class="caret"></span>
                                                     </button>
                                                     <ul class="dropdown-menu">
-                                                        <li>
+                                                        <li *ngIf="databaseName == 'K4C'">
+                                                            <a (click)="PrintSaleBillNewK4c(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-print" aria-hidden="true"></i> Print Bill
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="databaseName == 'K4C'">
+                                                            <a (click)="ViewInvoice(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-print" aria-hidden="true"></i> CP
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="databaseName != 'K4C'">
                                                             <a (click)="ViewInvoice(col.Doc_No)">
                                                                 <i class="fa fa-fw fa-print" aria-hidden="true"></i> Print Bill
                                                             </a>
@@ -463,7 +473,17 @@
                                                             <span class="caret"></span>
                                                     </button>
                                                     <ul class="dropdown-menu">
-                                                        <li>
+                                                        <li *ngIf="databaseName == 'K4C'">
+                                                            <a (click)="PrintSaleBillNewK4c(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-print" aria-hidden="true"></i> Print Bill
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="databaseName == 'K4C'">
+                                                            <a (click)="ViewInvoice(col.Doc_No)">
+                                                                <i class="fa fa-fw fa-print" aria-hidden="true"></i> CP
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="databaseName != 'K4C'">
                                                             <a (click)="ViewInvoice(col.Doc_No)">
                                                                 <i class="fa fa-fw fa-print" aria-hidden="true"></i> Print Bill
                                                             </a>
