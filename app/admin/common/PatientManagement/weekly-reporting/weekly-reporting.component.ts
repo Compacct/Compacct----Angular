@@ -24,6 +24,12 @@ export class WeeklyReportingComponent implements OnInit {
   WeeklyFootballListHeader: any= [];
   col:any;
   costcentid:any;
+  rowofcalcol:any = [];
+  WFDPopup:boolean = false;
+  WeekFootFallDetailsList:any = [];
+  WeekFootFallDetailsListHeader:any = [];
+  WeekFootCol : any;
+  WeekFootRow : any;
 
   buttonname: any= "Create";
   Spinner: boolean = false;
@@ -86,6 +92,8 @@ export class WeeklyReportingComponent implements OnInit {
   DispatchMISList:any = [];
   BackupDispatchMISList:any = [];
   DispatchMISListHeader:any = [];
+
+  
 
   constructor(
     private GlobalAPI:CompacctGlobalApiService,
@@ -162,12 +170,15 @@ export class WeeklyReportingComponent implements OnInit {
       "Json_Param_String": JSON.stringify([tempobj])
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      // console.log('data daata',data);
       if(data.length){
+      this.GetRowsTotal(data);
       this.WeeklyFootballList = data;
       this.BackupWeeklyFootballList = data;
       this.GetDistinct();
       this.WeeklyFootballListHeader = Object.keys(data[0]);
       this.seachSpinner = false;
+      this.GetTotalForDynamicColumns();
     }
     else {
       this.seachSpinner = false;
@@ -175,25 +186,109 @@ export class WeeklyReportingComponent implements OnInit {
     });
   }
   }
+  GetRowsTotal(data){
+    data.forEach((element:any) => {
+      let getvalues:any = Object.values(element)
+      // console.log('getvalues',getvalues);
+
+      let calculatetotal=0;
+      getvalues.forEach((ele:any)=>{
+          // console.log('typeof elu',typeof ele)
+          
+          if((typeof ele=='number')){
+            calculatetotal=calculatetotal+ele
+          }
+
+      })
+      element['Total'] = Number(calculatetotal.toFixed(2));
+    });
+  }
+  GetTotalForDynamicColumns() {
+    // Initialize an empty object to hold column totals
+    let columnTotals: any = {};
+  
+    // Loop through each row in the list
+    this.WeeklyFootballList.forEach((element: any) => {
+      // Loop through each key in the current row
+      for (const key in element) {
+        // Check if the value is a number and add to the column total
+        if (typeof element[key] === 'number') {
+          if (!columnTotals[key]) {
+            columnTotals[key] = 0; // Initialize the column if not already present
+          }
+          columnTotals[key] += element[key];
+        }
+      }
+    });
+    this.WeeklyFootballList.push({ 'Cost_Cen_Name': 'Total', ...columnTotals });
+    // console.log('Column Totals:', columnTotals);
+    // this.rowofcalcol = Object.values(columnTotals);
+    // console.log(this.rowofcalcol)
+    // // Log the totals for each dynamic column
+    // console.log('Column Totals:', columnTotals);
+    // return columnTotals;
+  }
   onrightclick(col,row){
-    if(col != "Cost_Cen_Name"){
+    this.WeekFootCol = undefined
+    this.WeekFootRow = undefined
+    if(col != "Cost_Cen_Name" && col != "Total"){
     console.log("col",col)
     console.log("Row",row.Cost_Cen_Name)
+    this.WeekFootCol = col
+    this.WeekFootRow = row.Cost_Cen_Name
+    this.GetWeeklyFootDetails();
     }
-    // if(col && row.Emp_ID) {
-    //   this.col = col;
-    //   this.costcentid = row.Emp_ID;
-      // console.log("Row",row[this.col])
-      // event.preventDefault();
-      // if (this.col != "Emp_Code" && this.col != "Emp_Name" && row[this.col] != 13) {
-      //   this.AllAttendanceData.forEach((el:any)=>{
-      //     if(Number(el.Emp_ID )== Number(this.costcentid)){
-      //      el[this.col] = 1;
-      //     }
-      //   })
-      // }
-    // }
   }
+  GetWeeklyFootDetails(){
+    this.WeekFootFallDetailsList = [];
+    if (this.WeekFootCol && this.WeekFootRow) {
+      const start = this.ObjWeeklyFootball.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjWeeklyFootball.From_Date))
+      : this.DateService.dateConvert(new Date());
+      const end = this.ObjWeeklyFootball.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjWeeklyFootball.To_Date))
+      : this.DateService.dateConvert(new Date());
+      const sendobj = {
+        start_date: start,             
+			  end_date: end,        
+			  Cost_Cen_Name : this.WeekFootRow,          
+			  Enq_Source_Name : this.WeekFootCol
+      }
+    const obj = {
+      "SP_String": "sp_weekly_report",
+      "Report_Name_String": "weekly_footfall_details",
+      "Json_Param_String": JSON.stringify(sendobj)
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      if (data.length) {
+        this.WeekFootFallDetailsList = data;
+        this.WeekFootFallDetailsListHeader = Object.keys(data[0]);
+        console.log("WeekFootFallDetailsList", this.WeekFootFallDetailsList);
+        this.WFDPopup = true;
+      } else {
+        this.WeekFootFallDetailsList = [];
+        this.WeekFootFallDetailsListHeader = [];
+      }
+    });
+    }
+  }
+  ExportToExcelWeekFootFall(){
+    const start = this.start_date
+    ? this.DateService.dateConvert(new Date(this.start_date))
+    : this.DateService.dateConvert(new Date());
+  const end = this.end_date
+    ? this.DateService.dateConvert(new Date(this.end_date))
+    : this.DateService.dateConvert(new Date());
+     let tempobj = {}
+  if (start && end) {
+   tempobj = {
+    From_Date: start,
+    To_Date: end,
+  }
+  }
+    this.excelservice.exporttoExcelWeeklyFootfallDetails(this.WeeklyFootballList,tempobj);
+  }
+
   // DISTINCT & FILTER
   GetDistinct() {
     let DLiCustomer:any = [];
@@ -548,22 +643,7 @@ GetRAviewDetails(DocNo) {
   //   })
   // }
 }
-ExportToExcel(){
-  const start = this.start_date
-  ? this.DateService.dateConvert(new Date(this.start_date))
-  : this.DateService.dateConvert(new Date());
-const end = this.end_date
-  ? this.DateService.dateConvert(new Date(this.end_date))
-  : this.DateService.dateConvert(new Date());
-   let tempobj = {}
-if (start && end) {
- tempobj = {
-  From_Date: start,
-  To_Date: end,
-}
-}
-  this.excelservice.exporttoExcelSalesMIS(this.WeeklyFootballList,tempobj);
-}
+
 
 //DISPATCH MIS
 getDispatchMISDateRange(dateRangeObj) {
