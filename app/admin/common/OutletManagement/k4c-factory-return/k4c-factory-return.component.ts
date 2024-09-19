@@ -140,6 +140,7 @@ export class K4cFactoryReturnComponent implements OnInit {
   Refreshlist:any = [];
 
   expotSpinner = false;
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -168,6 +169,7 @@ export class K4cFactoryReturnComponent implements OnInit {
     });
     this.getMaterialType();
     this.getDate();
+    this.getLockDate();
     this.getToCostCenter();
     //this.getToGodown();
     this.getGodown();
@@ -717,6 +719,7 @@ export class K4cFactoryReturnComponent implements OnInit {
 
   // DAY END CHECK
  saveCheck(){
+  if(this.checkLockDate(this.DateService.dateConvert(new Date(this.myDate)))) {
   if(this.$CompacctAPI.CompacctCookies.Cost_Cen_ID && this.Fromgodownid){
     this.ngxService.start();
     const TempObj = {
@@ -766,7 +769,7 @@ export class K4cFactoryReturnComponent implements OnInit {
       detail: "Error Occured "
     });
   }
-
+  }
  }
  ValidateEntryCheck(){
   const obj = {
@@ -991,6 +994,7 @@ exportoexcelbrowse(fileName){
   this.Return_reason = undefined;
   this.FranchiseCostCentId = undefined;
   if(DocNo.Doc_No){
+    if(this.checkLockDate(DocNo.Doc_Date)){
   this.ObjBrowse.Doc_No = DocNo.Doc_No;
   this.FranchiseCostCentId = DocNo.F_Cost_Cen_ID;
   this.AcceptChallanPoppup = true;
@@ -1001,6 +1005,7 @@ exportoexcelbrowse(fileName){
   this.GetFranchiseList();
   this.getsubledgerid();
   }
+    }
  }
  changeRemarks(col){
    console.log("Change Remarks")
@@ -1018,6 +1023,45 @@ exportoexcelbrowse(fileName){
    })
 console.log(this.editList)
  }
+ getLockDate(){
+  const obj = {
+   "SP_String": "sp_Comm_Controller",
+   "Report_Name_String": "Get_LockDate",
+   //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+
+ }
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  // console.log('LockDate===',data);
+  this.lockdate = data[0].dated;
+
+})
+}
+checkLockDate(docdate){
+  if(this.lockdate && docdate){
+    if(new Date(docdate) > new Date(this.lockdate)){
+      return true;
+    } else {
+      var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+    });
+      return false;
+    }
+  } else {
+    this.compacctToast.clear();
+    this.compacctToast.add({
+     key: "compacct-toast",
+     severity: "error",
+     summary: "Warn Message",
+     detail: "Date not found."
+    });
+    return false;
+  }
+}
  edit(DocNo){
   //this.clearData();
   this.Doc_no = undefined;
@@ -1029,6 +1073,7 @@ console.log(this.editList)
   this.Return_reason = undefined;
   this.FranchiseCostCentId = undefined;
   if(DocNo.Doc_No){
+    if(this.checkLockDate(DocNo.Doc_Date)){
   this.ObjBrowse.Doc_No = DocNo.Doc_No;
   this.FranchiseCostCentId = DocNo.F_Cost_Cen_ID;
   // if(this.router.navigate(['./K4C_Factory_Return'], { queryParams: { Redirect_To : './K4C_Factory_Return' , Create_Flag : true} })){
@@ -1042,6 +1087,7 @@ console.log(this.editList)
   this.GetFranchiseBill();
   this.GetFranchiseList();
   this.getsubledgerid();
+    }
   }
  }
  geteditdetails(Doc_No){
@@ -1301,6 +1347,7 @@ saveCheckUpdate(){
  // console.log("delete",row)
   this.del_doc_no = undefined;
   if (row.Doc_No) {
+    if(this.checkLockDate(row.Doc_Date)){
    this.del_doc_no = row.Doc_No;
    this.compacctToast.clear();
    this.compacctToast.add({
@@ -1310,6 +1357,7 @@ saveCheckUpdate(){
      summary: "Are you sure?",
      detail: "Confirm to proceed"
    });
+    }
  }
 }
  onConfirm(){

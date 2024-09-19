@@ -91,13 +91,18 @@
                   <div class="col-sm-4">
                     <label class="control-label">Alternate Mobile Number</label>
                     <input type="text" class="form-control" placeholder="Enter Another number" name="AnotherMobile"
-                      #AnotherMobile="ngModel" [(ngModel)]="objPatient.Mobile_2" (ngModelChange)="checkMobile(objPatient.Mobile_2,'Mobile_2')" CompacctDigitonly="true" maxlength="10"
+                      #AnotherMobile="ngModel" [(ngModel)]="objPatient.Mobile_2" 
+                      oninput="event.target.value = event.target.value.replace(/[^0-9]/g, '');" 
+                     
+                      (ngModelChange)="checkMobile(objPatient.Mobile_2,'Mobile_2')" 
+                      maxlength="10"
                       minlength="10">
                   </div>
                   <div class="col-sm-4">
                     <label class="control-label">WhatsApp Number</label>
                     <input type="text" class="form-control" placeholder="WhatsApp number" name="WhatsAppMobile"
-                      #WhatsAppMobile="ngModel" [(ngModel)]="objPatient.Mobile_3_WP" CompacctDigitonly="true"
+                      #WhatsAppMobile="ngModel"  oninput="event.target.value = event.target.value.replace(/[^0-9]/g, '');"  
+                      [(ngModel)]="objPatient.Mobile_3_WP"
                       maxlength="10" minlength="10">
                   </div>
                 </div>

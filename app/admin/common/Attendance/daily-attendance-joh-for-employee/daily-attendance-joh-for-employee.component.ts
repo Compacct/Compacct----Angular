@@ -43,6 +43,7 @@ export class DailyAttendanceJohForEmployeeComponent implements OnInit {
   Total_Late: any;
   Half_Day: any;
   Annual_Leave: any;
+  Missed: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -178,6 +179,9 @@ export class DailyAttendanceJohForEmployeeComponent implements OnInit {
 
     var annualleave = this.EmpData.filter(item => item.Sht_Desc === "AL")
     this.Annual_Leave = annualleave.length ? annualleave.length : undefined;
+
+    var missed = this.EmpData.filter(item=>item.Sht_Desc === "MS")
+    this.Missed = missed.length ? missed.length : undefined;
   }
 
 

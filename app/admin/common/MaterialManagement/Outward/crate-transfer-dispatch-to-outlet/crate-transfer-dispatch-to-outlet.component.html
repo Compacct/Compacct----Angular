@@ -1,0 +1,321 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast position="center" key="d" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onConfirmdelete()" label="Yes" class="ui-button-success"></button>
+            </div>
+            <div class="ui-g-6">
+                <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="CrateSearchForm" #CrateSearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Transaction Date</label>
+    
+                                        <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)">
+                                        </app-compacct-daterangepicker>
+    
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">From Outlet <sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Bfromoutlet" #Bfromoutlet="ngModel" [attr.disabled]="Bfromoutletdisableflag" [(ngModel)]="ObjBrowse.From_Cost_Cen_ID" (change)="getBFromGodown()" [ngClass]="{'clearance':SearchFormSubmitted && Bfromoutlet?.errors?.required}">
+                                                  <option  [ngValue]="undefined">Select</option>
+                                           <option *ngFor = "let option of BFromOutletList" [value] ="option.Cost_Cen_ID">
+                                              {{option.Cost_Cen_Name}}
+                                            </option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">From Stock Point <sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="Bfromgodown" #Bfromgodown="ngModel" [disabled]="Bfromstockdisableflag" [(ngModel)]="ObjBrowse.From_Godown_Id" [ngClass]="{'clearance':SearchFormSubmitted && Bfromgodown?.errors?.required}" required>
+                                                      <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor = "let option of BFromGodownList" [value] ="option.godown_id">
+                                                  {{option.godown_name}}
+                                                </option>
+                                          </select>
+                                    </div>
+    
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-primary custombutton1" data-toggle="modal" (click)="GetSearchedList(CrateSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
+                                            <p-progressSpinner *ngIf="seachSpinner" [style]="{ width: '15px', height: '15px' }" strokeWidth="8" animationDuration=".5s"></p-progressSpinner>
+                                            <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h5><strong></strong></h5>
+                                </div>
+                            </div>
+                            <div class="table-responsive table-id">
+                                <p-table [value]="Searchedlist" #dt [paginator]="true" [rows]="100" [loading]="seachSpinner" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[10,25,50,100]" [rowHover]="true" [globalFilterFields]='["Txn_ID","Transfer_To","Date","Amount","Bank_Name","Slip_No"]'>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:5em">Action</th>
+                                            <th>Doc No</th>
+                                            <th>Transaction Date</th>
+                                            <th>From Outlet</th>
+                                            <th>Crate</th>
+                                            <th>Accepted Crate</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col let-i="rowIndex">
+                                        <tr [class]='col.Crate_IN != col.Accepted_Crate ? "text-red-active" : ""'>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                      <i class="fa fa-fw fa-bars"></i>
+                                                      <span class="caret"></span>
+                                                  </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a (click)="View(col)">
+                                                                <i class="fa fa-fw fa-eye" aria-hidden="true"></i> View
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Crate_IN != col.Accepted_Crate && $CompacctAPI.CompacctCookies.Cost_Cen_ID == col.F_Cost_Cen_ID">
+                                                            <a (click)="Edit(col)">
+                                                                <i class="fa fa-fw fa-pencil"></i> Edit
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Crate_IN != col.Accepted_Crate && $CompacctAPI.CompacctCookies.Cost_Cen_ID == col.To_Cost_Cen_ID">
+                                                            <a (click)="AcceptChallan(col)">
+                                                                <i class="fa fa-check"></i> Accepted Crate
+                                                            </a>
+                                                        </li>
+                                                        <li *ngIf="col.Accepted_Crate === 0 && $CompacctAPI.CompacctCookies.Cost_Cen_ID == col.F_Cost_Cen_ID">
+                                                            <a (click)="Delete(col)">
+                                                                <i class="fa fa-trash" aria-hidden="true"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td>{{col.Doc_No}}</td>
+                                            <td>{{col.Transaction_Date | date : 'dd/MMM/yyyy'}}</td>
+                                            <td>{{col.F_Cost_Cen_Name}}</td>
+                                            <td>{{col.Crate_IN}}</td>
+                                            <td>{{col.Accepted_Crate}}</td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+    
+                            </div>
+                        </p-tabPanel>
+
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="CrateTransferForm" #CrateTransferForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Transaction Date</label>
+                                        <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='todayDate' [enabled]="EditList.length ? false : true"></ejs-datepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">From Outlet <sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="fromoutlet" #fromoutlet="ngModel" [attr.disabled]="fromoutletdisableflag" [(ngModel)]="ObjCrateTransfer.From_Cost_Cen_ID" (change)="getFromGodown()" [ngClass]="{'clearance':ObjCrateTransferFormSubmitted && fromoutlet?.errors?.required}" required>
+                                                  <option  [ngValue]="undefined">Select</option>
+                                           <option *ngFor = "let option of FromOutletList" [value] ="option.Cost_Cen_ID">
+                                              {{option.Cost_Cen_Name}}
+                                            </option>
+                                      </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">From Stock Point <sup class="text-danger">*</sup></label>
+                                        <select class="form-control" name="fromgodown" #fromgodown="ngModel" [(ngModel)]="ObjCrateTransfer.From_Godown_Id" [disabled]="fromstockdisableflag" [ngClass]="{'clearance':ObjCrateTransferFormSubmitted && fromgodown?.errors?.required}" required>
+                                                      <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor = "let option of FromGodownList" [value] ="option.godown_id">
+                                                  {{option.godown_name}}
+                                                </option>
+                                          </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Brand <span class="text-danger"></span></label>
+                                            <p-multiSelect [options]="DistBrandName" [(ngModel)]="SelectedDistBrandName" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Brand_Name"></p-multiSelect>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="table-responsive table-id">
+                                <p-table [value]="GetToOutletList" [paginator]="GetToOutletList.length ? true : false" [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple" [rowsPerPageOptions]="[100,200,300]" [globalFilterFields]="HeaderGetToOutletList"
+                                    [rowHover]="true" #dt1>
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-sm-3 pull-right" style="text-align: right">
+                                                <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                            </div>
+                                        </div>
+    
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Outlet</th>
+                                            <th>Crate</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-col>
+                                        <tr>
+                                            <td>{{col.Cost_Cen_Name}}</td>
+                                            <td><input type="text" [name]="col.Cost_Cen_ID" [(ngModel)]='col.Crate' CompacctDigitonly="true" class="form-control" style="width: 71px;" [disabled]="col.cratedisabled"
+                                                onkeydown="if(event.key==='.'){event.preventDefault();}" oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');"/>
+                                            </td>
+    
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="paginatorright" let-state>
+                                        Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                            <div class="box-footer">
+                                <button type="button" class="btn btn-primary pull-right" (click)="SaveCrate(CrateTransferForm.form.valid)" id="load" [disabled]="Spinner">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                        <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
+                                </button>
+                            </div>
+                        </p-tabPanel>
+
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Accept Crate -->
+<p-dialog header="Accept" [(visible)]="acceptchallanpopup" [modal]="true" [responsive]="true" [style]="{width: '80%', minWidth: '300px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Doc No</label>
+            <div class="label-t">{{DocNO}}</div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Transaction Date</label>
+            <div class="label-t">{{date | date :"dd/MMM/yyyy"}}</div>
+        </div>
+
+        <div class="col-sm-3">
+            <label class="control-label">From Outlet</label>
+            <div class="label-t">{{FromOutlet}}</div>
+
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">To Outlet</label>
+            <div class="label-t">{{ToOutlet}}</div>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Crate <sup class="text-danger">*</sup></label>
+            <input class="form-control" onkeydown="if(event.key==='.'){event.preventDefault();}" oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');" name="Acceptcrate" #Acceptcrate="ngModel" [(ngModel)]="acceptcrate" CompacctDigitonly="true">
+
+        </div>
+    </div>
+    <p-footer>
+        <button type="button" (click)="SaveAccept()" class="btn btn-success">
+       <i class="fa fa-check"></i>&nbsp;  Update
+     </button>
+    </p-footer>
+</p-dialog>
+
+<!-- view -->
+<p-dialog [header]="viewDocNO" [(visible)]="viewpopup" [modal]="true" [responsive]="true" [style]="{width: '80%', minWidth: '300px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Challan Date</label>
+            <div class="label-t">{{viewdate | date :"dd/MMM/yyyy"}}</div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Challan No</label>
+            <div class="label-t">{{viewDocNO}}</div>
+        </div>
+
+        <div class="col-sm-3">
+            <label class="control-label">From Outlet</label>
+            <div class="label-t">{{vfromoutlet}}</div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">From Stock Point</label>
+            <div class="label-t">{{vFromStokePoint}}</div>
+        </div>
+
+
+    </div>
+    <div class="clearfix"></div>
+    <div class="table-responsive table-id" style="overflow-x: hidden !important;">
+        <p-table [value]="ViewList" [globalFilterFields]="['To_Cost_Cen_Name','Accepted_Crate']" [rowHover]="true" [autoLayout]="true" #dt2>
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-3 pull-right" style="text-align: right">
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                    </div>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>To Outlet</th>
+                    <th>Crate</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-i="rowIndex">
+                <tr>
+                    <td>{{col.To_Cost_Cen_Name}}</td>
+                    <td>{{col.Accepted_Crate}}</td>
+
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <p-footer>
+        <button type="button" (click)="exportexcel(ViewList, 'Crate_List')" class="btn btn-success">
+            <i class="fa fa-check"></i>&nbsp;  Export to excel
+        </button>
+    </p-footer>
+</p-dialog>

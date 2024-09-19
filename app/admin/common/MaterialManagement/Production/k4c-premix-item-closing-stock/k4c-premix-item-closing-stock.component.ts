@@ -9,6 +9,7 @@ import { CompacctHeader } from "../../../../shared/compacct.services/common.head
 import { CompacctGlobalApiService } from "../../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service"
 import { ActivatedRoute, Router } from "@angular/router";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 import * as XLSX from 'xlsx';
 
 @Component({
@@ -69,6 +70,7 @@ export class K4cPremixItemClosingStockComponent implements OnInit {
   productlistforexcel:any = [];
   QtyfilterFLag = false;
   backupeditprolist:any = [];
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -79,6 +81,7 @@ export class K4cPremixItemClosingStockComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) {
     this.route.queryParams.subscribe(params => {
       this.clearData();
@@ -100,6 +103,7 @@ export class K4cPremixItemClosingStockComponent implements OnInit {
       Header: "Premix Closing Stock - " + this.MaterialType_Flag ,
       Link: " Material Management -> Premix Closing Stock - " + this.MaterialType_Flag
     });
+    this.getLockDate();
     this.GetBrand();
     this.GetCostCen();
     this.GetBCostCen();
@@ -116,11 +120,50 @@ export class K4cPremixItemClosingStockComponent implements OnInit {
      this.BackupIndentList = [];
      this.TIndentList = [];
      this.SelectedIndent = [];
-   }
-   onReject() {
+  }
+  onReject() {
     this.compacctToast.clear("c");
     this.compacctToast.clear("s");
     this.Spinner = false;
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
   }
   GetBrand(){
     const obj = {
@@ -513,8 +556,8 @@ checkdecimal(obj){
 
              }
     }
-   }
-   saveqty(){
+  }
+  saveqty(){
     let flag = true;
    for(let i = 0; i < this.ProductList.length ; i++){
     if(Number(this.ProductList[i].Batch_Qty) <  Number(this.ProductList[i].Issue_Qty)){
@@ -527,6 +570,7 @@ checkdecimal(obj){
   // SAVE AND UPDATE
   SaveBeforeCheck(){
     this.Spinner = true;
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.todayDate)))) {
      if (this.BackupProList.length) {
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -536,6 +580,7 @@ checkdecimal(obj){
         summary: "Are you sure?",
         detail: "Confirm to proceed"
       });
+     }
     }
   }
   dataforSave(){
@@ -682,7 +727,7 @@ const obj = {
    this.PremixInvSearchFormSubmitted = false;
  })
 }
-}
+  }
 
   clearData(){
     this.QtyfilterFLag = false;
@@ -691,67 +736,6 @@ const obj = {
     // this.GetGodown();
     this.ObjBrowse.Cost_Cen_ID = 114;
     this.ObjBrowse.godown_id = 112;
-    // this.GetBGodown();
-    // this.ObjProClosingStock.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    // FOR CREATE TAB
-    // if (this.CostCentId_Flag) {
-      // this.ObjProClosingStock.Cost_Cen_ID = String(this.CostCentId_Flag);
-      // this.Cdisableflag = true;
-      // this.GetGodown();
-      // this.ObjBrowse.To_Cost_Cen_ID = String(this.CostCentId_Flag);
-      // this.TBCdisableflag = true;
-      // this.GetBToGodown();
-      // } 
-      // else {
-      //   this.ObjProClosingStock.Cost_Cen_ID = undefined;
-      //   //this.ObjRawMateriali.To_godown_id = undefined;
-      //   this.TCdisableflag = false;
-      //   this.GetGodown();
-      //   this.ObjBrowse.To_Cost_Cen_ID = undefined;
-      //   this.TBCdisableflag = false;
-      //   this.GetBToGodown();
-      // }
-      // FOR CREATE TAB
-      
-      // FOR BROWSE
-      // if (this.CostCentId_Flag) {
-      //   this.ObjBrowse.To_Cost_Cen_ID = String(this.CostCentId_Flag);
-      //   this.TBCdisableflag = true;
-      //   this.GetBToGodown();
-      //   } else {
-      //     this.ObjBrowse.To_Cost_Cen_ID = undefined;
-      //     //this.ObjRawMateriali.To_godown_id = undefined;
-      //     this.TBCdisableflag = false;
-      //     this.GetBToGodown();
-      //   }
-        // FOR BROWSE
-
-    // this.ObjProClosingStock.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
-    //  if(this.GodownList.length === 1){
-    //    this.Gdisableflag = true;
-    //  }else{
-    //    this.Gdisableflag = false;
-    //  }
-    // this.GetToGodown();
-    // FOR CREATE TAB
-    //  this.ObjRawMateriali.To_godown_id = this.ToGodownList.length === 1 ? this.ToGodownList[0].godown_id : undefined;
-    //  if(this.ToGodownList.length === 1){
-    //    this.TGdisableflag = true;
-    //  }else{
-    //    this.TGdisableflag = false;
-    //  }
-     // FOR CREATE TAB
-
-     // FOR BROWSE TAB
-    //  this.ObjBrowse.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    //  this.ObjBrowse.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
-    //  if(this.GodownList.length === 1){
-    //    this.BGdisableflag = true;
-    //  }else{
-    //    this.BGdisableflag = false;
-    //  }
-     // FOR BROWSE TAB
-
     this.ObjProClosingStock.Remarks = [];
     this.ObjProClosingStock.Indent_List = undefined;
     this.ProductList = [];
@@ -767,7 +751,6 @@ const obj = {
     this.ObjProClosingStock.Doc_No = undefined;
     this.todayDate = new Date();
     this.PremixInvSearchFormSubmitted = false;
-
   }
   
 // Edit
@@ -775,6 +758,7 @@ EditInvClosingStock(col){
   this.ObjProClosingStock.Doc_No = undefined;
   this.Doc_Date = undefined;
   if(col.Doc_No){
+  if(this.checkLockDate(col.Doc_Date)){
    this.ObjProClosingStock.Doc_No = col.Doc_No;
    this.Doc_Date = new Date(col.Doc_Date);
    this.tabIndexToView = 1;
@@ -789,10 +773,12 @@ EditInvClosingStock(col){
     this.GetdataforEdit()
   //  }, 600)
   }
+  }
 
 }
 GetdataforEdit(){
   //this.OTclosingstockwithbatchFormSubmitted = false;
+  this.ngxService.start();
     const obj = {
       "SP_String": "SP_K4C_Premix_Inventory",
       "Report_Name_String": "Get_Edit_Data",
@@ -801,10 +787,8 @@ GetdataforEdit(){
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("Edit Data From API",data);
+      if(data.length){
       this.EditList = data;
-      //  this.todayDate = new Date(data[0].Doc_Date);
-      //  this.minDate = new Date(data[0].Doc_Date.getDate());
-      //  this.maxDate = new Date(data[0].Doc_Date.getDate());
       this.ObjProClosingStock.Brand_ID = data[0].Brand_ID ? data[0].Brand_ID : undefined;
        this.ObjProClosingStock.Cost_Cen_ID = data[0].Cost_Cen_ID;
        this.ObjProClosingStock.godown_id = data[0].godown_id;
@@ -833,34 +817,13 @@ GetdataforEdit(){
            this.backupeditprolist = this.ProductList;
            this.BackupProList = this.ProductList;
            this.BackupIndentList = [...this.ProductList];
-           //this.backUpproductList = this.productList;
-          //  this.BackupIndentList = this.IndentNoList;
            this.GetEditProductType();
-          console.log("edit ProductList===", this.ProductList);
+          this.ngxService.stop();
       });
-    //   const ctrl = this;
-    //   setTimeout(function () {
-    //     ctrl.BackupProList.forEach(ele => {
-    //     const ARR = ctrl.EditList.filter(item => item.Product_ID === ele.Product_ID);
-    //     if (ARR.length) {
-    //       ele['Closing_Qty']= ARR[0].Closing_Qty,
-    //       // el.Product_Type_ID = aRR[0].Product_Type_ID,
-    //       // el.Product_Type = aRR[0].Product_Type,
-    //       // el.Product_ID = aRR[0].Product_ID,
-    //       // el.Product_Description = aRR[0].Product_Description,
-    //       ele['Last_Pur_Rate'] = ARR[0].Last_Pur_Rate,
-    //       ele['Batch_No'] = ARR[0].Batch_No,
-    //       ele['Batch_Qty'] = ARR[0].Total_Qty,
-    //       // el.UOM = aRR[0].UOM,
-    //       // el.Closing_Qty = aRR[0].Closing_Qty,
-    //       ele['Varience_Qty'] = ARR[0].Varience_Qty,
-    //       ele['Remarks'] = ARR[0].Remarks
-    //     }
-    //     ctrl.ProductList = ctrl.BackupProList;
-    //     console.log("edit ProductList===", ARR);
-    //   });
-    // }, 600)
-    //   this.ProductList = [...this.ProductList];
+    }
+    else {
+      this.ngxService.stop();
+    }
     })
 }
 QtyFilter(){
@@ -953,6 +916,7 @@ getviewdata(Doc_No){
 DeleteInvClosingStock(col){
   this.ObjProClosingStock.Doc_No = undefined;
   if(col.Doc_No){
+    if(this.checkLockDate(col.Doc_Date)){
     this.ObjProClosingStock.Doc_No = col.Doc_No;
     this.compacctToast.clear();
     this.compacctToast.add({
@@ -962,6 +926,7 @@ DeleteInvClosingStock(col){
       summary: "Are you sure?",
       detail: "Confirm to proceed"
     });
+    }
   }
 }
 onConfirm(){

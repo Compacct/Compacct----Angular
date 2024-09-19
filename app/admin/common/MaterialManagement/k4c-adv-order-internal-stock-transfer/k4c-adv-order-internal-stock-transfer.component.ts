@@ -18,7 +18,7 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
   encapsulation: ViewEncapsulation.None
 })
 export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
@@ -36,40 +36,41 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
   ObjproductAdd : productAdd = new productAdd ();
   //ProtypeDisabled = false;
 
-  BrandList = [];
-  ProductTypeList = [];
-  Fcostcenlist = [];
-  FromGodownList = [];
-  Tocostcenlist = [];
-  ToGodownList = [];
-  Datelist = [];
-  ProductNamelList = [];
-  BatchNoList = [];
-  AddProDetails = [];
-  Searchedlist = [];
-  godownid = [];
-  editList = [];
+  BrandList:any = [];
+  ProductTypeList:any = [];
+  Fcostcenlist:any = [];
+  FromGodownList:any = [];
+  Tocostcenlist:any = [];
+  ToGodownList:any = [];
+  Datelist:any = [];
+  ProductNamelList:any = [];
+  BatchNoList:any = [];
+  AddProDetails:any = [];
+  Searchedlist:any = [];
+  godownid:any = [];
+  editList:any = [];
   FPDisabled = false;
   editFlag = false;
   AdvIntStockFormSubmitted = false;
   ProtypeDisabled = false
-  initDate = [];
+  initDate:any = [];
   minDate: Date;
   maxDate: Date;
   displaysavepopup = false;
-  filteredData = [];
-  BrowseDate = [];
+  filteredData:any = [];
+  BrowseDate:any = [];
   BDate: Date;
-  DateProlist = [];
+  DateProlist:any = [];
   ProDate : any = Date;
-  ProductionList = [] ;
-  BackupProductionList = [];
-  ProductionFilter = [];
+  ProductionList:any = [] ;
+  BackupProductionList:any = [];
+  ProductionFilter:any = [];
   SelectedProduction : any;
-  TProductionList = [];
+  TProductionList:any = [];
   Cost_Cen_Id: any;
-  BackUpProductNamelList = [];
-  editProNoList = [];
+  BackUpProductNamelList:any = [];
+  editProNoList:any = [];
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -89,6 +90,7 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
       Header: "Internal Stock Transfer (Advance Order)",
       Link: " Material Management -> Internal Stock Transfer (Advance Order)"
     });
+    this.getLockDate();
     this.GetBrand();
     this.GetFromCostCen();
     //this.GetFromGodown();
@@ -108,6 +110,45 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
      this.ProductionFilter = [];
    }
  
+   getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    // console.log('LockDate===',data);
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
+  } 
    //CREATE START
    GetBrand(){
      const obj = {
@@ -404,6 +445,7 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
    SaveAdvIntStocktr(){
      console.log("saveqty",this.saveqty());
      this.ngxService.start();
+     if(this.checkLockDate(this.DateService.dateConvert(new Date(this.todayDate)))) {
      if(this.saveqty()){
      if(Number(this.Objproduction.From_Cost_Cen_ID) == Number(this.Objproduction.To_Cost_Cen_ID) &&
        Number(this.Objproduction.From_godown_id) !== Number(this.Objproduction.To_godown_id)){
@@ -459,11 +501,11 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
          detail: "can't use same stock point with respect to same cost centre"
        });
      }
-   }
-   else {
-     this.editFlag = true;
-     this.ngxService.stop();
-     this.compacctToast.clear();
+     }
+      else {
+        this.editFlag = true;
+        this.ngxService.stop();
+        this.compacctToast.clear();
           this.compacctToast.add({
               key: "compacct-toast",
               severity: "error",
@@ -472,6 +514,10 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
             });
  
           }
+      }
+      else {
+        this.ngxService.stop();
+      }
    }
    getProductionNo(){
      if(this.SelectedProduction.length) {
@@ -493,7 +539,7 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
      // console.log(this.DateService.dateConvert(new Date(this.myDate)))
       this.Objproduction.Doc_Date = this.DateService.dateConvert(new Date(this.todayDate));
      if(this.BackUpProductNamelList.length) {
-       let tempArr =[]
+       let tempArr:any =[]
        this.BackUpProductNamelList.forEach(item => {
          if(item.del_Qty && Number(item.del_Qty) !== 0){
          const obj = {
@@ -676,6 +722,7 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
    DeleteIntStocktr(docNo){
      this.Objproduction.Doc_No = undefined ;
      if(docNo.Doc_No){
+     if(this.checkLockDate(docNo.Doc_Date)){
      this.Objproduction.Doc_No = docNo.Doc_No;
      this.compacctToast.clear();
      this.compacctToast.add({
@@ -685,6 +732,7 @@ export class K4cAdvOrderInternalStockTransferComponent implements OnInit {
      summary: "Are you sure?",
      detail: "Confirm to proceed"
     });
+    }
     }
   }
   onConfirm() {

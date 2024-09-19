@@ -34,6 +34,7 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
   EditDoc_No = undefined;
   dateList: any;
   myDate: Date;
+  lockdate:any;
   returnedID:any = [];
   buttonname = "Save & Print Bill";
   Spinner = false;
@@ -210,6 +211,7 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
       Header: "POS Bill",
       Link: " Outlet -> Sale Bill"
     });
+    this.getLockDate();
     this.getselectitem();
     this.GetProductTypeFilterList();
     this.getbilldate();
@@ -434,6 +436,47 @@ export class K4cOutletSaleBillComponent implements OnInit,AfterViewInit {
    // this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));
 
   })
+}
+getLockDate(){
+  const obj = {
+   "SP_String": "sp_Comm_Controller",
+   "Report_Name_String": "Get_LockDate",
+   //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+
+ }
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  // console.log('LockDate===',data);
+  this.lockdate = data[0].dated;
+
+})
+}
+checkLockDate(docdate){
+  if(this.lockdate && docdate){
+    if(new Date(docdate) > new Date(this.lockdate)){
+      return true;
+    } else {
+      var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Can't "+msg+ " this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+    });
+      return false;
+    }
+  } else {
+    this.Spinner = false;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+     key: "compacct-toast",
+     severity: "error",
+     summary: "Warn Message",
+     detail: "Date not found."
+    });
+    return false;
+  }
 }
 
 getcostcenid(){
@@ -1664,6 +1707,7 @@ Updaterequestdetailsaftersave(billno){
 }
 // DAY END CHECK
 saveCheck(){
+  if(this.checkLockDate(this.DateService.dateConvert(new Date(this.myDate)))) {
   if(this.FromCostCentId && this.godown_id){
     this.Spinner = true;
     this.ngxService.start();
@@ -1698,7 +1742,10 @@ saveCheck(){
        this.clearData();
      }
    })
+ } else {
+  this.Spinner = false;
  }
+}
 
 
 }
@@ -2475,8 +2522,11 @@ onConfirmSwiggyZomato(val) {
 
 editmaster(eROW){
 //console.log("editmaster",eROW);
+if(!this.QueryStringObj.Browse_Flag){
   this.clearData();
+}
   if(eROW.Bill_No){
+    if(this.checkLockDate(eROW.Bill_Date)){
   this.Objcustomerdetail.Bill_No = eROW.Bill_No;
   this.tabIndexToView = 1;
   // this.items = ["BROWSE", "UPDATE"];
@@ -2484,6 +2534,7 @@ editmaster(eROW){
    //console.log("this.EditDoc_No ", this.Objcustomerdetail.Bill_No );
   this.geteditmaster(this.Objcustomerdetail.Bill_No);
   //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
+    }
   }
 }
 geteditmaster(Bill_No){
@@ -2588,6 +2639,7 @@ Cancle(row){
   this.cancleFormSubmitted = false;
   this.Objcustomerdetail.Bill_No = undefined ;
   if(row.Bill_No){
+    if(this.checkLockDate(row.Bill_Date)){
   this.checkSave = true;
   //this.CanRemarksPoppup = true;
   this.Can_Remarks = true;
@@ -2602,6 +2654,7 @@ Cancle(row){
     summary: "Are you sure?",
     detail: "Confirm to proceed"
     });
+    }
   }
  }
  onConfirm(){}
@@ -2686,6 +2739,7 @@ getorderno(orderno){
   }
 getadvorderdetails(Adv_Order_No){
     //console.log('Bill No ===', this.Adv_Order_No)
+    this.ngxService.start();
     const TempObj = {
       Cost_Cen_ID : this.QueryStringObj.Del_Cost_Cent_ID ? this.QueryStringObj.Del_Cost_Cent_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
       Doc_No : this.Adv_Order_No
@@ -2696,6 +2750,7 @@ getadvorderdetails(Adv_Order_No){
       "Json_Param_String" :  JSON.stringify([TempObj])
      }
      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data.length){
        this.AdvOderDetailList = data;
        console.log('Advance Order Detail ===', data)
        this.Objcustomerdetail.Costomer_Mobile = data[0].Costomer_Mobile;
@@ -2768,6 +2823,11 @@ getadvorderdetails(Adv_Order_No){
 
         this.listofamount();
         this.CalculateTotalAmt();
+        this.ngxService.stop();
+      }
+      else {
+        this.ngxService.stop();
+      }
      })
   }
 

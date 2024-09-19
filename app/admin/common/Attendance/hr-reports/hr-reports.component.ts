@@ -35,11 +35,14 @@ export class HrReportsComponent implements OnInit {
   employeeflag: boolean = false;
   attentypeflag: boolean = false;
   HRyearflag: boolean = false;
+  AccHRyearflag: boolean = false;
   Quaterflag: boolean = false;
   quaterlist: any = [];
   HrYearList: any = [];
+  AccHrYearList: any = [];
   Quarter: any;
   HR_Year_ID: any;
+  Acc_HR_Year_ID: any;
   constructor(
     private Header: CompacctHeader,
     private CompacctToast: MessageService,
@@ -57,6 +60,7 @@ export class HrReportsComponent implements OnInit {
     });
     this.getReportNames();
     this.gethrYearList();
+    this.getAcchrYearList();
     this.getQuaterNames();
   }
 
@@ -88,6 +92,17 @@ export class HrReportsComponent implements OnInit {
       this.HR_Year_ID =  this.HrYearList.length ? this.HrYearList[0].HR_Year_ID : undefined;
       });
   }
+  getAcchrYearList(){
+    const obj = {
+      "SP_String":"SP_HR_Reports",
+      "Report_Name_String":"Get A/C Year"
+   }
+   this.GlobalAPI.getData(obj)
+     .subscribe((data:any)=>{
+      this.AccHrYearList = data;
+      this.Acc_HR_Year_ID =  this.AccHrYearList.length ? this.AccHrYearList[0].accyear : undefined;
+      });
+  }
   getQuaterNames() {
     const obj = {
       "SP_String": "SP_HR_Reports",
@@ -101,6 +116,7 @@ export class HrReportsComponent implements OnInit {
 
   structureData(repname: any) {
     this.HR_Year_ID =  this.HrYearList.length ? this.HrYearList[0].HR_Year_ID : undefined;
+    this.Acc_HR_Year_ID =  this.AccHrYearList.length ? this.AccHrYearList[0].accyear : undefined;
     this.Quarter = undefined;
     this.currentMonth = new Date();
     this.visibleDate = "";
@@ -112,6 +128,7 @@ export class HrReportsComponent implements OnInit {
     this.employeeflag = false;
     this.attentypeflag = false;
     this.HRyearflag = false;
+    this.AccHRyearflag = false;
     this.Quaterflag = false;
     if (this.findObj) {
       this.visibleDate = this.findObj.allowed_control;
@@ -136,6 +153,9 @@ export class HrReportsComponent implements OnInit {
         }
         else if (allowFields[i] == 'YR') {
           this.HRyearflag = true;
+        }
+        else if (allowFields[i] == 'AccYR') {
+          this.AccHRyearflag = true;
         }
         else if (allowFields[i] == 'QR') {
           this.Quaterflag = true;
@@ -232,6 +252,33 @@ export class HrReportsComponent implements OnInit {
           "SP_String": "SP_HR_Reports",
           "Report_Name_String": this.findObj.report_name,
           "Json_Param_String": JSON.stringify([{ "HR_Year_ID": this.HR_Year_ID, "Quarter": this.Quarter }])
+        }
+        this.GlobalAPI.postData(apiObj).subscribe(async (data: any) => {
+          // console.log("export excel data", data);
+          this.Spinner = false;
+          if (data.length) {
+            this.ngxService.start();
+            await this.ExportExcelService.exprtToExcelHR_Reports(data, this.findObj);
+            this.ngxService.stop();
+          }
+          else {
+            this.CompacctToast.clear();
+            this.CompacctToast.add({
+              key: "compacct-toast",
+              severity: "error",
+              summary: "Excel Export Fail",
+              detail: "No Data Available"
+            });
+          }
+        });
+      }
+      else if (this.visibleDate == "AccYR,QR,XL") {
+        this.Spinner = true;
+        let accstartenddate = this.AccHrYearList.filter(ele=> ele.accyear === this.Acc_HR_Year_ID)
+        const apiObj = {
+          "SP_String": "SP_HR_Reports",
+          "Report_Name_String": this.findObj.report_name,
+          "Json_Param_String": JSON.stringify([{ "StartDate": this.DateService.dateConvert(accstartenddate[0].StartDate), "EndDate": this.DateService.dateConvert(accstartenddate[0].EndDate), HR_Year_ID:0, "Quarter": this.Quarter }])
         }
         this.GlobalAPI.postData(apiObj).subscribe(async (data: any) => {
           // console.log("export excel data", data);

@@ -11,6 +11,7 @@ import { DateTimeConvertService } from '../../../../../shared/compacct.global/da
 import { ActivatedRoute } from '@angular/router';
 import { identity } from 'rxjs';
 import { NUMBER_TYPE } from '@angular/compiler/src/output/output_ast';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-journal-voucher',
@@ -20,8 +21,8 @@ import { NUMBER_TYPE } from '@angular/compiler/src/output/output_ast';
   encapsulation: ViewEncapsulation.None
 })
 export class JournalVoucherComponent implements OnInit {
-  items = [];
-  menuList = [];
+  items:any = [];
+  menuList:any = [];
   tabIndexToView = 0;
   buttonname = "Create";
   seachSpinner = false;
@@ -30,30 +31,31 @@ export class JournalVoucherComponent implements OnInit {
   objsearch:search = new search();
   journalFormSubmitted = false;
   voucherdata = new Date();
-  costCentList = [];
-  costHeadList = [];
+  costCentList:any = [];
+  costHeadList:any = [];
   NEFTDate = new Date();
   journallowerFormSubmitted = false;
   Spinner = false;
-  lowerList = [];
-  LedgerList = [];
-  SubLedgerList =[];
-  LedgerdataList = [];
-  SubLedgerDataList = [];
-  SubLedgerDataListlow = [];
-  SubLedgerListlow = [];
+  lowerList:any = [];
+  LedgerList:any = [];
+  SubLedgerList:any = [];
+  LedgerdataList:any = [];
+  SubLedgerDataList:any = [];
+  SubLedgerDataListlow:any = [];
+  SubLedgerListlow:any = [];
   JournalSearchFormSubmit = false;
-  initDate = [];
-  VoucherTypeList = [];
-  AlljournalData = [];
+  initDate:any = [];
+  VoucherTypeList:any = [];
+  AlljournalData:any = [];
   totalDR:number = 0;
   totalCR:number= 0;
   RefDocDate = new Date();
   VoucherNo = undefined;
-  costHeadDataList = [];
-  projectDataList = [];
-  DynamicHeader = [];
+  costHeadDataList:any = [];
+  projectDataList:any = [];
+  DynamicHeader:any = [];
   VoucherTypeID = undefined;
+  lockdate:any;
 
   constructor(
     private $http: HttpClient,
@@ -64,6 +66,7 @@ export class JournalVoucherComponent implements OnInit {
     private $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
     private route: ActivatedRoute,
+    private ngxService: NgxUiLoaderService
   ) {
     this.route.queryParams.subscribe(params => {
       console.log("params",params.Voucher_Type_ID);
@@ -87,6 +90,7 @@ export class JournalVoucherComponent implements OnInit {
     this.getVoucherType();
     this.GetCostHead();
     this.getProject();
+    this.getLockDate();
   }
   TabClick(e) {
     this.tabIndexToView = e.index;
@@ -95,6 +99,7 @@ export class JournalVoucherComponent implements OnInit {
     this.clearData();
   }
   clearData(){
+    this.ngxService.stop();
     this.journallowerFormSubmitted = false;
     this.journalFormSubmitted = false;
     this.objjournal = new journalTopper()
@@ -116,6 +121,45 @@ export class JournalVoucherComponent implements OnInit {
     this.AlljournalData = [];
     this.objsearch.Voucher_Type_ID = undefined
     this.Spinner = false;
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
   }
  
   lowerAdd(valid){
@@ -329,6 +373,7 @@ saveJournal(valid){
  console.log("save Valid",valid);
  this.journalFormSubmitted = true;
  if(valid){
+  if(this.checkLockDate(this.DateService.dateConvert(new Date(this.voucherdata)))) {
    let savedata = {};
    this.Spinner = true;
    let msg = "";
@@ -392,12 +437,13 @@ saveJournal(valid){
         this.items = ["BROWSE", "CREATE"];
         this.buttonname = "Create";
         this.ShowSearchData(true)
+        this.Spinner = false;
       }
       else {
+        this.Spinner = false;
         this.initDate = [new Date(),new Date()];
       }
       this.getCostCenter();
-      this.Spinner = false;
       this.AlljournalData = [];
       this.objsearch.Voucher_Type_ID = undefined
       this.compacctToast.clear();
@@ -412,6 +458,7 @@ saveJournal(valid){
       this.clearData();
      }
      else {
+      this.Spinner = false;
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "compacct-toast",
@@ -421,6 +468,7 @@ saveJournal(valid){
       });
      }
     })
+  }
  }
 }
 GetCostHead(){
@@ -446,6 +494,7 @@ getProject(){
 }
 EditJournal(col){
   if(col.Voucher_No){
+    if(this.checkLockDate(col.Dated)){
     this.VoucherNo = undefined;
     this.VoucherNo = col.Voucher_No;
     this.objjournal = new journalTopper();
@@ -460,15 +509,18 @@ EditJournal(col){
     this.items = ["BROWSE", "UPDATE"];
     this.buttonname = "Update";
     this.GetEditMasterUom(col.Voucher_No)
+    }
   }
 }
 GetEditMasterUom(V_NO){
+  this.ngxService.start();
   const obj = {
     "SP_String": "Sp_Acc_Journal",
     "Report_Name_String":"BL_Txn_Acc_Journal_Get",
     "Json_Param_String": JSON.stringify([{Voucher_No : V_NO}]) 
    }
    this.GlobalAPI.getData(obj).subscribe((res:any)=>{
+    if(res.length || res[0].T_element != null){
      let data = JSON.parse(res[0].T_element);
      console.log("Edit Data",data);
      this.objjournal = data[0];
@@ -479,20 +531,29 @@ GetEditMasterUom(V_NO){
       this.objjournal.Amount = Number((data[0].DR_Amt).toFixed(2))
       this.objjournal.DrCrdata = "DR";
       this.getTotalDRCR()
+      this.ngxService.stop();
     }
     else if (data[0].CR_Amt){
       this.objjournal.Amount = Number((data[0].CR_Amt).toFixed(2))
       this.objjournal.DrCrdata = "CR";
       this.getTotalDRCR()
+      this.ngxService.stop();
     }
     else {
       console.error("Amount Not Found");
+      this.ngxService.stop();
     }
+    this.ngxService.stop();
+  }
+  else {
+    this.ngxService.stop();
+  }
    })
 }
 DeleteJournal(col){
   console.log("Col",col);
  if(col.Voucher_No){
+  if(this.checkLockDate(col.Dated)){
    this.VoucherNo = undefined;
    this.VoucherNo = col.Voucher_No;
    this.compacctToast.clear();
@@ -503,6 +564,7 @@ DeleteJournal(col){
      summary: "Are you sure?",
      detail: "Confirm to proceed"
    });
+  }
  }
 }
 onReject() {

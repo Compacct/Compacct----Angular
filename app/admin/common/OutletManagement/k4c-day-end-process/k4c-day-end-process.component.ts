@@ -49,6 +49,7 @@ export class K4cDayEndProcessComponent implements OnInit {
   RTFstatus:any;
   OSTstatus:any;
   DispChallanStatus:any;
+  CrateTransferStatus:any;
   Password = undefined;
   Passdisabled = true;
   PasswordFormSubmitted = false;
@@ -57,6 +58,7 @@ export class K4cDayEndProcessComponent implements OnInit {
   date: Date;
   location:any;
   costcenid: any;
+  lockdate: any;
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -77,6 +79,7 @@ export class K4cDayEndProcessComponent implements OnInit {
     });
     this.GetProDate();
     this.GetCostCenter();
+    this.getLockDate();
   }
   TabClick(e){
     // console.log(e)
@@ -84,6 +87,47 @@ export class K4cDayEndProcessComponent implements OnInit {
      this.items = ["BROWSE", "CREATE"];
     this.clearData();
    }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate",
+     //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //   console.log('LockDate===',data);
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
+  }
   onConfirm(){}
   onReject(){
     this.compacctToast.clear("c");
@@ -294,6 +338,7 @@ export class K4cDayEndProcessComponent implements OnInit {
     let saveValue = false;
     this.mismatch = true;
    // const sameValArr = this.paymentList.filter(item=> item.Total_Amount !== Number(item.Amount) );
+  if(this.checkLockDate(this.DateService.dateConvert(new Date(this.Datevalue)))) {
     if(this.paymentList.length && this.closeingstatus){
       if( this.closeingUpdate === this.closeingstatus && this.closeingUpdate === "YES"){
         this.CheckAdvOrDel();
@@ -318,6 +363,7 @@ export class K4cDayEndProcessComponent implements OnInit {
               detail: "Select Closing Stock Update"
             });
     }
+  }
 
   }
 
@@ -360,6 +406,7 @@ export class K4cDayEndProcessComponent implements OnInit {
         this.OSTstatus = data[0].Outlet_Stock_Transfer_Status;
         // this.OSTstatus = "YES";
         console.log("OSTstatus",this.OSTstatus);
+        this.CheckDispChallanStatus();
       })
     }
   }
@@ -383,6 +430,26 @@ export class K4cDayEndProcessComponent implements OnInit {
       })
     }
   }
+  CheckCrateTransferStatus(){
+    this.CrateTransferStatus = undefined;
+    if(this.Datevalue){
+      const tempObj = {
+        //Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
+        Cost_Cen_ID : this.Cost_Cen_ID,
+        Date : this.DateService.dateConvert(new Date(this.Datevalue))
+      }
+      const obj = {
+        "SP_String": "SP_K4C_Day_End_Process",
+        "Report_Name_String": "Check_accept_crate_Status",
+        "Json_Param_String" :  JSON.stringify([tempObj])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+        this.CrateTransferStatus = data[0].Crate_Accept_Status;
+        // this.CrateTransferStatus = "YES";
+        console.log("CrateTransferStatus",this.CrateTransferStatus);
+      })
+    }
+  }
   CheckAdvOrDel(){
     const tempObj = {
       Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
@@ -399,10 +466,11 @@ export class K4cDayEndProcessComponent implements OnInit {
       if(data[0].Status === "YES"){
         this.CheckRTFstatus();
         // this.CheckOSTstatus();
-        this.CheckDispChallanStatus();
+        // this.CheckDispChallanStatus();
+        this.CheckCrateTransferStatus();
         setTimeout(() => {
           this.saveCheck();
-        }, 200);
+        }, 500);
       }
       else{
         this.compacctToast.clear();
@@ -444,7 +512,7 @@ export class K4cDayEndProcessComponent implements OnInit {
   }
   CheckForPasswordDisable(){
       this.Passdisabled = false;
-      if((this.RTFstatus === "YES") && (this.OSTstatus === "YES") && (this.DispChallanStatus === "YES")){
+      if((this.RTFstatus === "YES") && (this.OSTstatus === "YES") && (this.DispChallanStatus === "YES") && (this.CrateTransferStatus === "YES")){
         // this.paymentList['Passdisabled'] = true;
         // this.Passdisabled = true;
         this.save();
@@ -459,7 +527,7 @@ export class K4cDayEndProcessComponent implements OnInit {
           sticky: true,
           closable: false,
           severity: "warn",
-          summary: "Acceptance Pending of RTF / Outlet Stock Transfer / Dispatch Challan. Please complete before EOD.",
+          summary: "Acceptance Pending of RTF / Outlet Stock Transfer / Dispatch Challan / Crate Transfer. Please complete before EOD.",
           // detail: "Confirm to proceed"
         });
       }
@@ -591,6 +659,7 @@ export class K4cDayEndProcessComponent implements OnInit {
     this.Editlist = [];
     this.costcenid = undefined;
     this.location = undefined;
+    if(this.checkLockDate(EODobj.Date)){
     const tempObj = {
       Cost_Cen_ID: EODobj.Cost_Cen_ID,
       Date : this.DateService.dateConvert(new Date(EODobj.Date))
@@ -608,6 +677,7 @@ export class K4cDayEndProcessComponent implements OnInit {
       this.editpopup = true;
       console.log("this.Editlist",this.Editlist);
     })
+    }
   }
   saveedit(){
     let editData:any = [];

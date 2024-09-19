@@ -17,7 +17,7 @@ import { Observable } from 'rxjs/internal/Observable';
   encapsulation: ViewEncapsulation.None
 })
 export class K4cRawMaterialIssueComponent implements OnInit {
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false
   tabIndexToView = 0;
@@ -26,22 +26,22 @@ export class K4cRawMaterialIssueComponent implements OnInit {
   ObjRawMateriali : RawMateriali = new RawMateriali ();
   RawMaterialIssueFormSubmitted = false;
   ObjBrowse : Browse = new Browse ();
-  Fcostcenlist = [];
-  FromGodownList = [];
-  Tocostcenlist = [];
-  ToGodownList = [];
+  Fcostcenlist:any = [];
+  FromGodownList:any = [];
+  Tocostcenlist :any= [];
+  ToGodownList:any = [];
   FCostdisableflag = false;
   FGdisableflag = false;
   TCostdisableflag = false;
   TGdisableflag = false;
   IndentListFormSubmitted = false;
-  IndentList = [];
-  ProductList = [];
+  IndentList:any = [];
+  ProductList:any = [];
   SelectedIndent: any;
-  BackupIndentList = [];
-  IndentFilter = [];
-  TIndentList = [];
-  Searchedlist = [];
+  BackupIndentList:any = [];
+  IndentFilter:any = [];
+  TIndentList:any = [];
+  Searchedlist:any = [];
   flag = false;
   Param_Flag ='';
   CostCentId_Flag : any;
@@ -87,8 +87,8 @@ export class K4cRawMaterialIssueComponent implements OnInit {
      this.BackupIndentList = [];
      this.TIndentList = [];
      this.SelectedIndent = [];
-   }
-   GetFromCostCen(){
+  }
+  GetFromCostCen(){
     const tempObj = {
       Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
     }
@@ -210,7 +210,7 @@ export class K4cRawMaterialIssueComponent implements OnInit {
   }
   }
   GetIndent(){
-    let DIndent = [];
+    let DIndent:any = [];
     this.IndentFilter = [];
     this.SelectedIndent = [];
     this.BackupIndentList.forEach((item) => {
@@ -224,7 +224,7 @@ export class K4cRawMaterialIssueComponent implements OnInit {
   }
   filterIndentList() {
     //console.log("SelectedTimeRange", this.SelectedTimeRange);
-    let DIndent = [];
+    let DIndent:any = [];
     this.TIndentList = [];
     const temparr = this.ProductList.filter((item)=> item.Issue_Qty);
     this.ProductList = [];
@@ -249,7 +249,7 @@ export class K4cRawMaterialIssueComponent implements OnInit {
   // GET PRODUCT LIST
   dataforproduct(){
     if(this.SelectedIndent.length) {
-      let Arr =[]
+      let Arr:any =[]
       this.SelectedIndent.forEach(el => {
         if(el){
           const Dobj = {
@@ -334,7 +334,7 @@ export class K4cRawMaterialIssueComponent implements OnInit {
     // console.log(this.DateService.dateConvert(new Date(this.myDate)))
      this.ObjRawMateriali.Doc_Date = this.DateService.dateConvert(new Date(this.myDate));
     if(this.ProductList.length) {
-      let tempArr =[]
+      let tempArr:any =[]
       this.ProductList.forEach(item => {
         if(item.Issue_Qty && Number(item.Issue_Qty) != 0) {
         const obj = {

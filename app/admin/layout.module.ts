@@ -529,6 +529,11 @@ import { BlCrmEnqCaseHistoryComponent } from './common/PatientManagement/bl-crm-
 import { NewAdultSpeechEvaluationComponent } from './common/PatientManagement/new-adult-speech-evaluation/new-adult-speech-evaluation.component';
 import { NewChildSpeechEvaluationComponent } from './common/PatientManagement/new-child-speech-evaluation/new-child-speech-evaluation.component';
 import { BlCrmLsqBillManagementComponent } from './common/FinancialManagement/Retail/bl-crm-lsq-bill-management/bl-crm-lsq-bill-management.component';
+import { CouponCheckingComponent } from './common/PatientManagement/coupon-checking/coupon-checking.component';
+import { ExpenseTrackingComponent } from './common/HR/expense-tracking/expense-tracking.component';
+import { CrateTransferDispatchToOutletComponent } from './common/MaterialManagement/Outward/crate-transfer-dispatch-to-outlet/crate-transfer-dispatch-to-outlet.component';
+import { ChangeBatchNumberComponent } from './common/MaterialManagement/Outward/change-batch-number/change-batch-number.component';
+import { WeeklyReportingComponent } from './common/PatientManagement/weekly-reporting/weekly-reporting.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -972,7 +977,12 @@ import { BlCrmLsqBillManagementComponent } from './common/FinancialManagement/Re
     BlCrmEnqCaseHistoryComponent,
     NewAdultSpeechEvaluationComponent,
     NewChildSpeechEvaluationComponent,
-    BlCrmLsqBillManagementComponent
+    BlCrmLsqBillManagementComponent,
+    CouponCheckingComponent,
+    ExpenseTrackingComponent,
+    CrateTransferDispatchToOutletComponent,
+    ChangeBatchNumberComponent,
+    WeeklyReportingComponent
   ],
   imports: [
     CommonModule,

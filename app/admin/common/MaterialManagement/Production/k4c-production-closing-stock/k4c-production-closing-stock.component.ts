@@ -9,6 +9,7 @@ import { CompacctHeader } from "../../../../shared/compacct.services/common.head
 import { CompacctGlobalApiService } from "../../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service"
 import { ActivatedRoute, Router } from "@angular/router";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 import * as XLSX from 'xlsx';
 
 @Component({
@@ -69,6 +70,7 @@ export class K4cProductionClosingStockComponent implements OnInit {
   productlistforexcel:any = [];
   datepickerdisable = true;
   Checklist:any = [];
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -79,6 +81,7 @@ export class K4cProductionClosingStockComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
+    private ngxService: NgxUiLoaderService
   ) { }
 
   ngOnInit() {
@@ -98,6 +101,7 @@ export class K4cProductionClosingStockComponent implements OnInit {
       Header: "Production Closing Stock  - " + this.MaterialType_Flag, //this.MaterialType_Flag + 
       Link: " Material Management -> Production Closing Stock - " + this.MaterialType_Flag
     });
+    this.getLockDate();
     this.GetBrand();
     this.GetCostCen();
     this.GetBCostCen();
@@ -116,11 +120,50 @@ export class K4cProductionClosingStockComponent implements OnInit {
      this.SelectedIndent = [];
      this.datepickerdisable = true;
      this.EditList = [];
-   }
-   onReject() {
+  }
+  onReject() {
     this.compacctToast.clear("c");
     this.compacctToast.clear("s");
     this.Spinner = false;
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
   }
   GetBrand(){
     const obj = {
@@ -132,7 +175,7 @@ export class K4cProductionClosingStockComponent implements OnInit {
        console.log("Brand List ===",this.BrandList);
     })
   }
-   GetCostCen(){
+  GetCostCen(){
     const tempObj = {
       Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID,
       Material_Type : this.MaterialType_Flag ? this.MaterialType_Flag : 'NA'
@@ -473,8 +516,8 @@ ConsumptionCal(indx,obj){
 
              }
     }
-   }
-   saveqty(){
+  }
+  saveqty(){
     let flag = true;
    for(let i = 0; i < this.ProductList.length ; i++){
     if(Number(this.ProductList[i].Batch_Qty) <  Number(this.ProductList[i].Issue_Qty)){
@@ -487,6 +530,7 @@ ConsumptionCal(indx,obj){
   // SAVE AND UPDATE
   SaveBeforeCheck(){
     this.Spinner = true;
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.todayDate)))) {
      if (this.ProductList.length) {
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -499,6 +543,7 @@ ConsumptionCal(indx,obj){
     }
     else {
     this.Spinner = false;
+    }
     }
   }
   dataforSaveRawMaterialIssue(){
@@ -692,72 +737,12 @@ const obj = {
   }
 
   clearData(){
+    this.ngxService.stop();
     this.ObjProClosingStock.Cost_Cen_ID = 2;
     this.ObjProClosingStock.godown_id = 4;
     // this.GetGodown();
     this.ObjBrowse.Cost_Cen_ID = 2;
     this.ObjBrowse.godown_id = 4;
-    // this.GetBGodown();
-    // this.ObjProClosingStock.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    // FOR CREATE TAB
-    // if (this.CostCentId_Flag) {
-      // this.ObjProClosingStock.Cost_Cen_ID = String(this.CostCentId_Flag);
-      // this.Cdisableflag = true;
-      // this.GetGodown();
-      // this.ObjBrowse.To_Cost_Cen_ID = String(this.CostCentId_Flag);
-      // this.TBCdisableflag = true;
-      // this.GetBToGodown();
-      // } 
-      // else {
-      //   this.ObjProClosingStock.Cost_Cen_ID = undefined;
-      //   //this.ObjRawMateriali.To_godown_id = undefined;
-      //   this.TCdisableflag = false;
-      //   this.GetGodown();
-      //   this.ObjBrowse.To_Cost_Cen_ID = undefined;
-      //   this.TBCdisableflag = false;
-      //   this.GetBToGodown();
-      // }
-      // FOR CREATE TAB
-      
-      // FOR BROWSE
-      // if (this.CostCentId_Flag) {
-      //   this.ObjBrowse.To_Cost_Cen_ID = String(this.CostCentId_Flag);
-      //   this.TBCdisableflag = true;
-      //   this.GetBToGodown();
-      //   } else {
-      //     this.ObjBrowse.To_Cost_Cen_ID = undefined;
-      //     //this.ObjRawMateriali.To_godown_id = undefined;
-      //     this.TBCdisableflag = false;
-      //     this.GetBToGodown();
-      //   }
-        // FOR BROWSE
-
-    // this.ObjProClosingStock.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
-    //  if(this.GodownList.length === 1){
-    //    this.Gdisableflag = true;
-    //  }else{
-    //    this.Gdisableflag = false;
-    //  }
-    // this.GetToGodown();
-    // FOR CREATE TAB
-    //  this.ObjRawMateriali.To_godown_id = this.ToGodownList.length === 1 ? this.ToGodownList[0].godown_id : undefined;
-    //  if(this.ToGodownList.length === 1){
-    //    this.TGdisableflag = true;
-    //  }else{
-    //    this.TGdisableflag = false;
-    //  }
-     // FOR CREATE TAB
-
-     // FOR BROWSE TAB
-    //  this.ObjBrowse.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    //  this.ObjBrowse.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : undefined;
-    //  if(this.GodownList.length === 1){
-    //    this.BGdisableflag = true;
-    //  }else{
-    //    this.BGdisableflag = false;
-    //  }
-     // FOR BROWSE TAB
-
     this.ObjProClosingStock.Remarks = [];
     this.ObjProClosingStock.Indent_List = undefined;
     this.ProductList = [];
@@ -783,6 +768,7 @@ EditIntStock(col){
   this.ObjProClosingStock.Doc_No = undefined;
   this.Doc_Date = undefined;
   if(col.Doc_No){
+   if(this.checkLockDate(col.Doc_Date)){
    this.ObjProClosingStock.Doc_No = col.Doc_No;
    this.Doc_Date = new Date(col.Doc_Date);
    this.tabIndexToView = 1;
@@ -798,10 +784,12 @@ EditIntStock(col){
     this.GetdataforEdit()
   //  }, 600)
   }
+  }
 
 }
 GetdataforEdit(){
   //this.OTclosingstockwithbatchFormSubmitted = false;
+  this.ngxService.start();
     const obj = {
       "SP_String": "SP_Production_Closing_Stock",
       "Report_Name_String": "Get_Edit_Data",
@@ -810,6 +798,7 @@ GetdataforEdit(){
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       console.log("Edit Data From API",data);
+      if(data.length){
       this.EditList = data;
       //  this.todayDate = new Date(data[0].Doc_Date);
       //  this.minDate = new Date(data[0].Doc_Date.getDate());
@@ -863,6 +852,11 @@ GetdataforEdit(){
     //   });
     // }, 600)
     //   this.ProductList = [...this.ProductList];
+    this.ngxService.stop();
+      }
+      else {
+       this.ngxService.stop();
+      }
     })
 }
 GetEditProductType(){
@@ -933,6 +927,7 @@ geteditmaster(Doc_No){
 DeleteIntStocktr(col){
   this.ObjProClosingStock.Doc_No = undefined;
   if(col.Doc_No){
+    if(this.checkLockDate(col.Doc_Date)){
     this.ObjProClosingStock.Doc_No = col.Doc_No;
     this.compacctToast.clear();
     this.compacctToast.add({
@@ -942,6 +937,7 @@ DeleteIntStocktr(col){
       summary: "Are you sure?",
       detail: "Confirm to proceed"
     });
+    }
   }
 }
 onConfirm(){

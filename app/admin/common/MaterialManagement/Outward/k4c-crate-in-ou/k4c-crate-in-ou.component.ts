@@ -17,12 +17,12 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
   encapsulation: ViewEncapsulation.None
 })
 export class K4cCrateInOuComponent implements OnInit {
-  items = [];
+  items:any = [];
   Spinner = false;
   seachSpinner = false;
   tabIndexToView = 0;
   buttonname = "Save"
-  Objcrate : crate = new crate ();
+  Objcrate : crate = new crate();
   todayDate : Date;
   currentdate = new Date();
   crateFormSubmitted = false;
@@ -30,20 +30,20 @@ export class K4cCrateInOuComponent implements OnInit {
   fromstockdisableflag = false;
   tooutletdisableflag = false;
   tostockdisableflag = false;
-  FromOutletList = [];
-  FromGodownList = [];
-  ToOutletList = [];
-  ToGodownList = [];
+  FromOutletList:any = [];
+  FromGodownList:any = [];
+  ToOutletList:any = [];
+  ToGodownList:any = [];
 
   ObjBrowse : Browse  = new Browse();
   SearchFormSubmitted = false;
   Bfromoutletdisableflag = false;
   Bfromstockdisableflag = false;
-  Searchedlist = [];
-  BFromOutletList = [];
-  BFromGodownList = [];
-  editList = [];
-  AcceptList = [];
+  Searchedlist:any = [];
+  BFromOutletList:any = [];
+  BFromGodownList:any = [];
+  editList:any = [];
+  AcceptList:any = [];
   crateinout = undefined;
 
   acceptchallanpopup = false;
@@ -64,7 +64,7 @@ export class K4cCrateInOuComponent implements OnInit {
   cratein = undefined;
 
   viewpopup = false;
-  ViewList = undefined;
+  ViewList:any = [];
   viewDocNO = undefined;
   vfromoutlet = undefined;
   vFromStokePoint = undefined;
@@ -73,12 +73,13 @@ export class K4cCrateInOuComponent implements OnInit {
   vdate: Date;
   vacceptcrate = undefined;
 
-  EditList = [];
+  EditList:any = [];
   EditDocNo = undefined;
   deldocno = undefined;
   delfcostcen = undefined;
   delfgodown = undefined;
   editcrate: any;
+  lockdate:any;
 
   constructor(
     private $http: HttpClient,
@@ -97,6 +98,7 @@ export class K4cCrateInOuComponent implements OnInit {
       Header: "Crate In / Out",
       Link: "Material Management -> Crate In / Out"
     });
+    this.getLockDate();
     this.getFromOutlet();
     this.getToOutlet();
     this.getBFromOutlet();
@@ -108,6 +110,47 @@ export class K4cCrateInOuComponent implements OnInit {
     //this.todayDate = new Date();
     this.clearData();
   }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate"
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.ngxService.stop();
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
+  }
   getFromOutlet(){
     const obj = {
       "SP_String": "SP_Controller_Master",
@@ -117,24 +160,6 @@ export class K4cCrateInOuComponent implements OnInit {
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.FromOutletList = data;
-     //this.Objcrate.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    // this.fromoutletdisableflag = true;
-    // this.getFromGodown();
-     //this.Objcrate.From_Cost_Cen_ID = this.FromOutlet.length === 1 ? this.FromOutlet[0].Cost_Cen_ID : undefined;
-    //  if(this.FromOutlet.length === 1) {
-    //   this.Objcrate.From_Cost_Cen_ID = this.FromOutlet[0].Cost_Cen_ID;
-    //  } 
-    //  else {
-    //   this.Objcrate.From_Cost_Cen_ID = undefined;
-    //  }
-    //  console.log("this.FromOutletList ======",this.FromOutletList);
-      
-      // if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
-      //   //this.ObjBrowseStockView.Outlet = this.Outletid.length === 1 ? this.Outletid[0].Cost_Cen_ID : undefined;
-      //   this.Objcrate.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-      //   this.fromoutletdisableflag = true;
-      //   this.getFromGodown();
-      //   } else {
           this.Objcrate.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
           this.fromoutletdisableflag = true;
           this.getFromGodown();
@@ -152,13 +177,21 @@ export class K4cCrateInOuComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.FromGodownList = data;
      //this.Objcrate.From_Godown_Id = this.FromGodownList.length === 1 ? this.FromGodownList[0].godown_id : undefined;
-     if(this.FromGodownList.length === 1){
-      this.Objcrate.From_Godown_Id = this.FromGodownList[0].godown_id;
-      this.fromstockdisableflag = true;
-     }else{
-       this.Objcrate.From_Godown_Id = undefined;
-       this.fromstockdisableflag = false;
-     }
+     if(this.FromGodownList.length){
+      if(this.Objcrate.From_Cost_Cen_ID == 2){
+        this.Objcrate.From_Godown_Id = 56;
+        this.fromstockdisableflag = false;
+        } else if(this.FromGodownList.length === 1){
+          this.Objcrate.From_Godown_Id = this.FromGodownList[0].godown_id;
+          this.fromstockdisableflag = true;
+        } else{
+          this.Objcrate.From_Godown_Id = undefined;
+          this.fromstockdisableflag = false;
+        }
+      } else{
+        this.Objcrate.From_Godown_Id = undefined;
+        this.fromstockdisableflag = false;
+      }
      // console.log("this.FromGodownList ======",this.FromGodownList);
 
     });
@@ -172,13 +205,11 @@ export class K4cCrateInOuComponent implements OnInit {
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.ToOutletList = data;
-     //this.Objcrate.To_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-     //this.getToGodown();
-     if (this.$CompacctAPI.CompacctCookies.Cost_Cen_ID != 2) {
-      this.Objcrate.To_Cost_Cen_ID = 2;
-      this.tooutletdisableflag = true;
-      this.getToGodown();
-     }
+    //  if (this.$CompacctAPI.CompacctCookies.Cost_Cen_ID != 2) {
+      // this.Objcrate.To_Cost_Cen_ID = 2;
+    //   this.tooutletdisableflag = true;
+    //   this.getToGodown();
+    //  }
     //  console.log("this.ToOutletList ======",this.ToOutletList);
 
     });
@@ -201,14 +232,6 @@ export class K4cCrateInOuComponent implements OnInit {
        this.Objcrate.To_Godown_Id = undefined;
        this.tostockdisableflag = false;
      }
-    // } else {
-    //   if(this.ToGodownList.length === 1){
-    //     this.Objcrate.To_Godown_Id = this.ToGodownList[0].godown_id;
-    //      this.tostockdisableflag = true;
-    //    }else{
-    //      this.Objcrate.To_Godown_Id = undefined;
-    //      this.tostockdisableflag = false;
-    //    }
     }
     //  console.log("this.ToGodownList ======",this.ToGodownList);
 
@@ -231,19 +254,8 @@ export class K4cCrateInOuComponent implements OnInit {
       User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
       Accepted_Crate : this.buttonname != "Save" ? Number(this.editcrate) : 0
     }
-    // const Objtemp = {
-    //   Doc_No : 'A',
-    //     Doc_Date : this.DateService.dateConvert(new Date(this.currentdate)), 
-    //     F_Cost_Cen_ID : 0,
-    //     F_Godown_ID : 0,
-    //     To_Cost_Cen_ID : this.Objcrate.To_Cost_Cen_ID,
-    //     To_Godown_ID : this.Objcrate.To_Godown_Id,
-    //     Transaction_Date : this.DateService.dateConvert(new Date(this.todayDate)),
-    //     Crate_IN : Number(this.Objcrate.Crate),
-    //     Crate_Out : 0,
-    //     User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
-    // }
     if(valid){
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.todayDate)))) {
       const obj = {
         "SP_String": "SP_BL_Txn_K4C_Crate_IN_OUT",
         "Report_Name_String": "Create_BL_Txn_K4C_Crate_IN_OUT",
@@ -271,8 +283,8 @@ export class K4cCrateInOuComponent implements OnInit {
          }
          else {
          this.clearData();
+         this.GetSearchedList(true);
          }
-        //  this.GetSearchedList(true);
     
         } else{
           this.ngxService.stop();
@@ -285,6 +297,7 @@ export class K4cCrateInOuComponent implements OnInit {
           });
         }
       })
+    }
     }
     else{
       this.ngxService.stop();
@@ -312,9 +325,6 @@ export class K4cCrateInOuComponent implements OnInit {
      }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.BFromOutletList = data;
-     //this.Objcrate.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    // this.fromoutletdisableflag = true;
-    // this.getFromGodown();
     //  console.log("this.BFromOutletList ======",this.BFromOutletList);
       
       if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
@@ -339,13 +349,21 @@ export class K4cCrateInOuComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
      this.BFromGodownList = data;
      //this.Objcrate.From_Godown_Id = this.FromGodownList.length === 1 ? this.FromGodownList[0].godown_id : undefined;
-     if(this.BFromGodownList.length === 1){
-      this.ObjBrowse.From_Godown_Id = this.BFromGodownList[0].godown_id;
-      this.Bfromstockdisableflag = true;
-     }else{
-       this.ObjBrowse.From_Godown_Id = undefined;
-       this.Bfromstockdisableflag = false;
-     }
+     if(this.BFromGodownList.length){
+      if(this.ObjBrowse.From_Cost_Cen_ID == 2){
+        this.ObjBrowse.From_Godown_Id = 56;
+        this.Bfromstockdisableflag = false;
+        } else if(this.BFromGodownList.length === 1){
+          this.ObjBrowse.From_Godown_Id = this.BFromGodownList[0].godown_id;
+          this.Bfromstockdisableflag = true;
+        } else{
+          this.ObjBrowse.From_Godown_Id = undefined;
+          this.Bfromstockdisableflag = false;
+        }
+      } else{
+        this.ObjBrowse.From_Godown_Id = undefined;
+        this.Bfromstockdisableflag = false;
+      }
      // console.log("this.BFromGodownList ======",this.BFromGodownList);
 
     });
@@ -427,11 +445,6 @@ export class K4cCrateInOuComponent implements OnInit {
        if (data[0].Crate_Out == 0) {
         this.vacceptcrate = data[0].Crate_IN;
        }
-      //  this.AcceptList.forEach(el =>{
-      //   if(!el.Accepted_Qty){
-      //     el.Accepted_Qty = el.Qty;
-      //   }
-      // })
        //  console.log("ViewList",this.ViewList);
      })
    
@@ -441,6 +454,7 @@ export class K4cCrateInOuComponent implements OnInit {
     this.AcceptList = [];
     this.clearData();
     if(accptcrate.Doc_No){
+    if(this.checkLockDate(accptcrate.Transaction_Date)){
       const ObjTemp = {
         Doc_No : accptcrate.Doc_No,
         F_Cost_Cen_ID : accptcrate.F_Cost_Cen_ID,
@@ -476,14 +490,9 @@ export class K4cCrateInOuComponent implements OnInit {
         this.acceptcrate = data[0].Crate_IN;
         this.cratein = data[0].Crate_IN;
        }
-      //  this.AcceptList.forEach(el =>{
-      //   if(!el.Accepted_Qty){
-      //     el.Accepted_Qty = el.Qty;
-      //   }
-      // })
        //  console.log("AcceptList",this.AcceptList);
      })
-   
+    }
     }
   }
   SaveAccept(){
@@ -545,6 +554,7 @@ export class K4cCrateInOuComponent implements OnInit {
     this.EditList = [];
     //this.clearData();
     if(edit.Doc_No){
+    if(this.checkLockDate(edit.Transaction_Date)){
       this.EditDocNo = edit.Doc_No;
       this.editcrate = edit.Accepted_Crate;
       this.tabIndexToView = 1;
@@ -578,7 +588,7 @@ export class K4cCrateInOuComponent implements OnInit {
        }
        //  console.log("EditList",this.EditList);
      })
-   
+    }
     }
   }
   Delete(del){
@@ -586,6 +596,7 @@ export class K4cCrateInOuComponent implements OnInit {
     this.delfcostcen = undefined;
     this.delfgodown = undefined;
     if(del.Doc_No){
+    if(this.checkLockDate(del.Transaction_Date)){
     this.deldocno = del.Doc_No;
     this.delfcostcen = del.F_Cost_Cen_ID;
     this.delfgodown = del.F_Godown_ID;
@@ -597,6 +608,7 @@ export class K4cCrateInOuComponent implements OnInit {
     summary: "Are you sure?",
     detail: "Confirm to proceed"
     });
+    }
     }
   }
   onConfirm(){
@@ -638,35 +650,16 @@ export class K4cCrateInOuComponent implements OnInit {
   clearData(){
     this.todayDate = new Date();
     this.Objcrate.Crate = undefined;
-    // this.Objcrate.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    // this.Objcrate.From_Godown_Id = undefined;
-    // this.fromstockdisableflag = false;  
-    //this.Objcrate.To_Cost_Cen_ID = undefined;
-    if (this.$CompacctAPI.CompacctCookies.Cost_Cen_ID != 2) {
-      this.Objcrate.To_Cost_Cen_ID = 2;
-      this.tooutletdisableflag = true;
-      this.getToGodown();
-     }
+    // if (this.$CompacctAPI.CompacctCookies.Cost_Cen_ID != 2) {
+    //   this.Objcrate.To_Cost_Cen_ID = 2;
+    //   this.tooutletdisableflag = true;
+    //   this.getToGodown();
+    //  }
+    this.Objcrate.To_Cost_Cen_ID = undefined;
     this.getToGodown();
-    //this.Objcrate.To_Godown_Id = undefined;
-    //this.tostockdisableflag = false;
-    // if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
-    //   this.Objcrate.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
-    //   this.fromoutletdisableflag = true;
-    //   this.getFromGodown();
-    //   } else {
         this.Objcrate.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
         this.fromoutletdisableflag = true;
         this.getFromGodown();
-    //  }
-    
-    // if(this.ToGodownList.length === 1){
-    //   this.Objcrate.To_Godown_Id = this.ToGodownList[0].godown_id;
-    //    this.tostockdisableflag = true;
-    //  }else{
-    //    this.Objcrate.To_Godown_Id = undefined;
-    //    this.tostockdisableflag = false;
-    //  }
 
       if(this.$CompacctAPI.CompacctCookies.User_Type != 'A'){
         this.ObjBrowse.From_Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;

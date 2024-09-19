@@ -245,7 +245,7 @@
                                 </div>
                             </div>
                             <div class="no-padding">
-                                <p-table [value]="productDetails" [globalFilterFields]="['Product_Description','Rate','Req_Qty','Batch_NO','Issue_Qty']" [rowHover]="true" [autoLayout]="true" #dt>
+                                <p-table [value]="productDetails" [globalFilterFields]="['Product_Description','Rate','Req_Qty','Batch_NO','Issue_Qty']" [rowHover]="true" [loading]="loading" [autoLayout]="true" #dt>
                                     <ng-template pTemplate="caption">
                                         <div class="row">
                                             <div class="col-sm-3 pull-right" style="text-align: right">

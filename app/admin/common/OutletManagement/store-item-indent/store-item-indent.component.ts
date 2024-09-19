@@ -69,6 +69,7 @@ export class StoreItemIndentComponent implements OnInit {
   
   ShowRemarks: any;
   CheckCreate: any;
+  lockdate: any;
 
   constructor(
     private $http: HttpClient,
@@ -96,6 +97,7 @@ export class StoreItemIndentComponent implements OnInit {
  this.onload();
  this.GetOutletName();
  this.CheckRequisitionForCreate();
+ this.getLockDate();
   }
   async onload() {
     await this.getProductSubTypeList().then(response => {
@@ -303,6 +305,7 @@ export class StoreItemIndentComponent implements OnInit {
  editmaster(masterProduct){
    this.edit = true;
    if(masterProduct.Req_No){
+    if(this.checkLockDate(masterProduct.Req_Date)){
    this.tabIndexToView = 1;
    this.items = ["BROWSE", "UPDATE"];
    this.buttonname = "Update";
@@ -311,6 +314,7 @@ export class StoreItemIndentComponent implements OnInit {
    //this.RequisitionList = [];
    this.clearData();
    this.geteditmaster(masterProduct);
+    }
    }
  }
  geteditmaster(masterProduct){
@@ -434,6 +438,7 @@ export class StoreItemIndentComponent implements OnInit {
    return val ? val : '-';
  }
  showDialog() {
+  if(this.checkLockDate(this.DateService.dateConvert(new Date(this.myDate)))) {
    this.display = true;
    this.filteredData = [];
    this.RequisitionList.forEach(obj => {
@@ -443,7 +448,8 @@ export class StoreItemIndentComponent implements OnInit {
       // console.log("this.filteredData===",this.filteredData);
      }
 
-  })
+    })
+  }
  }
  saveREquistion(){
    this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));
@@ -594,12 +600,54 @@ export class StoreItemIndentComponent implements OnInit {
     }
  }
 
+ getLockDate(){
+  const obj = {
+   "SP_String": "sp_Comm_Controller",
+   "Report_Name_String": "Get_LockDate",
+   //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+
+ }
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  // console.log('LockDate===',data);
+  this.lockdate = data[0].dated;
+
+})
+}
+checkLockDate(docdate){
+  if(this.lockdate && docdate){
+    if(new Date(docdate) > new Date(this.lockdate)){
+      return true;
+    } else {
+      var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+    });
+      return false;
+    }
+  } else {
+    this.Spinner = false;
+    this.compacctToast.clear();
+    this.compacctToast.add({
+     key: "compacct-toast",
+     severity: "error",
+     summary: "Warn Message",
+     detail: "Date not found."
+    });
+    return false;
+  }
+}
  Cancle(row){
    // console.log("requistion_no_gen ===", this.requistion_no_gen)
    this.requistionId = undefined ;
    this.requistion_no_gen = undefined ;
    this.act_popup = false;
    if(row.Req_No){
+    if(this.checkLockDate(row.Req_Date)){
      this.can_popup = true;
    this.requistionId = row.Req_No ;
    // console.log("delete Rowr ===", this.requistionId);
@@ -612,6 +660,7 @@ export class StoreItemIndentComponent implements OnInit {
      summary: "Are you sure?",
      detail: "Confirm to proceed"
      });
+    }
    }
   }
   onReject(){
@@ -693,6 +742,7 @@ export class StoreItemIndentComponent implements OnInit {
    this.requistionId = undefined ;
    this.requistion_no_gen = undefined ;
    if(row.Req_No){
+    if(this.checkLockDate(row.Req_Date)){
      this.act_popup = true;
    this.requistionId = row.Req_No ;
    console.log("delete Rowr ===", this.requistionId);
@@ -706,6 +756,7 @@ export class StoreItemIndentComponent implements OnInit {
      detail: "Confirm to proceed"
      });
    }
+    }
 
  }
  onConfirm2(){

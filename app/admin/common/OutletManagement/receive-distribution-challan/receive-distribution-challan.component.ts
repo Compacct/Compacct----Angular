@@ -20,47 +20,47 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
   encapsulation: ViewEncapsulation.None
 })
 export class ReceiveDistributionChallanComponent implements OnInit {
-  items = [];
+  items:any = [];
   tabIndexToView = 0;
-  menuList = [];
+  menuList:any = [];
   buttonname = "Create";
   seachSpinner = false;
-  GetAllDataList = [];
-  EditList = [];
+  GetAllDataList:any = [];
+  EditList:any = [];
   tabEdit = false;
   DocNO = undefined;
   FromStokePoint = undefined;
-  date = undefined;
+  date : any;
   viewDocNO = undefined;
   viewFromStokePoint = undefined;
-  viewdate = undefined;
-  productDetails = [];
+  viewdate : any;
+  productDetails:any = [];
   Spinner = false;
-  saveData = [];
-  ReasonList = [];
+  saveData:any = [];
+  ReasonList:any = [];
   ReasonId = undefined;
   Reason = undefined;
   tabView = false ;
-  viewproductDetails = [];
-  initDate = [];
+  viewproductDetails:any = [];
+  initDate:any = [];
   fromCostId = undefined;
   fromGodownId = undefined;
   ObjBrowseData : BrowseData = new BrowseData ()
-  mattypelist = [];
+  mattypelist:any = [];
   DistributionSearchFormSubmitted = false;
   Indent_Date: any;
   Material_Type = undefined;
   Adv_Order_No: any;
   Indent_Date_To: any;
   Indent_Date_From: any;
-  updateexdate = [];
-  Expirydate = [];
+  updateexdate:any = [];
+  Expirydate:any = [];
   ReqNo: any;
-  ReqNolist = [];
+  ReqNolist:any = [];
 
   dispatchchallanno : any;
-  FranchiseProductList = [];
-  FranchiseList = [];
+  FranchiseProductList:any = [];
+  FranchiseList:any = [];
   taxable: any;
   cgst: any;
   sgst: any;
@@ -74,9 +74,10 @@ export class ReceiveDistributionChallanComponent implements OnInit {
   subledgerid:any;
   franchisecostcenid:any;
 
-  Franchise = [];
+  Franchise:any = [];
   FranchiseBill:any;
   ToCostCentId = undefined;
+  lockdate:any;
 
   constructor(
     private $http: HttpClient,
@@ -107,6 +108,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
 
     this.GetFranchiseBill();
     this.GetFranchiseList();
+    this.getLockDate();
   }
   onConfirm(){}
   onReject(){
@@ -142,6 +144,44 @@ export class ReceiveDistributionChallanComponent implements OnInit {
       //this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));??
 
     })
+  }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate",
+     //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  //   console.log('LockDate===',data);
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't edit or delete this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
   }
   getMaterialType() {
     const obj = {
@@ -225,6 +265,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
    this.clearData();
    this.ToCostCentId = undefined;
    if(masterProduct.Doc_No){
+    // if(this.checkLockDate(masterProduct.Doc_Date)){
     this.fromCostId = undefined;
     this.fromGodownId = undefined;
     this.ToCostCentId = masterProduct.To_Cost_Cen_ID;
@@ -235,7 +276,8 @@ export class ReceiveDistributionChallanComponent implements OnInit {
     this.geteditmaster(masterProduct);
     this.getReqNo(masterProduct);
     this.getsubledgerid();
-    }
+    // }
+   }
   }
   geteditmaster(masterProduct){
     // if(this.ObjBrowseData.Material_Type === "Store Item"){
@@ -270,6 +312,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
   
     //   })
     // } else {
+    this.ngxService.start();
       const tempData = {
         Material_Type : this.ObjBrowseData.Material_Type,
         Doc_No : masterProduct.Doc_No
@@ -322,7 +365,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
       //this.getsubledgerid();
       console.log("this.EditList",this.productDetails);
       this.tabEdit = true;
-
+      this.ngxService.stop();
     })
   //}
   }
@@ -366,7 +409,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
     })
   }
   getReqNos(){
-    let Rarr =[]
+    let Rarr:any =[]
     if(this.ReqNolist.length) {
       this.ReqNolist.forEach(el => {
         if(el){
@@ -620,8 +663,8 @@ export class ReceiveDistributionChallanComponent implements OnInit {
     const ctrl = this;
     const subledgeridObj = $.grep(ctrl.FranchiseList,function(item: any) {return item.Cost_Cen_ID == ctrl.ToCostCentId})[0];
     console.log(subledgeridObj);
-    this.subledgerid = subledgeridObj.Sub_Ledger_ID;
-    this.franchisecostcenid = subledgeridObj.Cost_Cen_ID;
+    this.subledgerid = subledgeridObj ? subledgeridObj.Sub_Ledger_ID : undefined;
+    this.franchisecostcenid = subledgeridObj ? subledgeridObj.Cost_Cen_ID : undefined;
     console.log("this.subledgerid ==", this.subledgerid)
     
    }
@@ -657,7 +700,7 @@ export class ReceiveDistributionChallanComponent implements OnInit {
  getdataforSaveFranchise(){
     //this.currentDate = this.DateService.dateConvert(new Date(this.currentDate));
     if(this.FranchiseProductList.length) {
-      let tempArr =[]
+      let tempArr:any =[]
       this.FranchiseProductList.forEach(item => {
         if (Number(item.Taxable) && Number(item.Taxable) != 0) {
      const TempObj = {

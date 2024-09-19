@@ -45,13 +45,17 @@
                                     <option *ngFor='let option of OutletNameList' [ngValue]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
                             </select>
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-1">
                                         <button class="btn btn-primary custombutton1" data-toggle="modal" (click)="SearchStockBill(RequistionSearchForm.form.valid)" id="load" [disabled]="seachSpinner">
                             <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                             <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                          </button>
                                     </div>
-                                    <div class="col-sm-2"></div>
+                                    <div class="col-sm-1">
+                                        <button class="btn btn-success custombutton1" (click)="exportoexcelbrowse(GetAllDataList,'Indent')" [disabled]="!GetAllDataList.length">
+                                                 <span  class="glyphicon glyphicon-save"></span> Export to excel
+                                              </button>
+                                    </div>
 
                                 </div>
                             </form>
@@ -325,6 +329,7 @@
         </tbody>
     </table>
     <p-footer>
+        <button type="button" pButton icon="fa fa-file-excel-o" (click)="exportoexcelProductWise(viewList,'Indent_Product_List')" label="Export to Excel" class="ui-button-secondary"></button>
         <button type="button" pButton icon="fa fa-times" (click)="viewpop=false" label="Close" class="ui-button-secondary"></button>
     </p-footer>
 </p-dialog>

@@ -143,6 +143,8 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
   Refreshlist:any = [];
   generatedisabledbutton: boolean = true;
   generatedisabled: boolean = false;
+  lockdate:any;
+  proSpinner:boolean = false;
   
   constructor(
     private $http: HttpClient,
@@ -164,7 +166,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
       Header: "Dispatch to Outlet (Store Item)",
       Link: "Material Management -> Outward -> Dispatch to Outlet (Store Item)"
     });
-
+    this.getLockDate();
     this.GetDate();
     this.GetFromGodown();
     this.GetVehicle();
@@ -258,6 +260,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
   this.ChallanDate = this.DateService.dateConvert(new Date(this.myDate));
   this.generatedisabledbutton = true;
   this.generatedisabled = false;
+  this.proSpinner = false;
   }
   getCostcenter(){
     console.log(this.Objdispatch.Brand_ID)
@@ -353,7 +356,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.toGodownList = data;
       console.log("this.toGodownList",this.toGodownList);
-      this.Objdispatch.To_Godown_ID= this.toGodownList[0].godown_id ;
+      this.Objdispatch.To_Godown_ID= this.toGodownList.length ? this.toGodownList[0].godown_id : undefined;
       if(this.Objdispatch.To_Godown_ID){
         this.To_Godown_ID_Dis = true;
       }
@@ -395,6 +398,47 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
     })
 
   }
+  getLockDate(){
+    const obj = {
+     "SP_String": "sp_Comm_Controller",
+     "Report_Name_String": "Get_LockDate",
+     //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+  
+   }
+   this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+    // console.log('LockDate===',data);
+    this.lockdate = data[0].dated;
+  
+  })
+  }
+  checkLockDate(docdate){
+    if(this.lockdate && docdate){
+      if(new Date(docdate) > new Date(this.lockdate)){
+        return true;
+      } else {
+        var msg = this.tabIndexToView === 0 ? "edit or delete" : "create";
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn Message",
+         detail: "Can't "+msg+" this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+      });
+        return false;
+      }
+    } else {
+      this.Spinner = false;
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Date not found."
+      });
+      return false;
+    }
+  }
   // SAVE DISPATCH
   getTotalIndValue(){
     let Indval = 0;
@@ -426,6 +470,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
     return issueval ? issueval.toFixed(2) : '-';
   }
   showDialog() {
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.ChallanDate)))) {
     this.displaysavepopup = true;
     this.filteredData = [];
     this.productDetails.forEach(obj => {
@@ -436,6 +481,7 @@ export class K4cDispatchOutletStoreComponent implements OnInit {
       // this.BackUpproductDetails.push(obj);
     }
    })
+   }
   }
   getTotal(key){
     let TotalAmt = 0;
@@ -1213,6 +1259,7 @@ editmaster(masterProduct){
   this.clearData();
   this.outLetDis = true;
   if(masterProduct.Doc_No){
+  if(this.checkLockDate(masterProduct.Doc_Date)){
   this.tabIndexToView = 1;
   this.items = ["BROWSE", "UPDATE"];
   this.buttonname = "Update";
@@ -1224,6 +1271,7 @@ editmaster(masterProduct){
   this.reqQTYdis = false;
   this.AccQtydis = true;
   this.geteditmaster(masterProduct);
+  }
   }
 }
 GeneratingBillNo(masterProduct){
@@ -1485,6 +1533,7 @@ GetIndentList(){
 GetshowProduct(outletValid,DispatchValid){
   this.OutletFormSubmit = true;
   this.DispatchFormSubmit = true;
+  this.proSpinner = true;
   if(this.dataforShowproduct()){
   if(outletValid && DispatchValid){
     this.SpinnerShow = true;
@@ -1517,6 +1566,7 @@ GetshowProduct(outletValid,DispatchValid){
       this.From_Godown_ID_Dis = true;
       this.To_Godown_ID_Dis = true;
       //this.adDisabled = false;
+      this.proSpinner = false;
       this.GetProductType();
 
       //this.clearData();
@@ -1605,6 +1655,7 @@ deleteDispatch(masterProduct){
  console.log("deleteCol",masterProduct)
  this.doc_no = undefined;
  if (masterProduct.Doc_No) {
+ if(this.checkLockDate(masterProduct.Doc_Date)){
   this.doc_no = masterProduct.Doc_No;
   this.doc_date = masterProduct.Doc_Date;
   this.compacctToast.clear();
@@ -1615,7 +1666,8 @@ deleteDispatch(masterProduct){
     summary: "Are you sure?",
     detail: "Confirm to proceed"
   });
-}
+ }
+ }
 }
 Print(Doc_No){
   console.log("print",Doc_No);

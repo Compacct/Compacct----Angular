@@ -114,6 +114,7 @@ export class BillEditFromAdminComponent implements OnInit {
   GridList:any = [];
   GridListHeader:any = [];
   GetDataList: any = [];
+  lockdate:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -167,6 +168,7 @@ export class BillEditFromAdminComponent implements OnInit {
     this.getcredittoaccount();
     //console.log(this.QueryStringObj);
     this.GetCostCenter();
+    this.getLockDate();
   }
   TabClick(e){
     //console.log(e)
@@ -271,6 +273,7 @@ autoaFranchiseBill() {
       this.rowCostcenter = "";
       this.Created_By = undefined;
       if(eROW.Bill_No){
+      if(this.checkLockDate(eROW.Bill_Date)){
         this.ngxService.start();
       this.Objcustomerdetail.Bill_No = eROW.Bill_No;
       this.canbilldate = new Date(eROW.Bill_Date);
@@ -291,6 +294,7 @@ autoaFranchiseBill() {
       }
       this.geteditmaster(this.Objcustomerdetail.Bill_No);
       //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
+      }
       }
   }
     geteditmaster(Bill_No){
@@ -449,6 +453,48 @@ autoaFranchiseBill() {
   // this.ObjRequistion.Req_Date = this.DateService.dateTimeConvert(new Date(this.myDate));
 
  })
+}
+getLockDate(){
+  const obj = {
+   "SP_String": "sp_Comm_Controller",
+   "Report_Name_String": "Get_LockDate",
+   //"Json_Param_String": JSON.stringify([{Doc_Type : "Sale_Bill"}])
+
+ }
+ this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+  // console.log('LockDate===',data);
+  this.lockdate = data[0].dated;
+
+})
+}
+checkLockDate(docdate){
+  if(this.lockdate && docdate){
+    if(new Date(docdate) > new Date(this.lockdate)){
+      return true;
+    } else {
+      this.Spinner = false;
+      this.ngxService.stop();
+      this.compacctToast.clear();
+      this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn Message",
+       detail: "Can't edit or delete this document. Transaction locked till "+ this.DateService.dateConvert(new Date (this.lockdate))
+    });
+      return false;
+    }
+  } else {
+    this.Spinner = false;
+    this.ngxService.stop();
+    this.compacctToast.clear();
+    this.compacctToast.add({
+     key: "compacct-toast",
+     severity: "error",
+     summary: "Warn Message",
+     detail: "Date not found."
+    });
+    return false;
+  }
 }
   // GLOBAL KEY EVENT
   onKeydownMain(event,nextElemID): void {
@@ -1322,6 +1368,7 @@ checkdiscountamt(){
   saveprintAndUpdate(){
     this.SavePrintFormSubmitted = true;
     this.ngxService.start();
+    if(this.checkLockDate(this.DateService.dateConvert(new Date(this.myDate)))) {
     if(this.GSTvalidFlag){
       this.Spinner = false;
       this.ngxService.stop();
@@ -1490,7 +1537,7 @@ checkdiscountamt(){
     // this.productSubmit =[];
     // this.clearlistamount();
     // this.cleartotalamount();
-  
+  }
   }
   SaveFranSaleBill(){
     let reportname = "";
@@ -1660,6 +1707,7 @@ checkdiscountamt(){
       this.rowCostcenter = "";
       this.Created_By = undefined;
       if(eROW.Bill_No){
+      if(this.checkLockDate(eROW.Bill_Date)){
         this.ngxService.start();
       this.Objcustomerdetail.Bill_No = eROW.Bill_No;
       this.canbilldate = new Date(eROW.Bill_Date);
@@ -1680,6 +1728,7 @@ checkdiscountamt(){
       // }
       this.geteditdiagnosismaster(this.Objcustomerdetail.Bill_No);
       //this.getadvorderdetails(this.Objcustomerdetail.Bill_No);
+      }
       }
   }
   geteditdiagnosismaster(Bill_No){
