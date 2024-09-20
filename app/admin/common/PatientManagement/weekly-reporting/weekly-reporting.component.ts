@@ -464,6 +464,28 @@ export class WeeklyReportingComponent implements OnInit {
   }
     this.excelservice.exporttoExcelWeeklyFootfallDetails(this.WeeklySalesList,tempobj);
   }
+  // Determine whether to display the first column for a given row
+  shouldDisplay(rowIndex: number, field: string): boolean {
+    if (rowIndex === 0) {
+        return true;
+    }
+    return this.WeeklySalesList[rowIndex][field] !== this.WeeklySalesList[rowIndex - 1][field];
+}
+
+// Calculate rowSpan for grouped rows
+calculateRowSpan(rowIndex: number, field: string): number {
+    let currentValue = this.WeeklySalesList[rowIndex][field];
+    let rowSpan = 1;
+
+    for (let i = rowIndex + 1; i < this.WeeklySalesList.length; i++) {
+        if (this.WeeklySalesList[i][field] === currentValue) {
+            rowSpan++;
+        } else {
+            break;
+        }
+    }
+    return rowSpan;
+}
 
   getDateRange17(dateRangeObj){
     if (dateRangeObj.length) {

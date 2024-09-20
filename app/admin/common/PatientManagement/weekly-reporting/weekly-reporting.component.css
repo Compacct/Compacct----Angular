@@ -121,7 +121,12 @@ p:hover {
     background-color: #f5e8d1 !important;
     border: 1px solid black !important;
 }
-#tab4 body .ui-table .ui-table-tbody > tr > td{
+/* Sticky first column */
+/* #cost-center-body td:first-child {
+    position: sticky;
+    left: 0;
+} */
+body .myclass .ui-table-tbody > tr > td{
     padding: 0px !important;
+    border: none !important;
 }
-
