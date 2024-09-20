@@ -31,69 +31,33 @@ export class WeeklyReportingComponent implements OnInit {
   WeekFootCol : any;
   WeekFootRow : any;
 
+  ObjAppoWithSrc : AppoWithSrc = new AppoWithSrc();
+  AppoWithSrcList:any = [];
+  AppoWithSrcListHeader:any = [];
+  AppoWithSrcDetailsList:any = [];
+  AppoWithSrcDetailsListHeader:any = [];
+  AppowithSrcFormSubmitted:boolean = false;
+  tab2seachSpinner:boolean = false;
+  totalcount:any
+  status:any;
+
+  ObjWeeklySales : WeeklySales = new WeeklySales();
+  seachSpinnerWeeklySales:boolean=false;
+  WeeklySalesList:any=[];
+  BackupWeeklySalesList:any = [];
+  WeeklySalesListHeader: any= [];
+
+  ObjWeeklySalesDetails : WeeklySalesDetails = new WeeklySalesDetails();
+  seachSpinnerWeeklySalesdetails:boolean=false;
+  WeeklySalesDetailsList:any=[];
+  BackupWeeklySalesDetailsList:any = [];
+  WeeklySalesDetailsListHeader: any= [];
+
   buttonname: any= "Create";
   Spinner: boolean = false;
   seachSpinner: boolean = false;
   items: any= [];
-  ParameterMasterFormSubmitted: boolean= false;
-  initDate: any = [];
-  start_date: Date;
-  end_date: Date;
-  
-  LIviewPopup:boolean = false;
-  LIviewList:any = [];
-  DynamicLIviewList:any = [];
-  
-  LIviewData:any = {};
-  AddProdList:any = [];
-  Tax: any = undefined;
-  CGST: any = undefined;
-  SGST: any = undefined;
-  IGST: any = undefined;
-  NetAMT: any = undefined;
 
-  PIviewData:any = {};
-  PIList:any = [];
-  PIPopup:boolean = false;
-  PIviewList:any = [];
-  PIListHeader:any = [];
-  PIviewPopup:boolean = false;
-  AddPIProdList:any = [];
-  PITax:any = undefined;
-  PICGST:any = undefined;
-  PISGST:any = undefined;
-  PIIGST:any = undefined;
-  PINetAMT:any = undefined;
-
-  SOPopup:boolean = false;
-  SOList:any = [];
-  SOListHeader:any = [];
-
-  OCPopup:boolean = false;
-  OCList:any = [];
-  OCListHeader:any = [];
-
-  SBillPopup:boolean = false;
-  SBillList:any = [];
-  SBillListHeader:any = [];
-
-  RAPopup:boolean = false;
-  RAList:any = [];
-  RAListHeader:any = [];
-
-  
-  DistLiCustomer:any = [];
-  SelectedDistLiCustomer:any = [];
-  DistProductName:any = [];
-  SelectedDistProductName:any = [];
-  SearchFields:any = [];
-  DIspatchMIS_start_date: Date;
-  DIspatchMIS_end_date: Date;
-  DispatchMISList:any = [];
-  BackupDispatchMISList:any = [];
-  DispatchMISListHeader:any = [];
-
-  
 
   constructor(
     private GlobalAPI:CompacctGlobalApiService,
@@ -110,19 +74,19 @@ export class WeeklyReportingComponent implements OnInit {
       Header: "Weekly Reporting",
       Link: "Report -> Weekly Reporting"
     });
-    this.items = ["FOOTBALL", "APPOINTMENT WITH SOURCES"];
-    // this.GetCostCenter();
+    this.items = ["FOOTFALL", "APPOINTMENT WITH SOURCES", "SALES", "SALES IN DETAILS"];
+    this.GetCostCenter();
     // this.GetEnqSource();
   }
   TabClick(e){
     this.tabIndexToView = e.index;
-    this.items = ["FOOTBALL", "APPOINTMENT WITH SOURCES"];
+    this.items = ["FOOTFALL", "APPOINTMENT WITH SOURCES", "SALES", "SALES IN DETAILS"];
   }
   GetCostCenter(){
     this.CostCenterList = [];
     const obj = {
       "SP_String": "sp_weekly_report",
-      "Report_Name_String": "get_cost_center"
+      "Report_Name_String": "Get_cost_center"
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       this.CostCenterList = data;
@@ -175,7 +139,7 @@ export class WeeklyReportingComponent implements OnInit {
       this.GetRowsTotal(data);
       this.WeeklyFootballList = data;
       this.BackupWeeklyFootballList = data;
-      this.GetDistinct();
+      // this.GetDistinct();
       this.WeeklyFootballListHeader = Object.keys(data[0]);
       this.seachSpinner = false;
       this.GetTotalForDynamicColumns();
@@ -273,12 +237,12 @@ export class WeeklyReportingComponent implements OnInit {
     }
   }
   ExportToExcelWeekFootFall(){
-    const start = this.start_date
-    ? this.DateService.dateConvert(new Date(this.start_date))
-    : this.DateService.dateConvert(new Date());
-  const end = this.end_date
-    ? this.DateService.dateConvert(new Date(this.end_date))
-    : this.DateService.dateConvert(new Date());
+    const start = this.ObjWeeklyFootball.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjWeeklyFootball.From_Date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjWeeklyFootball.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjWeeklyFootball.To_Date))
+      : this.DateService.dateConvert(new Date());
      let tempobj = {}
   if (start && end) {
    tempobj = {
@@ -289,440 +253,297 @@ export class WeeklyReportingComponent implements OnInit {
     this.excelservice.exporttoExcelWeeklyFootfallDetails(this.WeeklyFootballList,tempobj);
   }
 
-  // DISTINCT & FILTER
-  GetDistinct() {
-    let DLiCustomer:any = [];
-    let DProductName:any = [];
-    this.DistLiCustomer = [];
-    this.SelectedDistLiCustomer = [];
-    this.DistProductName = [];
-    this.SelectedDistProductName = [];
-    this.SearchFields =[];
-    this.WeeklyFootballList.forEach((item) => {
-   if (DLiCustomer.indexOf(item.LI_Customer) === -1) {
-    DLiCustomer.push(item.LI_Customer);
-   this.DistLiCustomer.push({ label: item.LI_Customer, value: item.LI_Customer });
-   }
-   if (DProductName.indexOf(item.Product_Name) === -1) {
-    DProductName.push(item.Product_Name);
-   this.DistProductName.push({ label: item.Product_Name, value: item.Product_Name });
-   }
-  });
-     this.BackupWeeklyFootballList = [...this.WeeklyFootballList];
+  getDateRangeAppowithSrc(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjAppoWithSrc.From_Date = dateRangeObj[0];
+      this.ObjAppoWithSrc.To_Date = dateRangeObj[1];
+    }
   }
-  FilterDist() {
-    let DLiCustomer:any = [];
-    let DProductName:any = [];
-    this.SearchFields =[];
-  if (this.SelectedDistLiCustomer.length) {
-    this.SearchFields.push('Dept_Name');
-    DLiCustomer = this.SelectedDistLiCustomer;
-  }
-  if (this.SelectedDistProductName.length) {
-    this.SearchFields.push('Present_Status');
-    DProductName = this.SelectedDistProductName;
-  }
-  this.WeeklyFootballList = [];
-  if (this.SearchFields.length) {
-    let LeadArr = this.BackupWeeklyFootballList.filter(function (e) {
-      return (DLiCustomer.length ? DLiCustomer.includes(e['LI_Customer']) : true) &&
-             (DProductName.length ? DProductName.includes(e['Product_Name']) : true)
+  GetAppowithSrc(valid) {
+    this.AppoWithSrcList = [];
+    // this.BackupWeeklyFootballList = [];
+    this.AppoWithSrcListHeader = [];
+    this.AppoWithSrcDetailsList = [];
+    this.AppoWithSrcDetailsListHeader = [];
+    this.AppowithSrcFormSubmitted = true;
+    const start = this.ObjAppoWithSrc.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjAppoWithSrc.From_Date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjAppoWithSrc.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjAppoWithSrc.To_Date))
+      : this.DateService.dateConvert(new Date());
+      this.tab2seachSpinner = true;
+  if (valid && start && end) {
+    this.AppowithSrcFormSubmitted = false;
+    const tempobj = {
+      start_date: start,
+      end_date: end,
+      Cost_Cen_ID: this.ObjAppoWithSrc.Cost_Cen_ID
+    }
+    const obj = {
+      "SP_String": "sp_weekly_report",
+      "Report_Name_String": "weekly_appointment_count",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      console.log('data daata',data);
+      if(data.length){
+      // this.GetRowsTotal(data);
+      this.AppoWithSrcList = data;
+      // this.BackupWeeklyFootballList = data;
+      this.AppoWithSrcListHeader = Object.keys(data[0]);
+      this.tab2seachSpinner = false;
+      this.getTotalValue();
+    }
+    else {
+      this.AppoWithSrcList = [];
+      this.AppoWithSrcListHeader = [];
+      this.tab2seachSpinner = false;
+    }
     });
-  this.WeeklyFootballList = LeadArr.length ? LeadArr : [];
   } else {
-  this.WeeklyFootballList = [...this.BackupWeeklyFootballList] ;
+    this.tab2seachSpinner = false;
   }
   }
-onReject(){}
-GetLIview(dataobj){
-  this.LIviewData = {};
-  this.AddProdList = [];
-  this.Tax = undefined;
-  this.CGST = undefined;
-  this.SGST = undefined;
-  this.IGST = undefined;
-  this.NetAMT = undefined;
-      if (dataobj.LI_Doc_No) {
-      const tempobj = {
-        Doc_No : dataobj.LI_Doc_No,
-      }
-        const obj = {
-          "SP_String": "SP_Sales_MIS_Report",
-          "Report_Name_String": "Get_LI_View_Details",
-          "Json_Param_String": JSON.stringify([tempobj])
-          }
-        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-          this.LIviewList = data;
-          this.LIviewData = data[0];
-          data.forEach(element => {
-            const  productObj = {
-               Product_Type : element.Product_Type,
-               Product_Sub_Type : element.Product_Sub_Type,
-               Product_Specification : element.Product_Name,
-               Qty :  Number(element.Qty),
-               UOM : element.UOM,
-               Rate : element.Rate,
-               Taxable_unt : element.Taxable_Amount,
-               CGST_Rate : element.CGST_Rate,
-               CGST_Amt : element.CGST_Amount,
-               SGST_Rate : element.SGST_Rate,
-               SGST_Amt :  element.SGST_Amount,
-               IGST_Rate : element.IGST_Rate,
-               IGST_Amt : element.IGST_Amount,
-               Line_Total_Amount : element.Line_Total_Amount
-             };
-             this.AddProdList.push(productObj);
-     
-     
-              //
-         });
-         this.TotalCalculation();
-          this.LIviewPopup = true
-          
-        })
-      }
-    
-}
-LIpopupCancle(){
-  this.LIviewData = {};
-  this.AddProdList = [];
-  this.Tax = undefined;
-  this.CGST = undefined;
-  this.SGST = undefined;
-  this.IGST = undefined;
-  this.NetAMT = undefined;
-  this.LIviewPopup = false;
-}
-TotalCalculation(){
-  this.Tax = undefined;
-  this.CGST = undefined;
-  this.SGST = undefined;
-  this.IGST = undefined;
-  this.NetAMT = undefined;
-  let count1 = 0;
-  let count2 = 0;
-  let count3 = 0;
-  let count4 = 0;
-  let count5 = 0;
-  this.AddProdList.forEach(item => {
-    count1 = count1 + Number(item.Taxable_unt);
-    count2= count2 + Number(item.CGST_Amt);
-    count3 = count3 + Number(item.SGST_Amt);
-    count4= count4 + Number(item.IGST_Amt);
-    count5 = count5 + Number(item.Line_Total_Amount);
-  });
-  this.Tax = count1.toFixed(2);
-  this.CGST = count2.toFixed(2);
-  this.SGST = count3.toFixed(2);
-  this.IGST = count4.toFixed(2);
-  this.NetAMT = count5.toFixed(2);
-}
-GetPI(dataobj){
-  this.PIList = [];
-  if (dataobj.LI_Doc_No) {
-  const obj = {
-    "SP_String": "SP_Sales_MIS_Report",
-    "Report_Name_String": "Get_PI_Data_Details",
-    "Json_Param_String": JSON.stringify({Doc_No : dataobj.LI_Doc_No})
-  }
-  this.GlobalAPI.getData(obj).subscribe((data: any) => {
-    this.PIList = data;
-    if (this.PIList.length) {
-      this.PIListHeader = Object.keys(data[0]);
-    } else {
-      this.PIListHeader = [];
-    }
-    // console.log("PIList", this.PIList);
-    this.PIPopup = true;
-  });
-  }
-}
-GetPIviewDetails(dataobj){
-  this.PIviewData = {};
-  this.AddPIProdList = [];
-  this.PITax = undefined;
-  this.PICGST = undefined;
-  this.PISGST = undefined;
-  this.PIIGST = undefined;
-  this.PINetAMT = undefined;
-      if (dataobj.PI_Doc_No) {
-      const tempobj = {
-        Doc_No : dataobj.PI_Doc_No,
-      }
-        const obj = {
-          "SP_String": "SP_Sales_MIS_Report",
-          "Report_Name_String": "Get_PI_View_Details",
-          "Json_Param_String": JSON.stringify([tempobj])
-          }
-        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-          this.PIviewList = data;
-          this.PIviewData = data[0];
-          data.forEach(element => {
-            const  productObj = {
-               //ID : element.ID,
-               LI_Doc_No : element.LI_Doc_No,
-               LI_Doc_Date : element.LI_Doc_Date,
-               Ref_Doc_No : element.Ref_Doc_No,
-               Ref_Doc_Date : element.Ref_Doc_Date,
-               Product_Specification : element.Product_Name,
-               LI_Qty : Number(element.LI_Qty),
-               Qty :  Number(element.Qty),
-               Sale_Order_Qty : Number(element.Sale_Order_Qty),
-               Sale_Bill_Qty : Number(element.Sale_Bill_Qty),
-               UOM : element.UOM,
-               Rate : element.Rate,
-               Taxable_unt : element.Taxable_Amount,
-               CGST_Rate : element.CGST_Rate,
-               CGST_Amt : element.CGST_Amount,
-               SGST_Rate : element.SGST_Rate,
-               SGST_Amt :  element.SGST_Amount,
-               IGST_Rate : element.IGST_Rate,
-               IGST_Amt : element.IGST_Amount,
-               Line_Total_Amount : element.Line_Total_Amount
-             };
-             this.AddPIProdList.push(productObj);
-     
-     
-              //
-         });
-         this.TotalPICalculation();
-         this.PIviewPopup = true
-          
-        })
-      }
-}
-TotalPICalculation(){
-  this.PITax = undefined;
-  this.PICGST = undefined;
-  this.PISGST = undefined;
-  this.PIIGST = undefined;
-  this.PINetAMT = undefined;
-  let count1 = 0;
-  let count2 = 0;
-  let count3 = 0;
-  let count4 = 0;
-  let count5 = 0;
-  this.AddPIProdList.forEach(item => {
-    count1 = count1 + Number(item.Taxable_unt);
-    count2= count2 + Number(item.CGST_Amt);
-    count3 = count3 + Number(item.SGST_Amt);
-    count4= count4 + Number(item.IGST_Amt);
-    count5 = count5 + Number(item.Line_Total_Amount);
-  });
-  this.PITax = count1.toFixed(2);
-  this.PICGST = count2.toFixed(2);
-  this.PISGST = count3.toFixed(2);
-  this.PIIGST = count4.toFixed(2);
-  this.PINetAMT = count5.toFixed(2);
-}
-GetSO(dataobj){
-  this.SOList = [];
-  if (dataobj.LI_Doc_No) {
-  const obj = {
-    "SP_String": "SP_Sales_MIS_Report",
-    "Report_Name_String": "Get_SO_Data_Details",
-    "Json_Param_String": JSON.stringify({Doc_No : dataobj.LI_Doc_No})
-  }
-  this.GlobalAPI.getData(obj).subscribe((data: any) => {
-    this.SOList = data;
-    if (this.SOList.length) {
-      this.SOListHeader = Object.keys(data[0]);
-    } else {
-      this.SOListHeader = [];
-    }
-    // console.log("PIList", this.PIList);
-    this.SOPopup = true;
-  });
-  }
-}
-GetSOviewDetails(DocNo) {
-  if (DocNo) {
-    const objtemp = {
-      "SP_String": "SP_BL_Txn_Sale_Order",
-      "Report_Name_String": "Sale_Order_Print"
-    }
-    this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
-      var printlink = data[0].Column1;
-      window.open(printlink + "?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
-    })
-  }
-}
-GetOC(dataobj){
-  this.OCList = [];
-  if (dataobj.LI_Doc_No) {
-  const obj = {
-    "SP_String": "SP_Sales_MIS_Report",
-    "Report_Name_String": "Get_SC_Data_Details",
-    "Json_Param_String": JSON.stringify({Doc_No : dataobj.LI_Doc_No})
-  }
-  this.GlobalAPI.getData(obj).subscribe((data: any) => {
-    this.OCList = data;
-    if (this.OCList.length) {
-      this.OCListHeader = Object.keys(data[0]);
-    } else {
-      this.OCListHeader = [];
-    }
-    // console.log("PIList", this.PIList);
-    this.OCPopup = true;
-  });
-  }
-}
-GetOCviewDetails(DocNo) {
-  if (DocNo) {
-    const objtemp = {
-      "SP_String": "SP_MICL_Sale_Bill",
-      "Report_Name_String": "Sale_Challan_Print"
-    }
-    this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
-      var printlink = data[0].Column1;
-      window.open(printlink + "?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
-    })
-  }
-}
-GetSB(dataobj){
-  this.SBillList = [];
-  if (dataobj.LI_Doc_No) {
-  const obj = {
-    "SP_String": "SP_Sales_MIS_Report",
-    "Report_Name_String": "Get_SB_Data_Details",
-    "Json_Param_String": JSON.stringify({Doc_No : dataobj.LI_Doc_No})
-  }
-  this.GlobalAPI.getData(obj).subscribe((data: any) => {
-    this.SBillList = data;
-    if (this.SBillList.length) {
-      this.SBillListHeader = Object.keys(data[0]);
-    } else {
-      this.SBillListHeader = [];
-    }
-    // console.log("PIList", this.PIList);
-    this.SBillPopup = true;
-  });
-  }
-}
-GetSBviewDetails(DocNo) {
-  if (DocNo) {
-    const objtemp = {
-      "SP_String": "SP_MICL_Sale_Bill",
-      "Report_Name_String": "Sale_Bill_Print"
-    }
-    this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
-      var printlink = data[0].Column1;
-      window.open(printlink + "?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
-    })
-  }
-}
-GetRA(dataobj){
-  this.RAList = [];
-  if (dataobj.LI_Doc_No) {
-  const obj = {
-    "SP_String": "SP_Sales_MIS_Report",
-    "Report_Name_String": "Get_RA_Data_Details",
-    "Json_Param_String": JSON.stringify({Doc_No : dataobj.LI_Doc_No})
-  }
-  this.GlobalAPI.getData(obj).subscribe((data: any) => {
-    this.RAList = data;
-    if (this.RAList.length) {
-      this.RAListHeader = Object.keys(data[0]);
-    } else {
-      this.RAListHeader = [];
-    }
-    // console.log("PIList", this.PIList);
-    this.RAPopup = true;
-  });
-  }
-}
-GetRAviewDetails(DocNo) {
-  // if (DocNo) {
-  //   const objtemp = {
-  //     "SP_String": "SP_MICL_Sale_Bill",
-  //     "Report_Name_String": "Sale_Bill_Print"
-  //   }
-  //   this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
-  //     var printlink = data[0].Column1;
-  //     window.open(printlink + "?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
-  //   })
-  // }
-}
+  getTotalValue(){
+    this.totalcount = 0;
+    let Amtval = 0;
+    this.AppoWithSrcList.forEach((item)=>{
+      Amtval += Number(item.count);
+    });
 
-
-//DISPATCH MIS
-getDispatchMISDateRange(dateRangeObj) {
-  if (dateRangeObj.length) {
-    this.DIspatchMIS_start_date = dateRangeObj[0];
-    this.DIspatchMIS_end_date = dateRangeObj[1];
+    this.totalcount = Amtval ? Amtval.toFixed(2) : '-';
   }
-}
-GetDispatchMIS() {
-  this.DispatchMISList = [];
-  this.BackupDispatchMISList = [];
-  const start = this.DIspatchMIS_start_date
-    ? this.DateService.dateConvert(new Date(this.DIspatchMIS_start_date))
-    : this.DateService.dateConvert(new Date());
-  const end = this.DIspatchMIS_end_date
-    ? this.DateService.dateConvert(new Date(this.DIspatchMIS_end_date))
-    : this.DateService.dateConvert(new Date());
-    this.seachSpinner = true;
-if (start && end) {
-  const tempobj = {
+  GetDoneDetails(obj){
+    console.log(obj.remark)
+    this.status = undefined;
+    if(obj.remark != "Cancel"){
+      console.log(obj.count)
+      this.status = obj.remark;
+      this.GetAppowithSrcDetails();
+    }
+  }
+  GetAppowithSrcDetails(){
+    this.AppoWithSrcDetailsList = [];
+    this.AppoWithSrcDetailsListHeader = [];
+    if (this.status) {
+      const start = this.ObjAppoWithSrc.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjAppoWithSrc.From_Date))
+      : this.DateService.dateConvert(new Date());
+      const end = this.ObjAppoWithSrc.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjAppoWithSrc.To_Date))
+      : this.DateService.dateConvert(new Date());
+      const sendobj = {
+        start_date: start,             
+			  end_date: end,        
+			  Status: this.status
+      }
+    const obj = {
+      "SP_String": "sp_weekly_report",
+      "Report_Name_String": "weekly_appointment_with_source",
+      "Json_Param_String": JSON.stringify(sendobj)
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      if (data.length) {
+        this.AppoWithSrcDetailsList = data;
+        this.AppoWithSrcDetailsListHeader = Object.keys(data[0]);
+        console.log("AppoWithSrcDetailsList", this.AppoWithSrcDetailsList);
+      } else {
+        this.AppoWithSrcDetailsList = [];
+        this.AppoWithSrcDetailsListHeader = [];
+      }
+    });
+    }
+  }
+  ExportToExcelAppoWithSorce(){
+    const start = this.ObjAppoWithSrc.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjAppoWithSrc.From_Date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjAppoWithSrc.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjAppoWithSrc.To_Date))
+      : this.DateService.dateConvert(new Date());
+     let tempobj = {}
+     let data1:any = [];
+     this.AppoWithSrcList.forEach(element => {
+      const obj = {
+        remark : element.remark,
+        count : element.count
+       }
+       data1.push(obj);
+     });
+  if (start && end) {
+   tempobj = {
+    From_Date: start,
+    To_Date: end,
+    Cost_Cen_Name: this.AppoWithSrcList[0].Cost_Cen_Name,
+    excelData1: data1,
+    totalcount: this.totalcount,
+    excelData2: this.AppoWithSrcDetailsList
+  }
+  }
+    this.excelservice.exporttoExcelAppoWithSourceDetails(tempobj);
+  }
+ 
+  getDateRangeWeeklySales(dateRangeObj){
+    if (dateRangeObj.length) {
+      this.ObjWeeklySales.From_Date = dateRangeObj[0];
+      this.ObjWeeklySales.To_Date = dateRangeObj[1];
+    }
+  }
+  GetWeeklySales() {
+    this.WeeklySalesList = [];
+    this.BackupWeeklySalesList = [];
+    this.WeeklySalesListHeader = [];
+    const start = this.ObjWeeklySales.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjWeeklySales.From_Date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjWeeklySalesDetails.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjWeeklySales.To_Date))
+      : this.DateService.dateConvert(new Date());
+      this.seachSpinnerWeeklySales = true;
+  if (start && end) {
+    const tempobj = {
+      start_date: start,
+      end_date: end,
+      // Cost_Cen_ID: 
+      // Enq_Source_ID:
+    }
+    const obj = {
+      "SP_String": "sp_weekly_report",
+      "Report_Name_String": "weekly_sales_count_details",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      // console.log('data daata',data);
+      if(data.length){
+      this.GetRowsTotal(data);
+      this.WeeklySalesList = data;
+      this.BackupWeeklySalesList = data;
+      this.WeeklySalesListHeader = Object.keys(data[0]);
+      this.seachSpinnerWeeklySales = false;
+      this.GetTotalForColumns();
+    }
+    else {
+      this.seachSpinnerWeeklySales = false;
+    }
+    });
+  }
+  }
+  GetTotalForColumns() {
+    // Initialize an empty object to hold column totals
+    let columnTotals: any = {};
+  
+    // Loop through each row in the list
+    this.WeeklySalesList.forEach((element: any) => {
+      // Loop through each key in the current row
+      for (const key in element) {
+        // Check if the value is a number and add to the column total
+        if (typeof element[key] === 'number') {
+          if (!columnTotals[key]) {
+            columnTotals[key] = 0; // Initialize the column if not already present
+          }
+          columnTotals[key] += element[key];
+        }
+      }
+    });
+    this.WeeklySalesList.push({ 'Cost_Cen_Name': 'Total', ...columnTotals });
+  }
+  ExportToExcelWeekSales(){
+    const start = this.ObjWeeklySales.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjWeeklySales.From_Date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjWeeklySales.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjWeeklySales.To_Date))
+      : this.DateService.dateConvert(new Date());
+     let tempobj = {}
+  if (start && end) {
+   tempobj = {
     From_Date: start,
     To_Date: end,
   }
-  const obj = {
-    "SP_String": "SP_Sales_MIS_Report",
-    "Report_Name_String": "Get_Despatch_Report_Date",
-    "Json_Param_String": JSON.stringify([tempobj])
   }
-  this.GlobalAPI.getData(obj).subscribe((data: any) => {
-    data.forEach((el:any,i:any)=>{
-      let DispatchMISListHeader:any = Object.values(data[i]).slice(2)
-       const sumWithInitial = DispatchMISListHeader.reduce(
-         (accumulator, currentValue) => accumulator + currentValue,
-       );
-       el['Total'] = Number(Number(sumWithInitial).toFixed(2));
-       })
-    this.DispatchMISList = data;
-    this.BackupDispatchMISList = data;
-    this.GetDistinct();
-    if (this.DispatchMISList.length) {
-      this.DispatchMISListHeader = Object.keys(data[0]);
-    } else {
-      this.DispatchMISListHeader = [];
-    }
-    this.seachSpinner = false;
-    console.log("WeeklyFootballList", this.WeeklyFootballList);
-  });
-}
-}
+    this.excelservice.exporttoExcelWeeklyFootfallDetails(this.WeeklySalesList,tempobj);
+  }
 
-CalculateColumn(field:any){
-  if(field != 'SlNo' && field != 'Sub_Ledger_Billing_Name'){
-    let coltotal = 0;
-    this.DispatchMISList.forEach((el:any,i:any)=>{
-      coltotal = Number(coltotal) + Number(el[field])
-       })
-    return coltotal ? Number(coltotal).toFixed(2) : '-'
+  getDateRange17(dateRangeObj){
+    if (dateRangeObj.length) {
+      this.ObjWeeklySalesDetails.From_Date = dateRangeObj[0];
+      this.ObjWeeklySalesDetails.To_Date = dateRangeObj[1];
+    }
   }
+  GetWeeklySalesDetaild(){
+    this.WeeklySalesDetailsList = [];
+    this.BackupWeeklySalesDetailsList = [];
+    this.WeeklySalesDetailsListHeader = [];
+    const start = this.ObjWeeklySalesDetails.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjWeeklySalesDetails.From_Date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjWeeklySalesDetails.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjWeeklySalesDetails.To_Date))
+      : this.DateService.dateConvert(new Date());
+      this.seachSpinnerWeeklySalesdetails = true;
+  if (start && end) {
+    const tempobj = {
+      start_date: start,
+      end_date: end
+    }
+    const obj = {
+      "SP_String": "sp_weekly_report",
+      "Report_Name_String": "weekly_sales_details",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      console.log('data sales',data);
   
-}
-ExportToExcelDispatchMIS(){
-  const start = this.DIspatchMIS_start_date
-  ? this.DateService.dateConvert(new Date(this.DIspatchMIS_start_date))
-  : this.DateService.dateConvert(new Date());
-const end = this.DIspatchMIS_end_date
-  ? this.DateService.dateConvert(new Date(this.DIspatchMIS_end_date))
-  : this.DateService.dateConvert(new Date());
- 
-if (start && end) {
-const tempobj = {
-  From_Date: start,
-  To_Date: end,
-}
-  this.excelservice.exporttoExcelSales(this.DispatchMISList,tempobj);
-}
-}
+      if(data.length){
+        let sata:any =[];
+  
+        data.forEach((element:any) => {
+          sata.push(
+            {
+              'Cost_Cen_Name': element.Cost_Cen_Name,
+              'amount': element.amount,
+              'Enq_deatils': JSON.parse(element.Enq_deatils)
+            }
+          )
+        });
+        console.log('sata',sata)
+  
+      this.WeeklySalesDetailsList = sata;
+      this.BackupWeeklySalesDetailsList = sata;
+      this.WeeklySalesDetailsListHeader = Object.keys(sata[0]);
+      this.seachSpinnerWeeklySalesdetails = false;
+    }
+    else {
+      this.seachSpinnerWeeklySalesdetails = false;
+    }
+    });
+  }
+  }
+  ExportToExcelWeeklySalesDetails(){
+    let tempobj = {
+     From_Date: this.ObjWeeklySalesDetails.From_Date ? this.DateService.dateConvert(new Date(this.ObjWeeklySalesDetails.From_Date)) : this.DateService.dateConvert(new Date()),
+     To_Date: this.ObjWeeklySalesDetails.To_Date ? this.DateService.dateConvert(new Date(this.ObjWeeklySalesDetails.To_Date)) : this.DateService.dateConvert(new Date())
+     }
+     this.excelservice.exporttoExcelWeeklySalesDetails(this.WeeklySalesDetailsList,tempobj);
+  }
+
 }
 
 class WeeklyFootball {
+  From_Date: any;
+  To_Date: any;
+}
+class AppoWithSrc {
+  From_Date: any;
+  To_Date: any;
+  Cost_Cen_ID: any;
+}
+class WeeklySales {
+  From_Date: any;
+  To_Date: any;
+}
+class WeeklySalesDetails {
   From_Date: any;
   To_Date: any;
 }
