@@ -14,6 +14,7 @@ import { CompacctCommonApi } from '../../../../shared/compacct.services/common.a
   encapsulation: ViewEncapsulation.None
 })
 export class ChangeBatchNumberComponent implements OnInit {
+  BrandList:any = [];
   ProductList:any = [];
   OldBatchNoList:any = [];
   Spinner:boolean = false;
@@ -46,13 +47,27 @@ export class ChangeBatchNumberComponent implements OnInit {
       Header: "Change Batch Number",
       Link: "Material Management -> Change Batch Number"
     });
-    this.GetProduct();
+    this.GetBrandBro();
   }
-  GetProduct(){
+  GetBrandBro(){
+    const obj = {
+      "SP_String": "SP_Production_Voucher",
+      "Report_Name_String": "Get - Brand",
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.BrandList = data;
+    })
+  }
+  GetProduct(brandid){
     this.ProductList = [];
+    const TempObj = {
+      Brand_ID : brandid
+     }
      const obj = {
       "SP_String": "SP_batch_no_change",
-      "Report_Name_String": "GET_Products"
+      "Report_Name_String": "GET_Products",
+      "Json_Param_String": JSON.stringify([TempObj])
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -134,6 +149,7 @@ export class ChangeBatchNumberComponent implements OnInit {
           Doc_No : "A",
           Doc_Date : this.DateService.dateConvert(new Date(this.CurrentDate)),
           To_Cost_Cen_ID : this.ObjChangeBatchNo.To_Cost_Cen_ID,
+          Brand_ID : this.ObjChangeBatchNo.Brand_ID,
           Product_ID : this.ObjChangeBatchNo.Product_ID,
           Qty: this.ObjChangeBatchNo.Qty,
           UOM: this.ObjChangeBatchNo.UOM,
@@ -216,6 +232,7 @@ export class ChangeBatchNumberComponent implements OnInit {
 }
 class ChangeBatchNo {
   Doc_No: any;
+  Brand_ID: any;
   Product_ID : any;
   Qty : any;
   UOM:string = "";

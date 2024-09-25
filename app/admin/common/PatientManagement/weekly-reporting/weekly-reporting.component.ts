@@ -40,6 +40,11 @@ export class WeeklyReportingComponent implements OnInit {
   tab2seachSpinner:boolean = false;
   totalcount:any
   status:any;
+  AppoSrcCol:any;
+  AppoSrcRow:any;
+  AppoSrcPatientList:any = [];
+  AppoSrcPatientListHeader:any = [];
+  AppoSrcPopup:boolean = false;
 
   ObjWeeklySales : WeeklySales = new WeeklySales();
   seachSpinnerWeeklySales:boolean=false;
@@ -57,6 +62,7 @@ export class WeeklyReportingComponent implements OnInit {
   Spinner: boolean = false;
   seachSpinner: boolean = false;
   items: any= [];
+  loading:boolean = false;
 
 
   constructor(
@@ -135,10 +141,10 @@ export class WeeklyReportingComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       // console.log('data daata',data);
-      if(data.length){
       this.GetRowsTotal(data);
-      this.WeeklyFootballList = data;
-      this.BackupWeeklyFootballList = data;
+      this.BackupWeeklyFootballList = [...data];
+      if(this.BackupWeeklyFootballList.length){
+      this.WeeklyFootballList = [...this.BackupWeeklyFootballList]
       // this.GetDistinct();
       this.WeeklyFootballListHeader = Object.keys(data[0]);
       this.seachSpinner = false;
@@ -196,8 +202,8 @@ export class WeeklyReportingComponent implements OnInit {
     this.WeekFootCol = undefined
     this.WeekFootRow = undefined
     if(col != "Cost_Cen_Name" && col != "Total"){
-    console.log("col",col)
-    console.log("Row",row.Cost_Cen_Name)
+    // console.log("col",col)
+    // console.log("Row",row.Cost_Cen_Name)
     this.WeekFootCol = col
     this.WeekFootRow = row.Cost_Cen_Name
     this.GetWeeklyFootDetails();
@@ -227,7 +233,7 @@ export class WeeklyReportingComponent implements OnInit {
       if (data.length) {
         this.WeekFootFallDetailsList = data;
         this.WeekFootFallDetailsListHeader = Object.keys(data[0]);
-        console.log("WeekFootFallDetailsList", this.WeekFootFallDetailsList);
+        // console.log("WeekFootFallDetailsList", this.WeekFootFallDetailsList);
         this.WFDPopup = true;
       } else {
         this.WeekFootFallDetailsList = [];
@@ -250,7 +256,7 @@ export class WeeklyReportingComponent implements OnInit {
     To_Date: end,
   }
   }
-    this.excelservice.exporttoExcelWeeklyFootfallDetails(this.WeeklyFootballList,tempobj);
+    this.excelservice.exporttoExcelWeeklyFootfallDetails(this.BackupWeeklyFootballList,tempobj);
   }
 
   getDateRangeAppowithSrc(dateRangeObj) {
@@ -286,7 +292,7 @@ export class WeeklyReportingComponent implements OnInit {
       "Json_Param_String": JSON.stringify([tempobj])
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      console.log('data daata',data);
+      // console.log('data daata',data);
       if(data.length){
       // this.GetRowsTotal(data);
       this.AppoWithSrcList = data;
@@ -315,10 +321,10 @@ export class WeeklyReportingComponent implements OnInit {
     this.totalcount = Amtval ? Amtval.toFixed(2) : '-';
   }
   GetDoneDetails(obj){
-    console.log(obj.remark)
+    // console.log(obj.remark)
     this.status = undefined;
     if(obj.remark != "Cancel"){
-      console.log(obj.count)
+      // console.log(obj.count)
       this.status = obj.remark;
       this.GetAppowithSrcDetails();
     }
@@ -347,7 +353,7 @@ export class WeeklyReportingComponent implements OnInit {
       if (data.length) {
         this.AppoWithSrcDetailsList = data;
         this.AppoWithSrcDetailsListHeader = Object.keys(data[0]);
-        console.log("AppoWithSrcDetailsList", this.AppoWithSrcDetailsList);
+        // console.log("AppoWithSrcDetailsList", this.AppoWithSrcDetailsList);
       } else {
         this.AppoWithSrcDetailsList = [];
         this.AppoWithSrcDetailsListHeader = [];
@@ -371,7 +377,6 @@ export class WeeklyReportingComponent implements OnInit {
        }
        data1.push(obj);
      });
-  if (start && end) {
    tempobj = {
     From_Date: start,
     To_Date: end,
@@ -380,8 +385,51 @@ export class WeeklyReportingComponent implements OnInit {
     totalcount: this.totalcount,
     excelData2: this.AppoWithSrcDetailsList
   }
-  }
     this.excelservice.exporttoExcelAppoWithSourceDetails(tempobj);
+  }
+  GetPatientDetailstab2(col,row){
+    this.AppoSrcCol = undefined
+    this.AppoSrcRow = undefined
+    if(col != "Enq_Source_Name" && col != "Total"){
+    // console.log("col",col)
+    // console.log("Row",row.Enq_Source_Name)
+    this.AppoSrcCol = col
+    this.AppoSrcRow = row.Enq_Source_Name
+    this.GetPatientDetails();
+    }
+  }
+  GetPatientDetails(){
+    this.AppoSrcPatientList = [];
+    if (this.AppoSrcCol && this.AppoSrcRow) {
+      const start = this.ObjAppoWithSrc.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjAppoWithSrc.From_Date))
+      : this.DateService.dateConvert(new Date());
+      const end = this.ObjAppoWithSrc.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjAppoWithSrc.To_Date))
+      : this.DateService.dateConvert(new Date());
+      const sendobj = {
+        start_date: start,             
+			  end_date: end,        
+			  Consultancy_Descr : this.AppoSrcCol,          
+			  Enq_Source_Name : this.AppoSrcRow 
+      }
+    const obj = {
+      "SP_String": "sp_weekly_report",
+      "Report_Name_String": "weekly_appointment_with_source_details",
+      "Json_Param_String": JSON.stringify(sendobj)
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      if (data.length) {
+        this.AppoSrcPatientList = data;
+        this.AppoSrcPatientListHeader = Object.keys(data[0]);
+        // console.log("AppoSrcPatientList", this.AppoSrcPatientList);
+        this.AppoSrcPopup = true;
+      } else {
+        this.AppoSrcPatientList = [];
+        this.AppoSrcPatientListHeader = [];
+      }
+    });
+    }
   }
  
   getDateRangeWeeklySales(dateRangeObj){
@@ -415,10 +463,17 @@ export class WeeklyReportingComponent implements OnInit {
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       // console.log('data daata',data);
+      data.forEach((el:any,i:any)=>{
+        let WeeklySalesListHeader:any = Object.values(data[i]).slice(2)
+         const sumWithInitial = WeeklySalesListHeader.reduce(
+           (accumulator, currentValue) => accumulator + currentValue,
+         );
+         el['Total'] = Number(Number(sumWithInitial).toFixed(2));
+         })
+      // this.GetRowsTotal(data);
       if(data.length){
-      this.GetRowsTotal(data);
-      this.WeeklySalesList = data;
-      this.BackupWeeklySalesList = data;
+      this.WeeklySalesList = [...data];
+      this.BackupWeeklySalesList = [...data];
       this.WeeklySalesListHeader = Object.keys(data[0]);
       this.seachSpinnerWeeklySales = false;
       this.GetTotalForColumns();
@@ -431,22 +486,36 @@ export class WeeklyReportingComponent implements OnInit {
   }
   GetTotalForColumns() {
     // Initialize an empty object to hold column totals
-    let columnTotals: any = {};
+    let columnCountTotals: any = {};
+    let columnTotalAmount: any = {};
   
     // Loop through each row in the list
     this.WeeklySalesList.forEach((element: any) => {
       // Loop through each key in the current row
+      if(element.Sl_no == 1) {
       for (const key in element) {
         // Check if the value is a number and add to the column total
         if (typeof element[key] === 'number') {
-          if (!columnTotals[key]) {
-            columnTotals[key] = 0; // Initialize the column if not already present
+          if (!columnCountTotals[key]) {
+            columnCountTotals[key] = 0; // Initialize the column if not already present
           }
-          columnTotals[key] += element[key];
+          columnCountTotals[key] += element[key];
         }
       }
+      }
+      if(element.Sl_no == 2) {
+        for (const key in element) {
+          // Check if the value is a number and add to the column total
+          if (typeof element[key] === 'number') {
+            if (!columnTotalAmount[key]) {
+              columnTotalAmount[key] = 0; // Initialize the column if not already present
+            }
+            columnTotalAmount[key] += element[key];
+          }
+        }
+        }
     });
-    this.WeeklySalesList.push({ 'Cost_Cen_Name': 'Total', ...columnTotals });
+    this.WeeklySalesList.push({ 'Cost_Cen_Name': 'Total Count', ...columnCountTotals}, { 'Cost_Cen_Name': 'Total Amount', ...columnTotalAmount });
   }
   ExportToExcelWeekSales(){
     const start = this.ObjWeeklySales.From_Date
@@ -456,13 +525,13 @@ export class WeeklyReportingComponent implements OnInit {
       ? this.DateService.dateConvert(new Date(this.ObjWeeklySales.To_Date))
       : this.DateService.dateConvert(new Date());
      let tempobj = {}
-  if (start && end) {
    tempobj = {
     From_Date: start,
     To_Date: end,
+    excelData:this.BackupWeeklySalesList
+    // excelData:this.BackupWeeklySalesList.map(({ Sl_no, ...rest }) => rest)
   }
-  }
-    this.excelservice.exporttoExcelWeeklyFootfallDetails(this.WeeklySalesList,tempobj);
+    this.excelservice.exporttoExcelWeekSales(tempobj);
   }
   // Determine whether to display the first column for a given row
   shouldDisplay(rowIndex: number, field: string): boolean {
@@ -515,7 +584,7 @@ calculateRowSpan(rowIndex: number, field: string): number {
       "Json_Param_String": JSON.stringify([tempobj])
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
-      console.log('data sales',data);
+      // console.log('data sales',data);
   
       if(data.length){
         let sata:any =[];
@@ -529,7 +598,7 @@ calculateRowSpan(rowIndex: number, field: string): number {
             }
           )
         });
-        console.log('sata',sata)
+        // console.log('sata',sata)
   
       this.WeeklySalesDetailsList = sata;
       this.BackupWeeklySalesDetailsList = sata;
@@ -549,6 +618,9 @@ calculateRowSpan(rowIndex: number, field: string): number {
      }
      this.excelservice.exporttoExcelWeeklySalesDetails(this.WeeklySalesDetailsList,tempobj);
   }
+
+  onReject(){}
+  onConfirm(){}
 
 }
 

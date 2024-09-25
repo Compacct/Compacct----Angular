@@ -145,7 +145,10 @@ export class MiclRequisitionComponent implements OnInit {
         this.toCostCenter = Number(params['CostCenID']);
         this.headerText = params['Caption'];
         this.ReqType = params['ReqType'];
-        
+        this.Header.pushHeader({
+          Header: this.headerText,
+          Link: this.headerText
+        });
        })
      }
 

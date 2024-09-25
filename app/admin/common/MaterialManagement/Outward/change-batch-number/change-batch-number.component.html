@@ -27,6 +27,17 @@
                     <p-tabView [activeIndex]="tabIndexToView">
                         <form name="ChangeBatchNoForm" #ChangeBatchNoForm="ngForm" novalidate>
                             <div class="form-group">
+                                <div class="col-sm-2">
+                                    <label class="control-label">Brand &nbsp;<sup class="text-danger">*</sup>
+                                    </label>
+                                    <select class="form-control" name="brandid" #brandid="ngModel" [(ngModel)]="ObjChangeBatchNo.Brand_ID" (change)="GetProduct(ObjChangeBatchNo.Brand_ID)" [ngClass]="{'clearance': ChangeBatchNoFormSubmitted && brandid?.errors?.required}" required>
+                                          <option  [ngValue]="undefined">Select</option>
+                                      <option *ngFor="let option of BrandList" value="{{option.Brand_ID}}">
+                                          {{option.Brand_INI}}
+                                          </option>
+                                  </select>
+
+                                </div>
                                 <div class="col-sm-3">
                                     <label class="control-label">Product <sup class="text-danger">*</sup> &nbsp;</label>
                                         <p-dropdown [options]="ProductList" name="product" [(ngModel)]="ObjChangeBatchNo.Product_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="GetOldBatchList()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
@@ -67,13 +78,13 @@
                                         <input class="form-control" name="Batch" #Batch="ngModel" [(ngModel)]="ObjChangeBatchNo.New_Batch_No"  placeholder="New Batch No." [disabled]="true" [ngClass]="{'clearance': ChangeBatchNoFormSubmitted && Batch?.errors?.required}"
                                             required>
                                 </div>
-                                <div class="col-sm-1">
-                                    <button type="button" class="btn btn-primary custombutton2" (click)="SaveNewBatchNo(ChangeBatchNoForm.form.valid)" id="load" [disabled]="Spinner">
-                                      <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                      <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
-                                    </button>
-                                </div>
-                            </div>   
+                            </div>  
+                            <div class="box-footer">
+                                <button type="button" class="btn btn-primary pull-right" (click)="SaveNewBatchNo(ChangeBatchNoForm.form.valid)" id="load" [disabled]="Spinner">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
+                                </button>
+                            </div> 
                         </form>
                     </p-tabView>
                 </div>

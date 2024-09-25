@@ -89,12 +89,22 @@ p:hover {
     background-color: #c7a7e4 !important;
     border: 1px solid black !important;
 }
+#cost-center-body .colcalculatetotalcount {
+    color: black !important;
+    background-color: #c7a7e4 !important;
+    border: 1px solid black !important;
+}
 .last-row-class {
     text-align: center;
     color: black !important;
     background-color: #c7a7e4 !important;
     border: 1px solid black !important;
-  }
+}
+.lastsecond-row-class {
+    color: black !important;
+    background-color: #c7a7e4 !important;
+    border: 1px solid black !important;
+}
 #cost-center-body .last-row-first-column {
     color: white !important;
     background-color: #753fa6 !important;
