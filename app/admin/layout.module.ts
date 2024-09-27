@@ -534,6 +534,7 @@ import { ExpenseTrackingComponent } from './common/HR/expense-tracking/expense-t
 import { CrateTransferDispatchToOutletComponent } from './common/MaterialManagement/Outward/crate-transfer-dispatch-to-outlet/crate-transfer-dispatch-to-outlet.component';
 import { ChangeBatchNumberComponent } from './common/MaterialManagement/Outward/change-batch-number/change-batch-number.component';
 import { WeeklyReportingComponent } from './common/PatientManagement/weekly-reporting/weekly-reporting.component';
+import { CrmReportV2Component } from './common/PatientManagement/crm-report-v2/crm-report-v2.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -982,7 +983,8 @@ import { WeeklyReportingComponent } from './common/PatientManagement/weekly-repo
     ExpenseTrackingComponent,
     CrateTransferDispatchToOutletComponent,
     ChangeBatchNumberComponent,
-    WeeklyReportingComponent
+    WeeklyReportingComponent,
+    CrmReportV2Component
   ],
   imports: [
     CommonModule,
