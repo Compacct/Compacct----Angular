@@ -145,9 +145,27 @@ export class PatientCreateBrunchComponent implements OnInit {
     });
   }
 
+  CheckSameMobileNo() {
+    const samepono = this.allDataList.filter(item=> (item.Mobile === this.objPatient.Mobile));
+    if(samepono.length) {
+      this.CompacctToast.clear();
+      this.CompacctToast.add({
+         key: "compacct-toast",
+         severity: "error",
+         summary: "Warn message  ",
+         detail: "Mobile Number Already Exist."
+       });
+      return false;
+    } 
+      else {
+        return true;
+      }
+    
+    
+  }
   saveDocAppo(valid: any) {
     this.CreationFormSubmited = true;
-    if (valid) {
+    if (valid && this.CheckSameMobileNo()) {
       this.CreationFormSubmited = false;
       this.objPatient.Cost_Cen_ID = this.commonApi.CompacctCookies.Cost_Cen_ID;
       this.objPatient.User_ID = this.userID;

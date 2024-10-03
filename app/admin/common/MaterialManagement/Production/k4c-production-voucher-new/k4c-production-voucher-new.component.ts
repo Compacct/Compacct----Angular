@@ -465,19 +465,8 @@ export class K4cProductionVoucherNewComponent implements OnInit {
     }
   }
   GetProductionpro(){
-    //if(this.Objproduction.Product_Type_ID){
-      //this.checkBoxdis = false;
-      this.allProductsCheck = false;
-      // const tempObj = {
-      //   Brand_ID : this.Objproduction.Brand_ID,
-      //   Product_Type_ID : this.Objproduction.Product_Type_ID ? this.Objproduction.Product_Type_ID : 0,
-      //   From_Cost_Cen_ID : 0,
-      //   From_godown_id : 0,
-      //   Doc_Type : "Requi",
-      //   Date : this.DateService.dateConvert(new Date(this.todayDate)),
-      //   Req_No : this.Objproduction.indentNo.toString()
-      // }
-      //if(this.dataforproduct()){
+      if(this.SelectedIndent.length) {
+        this.allProductsCheck = false;
       this.loading = true;
       const obj = {
         "SP_String": "SP_Production_Voucher_New",
@@ -487,12 +476,13 @@ export class K4cProductionVoucherNewComponent implements OnInit {
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.ProductionlList = data;
         this.ProductionlList.forEach(el=>{
-          el['Qty'] = el.req_qty ? el.req_qty : undefined;
+          el['stock_qty'] = el.stock_qty > 0 ? el.stock_qty : 0;
+          // el['Qty'] = el.req_qty ? Number(Number(el.req_qty) - Number(el.stock_qty)) : undefined;
         })
         this.BackUpProductionlList = [...this.ProductionlList];
         this.loading = false;
       })
-   // }
+   }
 
   }
   onFilterChange(eve: any) {
@@ -518,7 +508,8 @@ export class K4cProductionVoucherNewComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
       this.ProductionlList = data;
       this.ProductionlList.forEach(el=>{
-        el['Qty'] = el.req_qty ? el.req_qty : undefined;
+        el['stock_qty'] = el.stock_qty > 0 ? el.stock_qty : 0;
+        // el['Qty'] = el.req_qty ? Number(Number(el.req_qty) - Number(el.stock_qty)) : undefined;
       });
       this.BackUpProductionlList = [...this.ProductionlList];
       this.loading = false;
@@ -1116,7 +1107,8 @@ const obj = {
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.ProductionlList = data;
         this.ProductionlList.forEach(el=>{
-          el['Qty'] = el.req_qty ? el.req_qty : undefined;
+          el['stock_qty'] = el.stock_qty > 0 ? el.stock_qty : 0;
+          el['Qty'] = el.req_qty ? Number(Number(el.req_qty) - Number(el.stock_qty)) : undefined;
         })
         this.BackUpProductionlList = [...this.ProductionlList];
         this.loading = false;

@@ -285,7 +285,7 @@
                                         <input type="number" class="form-control" placeholder="Notification Level" name="Reorder_Level" #Reorder_Level="ngModel" [(ngModel)]="ObjmasterProduct.Reorder_Level" CompacctDigitonly="true">
                                     </div>
 
-                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished' && Param_Flag != 'Store Item - Saleable'">
+                                    <div class="col-sm-4" *ngIf="Param_Flag != 'Semi Finished' && Param_Flag != 'Finished'">
                                         <label class="control-label">Critical Level</label>
                                         <input type="number" class="form-control" placeholder="Critical Level" name="Critical_Level" #Critical_Level="ngModel" [(ngModel)]="ObjmasterProduct.Critical_Level" CompacctDigitonly="true">
                                     </div>

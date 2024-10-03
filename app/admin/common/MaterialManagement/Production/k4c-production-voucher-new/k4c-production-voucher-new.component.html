@@ -375,6 +375,7 @@
                                             <th>Product Type</th>
                                             <th>Product Description</th>
                                             <th>Indent Qty</th>
+                                            <th *ngIf="!editList.length">Stock Qty</th>
                                             <th>Production Qty</th>
                                         </tr>
                                     </ng-template>
@@ -383,6 +384,7 @@
                                             <td>{{col.Product_Type}}</td>
                                             <td>{{col.Product_Description}}</td>
                                             <td>{{col.req_qty}}</td>
+                                            <td *ngIf="!editList.length">{{col.stock_qty}}</td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.Qty' CompacctDigitonly="true" class="form-control" style="width: 71px;" /></td>
 
                                         </tr>

@@ -1944,6 +1944,13 @@ export class SaleBillNewComponent implements OnInit {
     })
     }
    }
+   PrintSaleBillNew(DocNo) {
+    if(DocNo) {
+    
+      window.open("/Report/Print/K4C/k4c_sale_bill.html"+"?Doc_No=" + DocNo, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+
+    }
+   }
 
 }
 class SaleBillNew {
