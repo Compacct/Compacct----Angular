@@ -341,7 +341,8 @@ export class WeeklyReportingComponent implements OnInit {
       : this.DateService.dateConvert(new Date());
       const sendobj = {
         start_date: start,             
-			  end_date: end,        
+			  end_date: end, 
+        Cost_Cen_ID: this.ObjAppoWithSrc.Cost_Cen_ID,
 			  Status: this.status
       }
     const obj = {
@@ -409,7 +410,8 @@ export class WeeklyReportingComponent implements OnInit {
       : this.DateService.dateConvert(new Date());
       const sendobj = {
         start_date: start,             
-			  end_date: end,        
+			  end_date: end,     
+        Cost_Cen_ID: this.ObjAppoWithSrc.Cost_Cen_ID,   
 			  Consultancy_Descr : this.AppoSrcCol,          
 			  Enq_Source_Name : this.AppoSrcRow 
       }
