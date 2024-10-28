@@ -317,8 +317,14 @@ export class WeeklyReportingComponent implements OnInit {
     this.AppoWithSrcList.forEach((item)=>{
       Amtval += Number(item.count);
     });
-
-    this.totalcount = Amtval ? Amtval.toFixed(2) : '-';
+    const str = Amtval.toFixed(2);
+    const val: string[] = str.split(".");
+    if(val[1]=='00'){
+      this.totalcount = Amtval ? Amtval : '-';
+    }
+    else {
+      this.totalcount = Amtval ? Amtval.toFixed(2) : '-';
+    }
   }
   GetDoneDetails(obj){
     // console.log(obj.remark)

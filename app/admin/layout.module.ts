@@ -535,6 +535,7 @@ import { CrateTransferDispatchToOutletComponent } from './common/MaterialManagem
 import { ChangeBatchNumberComponent } from './common/MaterialManagement/Outward/change-batch-number/change-batch-number.component';
 import { WeeklyReportingComponent } from './common/PatientManagement/weekly-reporting/weekly-reporting.component';
 import { CrmReportV2Component } from './common/PatientManagement/crm-report-v2/crm-report-v2.component';
+import { LeaveAutoUpdateComponent } from './common/HR/leave-auto-update/leave-auto-update.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -984,7 +985,8 @@ import { CrmReportV2Component } from './common/PatientManagement/crm-report-v2/c
     CrateTransferDispatchToOutletComponent,
     ChangeBatchNumberComponent,
     WeeklyReportingComponent,
-    CrmReportV2Component
+    CrmReportV2Component,
+    LeaveAutoUpdateComponent
   ],
   imports: [
     CommonModule,

@@ -1,0 +1,37 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <div class="form-group">
+                        <div class="col-sm-2">
+                            <label class="control-label">Transaction Month<sup class="text-danger">*</sup></label>
+                            <input class="form-control" type="month" name="month" [(ngModel)]="Month_Name">
+                        </div>
+                        <div class="col-sm-4">
+                            <button class="btn btn-primary" (click)="AutoUpdate()" id="load" style="margin-top: 28px" [disabled]="SaveSpinner">
+                                <p-progressSpinner
+                                    *ngIf="SaveSpinner"
+                                    [style]="{ width: '15px', height: '15px' }"
+                                    strokeWidth="8"
+                                    animationDuration=".5s"></p-progressSpinner>
+                                <span *ngIf="!SaveSpinner" class="glyphicon glyphicon-save"></span>Save
+                            </button>
+                        </div>
+                    <!-- </div>
+                    <br>
+                    <div class="form-group"> -->
+                    </div>
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <h5><strong></strong></h5>
+                            </div>
+                        </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
