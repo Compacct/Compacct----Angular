@@ -438,6 +438,7 @@ import { ChangeBatchNumberComponent } from './common/MaterialManagement/Outward/
 import { WeeklyReportingComponent } from './common/PatientManagement/weekly-reporting/weekly-reporting.component';
 import { CrmReportV2Component } from './common/PatientManagement/crm-report-v2/crm-report-v2.component';
 import { LeaveAutoUpdateComponent } from './common/HR/leave-auto-update/leave-auto-update.component';
+import { PackageSessionCompleteComponent } from "./common/PatientManagement/package-session-complete/package-session-complete.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3359,7 +3360,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
         title: 'Leave Auto Update'
       }
     },
-    
+    {
+      path: 'BL_Txn_Package_Session_complete',
+      component: PackageSessionCompleteComponent,
+      data: {
+        title: 'Package Session Complete'
+      }
+    },
     /*{
 
 
