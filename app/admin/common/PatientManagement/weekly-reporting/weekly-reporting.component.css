@@ -140,3 +140,7 @@ body .myclass .ui-table-tbody > tr > td{
     padding: 0px !important;
     border: none !important;
 }
+body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+    border-bottom: 1px solid #c1c1c1 !important;
+    margin-bottom: 0px;
+}

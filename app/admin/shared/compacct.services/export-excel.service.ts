@@ -3672,25 +3672,28 @@ export class ExportExcelService {
   const workbook = new Workbook();
   let worksheet = workbook.addWorksheet("Weekly Sales");
 
-  const header =  Object.keys(objexcel.excelData[0]) 
-  const data:any = [];
-  const slno1:any = [];//objexcel.excelData.filter(el => el.Sl_no == 1);
-  const slno2:any = [];//objexcel.excelData.filter(el => el.Sl_no == 2);
-  objexcel.excelData.forEach((ele:any) => {
-    data.push(Object.values(ele))
+  const header = Object.keys(objexcel.excelData[0]);
+  const data: any = [];
+  const slno1: any = [];
+  const slno2: any = [];
+
+  objexcel.excelData.forEach((ele) => {
+    data.push(Object.values(ele));
   });
-  objexcel.excelData.forEach((ele:any) => {
-    if(ele.Sl_no == 1){
-      slno1.push(Object.values(ele))
-    }
-  });
-  objexcel.excelData.forEach((ele:any) => {
-    if(ele.Sl_no == 2){
-      slno2.push(Object.values(ele))
+
+  objexcel.excelData.forEach((ele) => {
+    if (ele.Sl_no == 1) {
+      slno1.push(Object.values(ele));
     }
   });
 
-  let headerRow1 = worksheet.addRow(["Weekly Sales "+"( " + `${objexcel.From_Date} - ${objexcel.To_Date}` + " )"]);
+  objexcel.excelData.forEach((ele) => {
+    if (ele.Sl_no == 2) {
+      slno2.push(Object.values(ele));
+    }
+  });
+
+  let headerRow1 = worksheet.addRow(["","Weekly Sales " + `( ${objexcel.From_Date} - ${objexcel.To_Date} )`]);
   headerRow1.eachCell((cell, number) => {
     cell.alignment = { vertical: 'middle', horizontal: 'center' };
     cell.fill = {
@@ -3698,12 +3701,12 @@ export class ExportExcelService {
       pattern: 'solid',
       fgColor: { argb: '8f5bb1' },
       bgColor: { argb: '' }
-    }
+    };
     cell.font = {
       bold: true,
       color: { argb: 'FFFFFF' },
       size: 12
-    }
+    };
     cell.border = {
       top: { style: 'thin' },
       left: { style: 'thin' },
@@ -3711,9 +3714,10 @@ export class ExportExcelService {
       right: { style: 'thin' },
     };
   });
-  worksheet.mergeCells('A1', this.colName(objexcel.excelData.length - 7)+'1')
 
-  let headerRow2 = worksheet.addRow(["Sources"]);
+  // worksheet.mergeCells('A1', this.colName(header.length - 2) + '1');
+
+  let headerRow2 = worksheet.addRow(["","Sources"]);
   headerRow2.eachCell((cell, number) => {
     worksheet.getColumn(number).width = 30;
     cell.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -3722,12 +3726,12 @@ export class ExportExcelService {
       pattern: 'solid',
       fgColor: { argb: 'e6325c' },
       bgColor: { argb: '' }
-    }
+    };
     cell.font = {
       bold: true,
       color: { argb: 'FFFFFF' },
       size: 12
-    }
+    };
     cell.border = {
       top: { style: 'thin' },
       left: { style: 'thin' },
@@ -3735,49 +3739,47 @@ export class ExportExcelService {
       right: { style: 'thin' },
     };
   });
-  worksheet.mergeCells('A2', this.colName(objexcel.excelData.length - 7)+'2')
+
+  // worksheet.mergeCells('A2', this.colName(header.length - 2) + '2');
+
   let headerRow3 = worksheet.addRow(header);
 
-   // Set dynamic width for each column based on header length
-   worksheet.columns.forEach((column, index) => {
-    const headerLength = header[index] ? header[index].length : 10; // Default to 10 if no header
-    column.width = Math.max(headerLength + 5, 10); // Set a minimum width of 10 and add padding of 5
+  // Set dynamic width for each column based on header length
+  worksheet.columns.forEach((column, index) => {
+    const headerLength = header[index] ? header[index].length : 10;
+    column.width = Math.max(headerLength + 5, 10);
   });
-  
+
   headerRow3.eachCell((cell, number) => {
-    // Apply different fill colors based on the column (first, last, or others)
-    const totalColumns = headerRow3.cellCount; // Get the total number of columns in the header row
-    if (number === 1) {
+    const totalColumns = headerRow3.cellCount;
+    if (number === 2) {
       cell.alignment = { vertical: 'middle', horizontal: 'left' };
-      // First column
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: 'e6325c' }, // Color for first column
+        fgColor: { argb: 'e6325c' },
       };
       cell.font = {
         bold: true,
-        color: { argb: 'FFFFFFFF' }, // White text color
+        color: { argb: 'FFFFFFFF' },
       };
     } else if (number === totalColumns) {
       cell.alignment = { vertical: 'middle', horizontal: 'center' };
-      // Last column
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: '753fa6' }, // Color for last column
+        fgColor: { argb: '753fa6' },
       };
       cell.font = {
         bold: true,
-        color: { argb: 'FFFFFFFF' }, // White text color
+        color: { argb: 'FFFFFFFF' },
       };
     } else {
-      // All other columns
       cell.alignment = { vertical: 'middle', horizontal: 'center' };
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: 'd9d8db' }, // Default color for other columns
+        fgColor: { argb: 'd9d8db' },
       };
       cell.font = {
         color: { argb: 'black' },
@@ -3791,31 +3793,39 @@ export class ExportExcelService {
     };
   });
 
-
   // Add Data and Conditional Formatting
-  data.forEach((d, i) => {
-    const row = worksheet.addRow(d);
-    for( let i= 0; i< d.length;i++ ){
-      row.getCell(i + 1).border = {
-            top: { style: 'thin' },
-            left: { style: 'thin' },
-            bottom: { style: 'thin' },
-            right: { style: 'thin' },
+  let startRow = 4; // Starting from the first data row
+  let lastCostCenter = objexcel.excelData[0].Cost_Cen_Name; // Keep track of the first cost center name
+  let groupStartRow = startRow; // Variable to track the start of each group
+
+  objexcel.excelData.forEach((data, i) => {
+    const row = worksheet.addRow(Object.values(data));
+    const rowIndex = startRow + i; // Current row index
+
+    // Center align font in the first column
+    row.getCell(1).alignment = { vertical: 'middle', horizontal: 'center' }; // Center align the first column
+
+    // Check if the Cost_Cen_Name is the same as the previous one
+    if (data.Cost_Cen_Name !== lastCostCenter) {
+      // Merge cells for the previous group before moving to the next
+      if (groupStartRow < rowIndex - 1) {
+        worksheet.mergeCells(`A${groupStartRow}:A${rowIndex - 1}`); // Merge cells for the previous group
       }
-      row.getCell(i + 1).alignment = {
-        horizontal:'center'
-      }
+
+      // Update tracking variables for the new group
+      groupStartRow = rowIndex;
+      lastCostCenter = data.Cost_Cen_Name;
     }
+
     // Get the total number of columns in the current row
     const totalColumns = row.cellCount;
-    
     // Format the first column
-    row.getCell(1).fill = {
+    row.getCell(2).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'd9d8db' },
     };
-    row.getCell(1).alignment = {
+    row.getCell(2).alignment = {
       horizontal:'left'
     };
     
@@ -3829,21 +3839,44 @@ export class ExportExcelService {
       bold: true,
     };
 
-  });
-  // worksheet.spliceColumns(1, 1);
 
-  let headerMar = [...header]
-   const headerMarHeader = headerMar.slice(2)
-   let totalRow = worksheet.addRow([]);
-   totalRow.getCell(2).value = "Total Count"
-   totalRow.getCell(2).alignment = {
-    horizontal:'right'
-   }
-  
-   const result = (rinx) => {
-    let sum: any = 0;
-    slno1.forEach((arr: any) => {
-      arr.forEach((arr1: any, inx: any) => {
+    for( let i= 0; i< header.length;i++ ){
+      row.getCell(i + 1).border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+      }
+      row.getCell(i + 1).alignment = {
+        horizontal:'center'
+      }
+    }
+    // Set cell borders and additional formatting
+    row.getCell(1).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+  });
+
+  // Merge the last group if necessary (after the loop ends)
+  const lastRowNum = worksheet.lastRow ? worksheet.lastRow.number : 0;
+  if (groupStartRow < lastRowNum) {
+    worksheet.mergeCells(`A${groupStartRow}:A${lastRowNum}`);
+  }
+
+  // Create total rows
+  let totalRow = worksheet.addRow([]);
+  totalRow.getCell(2).value = "Total Count";
+  totalRow.getCell(2).alignment = {
+    horizontal: 'right'
+  };
+
+  const calculateSum = (slnoData, rinx) => {
+    let sum = 0;
+    slnoData.forEach((arr) => {
+      arr.forEach((arr1, inx) => {
         if (inx == rinx) {
           sum += arr1;
         }
@@ -3851,14 +3884,12 @@ export class ExportExcelService {
     });
     return sum;
   };
-   headerMarHeader.forEach((el) => {
-    // console.log(header.indexOf(el));
-    totalRow.getCell(header.indexOf(el) + 1).value = result(
-      header.indexOf(el)
-    );
 
+  header.slice(2).forEach((el) => {
+    totalRow.getCell(header.indexOf(el) + 1).value = calculateSum(slno1, header.indexOf(el));
   });
-  totalRow.eachCell((cell, number) => {
+
+  totalRow.eachCell((cell) => {
     cell.border = {
       top: { style: 'thin' },
       left: { style: 'thin' },
@@ -3868,37 +3899,23 @@ export class ExportExcelService {
     cell.font = {
       bold: true,
       size: 12
-    }
+    };
     cell.alignment = {
-      horizontal:'center'
-    }
-  })
+      horizontal: 'center'
+    };
+  });
 
   let totalRow2 = worksheet.addRow([]);
-  totalRow2.getCell(2).value = "Total Amount"
+  totalRow2.getCell(2).value = "Total Amount";
   totalRow2.getCell(2).alignment = {
-    horizontal:'right'
-   }
-  
-   const result2 = (rinx) => {
-    let sum2: any = 0;
-    slno2.forEach((arr: any) => {
-      arr.forEach((arr1: any, inx: any) => {
-        if (inx == rinx) {
-          sum2 += arr1;
-        }
-      });
-    });
-    return sum2;
+    horizontal: 'right'
   };
-   headerMarHeader.forEach((el) => {
-    // console.log(header.indexOf(el));
-    totalRow2.getCell(header.indexOf(el) + 1).value = result2(
-      header.indexOf(el)
-    );
 
+  header.slice(2).forEach((el) => {
+    totalRow2.getCell(header.indexOf(el) + 1).value = calculateSum(slno2, header.indexOf(el));
   });
-  totalRow2.eachCell((cell, number) => {
+
+  totalRow2.eachCell((cell) => {
     cell.border = {
       top: { style: 'thin' },
       left: { style: 'thin' },
@@ -3908,22 +3925,43 @@ export class ExportExcelService {
     cell.font = {
       bold: true,
       size: 12
-    }
+    };
     cell.alignment = {
-      horizontal:'center'
-    }
-  })
+      horizontal: 'center'
+    };
+  });
+
   worksheet.spliceColumns(1, 1);
+  worksheet.mergeCells('A1', this.colName(header.length - 2) + '1');
+  worksheet.mergeCells('A2', this.colName(header.length - 2) + '2');
+  
   // Access the last row
-const lastRow = worksheet.lastRow;
+  const lastRow = worksheet.lastRow;
 
-if (lastRow) {
-  // Access the second-to-last row
-  const secondLastRow = worksheet.getRow(lastRow.number - 1);
+  if (lastRow) {
+    const secondLastRow = worksheet.getRow(lastRow.number - 1);
 
-  if (secondLastRow && secondLastRow.hasValues) {
-    // Format the second-to-last row
-    secondLastRow.eachCell((cell, number) => {
+    if (secondLastRow && secondLastRow.hasValues) {
+      secondLastRow.eachCell((cell, number) => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'c7a7e4' },
+        };
+        cell.font = {
+          bold: true,
+          color: { argb: '000000' },
+        };
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+      });
+    }
+
+    totalRow.eachCell((cell, number) => {
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
@@ -3940,26 +3978,14 @@ if (lastRow) {
         right: { style: 'thin' },
       };
     });
-
-    // Change the color of the first cell in the second-to-last row
-    secondLastRow.getCell(1).fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: '753fa6' },
-    };
-    secondLastRow.getCell(1).font = {
-      bold: true,
-      color: { argb: 'FFFFFFFF' },
-    };
   }
-}
-    
+
   // Generate & Save Excel File
   workbook.xlsx.writeBuffer().then((data: any) => {
-  const blob = new Blob([data], {
-    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  });
-  fs.saveAs(blob, 'Weekly_Sales.xlsx');
+    const blob = new Blob([data], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    fs.saveAs(blob, 'Weekly_Sales.xlsx');
   });
  }
  exporttoExcelWeeklySalesDetails(excelData:any, daterange:any) {

@@ -317,8 +317,14 @@ export class WeeklyReportingComponent implements OnInit {
     this.AppoWithSrcList.forEach((item)=>{
       Amtval += Number(item.count);
     });
-
-    this.totalcount = Amtval ? Amtval.toFixed(2) : '-';
+    const str = Amtval.toFixed(2);
+    const val: string[] = str.split(".");
+    if(val[1]=='00'){
+      this.totalcount = Amtval ? Amtval : '-';
+    }
+    else {
+      this.totalcount = Amtval ? Amtval.toFixed(2) : '-';
+    }
   }
   GetDoneDetails(obj){
     // console.log(obj.remark)
@@ -341,7 +347,8 @@ export class WeeklyReportingComponent implements OnInit {
       : this.DateService.dateConvert(new Date());
       const sendobj = {
         start_date: start,             
-			  end_date: end,        
+			  end_date: end, 
+        Cost_Cen_ID: this.ObjAppoWithSrc.Cost_Cen_ID,
 			  Status: this.status
       }
     const obj = {
@@ -409,7 +416,8 @@ export class WeeklyReportingComponent implements OnInit {
       : this.DateService.dateConvert(new Date());
       const sendobj = {
         start_date: start,             
-			  end_date: end,        
+			  end_date: end,     
+        Cost_Cen_ID: this.ObjAppoWithSrc.Cost_Cen_ID,   
 			  Consultancy_Descr : this.AppoSrcCol,          
 			  Enq_Source_Name : this.AppoSrcRow 
       }

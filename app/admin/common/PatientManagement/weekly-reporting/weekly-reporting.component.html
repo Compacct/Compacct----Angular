@@ -245,7 +245,7 @@
                                             [ngClass]="{'colcostcnternmae': option === 'Cost_Cen_Name',
                                                         'colcalculatetotalcount': option === 'Total Count',
                                                         'colnotcostcnternmae': option !== 'Cost_Cen_Name' && option !== 'Total Count'}">
-                                            {{col[option] ? (col[option]).toFixed(2) : ''}} 
+                                            {{col[option] ? col[option] : ''}} 
                                         </td>
                                     </tr>
                                 </ng-template>
