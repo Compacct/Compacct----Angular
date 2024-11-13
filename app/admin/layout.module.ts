@@ -536,6 +536,7 @@ import { ChangeBatchNumberComponent } from './common/MaterialManagement/Outward/
 import { WeeklyReportingComponent } from './common/PatientManagement/weekly-reporting/weekly-reporting.component';
 import { CrmReportV2Component } from './common/PatientManagement/crm-report-v2/crm-report-v2.component';
 import { LeaveAutoUpdateComponent } from './common/HR/leave-auto-update/leave-auto-update.component';
+import { PackageSessionCompleteComponent } from './common/PatientManagement/package-session-complete/package-session-complete.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -986,7 +987,8 @@ import { LeaveAutoUpdateComponent } from './common/HR/leave-auto-update/leave-au
     ChangeBatchNumberComponent,
     WeeklyReportingComponent,
     CrmReportV2Component,
-    LeaveAutoUpdateComponent
+    LeaveAutoUpdateComponent,
+    PackageSessionCompleteComponent
   ],
   imports: [
     CommonModule,
