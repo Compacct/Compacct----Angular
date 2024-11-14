@@ -141,9 +141,32 @@ GetAudilogist(){
     }
  });
 }
+CheckSameMobileNo() {
+  if(this.buttonname === 'Save'){
+  const samepono = this.allDataList.filter(item=> (item.Mobile === this.ObjCaseHistory.Mobile));
+  if(samepono.length) {
+    this.compacctToast.clear();
+    this.compacctToast.add({
+       key: "compacct-toast",
+       severity: "error",
+       summary: "Warn message  ",
+       detail: "Mobile Number Already Exist."
+     });
+    return false;
+  } 
+    else {
+      return true;
+    }
+  }
+  else {
+    return true;
+  }
+  
+  
+}
 saveCaseHistoryData(valid:any){
 this.EngCaseHistoryFormSubmitted = true;
-if (valid) {
+if (valid && this.CheckSameMobileNo()) {
 this.SaveAfter = true;
 this.ObjCaseHistory.Case_Date = this.DateService.dateConvert(new Date(this.Case_Date));
 

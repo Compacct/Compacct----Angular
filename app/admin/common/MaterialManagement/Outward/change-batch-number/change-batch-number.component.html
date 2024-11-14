@@ -28,6 +28,24 @@
                         <form name="ChangeBatchNoForm" #ChangeBatchNoForm="ngForm" novalidate>
                             <div class="form-group">
                                 <div class="col-sm-3">
+                                    <label class="control-label">Brand &nbsp;<sup class="text-danger">*</sup>
+                                    </label>
+                                    <select class="form-control" name="brandid" #brandid="ngModel" [(ngModel)]="ObjChangeBatchNo.Brand_ID" (change)="GetProductionVoucherNo(ObjChangeBatchNo.Brand_ID)" [ngClass]="{'clearance': ChangeBatchNoFormSubmitted && brandid?.errors?.required}" required>
+                                          <option  [ngValue]="undefined">Select</option>
+                                      <option *ngFor="let option of BrandList" value="{{option.Brand_ID}}">
+                                          {{option.Brand_INI}}
+                                          </option>
+                                  </select>
+
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Production Voucher No. <sup class="text-danger">*</sup> &nbsp;</label>
+                                        <p-dropdown [options]="ProductionVoucherNoList" name="productionVoucherno" [(ngModel)]="ObjChangeBatchNo.Production_Voucher_No" [showClear]="true" [emptyFilterMessage]="' No Production Voucher Found'" (onChange)="GetProduct(ObjChangeBatchNo.Production_Voucher_No)" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
+                                            [placeholder]="'Select Production Voucher No'" [virtualScroll]="true" itemSize="30" #productionVoucherno="ngModel" [required]="true" [ngClass]="{'clearance': ChangeBatchNoFormSubmitted && productionVoucherno?.errors?.required}"
+                                            required>
+                                        </p-dropdown>
+                                </div>
+                                <div class="col-sm-3">
                                     <label class="control-label">Product <sup class="text-danger">*</sup> &nbsp;</label>
                                         <p-dropdown [options]="ProductList" name="product" [(ngModel)]="ObjChangeBatchNo.Product_ID" [showClear]="true" [emptyFilterMessage]="' No Product Found'" (onChange)="GetOldBatchList()" [filter]="true" filterBy="label,value.name" [resetFilterOnHide]="true"
                                             [placeholder]="'Select Product'" [virtualScroll]="true" itemSize="30" #product="ngModel" [required]="true" [ngClass]="{'clearance': ChangeBatchNoFormSubmitted && product?.errors?.required}"
@@ -48,7 +66,9 @@
                                         </option>
                                     </select>
                                 </div>
-                                <div class="col-sm-2">
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-3">
                                     <label class="control-label">Qty <sup class="text-danger">*</sup></label>
                                     <div class="input-group">
                                         <input class="form-control"
@@ -62,18 +82,18 @@
                                         <span class="input-group-addon" id="basic-addon2"><span *ngIf="!ObjChangeBatchNo.UOM">-</span>{{ ObjChangeBatchNo.UOM }}</span>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-3">
                                     <label class="control-label">New Batch <sup class="text-danger">*</sup></label>
                                         <input class="form-control" name="Batch" #Batch="ngModel" [(ngModel)]="ObjChangeBatchNo.New_Batch_No"  placeholder="New Batch No." [disabled]="true" [ngClass]="{'clearance': ChangeBatchNoFormSubmitted && Batch?.errors?.required}"
                                             required>
                                 </div>
-                                <div class="col-sm-1">
-                                    <button type="button" class="btn btn-primary custombutton2" (click)="SaveNewBatchNo(ChangeBatchNoForm.form.valid)" id="load" [disabled]="Spinner">
-                                      <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
-                                      <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
-                                    </button>
-                                </div>
-                            </div>   
+                            </div>  
+                            <div class="box-footer">
+                                <button type="button" class="btn btn-primary pull-right" (click)="SaveNewBatchNo(ChangeBatchNoForm.form.valid)" id="load" [disabled]="Spinner">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> {{buttonname}}
+                                </button>
+                            </div> 
                         </form>
                     </p-tabView>
                 </div>

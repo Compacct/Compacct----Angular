@@ -71,6 +71,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
   BackUpProductNamelList:any = [];
   editProNoList:any = [];
   lockdate:any;
+  Is_Change_Batch:any;
 
   constructor(
     private Header: CompacctHeader,
@@ -348,6 +349,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
        this.ProductionList = [];
        this.BackupProductionList = [];
        this.ProductNamelList = [];
+       this.Is_Change_Batch = undefined;
      if(valid){
      const TempObj = {
       Doc_Date : this.DateService.dateConvert(new Date(this.ProDate))
@@ -366,6 +368,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
      //   });
        this.ProductionList = data;
        this.BackupProductionList = data;
+       this.Is_Change_Batch = data.length ? "N" : "";
       // this.Cost_Cen_Id = data[0].Cost_Cen_ID;
      // } else {
      //   this.IndentNoList = [];
@@ -382,6 +385,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
        this.ProductionList = [];
        this.BackupProductionList = [];
        this.ProductNamelList = [];
+       this.Is_Change_Batch = undefined;
      if(valid){
      const TempObj = {
       Doc_Date : this.DateService.dateConvert(new Date(this.ProDate))
@@ -400,6 +404,7 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
      //   });
        this.ProductionList = data;
        this.BackupProductionList = data;
+       this.Is_Change_Batch = data.length ? "Y" : "";
       // this.Cost_Cen_Id = data[0].Cost_Cen_ID;
      // } else {
      //   this.IndentNoList = [];
@@ -697,7 +702,8 @@ export class K4cInternalStockTransferNewComponent implements OnInit {
             To_Cost_Cen_ID : this.Objproduction.To_Cost_Cen_ID,
             To_godown_id : this.Objproduction.To_godown_id,
             User_ID : this.$CompacctAPI.CompacctCookies.User_ID,
-            Production_Date : this.DateService.dateConvert(new Date(this.ProDate))
+            Production_Date : this.DateService.dateConvert(new Date(this.ProDate)),
+            Is_Change_Batch : this.Is_Change_Batch
         }
         tempArr.push(obj)
       }

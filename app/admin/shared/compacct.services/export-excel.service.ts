@@ -3298,7 +3298,7 @@ export class ExportExcelService {
     data.push(Object.values(ele))
   });
 
-  let headerRow1 = worksheet.addRow(["Weekly Footfall"]);
+  let headerRow1 = worksheet.addRow(["Weekly Footfall "+"( " + `${daterange.From_Date} - ${daterange.To_Date}` + " )"]);
   headerRow1.eachCell((cell, number) => {
     cell.alignment = { vertical: 'middle', horizontal: 'center' };
     cell.fill = {
@@ -3319,7 +3319,7 @@ export class ExportExcelService {
       right: { style: 'thin' },
     };
   });
-  worksheet.mergeCells('A1', this.colName(excelData.length - 2)+'1')
+  worksheet.mergeCells('A1', this.colName(excelData.length - 1)+'1')
 
   let headerRow2 = worksheet.addRow(["Sources"]);
   headerRow2.eachCell((cell, number) => {
@@ -3328,7 +3328,7 @@ export class ExportExcelService {
     cell.fill = {
       type: 'pattern',
       pattern: 'solid',
-      fgColor: { argb: 'd34381' },
+      fgColor: { argb: 'e6325c' },
       bgColor: { argb: '' }
     }
     cell.font = {
@@ -3343,22 +3343,155 @@ export class ExportExcelService {
       right: { style: 'thin' },
     };
   });
-  worksheet.mergeCells('A2', this.colName(excelData.length - 2)+'2')
+  worksheet.mergeCells('A2', this.colName(excelData.length - 1)+'2')
   let headerRow3 = worksheet.addRow(header);
+
+   // Set dynamic width for each column based on header length
+   worksheet.columns.forEach((column, index) => {
+    const headerLength = header[index] ? header[index].length : 10; // Default to 10 if no header
+    column.width = Math.max(headerLength + 5, 10); // Set a minimum width of 10 and add padding of 5
+  });
   
   headerRow3.eachCell((cell, number) => {
+    // Apply different fill colors based on the column (first, last, or others)
+    const totalColumns = headerRow3.cellCount; // Get the total number of columns in the header row
+    if (number === 1) {
+      cell.alignment = { vertical: 'middle', horizontal: 'left' };
+      // First column
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'e6325c' }, // Color for first column
+      };
+      cell.font = {
+        bold: true,
+        color: { argb: 'FFFFFFFF' }, // White text color
+      };
+    } else if (number === totalColumns) {
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      // Last column
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '753fa6' }, // Color for last column
+      };
+      cell.font = {
+        bold: true,
+        color: { argb: 'FFFFFFFF' }, // White text color
+      };
+    } else {
+      // All other columns
       cell.alignment = { vertical: 'middle', horizontal: 'center' };
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: header[0] ? 'd34381' : 'd9d8db'},
-        bgColor: { argb: '' }
+        fgColor: { argb: 'd9d8db' }, // Default color for other columns
+      };
+      cell.font = {
+        color: { argb: 'black' },
+      };
+    }
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+  });
+
+
+  // Add Data and Conditional Formatting
+  data.forEach((d, i) => {
+    const row = worksheet.addRow(d);
+    for( let i= 0; i< d.length;i++ ){
+      row.getCell(i + 1).border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
       }
+      row.getCell(i + 1).alignment = {
+        horizontal:'center'
+      }
+    }
+    // Get the total number of columns in the current row
+    const totalColumns = row.cellCount;
+    
+    // Format the first column
+    row.getCell(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'd9d8db' },
+    };
+    row.getCell(1).alignment = {
+      horizontal:'left'
+    };
+    
+    // Format the last column
+    row.getCell(totalColumns).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'c7a7e4' },
+    };
+    row.getCell(totalColumns).font = {
+      bold: true,
+    };
+
+  });
+  let headerMar = [...header]
+   const headerMarHeader = headerMar.slice(1)
+   let totalRow = worksheet.addRow([]);
+   totalRow.getCell(1).value = "Total"
+   totalRow.getCell(1).alignment = {
+    horizontal:'right'
+   }
+  
+   const result = (rinx) => {
+    let sum: any = 0;
+    data.forEach((arr: any) => {
+      arr.forEach((arr1: any, inx: any) => {
+        if (inx == rinx) {
+          sum += arr1;
+        }
+      });
+    });
+    return sum;
+  };
+   headerMarHeader.forEach((el) => {
+    // console.log(header.indexOf(el));
+    totalRow.getCell(header.indexOf(el) + 1).value = result(
+      header.indexOf(el)
+    );
+
+  });
+  totalRow.eachCell((cell, number) => {
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    cell.font = {
+      bold: true,
+      size: 12
+    }
+    cell.alignment = {
+      horizontal:'center'
+    }
+  })
+  // Access the last row after all rows have been added
+  const lastRow = worksheet.lastRow;
+  if (lastRow) {
+    lastRow.eachCell((cell, number) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'c7a7e4' },
+      };
       cell.font = {
         bold: true,
-        color: { argb: 'FFFFFF' },
-        size: 12
-      }
+        color: { argb: '000000' }, // Black text color for the last row
+      };
       cell.border = {
         top: { style: 'thin' },
         left: { style: 'thin' },
@@ -3367,70 +3500,18 @@ export class ExportExcelService {
       };
     });
 
-//  const getWagesQTY = (tableheaderData:any,tableBody:any)=>{
-//     const getQTY = excelData.SecondbodyData.filter(el=> el.product_hash == tableheaderData.product_hash &&  el.machine_id == tableBody.machine_id)
-//     return getQTY.length ? getQTY[0].qty : 0
-//   }
-
-//   // Adding FirstbodyData
-//   excelData.FirstbodyData.forEach((subProc: any) => {
-//     const machineDetailsLength = subProc.machine_details.length;
-//     subProc.machine_details.forEach((machine: any, index: number) => {
-//                 const row = worksheet.addRow([
-//                     index === 0 ? subProc.sub_proc_display_srl : '',
-//                     index === 0 ? subProc.sub_proc_name + '(' + subProc.rate_per_kg + ')' : '',
-//                     machine.machine_name,
-//                ]);
-//                 let totalIterations = 0;
-//                 excelData.SecondRow.forEach((el:any,inx)=>{
-//                  worksheet.getRow(row.number).getCell((totalIterations+ 4)).value = getWagesQTY(el,machine) 
-//                    totalIterations++;
-//               })
-//                 row.eachCell((cell, colNumber) => {
-//                 cell.border = {
-//                         top: { style: 'thin' },
-//                         left: { style: 'thin' },
-//                         bottom: { style: (machineDetailsLength - 1) == index || colNumber == 1 || colNumber == 2  ? 'thick' : 'thin' },
-//                         right: { style: 'thin' },
-//                     };
-                    
-//                    cell.alignment = {
-//                         vertical: 'middle',
-//                         horizontal: 'center'
-//                    };
-//                  });
-     
-//   });
-
-//     // Merging cells dynamically based on the number of machine details
-//         const lastRowNum = worksheet.lastRow?.number ?? 0;
-//     if (machineDetailsLength > 1) {
-//         worksheet.mergeCells(`A${lastRowNum - machineDetailsLength + 1}:A${lastRowNum}`);
-//         worksheet.mergeCells(`B${lastRowNum - machineDetailsLength + 1}:B${lastRowNum}`);
-        
-//     }
+    // Change the color of the first cell in the last row
+    lastRow.getCell(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '753fa6' },
+    };
+    lastRow.getCell(1).font = {
+      bold: true,
+      color: { argb: 'FFFFFFFF' },
+    };
+  } 
     
-// });
-
-//   worksheet.getColumn(1).width = 10;
-//   worksheet.getColumn(2).width = 40;
-//   // worksheet.mergeCells(`A6:A${excelData.FirstbodyData.machine_details.length}`);
-
-  // Add Data and Conditional Formatting
-    data.forEach((d,i) => {
-      const row = worksheet.addRow(d);
-    // for( let i= 0; i< d.length;i++ ){
-    //   row.getCell(i + 1).border = {
-    //         top: { style: 'thin' },
-    //         left: { style: 'thin' },
-    //         bottom: { style: 'thin' },
-    //         right: { style: 'thin' },
-    //   }
-    //   row.getCell(i + 1).alignment = {
-    //     horizontal:'center'
-    //   }
-    // }
-    });
   // Generate & Save Excel File
   workbook.xlsx.writeBuffer().then((data: any) => {
   const blob = new Blob([data], {
@@ -3438,5 +3519,621 @@ export class ExportExcelService {
   });
   fs.saveAs(blob, 'Weekly_Foootfall.xlsx');
   });
+ }
+ exporttoExcelAppoWithSourceDetails(objexcel) {
+  const workbook = new Workbook();
+  let worksheet = workbook.addWorksheet("Weekly Appointment With Sources");
+
+  let tablehead1 = worksheet.addRow([objexcel.Cost_Cen_Name, objexcel.totalcount]);
+  tablehead1.getCell(1).alignment = { vertical: 'middle', horizontal: 'left' };
+    tablehead1.getCell(1).font={
+      bold:true
+    }
+    tablehead1.getCell(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '53ca3f' },
+      bgColor: { argb: '' }
+    }
+    tablehead1.getCell(1).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+}
+    tablehead1.getCell(2).alignment = { vertical: 'middle', horizontal: 'center' };
+    tablehead1.getCell(2).font={
+      bold:true
+    }
+    tablehead1.getCell(2).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '53ca3f' },
+      bgColor: { argb: '' }
+    }
+    tablehead1.getCell(2).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+}
+    const data1:any = [];
+    objexcel.excelData1.forEach((ele:any) => {
+      data1.push(Object.values(ele))
+    });
+    // Add Data and Conditional Formatting
+    data1.forEach((d, i) => {
+    const row = worksheet.addRow(d);
+    row.getCell(1).alignment = {
+      horizontal:'left'
+    }
+      row.getCell(1).border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+      }
+      row.getCell(1).font = {
+        bold:true
+      }
+    // Format the first column
+    row.getCell(2).alignment = {
+      horizontal:'center'
+    };
+    row.getCell(2).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+}
+
+    });
+
+  const header =  Object.keys(objexcel.excelData2[0]) 
+  const data2:any = [];
+  objexcel.excelData2.forEach((ele:any) => {
+    data2.push(Object.values(ele))
+  });
+  worksheet.addRow([]);
+  // worksheet.mergeCells('A2', this.colName(objexcel.excelData2.length - 2)+'2')
+  let tablehead2 = worksheet.addRow(header);
+   // Set dynamic width for each column based on header length
+   worksheet.columns.forEach((column, index) => {
+    const headerLength = header[index] ? header[index].length : 12; // Default to 10 if no header
+    column.width = Math.max(headerLength + 6, 12); // Set a minimum width of 10 and add padding of 5
+  });
+
+  tablehead2.eachCell((cell, number) => {
+    if (number === 1) {
+      cell.alignment = { vertical: 'middle', horizontal: 'right' };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'eab832' },
+      };
+      cell.font = {
+          bold: true,
+        };
+    } else {
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'f5e8d1' },
+      };
+      cell.font = {
+        bold: true,
+      };
+    }
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+  });
+
+  // Add Data and Conditional Formatting
+  data2.forEach((d, i) => {
+    const row = worksheet.addRow(d);
+    for( let i= 0; i< d.length;i++ ){
+      row.getCell(i + 1).border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+      }
+    }
+    row.eachCell((cell, number) => {
+      if (number === 1) {
+        cell.alignment = { vertical: 'middle', horizontal: 'right' };
+        cell.font = {
+          bold: true,
+        };
+      } else {
+        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      }
+    });
+    row.getCell(2).font={
+      bold:true
+    }
+
+  });
+    
+  // Generate & Save Excel File
+  workbook.xlsx.writeBuffer().then((data: any) => {
+  const blob = new Blob([data], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+  fs.saveAs(blob, 'Weekly_Appointments_With_Sources.xlsx');
+  });
+ }
+ exporttoExcelWeekSales(objexcel) {
+  const workbook = new Workbook();
+  let worksheet = workbook.addWorksheet("Weekly Sales");
+
+  const header = Object.keys(objexcel.excelData[0]);
+  const data: any = [];
+  const slno1: any = [];
+  const slno2: any = [];
+
+  objexcel.excelData.forEach((ele) => {
+    data.push(Object.values(ele));
+  });
+
+  objexcel.excelData.forEach((ele) => {
+    if (ele.Sl_no == 1) {
+      slno1.push(Object.values(ele));
+    }
+  });
+
+  objexcel.excelData.forEach((ele) => {
+    if (ele.Sl_no == 2) {
+      slno2.push(Object.values(ele));
+    }
+  });
+
+  let headerRow1 = worksheet.addRow(["","Weekly Sales " + `( ${objexcel.From_Date} - ${objexcel.To_Date} )`]);
+  headerRow1.eachCell((cell, number) => {
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '8f5bb1' },
+      bgColor: { argb: '' }
+    };
+    cell.font = {
+      bold: true,
+      color: { argb: 'FFFFFF' },
+      size: 12
+    };
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+  });
+
+  // worksheet.mergeCells('A1', this.colName(header.length - 2) + '1');
+
+  let headerRow2 = worksheet.addRow(["","Sources"]);
+  headerRow2.eachCell((cell, number) => {
+    worksheet.getColumn(number).width = 30;
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'e6325c' },
+      bgColor: { argb: '' }
+    };
+    cell.font = {
+      bold: true,
+      color: { argb: 'FFFFFF' },
+      size: 12
+    };
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+  });
+
+  // worksheet.mergeCells('A2', this.colName(header.length - 2) + '2');
+
+  let headerRow3 = worksheet.addRow(header);
+
+  // Set dynamic width for each column based on header length
+  worksheet.columns.forEach((column, index) => {
+    const headerLength = header[index] ? header[index].length : 10;
+    column.width = Math.max(headerLength + 5, 10);
+  });
+
+  headerRow3.eachCell((cell, number) => {
+    const totalColumns = headerRow3.cellCount;
+    if (number === 2) {
+      cell.alignment = { vertical: 'middle', horizontal: 'left' };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'e6325c' },
+      };
+      cell.font = {
+        bold: true,
+        color: { argb: 'FFFFFFFF' },
+      };
+    } else if (number === totalColumns) {
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '753fa6' },
+      };
+      cell.font = {
+        bold: true,
+        color: { argb: 'FFFFFFFF' },
+      };
+    } else {
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'd9d8db' },
+      };
+      cell.font = {
+        color: { argb: 'black' },
+      };
+    }
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+  });
+
+  // Add Data and Conditional Formatting
+  let startRow = 4; // Starting from the first data row
+  let lastCostCenter = objexcel.excelData[0].Cost_Cen_Name; // Keep track of the first cost center name
+  let groupStartRow = startRow; // Variable to track the start of each group
+
+  objexcel.excelData.forEach((data, i) => {
+    const row = worksheet.addRow(Object.values(data));
+    const rowIndex = startRow + i; // Current row index
+
+    // Center align font in the first column
+    row.getCell(1).alignment = { vertical: 'middle', horizontal: 'center' }; // Center align the first column
+
+    // Check if the Cost_Cen_Name is the same as the previous one
+    if (data.Cost_Cen_Name !== lastCostCenter) {
+      // Merge cells for the previous group before moving to the next
+      if (groupStartRow < rowIndex - 1) {
+        worksheet.mergeCells(`A${groupStartRow}:A${rowIndex - 1}`); // Merge cells for the previous group
+      }
+
+      // Update tracking variables for the new group
+      groupStartRow = rowIndex;
+      lastCostCenter = data.Cost_Cen_Name;
+    }
+
+    // Get the total number of columns in the current row
+    const totalColumns = row.cellCount;
+    // Format the first column
+    row.getCell(2).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'd9d8db' },
+    };
+    row.getCell(2).alignment = {
+      horizontal:'left'
+    };
+    
+    // Format the last column
+    row.getCell(totalColumns).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'c7a7e4' },
+    };
+    row.getCell(totalColumns).font = {
+      bold: true,
+    };
+
+
+    for( let i= 0; i< header.length;i++ ){
+      row.getCell(i + 1).border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+      }
+      row.getCell(i + 1).alignment = {
+        horizontal:'center'
+      }
+    }
+    // Set cell borders and additional formatting
+    row.getCell(1).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+  });
+
+  // Merge the last group if necessary (after the loop ends)
+  const lastRowNum = worksheet.lastRow ? worksheet.lastRow.number : 0;
+  if (groupStartRow < lastRowNum) {
+    worksheet.mergeCells(`A${groupStartRow}:A${lastRowNum}`);
+  }
+
+  // Create total rows
+  let totalRow = worksheet.addRow([]);
+  totalRow.getCell(2).value = "Total Count";
+  totalRow.getCell(2).alignment = {
+    horizontal: 'right'
+  };
+
+  const calculateSum = (slnoData, rinx) => {
+    let sum = 0;
+    slnoData.forEach((arr) => {
+      arr.forEach((arr1, inx) => {
+        if (inx == rinx) {
+          sum += arr1;
+        }
+      });
+    });
+    return sum;
+  };
+
+  header.slice(2).forEach((el) => {
+    totalRow.getCell(header.indexOf(el) + 1).value = calculateSum(slno1, header.indexOf(el));
+  });
+
+  totalRow.eachCell((cell) => {
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    cell.font = {
+      bold: true,
+      size: 12
+    };
+    cell.alignment = {
+      horizontal: 'center'
+    };
+  });
+
+  let totalRow2 = worksheet.addRow([]);
+  totalRow2.getCell(2).value = "Total Amount";
+  totalRow2.getCell(2).alignment = {
+    horizontal: 'right'
+  };
+
+  header.slice(2).forEach((el) => {
+    totalRow2.getCell(header.indexOf(el) + 1).value = calculateSum(slno2, header.indexOf(el));
+  });
+
+  totalRow2.eachCell((cell) => {
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    cell.font = {
+      bold: true,
+      size: 12
+    };
+    cell.alignment = {
+      horizontal: 'center'
+    };
+  });
+
+  worksheet.spliceColumns(1, 1);
+  worksheet.mergeCells('A1', this.colName(header.length - 2) + '1');
+  worksheet.mergeCells('A2', this.colName(header.length - 2) + '2');
+  
+  // Access the last row
+  const lastRow = worksheet.lastRow;
+
+  if (lastRow) {
+    const secondLastRow = worksheet.getRow(lastRow.number - 1);
+
+    if (secondLastRow && secondLastRow.hasValues) {
+      secondLastRow.eachCell((cell, number) => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'c7a7e4' },
+        };
+        cell.font = {
+          bold: true,
+          color: { argb: '000000' },
+        };
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+      });
+    }
+
+    totalRow.eachCell((cell, number) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'c7a7e4' },
+      };
+      cell.font = {
+        bold: true,
+        color: { argb: '000000' },
+      };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+    });
+  }
+
+  // Generate & Save Excel File
+  workbook.xlsx.writeBuffer().then((data: any) => {
+    const blob = new Blob([data], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    fs.saveAs(blob, 'Weekly_Sales.xlsx');
+  });
+ }
+ exporttoExcelWeeklySalesDetails(excelData:any, ExcelDetails:any) {
+  let workbook = new Workbook();
+  let worksheet = workbook.addWorksheet(ExcelDetails.WorkSheetName);
+
+    // Header
+    let subheaderRow1 = worksheet.addRow(ExcelDetails.DateRange);
+    subheaderRow1.eachCell((cell, number) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '809bba' },
+        bgColor: { argb: '' }
+      }
+      cell.font = {
+        bold: true,
+        color: { argb: 'FFFFFF' },
+        size: 10
+      }
+    })
+    subheaderRow1.alignment = { horizontal:'center',vertical:'middle' }
+    worksheet.mergeCells(subheaderRow1.number, 1, subheaderRow1.number, 4);
+
+  // SubHeader
+  let headerRow = worksheet.addRow(ExcelDetails.HeaderName2List);
+  headerRow.eachCell((cell, number) => {
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '4a9ecf' },
+      bgColor: { argb: '' }
+    }
+    cell.font = {
+      bold: true,
+      color: { argb: 'FFFFFF' },
+      size: 10
+    }
+  })
+  headerRow.alignment = { horizontal:'center',vertical:'middle' }
+
+
+
+  // frozen Row
+  worksheet.views = [
+    {state: 'frozen', ySplit: 2}
+  ];
+
+  // Body
+  excelData.forEach((d:any) => {
+    let arrhead1:any = []
+            if(ExcelDetails.FileName === "Advance_Order_Details"){
+              arrhead1 = ['','',d.Cost_Cen_Name,d.amount,'']
+            } else {
+              arrhead1 = ['','',d.Cost_Cen_Name,d.amount]
+            }
+    const row = worksheet.addRow(arrhead1)
+    row.height = 22;
+    row.eachCell((cell, number) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'ffA500' },
+      }
+      cell.font = {
+        bold: true,
+      }
+      if(number == 3) {
+        cell.alignment = { horizontal:'left',vertical:'middle' }
+      }
+      else{
+        cell.alignment = { horizontal:'right',vertical:'middle' }
+      }
+    })
+    
+    if(d.Enq_deatils.length){
+      d.Enq_deatils.forEach((ele:any) => {
+        let arrhead2:any = []
+            if(ExcelDetails.FileName === "Advance_Order_Details"){
+              arrhead2 = [ele.Enq_Source_Name,'','',ele.amount,'']
+            } else {
+              arrhead2 = [ele.Enq_Source_Name,'','',ele.amount]
+            }
+        const prow = worksheet.addRow(arrhead2);
+        prow.height = 20;
+        prow.eachCell((cell, number) => {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'fbf1bc' },
+          }
+          cell.font = {
+            bold: true,
+          }
+          if(number == 1) {
+            cell.alignment = { horizontal:'left',vertical:'middle' }
+          }
+          else{
+            cell.alignment = { horizontal:'right',vertical:'middle' }
+          }
+        })
+
+        if(ele.Enq_details.length){
+          ele.Enq_details.forEach((el:any) => {
+            let arr:any = []
+            if(ExcelDetails.FileName === "Advance_Order_Details"){
+              arr = [el.Billing_Name,el.Binarual,el.Products,el.Amount,el.Bill_Status]
+            } else {
+              arr = [el.Billing_Name,el.Binarual,el.Products,el.Amount]
+            }
+            const grow = worksheet.addRow(arr);
+            grow.height = 20;
+            grow.eachCell((cell, number) => {
+              cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'efede0' },
+              }
+              cell.font = {
+                bold: true,
+              }
+              if(number == 4) {
+                cell.alignment = { horizontal:'right',vertical:'middle' }
+              }
+              else{
+                cell.alignment = { horizontal:'left',vertical:'middle' }
+              }
+            })
+          
+          });
+        }
+      
+      });
+    }
+
+  });
+
+  worksheet.getColumn('A').width = 40
+  worksheet.getColumn('B').width = 8
+  worksheet.getColumn('C').width = 90
+  worksheet.getColumn('D').width = 15
+
+
+  // save as 
+  workbook.xlsx.writeBuffer().then((data) => {
+    let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    fs.saveAs(blob, ExcelDetails.FileName+'.xlsx');
+  })
+
 }
 }

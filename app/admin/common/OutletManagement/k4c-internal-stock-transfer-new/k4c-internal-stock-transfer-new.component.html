@@ -77,7 +77,7 @@
                                                                  <span class="caret"></span>
                                                              </button>
                                                     <ul class="dropdown-menu">
-                                                        <li *ngIf='col.Status == "Can modify"'>
+                                                        <li *ngIf='col.Status == "Can modify" && col.Is_Change_Batch != "Y"'>
                                                             <a (click)="EditIntStock(col)">
                                                                 <i class="fa fa-fw fa-pencil"></i> Edit
                                                             </a>

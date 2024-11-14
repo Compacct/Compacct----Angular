@@ -81,7 +81,7 @@
                                         #Cost_Cen_ID_Browse='ngModel' 
                                         [(ngModel)]="ObjBrowseData.Cost_Cen_ID"
                                         (change)="GetgodownBrowse(ObjBrowseData.Cost_Cen_ID)"
-                                        [disabled]="userType != 'A'"
+                                        
                                         >
                                             <option  [ngValue]="undefined">Select</option>
                                             <option *ngFor="let option of costcenterList" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
@@ -94,7 +94,7 @@
                                         name="Godown_ID_Browse" 
                                         #Godown_ID_Browse="ngModel" 
                                         [(ngModel)]="ObjBrowseData.Godown_ID"
-                                        [disabled]="userType != 'A'"
+                                        
                                          >
                                             <option  [ngValue]="undefined">Select</option>
                                             <option *ngFor="let option of GodownBrowseList" [value]="option.Godown_ID">{{option.godown_name}}</option>
@@ -193,7 +193,7 @@
                                          [(ngModel)]='objreqi.Cost_Cen_ID' 
                                          [ngClass]="{'clearance': validatation?.required && Cost_Cen_ID_te?.errors?.required}" 
                                          (change)="Getgodown(objreqi.Cost_Cen_ID)"
-                                         [disabled]="userType != 'A'"
+                                         
                                          required>
                                   <option  [ngValue]="undefined">Select</option>
                                   <option *ngFor="let option of costcenterList" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
