@@ -1,5 +1,6 @@
 
 div.label-t {
+  min-height: 30px !important;
   padding: 6px 12px;
   background: rgb(206 216 216 / 51%);
 }

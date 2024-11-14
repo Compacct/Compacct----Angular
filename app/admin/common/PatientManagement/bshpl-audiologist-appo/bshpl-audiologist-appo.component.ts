@@ -104,6 +104,10 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   ObjTestDetails:TestDetails = new TestDetails();
   displayViewTestPOP:boolean = false;
 
+  // view case History
+  displayViewCaseHistory:boolean = false;
+  ObjCaseHistory:any = {};
+
   constructor(
     private $http: HttpClient,
     private commonApi: CompacctCommonApi,
@@ -135,6 +139,34 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.GetMissedReasonList();
     this.GetTestDoneList();
     this.getResult();
+  }
+
+  viewCaseHistory(col:any){
+    if(col.foot_fall_id)
+      {
+        console.log('row data', col);
+        this.displayViewCaseHistory = true;
+        this.GetPatientData(col.foot_fall_id)
+      }
+  }
+
+  GetPatientData(id:any) {
+    this.ProductList = [];
+    const obj = {
+      "SP_String": "SP_BL_CRM_Enq_Case_History",
+      "Report_Name_String": "Get_ENQ_Case_History",
+      "Json_Param_String": JSON.stringify([{Foot_Fall_ID:id}])
+      }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      console.log("patient",data);
+      this.ObjCaseHistory = data[0];
+    });
+  }
+
+  
+  closeCaseHistory(){
+    this.displayViewCaseHistory = false;
+    this.ObjCaseHistory = {};
   }
 
   TabClick(e: any) {

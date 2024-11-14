@@ -85,6 +85,12 @@
                                                                    Patient Details
                                                                 </a>
                                                             </li>
+                                                             <li *ngIf="this.databaseName=='GN_Soft_Hear_UP'">
+                                                                <a (click)="viewCaseHistory(col)" >
+                                                                   <i class="fa fa-eye"></i>
+                                                                   View Case History
+                                                                </a>
+                                                            </li>
                                                             <li *ngIf="databaseName != 'GN_Crystal_Mumbai'">
                                                                 <a (click)="actionClick_UpdateAppo(col)">
                                                                     <i class="fa fa-repeat"></i>
@@ -1504,3 +1510,311 @@
     </p-footer>
 </p-dialog>
 
+<!-- View case history dialog -->
+<p-dialog
+[header]="'Case History'"
+[appendTo]="'body'"
+[visible]="displayViewCaseHistory"
+[closeOnEscape]="true"
+[closable]="true"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '90%', minWidth: '200px', minHeight: '400px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+[autoZIndex]="true"
+>
+<form name="EngCaseHistoryForm">
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Date<sup class="text-danger">*</sup></label>
+            <div class="label-t">{{ObjCaseHistory.Registration_Date ? (ObjCaseHistory.Registration_Date|date:'dd/MMM/yyyy'):"-"}}</div>
+        </div>
+    </div>
+    <br>
+    <div class="form-group">
+    <div class="col-lg-12">
+        <div class="panel-group">
+            <div class="panel panel-primary">
+                    <div class="panel-body">
+                        <div class="form-group" style="padding: 1em;">
+                        <h4 style="padding: 0.5em 0em; margin-top:-26px; color: #007ca3;">
+                            <strong>PATIENT INFORMATION</strong>
+                        </h4>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Mobile No<sup class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Enter mobile number" name="Mobile"
+                                    [ngModel]="ObjCaseHistory.Mobile" disabled>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Alternate Mobile No</label>
+                                    <input type="text" class="form-control" placeholder="Enter Another number" name="AnotherMobile"
+                                    [(ngModel)]="ObjCaseHistory.Mobile_2" disabled>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">WhatsApp No</label>
+                                    <input type="text" class="form-control" placeholder="WhatsApp number" name="WhatsAppMobile"
+                                     [(ngModel)]="ObjCaseHistory.Mobile_3_WP" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label class="control-label">Name<sup class="text-danger">*</sup> </label>
+                                    <div class="label-t"></div>
+                                   
+                                    
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Age</label>
+                                    <div class="label-t"></div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">Gender<sup class="text-danger">*</sup></label>
+                                    <div class="label-t"></div>
+                                </div>
+                                </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <label class="control-label">Date of Birth </label>
+                                
+                                <div class="label-t"></div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Email ID</label>
+                                <input type="text" class="form-control" name="Email_ID"
+                                    [(ngModel)]="ObjCaseHistory.Email" placeholder="Enter Email ID"
+                                    disabled >
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Profession<sup class="text-danger"></sup></label>
+                                <div class="label-t"></div>
+                                </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <label class="control-label">Pincode</label>
+                                <input type="text" class="form-control" placeholder="Pincode" name="Pincode" 
+                                    [(ngModel)]="ObjCaseHistory.Pin" disabled>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Location</label>
+                                <input type="text" class="form-control" Compacct-Place 
+                                placeholder="Location" name="Location" disabled [(ngModel)]="ObjCaseHistory.Location">
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Country</label>
+                                <div class="label-t"></div>
+                            </div>
+                            </div>
+                            <div class="row">
+                            <div class="col-sm-4">
+                                <label class="control-label">State</label>
+                               <div class="label-t"></div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">District</label>
+                                <div class="label-t"></div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Address</label>
+                                <textarea type="text" class="form-control" placeholder="Address" name="Address" #Address="ngModel"
+                                [(ngModel)]="ObjCaseHistory.Address" rows="2" disabled>
+                                </textarea>
+                            </div>
+                            </div>
+                            <div class="row">
+                            <div class="col-sm-4">
+                                <label class="control-label">Enquiry Source<sup class="text-danger">*</sup></label>
+                                <div class="label-t"></div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Reference Doctor</label>
+                               <div class="label-t"></div>
+                              </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Consultancy Type<sup class="text-danger">*</sup></label>
+                                <div class="label-t"></div>
+                            </div>
+                            </div>
+                            <div class="row">
+                            <div class="col-sm-4">
+                                <label class="control-label">Who has accompanied you<sup class="text-danger"></sup></label>
+                                <div class="label-t"></div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <br>
+    <div class="form-group" style="padding: 1em;">
+        <h5 style="
+        padding: 0.5em 1em;
+        background: #c1c1c185;
+        border-top: 5px solid #3c8dbc;
+        border-bottom: 1px solid #c6c6c6;
+        margin-top: -20px;
+        ">
+        <i class="fa fa-user">
+        </i> &nbsp;<strong>Case History:</strong>
+        </h5>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Reason for Visit<sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Present complain<sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Right Ear Tinnitus<sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Left Ear Tinnitus<sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Right Ear Pain<sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Left Ear Pain<sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Right Ear Discharge<sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Left Ear Discharge<sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Right Ear Vertigo/Dizziness <sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Left Ear Vertigo/Dizziness <sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Right Ear Blocking sensation <sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Left Ear Blocking sensation <sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Exposure to noise <sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Duration of noise exposure in a day (hours) <sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+    </div>
+    <div class="form-group" style="padding: 1em;">
+        <h5 style="
+        padding: 0.5em 1em;
+        background: #c1c1c185;
+        border-top: 5px solid #3c8dbc;
+        border-bottom: 1px solid #c6c6c6;
+        ">
+        <i class="fa fa-user">
+        </i> &nbsp;<strong>Medical :</strong>
+    </h5>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Referring doctor/ENT <sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Ear surgical history <sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+    </div>
+    <div class="form-group" style="padding: 1em;">
+        <h5 style="
+        padding: 0.5em 1em;
+        background: #c1c1c185;
+        border-top: 5px solid #3c8dbc;
+        border-bottom: 1px solid #c6c6c6;
+        ">
+        <i class="fa fa-user">
+        </i> &nbsp;<strong>Hearing :</strong>
+    </h5>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Better ear <sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Family history of hearing loss <sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Current/previous hearing aid technology <sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Current/previous hearing aid type <sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Hearing aid difficulties <sup class="text-danger"></sup></label>
+            <div class="label-t"></div>
+        </div>
+    </div>
+    <hr>
+    <div class="form-group">
+        <div class="col-sm-4">
+        <label class="control-label">Date</label>
+        <div class="label-t"></div>
+        </div>
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4"style="margin-top: 2em;">
+            <!-- <p-dropdown [options]="Audilogistlist"
+            name="Audilogist1" 
+            #Audilogist1="ngModel" 
+            [(ngModel)]="ObjCaseHistory.Audiologist_ID"
+            [showClear]="true" 
+            [emptyFilterMessage]="' No Audilogist Found'" 
+            [filter]="true" filterBy="label,value.name" 
+            [resetFilterOnHide]="true" 
+            [placeholder]="'Select Audilogist'" 
+            [virtualScroll]="true"
+            itemSize="30" 
+            [styleClass]="EngCaseHistoryFormSubmitted && Audilogist1.errors?.required? 'clearance' : ''"> 
+        </p-dropdown> -->
+        <div style="text-align:center;">
+            <Strong >Audilogist</Strong>
+        </div>                           
+        </div>
+  </div>
+                  
+   </form>
+<p-footer>
+    <button class="btn btn-primary" (click)="closeCaseHistory()" >
+      <span class="glyphicon glyphicon-remove"></span>Close
+    </button>
+  </p-footer>
+</p-dialog>
