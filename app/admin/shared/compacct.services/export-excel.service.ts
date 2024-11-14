@@ -3988,12 +3988,12 @@ export class ExportExcelService {
     fs.saveAs(blob, 'Weekly_Sales.xlsx');
   });
  }
- exporttoExcelWeeklySalesDetails(excelData:any, daterange:any) {
+ exporttoExcelWeeklySalesDetails(excelData:any, ExcelDetails:any) {
   let workbook = new Workbook();
-  let worksheet = workbook.addWorksheet('Weekely Sales Excel');
+  let worksheet = workbook.addWorksheet(ExcelDetails.WorkSheetName);
 
     // Header
-    let subheaderRow1 = worksheet.addRow(['Period:- '+daterange.From_Date+' - '+daterange.To_Date,'','','']);
+    let subheaderRow1 = worksheet.addRow(ExcelDetails.DateRange);
     subheaderRow1.eachCell((cell, number) => {
       cell.fill = {
         type: 'pattern',
@@ -4011,7 +4011,7 @@ export class ExportExcelService {
     worksheet.mergeCells(subheaderRow1.number, 1, subheaderRow1.number, 4);
 
   // SubHeader
-  let headerRow = worksheet.addRow(['Billing Name','Binarual','Products','Amount']);
+  let headerRow = worksheet.addRow(ExcelDetails.HeaderName2List);
   headerRow.eachCell((cell, number) => {
     cell.fill = {
       type: 'pattern',
@@ -4036,8 +4036,13 @@ export class ExportExcelService {
 
   // Body
   excelData.forEach((d:any) => {
-
-    const row = worksheet.addRow(['','',d.Cost_Cen_Name,d.amount])
+    let arrhead1:any = []
+            if(ExcelDetails.FileName === "Advance_Order_Details"){
+              arrhead1 = ['','',d.Cost_Cen_Name,d.amount,'']
+            } else {
+              arrhead1 = ['','',d.Cost_Cen_Name,d.amount]
+            }
+    const row = worksheet.addRow(arrhead1)
     row.height = 22;
     row.eachCell((cell, number) => {
       cell.fill = {
@@ -4058,8 +4063,13 @@ export class ExportExcelService {
     
     if(d.Enq_deatils.length){
       d.Enq_deatils.forEach((ele:any) => {
-
-        const prow = worksheet.addRow([ele.Enq_Source_Name,'','',ele.amount]);
+        let arrhead2:any = []
+            if(ExcelDetails.FileName === "Advance_Order_Details"){
+              arrhead2 = [ele.Enq_Source_Name,'','',ele.amount,'']
+            } else {
+              arrhead2 = [ele.Enq_Source_Name,'','',ele.amount]
+            }
+        const prow = worksheet.addRow(arrhead2);
         prow.height = 20;
         prow.eachCell((cell, number) => {
           cell.fill = {
@@ -4080,8 +4090,13 @@ export class ExportExcelService {
 
         if(ele.Enq_details.length){
           ele.Enq_details.forEach((el:any) => {
-
-            const grow = worksheet.addRow([el.Billing_Name,el.Binarual,el.Products,el.Amount]);
+            let arr:any = []
+            if(ExcelDetails.FileName === "Advance_Order_Details"){
+              arr = [el.Billing_Name,el.Binarual,el.Products,el.Amount,el.Bill_Status]
+            } else {
+              arr = [el.Billing_Name,el.Binarual,el.Products,el.Amount]
+            }
+            const grow = worksheet.addRow(arr);
             grow.height = 20;
             grow.eachCell((cell, number) => {
               cell.fill = {
@@ -4117,7 +4132,7 @@ export class ExportExcelService {
   // save as 
   workbook.xlsx.writeBuffer().then((data) => {
     let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    fs.saveAs(blob, 'Weekly_Sales_Details.xlsx');
+    fs.saveAs(blob, ExcelDetails.FileName+'.xlsx');
   })
 
 }
