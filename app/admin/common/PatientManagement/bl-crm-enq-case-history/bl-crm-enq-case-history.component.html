@@ -259,12 +259,13 @@
                                             </select>
                                         </div>
                                         <div class="col-sm-4">
-                                            <label class="control-label">Reference Doctor</label>
+                                            <label class="control-label">Reference Doctor<sup class="text-danger">*</sup></label>
                                             <p-dropdown [options]="refDoctorList" name="RefDoctor" #RefDoctor="ngModel"
                                               [(ngModel)]="ObjCaseHistory.Enq_Source_Sub_ID" [showClear]="true"
                                               [emptyFilterMessage]="' No Data Found'" [filter]="true" filterBy="label,value.name"
                                               [resetFilterOnHide]="true" [placeholder]="'Select Reference Doctor'" [virtualScroll]="true"
-                                              [itemSize]="30">
+                                              [itemSize]="30" [styleClass]="EngCaseHistoryFormSubmitted && RefDoctor.errors?.required? 'clearance' : ''" 
+                                              [required]="true">
                                             </p-dropdown>
                                           </div>
                                         <div class="col-sm-4">

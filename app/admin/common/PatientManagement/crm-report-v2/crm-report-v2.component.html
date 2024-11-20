@@ -165,12 +165,16 @@
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
+                <th>Doc No.</th>
+                <th>Doc Date</th>
                 <th>Patient Name</th>
                 <th>Mobile</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
             <tr>
+                <td>{{col.doc_no ? col.doc_no : '-'}}</td>
+                <td>{{col.Doc_Date ? (col.Doc_Date | date : 'dd/MMM/yyyy') : '-'}}</td>
                 <td>{{col.Patient_Name ? col.Patient_Name : '-'}}</td>
                 <td>{{col.Mobile ? col.Mobile : '-'}}</td>
             </tr>
