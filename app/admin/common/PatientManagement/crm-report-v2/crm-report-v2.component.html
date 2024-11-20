@@ -86,12 +86,20 @@
                                      <app-compacct-daterangepicker (DaterangeObj)="getDateRangePatReg($event)" >
                                     </app-compacct-daterangepicker>
                                 </div>
-                                <div class="col-sm-1">
+                                <div class="col-sm-2">
                                         <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetPatientRegistration()" id="load" [disabled]="tab2seachSpinner">
                                       <p-progressSpinner *ngIf="tab2seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                       <span *ngIf="!tab2seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                    </button>
                                 </div>
+                                <div class="col-sm-2">
+                                    <button
+                                       class="btn btn-success" style="margin-top: 28px"
+                                       (click)="exportoexcel(PatientRegistrationList,'Patient_Registration_Report')"
+                                       [disabled] = "!PatientRegistrationList.length">
+                                       <span  class="glyphicon glyphicon-save"></span> Export to excel
+                                    </button>
+                                  </div>
                             </div>
                         </form>
                             <div class="clearfix"></div>
@@ -157,6 +165,14 @@
     [globalFilterFields]='PatientDetailsListHeader' [rowHover]="true" [autoLayout]="true" #dt1>
         <ng-template pTemplate="caption">
             <div class="row">
+                <div class="col-sm-2">
+                    <button
+                       class="btn btn-success"
+                       (click)="exportoexcel(PatientDetailsList,'Patient_Details_Report')"
+                       [disabled] = "!PatientDetailsList.length">
+                       <span  class="glyphicon glyphicon-save"></span> Export to excel
+                    </button>
+                  </div>
                 <div class="col-sm-3 pull-right" style="text-align: right">
                     <input type="text" pInputText size="50" placeholder="Search" (input)="dt1.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                 </div>
