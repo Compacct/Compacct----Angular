@@ -6,6 +6,7 @@ import { CompacctHeader } from '../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ExportExcelService } from '../../../shared/compacct.services/export-excel.service';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-crm-report-v2',
@@ -228,6 +229,12 @@ export class CrmReportV2Component implements OnInit {
         window.open(printlink + billno, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
       })
     }
+  }
+
+  exportoexcel(Arr:any,fileName:any): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
   }
 
 
