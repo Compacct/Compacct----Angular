@@ -867,6 +867,7 @@ export class SaleBillNewComponent implements OnInit {
      console.log(obj)
      const productObj:any = []
      productObj.push(obj)
+     this.ObjProductInfo.Product_ID = undefined;
      this.ObjProductInfo.HSN_No = undefined;
      this.ObjProductInfo.Product_Specification = undefined;
      this.ObjProductInfo.Godown_Id = undefined;
@@ -882,7 +883,10 @@ export class SaleBillNewComponent implements OnInit {
      this.ObjProductInfo.SGST_Amount = undefined;
      this.ObjProductInfo.IGST_Rate = undefined;
      this.ObjProductInfo.IGST_Amount = undefined;
-    this.ObjProductInfo.Product_ID = productObj[0].Product_ID
+     setTimeout(() => {
+      this.ObjProductInfo.Product_ID = productObj[0].Product_ID
+     }, 300);
+     
     // console.log(vendorObj);
      this.ObjProductInfo.HSN_No = productObj[0].HSN_No;
      this.ObjProductInfo.Product_Specification = productObj[0].Product_Spec;

@@ -131,6 +131,116 @@
                                 
                             </div>
                     </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-list-alt">
+                        <form name="SearchAudiologistTrialForm" #SearchAudiologistTrialForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Date</label>
+                                     <app-compacct-daterangepicker (DaterangeObj)="getDateRangeAudioIncen($event)" >
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-1">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetAudiologistIncentive()" id="load" [disabled]="tab3seachSpinner">
+                                      <p-progressSpinner *ngIf="tab3seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!tab3seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                   </button>
+                                </div>
+                                <!-- <div class="col-sm-2" *ngIf="AudiologistTrialList.length">
+                                    <button  class="btn btn-success custombutton"  (click)="ExportToExcelWeekFootFall()">Export To Excel</button>
+                                </div> -->
+                            </div>
+                        </form>
+                            <div class="table-responsive no-padding" *ngIf="AudiologistIncentiveList.length">
+                                    <p-table [value]="AudiologistIncentiveList" [paginator]="AudiologistIncentiveList.length ? true : false"
+                                        [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                        [rowsPerPageOptions]="[100,200,300]"
+                                        [globalFilterFields]="AudiologistIncentiveListHeader" [rowHover]="true" #dt>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                                        class="searchInput form-control">
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th nowrap style="border: 1px solid #b1a2a2;">Doctor Name</th>
+                                                <th nowrap style="border: 1px solid #b1a2a2;">Start Range</th>
+                                                <th nowrap style="border: 1px solid #b1a2a2;">End Range</th>
+                                                <th nowrap style="border: 1px solid #b1a2a2;">Sale Amt L 40</th>
+                                                <th nowrap style="border: 1px solid #b1a2a2;">Calc Amt L 40</th>
+                                                <th nowrap style="border: 1px solid #b1a2a2;">% below 40</th>
+                                                <th nowrap style="border: 1px solid #b1a2a2;">Calc Amt L 40 val</th>
+                                                <th nowrap style="border: 1px solid #b1a2a2;">Sale Amt G 40</th>
+                                                <th nowrap style="border: 1px solid #b1a2a2;">Calc Amt G 40</th>
+                                                <th nowrap style="border: 1px solid #b1a2a2;">% above 40</th>
+                                                <th nowrap style="border: 1px solid #b1a2a2;">Calc Amt G 40 val</th>
+                                                <!-- <th nowrap *ngFor="let option of AudiologistIncentiveListHeader | slice:2">{{option.replaceAll('_',' ')}}</th> -->
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                            <tr>
+                                                <td style="border: 1px solid #b1a2a2 !important;"
+                                                    *ngIf="shouldDisplay(rowIndex, 'Doctor_Name')" 
+                                                    [attr.rowspan]="calculateRowSpan(rowIndex, 'Doctor_Name')">
+                                                    {{col['Doctor_Name']}}
+                                                </td>
+                                                <td style="border: 1px solid #b1a2a2 !important;"> {{col.Start_range}}</td>
+                                                <td style="border: 1px solid #b1a2a2 !important;"> {{col.End_range}}</td>
+                                                <!-- <td> {{col.Sale_Amt_L_40}}</td> -->
+                                                <td nowrap style="border: 1px solid #b1a2a2 !important;"
+                                                    *ngIf="shouldDisplay(rowIndex, 'Sale_Amt_L_40')" 
+                                                    [attr.rowspan]="calculateRowSpan(rowIndex, 'Sale_Amt_L_40')">
+                                                    {{getToFixed(col['Sale_Amt_L_40'])}}
+                                                </td>
+                                                <td style="border: 1px solid #b1a2a2 !important;"> {{col.Calc_Amount_L_40}}</td>
+                                                <td style="border: 1px solid #b1a2a2 !important;"> {{col.Percentage_below_40}}</td>
+                                                <td style="border: 1px solid #b1a2a2 !important;"> {{col.Calc_Amount_L_40_value}}</td>
+                                                <!-- <td> {{col.Sale_Amt_G_40}}</td> -->
+                                                <td nowrap style="border: 1px solid #b1a2a2 !important;"
+                                                    *ngIf="shouldDisplay(rowIndex, 'Sale_Amt_G_40')" 
+                                                    [attr.rowspan]="calculateRowSpan(rowIndex, 'Sale_Amt_G_40')">
+                                                    {{getToFixed(col['Sale_Amt_G_40'])}}
+                                                </td>
+                                                <!-- <td> {{col.Calc_Amount_G_40}}</td> -->
+                                                <td nowrap style="border: 1px solid #b1a2a2 !important;"
+                                                    *ngIf="shouldDisplay(rowIndex, 'Calc_Amount_G_40')" 
+                                                    [attr.rowspan]="calculateRowSpan(rowIndex, 'Calc_Amount_G_40')">
+                                                    {{getToFixed(col['Calc_Amount_G_40'])}}
+                                                </td>
+                                                <!-- <td> {{col.Percentage_above_40}}</td> -->
+                                                <td nowrap style="border: 1px solid #b1a2a2 !important;"
+                                                    *ngIf="shouldDisplay(rowIndex, 'Percentage_above_40')" 
+                                                    [attr.rowspan]="calculateRowSpan(rowIndex, 'Percentage_above_40')">
+                                                    {{getToFixed(col['Percentage_above_40'])}}
+                                                </td>
+                                                <!-- <td> {{col.Calc_Amount_G_40_value}}</td> -->
+                                                <td nowrap style="border: 1px solid #b1a2a2 !important;"
+                                                    *ngIf="shouldDisplay(rowIndex, 'Calc_Amount_G_40_value')" 
+                                                    [attr.rowspan]="calculateRowSpan(rowIndex, 'Calc_Amount_G_40_value')">
+                                                    {{getToFixed(col['Calc_Amount_G_40_value'])}}
+                                                </td>
+                                                <!-- <td nowrap *ngFor="let option of AudiologistIncentiveListHeader | slice:2; let i = index" 
+                                                    (click)="onclick(option,col)">{{col[option]}} 
+                                                </td> -->
+                                            </tr>
+                                        </ng-template>
+                                        <!-- <ng-template>
+                                            <tr *ngIf='rowIndex === (data.Doctor_Name.length - 1)'>
+                                                <td colspan="4" class="text-right">Total</td>
+                                                <td>{{CalculateTotal(data)}}</td>
+                                            </tr>
+                                        </ng-template> -->
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                                            {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                
+                            </div>
+                    </p-tabPanel>
                     </p-tabView>
                 </div>
             </div>
@@ -167,6 +277,7 @@
             <tr>
                 <th>Doc No.</th>
                 <th>Doc Date</th>
+                <th>Trial Date</th>
                 <th>Patient Name</th>
                 <th>Mobile</th>
             </tr>
@@ -175,6 +286,7 @@
             <tr>
                 <td>{{col.doc_no ? col.doc_no : '-'}}</td>
                 <td>{{col.Doc_Date ? (col.Doc_Date | date : 'dd/MMM/yyyy') : '-'}}</td>
+                <td>{{col.Trial_Date ? (col.Trial_Date | date : 'dd/MMM/yyyy') : '-'}}</td>
                 <td>{{col.Patient_Name ? col.Patient_Name : '-'}}</td>
                 <td>{{col.Mobile ? col.Mobile : '-'}}</td>
             </tr>
