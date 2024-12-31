@@ -226,6 +226,7 @@
                                 <th nowrap style="font-size: 1.6rem;padding: 5px !important;" colspan="2">Billing Name</th>
                                 <th nowrap style="font-size: 1.6rem;padding: 5px !important;">Binarual</th>
                                 <th nowrap style="font-size: 1.6rem;padding: 5px !important;" colspan="3">Products</th>
+                                <th nowrap style="font-size: 1.6rem;padding: 5px !important;" >Advance Amount</th>
                                 <th nowrap style="font-size: 1.6rem;padding: 5px !important;" >Amount</th>
                                 <th nowrap style="font-size: 1.6rem;padding: 5px !important;" >Bill Status</th>
                             </tr>
@@ -238,7 +239,7 @@
                                 text-align: center;
                                 background-color: #ffA500;
                                 border: 1px solid #c8d6e3;"  
-                                colspan="6">{{row.Cost_Cen_Name}} 
+                                colspan="7">{{row.Cost_Cen_Name}} 
                                 </td>
                                 <td style="font-size: 18px;
                                 font-weight: 700;
@@ -257,7 +258,7 @@
                             <br>
                             <ng-container *ngFor="let option of row.Enq_deatils">
                                 <tr>
-                                    <td colspan="6">
+                                    <td colspan="7">
                                         <span style="display: block;
                                         border: 1px solid #75605a;
                                         font-size: 17px;
@@ -328,6 +329,18 @@
                                             height: 50px;
                                             background-color: #efede0;" >
                                             {{singleGroup.Products}}
+                                            </span>  
+                                        </td>
+                                        <td>
+                                            <span style="display: block;
+                                            border: 1px solid #8b6c5c;
+                                            font-size: 14px;
+                                            font-weight: 500;
+                                            text-align: right;
+                                            padding: 3px;
+                                            height: 50px;
+                                            background-color: #efede0;" >
+                                            {{singleGroup.Adv_amt}}
                                             </span>  
                                         </td>
                                         <td>

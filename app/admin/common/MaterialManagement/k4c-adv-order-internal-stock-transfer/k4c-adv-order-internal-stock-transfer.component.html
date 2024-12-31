@@ -252,7 +252,7 @@
                                             <th>Product Description</th>
                                             <th>Batch No</th>
                                             <th>Batch Qty</th>
-                                            <th> Weight in Pound</th>
+                                            <th>Weight in Pound</th>
                                             <th>Delivery Qty</th>
                                         </tr>
                                     </ng-template>
@@ -268,8 +268,8 @@
                                       <tr *ngIf="col.Product_Modifier_4">Message 5 -<td>{{col.Product_Modifier_4}}</td></tr></i><br>
                                             </td>
                                             <td>{{col.Batch_NO}}</td>
-                                            <td>{{col.Weight_in_Pound}}</td>
                                             <td>{{col.Qty}}</td>
+                                            <td>{{col.Weight_in_Pound}}</td>
                                             <td><input type="text" [name]="col.Product_ID" [(ngModel)]='col.del_Qty' (ngModelChange)='qtyChqEdit(col)' [ngClass]="{'clearance' : editFlag}" CompacctDigitonly="true" class="form-control" style="width: 71px;"
                                                 /></td>
 

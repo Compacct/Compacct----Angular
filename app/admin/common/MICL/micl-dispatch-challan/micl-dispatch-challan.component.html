@@ -457,14 +457,14 @@
 
                                 </div>
                                 <div class="col-sm-4">
-                                    <label class="control-label">Requisition For &nbsp;</label>
+                                    <label class="control-label">Requisition For &nbsp;<span class="text-danger">*</span></label>
                                     <select class="form-control" 
                                     name="Cost_Cen_ID_Pending" 
                                     #Cost_Cen_ID_Pending='ngModel' 
                                     [(ngModel)]="ObjPendingIndent.Cost_Cen_ID"
                                     [ngClass]="{'clearance': PendingIndentFormSubmitted && Cost_Cen_ID_Pending?.errors?.required}" 
                                     required
-                                    [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'"
+                                    [attr.disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A' ? true : null"
                                    >
                                         <option  [ngValue]="undefined">Select</option>
                                         <option *ngFor="let option of costcenterListPeding" [value]="option.Cost_Cen_ID">{{option.Cost_Cen_Name}}</option>
