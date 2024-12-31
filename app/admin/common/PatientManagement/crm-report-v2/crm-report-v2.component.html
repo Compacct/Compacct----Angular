@@ -28,7 +28,7 @@
                         <form name="SearchAudiologistTrialForm" #SearchAudiologistTrialForm="ngForm" novalidate>
                             <div class="form-group">
                                 <div class="col-sm-4">
-                                    <label class="control-label">Date</label>
+                                    <label class="control-label">Period</label>
                                      <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" >
                                     </app-compacct-daterangepicker>
                                 </div>
@@ -82,7 +82,7 @@
                         <form name="PatientRegForm" #PatientRegForm="ngForm" novalidate>
                             <div class="form-group">
                                 <div class="col-sm-4">
-                                    <label class="control-label">Date</label>
+                                    <label class="control-label">Period</label>
                                      <app-compacct-daterangepicker (DaterangeObj)="getDateRangePatReg($event)" >
                                     </app-compacct-daterangepicker>
                                 </div>
@@ -135,7 +135,7 @@
                         <form name="SearchAudiologistTrialForm" #SearchAudiologistTrialForm="ngForm" novalidate>
                             <div class="form-group">
                                 <div class="col-sm-4">
-                                    <label class="control-label">Date</label>
+                                    <label class="control-label">Period</label>
                                      <app-compacct-daterangepicker (DaterangeObj)="getDateRangeAudioIncen($event)" >
                                     </app-compacct-daterangepicker>
                                 </div>
@@ -233,6 +233,57 @@
                                                 <td>{{CalculateTotal(data)}}</td>
                                             </tr>
                                         </ng-template> -->
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                                            {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                
+                            </div>
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-list-alt">
+                        <form name="DoctorForm" #DoctorForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Period</label>
+                                     <app-compacct-daterangepicker (DaterangeObj)="getDateRangeDoctor($event)" >
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-1">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetDoctorsIncentive()" id="load" [disabled]="tab4seachSpinner">
+                                      <p-progressSpinner *ngIf="tab4seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!tab4seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                   </button>
+                                </div>
+                            </div>
+                        </form>
+                            <div class="clearfix"></div>
+                            <div class="table-responsive no-padding" *ngIf="DoctorsIncentiveList.length">
+                                    <p-table [value]="DoctorsIncentiveList" [paginator]="DoctorsIncentiveList.length ? true : false"
+                                        [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                        [rowsPerPageOptions]="[100,200,300]"
+                                        [globalFilterFields]="DoctorsIncentiveListHeader" [rowHover]="true" #dtt>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dtt.filterGlobal($event.target.value, 'contains')"
+                                                        class="searchInput form-control">
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th nowrap *ngFor="let option of DoctorsIncentiveListHeader">{{option.replaceAll('_',' ')}}</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                            <tr>
+                                                <td nowrap *ngFor="let option of DoctorsIncentiveListHeader; let i = index" >
+                                                    {{col[option]}} 
+                                                </td>
+                                            </tr>
+                                        </ng-template>
                                         <ng-template pTemplate="paginatorright" let-state>
                                             Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
                                             {{state.totalRecords}}

@@ -44,6 +44,12 @@ export class CrmReportV2Component implements OnInit {
   BackupAudiologistIncentiveList:any=[];
   AudiologistIncentiveListHeader:any=[];
 
+  ObjDoctorsIncentive : DoctorsIncentive = new DoctorsIncentive();
+  tab4seachSpinner:boolean = false;
+  DoctorsIncentiveList: any= [];
+  BackupDoctorsIncentiveList:any = [];
+  DoctorsIncentiveListHeader: any= [];
+
   constructor(
     private GlobalAPI:CompacctGlobalApiService,
     private compacctToast:MessageService,
@@ -59,11 +65,11 @@ export class CrmReportV2Component implements OnInit {
       Header: "Report",
       Link: "Report"
     });
-    this.items = ["AUDIOLOGIST TRIAL", "PATIENT REGISTRATION", "AUDIOLOGIST INCENTIVE"];
+    this.items = ["AUDIOLOGIST TRIAL", "PATIENT REGISTRATION", "AUDIOLOGIST INCENTIVE", "DOCTORS INCENTIVE"];
   }
   TabClick(e){
     this.tabIndexToView = e.index;
-    this.items = ["AUDIOLOGIST TRIAL", "PATIENT REGISTRATION", "AUDIOLOGIST INCENTIVE"];
+    this.items = ["AUDIOLOGIST TRIAL", "PATIENT REGISTRATION", "AUDIOLOGIST INCENTIVE", "DOCTORS INCENTIVE"];
   }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
@@ -345,6 +351,48 @@ export class CrmReportV2Component implements OnInit {
     return value ? Number(Number(value).toFixed(2)) : '';
   }
 
+  getDateRangeDoctor(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjDoctorsIncentive.From_Date = dateRangeObj[0];
+      this.ObjDoctorsIncentive.To_Date = dateRangeObj[1];
+    }
+  }
+  GetDoctorsIncentive() {
+    this.DoctorsIncentiveList = [];
+    this.BackupDoctorsIncentiveList = [];
+    this.DoctorsIncentiveListHeader = [];
+    const start = this.ObjDoctorsIncentive.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjDoctorsIncentive.From_Date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjDoctorsIncentive.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjDoctorsIncentive.To_Date))
+      : this.DateService.dateConvert(new Date());
+      this.tab4seachSpinner = true;
+  if (start && end) {
+    const tempobj = {
+      Start_Date : start,
+      End_Date : end
+    }
+    const obj = {
+      "SP_String": "SP_CRM_Report",
+      "Report_Name_String": "Doctor_Incentive",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      // console.log('data daata',data);
+      if(data.length){
+      this.DoctorsIncentiveList = data;
+      this.BackupDoctorsIncentiveList = data;
+      this.DoctorsIncentiveListHeader = Object.keys(data[0]);
+      this.tab4seachSpinner = false;
+    }
+    else {
+      this.tab4seachSpinner = false;
+    }
+    });
+  }
+  }
+
 
   onReject(){}
   onConfirm(){}
@@ -356,6 +404,10 @@ class AudiologistTrial {
   To_Date: any;
 }
 class PatientRegistration {
+  From_Date: any;
+  To_Date: any;
+}
+class DoctorsIncentive {
   From_Date: any;
   To_Date: any;
 }
