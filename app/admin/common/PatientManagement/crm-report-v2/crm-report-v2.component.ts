@@ -6,6 +6,7 @@ import { CompacctHeader } from '../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ExportExcelService } from '../../../shared/compacct.services/export-excel.service';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-crm-report-v2',
@@ -242,6 +243,12 @@ export class CrmReportV2Component implements OnInit {
     }
   }
 
+
+  exportoexcel(Arr:any,fileName:any): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+
   getDateRangeAudioIncen(dateRangeObj) {
     if (dateRangeObj.length) {
       this.ObjAudiologistIncentive.From_Date = dateRangeObj[0];
@@ -391,6 +398,7 @@ export class CrmReportV2Component implements OnInit {
     }
     });
   }
+
   }
 
 
