@@ -8,6 +8,9 @@ div.table-responsive1.table-id>p-table>div>div {
 body .ui-table .ui-table-tbody > tr > td {
     border: 1px solid rgb(255, 255, 255) !important;
 }
+#borderstyle {
+    border: 1px solid black !important;
+}
 .ui-table-auto-layout > .ui-table-wrapper{
     width: auto !important;
 }

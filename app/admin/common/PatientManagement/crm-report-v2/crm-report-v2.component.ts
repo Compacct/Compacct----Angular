@@ -6,6 +6,7 @@ import { CompacctHeader } from '../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ExportExcelService } from '../../../shared/compacct.services/export-excel.service';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-crm-report-v2',
@@ -38,6 +39,18 @@ export class CrmReportV2Component implements OnInit {
   BackupPatientRegistrationList:any = [];
   PatientRegistrationListHeader: any= [];
 
+  ObjAudiologistIncentive : AudiologistIncentive = new AudiologistIncentive();
+  tab3seachSpinner:boolean = false;
+  AudiologistIncentiveList:any=[];
+  BackupAudiologistIncentiveList:any=[];
+  AudiologistIncentiveListHeader:any=[];
+
+  ObjDoctorsIncentive : DoctorsIncentive = new DoctorsIncentive();
+  tab4seachSpinner:boolean = false;
+  DoctorsIncentiveList: any= [];
+  BackupDoctorsIncentiveList:any = [];
+  DoctorsIncentiveListHeader: any= [];
+
   constructor(
     private GlobalAPI:CompacctGlobalApiService,
     private compacctToast:MessageService,
@@ -53,11 +66,11 @@ export class CrmReportV2Component implements OnInit {
       Header: "Report",
       Link: "Report"
     });
-    this.items = ["AUDIOLOGIST TRIAL", "PATIENT REGISTRATION"];
+    this.items = ["AUDIOLOGIST TRIAL", "PATIENT REGISTRATION", "AUDIOLOGIST INCENTIVE", "DOCTORS INCENTIVE"];
   }
   TabClick(e){
     this.tabIndexToView = e.index;
-    this.items = ["AUDIOLOGIST TRIAL", "PATIENT REGISTRATION"];
+    this.items = ["AUDIOLOGIST TRIAL", "PATIENT REGISTRATION", "AUDIOLOGIST INCENTIVE", "DOCTORS INCENTIVE"];
   }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
@@ -231,6 +244,165 @@ export class CrmReportV2Component implements OnInit {
   }
 
 
+  exportoexcel(Arr:any,fileName:any): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(Arr);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+  }
+
+  getDateRangeAudioIncen(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjAudiologistIncentive.From_Date = dateRangeObj[0];
+      this.ObjAudiologistIncentive.To_Date = dateRangeObj[1];
+    }
+  }
+  GetAudiologistIncentive() {
+    this.AudiologistIncentiveList = [];
+    this.BackupAudiologistIncentiveList = [];
+    this.AudiologistIncentiveListHeader = [];
+    const start = this.ObjAudiologistIncentive.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjAudiologistIncentive.From_Date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjAudiologistIncentive.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjAudiologistIncentive.To_Date))
+      : this.DateService.dateConvert(new Date());
+      this.tab3seachSpinner = true;
+  if (start && end) {
+    const tempobj = {
+      Start_Date : start,
+      End_Date : end
+    }
+    const obj = {
+      "SP_String": "SP_CRM_Report",
+      "Report_Name_String": "Audiologist_Incentive ",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      // console.log('data daata',data);
+      if(data.length){
+        this.CalculateTotal(data);
+        // this.AudiologistIncentiveList = data;
+        this.BackupAudiologistIncentiveList = data;
+        this.AudiologistIncentiveListHeader = Object.keys(data[0]);
+        this.tab3seachSpinner = false;
+    }
+    else {
+      this.tab3seachSpinner = false;
+    }
+    });
+  }
+  }
+  shouldDisplay(rowIndex: number, field: string): boolean {
+    if (rowIndex === 0) {
+        return true;
+    }
+    return this.AudiologistIncentiveList[rowIndex][field] !== this.AudiologistIncentiveList[rowIndex - 1][field];
+  }
+  calculateRowSpan(rowIndex: number, field: string): number {
+    let currentValue = this.AudiologistIncentiveList[rowIndex][field];
+    let rowSpan = 1;
+
+    for (let i = rowIndex + 1; i < this.AudiologistIncentiveList.length; i++) {
+        if (this.AudiologistIncentiveList[i][field] === currentValue) {
+            rowSpan++;
+        } else {
+            break;
+        }
+    }
+    return rowSpan;
+  }
+  CalculateTotal(data: { Doctor_ID: number; Doctor_Name: string; Calc_Amount_L_40_value: number; Calc_Amount_G_40_value: number }[]) {
+    // Step 1: Group data by Doctor_ID
+    const groupedData = data.reduce((acc, item) => {
+      const { Doctor_ID, Doctor_Name, Calc_Amount_L_40_value, Calc_Amount_G_40_value } = item;
+  
+      // Check if the Doctor_ID already exists in the accumulator
+      if (!acc[Doctor_ID]) {
+        acc[Doctor_ID] = { totalCalc_Amount_L_40_value: 0, totalCalc_Amount_G_40_value: 0, entries: [] };
+      }
+  
+      // Sum the Calc_Amount_L_40 for each doctor and store the entry
+      acc[Doctor_ID].totalCalc_Amount_L_40_value += Calc_Amount_L_40_value;
+      acc[Doctor_ID].totalCalc_Amount_G_40_value = Calc_Amount_G_40_value;
+      acc[Doctor_ID].entries.push(item);
+  
+      return acc;
+    }, {} as Record<string, any>);
+  
+    // Step 2: Flatten the grouped data and insert totals
+    const result: { Doctor_ID: number; Doctor_Name: string; Calc_Amount_L_40_value: number; Calc_Amount_G_40_value: number }[] = [];
+  
+    // Iterate through the grouped data and format the result
+    for (const [doctorID, { totalCalc_Amount_L_40_value, totalCalc_Amount_G_40_value, entries }] of Object.entries(groupedData)) {
+      const doctorData = entries[0]; // Get the first entry to extract the Doctor_Name
+      result.push(...entries);  // Add all entries for the doctor
+      result.push({
+        Doctor_ID: parseInt(doctorID),  // Ensure the Doctor_ID is an integer
+        Doctor_Name: doctorData.Doctor_Name, // Use the Doctor_Name from the first entry
+        Calc_Amount_L_40_value: totalCalc_Amount_L_40_value, // Add the total amount for the doctor
+        Calc_Amount_G_40_value: totalCalc_Amount_L_40_value + totalCalc_Amount_G_40_value  // Add the total amount for the doctor
+      });
+    }
+  
+    console.log(result);  // Log the result
+    this.AudiologistIncentiveList = result;
+  }
+  getTotalValue(key){
+    let Amtval = 0;
+    this.AudiologistIncentiveList.forEach((item)=>{
+      Amtval += Number(item[key]);
+    });
+
+    return Amtval ? Amtval.toFixed(2) : '-';
+  }
+  getToFixed(value){
+    return value ? Number(Number(value).toFixed(2)) : '';
+  }
+
+  getDateRangeDoctor(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjDoctorsIncentive.From_Date = dateRangeObj[0];
+      this.ObjDoctorsIncentive.To_Date = dateRangeObj[1];
+    }
+  }
+  GetDoctorsIncentive() {
+    this.DoctorsIncentiveList = [];
+    this.BackupDoctorsIncentiveList = [];
+    this.DoctorsIncentiveListHeader = [];
+    const start = this.ObjDoctorsIncentive.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjDoctorsIncentive.From_Date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjDoctorsIncentive.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjDoctorsIncentive.To_Date))
+      : this.DateService.dateConvert(new Date());
+      this.tab4seachSpinner = true;
+  if (start && end) {
+    const tempobj = {
+      Start_Date : start,
+      End_Date : end
+    }
+    const obj = {
+      "SP_String": "SP_CRM_Report",
+      "Report_Name_String": "Doctor_Incentive",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      // console.log('data daata',data);
+      if(data.length){
+      this.DoctorsIncentiveList = data;
+      this.BackupDoctorsIncentiveList = data;
+      this.DoctorsIncentiveListHeader = Object.keys(data[0]);
+      this.tab4seachSpinner = false;
+    }
+    else {
+      this.tab4seachSpinner = false;
+    }
+    });
+  }
+
+  }
+
+
   onReject(){}
   onConfirm(){}
 
@@ -241,6 +413,14 @@ class AudiologistTrial {
   To_Date: any;
 }
 class PatientRegistration {
+  From_Date: any;
+  To_Date: any;
+}
+class DoctorsIncentive {
+  From_Date: any;
+  To_Date: any;
+}
+class AudiologistIncentive {
   From_Date: any;
   To_Date: any;
 }

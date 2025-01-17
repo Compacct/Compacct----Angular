@@ -46,6 +46,12 @@ export class WeeklyReportingComponent implements OnInit {
   AppoSrcPatientListHeader:any = [];
   AppoSrcPopup:boolean = false;
 
+  ObjAdvanceOrderDetails : AdvanceOrderDetails = new AdvanceOrderDetails();
+  seachSpinnerAdvanceOrderDetails:boolean=false;
+  AdvanceOrderDetailsList:any=[];
+  BackupAdvanceOrderDetailsList:any = [];
+  AdvanceOrderDetailsListHeader: any= [];
+
   ObjWeeklySales : WeeklySales = new WeeklySales();
   seachSpinnerWeeklySales:boolean=false;
   WeeklySalesList:any=[];
@@ -80,13 +86,13 @@ export class WeeklyReportingComponent implements OnInit {
       Header: "Weekly Reporting",
       Link: "Report -> Weekly Reporting"
     });
-    this.items = ["FOOTFALL", "APPOINTMENT WITH SOURCES", "SALES", "SALES IN DETAILS"];
+    this.items = ["FOOTFALL", "APPOINTMENT WITH SOURCES", "ADVANCE ORDER DETAILS", "SALES", "SALES IN DETAILS"];
     this.GetCostCenter();
     // this.GetEnqSource();
   }
   TabClick(e){
     this.tabIndexToView = e.index;
-    this.items = ["FOOTFALL", "APPOINTMENT WITH SOURCES", "SALES", "SALES IN DETAILS"];
+    this.items = ["FOOTFALL", "APPOINTMENT WITH SOURCES", "ADVANCE ORDER DETAILS", "SALES", "SALES IN DETAILS"];
   }
   GetCostCenter(){
     this.CostCenterList = [];
@@ -439,6 +445,75 @@ export class WeeklyReportingComponent implements OnInit {
     });
     }
   }
+
+  getDateRangeAdvance(dateRangeObj){
+    if (dateRangeObj.length) {
+      this.ObjAdvanceOrderDetails.From_Date = dateRangeObj[0];
+      this.ObjAdvanceOrderDetails.To_Date = dateRangeObj[1];
+    }
+  }
+  GetAdvanceOrderDetailsd(){
+    this.AdvanceOrderDetailsList = [];
+    this.BackupAdvanceOrderDetailsList = [];
+    this.AdvanceOrderDetailsListHeader = [];
+    const start = this.ObjAdvanceOrderDetails.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjAdvanceOrderDetails.From_Date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjAdvanceOrderDetails.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjAdvanceOrderDetails.To_Date))
+      : this.DateService.dateConvert(new Date());
+      this.seachSpinnerAdvanceOrderDetails = true;
+  if (start && end) {
+    const tempobj = {
+      start_date: start,
+      end_date: end
+    }
+    const obj = {
+      "SP_String": "sp_weekly_report",
+      "Report_Name_String": "weekly_advance_order_details",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      // console.log('data sales',data);
+  
+      if(data.length){
+        let sata:any =[];
+  
+        data.forEach((element:any) => {
+          sata.push(
+            {
+              'Cost_Cen_Name': element.Cost_Cen_Name,
+              'amount': element.amount,
+              'Enq_deatils': JSON.parse(element.Enq_deatils)
+            }
+          )
+        });
+        // console.log('sata',sata)
+  
+      this.AdvanceOrderDetailsList = sata;
+      this.BackupAdvanceOrderDetailsList = sata;
+      this.AdvanceOrderDetailsListHeader = Object.keys(sata[0]);
+      this.seachSpinnerAdvanceOrderDetails = false;
+    }
+    else {
+      this.seachSpinnerAdvanceOrderDetails = false;
+    }
+    });
+  }
+  }
+  ExportToExcelAdvanceOrderDetails(){
+    let From_Date = this.ObjAdvanceOrderDetails.From_Date ? this.DateService.dateConvert(new Date(this.ObjAdvanceOrderDetails.From_Date)) : this.DateService.dateConvert(new Date())
+    let To_Date = this.ObjAdvanceOrderDetails.To_Date ? this.DateService.dateConvert(new Date(this.ObjAdvanceOrderDetails.To_Date)) : this.DateService.dateConvert(new Date())
+    let tempobj = {
+    //  From_Date: this.ObjAdvanceOrderDetails.From_Date ? this.DateService.dateConvert(new Date(this.ObjAdvanceOrderDetails.From_Date)) : this.DateService.dateConvert(new Date()),
+    //  To_Date: this.ObjAdvanceOrderDetails.To_Date ? this.DateService.dateConvert(new Date(this.ObjAdvanceOrderDetails.To_Date)) : this.DateService.dateConvert(new Date()),
+     DateRange: ['Period:- '+From_Date+' - '+To_Date,'','','',''],
+     WorkSheetName: "Advance Order Details",
+     FileName: "Advance_Order_Details",
+     HeaderName2List: ['Billing Name','Binarual','Products','Amount', 'Bill Status']
+     }
+     this.excelservice.exporttoExcelWeeklySalesDetails(this.AdvanceOrderDetailsList,tempobj);
+  }
  
   getDateRangeWeeklySales(dateRangeObj){
     if (dateRangeObj.length) {
@@ -620,9 +695,13 @@ calculateRowSpan(rowIndex: number, field: string): number {
   }
   }
   ExportToExcelWeeklySalesDetails(){
+    let From_Date = this.ObjWeeklySalesDetails.From_Date ? this.DateService.dateConvert(new Date(this.ObjWeeklySalesDetails.From_Date)) : this.DateService.dateConvert(new Date())
+    let To_Date = this.ObjWeeklySalesDetails.To_Date ? this.DateService.dateConvert(new Date(this.ObjWeeklySalesDetails.To_Date)) : this.DateService.dateConvert(new Date())
     let tempobj = {
-     From_Date: this.ObjWeeklySalesDetails.From_Date ? this.DateService.dateConvert(new Date(this.ObjWeeklySalesDetails.From_Date)) : this.DateService.dateConvert(new Date()),
-     To_Date: this.ObjWeeklySalesDetails.To_Date ? this.DateService.dateConvert(new Date(this.ObjWeeklySalesDetails.To_Date)) : this.DateService.dateConvert(new Date())
+     DateRange: ['Period:- '+From_Date+' - '+To_Date,'','',''],
+     WorkSheetName: "Weekly Sales Details",
+     FileName: "Weekly_Sales_Details",
+     HeaderName2List: ['Billing Name','Binarual','Products','Amount']
      }
      this.excelservice.exporttoExcelWeeklySalesDetails(this.WeeklySalesDetailsList,tempobj);
   }
@@ -640,6 +719,10 @@ class AppoWithSrc {
   From_Date: any;
   To_Date: any;
   Cost_Cen_ID: any;
+}
+class AdvanceOrderDetails {
+  From_Date: any;
+  To_Date: any;
 }
 class WeeklySales {
   From_Date: any;

@@ -180,6 +180,208 @@
                             </div>
                     </p-tabPanel>
                     <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[2]" leftIcon="glyphicon glyphicon-list-alt">
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <label class="control-label">Date Range</label>
+                                 <app-compacct-daterangepicker (DaterangeObj)="getDateRangeAdvance($event)" >
+                                </app-compacct-daterangepicker>
+                            </div>
+                            <div class="col-sm-1">
+                                <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetAdvanceOrderDetailsd()" id="load" [disabled]="seachSpinnerAdvanceOrderDetails">
+                                    <p-progressSpinner *ngIf="seachSpinnerAdvanceOrderDetails" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!seachSpinnerAdvanceOrderDetails" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                </button>
+                            </div>
+                            <div class="col-sm-2" *ngIf="AdvanceOrderDetailsList.length">
+                                <button  class="btn btn-success custombutton"  (click)="ExportToExcelAdvanceOrderDetails()">Export To Excel</button>
+                            </div>
+                        </div>
+                        <p-table
+                            #dt18
+                            [value]="AdvanceOrderDetailsList"
+                            responsiveLayout="scroll"
+                            [paginator]="AdvanceOrderDetailsList.length ? true : false"
+                            [filterDelay]="0"
+                            [globalFilterFields]="AdvanceOrderDetailsListHeader"
+                            scrollHeight="580px"
+                            [loading]="loading"
+                            styleClass="p-datatable-gridlines myclass"
+                            [rows]="100"
+                            [rowsPerPageOptions]="[100,200,300]"
+                            dataKey="group_name"
+                        >
+
+                        <ng-template pTemplate="caption">
+                            <div class="row">
+                                <div class="col-sm-3 pull-right" style="text-align: right">
+                                    <input type="text" pInputText size="50" placeholder="Search"
+                                    (input)="dt18.filterGlobal($event.target.value, 'contains')"
+                                    class="searchInput form-control">
+                                </div>
+                            </div>
+                        </ng-template>
+
+                        <ng-template pTemplate="header" >
+                            <tr style="height: 35px;position: sticky !important; top: 0 !important; z-index: 1">
+                                <th nowrap style="font-size: 1.6rem;padding: 5px !important;" colspan="2">Billing Name</th>
+                                <th nowrap style="font-size: 1.6rem;padding: 5px !important;">Binarual</th>
+                                <th nowrap style="font-size: 1.6rem;padding: 5px !important;" colspan="3">Products</th>
+                                <th nowrap style="font-size: 1.6rem;padding: 5px !important;" >Advance Amount</th>
+                                <th nowrap style="font-size: 1.6rem;padding: 5px !important;" >Amount</th>
+                                <th nowrap style="font-size: 1.6rem;padding: 5px !important;" >Bill Status</th>
+                            </tr>
+                        </ng-template>
+                            
+                        <ng-template pTemplate="body" let-row let-expanded="expanded">
+                            <tr>
+                                <td style="font-size: 18px;
+                                font-weight: 700;
+                                text-align: center;
+                                background-color: #ffA500;
+                                border: 1px solid #c8d6e3;"  
+                                colspan="7">{{row.Cost_Cen_Name}} 
+                                </td>
+                                <td style="font-size: 18px;
+                                font-weight: 700;
+                                text-align: right;
+                                background-color: #ffA500;
+                                border: 1px solid #c8d6e3;"  
+                                >{{row.amount}} 
+                                </td>
+                                <td style="font-size: 18px;
+                                font-weight: 700;
+                                text-align: right;
+                                background-color: #ffA500;
+                                border: 1px solid #c8d6e3;"  
+                                ></td>
+                            </tr>
+                            <br>
+                            <ng-container *ngFor="let option of row.Enq_deatils">
+                                <tr>
+                                    <td colspan="7">
+                                        <span style="display: block;
+                                        border: 1px solid #75605a;
+                                        font-size: 17px;
+                                        font-weight: 500;
+                                        text-align: left;
+                                        padding: 3px;
+                                        background-color: #fbf1bc;"
+                                        >
+                                        {{option.Enq_Source_Name}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span style="display: block;
+                                        border: 1px solid #75605a;
+                                        font-size: 17px;
+                                        font-weight: 500;
+                                        text-align: right;
+                                        padding: 3px;
+                                        background-color: #fbf1bc;"
+                                        >
+                                        {{option.amount}}
+                                        </span>
+                                    </td>
+                                    <td><span style="display: block;
+                                        border: 1px solid #75605a;
+                                        font-size: 17px;
+                                        font-weight: 500;
+                                        text-align: right;
+                                        padding: 3px;
+                                        background-color: #fbf1bc;
+                                        height: 33px;">
+                                        </span></td>
+                                </tr>
+                                <br>
+                                <ng-container *ngFor="let singleGroup of option.Enq_details">
+                                    <tr>
+                                        <td colspan="2">
+                                            <span style="display: block;
+                                            border: 1px solid #8b6c5c;
+                                            font-size: 14px;
+                                            font-weight: 500;
+                                            text-align: left;
+                                            padding: 3px;
+                                            height: 50px;
+                                            background-color: #efede0;" >
+                                            {{singleGroup.Billing_Name}}
+                                            </span>  
+                                        </td>
+                                        <td>
+                                            <span style="display: block;
+                                            border: 1px solid #8b6c5c;
+                                            font-size: 14px;
+                                            font-weight: 500;
+                                            text-align: center;
+                                            padding: 3px;
+                                            height: 50px;
+                                            background-color: #efede0;" >
+                                            {{singleGroup.Binarual}}
+                                            </span>  
+                                        </td>
+                                        <td colspan="3">
+                                            <span style="display: block;
+                                            border: 1px solid #8b6c5c;
+                                            font-size: 14px;
+                                            font-weight: 500;
+                                            text-align: left;
+                                            padding: 3px;
+                                            height: 50px;
+                                            background-color: #efede0;" >
+                                            {{singleGroup.Products}}
+                                            </span>  
+                                        </td>
+                                        <td>
+                                            <span style="display: block;
+                                            border: 1px solid #8b6c5c;
+                                            font-size: 14px;
+                                            font-weight: 500;
+                                            text-align: right;
+                                            padding: 3px;
+                                            height: 50px;
+                                            background-color: #efede0;" >
+                                            {{singleGroup.Adv_amt}}
+                                            </span>  
+                                        </td>
+                                        <td>
+                                            <span style="display: block;
+                                            border: 1px solid #8b6c5c;
+                                            font-size: 14px;
+                                            font-weight: 500;
+                                            text-align: right;
+                                            padding: 3px;
+                                            height: 50px;
+                                            background-color: #efede0;" >
+                                            {{singleGroup.Amount}}
+                                            </span>  
+                                        </td>
+                                        <td>
+                                            <span style="display: block;
+                                            border: 1px solid #8b6c5c;
+                                            font-size: 14px;
+                                            font-weight: 500;
+                                            text-align: right;
+                                            padding: 3px;
+                                            height: 50px;
+                                            background-color: #efede0;" >
+                                            {{singleGroup.Bill_Status}}
+                                            </span>  
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                                <br>
+                            </ng-container>
+                        </ng-template>
+
+                        <ng-template pTemplate="paginatorright" let-state>
+                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                            {{state.totalRecords}}
+                        </ng-template>
+
+                        </p-table>
+
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-list-alt">
                         <form name="SearchWeeklySalesForm" #SearchWeeklySalesForm="ngForm" novalidate>
                             <div class="form-group">
                                 <div class="col-sm-4">
@@ -257,7 +459,7 @@
                                 
                             </div>
                     </p-tabPanel>
-                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[3]" leftIcon="glyphicon glyphicon-list-alt">
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[4]" leftIcon="glyphicon glyphicon-list-alt">
                         <div class="form-group">
                             <div class="col-sm-4">
                                 <label class="control-label">Date Range</label>
