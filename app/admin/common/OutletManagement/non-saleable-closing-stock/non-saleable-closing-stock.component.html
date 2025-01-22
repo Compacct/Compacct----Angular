@@ -118,7 +118,7 @@
                                                                 <i class="fa fa-fw fa-eye" aria-hidden="true"></i> View
                                                             </a>
                                                         </li>
-                                                        <li>
+                                                        <li *ngIf="$CompacctAPI.CompacctCookies.User_Type == 'A'">
                                                             <a (click)="Edit(col)">
                                                                 <i class="fa fa-fw fa-pencil" aria-hidden="true"></i> Edit
                                                             </a>

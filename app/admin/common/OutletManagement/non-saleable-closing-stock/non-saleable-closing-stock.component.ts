@@ -348,6 +348,7 @@ const end = this.ObjBrowse.end_date
     costcentid = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
   }
   if(valid){
+    this.seachSpinner = true;
 const tempobj = {
   From_Date : start,
   To_Date : end,
