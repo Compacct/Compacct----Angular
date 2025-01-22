@@ -439,6 +439,7 @@ import { WeeklyReportingComponent } from './common/PatientManagement/weekly-repo
 import { CrmReportV2Component } from './common/PatientManagement/crm-report-v2/crm-report-v2.component';
 import { LeaveAutoUpdateComponent } from './common/HR/leave-auto-update/leave-auto-update.component';
 import { PackageSessionCompleteComponent } from "./common/PatientManagement/package-session-complete/package-session-complete.component";
+import { BlTxnRefDocEntryComponent } from './common/PatientManagement/bl-txn-ref-doc-entry/bl-txn-ref-doc-entry.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3365,6 +3366,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: PackageSessionCompleteComponent,
       data: {
         title: 'Package Session Complete'
+      }
+    },
+    {
+      path: 'BL_Txn_Ref_Doc_Entry',
+      component: BlTxnRefDocEntryComponent,
+      data: {
+        title: 'Reference Doctor Entry'
       }
     },
     /*{
