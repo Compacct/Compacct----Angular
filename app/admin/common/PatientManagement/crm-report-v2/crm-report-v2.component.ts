@@ -66,11 +66,11 @@ export class CrmReportV2Component implements OnInit {
       Header: "Report",
       Link: "Report"
     });
-    this.items = ["AUDIOLOGIST TRIAL", "PATIENT REGISTRATION", "AUDIOLOGIST INCENTIVE", "DOCTORS INCENTIVE"];
+    this.items = ["AUDIOLOGIST TRIAL", "PATIENT REGISTRATION", "AUDIOLOGIST INCENTIVE", "DOCTORS CONSULTATION"];
   }
   TabClick(e){
     this.tabIndexToView = e.index;
-    this.items = ["AUDIOLOGIST TRIAL", "PATIENT REGISTRATION", "AUDIOLOGIST INCENTIVE", "DOCTORS INCENTIVE"];
+    this.items = ["AUDIOLOGIST TRIAL", "PATIENT REGISTRATION", "AUDIOLOGIST INCENTIVE", "DOCTORS CONSULTATION"];
   }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
