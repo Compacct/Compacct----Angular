@@ -59,14 +59,14 @@
                                                                             <i class="fa fa-fw fa-bars"></i>
                                                                             <span class="caret"></span>
                                                                         </button>
-                                                                        <ul class="dropdown-menu">
-                                                                            <li>
+                                                                        <ul *ngIf="commonApi.CompacctCookies.Del_Right === 'Y'"  class="dropdown-menu">
+                                                                            <li  >
                                                                                 <a (click)="EditCostcenter(col)">
                                                                                     <i class="fa fa-fw fa-pencil"></i>
                                                                                     Edit
                                                                                 </a>
                                                                             </li>
-                                                                            <li>
+                                                                            <li >
                                                                                 <a (click)="DeleteCostcenter(col)">
                                                                                     <i class="fa fa-fw fa-trash"></i>
                                                                                     Delete
