@@ -537,6 +537,7 @@ import { WeeklyReportingComponent } from './common/PatientManagement/weekly-repo
 import { CrmReportV2Component } from './common/PatientManagement/crm-report-v2/crm-report-v2.component';
 import { LeaveAutoUpdateComponent } from './common/HR/leave-auto-update/leave-auto-update.component';
 import { PackageSessionCompleteComponent } from './common/PatientManagement/package-session-complete/package-session-complete.component';
+import { BlTxnRefDocEntryComponent } from './common/PatientManagement/bl-txn-ref-doc-entry/bl-txn-ref-doc-entry.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -988,7 +989,8 @@ import { PackageSessionCompleteComponent } from './common/PatientManagement/pack
     WeeklyReportingComponent,
     CrmReportV2Component,
     LeaveAutoUpdateComponent,
-    PackageSessionCompleteComponent
+    PackageSessionCompleteComponent,
+    BlTxnRefDocEntryComponent
   ],
   imports: [
     CommonModule,
