@@ -138,12 +138,33 @@
                                                                                     Edit
                                                                                 </a>
                                                                             </li>
-                                                                            <li *ngIf='list.Total_Accept !== list.Total_Issue'>
+                                                                            <li *ngIf='list.Total_Accept !== list.Total_Issue && databaseName !== "GN_Crystal_Mumbai" && databaseName !=="GN_Global_Coimbatore"'>
                                                                                 <a (click)="AcceptStockTransfer(list)">
                                                                                     <i class="fa fa-fw fa-history"></i>
                                                                                     {{list.F_Cost_Cen_ID == $CompacctAPI.CompacctCookies.Cost_Cen_ID ? 'Edit Product' : list.T_Cost_Cen_ID == $CompacctAPI.CompacctCookies.Cost_Cen_ID ? 'Accept Challan' : ''}}
                                                                                 </a>
                                                                             </li>
+
+                                                                            <ng-container *ngIf="databaseName == 'GN_Crystal_Mumbai' || databaseName == 'GN_Global_Coimbatore'" >
+                                                                                <li *ngIf='list.Total_Accept !== list.Total_Issue && list.F_Cost_Cen_ID == $CompacctAPI.CompacctCookies.Cost_Cen_ID  '>
+                                                                                    <a (click)="AcceptStockTransfer(list,'Edit Product')">
+                                                                                        <i class="fa fa-fw fa-history"></i>
+                                                                                        Edit Product
+                                                                                    </a>
+                                                                                </li>
+    
+                                                                                <li *ngIf='list.Total_Accept !== list.Total_Issue &&  list.T_Cost_Cen_ID == $CompacctAPI.CompacctCookies.Cost_Cen_ID'>
+                                                                                    <a (click)="AcceptStockTransfer(list, 'Accept Challan')">
+                                                                                        <i class="fa fa-fw fa-history"></i>
+                                                                                        Accept Challan
+                                                                                    </a>
+                                                                                </li>
+
+                                                                            </ng-container>
+                                                                           
+
+
+
                                                                             <li *ngIf="!(list.Eway_Bill_No === 'Not Required')">
                                                                                     <a (click)="EwayUpdateModal(list)">
                                                                                         <i class="fa fa-fw fa-upload"></i>

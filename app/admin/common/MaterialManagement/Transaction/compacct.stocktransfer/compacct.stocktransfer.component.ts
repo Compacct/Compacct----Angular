@@ -200,6 +200,17 @@ export class StocktransferComponent implements OnInit {
         .subscribe((data: any) => {
           this.databaseName = data;
           console.log(data)
+          if(this.databaseName == 'GN_Crystal_Mumbai' || this.databaseName == 'GN_Global_Coimbatore'){
+            this.cols.forEach((el,inx)=>{
+              if( el.field == 'F_Cost_Cen_Name' ){
+                this.cols.splice(inx + 1, 0,{ field: "F_godown_name", header: "Issuing Godown" },);
+              }
+              if(el.field == 'T_Cost_Cen_Name'){
+                this.cols.splice(inx + 1, 0,{ field: "T_godown_name", header: "To Godown" },);
+              }
+            })
+          }
+        
         });
   }
   GetCostCenter() {
@@ -1718,17 +1729,25 @@ export class StocktransferComponent implements OnInit {
     }
   }
   // ACCEPT
-  AcceptStockTransfer(obj) {
+  AcceptStockTransfer(obj,ModalTitle?) {
     this.AcceptStockModalTitle = undefined;
     this.AcceptProductList =[];
     this.AcceptStockDocNo = undefined;
     if(obj.Doc_No) {  
      this.AcceptStockDocNo = obj.Doc_No;
-     this.AcceptStockModalTitle = obj.F_Cost_Cen_ID == this.$CompacctAPI.CompacctCookies.Cost_Cen_ID ? 'Edit Product' : obj.T_Cost_Cen_ID == this.$CompacctAPI.CompacctCookies.Cost_Cen_ID ? 'Accept Challan' : '-';
+     this.AcceptStockModalTitle = ModalTitle;
+     if(!ModalTitle){
+      this.AcceptStockModalTitle = obj.F_Cost_Cen_ID == this.$CompacctAPI.CompacctCookies.Cost_Cen_ID ? 'Edit Product' : obj.T_Cost_Cen_ID == this.$CompacctAPI.CompacctCookies.Cost_Cen_ID ? 'Accept Challan' : '-';
+     }
+    
      this.GetAcceptProduct(obj.Doc_No);
      
     }
   }
+
+  
+
+
   GetAcceptProduct(docId) {
     this.AcceptProductList = [];
     if(docId) {
