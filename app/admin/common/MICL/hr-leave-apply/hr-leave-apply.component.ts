@@ -46,7 +46,7 @@ export class HrLeaveApplyComponent implements OnInit {
   // minDateTo_Time = new Date()
   // maxDateFrom_Time = new Date()
   // maxDateTo_Time = new Date()
-  showBaln = undefined;
+  showBaln : any;
   NOfDayApplyBackUp = undefined;
   leaveStatusCheck = true;
   showErrorMsg = false
@@ -114,7 +114,7 @@ export class HrLeaveApplyComponent implements OnInit {
    
     this.header.pushHeader({
       Header: "Leave Application",
-      Link: " MICL -> Leave Application"
+      Link: " HR -> Leave Application"
     })
   // this.minDateTo_Time = this.From_Time
     this.FromDatevalue = new Date(this.currentdate);
@@ -355,10 +355,31 @@ export class HrLeaveApplyComponent implements OnInit {
        console.log("leave list==",this.leaveList);
        });
    }
+   CheckNoOFdays(){
+    if(this.databaseName === "GN_JOH_HR"){
+      if(this.ObjHrleave.No_Of_Days_Apply > this.showBaln){
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message ",
+          detail: "Taken leave is greater than left leave."
+        });
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+    else {
+      return true;
+    }
+   }
   saveData(valid:any){
     console.log("savedata==",this.ObjHrleave);
     this.leaveHrFormSubmitted = true;
-    if(valid){
+    if(valid && this.CheckNoOFdays()){
+      this.leaveHrFormSubmitted = false;
       console.log("HrleaveId==",this.HrleaveId);
       this.Spinner = true
       // if(this.$CompacctAPI.CompacctCookies.User_Type === "A") {
@@ -395,7 +416,6 @@ export class HrLeaveApplyComponent implements OnInit {
             this.txnId = undefined;
             this.Editdisable = false;
             this.tabIndexToView = 2;
-            this.leaveHrFormSubmitted = false;
             this.ObjHrleave =new Hrleave();
             this.FromDatevalue = new Date()
             this.ToDatevalue = new Date()
@@ -417,6 +437,7 @@ export class HrLeaveApplyComponent implements OnInit {
           });
       }
       else{
+        this.Spinner = false;
         console.error("error password")
       }
         

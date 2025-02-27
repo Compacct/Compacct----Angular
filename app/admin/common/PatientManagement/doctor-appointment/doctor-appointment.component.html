@@ -144,31 +144,32 @@
                                                                      Speech Evaluation Outcome Update
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="col.Consultancy_Descr == 'ASSR'">
+                                                            <li *ngIf="(col.Consultancy_Descr == 'ASSR') && (col.Status != 'Cancel' && col.Status != 'Reschedule')">
                                                                 <a (click)="actionClick(col ,'ASSR')" >
                                                                     <i class="fa fa-arrow-right"></i>
                                                                     Update Outcome
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="col.Consultancy_Descr == 'BERA'">
+                                                            <li *ngIf="(col.Consultancy_Descr == 'BERA') && (col.Status != 'Cancel' && col.Status != 'Reschedule')">
                                                                 <a (click)="actionClick(col ,'BERA')">
                                                                     <i class="fa fa-arrow-right"></i>
                                                                     Update Outcome
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="col.Consultancy_Descr == 'PTA' ||col.Consultancy_Descr == 'PTA +Tympanometry +Speech Audiometry' ||col.Consultancy_Descr == 'PTA+ Tympanometry' || col.Consultancy_Descr == 'PTA + Hearing Aid Trial'">
+                                                            <li *ngIf="(col.Consultancy_Descr == 'PTA' ||col.Consultancy_Descr == 'PTA +Tympanometry +Speech Audiometry' ||col.Consultancy_Descr == 'PTA+ Tympanometry' || col.Consultancy_Descr == 'PTA + Hearing Aid Trial')
+                                                                       && (col.Status !== 'Cancel' && col.Status !== 'Reschedule')">
                                                                 <a (click)="actionClick(col ,'PTA')">
                                                                     <i class="fa fa-arrow-right"></i>
                                                                     Update Outcome
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="col.Consultancy_Descr == 'Hearing Aid Trial'">
+                                                            <li *ngIf="(col.Consultancy_Descr == 'Hearing Aid Trial') && (col.Status != 'Cancel' && col.Status != 'Reschedule')">
                                                                 <a (click)="actionClick(col ,'Hearing Aid Trial')">
                                                                     <i class="fa fa-arrow-right"></i>
                                                                     Update Outcome
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="col.Consultancy_Descr == 'Tinnitus Assessment & Counselling'">
+                                                            <li *ngIf="(col.Consultancy_Descr == 'Tinnitus Assessment & Counselling') && (col.Status != 'Cancel' && col.Status != 'Reschedule')">
                                                                 <a (click)="actionClick(col ,'Tinnitus')">
                                                                     <i class="fa fa-arrow-right"></i>
                                                                     Update Outcome
