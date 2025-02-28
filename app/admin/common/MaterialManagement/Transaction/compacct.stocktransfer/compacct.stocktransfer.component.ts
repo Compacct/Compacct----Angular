@@ -200,15 +200,21 @@ export class StocktransferComponent implements OnInit {
         .subscribe((data: any) => {
           this.databaseName = data;
           console.log(data)
-          if(this.databaseName == 'GN_Crystal_Mumbai' || this.databaseName == 'GN_Global_Coimbatore'){
-            this.cols.forEach((el,inx)=>{
-              if( el.field == 'F_Cost_Cen_Name' ){
-                this.cols.splice(inx + 1, 0,{ field: "F_godown_name", header: "Issuing Godown" },);
+          if (this.databaseName == 'GN_Crystal_Mumbai' || this.databaseName == 'GN_Global_Coimbatore') {
+            const newCols = [];
+            
+            for (const col of this.cols) {
+              newCols.push(col);
+              
+              if (col.field == 'F_Cost_Cen_Name') {
+                newCols.push({ field: "F_godown_name", header: "Issuing Godown" });
               }
-              if(el.field == 'T_Cost_Cen_Name'){
-                this.cols.splice(inx + 1, 0,{ field: "T_godown_name", header: "To Godown" },);
+              else if (col.field == 'T_Cost_Cen_Name') {
+                newCols.push({ field: "T_godown_name", header: "To Godown" });
               }
-            })
+            }
+            
+            this.cols = newCols;
           }
         
         });
