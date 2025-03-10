@@ -233,7 +233,7 @@
                                           </div>
                                           </form>
 
-                                         <form name="CreatButtomForm" #CreatButtomForm="ngForm" novalidate>
+                                         <form *ngIf="buttonname =='Update'" name="CreatButtomForm" #CreatButtomForm="ngForm" novalidate>
                                              <div class="form-group">
                                                 <div class="col-sm-4">
                                                     <label class="control-label">Cost Center Name<sup class="text-danger">*</sup></label>
@@ -270,7 +270,7 @@
                                         </div>
                                         </form>
 
-                                      <ng-container>
+                                      <ng-container *ngIf="buttonname =='Update'">
                                          <table class="table table-bordered" *ngIf="multiProductObj.length">
                                         <thead>
                                           <tr>
