@@ -63,6 +63,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
   Recapture:any;
   CheckFinalizedOrNot:any;
   SaveButtonDisabled:boolean = false;
+  Balance: any;
 
   constructor(
     private Header: CompacctHeader,
@@ -389,8 +390,33 @@ export class DailyAttendanceSheetComponent implements OnInit {
       if(this.databaseName != 'GN_JOH_HR') {
       this.getAttenTypedropdown(obj.Atten_Type_ID);
       }
+      if(this.databaseName === 'GN_CCSAHA_Kolkata') {
+        if(this.Atten_Type === 6 || this.Atten_Type === 8 || this.Atten_Type === 9){
+        this.GetBalance();
+        }
+        }
       this.AttendancePopup = true;
     }
+  }
+  GetBalance() {
+    this.Balance = undefined;
+    const AtObj = {
+      Emp_ID : this.empid,
+      LEAVE_TYPE : this.Atten_Type,
+      Date : this.DateService.dateConvert(new Date(this.Daily_Atten_Date))
+    }
+    const objtemp = {
+      "SP_String": "SP_HR_Attn_Sheet_Day_Wise",
+      "Report_Name_String": "Show_Balance",
+      "Json_Param_String": JSON.stringify([AtObj])
+      }
+    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+      if(this.Atten_Type == 6 || this.Atten_Type == 8 || this.Atten_Type == 9){
+      this.Balance = data.length ? data[0].Balance : "0";
+      } else {
+        this.Balance = undefined;
+      }
+    })
   }
   // CheckIsLeave () {
   //   const attndata = this.AttenTypelist.filter(item=> Number(item.Atten_Type_ID) === Number(this.Atten_Type));
@@ -421,6 +447,7 @@ export class DailyAttendanceSheetComponent implements OnInit {
       Date : this.DateService.dateConvert(new Date(this.Daily_Atten_Date))
     }
     if(valid){
+    if(this.Balance != 0){
     if(isleave === true) {
       const obj = {
         "SP_String": "SP_Leave_Application",
@@ -447,6 +474,16 @@ export class DailyAttendanceSheetComponent implements OnInit {
     else {
       this.SaveAttendanceType();
     }
+  }
+  else{
+    this.compacctToast.clear();
+    this.compacctToast.add({
+      key: "compacct-toast",
+      severity: "error",
+      summary: "Warn Message",
+      detail: "Leave can not apply. "
+    });
+  }
     }
   }
   SaveAttendanceType(){
