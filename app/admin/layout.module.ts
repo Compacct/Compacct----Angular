@@ -538,6 +538,7 @@ import { CrmReportV2Component } from './common/PatientManagement/crm-report-v2/c
 import { LeaveAutoUpdateComponent } from './common/HR/leave-auto-update/leave-auto-update.component';
 import { PackageSessionCompleteComponent } from './common/PatientManagement/package-session-complete/package-session-complete.component';
 import { BlTxnRefDocEntryComponent } from './common/PatientManagement/bl-txn-ref-doc-entry/bl-txn-ref-doc-entry.component';
+import { BlTxnPettyCashVoucherComponent } from './common/SalesAndDistribution/Transaction/bl-txn-petty-cash-voucher/bl-txn-petty-cash-voucher.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -990,7 +991,8 @@ import { BlTxnRefDocEntryComponent } from './common/PatientManagement/bl-txn-ref
     CrmReportV2Component,
     LeaveAutoUpdateComponent,
     PackageSessionCompleteComponent,
-    BlTxnRefDocEntryComponent
+    BlTxnRefDocEntryComponent,
+    BlTxnPettyCashVoucherComponent
   ],
   imports: [
     CommonModule,
