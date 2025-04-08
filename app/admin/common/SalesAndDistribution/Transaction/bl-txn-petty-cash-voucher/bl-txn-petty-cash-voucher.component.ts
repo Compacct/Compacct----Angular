@@ -157,6 +157,7 @@ export class BlTxnPettyCashVoucherComponent implements OnInit {
     this.searchFormSubmit = true;
     this.seachSpinner = true;
     if(valid){
+     this.seachSpinner = false;
      this.objsearch.From_Date = this.objsearch.From_Date
       ? this.DateService.dateConvert(new Date(this.objsearch.From_Date))
       : this.DateService.dateConvert(new Date());

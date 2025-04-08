@@ -54,7 +54,9 @@
                             </div>
                             <div class="col-sm-3">
                                 <label class="control-label">CostCentre <sup class="text-danger">*</sup></label>
-                                <select class="form-control" name="CostCenID" #CostCenID="ngModel" [(ngModel)]="objsearch.Cost_Cen_ID" [ngClass]="{'clearance': searchFormSubmit && CostCenID?.errors?.required}" required>
+                                <select class="form-control" name="CostCenID" #CostCenID="ngModel" [(ngModel)]="objsearch.Cost_Cen_ID"
+                                 [attr.disabled]="($CompacctAPI.CompacctCookies.User_Type != 'A') ? true : null"
+                                 [ngClass]="{'clearance': searchFormSubmit && CostCenID?.errors?.required}" required>
                                           <option  [ngValue]="undefined">Select</option>
                                    <option *ngFor = "let option of costCenterList" [value] ="option.Cost_Cen_ID">
                                       {{option.Cost_Cen_Name}}
