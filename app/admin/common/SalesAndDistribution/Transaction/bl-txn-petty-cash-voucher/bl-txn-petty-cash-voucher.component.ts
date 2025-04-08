@@ -49,7 +49,7 @@ export class BlTxnPettyCashVoucherComponent implements OnInit {
         private Header: CompacctHeader,
         private GlobalAPI: CompacctGlobalApiService,
         private DateService: DateTimeConvertService,
-        private $CompacctAPI: CompacctCommonApi,
+        public $CompacctAPI: CompacctCommonApi,
         private compacctToast: MessageService,
         private route: ActivatedRoute,
         private ngxService: NgxUiLoaderService,
