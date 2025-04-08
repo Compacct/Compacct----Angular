@@ -132,7 +132,13 @@ export class BlTxnPettyCashVoucherComponent implements OnInit {
       })
     }
   }
-  Print(obj){}
+  Print(obj){
+    if (obj.Voucher_No) {
+      window.open("/Report/Crystal_Files/Finance/Voucher/Petty_Cash_Voucher.html?Voucher_No=" + obj.Voucher_No, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+  
+      );
+    }
+  }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
       this.objsearch.From_Date = dateRangeObj[0];
