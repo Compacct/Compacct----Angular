@@ -86,7 +86,7 @@ export class BlTxnPettyCashVoucherComponent implements OnInit {
     this.voucherdata = new Date();
     this.objpettyCashLower = new pettyCashLower();
     this.lowerList = [];
-    this.objpettyCash.Cost_Cen_ID_Trn = this.$CompacctAPI.CompacctCookies.User_Type != 'A' ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
+    this.objpettyCash.Cost_Cen_ID_Trn = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
   }
   onReject() {
     this.compacctToast.clear("c");
@@ -149,7 +149,7 @@ export class BlTxnPettyCashVoucherComponent implements OnInit {
     this.$http.get(this.url.apiGetCostCenter).subscribe((data:any)=>{
       this.costCenterList = data ? JSON.parse(data) : [];
       this.objsearch.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID
-      this.objpettyCash.Cost_Cen_ID_Trn = this.$CompacctAPI.CompacctCookies.User_Type != 'A' ? this.$CompacctAPI.CompacctCookies.Cost_Cen_ID : undefined;
+      this.objpettyCash.Cost_Cen_ID_Trn = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
   
      })
   }
@@ -220,20 +220,25 @@ export class BlTxnPettyCashVoucherComponent implements OnInit {
  
   }
   changesubLedgertop(LedgerID:AnyNsRecord){
-   this.GetBalance();
+    this.objpettyCash.Balance = undefined;
+    this.GetBalance();
   }
   GetBalance(){
-    if(this.objpettyCash.Ledger_ID){
+    this.objpettyCash.Balance = undefined;
+    if(this.objpettyCash.Cost_Cen_ID_Trn && this.objpettyCash.Ledger_ID){
       const tempobj = {
+        Fin_Year_ID : Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID),
+        As_On_Date   : this.DateService.dateConvert(new Date(this.voucherdata)),
+        Cost_Cen_ID : this.objpettyCash.Cost_Cen_ID_Trn,
         Ledger_ID : this.objpettyCash.Ledger_ID
       }
       const obj = {
         "SP_String": "SP_Petty_Cash_Voucher",
-        // "Report_Name_String": "Delete_Payment_Voucher",
+        "Report_Name_String": "Get_petty_cash_balance",
         "Json_Param_String": JSON.stringify([tempobj])
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
-        this.objpettyCash.Balance = 1000;
+        this.objpettyCash.Balance = data[0].bal_amt;
       })
     }
   }
@@ -344,7 +349,7 @@ export class BlTxnPettyCashVoucherComponent implements OnInit {
         key: "compacct-toast",
         severity: "error",
         summary: "Error Occured",
-        detail: "Total CR amount is greater than balance."
+        detail: "Total Amount is greater than Balance."
         // key: "c",
         // sticky: true,
         // severity: "error",

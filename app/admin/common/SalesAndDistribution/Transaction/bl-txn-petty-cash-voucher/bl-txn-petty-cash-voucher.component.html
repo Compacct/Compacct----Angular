@@ -169,6 +169,7 @@
                                 name="Cost_Cen_ID_Trn"
                                 #Cost_Cen_ID_Trn="ngModel"
                                [(ngModel)]="objpettyCash.Cost_Cen_ID_Trn"
+                               (change)="GetBalance()"
                                [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'"
                                [ngClass]="{'clearance': pettyCashFormSubmit && Cost_Cen_ID_Trn?.errors?.required}"
                                 required
@@ -205,7 +206,8 @@
                                             name="Balance"
                                             #Balance="ngModel"
                                             [(ngModel)]="objpettyCash.Balance"
-                                            placeholder="Balance">
+                                            placeholder="Balance"
+                                            disabled="true">
                                 </div>
                                 <div class="col-sm-4" >
                                
@@ -303,7 +305,7 @@
                                 <td><button (click)="DeleteProduct(i)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                             </tr>
                             <tr *ngIf="lowerList.length" >
-                                <td  nowrap colspan="7" style="text-align: left; font-weight: 600;"><span>Total CR Amount :</span> {{GetTotalCrAmt()}} &nbsp;&nbsp;&nbsp;<span>Total DR Amount : </span> {{objpettyCash.Balance}}</td>
+                                <td  nowrap colspan="7" style="text-align: left; font-weight: 600;"><span>Total Amount :</span> {{GetTotalCrAmt()}} &nbsp;&nbsp;&nbsp;<span>Total Balance : </span> {{objpettyCash.Balance}}</td>
                             </tr>
                           </tbody>
                         </table>
