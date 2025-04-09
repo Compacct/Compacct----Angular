@@ -35,6 +35,22 @@
     </div>
   </ng-template>
 </p-toast>
+<p-toast position="center" key="petty" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12 pull-right">
+                <button type="button" pButton (click)="onRejectpetty()" label="Ok" class="ui-button-secondary"></button>
+            </div>
+        </div>
+
+    </ng-template>
+</p-toast>
 
 <div class="row">
   <div class="col-xs-12">
@@ -125,7 +141,7 @@
                                                         <i class="fa fa-fw fa-print"></i> Print
                                                     </a>
                                                 </li>
-                                                <li>
+                                                <li *ngIf="$CompacctAPI.CompacctCookies.Del_Right === 'Y'">
                                                     <a (click)="DeleteVoucher(col)">
                                                         <i class="fa fa-fw fa-trash" aria-hidden="true"></i>
                                                         Delete
@@ -207,7 +223,8 @@
                                             #Balance="ngModel"
                                             [(ngModel)]="objpettyCash.Balance"
                                             placeholder="Balance"
-                                            disabled="true">
+                                            disabled="true"
+                                            [ngClass]="(objpettyCash.Balance < 0) ? 'text-red' : 'text-blue'">
                                 </div>
                                 <div class="col-sm-4" >
                                
@@ -305,7 +322,7 @@
                                 <td><button (click)="DeleteProduct(i)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                             </tr>
                             <tr *ngIf="lowerList.length" >
-                                <td  nowrap colspan="7" style="text-align: left; font-weight: 600;"><span>Total Amount :</span> {{GetTotalCrAmt()}} &nbsp;&nbsp;&nbsp;<span>Total Balance : </span> {{objpettyCash.Balance}}</td>
+                                <td  nowrap colspan="7" style="text-align: left; font-weight: 600;" ><span>Total Amount :</span> {{GetTotalCrAmt()}} &nbsp;&nbsp;&nbsp;<span>Total Balance : </span> <span [ngClass]="(objpettyCash.Balance < 0) ? 'text-red' : 'text-blue'">{{objpettyCash.Balance}}</span></td>
                             </tr>
                           </tbody>
                         </table>

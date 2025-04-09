@@ -37,7 +37,7 @@ export class BlTxnPettyCashVoucherComponent implements OnInit {
   DynamicHeader:any[] = []
 
   LedgerList:any[] = []
-  billdata =new Date()
+  billdata:any;
 
   ExpenseHeadLedgerList:any[] = []
   pettyCashlowerFormSubmit:boolean = false;
@@ -87,6 +87,8 @@ export class BlTxnPettyCashVoucherComponent implements OnInit {
     this.objpettyCashLower = new pettyCashLower();
     this.lowerList = [];
     this.objpettyCash.Cost_Cen_ID_Trn = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.objpettyCash.Ledger_ID =  this.LedgerList.length === 1 ? this.LedgerList[0].Ledger_ID : undefined
+    this.GetBalance();
   }
   onReject() {
     this.compacctToast.clear("c");
@@ -198,7 +200,7 @@ export class BlTxnPettyCashVoucherComponent implements OnInit {
           
          
         });
-        
+      this.objpettyCash.Ledger_ID =  this.LedgerList.length === 1 ? this.LedgerList[0].Ledger_ID : undefined
     })
  
   }
@@ -228,7 +230,7 @@ export class BlTxnPettyCashVoucherComponent implements OnInit {
     if(this.objpettyCash.Cost_Cen_ID_Trn && this.objpettyCash.Ledger_ID){
       const tempobj = {
         Fin_Year_ID : Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID),
-        As_On_Date   : this.DateService.dateConvert(new Date(this.voucherdata)),
+        As_On_Date : this.DateService.dateConvert(new Date(this.voucherdata)),
         Cost_Cen_ID : this.objpettyCash.Cost_Cen_ID_Trn,
         Ledger_ID : this.objpettyCash.Ledger_ID
       }
@@ -239,8 +241,21 @@ export class BlTxnPettyCashVoucherComponent implements OnInit {
       }
       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
         this.objpettyCash.Balance = data[0].bal_amt;
+        if(this.objpettyCash.Balance < 0){
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "petty",
+            sticky: true,
+            severity: "warn",
+            summary: "Petty Cash Balance is Negative."
+          });
+        }
+        
       })
     }
+  }
+  onRejectpetty() {
+    this.compacctToast.clear("petty");
   }
   AddDetails(valid){
   this.pettyCashlowerFormSubmit = true;
@@ -258,7 +273,7 @@ export class BlTxnPettyCashVoucherComponent implements OnInit {
         Cost_Cen_ID_Trn : this.objpettyCash.Cost_Cen_ID_Trn,
         User_ID : Number(this.$CompacctAPI.CompacctCookies.User_ID),
         bill_ref_no_for_petty : this.objpettyCashLower.bill_ref_no_for_petty,
-        bill_ref_date_petty : this.DateService.dateConvert(new Date(this.billdata)),
+        bill_ref_date_petty : this.billdata ? this.DateService.dateConvert(new Date(this.billdata)) : '',
         remarks_for_petty : this.objpettyCashLower.remarks_for_petty ? this.objpettyCashLower.remarks_for_petty : '',
         Is_Topper:"N",
       }
@@ -349,7 +364,7 @@ export class BlTxnPettyCashVoucherComponent implements OnInit {
         key: "compacct-toast",
         severity: "error",
         summary: "Error Occured",
-        detail: "Total Amount is greater than Balance."
+        detail: "Total Amount is greater than Total Balance."
         // key: "c",
         // sticky: true,
         // severity: "error",
