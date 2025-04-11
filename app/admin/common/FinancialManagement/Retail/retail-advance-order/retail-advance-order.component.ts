@@ -47,7 +47,7 @@ export class RetailAdvanceOrderComponent implements OnInit {
   LedgerList: any=[];
   BankTRNtypeList: any=[];
   PaymentTypeList:any=[];
-  BankDate: Date= new Date();
+  BankDate: any= new Date();
   addJournalList: any=[];
   backupTotalAmount: number= 0; 
   JournalDateLabel: any='DATE';
@@ -68,7 +68,7 @@ export class RetailAdvanceOrderComponent implements OnInit {
   displayPaymentPopup: boolean=false;
   PaymentSpinner: boolean=false;
   PaymentFormSubmitted: boolean=false;
-  BankPaymentDate: Date = new Date();
+  BankPaymentDate: any = new Date();
   addPaymentList: any=[];
   backupPatient: any=undefined;
   backupPatientID: any=undefined;
@@ -146,7 +146,7 @@ export class RetailAdvanceOrderComponent implements OnInit {
     this.objJournal= new Journal();
     this.JournalSpinner=false;
     this.JournalFormSubmitted=false;
-    this.BankDate=new Date();
+    this.BankDate= new Date();
     this.addJournalList=[];
     this.JournalDateLabel='DATE';
     this.JournalNOLabel='NO.';
@@ -609,14 +609,14 @@ export class RetailAdvanceOrderComponent implements OnInit {
     
     this.JournalDateLabel='DATE';
     this.JournalNOLabel='NO.';
-    this.BankDate=new Date();
+    this.BankDate=this.objJournal.TRN=='CASH' ? null : new Date();
     this.objJournal.BankDate=undefined;
     this.objJournal.No=undefined;
     this.objJournal.Bank_Name=undefined;
     this.objJournal.Bank_Branch_Name=undefined;
 
     this.objPayment.TRN=undefined;
-    this.BankPaymentDate=new Date();
+    this.BankPaymentDate=this.objJournal.TRN=='CASH' ? null : new Date();
     this.objPayment.BankDate=undefined;
     this.objPayment.No=undefined;
     this.objPayment.Bank_Name=undefined;
@@ -642,13 +642,13 @@ export class RetailAdvanceOrderComponent implements OnInit {
   SelectBankTRNtype(TRNtype: any){
     this.JournalDateLabel='DATE';
     this.JournalNOLabel='NO.';
-    this.BankDate=new Date();
+    this.BankDate=this.objJournal.TRN=='CASH' ? null : new Date();
     this.objJournal.BankDate=undefined;
     this.objJournal.No=undefined;
     this.objJournal.Bank_Name=undefined;
     this.objJournal.Bank_Branch_Name=undefined;
 
-    this.BankPaymentDate=new Date();
+    this.BankPaymentDate=this.objPayment.TRN=='CASH' ? null : new Date();
     this.objPayment.BankDate=undefined;
     this.objPayment.No=undefined;
     this.objPayment.Bank_Name=undefined;
