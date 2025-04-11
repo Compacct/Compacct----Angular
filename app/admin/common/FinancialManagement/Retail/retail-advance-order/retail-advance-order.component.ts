@@ -82,6 +82,7 @@ export class RetailAdvanceOrderComponent implements OnInit {
   objActivityLog = new ActivityLog();
   objProduct = new Product();
   objCommon = new Common();
+  databaseName:any
   constructor(
     private $http: HttpClient,
     private GlobalAPI:CompacctGlobalApiService,
@@ -112,6 +113,7 @@ export class RetailAdvanceOrderComponent implements OnInit {
     this.GetCustomerList();
     this.GetProductList();
     this.GetaspxFileName();
+    this.DataBaseCheck()
   }
 
   TabClick(e){
@@ -151,6 +153,17 @@ export class RetailAdvanceOrderComponent implements OnInit {
     this.JournalDateLabel='DATE';
     this.JournalNOLabel='NO.';
   }
+
+  DataBaseCheck() {
+    this.$http.get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          //console.log(data) BSHPL
+        });
+        //this.databaseName = 'BSHPL'
+  }
+
 
   Get_Patient_Subledger_ID(){
     this.$http
@@ -418,7 +431,7 @@ export class RetailAdvanceOrderComponent implements OnInit {
         });
         return
       }
-      if(!this.objProduct.Rate){
+      if(!this.objProduct.Rate && this.databaseName !=='GN_Anand_Chandigarh'){
         this.ProductOrderFormSubmitted = false;
         this.compacctToast.clear();
         this.compacctToast.add({
@@ -429,6 +442,21 @@ export class RetailAdvanceOrderComponent implements OnInit {
         });
         return
       }
+
+      const SameProductFilter = this.addProductList.filter((el:any)=> (el.Product_ID) == this.objProduct.Product_ID);
+      if(SameProductFilter.length){ 
+        this.ProductOrderFormSubmitted = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "You Can't choose same Product Name ",
+          detail:" "
+        });
+        return
+
+      }
+
       const tempFilter = this.ProductList.filter((el:any)=> Number(el.Product_ID) === Number(this.objProduct.Product_ID));
 
       this.objProduct.Expected_Delivery_Date=this.DateService.dateConvert(this.Expected_Delivery_Date);
